@@ -1,0 +1,17 @@
+{
+    "name": "@ss-2/snfoundry",
+    "version": "0.0.1",
+    "scripts": {
+      "chain": "docker run -p 0.0.0.0:5050:5050 shardlabs/starknet-devnet-rs:0.0.2 --seed 0",
+      "deploy": "cd scripts/deploy && sncast script run deploy"
+    },
+    "devDependencies": {
+      "@types/prettier": "^2"
+    },
+    "dependencies": {
+      "dotenv": "^16.3.1",
+      "envfile": "^6.18.0",
+      "prettier": "^2.8.8",
+      "toml": "^3.0.0"
+    }
+  }

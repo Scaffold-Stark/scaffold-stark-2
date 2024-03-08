@@ -1,0 +1,4 @@
+[sncast.default]
+url = "http://0.0.0.0:5050"
+account = "deployer_devnet"
+accounts-file = "../../localhost.accounts.json"

@@ -1,0 +1,18 @@
+{
+    "name": "ss-2",
+    "version": "0.0.1",
+    "author": "Q3 Labs",
+    "private": true,
+    "workspaces": {
+      "packages": [
+        "packages/snfoundry",
+        "packages/nextjs"
+      ]
+    },
+    "scripts": {
+      "chain": "yarn workspace @ss-2/snfoundry chain",
+      "deploy": "yarn workspace @ss-2/snfoundry deploy",
+      "start": "yarn workspace @ss-2/nextjs dev"
+    },
+    "packageManager": "yarn@3.2.3"
+  }
