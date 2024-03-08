@@ -12,7 +12,7 @@ docker pull shardlabs/starknet-devnet-rs:0.0.2
 
 ## Quickstart
 
-To get started with Scaffold-ETH 2, follow the steps below:
+To get started with Scaffold-Stark 2, follow the steps below:
 
 1. Clone this repo & install dependencies
 
