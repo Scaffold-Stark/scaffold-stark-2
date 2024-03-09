@@ -8,7 +8,7 @@ import {
 } from "@starknet-react/core";
 import { useEffect, useMemo, useState } from "react";
 import { cairo } from "starknet";
-import ConnectModal from "~~/components/wallet/ConnectModal";
+import ConnectModal from "~~/src/app/components/wallet/ConnectModal";
 
 export function DebugContracts() {
   const [openConnectModal, setOpenConnectModal] = useState(false);
@@ -48,7 +48,7 @@ export function DebugContracts() {
   const { contract } = useContract({
     abi,
     address:
-      "0x3de61871f86a6d3f09c75f55d2fd3309dc3a528ffef803462bd56532801ddcf",
+      "0x66519ebf59d635762c9401aac66257aa6558cce1ec57b5329b856bb247c587f",
   });
 
   const calls = useMemo(() => {
@@ -69,7 +69,7 @@ export function DebugContracts() {
     args: [],
     abi,
     address:
-      "0x3de61871f86a6d3f09c75f55d2fd3309dc3a528ffef803462bd56532801ddcf",
+      "0x66519ebf59d635762c9401aac66257aa6558cce1ec57b5329b856bb247c587f",
     watch: true,
   });
   console.log(error);

@@ -1,0 +1,57 @@
+{
+  "address": "637910608443604968575616619273863153308502850410741724043053000003186452173",
+  "classHash": "1036873972583252569369597029498756503435210827333067360570922732046055341965",
+  "abi": [
+    {
+      "type": "impl",
+      "name": "HelloStarknetImpl",
+      "interface_name": "contracts::IHelloStarknet"
+    },
+    {
+      "type": "interface",
+      "name": "contracts::IHelloStarknet",
+      "items": [
+        {
+          "type": "function",
+          "name": "increase_balance",
+          "inputs": [
+            {
+              "name": "amount",
+              "type": "core::felt252"
+            }
+          ],
+          "outputs": [],
+          "state_mutability": "external"
+        },
+        {
+          "type": "function",
+          "name": "get_balance",
+          "inputs": [],
+          "outputs": [
+            {
+              "type": "core::felt252"
+            }
+          ],
+          "state_mutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "get_balance2",
+          "inputs": [],
+          "outputs": [
+            {
+              "type": "core::felt252"
+            }
+          ],
+          "state_mutability": "view"
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "name": "contracts::HelloStarknet::Event",
+      "kind": "enum",
+      "variants": []
+    }
+  ]
+}
