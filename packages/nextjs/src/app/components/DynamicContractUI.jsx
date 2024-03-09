@@ -7,6 +7,7 @@ import { Contract } from 'starknet'
 import { Button, TextField } from "@radix-ui/themes";
 import { useUser } from "@/contexts/userContenxt";
 import { constants, RpcProvider } from "starknet";
+import { Reload } from "@radix-ui/themes";
 
 const provider = new RpcProvider({ 
   nodeUrl: "https://starknet-goerli.infura.io/v3/c45bd0ce3e584ba4a5e6a5928c9c0b0f",
@@ -32,7 +33,7 @@ const ContractPlayground = ({ contractDefinition }) => {
 
   useEffect(() => {
     
-  }, [account])
+  }, [account, contractDefinition]);
   const connectWallet = async() => {
     const { wallet } = await connect();
    
@@ -95,11 +96,17 @@ const ContractPlayground = ({ contractDefinition }) => {
     }
   };
 
+  {/* Reload the page */}
+  
+
   return (
     <div>
+      <div className="flex row">
       <h2 className="text-2xl font-bold">Contract Playground</h2>
+      
+      </div>
       <Button onClick={connectWallet} color="orange">Connect Wallet</Button>
-      <p>Connected to wallet: {account?.address}</p>
+      <p>Connected to wallet: {account?.address ? `${account.address.substring(0, 4)}...${account.address.substring(account.address.length - 4)}` : 'Not connected'}</p>
       {contractDefinition.abi
         .filter((item) => item.type === "interface")
         .flatMap((interfaceItem) => interfaceItem.items)
