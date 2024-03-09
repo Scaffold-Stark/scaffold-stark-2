@@ -30,7 +30,7 @@ export default function Header() {
       </div>
       <div className="flex items-center space-x-4">
         
-        <ConnectWalletButton className="md:text-sm lg:text-base"/>
+        <ConnectWalletButton/>
         
         <FaucetMenu />
       </div>

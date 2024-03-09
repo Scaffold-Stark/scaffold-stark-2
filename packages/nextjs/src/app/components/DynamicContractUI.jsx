@@ -127,10 +127,10 @@ const ContractPlayground = ({ contractDefinition }) => {
         .filter((item) => item.type === "function")
         .map((functionItem) => (
           <div key={functionItem.name} style={{ display: 'flex',justifyContent: 'space-between', gap: '5px', flexDirection: 'column' }}>
-
+<h3>{functionItem.name}</h3>
             {functionItem.inputs.map((input) => (
               <div key={input.name}>
-                <label htmlFor={input.name} className="badge-ghost badge">{input.name}</h3>
+                <h3 htmlFor={input.name} className="badge-ghost badge">{input.name}</h3>
 
                 <TextField.Input
                   type="text"
