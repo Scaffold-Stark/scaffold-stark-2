@@ -4,12 +4,17 @@ const path = require('path');
 const outputFilePath = path.join(__dirname, 'deployOutput.txt');
 const output = fs.readFileSync(outputFilePath, 'utf8');
 
-// Regex to match the deployed contract address
+// Regex to match the deployed contract address and class hash
 const addressRegex = /Deployed the contract to address: (\d+)/;
-const match = output.match(addressRegex);
+const classHashRegex = /Class hash of the declared contract: (\d+)/;
 
-if (match) {
-  const address = match[1];
+const addressMatch = output.match(addressRegex);
+const classHashMatch = output.match(classHashRegex);
+
+if (addressMatch && classHashMatch) {
+  const address = addressMatch[1];
+  const classHash = classHashMatch[1];
+
 
   // Extract the ABI from deploy_HelloStarknet.compiled_contract_class.json
   const compiledContractClassFilePath = path.join(__dirname, 'deploy', 'target', 'dev', 'deploy_HelloStarknet.contract_class.json');
@@ -20,6 +25,7 @@ if (match) {
   // Create the result object
   const result = {
     address: address,
+    classHash: classHash,
     abi: abi
   };
 
@@ -27,6 +33,9 @@ if (match) {
   const resultFilePath = path.join(__dirname, 'result.json');
   fs.writeFileSync(resultFilePath, JSON.stringify(result, null, 2));
   console.log(`Result written to ${resultFilePath}`);
+  const parentFolderPath = path.join(__dirname, '..', '..', 'nextjs', 'src', 'contracts', 'result.json');
+  fs.copyFileSync(resultFilePath, parentFolderPath);
+  console.log(`Result copied to ${parentFolderPath}`);
 } else {
   console.error('Deployed contract address not found in output.');
 }
