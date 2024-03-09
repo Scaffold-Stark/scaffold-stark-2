@@ -11,6 +11,7 @@
     },
     "scripts": {
       "chain": "yarn workspace @ss-2/snfoundry chain",
+      "cargo-chain": "chmod +x ./cargo-devnet.sh && ./cargo-devnet.sh",
       "deploy": "yarn workspace @ss-2/snfoundry deploy",
       "start": "yarn workspace @ss-2/nextjs dev"
     },
