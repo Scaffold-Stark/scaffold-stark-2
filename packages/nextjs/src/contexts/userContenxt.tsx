@@ -12,6 +12,7 @@ import {
   useState,
 } from "react";
 import { Account, Contract, RpcProvider, constants, num } from "starknet";
+
 export enum UserMode {
   OWNER = "owner",
   MULTIOWNER = "multiowner",
@@ -74,7 +75,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async () => {
   
-    console.log("startedLogin");
+
     const { wallet } = await connect( { modalMode: "canAsk" } )
 
     if (wallet && wallet.isConnected) {
@@ -94,25 +95,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setAccount(null);
     setAddress(null);
   };
-  const getBizOwnerContract = async () => {
-    
 
-    
-    if (!address) {
-      console.warn("Wallet address is not available.");
-      return;
-    }
-    if (!strapex_factory_address) {
-      alert("Factory contact missing in env");
-      return;
-    }  
-  };
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      getBizOwnerContract();
-    }
-  }, [isLoggedIn, address]);
+
   const toggleMode = () =>
     setUserMode(userMode === UserMode.OWNER ? UserMode.MULTIOWNER : UserMode.OWNER);
 

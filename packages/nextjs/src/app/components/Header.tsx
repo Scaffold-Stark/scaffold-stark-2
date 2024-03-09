@@ -21,9 +21,9 @@ export default function Header() {
         </nav>
       </div>
       <div className="flex items-center space-x-4">
-        {/* 
+        
         <ConnectWalletButton />
-        */}
+        
         <FaucetMenu />
       </div>
     </header>
