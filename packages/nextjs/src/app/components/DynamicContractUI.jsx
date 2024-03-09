@@ -8,8 +8,10 @@ import { Button, TextField } from "@radix-ui/themes";
 import { useUser } from "@/contexts/userContenxt";
 import { constants, RpcProvider } from "starknet";
 
-const provider = new RpcProvider({ nodeUrl: "http://127.0.0.1:5050/rpc" })
-
+const provider = new RpcProvider({ 
+  nodeUrl: "https://starknet-goerli.infura.io/v3/c45bd0ce3e584ba4a5e6a5928c9c0b0f",
+  chainId: constants.StarknetChainId.SN_GOERLI
+});
 const ContractPlayground = ({ contractDefinition }) => {
   const [inputValues, setInputValues] = useState({});
   const [connection, setConnection] = useState(null);
