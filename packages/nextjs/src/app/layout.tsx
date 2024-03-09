@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ScaffoldStarkAppWithProviders } from "~~/components/ScaffoldStarkAppWithProviders";
+import { ScaffoldStarkAppWithProviders } from "~~/src/app/components/ScaffoldStarkAppWithProviders";
+import '@radix-ui/themes/styles.css';
+import { Theme } from '@radix-ui/themes';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,9 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+      <Theme>
         <ScaffoldStarkAppWithProviders>
           {children}
         </ScaffoldStarkAppWithProviders>
+        </Theme>
       </body>
     </html>
   );

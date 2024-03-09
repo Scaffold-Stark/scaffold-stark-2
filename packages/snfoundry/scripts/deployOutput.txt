@@ -1,0 +1,8 @@
+   Compiling lib(deploy) deploy v0.1.0 (/Users/matveydergunov/Desktop/scaffold-stark-2/packages/snfoundry/scripts/deploy/Scarb.toml)
+   Compiling starknet-contract(deploy) deploy v0.1.0 (/Users/matveydergunov/Desktop/scaffold-stark-2/packages/snfoundry/scripts/deploy/Scarb.toml)
+    Finished release target(s) in 5 seconds
+command: script run
+message: 
+    0x6465636c617265206661696c6564 ('declare failed')
+
+status: script panicked

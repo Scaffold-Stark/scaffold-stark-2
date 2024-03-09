@@ -6,9 +6,17 @@
 ## Prerequisites [Maybe not needed ?]
 
 - Devnet 
+### Docker
 ```bash
 docker pull shardlabs/starknet-devnet-rs:0.0.2
 ```
+### Cargo
+For those who don't have Docker installed, or dont have the enough space to pull the image, you can use the `cargo.sh` script to install the necessary dependencies.
+```bash
+chmod +x install-cargo.sh
+./install-cargo.sh
+```
+
 
 ## Quickstart
 
@@ -25,9 +33,13 @@ snfoundryup -v 0.19.0
 
 2. Run a local network in the first terminal:
 
-```
+```bash
 yarn chain
 ```
+```bash
+yarn cargo-chain
+```
+
 
 This command starts a local Starknet network using Devnet. The network runs on your local machine and can be used for testing and development.
 
