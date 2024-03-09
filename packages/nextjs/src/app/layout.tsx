@@ -4,6 +4,7 @@ import "./globals.css";
 import { ScaffoldStarkAppWithProviders } from "~~/src/app/components/ScaffoldStarkAppWithProviders";
 import '@radix-ui/themes/styles.css';
 import { Theme } from '@radix-ui/themes';
+import Header from "./components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,6 +23,7 @@ export default function RootLayout({
       <body>
       <Theme>
         <ScaffoldStarkAppWithProviders>
+          <Header />
           {children}
         </ScaffoldStarkAppWithProviders>
         </Theme>
