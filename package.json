@@ -4,16 +4,19 @@
     "author": "Q3 Labs",
     "private": true,
     "workspaces": {
-      "packages": [
-        "packages/snfoundry",
-        "packages/nextjs"
-      ]
+        "packages": [
+            "packages/snfoundry",
+            "packages/nextjs"
+        ]
     },
     "scripts": {
-      "chain": "yarn workspace @ss-2/snfoundry chain",
-      "cargo-chain": "chmod +x ./cargo-devnet.sh && ./cargo-devnet.sh",
-      "deploy": "yarn workspace @ss-2/snfoundry deploy",
-      "start": "yarn workspace @ss-2/nextjs dev"
+        "chain": "yarn workspace @ss-2/snfoundry chain",
+        "cargo-chain": "chmod +x ./cargo-devnet.sh && ./cargo-devnet.sh",
+        "deploy": "yarn workspace @ss-2/snfoundry deploy",
+        "start": "yarn workspace @ss-2/nextjs dev"
     },
-    "packageManager": "yarn@3.2.3"
-  }
+    "packageManager": "yarn@3.2.3",
+    "devDependencies": {
+        "daisyui": "^4.7.3"
+    }
+}
