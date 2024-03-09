@@ -38,7 +38,7 @@ export const ScaffoldStarkAppWithProviders = ({
 
   return (
     <StarknetConfig
-      chains={[devnet]}
+      chains={[goerli]}
       provider={publicProvider()}
       connectors={connectors}
       explorer={starkscan}

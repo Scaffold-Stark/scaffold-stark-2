@@ -47,7 +47,8 @@ export function DebugContracts() {
 
   const { contract } = useContract({
     abi,
-    address: "0x3ac5262fa705b9ed96bea71cb8c4bdbe8185adbf69488db262689f4f55a91e",
+    address:
+      "0x3de61871f86a6d3f09c75f55d2fd3309dc3a528ffef803462bd56532801ddcf",
   });
 
   const calls = useMemo(() => {
@@ -67,9 +68,12 @@ export function DebugContracts() {
     functionName: "get_balance",
     args: [],
     abi,
-    address: "0x3ac5262fa705b9ed96bea71cb8c4bdbe8185adbf69488db262689f4f55a91e",
+    address:
+      "0x3de61871f86a6d3f09c75f55d2fd3309dc3a528ffef803462bd56532801ddcf",
     watch: true,
   });
+  console.log(error);
+  console.log(data);
 
   return (
     <div className="flex flex-col gap-y-6 lg:gap-y-8 py-8 lg:py-12 justify-center items-center">
