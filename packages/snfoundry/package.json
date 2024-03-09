@@ -3,7 +3,7 @@
     "version": "0.0.1",
     "scripts": {
       "chain": "docker run -p 0.0.0.0:5050:5050 shardlabs/starknet-devnet-rs:0.0.2 --seed 0",
-      "deploy": "cd scripts/deploy && sncast script run deploy"
+      "deploy": "cd scripts/deploy && sncast script run deploy > ../deployOutput.txt && node ../parseDeployOutput.mjs"
     },
     "devDependencies": {
       "@types/prettier": "^2"
