@@ -1,6 +1,6 @@
 {
-  "address": "0x63aefdc51868172a5ba9b5724448bf07746d377bf3b7c529f823e4b698145b6",
-  "classHash": "0xb080ac08a554ec3f3f7dcfabe1b9d9cc10ef26d75e80c0a773f164a4956060",
+  "address": "0x43ce338f2482749dab02e5c0d707eb3fd683b814be5d9689e621953e822932c",
+  "classHash": "0x77b2e586f836fc7fd29d1963eabc53b2480169f0529db06c8d87cf7738421fa",
   "abi": [
     {
       "type": "impl",
@@ -38,6 +38,26 @@
           "type": "function",
           "name": "get_balance2",
           "inputs": [],
+          "outputs": [
+            {
+              "type": "core::felt252"
+            }
+          ],
+          "state_mutability": "view"
+        },
+        {
+          "type": "function",
+          "name": "doubleInput",
+          "inputs": [
+            {
+              "name": "input",
+              "type": "core::felt252"
+            },
+            {
+              "name": "input2",
+              "type": "core::felt252"
+            }
+          ],
           "outputs": [
             {
               "type": "core::felt252"

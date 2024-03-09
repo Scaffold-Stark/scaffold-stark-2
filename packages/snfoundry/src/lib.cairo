@@ -3,6 +3,7 @@ pub trait IHelloStarknet<TContractState> {
     fn increase_balance(ref self: TContractState, amount: felt252);
     fn get_balance(self: @TContractState) -> felt252;
     fn get_balance2(self: @TContractState) -> felt252;
+    fn doubleInput(self: @TContractState, input: felt252, input2: felt252) -> felt252;
 }
 
 #[starknet::contract]
@@ -25,6 +26,10 @@ mod HelloStarknet {
 
         fn get_balance2(self: @ContractState) -> felt252 {
             self.balance.read()
+        }
+
+        fn doubleInput(self: @ContractState, input: felt252, input2: felt252) -> felt252 {
+            input * 2
         }
     }
 }

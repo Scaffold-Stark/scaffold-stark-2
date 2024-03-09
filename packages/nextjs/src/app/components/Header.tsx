@@ -1,6 +1,7 @@
 import { Button, ContextMenu } from "@radix-ui/themes";
 import FaucetMenu from "./FaucetMenu";
 import ConnectModal from "./wallet/ConnectModal";
+import ConnectWalletButton from "./wallet2/ConnectWalletButton";
 
 export default function Header() {
   return (
@@ -20,7 +21,9 @@ export default function Header() {
         </nav>
       </div>
       <div className="flex items-center space-x-4">
-        <Button>Connect Wallet</Button>
+        {/* 
+        <ConnectWalletButton />
+        */}
         <FaucetMenu />
       </div>
     </header>
