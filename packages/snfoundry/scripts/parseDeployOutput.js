@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-
 // Assuming the output is stored in 'deployOutput.txt'
 const outputFilePath = path.join(__dirname, 'deployOutput.txt');
 const output = fs.readFileSync(outputFilePath, 'utf8');

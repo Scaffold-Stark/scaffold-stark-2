@@ -1,0 +1,13 @@
+   Compiling lib(deploy) deploy v0.1.0 (/Users/matveydergunov/Desktop/scaffold-stark-2/packages/snfoundry/scripts/deploy/Scarb.toml)
+   Compiling starknet-contract(deploy) deploy v0.1.0 (/Users/matveydergunov/Desktop/scaffold-stark-2/packages/snfoundry/scripts/deploy/Scarb.toml)
+    Finished release target(s) in 5 seconds
+Transaction hash = 0x4dbd338f9d44e10f43c5f93f62dc66a6da2436bc41db7cb0107dd60cd9741b9
+Class hash of the declared contract: 2201223706413065451880399288906276363836558058421999388133321857434204419663
+Transaction hash = 0x70ed22cd4889423d3c6e4866cec489e52b6de769eec3bfd768600fd80705d43
+Deployed the contract to address: 103837803283824109376320136177421124208800383301683034504418260094933117214
+Call result: [0]
+Transaction hash = 0x8d7205dc6b58c687b139ad3d39ddd102e926ee47a99ed984443ae7136e8ba7
+Invoke tx hash is: 249912393229883721228338395597139897688595260456858150663828456852746570663
+Call result: [1]
+command: script run
+status: success
