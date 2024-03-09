@@ -11,12 +11,12 @@ export default function ConnectWalletButton() {
     }
   }, [userContext?.isLoggedIn]);
   return (
-    <Button
-      onClick={
-        userContext?.login
-      }
-    >
-      Connect Wallet
-    </Button>
+    <div>
+      {userContext?.isLoggedIn ? (
+        <Button onClick={userContext?.logout} color="red"> Logout </Button>
+      ) : (
+        <Button onClick={userContext?.login}>Connect Wallet</Button>
+      )}
+    </div>
   );
 }
