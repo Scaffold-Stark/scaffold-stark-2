@@ -1,3 +1,6 @@
 .vscode/**
 node_modules
 starknet-devnet-rs
+.yarn
+package-lock.json
+.yarnrc.yml
