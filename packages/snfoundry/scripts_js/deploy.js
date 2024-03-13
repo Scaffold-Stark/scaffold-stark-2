@@ -69,7 +69,7 @@ const deployContract = async (contractName) => {
   }
   return {
     classHash: classHash,
-    abi: existingClass.abi,
+    abi: json.stringify(existingClass.abi),
     address: contractAddress,
   };
 };
