@@ -2,25 +2,7 @@
 
 - snforge - 0.19.0
 - sncast - 0.19.0
-
-## Prerequisites [Maybe not needed ?]
-
-- Devnet
-
-### Docker
-
-```bash
-docker pull shardlabs/starknet-devnet-rs:2c984aad70e38aa578dd5beb00ee6908ad3952b0-seed0
-```
-
-### Cargo
-
-For those who don't have Docker installed, or dont have the enough space to pull the image, you can use the `cargo.sh` script to install the necessary dependencies.
-
-```bash
-chmod +x install-cargo.sh
-./install-cargo.sh
-```
+- cargo - latest
 
 ## Quickstart
 
