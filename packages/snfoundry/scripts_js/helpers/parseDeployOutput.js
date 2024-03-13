@@ -1,9 +1,9 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 // Assuming the output is stored in 'deployOutput.txt'
-const outputFilePath = path.join(__dirname, 'deployOutput.txt');
-const output = fs.readFileSync(outputFilePath, 'utf8');
+const outputFilePath = path.join(__dirname, "../../broadcast/deployOutput.txt");
+const output = fs.readFileSync(outputFilePath, "utf8");
 
 // Regex to match the deployed contract address and class hash
 const addressRegex = /Address (0x[0-9a-fA-F]+)/;
@@ -22,7 +22,7 @@ if (addressMatch && classHashMatch) {
   if (abiMatch) {
     abi = JSON.parse(abiMatch[1]);
   } else {
-    console.error('ABI not found in output.');
+    console.error("ABI not found in output.");
     return;
   }
 
@@ -30,17 +30,26 @@ if (addressMatch && classHashMatch) {
   const result = {
     address: address,
     classHash: classHash,
-    abi: abi
+    abi: abi,
   };
 
   // Write the result object to result.json
-  const resultFilePath = path.join(__dirname, 'result.json');
+  const resultFilePath = path.join(__dirname, "../../deployments/result.json");
   fs.writeFileSync(resultFilePath, JSON.stringify(result, null, 2));
   console.log(`Result written to ${resultFilePath}`);
 
-  const parentFolderPath = path.join(__dirname, '..', '..', 'nextjs', 'src', 'contracts', 'result.json');
+  const parentFolderPath = path.join(
+    __dirname,
+    "..",
+    "..",
+    "..",
+    "nextjs",
+    "src",
+    "contracts",
+    "result.json"
+  );
   fs.copyFileSync(resultFilePath, parentFolderPath);
   console.log(`Result copied to ${parentFolderPath}`);
 } else {
-  console.error('Deployed contract address or class hash not found in output.');
+  console.error("Deployed contract address or class hash not found in output.");
 }

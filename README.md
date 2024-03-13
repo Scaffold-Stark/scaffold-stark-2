@@ -1,5 +1,7 @@
 ## Compatible versions
 
+- scarb - 2.5.4
+- cairo - 2.5.4
 - snforge - 0.19.0
 - sncast - 0.19.0
 - cargo - latest

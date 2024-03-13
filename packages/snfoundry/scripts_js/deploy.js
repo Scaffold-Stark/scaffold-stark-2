@@ -1,27 +1,14 @@
-const {
-  Provider,
-  Account,
-  Contract,
-  json,
-  stark,
-  uint256,
-  shortString,
-  RpcProvider,
-  hash,
-} = require("starknet");
+const { json } = require("starknet");
 
 const fs = require("fs");
 const path = require("path");
 const dotenv = require("dotenv");
+const networks = require("./helpers/networks");
 dotenv.config();
+const argv = require("yargs/yargs")(process.argv.slice(2)).argv;
 
-const provider = new RpcProvider({
-  nodeUrl: process.env.RPC_URL,
-});
-const privateKey0 = process.env.PRIVATE_KEY_0;
-const account0Address = process.env.ACCOUNT_0_ADDRESS;
-const account0 = new Account(provider, account0Address, privateKey0, 1);
-
+const networkName = argv.network;
+const { provider, deployer } = networks[networkName];
 const deployContract = async (contractName) => {
   const compiledContractCasm = JSON.parse(
     fs
@@ -49,7 +36,7 @@ const deployContract = async (contractName) => {
   let existingClass;
   let contractAddress;
   try {
-    const tryDeclareAndDeploy = await account0.declareAndDeploy(
+    const tryDeclareAndDeploy = await deployer.declareAndDeploy(
       {
         contract: compiledContractSierra,
         casm: compiledContractCasm,
@@ -69,7 +56,7 @@ const deployContract = async (contractName) => {
   }
   return {
     classHash: classHash,
-    abi: json.stringify(existingClass.abi),
+    abi: JSON.stringify(existingClass.abi),
     address: contractAddress,
   };
 };
@@ -83,6 +70,12 @@ const deployScript = async () => {
   console.log("HelloStarknet Class Hash", helloStarknetClassHash);
   console.log("HelloStarknet ABI", helloStarknetAbi);
   console.log("HelloStarknet Address", ContractAddress);
+  const deployOutputPath = path.resolve(
+    __dirname,
+    "../broadcast/deployOutput.txt"
+  );
+  const deployOutput = `Class Hash ${helloStarknetClassHash}\nAddress ${ContractAddress}\nABI ${helloStarknetAbi}`;
+  fs.writeFileSync(deployOutputPath, deployOutput);
 };
 
 deployScript()
