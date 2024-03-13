@@ -30,7 +30,7 @@ This command starts a local Starknet network using Devnet. The network runs on y
 3. On a second terminal, deploy the test contract:
 
 ```
-yarn deploy
+yarn deploy --network {NETWORK_NAME}
 ```
 
 This command deploys a test smart contract to the local network. The contract is located in `packages/snfoundry/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts/deploy` to deploy the contract to the network. You can also customize the deploy script.
