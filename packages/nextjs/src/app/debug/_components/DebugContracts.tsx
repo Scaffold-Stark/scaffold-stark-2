@@ -48,7 +48,7 @@ export function DebugContracts() {
   const { contract } = useContract({
     abi,
     address:
-      "0x66519ebf59d635762c9401aac66257aa6558cce1ec57b5329b856bb247c587f",
+      "0x64274cacfc92d80807d70dc0a5a9e1ce6cf1d1c23f0e4bb48388027e7abab22",
   });
 
   const calls = useMemo(() => {
@@ -62,6 +62,10 @@ export function DebugContracts() {
     isPending,
   } = useContractWrite({
     calls,
+    options: {
+      maxFee: 99999999999999999,
+      version: 1,
+    },
   });
 
   const { data, isError, isLoading, error } = useContractRead({
@@ -69,7 +73,7 @@ export function DebugContracts() {
     args: [],
     abi,
     address:
-      "0x66519ebf59d635762c9401aac66257aa6558cce1ec57b5329b856bb247c587f",
+      "0x64274cacfc92d80807d70dc0a5a9e1ce6cf1d1c23f0e4bb48388027e7abab22",
     watch: true,
   });
   console.log(error);

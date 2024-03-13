@@ -49,10 +49,15 @@ const deployContract = async (contractName) => {
   let existingClass;
   let contractAddress;
   try {
-    const tryDeclareAndDeploy = await account0.declareAndDeploy({
-      contract: compiledContractSierra,
-      casm: compiledContractCasm,
-    });
+    const tryDeclareAndDeploy = await account0.declareAndDeploy(
+      {
+        contract: compiledContractSierra,
+        casm: compiledContractCasm,
+      },
+      {
+        maxFee: 999999999999990n,
+      }
+    );
     await provider.waitForTransaction(
       tryDeclareAndDeploy.deploy.transaction_hash
     );
