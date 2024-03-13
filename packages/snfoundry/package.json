@@ -2,7 +2,7 @@
   "name": "@ss-2/snfoundry",
   "version": "0.0.1",
   "scripts": {
-    "chain": "docker run -p 0.0.0.0:5050:5050 shardlabs/starknet-devnet-rs:2c984aad70e38aa578dd5beb00ee6908ad3952b0-seed0",
+    "chain": "./run-devnet.sh",
     "deploy": "snforge test && node scripts_js/deploy.js > ./scripts/deployOutput.txt && node ./scripts/parseDeployOutput.js",
     "bare-deploy": "scripts_js/deploy.js"
   },
