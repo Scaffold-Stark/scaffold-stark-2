@@ -23,10 +23,6 @@ snfoundryup -v 0.19.0
 yarn chain
 ```
 
-```bash
-yarn cargo-chain
-```
-
 This command starts a local Starknet network using Devnet. The network runs on your local machine and can be used for testing and development.
 
 3. On a second terminal, deploy the test contract:
