@@ -15,7 +15,7 @@ const provider = new RpcProvider({
 });
 const ContractPlayground = ({ contractDefinition }) => {
   const [inputValues, setInputValues] = useState({});
- 
+
   const [contractInstance, setContractInstance] = useState(null);
   const userContext = useUser();
 
@@ -107,16 +107,20 @@ const ContractPlayground = ({ contractDefinition }) => {
   };
 
   return (
-        <div className="card w-96 bg-base-100 shadow-xl text-justify-center ">
-
+    <div className="card w-96 bg-base-100 shadow-xl text-justify-center ">
       <div className="flex row">
-        <h2 className="text-2xl font-bold ba card-title">Contract Playground</h2>
+        <h2 className="text-2xl font-bold ba card-title">
+          Contract Playground
+        </h2>
       </div>
 
       <p>
         Connected to wallet:{" "}
         {userContext.address
-          ? `${userContext.address.substring(0, 4)}...${userContext.address.substring(
+          ? `${userContext.address.substring(
+              0,
+              4
+            )}...${userContext.address.substring(
               userContext.address.length - 4
             )}`
           : "Not connected"}
@@ -126,11 +130,21 @@ const ContractPlayground = ({ contractDefinition }) => {
         .flatMap((interfaceItem) => interfaceItem.items)
         .filter((item) => item.type === "function")
         .map((functionItem) => (
-          <div key={functionItem.name} style={{ display: 'flex',justifyContent: 'space-between', gap: '5px', flexDirection: 'column' }}>
-<h3>{functionItem.name}</h3>
+          <div
+            key={functionItem.name}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              gap: "5px",
+              flexDirection: "column",
+            }}
+          >
+            <h3>{functionItem.name}</h3>
             {functionItem.inputs.map((input) => (
               <div key={input.name}>
-                <h3 htmlFor={input.name} className="badge-ghost badge">{input.name}</h3>
+                <h3 htmlFor={input.name} className="badge-ghost badge">
+                  {input.name}
+                </h3>
 
                 <TextField.Input
                   type="text"
@@ -145,7 +159,12 @@ const ContractPlayground = ({ contractDefinition }) => {
                 />
               </div>
             ))}
-              <Button className= "btn-sm bg-primary flex space-x-4" onClick={() => handleFunctionCall(functionItem.name)}>{functionItem.inputs == 0 ? "Consult" : "Transact"}</Button>
+            <Button
+              className="btn-sm bg-primary flex space-x-4"
+              onClick={() => handleFunctionCall(functionItem.name)}
+            >
+              {functionItem.inputs == 0 ? "Consult" : "Transact"}
+            </Button>
           </div>
         ))}
     </div>

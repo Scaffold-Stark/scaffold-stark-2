@@ -2,12 +2,13 @@
 
 import {
   useAccount,
+  useBlockNumber,
   useContract,
   useContractRead,
   useContractWrite,
 } from "@starknet-react/core";
 import { useEffect, useMemo, useState } from "react";
-import { cairo } from "starknet";
+import { BlockNumber, cairo } from "starknet";
 import ConnectModal from "~~/src/app/components/wallet/ConnectModal";
 
 export function DebugContracts() {
@@ -47,8 +48,7 @@ export function DebugContracts() {
 
   const { contract } = useContract({
     abi,
-    address:
-      "0x64274cacfc92d80807d70dc0a5a9e1ce6cf1d1c23f0e4bb48388027e7abab22",
+    address: "0xb9bd302ae1daa17403c9dc5534b230deebf912f23724883cff9f739bf48903",
   });
 
   const calls = useMemo(() => {
@@ -62,19 +62,24 @@ export function DebugContracts() {
     isPending,
   } = useContractWrite({
     calls,
-    options: {
-      maxFee: 99999999999999999,
-      version: 1,
-    },
+  });
+
+  const {
+    data: datablock,
+    isLoading: isLoadingBlock,
+    isError: isErrorBlock,
+    error: errorBlock,
+  } = useBlockNumber({
+    blockIdentifier: "pending" as BlockNumber,
   });
 
   const { data, isError, isLoading, error } = useContractRead({
     functionName: "get_balance",
     args: [],
     abi,
-    address:
-      "0x64274cacfc92d80807d70dc0a5a9e1ce6cf1d1c23f0e4bb48388027e7abab22",
-    watch: true,
+    address: "0xb9bd302ae1daa17403c9dc5534b230deebf912f23724883cff9f739bf48903",
+    blockIdentifier: "pending" as BlockNumber,
+    refetchInterval: 3000,
   });
   console.log(error);
   console.log(data);
@@ -94,7 +99,7 @@ export function DebugContracts() {
         )}
       </div>
       <ConnectModal isOpen={openConnectModal} onClose={toggleModal} />
-      <button>hola</button>
+      <button>Execute increaase 1</button>
       <button
         onClick={() => {
           writeAsync();
