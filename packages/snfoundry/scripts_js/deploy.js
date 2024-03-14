@@ -8,6 +8,7 @@ dotenv.config();
 const argv = require("yargs/yargs")(process.argv.slice(2)).argv;
 
 const networkName = argv.network;
+console.log("Network Name", networkName);
 const { provider, deployer } = networks[networkName];
 const deployContract = async (contractName) => {
   const compiledContractCasm = JSON.parse(
