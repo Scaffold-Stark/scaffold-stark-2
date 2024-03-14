@@ -64,15 +64,6 @@ export function DebugContracts() {
     calls,
   });
 
-  const {
-    data: datablock,
-    isLoading: isLoadingBlock,
-    isError: isErrorBlock,
-    error: errorBlock,
-  } = useBlockNumber({
-    blockIdentifier: "pending" as BlockNumber,
-  });
-
   const { data, isError, isLoading, error } = useContractRead({
     functionName: "get_balance",
     args: [],
