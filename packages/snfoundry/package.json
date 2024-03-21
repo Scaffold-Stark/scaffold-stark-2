@@ -8,14 +8,15 @@
     "bare-deploy": "scripts_js/deploy.js"
   },
   "devDependencies": {
-    "@types/prettier": "^2"
+    "@types/prettier": "^2",
+    "yargs": "^17.7.2"
+
   },
   "dependencies": {
     "dotenv": "^16.3.1",
     "envfile": "^6.18.0",
     "prettier": "^2.8.8",
     "starknet": "5.25.0",
-    "toml": "^3.0.0",
-    "yargs": "^17.7.2"
+    "toml": "^3.0.0"
   }
 }
