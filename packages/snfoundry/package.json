@@ -2,6 +2,7 @@
   "name": "@ss-2/snfoundry",
   "version": "0.0.1",
   "scripts": {
+    "postinstall": "chmod +x install-scarb.sh && ./install-scarb.sh",
     "chain": "./run-devnet.sh",
     "deploy": "node scripts_js/helpers/deploy-wrapper.js",
     "prev-deploy": "scarb build && node scripts_js/deploy.js ${1} > ./scripts/deployOutput.txt && node ./scripts/parseDeployOutput.js",
@@ -10,7 +11,6 @@
   "devDependencies": {
     "@types/prettier": "^2",
     "yargs": "^17.7.2"
-
   },
   "dependencies": {
     "dotenv": "^16.3.1",

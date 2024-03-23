@@ -2,22 +2,19 @@
 
 - scarb - 2.5.4
 - cairo - 2.5.4
-- snforge - 0.19.0
-- sncast - 0.19.0
-- cargo - latest
 - node - >=18.17.0
 
 ## Quickstart
 
 To get started with Scaffold-Stark 2, follow the steps below:
 
-1. Clone this repo & install dependencies
+1. Clone this repo, install dependencies & install starknet package manager
 
 ```
 git clone https://github.com/Quantum3-Labs/scaffold-stark-2 --recurse-submodules
 cd scaffold-stark-2
 yarn install
-snfoundryup -v 0.19.0
+yarn postinstall #install scarb
 ```
 
 2. Prepare your environment variables
