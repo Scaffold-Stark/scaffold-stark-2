@@ -33,13 +33,13 @@ yarn chain
 
 This command starts a local Starknet network using Devnet. The network runs on your local machine and can be used for testing and development.
 
-4. On a second terminal, deploy the test contract:
+4. On a second terminal, deploy the sample contract:
 
 ```
 yarn deploy --network {NETWORK_NAME} // when NETWORK_NAME is not specified, it defaults to "devnet"
 ```
 
-This command deploys a test smart contract to the local network. The contract is located in `packages/snfoundry/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts/deploy` to deploy the contract to the network. You can also customize the deploy script.
+This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts_js/deploy` to deploy the contract to the network. You can also customize the deploy script.
 
 5. On a third terminal, start your NextJS app:
 
