@@ -10,7 +10,6 @@
   "devDependencies": {
     "@types/prettier": "^2",
     "yargs": "^17.7.2"
-
   },
   "dependencies": {
     "dotenv": "^16.3.1",
