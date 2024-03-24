@@ -8,7 +8,7 @@
 
 To get started with Scaffold-Stark 2, follow the steps below:
 
-1. Clone this repo, install dependencies & install starknet package manager
+1. Clone this repo, install dependencies & install scarb package manager
 
 ```
 git clone https://github.com/Quantum3-Labs/scaffold-stark-2 --recurse-submodules
@@ -49,6 +49,4 @@ yarn start
 
 Visit your app on: `http://localhost:3000`.
 
-<div>
-<iframe src="https://www.loom.com/share/0a0b23aa9eb34c32ad9be5b68f82817e" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen="" allow="autoplay" data-external="1"></iframe>
-</div>
+video demo [here](https://www.loom.com/share/0a0b23aa9eb34c32ad9be5b68f82817e)
