@@ -59,9 +59,7 @@ const deployContract = async (contractName, exportContractName) => {
   console.log("Deployed contract ", contractName, " at: ", contractAddress);
 
   const chainId = await provider.getChainId();
-  // look for file deployments/chainId.json
   const chainIdPath = path.resolve(__dirname, `../deployments/${chainId}.json`);
-  // if file exists, read it
   let deployments = {};
   if (fs.existsSync(chainIdPath)) {
     deployments = JSON.parse(fs.readFileSync(chainIdPath).toString());
@@ -89,7 +87,7 @@ const deployScript = async () => {
     classHash: helloStarknetClassHash,
     abi: helloStarknetAbi,
     address: ContractAddress,
-  } = await deployContract("HelloStarknet");
+  } = await deployContract("HelloStarknet"); // can pass another argument for the exported contract name
 };
 
 deployScript()
