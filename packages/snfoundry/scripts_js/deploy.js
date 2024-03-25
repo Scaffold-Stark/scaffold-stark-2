@@ -10,7 +10,7 @@ const argv = require("yargs/yargs")(process.argv.slice(2)).argv;
 const networkName = argv.network;
 console.log("Network Name", networkName);
 const { provider, deployer } = networks[networkName];
-const deployContract = async (contractName) => {
+const deployContract = async (contractName, exportContractName) => {
   const compiledContractCasm = JSON.parse(
     fs
       .readFileSync(
@@ -36,6 +36,7 @@ const deployContract = async (contractName) => {
   let classHash;
   let existingClass;
   let contractAddress;
+  console.log("Deploying Contract ", contractName);
   try {
     const tryDeclareAndDeploy = await deployer.declareAndDeploy(
       {
@@ -55,6 +56,27 @@ const deployContract = async (contractName) => {
   } catch (e) {
     console.log("Error", e);
   }
+  console.log("Deployed contract ", contractName, " at: ", contractAddress);
+
+  const chainId = await provider.getChainId();
+  // look for file deployments/chainId.json
+  const chainIdPath = path.resolve(__dirname, `../deployments/${chainId}.json`);
+  // if file exists, read it
+  let deployments = {};
+  if (fs.existsSync(chainIdPath)) {
+    deployments = JSON.parse(fs.readFileSync(chainIdPath).toString());
+  }
+
+  let finalContractName = exportContractName || contractName;
+
+  deployments[finalContractName] = {
+    classHash: classHash,
+    address: contractAddress,
+    contract: contractName,
+  };
+
+  fs.writeFileSync(chainIdPath, JSON.stringify(deployments, null, 2));
+
   return {
     classHash: classHash,
     abi: JSON.stringify(existingClass.abi),
@@ -68,15 +90,6 @@ const deployScript = async () => {
     abi: helloStarknetAbi,
     address: ContractAddress,
   } = await deployContract("HelloStarknet");
-  console.log("HelloStarknet Class Hash", helloStarknetClassHash);
-  console.log("HelloStarknet ABI", helloStarknetAbi);
-  console.log("HelloStarknet Address", ContractAddress);
-  const deployOutputPath = path.resolve(
-    __dirname,
-    "../broadcast/deployOutput.txt"
-  );
-  const deployOutput = `Class Hash ${helloStarknetClassHash}\nAddress ${ContractAddress}\nABI ${helloStarknetAbi}`;
-  fs.writeFileSync(deployOutputPath, deployOutput);
 };
 
 deployScript()
