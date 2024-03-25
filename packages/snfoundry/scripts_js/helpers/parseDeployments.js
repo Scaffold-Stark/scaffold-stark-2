@@ -21,19 +21,21 @@ const getContractDataFromDeployments = () => {
       const chainId = path.basename(file, ".json");
 
       Object.entries(content).forEach(([contractName, contractData]) => {
-        const abiFilePath = path.join(
-          __dirname,
-          `../../target/dev/contracts_${contractData.contract}.contract_class.json`
-        );
-        const abiContent = JSON.parse(fs.readFileSync(abiFilePath, "utf8"));
+        try {
+          const abiFilePath = path.join(
+            __dirname,
+            `../../target/dev/contracts_${contractData.contract}.contract_class.json`
+          );
+          const abiContent = JSON.parse(fs.readFileSync(abiFilePath, "utf8"));
 
-        allContractsData[chainId] = {
-          ...allContractsData[chainId],
-          [contractName]: {
-            address: contractData.address,
-            abi: abiContent.abi,
-          },
-        };
+          allContractsData[chainId] = {
+            ...allContractsData[chainId],
+            [contractName]: {
+              address: contractData.address,
+              abi: abiContent.abi,
+            },
+          };
+        } catch (e) {}
       });
     }
   });
