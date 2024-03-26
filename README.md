@@ -8,8 +8,8 @@ Before you begin, you need to install the following tools:
 
 ## Compatible versions
 
-- scarb - =2.5.4
-- cairo - =2.5.4
+- scarb - v2.5.4
+- cairo - v2.5.4
 
 ## Quickstart with Localhost(Devnet)
 
@@ -69,21 +69,15 @@ yarn install
 yarn postinstall #install scarb
 ```
 
-2. Prepare your environment variables. You need to fill the missing fields in the `.env` file.
+2. Prepare your environment variables. You need to fill the missing fields in the `.env` file. Make sure your wallet address is already deployed and has enough funds to deploy the contract.
 
 ```bash
 cp packages/snfoundry/.env.example packages/snfoundry/.env
 ```
 
-3. Run a local network in the first terminal:
-
-```bash
-yarn chain
-```
-
 This command starts a local Starknet network using Devnet. The network runs on your local machine and can be used for testing and development.
 
-4. On a second terminal, deploy the sample contract:
+3. On your terminal, deploy the sample contract:
 
 ```
 yarn deploy --network {NETWORK_NAME} // when NETWORK_NAME is not specified, it defaults to "devnet"
@@ -91,7 +85,7 @@ yarn deploy --network {NETWORK_NAME} // when NETWORK_NAME is not specified, it d
 
 This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts_js/deploy` to deploy the contract to the network. You can also customize the deploy script.
 
-5. On a third terminal, start your NextJS app:
+5. On a second terminal, start your NextJS app:
 
 ```
 yarn start
