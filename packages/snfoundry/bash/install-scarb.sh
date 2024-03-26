@@ -1,11 +1,15 @@
 #!/bin/bash
 
-scarb_version=$(scarb --version)
-version_254="scarb 2.5.4 (28dee92c8 2024-02-14)
-cairo: 2.5.4 (https://crates.io/crates/cairo-lang-compiler/2.5.4)
-sierra: 1.4.0"
+## Extract the version of scarb installed in local machine
+local_scarb_version=$(echo $(scarb --version) | grep -oP '\b\d+\.\d+\.\d+\b' | head -n 1)
 
-if [ "$scarb_version" != "$version_254" ]; then
-    echo "Installing scarb 2.5.4"
-    curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh -s -- -v 2.5.4
+## Extract the version of scarb from Scarb.toml used by scaffold
+scarb_dependence=$(cd .. && grep 'starknet =' Scarb.toml)
+scaffold_scarb_version=$(echo $scarb_dependence | grep -oP 'starknet = ">=\K[^"]+')
+
+if [ "$local_scarb_version" != "$scaffold_scarb_version" ]; then
+    echo "Installing Scarb v$scaffold_scarb_version!!!"
+    curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh -s -- -v $scaffold_scarb_version
+else
+    echo "Scarb v$local_scarb_version is already installed. Skipping installation."
 fi
