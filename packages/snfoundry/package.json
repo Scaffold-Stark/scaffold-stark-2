@@ -2,7 +2,6 @@
   "name": "@ss-2/snfoundry",
   "version": "0.0.1",
   "scripts": {
-    "postinstall": "cd bash && chmod +x install-scarb.sh && ./install-scarb.sh",
     "chain": "cd bash && ./run-devnet.sh",
     "deploy": "node scripts_js/helpers/deploy-wrapper.js",
     "prev-deploy": "scarb build && node scripts_js/deploy.js ${1} > ./scripts_js/deployOutput.txt && node ./scripts_js/parseDeployOutput.js",
