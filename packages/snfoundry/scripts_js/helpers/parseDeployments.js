@@ -69,7 +69,7 @@ const generateTsAbis = () => {
   );
 
   console.log(
-    `📝 Updated TypeScript contract definition file on ${TARGET_DIR}deployedContracts.ts`
+    `📝 Updated TypeScript contract definition file on ${TARGET_DIR}/deployedContracts.ts`
   );
 };
 
