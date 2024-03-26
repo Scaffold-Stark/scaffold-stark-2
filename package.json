@@ -11,7 +11,6 @@
     ]
   },
   "scripts": {
-    "postinstall": "yarn workspace @ss-2/snfoundry postinstall",
     "chain": "yarn workspace @ss-2/snfoundry chain",
     "deploy": "yarn workspace @ss-2/snfoundry deploy",
     "start": "yarn workspace @ss-2/nextjs dev"
