@@ -10,13 +10,13 @@ const argv = require("yargs/yargs")(process.argv.slice(2)).argv;
 const networkName = argv.network;
 console.log("Network Name", networkName);
 const { provider, deployer } = networks[networkName];
-const deployContract = async (contractName, exportContractName) => {
+const deployContract = async (projectName, contractName, exportContractName) => {
   const compiledContractCasm = JSON.parse(
     fs
       .readFileSync(
         path.resolve(
           __dirname,
-          `../target/dev/contracts_${contractName}.compiled_contract_class.json`
+          `../target/dev/${projectName}_${contractName}.compiled_contract_class.json`
         )
       )
       .toString("ascii")
@@ -27,7 +27,7 @@ const deployContract = async (contractName, exportContractName) => {
       .readFileSync(
         path.resolve(
           __dirname,
-          `../target/dev/contracts_${contractName}.contract_class.json`
+          `../target/dev/${projectName}_${contractName}.contract_class.json`
         )
       )
       .toString("ascii")
@@ -51,6 +51,7 @@ const deployContract = async (contractName, exportContractName) => {
       tryDeclareAndDeploy.deploy.transaction_hash
     );
     classHash = tryDeclareAndDeploy.declare.class_hash;
+    console.log("Class Hash", classHash);
     existingClass = await provider.getClassByHash(classHash);
     contractAddress = tryDeclareAndDeploy.deploy.address;
   } catch (e) {
@@ -87,7 +88,7 @@ const deployScript = async () => {
     classHash: helloStarknetClassHash,
     abi: helloStarknetAbi,
     address: ContractAddress,
-  } = await deployContract("HelloStarknet"); // can pass another argument for the exported contract name
+  } = await deployContract("contract_1","HelloStarknet"); // can pass another argument for the exported contract name
 };
 
 deployScript()
