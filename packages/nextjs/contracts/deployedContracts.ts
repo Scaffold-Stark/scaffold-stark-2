@@ -8,11 +8,11 @@ const deployedContracts = {
   devnet: {
     HelloStarknet: {
       address:
-        "0x032c34d2ab2fe291cfd0055dbbe9c982fcb27c649a855063b63b842849fa44be",
+        "0x04f33e09ca87b41c65de855e778b645786c6155aff9ffbe52905e4689b430d0e",
     },
     SimpleStorage: {
       address:
-        "0x004da7e695ccc3054936f0d045c64da0d06843e4c709db04177d3cbb2e341e51",
+        "0x073ef80989bee4acf22857c9909b301ebfae763138b7530c4509ea2c00f6e0c2",
     },
   },
 } as const;
