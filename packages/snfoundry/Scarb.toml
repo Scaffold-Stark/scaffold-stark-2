@@ -1,5 +1,5 @@
 [workspace]
-members = ["deploy", "contracts/*"]
+members = ["deploy", "contracts"]
 
 [workspace.package]
 version = "0.1.0"

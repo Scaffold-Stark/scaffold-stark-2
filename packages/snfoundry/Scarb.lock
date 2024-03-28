@@ -2,9 +2,5 @@
 version = 1
 
 [[package]]
-name = "contract_1"
-version = "0.1.0"
-
-[[package]]
-name = "contract_2"
+name = "contracts"
 version = "0.1.0"

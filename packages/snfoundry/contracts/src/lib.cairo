@@ -1,2 +1,2 @@
-mod hellostarknet;
-mod simplestorage;
+mod helloStarknet;
+mod simpleStorage;
