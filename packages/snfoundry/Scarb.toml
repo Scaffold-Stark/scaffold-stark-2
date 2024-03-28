@@ -1,6 +1,0 @@
-[workspace]
-members = ["deploy", "contracts"]
-
-[workspace.package]
-version = "0.1.0"
-edition = "2023_11"
