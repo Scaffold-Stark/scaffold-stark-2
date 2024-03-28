@@ -10,7 +10,11 @@ const argv = require("yargs/yargs")(process.argv.slice(2)).argv;
 const networkName = argv.network;
 console.log("Network Name", networkName);
 const { provider, deployer } = networks[networkName];
-const deployContract = async (contractName, exportContractName) => {
+const deployContract = async (
+  constructorArgs,
+  contractName,
+  exportContractName
+) => {
   const compiledContractCasm = JSON.parse(
     fs
       .readFileSync(
@@ -42,6 +46,7 @@ const deployContract = async (contractName, exportContractName) => {
       {
         contract: compiledContractSierra,
         casm: compiledContractCasm,
+        constructorCalldata: constructorArgs,
       },
       {
         maxFee: 999999999999990n,
@@ -87,7 +92,7 @@ const deployScript = async () => {
     classHash: helloStarknetClassHash,
     abi: helloStarknetAbi,
     address: ContractAddress,
-  } = await deployContract("HelloStarknet"); // can pass another argument for the exported contract name
+  } = await deployContract([], "HelloStarknet"); // can pass another argument for the exported contract name
 };
 
 deployScript()
