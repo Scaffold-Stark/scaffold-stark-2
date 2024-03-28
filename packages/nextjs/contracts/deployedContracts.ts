@@ -7,7 +7,7 @@ const deployedContracts = {
   0x534e5f474f45524c49: {
     HelloStarknet: {
       address:
-        "0x109fbbfcc8e7f2de2d1b70bb03343d1fc0b2993aabb0de611fa5802d008792b",
+        "0x3f8d8a85ae80667c40cc4bdca94ca03775c3fede03c1a16178e93dc94ba870d",
       abi: [
         {
           type: "impl",
