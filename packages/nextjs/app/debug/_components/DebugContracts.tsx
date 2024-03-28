@@ -9,7 +9,7 @@ import {
 } from "@starknet-react/core";
 import { useEffect, useMemo, useState } from "react";
 import { BlockNumber, cairo } from "starknet";
-import ConnectModal from "~~/src/app/components/wallet/ConnectModal";
+import ConnectModal from "~~/components/wallet/ConnectModal";
 
 export function DebugContracts() {
   const [openConnectModal, setOpenConnectModal] = useState(false);

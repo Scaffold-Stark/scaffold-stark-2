@@ -4,6 +4,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { sepolia, mainnet, goerli, devnet } from "@starknet-react/chains";
+import { Toaster } from "react-hot-toast";
 import {
   StarknetConfig,
   publicProvider,
@@ -13,7 +14,22 @@ import {
   voyager,
   starkscan,
 } from "@starknet-react/core";
+import { Header } from "~~/components/Header";
+import { Footer } from "~~/components/Footer";
+import { ProgressBar } from "~~/components/scaffold-stark/ProgressBar";
 
+const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <>
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="relative flex flex-col flex-1">{children}</main>
+        <Footer />
+      </div>
+      <Toaster />
+    </>
+  );
+};
 export const ScaffoldStarkAppWithProviders = ({
   children,
 }: {
@@ -43,7 +59,8 @@ export const ScaffoldStarkAppWithProviders = ({
       connectors={connectors}
       explorer={starkscan}
     >
-      {children}
+      <ProgressBar />
+      <ScaffoldStarkApp>{children}</ScaffoldStarkApp>
     </StarknetConfig>
   );
 };

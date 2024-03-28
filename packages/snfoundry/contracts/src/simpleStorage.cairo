@@ -11,10 +11,10 @@ mod SimpleStorage {
         name: felt252,
     }
 
-    // #[constructor]
-    // fn constructor(ref self: ContractState, name: felt252) {
-    //     self.name.write(name);
-    // }
+    #[constructor]
+    fn constructor(ref self: ContractState, name: felt252) {
+        self.name.write(name);
+    }
 
     #[abi(embed_v0)]
     impl SimpleStorageImpl of super::ISimpleStorage<ContractState> {
