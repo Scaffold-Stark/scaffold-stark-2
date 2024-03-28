@@ -20,7 +20,7 @@ const deployContract = async (
       .readFileSync(
         path.resolve(
           __dirname,
-          `../target/dev/contracts_${contractName}.compiled_contract_class.json`
+          `../contracts/target/dev/contracts_${contractName}.compiled_contract_class.json`
         )
       )
       .toString("ascii")
@@ -31,7 +31,7 @@ const deployContract = async (
       .readFileSync(
         path.resolve(
           __dirname,
-          `../target/dev/contracts_${contractName}.contract_class.json`
+          `../contracts/target/dev/contracts_${contractName}.contract_class.json`
         )
       )
       .toString("ascii")
