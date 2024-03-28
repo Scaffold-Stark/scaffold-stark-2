@@ -18,8 +18,7 @@
     "next-themes": "^0.2.1",
     "react": "^18",
     "react-dom": "^18",
-    "starknet": "5.25.0",
-    "starknetkit": "1.1.4"
+    "starknet": "5.25.0"
   },
   "devDependencies": {
     "@types/node": "^20",
