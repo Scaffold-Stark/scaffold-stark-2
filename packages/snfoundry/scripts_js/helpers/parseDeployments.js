@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const prettier = require("prettier");
 
-const TARGET_DIR = path.join(__dirname, "../../../nextjs/src/contracts");
+const TARGET_DIR = path.join(__dirname, "../../../nextjs/contracts");
 const deploymentsDir = path.join(__dirname, "../../deployments");
 const files = fs.readdirSync(deploymentsDir);
 
