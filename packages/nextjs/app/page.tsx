@@ -4,11 +4,16 @@ import Link from "next/link";
 import type { NextPage } from "next";
 // import { useAccount } from "wagmi";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { useScaffoldContract } from "~~/hooks/scaffold-stark/useScaffoldContract";
 // import { Address } from "~~/components/scaffold-eth";
 
 const Home: NextPage = () => {
   // const { address: connectedAddress } = useAccount();
+  // const { data, isLoading } = useScaffoldContract({
+  //   contractName: "HelloStarknet",
+  // });
 
+  // console.log(data, isLoading);
   return (
     <>
       <div className="flex items-center flex-col flex-grow pt-10">
