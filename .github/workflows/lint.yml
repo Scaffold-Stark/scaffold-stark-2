@@ -28,6 +28,10 @@ jobs:
           cache: 'yarn'
           #cache-dependency-path: packages/nextjs/yarn.lock
 
+      # Enable Corepack to ensure the correct Yarn version is used
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Install dependencies (Next.js)
         run: yarn install --immutable
         working-directory: ./packages/nextjs
