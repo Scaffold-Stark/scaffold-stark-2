@@ -1,11 +1,10 @@
 ## Compatible versions
 
-- scarb - 2.5.4
-- cairo - 2.5.4
-- snforge - 0.19.0
-- sncast - 0.19.0
-- cargo - latest
-- node - >=18.17.0
+  - cairo - 2.5.4
+  - snforge - 0.19.0
+  - sncast - 0.19.0
+  - cargo - latest
+  - node - >=18.17.0
 
 ## Quickstart
 
@@ -52,6 +51,4 @@ yarn start
 
 Visit your app on: `http://localhost:3000`.
 
-<div>
-<iframe src="https://www.loom.com/share/0a0b23aa9eb34c32ad9be5b68f82817e" height="405" width="720" style="border: 1px solid #464646;" allowfullscreen="" allow="autoplay" data-external="1"></iframe>
-</div>
+[![Loom Video](https://cdn.loom.com/sessions/thumbnails/0a0b23aa9eb34c32ad9be5b68f82817e-00001.jpg)](https://www.loom.com/share/0a0b23aa9eb34c32ad9be5b68f82817e)

@@ -1,0 +1,45 @@
+name: Next.js CI
+
+on:
+  push:
+    paths:
+      - 'packages/nextjs/**'
+  pull_request:
+    paths:
+      - 'packages/nextjs/**'
+
+jobs:
+  ci:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [lts/*]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Setup node env
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'yarn'
+          #cache-dependency-path: packages/nextjs/yarn.lock
+
+      - name: Install dependencies (Next.js)
+        run: yarn install --immutable
+        working-directory: ./packages/nextjs
+
+      - name: Run Next.js lint
+        run: yarn next:lint --max-warnings=0
+        working-directory: ./packages/nextjs
+
+      - name: Check typings on Next.js
+        run: yarn next:check-types
+        working-directory: ./packages/nextjs
+
+      - name: Build Next.js project
+        run: yarn build
+        working-directory: ./packages/nextjs
