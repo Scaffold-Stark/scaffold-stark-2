@@ -14,8 +14,6 @@ type Contracts = ContractsDeclaration[ConfiguredChainId];
 export type ContractName = keyof Contracts;
 export type Contract<TContractName extends ContractName> =
   Contracts[TContractName];
-export type ContractWithAbi<TContractName extends ContractName> =
-  Contract<TContractName> & { abi: Abi };
 type AddExternalFlag<T> = {
   [ChainId in keyof T]: {
     [ContractName in keyof T[ChainId]]: T[ChainId][ContractName] & {
