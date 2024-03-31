@@ -5,7 +5,7 @@ export type ScaffoldConfig = {
 };
 
 const scaffoldConfig = {
-  targetNetworks: [chains.devnet],
+  targetNetworks: [chains.sepolia],
 } as const satisfies ScaffoldConfig;
 
 export default scaffoldConfig;

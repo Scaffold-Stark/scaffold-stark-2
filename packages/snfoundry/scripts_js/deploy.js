@@ -1,14 +1,10 @@
-const { json } = require("starknet");
-
 const fs = require("fs");
 const path = require("path");
-const dotenv = require("dotenv");
 const networks = require("./helpers/networks");
-dotenv.config();
 const argv = require("yargs/yargs")(process.argv.slice(2)).argv;
 
 const networkName = argv.network;
-console.log("Network Name", networkName);
+
 const { provider, deployer } = networks[networkName];
 const deployContract = async (
   constructorArgs,

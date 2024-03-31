@@ -1,10 +1,17 @@
-import { Address } from "@starknet-react/chains";
 import scaffoldConfig from "~~/scaffold.config";
 import deployedContractsData from "~~/contracts/deployedContracts";
 // import externalContractsData from "~~/contracts/externalContracts";
-
-import type { MergeDeepRecord } from "type-fest/source/merge-deep";
-import { Abi } from "starknet";
+import type {
+  ExtractAbiFunction,
+  FunctionArgs,
+  Abi,
+  ExtractAbiInterfaces,
+  ExtractArgs,
+} from "abi-wan-kanabi/dist/kanabi";
+import {
+  UseContractReadProps,
+  UseContractWriteProps,
+} from "@starknet-react/core";
 
 type ConfiguredChainId =
   (typeof scaffoldConfig)["targetNetworks"][0]["network"];
@@ -26,13 +33,15 @@ export enum ContractCodeStatus {
   "DEPLOYED",
   "NOT_FOUND",
 }
+
+export type GenericContract = {
+  address: string;
+  abi: Abi;
+};
 export type GenericContractsDeclaration = {
   [network: string]: {
     [contractName: string]: GenericContract;
   };
-};
-export type GenericContract = {
-  address: string;
 };
 
 // const deepMergeContracts = <
@@ -81,4 +90,141 @@ type ContractsDeclaration = IsContractDeclarationMissing<
   typeof contractsData
 >;
 
+type AbiStateMutability = "view" | "external";
+
 export const contracts = contractsData as GenericContractsDeclaration | null;
+
+export type UseScaffoldWriteConfig<
+  TContractName extends ContractName,
+  TFunctionName extends ExtractAbiFunctionNamesScaffold<
+    ContractAbi<TContractName>,
+    "external"
+  >
+> = {
+  contractName: TContractName;
+  // onBlockConfirmation?: (txnReceipt: TransactionReceipt) => void; TODO check this lines
+  // blockConfirmations?: number;
+} & IsContractDeclarationMissing<
+  Partial<UseContractWriteProps>,
+  {
+    functionName: TFunctionName;
+  } & Omit<
+    UseContractWriteProps,
+    "chainId" | "abi" | "address" | "functionName" | "mode"
+  > &
+    UseScaffoldArgsParam<TContractName, TFunctionName>
+>;
+// export type UseScaffoldWriteConfig = {
+//   calls: Array<{
+//     contractName: ContractName;
+//     functionName: ExtractAbiFunctionNamesScaffold<
+//       ContractAbi<ContractName>,
+//       "external"
+//     >;
+//     args: any[]; // You can further refine this type based on your contract ABI
+//   }>;
+// };
+
+type InferContractAbi<TContract> = TContract extends { abi: infer TAbi }
+  ? TAbi
+  : never;
+
+export type ContractAbi<TContractName extends ContractName = ContractName> =
+  InferContractAbi<Contract<TContractName>>;
+
+export type FunctionNamesWithInputs<TContractName extends ContractName> =
+  Exclude<
+    Extract<
+      Extract<
+        ContractAbi<TContractName>[number],
+        { type: "interface" }
+      >["items"][number],
+      {
+        type: "function";
+      }
+    >,
+    {
+      inputs: readonly [];
+    }
+  >["name"];
+
+type OptionalTupple<T> = T extends readonly [infer H, ...infer R]
+  ? readonly [H | undefined, ...OptionalTupple<R>]
+  : T;
+type UnionToIntersection<U> = Expand<
+  (U extends any ? (k: U) => void : never) extends (k: infer I) => void
+    ? I
+    : never
+>;
+type Expand<T> = T extends object
+  ? T extends infer O
+    ? { [K in keyof O]: O[K] }
+    : never
+  : T;
+
+// helper function will only take from interfaces : //TODO: see if we can make it more generic
+export type ExtractAbiFunctionNamesScaffold<
+  TAbi extends Abi,
+  TAbiStateMutibility extends AbiStateMutability = AbiStateMutability
+> = ExtractAbiFunctionsScaffold<TAbi, TAbiStateMutibility>["name"];
+
+// helper function will only take from interfaces : //TODO: see if we can make it more generic
+export type ExtractAbiFunctionsScaffold<
+  TAbi extends Abi,
+  TAbiStateMutibility extends AbiStateMutability = AbiStateMutability
+> = Extract<
+  ExtractAbiInterfaces<TAbi>["items"][number],
+  {
+    type: "function";
+    state_mutability: TAbiStateMutibility;
+  }
+>;
+
+export type ExtractAbiFunctionScaffold<
+  TAbi extends Abi,
+  TFunctionName extends ExtractAbiFunctionNamesScaffold<TAbi>
+> = Extract<
+  ExtractAbiFunctionsScaffold<TAbi>,
+  {
+    name: TFunctionName;
+  }
+>;
+
+type UseScaffoldArgsParam<
+  TContractName extends ContractName,
+  TFunctionName extends ExtractAbiFunctionNamesScaffold<
+    ContractAbi<TContractName>
+  >
+> = TFunctionName extends ExtractAbiFunctionsScaffold<
+  ContractAbi<TContractName>
+>
+  ? {
+      args: OptionalTupple<
+        UnionToIntersection<
+          ExtractArgs<ContractAbi<TContractName>, TFunctionName>
+        >
+      >;
+    }
+  : {
+      args?: never;
+    };
+
+export type UseScaffoldReadConfig<
+  TContractName extends ContractName,
+  TFunctionName extends ExtractAbiFunctionNamesScaffold<
+    ContractAbi<TContractName>
+  >
+> = {
+  contractName: TContractName;
+} & IsContractDeclarationMissing<
+  Partial<UseContractReadProps>,
+  {
+    functionName: TFunctionName;
+  } & UseScaffoldArgsParam<TContractName, TFunctionName> &
+    Omit<UseContractReadProps, "chainId" | "abi" | "address" | "functionName">
+>;
+
+export type AbiFunctionOutputs<
+  TAbi extends Abi,
+  TFunctionName extends string
+> = ExtractAbiFunctionScaffold<TAbi, TFunctionName>["outputs"];

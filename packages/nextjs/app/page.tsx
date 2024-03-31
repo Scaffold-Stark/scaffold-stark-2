@@ -5,13 +5,26 @@ import type { NextPage } from "next";
 // import { useAccount } from "wagmi";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useScaffoldContract } from "~~/hooks/scaffold-stark/useScaffoldContract";
+import { useScaffoldContractRead } from "~~/hooks/scaffold-stark/useScaffoldContractRead";
+import { useScaffoldContractWrite } from "~~/hooks/scaffold-stark/useScaffoldContractWrite";
+import { Button } from "@radix-ui/themes";
+import ConnectModal from "~~/components/wallet/ConnectModal";
 // import { Address } from "~~/components/scaffold-eth";
 
 const Home: NextPage = () => {
   // const { address: connectedAddress } = useAccount();
-  // const { data, isLoading } = useScaffoldContract({
-  //   contractName: "HelloStarknet",
-  // });
+  const { data } = useScaffoldContractRead({
+    contractName: "HelloStarknet",
+    functionName: "get_balance6",
+  });
+
+  console.log(data);
+
+  const { writeAsync } = useScaffoldContractWrite({
+    contractName: "HelloStarknet",
+    functionName: "increase_balance",
+    args: [1],
+  });
 
   // console.log(data, isLoading);
   return (
@@ -68,6 +81,13 @@ const Home: NextPage = () => {
             </div>
           </div>
         </div>
+        {/* <ConnectModal
+          isOpen={true}
+          onClose={() => {
+            writeAsync();
+          }}
+        ></ConnectModal> */}
+        <Button onClick={writeAsync}>HI</Button>
       </div>
     </>
   );

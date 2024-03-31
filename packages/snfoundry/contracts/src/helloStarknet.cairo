@@ -24,7 +24,7 @@ mod HelloStarknet {
         }
 
         fn get_balance6(self: @ContractState) -> felt252 {
-            self.balance.read()
+            self.balance.read() + 1
         }
     }
 }
