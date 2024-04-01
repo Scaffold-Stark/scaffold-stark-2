@@ -1,22 +1,25 @@
 const { RpcProvider, Account } = require("starknet");
+const path = require("path");
 const dotenv = require("dotenv");
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
 // devnet
+const PRIVATE_KEY_DEVNET =
+  process.env.PRIVATE_KEY_DEVNET || "0x71d7bb07b9a64f6f78ac4c816aff4da9";
+const RPC_URL_DEVNET = process.env.RPC_URL_DEVNET || "http://127.0.0.1:5050";
+const ACCOUNT_ADDRESS_DEVNET =
+  process.env.ACCOUNT_ADDRESS_DEVNET ||
+  "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691";
+
 const providerDevnet =
-  process.env.RPC_URL_DEVNET &&
+  RPC_URL_DEVNET &&
   new RpcProvider({
-    nodeUrl: process.env.RPC_URL_DEVNET,
+    nodeUrl: RPC_URL_DEVNET,
   });
 const deployerDevnet =
-  process.env.ACCOUNT_ADDRESS_DEVNET &&
-  process.env.PRIVATE_KEY_DEVNET &&
-  new Account(
-    providerDevnet,
-    process.env.ACCOUNT_ADDRESS_DEVNET,
-    process.env.PRIVATE_KEY_DEVNET,
-    1
-  );
+  ACCOUNT_ADDRESS_DEVNET &&
+  PRIVATE_KEY_DEVNET &&
+  new Account(providerDevnet, ACCOUNT_ADDRESS_DEVNET, PRIVATE_KEY_DEVNET, 1);
 // goerli
 const providerGoerli =
   process.env.RPC_URL_GOERLI &&
