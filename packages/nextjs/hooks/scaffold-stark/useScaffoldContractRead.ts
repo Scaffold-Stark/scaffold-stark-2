@@ -1,7 +1,7 @@
 import { useTargetNetwork } from "./useTargetNetwork";
 import { useContractRead } from "@starknet-react/core";
 import { ExtractAbiFunctionNames } from "abi-wan-kanabi/dist/kanabi";
-import { BlockTag } from "starknet";
+import { BlockIdentifier, BlockTag } from "starknet";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import {
   AbiFunctionOutputs,
@@ -34,7 +34,7 @@ export const useScaffoldContractRead = <
     watch: true,
     args,
     enabled: !Array.isArray(args) || !args.some((arg) => arg === undefined),
-    blockIdentifier: "Pending" as BlockTag,
+    blockIdentifier: "pending" as BlockIdentifier,
     ...(readConfig as any),
   }) as Omit<ReturnType<typeof useContractRead>, "data" | "refetch"> & {
     data: AbiFunctionOutputs<ContractAbi, TFunctionName> | undefined;
