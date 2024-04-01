@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import type { NextPage } from "next";
-// import { useAccount } from "wagmi";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useScaffoldContract } from "~~/hooks/scaffold-stark/useScaffoldContract";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-stark/useScaffoldContractRead";
@@ -13,7 +12,6 @@ import { useAccount } from "@starknet-react/core";
 // import { Address } from "~~/components/scaffold-eth";
 
 const Home: NextPage = () => {
-  const { address } = useAccount();
   const { address: connectedAddress } = useAccount();
   const { data } = useScaffoldContractRead({
     contractName: "HelloStarknet",
