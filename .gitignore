@@ -3,5 +3,4 @@ node_modules
 local-devnet
 .yarn
 package-lock.json
-.yarnrc.yml
 .idea
