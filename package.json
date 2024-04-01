@@ -18,5 +18,8 @@
   "packageManager": "yarn@3.2.3",
   "devDependencies": {
     "daisyui": "^4.7.3"
+  },
+  "dependencies": {
+    "postcss": "^8.4.38"
   }
 }
