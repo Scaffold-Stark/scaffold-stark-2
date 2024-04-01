@@ -1,8 +1,7 @@
 import Image from "next/image";
 import GenericModal from "../GenericModal";
 import { Connector, useConnect } from "@starknet-react/core";
-import { useEffect, useState } from "react";
-
+import { useEffect, useState } from "react"; 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
@@ -25,6 +24,7 @@ const Wallet = ({
   connector: Connector;
   closeModal: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }) => {
+ 
   const { connect } = useConnect();
   const isSvg = src?.startsWith("<svg");
 
