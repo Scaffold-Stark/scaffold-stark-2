@@ -165,20 +165,37 @@ type Expand<T> = T extends object
 // helper function will only take from interfaces : //TODO: see if we can make it more generic
 export type ExtractAbiFunctionNamesScaffold<
   TAbi extends Abi,
-  TAbiStateMutibility extends AbiStateMutability = AbiStateMutability
-> = ExtractAbiFunctionsScaffold<TAbi, TAbiStateMutibility>["name"];
+  TAbiStateMutability extends AbiStateMutability = AbiStateMutability
+> = ExtractAbiFunctionsScaffold<TAbi, TAbiStateMutability>["name"];
 
 // helper function will only take from interfaces : //TODO: see if we can make it more generic
 export type ExtractAbiFunctionsScaffold<
   TAbi extends Abi,
-  TAbiStateMutibility extends AbiStateMutability = AbiStateMutability
+  TAbiStateMutability extends AbiStateMutability = AbiStateMutability
 > = Extract<
   ExtractAbiInterfaces<TAbi>["items"][number],
   {
     type: "function";
-    state_mutability: TAbiStateMutibility;
+    state_mutability: TAbiStateMutability;
   }
 >;
+
+// helper function will only take from interfaces : //TODO: see if we can make it more generic
+export type ExtractAbiFunctionNamesWithInputsScaffold<
+  TAbi extends Abi,
+  TAbiStateMutibility extends AbiStateMutability = AbiStateMutability
+> = Exclude<
+  Extract<
+    ExtractAbiInterfaces<TAbi>["items"][number],
+    {
+      type: "function";
+      state_mutability: TAbiStateMutibility;
+    }
+  >,
+  {
+    inputs: readonly [];
+  }
+>["name"];
 
 export type ExtractAbiFunctionScaffold<
   TAbi extends Abi,
@@ -190,18 +207,26 @@ export type ExtractAbiFunctionScaffold<
   }
 >;
 
+// let emerson = singleFunction extends listOfFunctions ? true : false;
+
 type UseScaffoldArgsParam<
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>
   >
-> = TFunctionName extends ExtractAbiFunctionsScaffold<
+> = TFunctionName extends ExtractAbiFunctionNamesWithInputsScaffold<
   ContractAbi<TContractName>
 >
   ? {
       args: OptionalTupple<
         UnionToIntersection<
-          ExtractArgs<ContractAbi<TContractName>, TFunctionName>
+          ExtractArgs<
+            ContractAbi<TContractName>,
+            ExtractAbiFunctionScaffold<
+              ContractAbi<TContractName>,
+              TFunctionName
+            >
+          >
         >
       >;
     }

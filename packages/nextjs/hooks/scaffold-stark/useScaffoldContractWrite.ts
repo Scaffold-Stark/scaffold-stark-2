@@ -17,6 +17,7 @@ import {
 } from "@starknet-react/core";
 import { Abi } from "starknet";
 import { ExtractAbiFunctions, FunctionArgs } from "abi-wan-kanabi/dist/kanabi";
+import { notification } from "~~/utils/scaffold-stark/notification";
 
 // type UpdatedArgs = Parameters<
 //   ReturnType<typeof useContractWrite<Abi, string, undefined>>["writeAsync"]
@@ -32,10 +33,7 @@ export const useScaffoldContractWrite = <
   contractName,
   functionName,
   args,
-  //   value,
-  //   onBlockConfirmation,
-  //   blockConfirmations,
-  ...writeConfig
+  options,
 }: UseScaffoldWriteConfig<TContractName, TFunctionName>) => {
   const { data: deployedContractData } = useDeployedContractInfo(contractName);
   const { chain } = useNetwork();
@@ -51,30 +49,27 @@ export const useScaffoldContractWrite = <
 
   const calls = useMemo(() => {
     if (!contract) return [];
-    return contract.populateTransaction[functionName](...args);
-  }, [contract]);
-
-  console.log("Address", address);
+    if (args) {
+      return contract.populateTransaction[functionName](
+        ...(args as unknown as any[]) //  TODO Fix this type
+      );
+    } else {
+      return contract.populateTransaction[functionName]();
+    }
+  }, [contract, args, functionName]);
 
   const wagmiContractWrite = useContractWrite({
-    // chainId: targetNetwork.id,
-    // address: deployedContractData?.address,
-    // abi: deployedContractData?.abi as Abi,
-    // functionName: functionName as any,
-    // args: args as unknown[],
-    // value: value,
-    // ...writeConfig,
     calls,
+    options,
   });
 
   //   const sendContractWriteTx = async ({
   //     args: newArgs,
-  //     value: newValue,
-  //     ...otherConfig
+  //     options: newOptions,
   //   }: {
   //     args?: UseScaffoldWriteConfig<TContractName, TFunctionName>["args"];
-  //     value?: UseScaffoldWriteConfig<TContractName, TFunctionName>["value"];
-  //   } & UpdatedArgs = {}) => {
+  //     options?: UseScaffoldWriteConfig<TContractName, TFunctionName>["options"];
+  //   }) => {
   //     if (!deployedContractData) {
   //       console.error(
   //         "Target Contract is not deployed, did you forget to run `yarn deploy`?"
@@ -90,29 +85,32 @@ export const useScaffoldContractWrite = <
   //       return;
   //     }
 
-  // if (wagmiContractWrite.writeAsync) {
-  //   try {
-  //     setIsMining(true);
-  //     const writeTxResult = await writeTx(
-  //       () =>
-  //         wagmiContractWrite.writeAsync({
-  //           args: newArgs ?? args,
-  //           value: newValue ?? value,
-  //           ...otherConfig,
-  //         }),
-  //       { onBlockConfirmation, blockConfirmations }
-  //     );
+  //     const newCalls = contract
+  //       ? contract.populateTransaction[functionName](
+  //           ...(args as unknown as any[]) //  TODO Fix this type
+  //         )
+  //       : calls;
 
-  //     return writeTxResult;
-  //   } catch (e: any) {
-  //     throw e;
-  //   } finally {
-  //     setIsMining(false);
-  //   }
-  // } else {
-  //   notification.error("Contract writer error. Try again.");
-  //   return;
-  // }
+  //     if (wagmiContractWrite.writeAsync) {
+  //       try {
+  //         setIsMining(true);
+  //         const writeTxResult = await writeTx(() =>
+  //           wagmiContractWrite.writeAsync({
+  //             calls: newCalls ?? calls,
+  //             options: newOptions ?? options,
+  //           })
+  //         );
+
+  //         return writeTxResult;
+  //       } catch (e: any) {
+  //         throw e;
+  //       } finally {
+  //         setIsMining(false);
+  //       }
+  //     } else {
+  //       notification.error("Contract writer error. Try again.");
+  //       return;
+  //     }
   //   };
 
   return {

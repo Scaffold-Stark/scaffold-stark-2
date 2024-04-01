@@ -9,15 +9,18 @@ import { useScaffoldContractRead } from "~~/hooks/scaffold-stark/useScaffoldCont
 import { useScaffoldContractWrite } from "~~/hooks/scaffold-stark/useScaffoldContractWrite";
 import { Button } from "@radix-ui/themes";
 import ConnectModal from "~~/components/wallet/ConnectModal";
+import { useAccount } from "@starknet-react/core";
 // import { Address } from "~~/components/scaffold-eth";
 
 const Home: NextPage = () => {
-  // const { address: connectedAddress } = useAccount();
+  const { address } = useAccount();
+  const { address: connectedAddress } = useAccount();
   const { data } = useScaffoldContractRead({
     contractName: "HelloStarknet",
     functionName: "get_balance6",
   });
 
+  console.log("connected address", connectedAddress);
   console.log(data);
 
   const { writeAsync } = useScaffoldContractWrite({
@@ -87,7 +90,13 @@ const Home: NextPage = () => {
             writeAsync();
           }}
         ></ConnectModal> */}
-        <Button onClick={writeAsync}>HI</Button>
+        <Button
+          onClick={() => {
+            writeAsync();
+          }}
+        >
+          HI
+        </Button>
       </div>
     </>
   );
