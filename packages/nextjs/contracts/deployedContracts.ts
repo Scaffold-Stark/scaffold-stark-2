@@ -7,7 +7,7 @@ const deployedContracts = {
   sepolia: {
     HelloStarknet: {
       address:
-        "0x019e3fe8c9e16411863110c0f6e073ab09f0a5d94ada04e983e4cb3c5ee1da6e",
+        "0x069874feabae1b6212bc28963670f05fa9c296c508bd94066b9e1264970d501c",
       abi: [
         {
           type: "impl",
@@ -52,6 +52,22 @@ const deployedContracts = {
               ],
               state_mutability: "view",
             },
+            {
+              type: "function",
+              name: "get_balance_increment",
+              inputs: [
+                {
+                  name: "amount",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::felt252",
+                },
+              ],
+              state_mutability: "view",
+            },
           ],
         },
         {
@@ -64,7 +80,7 @@ const deployedContracts = {
     },
     SimpleStorage: {
       address:
-        "0x067266f2db0c239cdcd546283ce52186a7b57c2016ef0263dfa4003b52dcecd2",
+        "0x04fcd0c9c37c8636f895dfef726536b966f4df254cb20c8dc4970db1b92ef826",
       abi: [
         {
           type: "impl",

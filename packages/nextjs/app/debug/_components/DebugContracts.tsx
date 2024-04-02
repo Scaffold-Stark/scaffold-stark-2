@@ -1,104 +1,69 @@
 "use client";
 
-import {
-  useAccount,
-  useBlockNumber,
-  useContract,
-  useContractRead,
-  useContractWrite,
-} from "@starknet-react/core";
-import { useEffect, useMemo, useState } from "react";
-import { BlockNumber, cairo } from "starknet";
-import ConnectModal from "~~/components/wallet/ConnectModal";
+import { useEffect } from "react";
+import { useLocalStorage } from "usehooks-ts";
+import { BarsArrowUpIcon } from "@heroicons/react/20/solid";
+import { ContractUI } from "~~/app/debug/_components/contract";
+import { ContractName } from "~~/utils/scaffold-stark/contract";
+import { getAllContracts } from "~~/utils/scaffold-stark/contractsData";
+
+const selectedContractStorageKey = "scaffoldEth2.selectedContract";
+const contractsData = getAllContracts();
+const contractNames = Object.keys(contractsData) as ContractName[];
 
 export function DebugContracts() {
-  const [openConnectModal, setOpenConnectModal] = useState(false);
-  const { address } = useAccount();
+  const [selectedContract, setSelectedContract] = useLocalStorage<ContractName>(
+    selectedContractStorageKey,
+    contractNames[0],
+    { initializeWithValue: false }
+  );
 
-  const toggleModal = () => {
-    setOpenConnectModal((prev) => !prev);
-  };
   useEffect(() => {
-    if (openConnectModal) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
+    if (!contractNames.includes(selectedContract)) {
+      setSelectedContract(contractNames[0]);
     }
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [openConnectModal]);
-
-  const abi = [
-    {
-      type: "function",
-      name: "increase_balance",
-      inputs: [{ name: "amount", type: "core::felt252" }],
-      outputs: [],
-      state_mutability: "external",
-    },
-    {
-      type: "function",
-      name: "get_balance",
-      inputs: [],
-      outputs: [{ type: "core::felt252" }],
-      state_mutability: "view",
-    },
-  ];
-
-  const { contract } = useContract({
-    abi,
-    address: "0xb9bd302ae1daa17403c9dc5534b230deebf912f23724883cff9f739bf48903",
-  });
-
-  const calls = useMemo(() => {
-    if (!address || !contract) return [];
-    return contract.populateTransaction["increase_balance"]!(1);
-  }, [contract, address]);
-
-  const {
-    writeAsync,
-    data: writeData,
-    isPending,
-  } = useContractWrite({
-    calls,
-  });
-
-  const { data, isError, isLoading, error } = useContractRead({
-    functionName: "get_balance",
-    args: [],
-    abi,
-    address: "0xb9bd302ae1daa17403c9dc5534b230deebf912f23724883cff9f739bf48903",
-    blockIdentifier: "pending" as BlockNumber,
-    refetchInterval: 3000,
-  });
-  console.log(error);
-  console.log(data);
+  }, [selectedContract, setSelectedContract]);
 
   return (
     <div className="flex flex-col gap-y-6 lg:gap-y-8 py-8 lg:py-12 justify-center items-center">
-      <div className="hidden md:flex gap-8">
-        {address ? (
-          <div className="flex justify-end">{address}</div>
-        ) : (
-          <button
-            onClick={toggleModal}
-            className="hidden md:block bg-blue-500 hover:bg-blue-700 text-white  py-2 px-4 rounded-full transition duration-300"
-          >
-            Connect
-          </button>
-        )}
-      </div>
-      <ConnectModal isOpen={openConnectModal} onClose={toggleModal} />
-      <button>Execute increaase 1</button>
-      <button
-        onClick={() => {
-          writeAsync();
-        }}
-      >
-        {" "}
-        execute tx{" "}
-      </button>
+      {contractNames.length === 0 ? (
+        <p className="text-3xl mt-14">No contracts found!</p>
+      ) : (
+        <>
+          {contractNames.length > 1 && (
+            <div className="flex flex-row gap-2 w-full max-w-7xl pb-1 px-6 lg:px-10 flex-wrap">
+              {contractNames.map((contractName) => (
+                <button
+                  className={`btn btn-secondary btn-sm font-light hover:border-transparent ${
+                    contractName === selectedContract
+                      ? "bg-base-300 hover:bg-base-300 no-animation"
+                      : "bg-base-100 hover:bg-secondary"
+                  }`}
+                  key={contractName}
+                  onClick={() => setSelectedContract(contractName)}
+                >
+                  {contractName}
+                  {/* {contractsData[contractName].external && (
+                    <span
+                      className="tooltip tooltip-top tooltip-accent"
+                      data-tip="External contract"
+                    >
+                      <BarsArrowUpIcon className="h-4 w-4 cursor-pointer" />
+                    </span>
+                  )} */}
+                </button>
+              ))}
+            </div>
+          )}
+          {contractNames.map((contractName) => (
+            <ContractUI
+              key={contractName}
+              contractName={contractName}
+              className={contractName === selectedContract ? "" : "hidden"}
+            />
+          ))}
+        </>
+      )}
     </div>
   );
 }

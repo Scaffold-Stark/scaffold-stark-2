@@ -12,12 +12,12 @@ import { useAccount } from "@starknet-react/core";
 // import { Address } from "~~/components/scaffold-eth";
 
 const Home: NextPage = () => {
-  const { data } = useScaffoldContractRead({
-    contractName: "HelloStarknet",
-    functionName: "get_balance6",
-  });
+  // const { data } = useScaffoldContractRead({
+  //   contractName: "HelloStarknet",
+  //   functionName: "get_balance6",
+  // });
 
-  console.log(data);
+  // console.log(data);
 
   const { writeAsync } = useScaffoldContractWrite({
     contractName: "HelloStarknet",
