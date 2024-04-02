@@ -45,7 +45,6 @@ export const ReadOnlyFunctionForm = ({
     blockIdentifier: "pending" as BlockNumber,
   });
   const transformedFunction = transformAbiFunction(abiFunction);
-  console.log("debug transformed function", transformedFunction);
   const inputElements = transformedFunction.inputs.map((input, inputIndex) => {
     const key = getFunctionInputKey(abiFunction.name, input, inputIndex);
     return (
@@ -61,8 +60,6 @@ export const ReadOnlyFunctionForm = ({
       />
     );
   });
-
-  console.log(inputElements);
 
   return (
     <div className="flex flex-col gap-3 py-5 first:pt-0 last:pb-1">

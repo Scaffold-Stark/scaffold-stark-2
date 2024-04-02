@@ -80,6 +80,13 @@ const Home: NextPage = () => {
             </div>
           </div>
         </div>
+        {/* <div
+          onClick={() => {
+            writeAsync();
+          }}
+        >
+          TEST TX
+        </div> */}
       </div>
     </>
   );

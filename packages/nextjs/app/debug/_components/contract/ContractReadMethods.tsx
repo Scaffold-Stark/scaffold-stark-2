@@ -47,9 +47,6 @@ export const ContractReadMethods = ({
   //     .sort((a, b) =>
   //       b.inheritedFrom ? b.inheritedFrom.localeCompare(a.inheritedFrom) : 1
   //     );
-
-  console.log("debug read methods");
-  console.log(functionsToDisplay);
   if (!functionsToDisplay.length) {
     return <>No read methods</>;
   }

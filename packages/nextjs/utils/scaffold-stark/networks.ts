@@ -22,6 +22,31 @@ export const NETWORKS_EXTRA_DATA: Record<string, ChainAttributes> = {
     color: "#48a9a6",
   },
 };
+/**
+ * Gives the block explorer transaction URL, returns empty string if the network is a local chain
+ */
+export function getBlockExplorerTxLink(network: string, txnHash: string) {
+  const chainNames = Object.keys(chains);
+
+  const targetChainArr = chainNames.filter((chainName) => {
+    const wagmiChain = chains[chainName as keyof typeof chains];
+    return wagmiChain.network === network;
+  });
+
+  if (targetChainArr.length === 0) {
+    return "";
+  }
+
+  const targetChain = targetChainArr[0] as keyof typeof chains;
+  // @ts-expect-error : ignoring error since `blockExplorers` key may or may not be present on some chains
+  const blockExplorerBaseURL = chains[targetChain].explorers?.starkscan[0];
+
+  if (!blockExplorerBaseURL) {
+    return `https://starkscan.co/tx/${txnHash}`;
+  }
+
+  return `${blockExplorerBaseURL}/tx/${txnHash}`;
+}
 
 /**
  * Gives the block explorer URL for a given address.

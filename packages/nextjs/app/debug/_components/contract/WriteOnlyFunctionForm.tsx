@@ -14,7 +14,6 @@ import {
   transformAbiFunction,
 } from "~~/app/debug/_components/contract";
 import { IntegerInput } from "~~/components/scaffold-stark";
-// import { useTransactor } from "~~/hooks/scaffold-stark";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import {
   useContract,
@@ -27,6 +26,7 @@ import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { Address } from "@starknet-react/chains";
 import { InvokeTransactionReceiptResponse } from "starknet";
 import { TxReceipt } from "./TxReceipt";
+import { useTransactor } from "~~/hooks/scaffold-stark";
 
 type WriteOnlyFunctionFormProps = {
   abi: Abi;
@@ -43,15 +43,11 @@ export const WriteOnlyFunctionForm = ({
   contractAddress,
 }: //   inheritedFrom,
 WriteOnlyFunctionFormProps) => {
-  console.log("debug contracts form");
-  console.log(abi);
-  console.log(abiFunction);
-  console.log(contractAddress);
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialFormState(abiFunction)
   );
   const { chain } = useNetwork();
-  //   const writeTxn = useTransactor();
+  const writeTxn = useTransactor();
   const { targetNetwork } = useTargetNetwork();
   const writeDisabled = !chain || chain?.network !== targetNetwork.network;
   //   const { contract } = useContract({
@@ -85,23 +81,11 @@ WriteOnlyFunctionFormProps) => {
     ],
   });
 
-  //   const {
-  //     data: result,
-  //     isLoading,
-  //     writeAsync,
-  //   } = useContractWrite({
-  //     address: contractAddress,
-  //     functionName: abiFunction.name,
-  //     abi: abi,
-  //     args: getParsedContractFunctionArgs(form),
-  //   });
-
   const handleWrite = async () => {
     if (writeAsync) {
       try {
-        // const makeWriteWithParams = () => writeAsync();
-        // await writeTxn(makeWriteWithParams);
-        await writeAsync();
+        const makeWriteWithParams = () => writeAsync();
+        await writeTxn(makeWriteWithParams);
         onChange();
       } catch (e: any) {
         console.error(
@@ -117,7 +101,6 @@ WriteOnlyFunctionFormProps) => {
   const { data: txResult } = useWaitForTransaction({
     hash: result?.transaction_hash,
   });
-  console.log(txResult);
   useEffect(() => {
     setDisplayedTxResult(txResult as InvokeTransactionReceiptResponse);
   }, [txResult]);
