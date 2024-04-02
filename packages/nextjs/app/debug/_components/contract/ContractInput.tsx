@@ -10,7 +10,7 @@ import {
   //   BytesInput,
   //   InputBase,
   IntegerInput,
-  //   IntegerVariant,
+  IntegerVariant,
 } from "~~/components/scaffold-stark";
 // import { AbiParameterTuple } from "~~/utils/scaffold-eth/contract";
 import { AbiParameter } from "~~/utils/scaffold-stark/contract";
