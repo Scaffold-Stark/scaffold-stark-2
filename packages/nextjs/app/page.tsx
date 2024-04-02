@@ -12,13 +12,11 @@ import { useAccount } from "@starknet-react/core";
 // import { Address } from "~~/components/scaffold-eth";
 
 const Home: NextPage = () => {
-  const { address: connectedAddress } = useAccount();
   const { data } = useScaffoldContractRead({
     contractName: "HelloStarknet",
     functionName: "get_balance6",
   });
 
-  console.log("connected address", connectedAddress);
   console.log(data);
 
   const { writeAsync } = useScaffoldContractWrite({
@@ -82,19 +80,6 @@ const Home: NextPage = () => {
             </div>
           </div>
         </div>
-        {/* <ConnectModal
-          isOpen={true}
-          onClose={() => {
-            writeAsync();
-          }}
-        ></ConnectModal> */}
-        <Button
-          onClick={() => {
-            writeAsync();
-          }}
-        >
-          HI
-        </Button>
       </div>
     </>
   );

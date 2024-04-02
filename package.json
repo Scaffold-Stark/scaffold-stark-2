@@ -13,10 +13,15 @@
   "scripts": {
     "chain": "yarn workspace @ss-2/snfoundry chain",
     "deploy": "yarn workspace @ss-2/snfoundry deploy",
-    "start": "yarn workspace @ss-2/nextjs dev"
+    "start": "yarn workspace @ss-2/nextjs dev",
+    "next:lint": "yarn workspace @ss-2/nextjs lint",
+    "next:check-types": "yarn workspace @ss-2/nextjs check-types"
   },
   "packageManager": "yarn@3.2.3",
   "devDependencies": {
     "daisyui": "^4.7.3"
+  },
+  "dependencies": {
+    "postcss": "^8.4.38"
   }
 }

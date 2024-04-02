@@ -10,6 +10,7 @@ import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
 //   RainbowKitCustomConnectButton,
 // } from "~~/components/scaffold-eth";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
+import WalletConnect from "~~/components/wallet/WalletConnect";
 
 type HeaderMenuLink = {
   label: string;
@@ -116,7 +117,7 @@ export const Header = () => {
         </ul>
       </div>
       <div className="navbar-end flex-grow mr-4">
-        <div>HERE BUTTON</div>
+        <WalletConnect/>
       </div>
     </div>
   );
