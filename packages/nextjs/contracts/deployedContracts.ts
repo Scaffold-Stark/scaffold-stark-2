@@ -7,7 +7,7 @@ const deployedContracts = {
   sepolia: {
     HelloStarknet: {
       address:
-        "0x069874feabae1b6212bc28963670f05fa9c296c508bd94066b9e1264970d501c",
+        "0x05e316173428d7358cb71e532acc6983608ec8a021f6e418a847969c53753452",
       abi: [
         {
           type: "impl",
@@ -80,7 +80,7 @@ const deployedContracts = {
     },
     SimpleStorage: {
       address:
-        "0x04fcd0c9c37c8636f895dfef726536b966f4df254cb20c8dc4970db1b92ef826",
+        "0x0501ed68f98395647d6b5f81500b74b597a93058eb8382f7231903d7933290b2",
       abi: [
         {
           type: "impl",
@@ -131,6 +131,156 @@ const deployedContracts = {
           name: "contracts::simpleStorage::SimpleStorage::Event",
           kind: "enum",
           variants: [],
+        },
+      ],
+    },
+    Vote: {
+      address:
+        "0x0246ede155184ce1f1f8ac52fece63870db4725c777b456237a81340ceff85b7",
+      abi: [
+        {
+          type: "impl",
+          name: "VoteImpl",
+          interface_name: "contracts::vote::VoteTrait",
+        },
+        {
+          type: "enum",
+          name: "core::bool",
+          variants: [
+            {
+              name: "False",
+              type: "()",
+            },
+            {
+              name: "True",
+              type: "()",
+            },
+          ],
+        },
+        {
+          type: "interface",
+          name: "contracts::vote::VoteTrait",
+          items: [
+            {
+              type: "function",
+              name: "get_vote_status",
+              inputs: [],
+              outputs: [
+                {
+                  type: "(core::integer::u8, core::integer::u8, core::integer::u8, core::integer::u8)",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "voter_can_vote",
+              inputs: [
+                {
+                  name: "user_address",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::bool",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "is_voter_registered",
+              inputs: [
+                {
+                  name: "address",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::bool",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "vote",
+              inputs: [
+                {
+                  name: "vote",
+                  type: "core::integer::u8",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+          ],
+        },
+        {
+          type: "constructor",
+          name: "constructor",
+          inputs: [
+            {
+              name: "voter_1",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "voter_2",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "voter_3",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::vote::Vote::VoteCast",
+          kind: "struct",
+          members: [
+            {
+              name: "voter",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+            {
+              name: "vote",
+              type: "core::integer::u8",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::vote::Vote::UnauthorizedAttempt",
+          kind: "struct",
+          members: [
+            {
+              name: "unauthorized_address",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::vote::Vote::Event",
+          kind: "enum",
+          variants: [
+            {
+              name: "VoteCast",
+              type: "contracts::vote::Vote::VoteCast",
+              kind: "nested",
+            },
+            {
+              name: "UnauthorizedAttempt",
+              type: "contracts::vote::Vote::UnauthorizedAttempt",
+              kind: "nested",
+            },
+          ],
         },
       ],
     },
