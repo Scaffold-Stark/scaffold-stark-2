@@ -3,6 +3,15 @@ const path = require("path");
 const networks = require("./helpers/networks");
 const argv = require("yargs/yargs")(process.argv.slice(2)).argv;
 
+const {
+  ContractAddress,
+  getChecksumAddress,
+  CallData,
+  validateChecksumAddress,
+  addAddressPadding,
+} = require("starknet");
+const { hash } = require("starknet");
+
 const networkName = argv.network;
 
 const { provider, deployer } = networks[networkName];
@@ -36,16 +45,46 @@ const deployContract = async (
   let classHash;
   let existingClass;
   let contractAddress;
+
+  const precomputedClassHash = hash.computeSierraContractClassHash(
+    compiledContractSierra
+  );
+  const contractCalldata = new CallData(compiledContractSierra.abi);
+  const constructorCalldata = constructorArgs
+    ? contractCalldata.compile("constructor", constructorArgs)
+    : [];
   console.log("Deploying Contract ", contractName);
+
+  let totalFee = 0n;
+
+  try {
+    const { suggestedMaxFee: estimatedFeeDeclare } =
+      await deployer.estimateDeclareFee(
+        {
+          contract: compiledContractSierra,
+          casm: compiledContractCasm,
+        },
+        {}
+      );
+    totalFee = estimatedFeeDeclare * 2n;
+  } catch (e) {
+    const { suggestedMaxFee: estimatedFeeDeploy } =
+      await deployer.estimateDeployFee({
+        classHash: precomputedClassHash,
+        constructorCalldata,
+      });
+    totalFee = estimatedFeeDeploy * 2n;
+  }
+
   try {
     const tryDeclareAndDeploy = await deployer.declareAndDeploy(
       {
         contract: compiledContractSierra,
         casm: compiledContractCasm,
-        constructorCalldata: constructorArgs,
+        constructorCalldata,
       },
       {
-        maxFee: 999999999999990n,
+        maxFee: totalFee,
       }
     );
     await provider.waitForTransaction(
@@ -90,8 +129,27 @@ const deployScript = async () => {
     classHash: helloStarknetClassHash,
     abi: helloStarknetAbi,
     address: ContractAddress,
-  } = await deployContract([], "HelloStarknet"); // can pass another argument for the exported contract name
-  await deployContract([1], "SimpleStorage"); // simple storage receives an argument in the constructor
+  } = await deployContract(null, "HelloStarknet"); // can pass another argument for the exported contract name
+  await deployContract(
+    {
+      name: 1,
+    },
+    "SimpleStorage"
+  ); // simple storage receives an argument in the constructor
+  await deployContract(
+    {
+      voter_1: addAddressPadding(
+        "0x06072Bb27d275a0bC1deBf1753649b8721CF845B681A48443Ac46baF45769f8E"
+      ),
+      voter_2: addAddressPadding(
+        "0x06072Bb27d275a0bC1deBf1753649b8721CF845B681A48443Ac46baF45769f8E"
+      ),
+      voter_3: addAddressPadding(
+        "0x06072Bb27d275a0bC1deBf1753649b8721CF845B681A48443Ac46baF45769f8E"
+      ),
+    },
+    "Vote"
+  );
 };
 
 deployScript()
