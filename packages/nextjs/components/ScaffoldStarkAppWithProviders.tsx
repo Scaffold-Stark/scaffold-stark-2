@@ -17,6 +17,7 @@ import {
 import { Header } from "~~/components/Header";
 import { Footer } from "~~/components/Footer";
 import { ProgressBar } from "~~/components/scaffold-stark/ProgressBar";
+import { appChains } from "~~/services/web3/connectors";
 
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -54,7 +55,7 @@ export const ScaffoldStarkAppWithProviders = ({
 
   return (
     <StarknetConfig
-      chains={[sepolia]}
+      chains={appChains}
       provider={publicProvider()}
       connectors={connectors}
       explorer={starkscan}

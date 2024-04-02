@@ -116,8 +116,7 @@ export const Header = () => {
         </ul>
       </div>
       <div className="navbar-end flex-grow mr-4">
-        <div />
-        <div />
+        <div>HERE BUTTON</div>
       </div>
     </div>
   );

@@ -1,14 +1,10 @@
-const { json } = require("starknet");
-
 const fs = require("fs");
 const path = require("path");
-const dotenv = require("dotenv");
 const networks = require("./helpers/networks");
-dotenv.config();
 const argv = require("yargs/yargs")(process.argv.slice(2)).argv;
 
 const networkName = argv.network;
-console.log("Network Name", networkName);
+
 const { provider, deployer } = networks[networkName];
 const deployContract = async (
   constructorArgs,
@@ -58,13 +54,15 @@ const deployContract = async (
     classHash = tryDeclareAndDeploy.declare.class_hash;
     existingClass = await provider.getClassByHash(classHash);
     contractAddress = tryDeclareAndDeploy.deploy.address;
+    contractAddress = "0x" + contractAddress.slice(2).padStart(64, "0");
   } catch (e) {
     console.log("Error", e);
   }
   console.log("Deployed contract ", contractName, " at: ", contractAddress);
-
-  const chainId = await provider.getChainId();
-  const chainIdPath = path.resolve(__dirname, `../deployments/${chainId}.json`);
+  const chainIdPath = path.resolve(
+    __dirname,
+    `../deployments/${networkName}.json`
+  );
   let deployments = {};
   if (fs.existsSync(chainIdPath)) {
     deployments = JSON.parse(fs.readFileSync(chainIdPath).toString());
