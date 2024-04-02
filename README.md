@@ -45,7 +45,7 @@ asdf global scarb 2.5.4
 ```
 
 Otherwise, you can simply run the following command in your terminal, and follow the onscreen instructions. This
-will install the latest stable release of Scarb.
+will install the version `2.5.4` of Scarb.
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh -s -- -v 2.5.4

@@ -1,2 +1,2 @@
-export * from "./getMetadata";
 export * from "./networks";
+export * from "./notification";
