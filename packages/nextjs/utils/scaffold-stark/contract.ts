@@ -90,7 +90,39 @@ type ContractsDeclaration = IsContractDeclarationMissing<
   typeof contractsData
 >;
 
+/**
+ * Abi types copied from abi-wan-kanabi as they are not exported
+ */
+export type AbiParameter = {
+  name: string;
+  type: string;
+};
+type AbiOutput = {
+  type: string;
+};
 type AbiStateMutability = "view" | "external";
+type AbiImpl = {
+  type: "impl";
+  name: string;
+  interface_name: string;
+};
+type AbiInterface = {
+  type: "interface";
+  name: string;
+  items: readonly AbiFunction[];
+};
+type AbiConstructor = {
+  type: "constructor";
+  name: "constructor";
+  inputs: readonly AbiParameter[];
+};
+export type AbiFunction = {
+  type: "function";
+  name: string;
+  inputs: readonly AbiParameter[];
+  outputs: readonly AbiOutput[];
+  state_mutability: AbiStateMutability;
+};
 
 export const contracts = contractsData as GenericContractsDeclaration | null;
 

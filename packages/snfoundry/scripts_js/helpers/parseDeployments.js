@@ -24,7 +24,7 @@ const getContractDataFromDeployments = () => {
         try {
           const abiFilePath = path.join(
             __dirname,
-            `../../target/dev/contracts_${contractData.contract}.contract_class.json`
+            `../../contracts/target/dev/contracts_${contractData.contract}.contract_class.json`
           );
           const abiContent = JSON.parse(fs.readFileSync(abiFilePath, "utf8"));
 
