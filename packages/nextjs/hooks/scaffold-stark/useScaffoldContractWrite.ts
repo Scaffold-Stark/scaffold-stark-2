@@ -47,19 +47,16 @@ export const useScaffoldContractWrite = <
     abi: deployedContractData?.abi as unknown as Abi,
   });
 
-  const calls = useMemo(() => {
-    if (!contract) return [];
-    if (args) {
-      return contract.populateTransaction[functionName](
-        ...(args as unknown as any[]) //  TODO Fix this type
-      );
-    } else {
-      return contract.populateTransaction[functionName]();
-    }
-  }, [contract, args, functionName]);
-
   const wagmiContractWrite = useContractWrite({
-    calls,
+    calls: deployedContractData
+      ? [
+          {
+            contractAddress: deployedContractData.address,
+            entrypoint: functionName,
+            calldata: args as any[],
+          },
+        ]
+      : [],
     options,
   });
 
