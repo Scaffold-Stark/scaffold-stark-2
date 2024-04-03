@@ -12,6 +12,7 @@ import {
   UseContractReadProps,
   UseContractWriteProps,
 } from "@starknet-react/core";
+import { Address } from "@starknet-react/chains";
 
 type ConfiguredChainId =
   (typeof scaffoldConfig)["targetNetworks"][0]["network"];
@@ -35,7 +36,7 @@ export enum ContractCodeStatus {
 }
 
 export type GenericContract = {
-  address: string;
+  address: Address;
   abi: Abi;
 };
 export type GenericContractsDeclaration = {
@@ -134,10 +135,11 @@ export type UseScaffoldWriteConfig<
   >
 > = {
   contractName: TContractName;
-  // onBlockConfirmation?: (txnReceipt: TransactionReceipt) => void; TODO check this lines
-  // blockConfirmations?: number;
 } & IsContractDeclarationMissing<
-  Partial<UseContractWriteProps>,
+  Partial<UseContractWriteProps> & {
+    functionName: string;
+    args: any[];
+  },
   {
     functionName: TFunctionName;
   } & Omit<

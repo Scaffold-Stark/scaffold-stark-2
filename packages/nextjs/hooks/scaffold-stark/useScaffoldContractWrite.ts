@@ -38,7 +38,7 @@ export const useScaffoldContractWrite = <
     calls: deployedContractData
       ? [
           {
-            contractAddress: deployedContractData.address,
+            contractAddress: deployedContractData?.address,
             entrypoint: functionName,
             calldata: args as any[],
           },

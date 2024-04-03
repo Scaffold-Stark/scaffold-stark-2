@@ -19,11 +19,11 @@ const Home: NextPage = () => {
 
   // console.log(data);
 
-  const { writeAsync } = useScaffoldContractWrite({
-    contractName: "HelloStarknet",
-    functionName: "increase_balance",
-    args: [1],
-  });
+  // const { writeAsync } = useScaffoldContractWrite({
+  //   contractName: "HelloStarknet",
+  //   functionName: "increase_balance",
+  //   args: [1],
+  // });
 
   // console.log(data, isLoading);
   return (
