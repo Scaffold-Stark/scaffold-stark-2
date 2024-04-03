@@ -1,6 +1,7 @@
 mod helloStarknet;
 mod simpleStorage;
 mod vote;
+mod challenge0;
 
 use starknet::ContractAddress;
 
