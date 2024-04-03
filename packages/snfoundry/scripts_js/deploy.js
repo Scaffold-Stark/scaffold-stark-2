@@ -91,7 +91,7 @@ const deployScript = async () => {
     abi: helloStarknetAbi,
     address: ContractAddress,
   } = await deployContract([], "HelloStarknet"); // can pass another argument for the exported contract name
-  await deployContract([1], "SimpleStorage"); // simple storage receives an argument in the constructor
+  await deployContract([0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691], "Ownable"); // simple storage receives an argument in the constructor
 };
 
 deployScript()
