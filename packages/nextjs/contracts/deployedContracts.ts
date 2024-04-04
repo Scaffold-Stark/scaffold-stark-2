@@ -7,7 +7,7 @@ const deployedContracts = {
   sepolia: {
     HelloStarknet: {
       address:
-        "0x05e316173428d7358cb71e532acc6983608ec8a021f6e418a847969c53753452",
+        "0x06ebc9ea691324adae48e0ebfd858fb9cdb2052f16fc9337518b6e9ac78b4576",
       abi: [
         {
           type: "impl",
@@ -80,7 +80,7 @@ const deployedContracts = {
     },
     SimpleStorage: {
       address:
-        "0x0501ed68f98395647d6b5f81500b74b597a93058eb8382f7231903d7933290b2",
+        "0x0131e61782d2a33b8c01bbe910ef9434e0d921c58c203ade5a18329e73c43a8f",
       abi: [
         {
           type: "impl",
@@ -136,7 +136,7 @@ const deployedContracts = {
     },
     Vote: {
       address:
-        "0x0246ede155184ce1f1f8ac52fece63870db4725c777b456237a81340ceff85b7",
+        "0x07e91c1964d3da4166c2cb9a15ed23fd98ed3ff3db2ba94359696f9dffa23e9c",
       abi: [
         {
           type: "impl",

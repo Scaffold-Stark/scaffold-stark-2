@@ -3,7 +3,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { sepolia, mainnet, goerli, devnet } from "@starknet-react/chains";
 import { Toaster } from "react-hot-toast";
 import {
   StarknetConfig,
@@ -11,13 +10,13 @@ import {
   argent,
   braavos,
   useInjectedConnectors,
-  voyager,
   starkscan,
 } from "@starknet-react/core";
 import { Header } from "~~/components/Header";
 import { Footer } from "~~/components/Footer";
 import { ProgressBar } from "~~/components/scaffold-stark/ProgressBar";
 import { appChains } from "~~/services/web3/connectors";
+import {BurnerConnector} from "~~/services/web3/stark-burner/BurnerConnector";
 
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -46,11 +45,7 @@ export const ScaffoldStarkAppWithProviders = ({
 
   const { connectors } = useInjectedConnectors({
     // Show these connectors if the user has no connector installed.
-    recommended: [argent(), braavos()],
-    // Hide recommended connectors if the user has any connector installed.
-    includeRecommended: "onlyIfNoConnectors",
-    // Randomize the order of the connectors.
-    order: "random",
+    recommended: [argent(), braavos(), new BurnerConnector()],
   });
 
   return (
