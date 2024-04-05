@@ -10,8 +10,8 @@ import {useTargetNetwork} from "~~/hooks/scaffold-stark/useTargetNetwork";
 import {getBlockExplorerAddressLink} from "~~/utils/scaffold-stark";
 import {useAccount, useNetwork} from "@starknet-react/core";
 import {Address} from "@starknet-react/chains";
-import {useEffect, useState} from "react";
-import ConnectModal from "~~/components/wallet/ConnectModal";
+import {useState} from "react";
+import ConnectModal from "./ConnectModal";
 
 /**
  * Custom Connect Button (watch balance + custom design)
@@ -20,7 +20,7 @@ export const CustomConnectButton = () => {
   useAutoConnect();
   const networkColor = useNetworkColor();
   const {targetNetwork} = useTargetNetwork();
-  const {address, status, chainId} = useAccount();
+  const {address, status, chainId, ...props} = useAccount();
   const {chain} = useNetwork();
   const [modalOpen, setModalOpen] = useState(false);
 

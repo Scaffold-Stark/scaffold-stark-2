@@ -1,5 +1,5 @@
 import Image from "next/image";
-import GenericModal from "../GenericModal";
+import GenericModal from "./GenericModal";
 import { Connector, useConnect } from "@starknet-react/core";
 import { useEffect, useState } from "react";
 import {useLocalStorage} from "usehooks-ts";
