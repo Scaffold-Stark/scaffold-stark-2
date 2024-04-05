@@ -5,7 +5,7 @@ import {
   RpcProvider,
 } from "starknet";
 import {ConnectorData, ConnectorIcons} from "@starknet-react/core/src/connectors/base";
-import {devnet} from "@starknet-react/chains";
+import {Chain, devnet} from "@starknet-react/chains";
 import scaffoldConfig from "~~/scaffold.config";
 
 export const burnerWalletId = "burner-wallet";
@@ -14,7 +14,7 @@ const burnerWalletIcon = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzUzIiBoZWln
 
 // https://github.com/apibara/starknet-react/blob/main/packages/core/src/connectors/injected.ts
 export class BurnerConnector extends InjectedConnector {
-  chain = devnet;
+  chain: Chain = devnet;
 
   constructor() {
     super({
