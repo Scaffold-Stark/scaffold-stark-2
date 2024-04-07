@@ -77,16 +77,11 @@ const deployContract = async (
   }
 
   try {
-    const tryDeclareAndDeploy = await deployer.declareAndDeploy(
-      {
-        contract: compiledContractSierra,
-        casm: compiledContractCasm,
-        constructorCalldata,
-      },
-      {
-        maxFee: totalFee,
-      }
-    );
+    const tryDeclareAndDeploy = await deployer.declareAndDeploy({
+      contract: compiledContractSierra,
+      casm: compiledContractCasm,
+      constructorCalldata,
+    });
     await provider.waitForTransaction(
       tryDeclareAndDeploy.deploy.transaction_hash
     );
@@ -132,7 +127,7 @@ const deployScript = async () => {
   } = await deployContract(null, "HelloStarknet"); // can pass another argument for the exported contract name
   await deployContract(
     {
-      name: 1
+      name: 1,
     },
     "SimpleStorage"
   ); // simple storage receives an argument in the constructor
@@ -152,7 +147,9 @@ const deployScript = async () => {
   );
   await deployContract(
     {
-      initial_owner: addAddressPadding("0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"),
+      initial_owner: addAddressPadding(
+        "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"
+      ),
     },
     "Ownable"
   ); // simple storage receives an argument in the constructor
