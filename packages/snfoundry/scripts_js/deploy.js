@@ -130,7 +130,7 @@ const deployScript = async () => {
   } = await deployContract(null, "HelloStarknet"); // can pass another argument for the exported contract name
   await deployContract(
     {
-      name: 1,
+      recipient: 1,
     },
     "Challenge0"
   ); // simple storage receives an argument in the constructor
