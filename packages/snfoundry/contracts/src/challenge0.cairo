@@ -32,16 +32,16 @@ mod Challenge0 {
     #[constructor]
     fn constructor(
         ref self: ContractState,
-        recipient: ContractAddress
+        recipient: felt252
     ) {
-        let arr = array![1, 2, 3];
-        let name = "MyNFT";
-        let symbol = "NFT";
-        let base_uri = "https://ipfs.io/ipfs/QmfVMAmNM1kDEBYrC2TPzQDoCRFH6F5tE1e9Mr4FkkR5Xr"; // bison nft
-        let token_id = arr.span();
+        //let arr = array![1, 2, 3];
+        let name:ByteArray = "YourCollectible";
+        let symbol:ByteArray = "YCB";
+        let base_uri:ByteArray = "https://ipfs.io/ipfs/QmfVMAmNM1kDEBYrC2TPzQDoCRFH6F5tE1e9Mr4FkkR5Xr"; // bison nft
+        //let token_id = arr.span();
 
         self.erc721.initializer(name, symbol, base_uri);
-        self._mint_assets(recipient, token_id);
+        //self._mint_assets(recipient, token_id);
     }
 
     #[generate_trait]

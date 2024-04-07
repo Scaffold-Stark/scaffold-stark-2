@@ -132,30 +132,30 @@ const deployScript = async () => {
   } = await deployContract(null, "HelloStarknet"); // can pass another argument for the exported contract name
   await deployContract(
     {
-      name: 1
+      recipient: 1
     },
-    "SimpleStorage"
+    "Challenge0"
   ); // simple storage receives an argument in the constructor
-  await deployContract(
-    {
-      voter_1: addAddressPadding(
-        "0x06072Bb27d275a0bC1deBf1753649b8721CF845B681A48443Ac46baF45769f8E"
-      ),
-      voter_2: addAddressPadding(
-        "0x06072Bb27d275a0bC1deBf1753649b8721CF845B681A48443Ac46baF45769f8E"
-      ),
-      voter_3: addAddressPadding(
-        "0x06072Bb27d275a0bC1deBf1753649b8721CF845B681A48443Ac46baF45769f8E"
-      ),
-    },
-    "Vote"
-  );
-  await deployContract(
-    {
-      initial_owner: addAddressPadding("0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"),
-    },
-    "Ownable"
-  ); // simple storage receives an argument in the constructor
+  // await deployContract(
+  //   {
+  //     voter_1: addAddressPadding(
+  //       "0x06072Bb27d275a0bC1deBf1753649b8721CF845B681A48443Ac46baF45769f8E"
+  //     ),
+  //     voter_2: addAddressPadding(
+  //       "0x06072Bb27d275a0bC1deBf1753649b8721CF845B681A48443Ac46baF45769f8E"
+  //     ),
+  //     voter_3: addAddressPadding(
+  //       "0x06072Bb27d275a0bC1deBf1753649b8721CF845B681A48443Ac46baF45769f8E"
+  //     ),
+  //   },
+  //   "Vote"
+  // );
+  // await deployContract(
+  //   {
+  //     initial_owner: addAddressPadding("0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"),
+  //   },
+  //   "Ownable"
+  // ); // simple storage receives an argument in the constructor
 };
 
 deployScript()
