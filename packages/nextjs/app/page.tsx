@@ -3,12 +3,6 @@
 import Link from "next/link";
 import type { NextPage } from "next";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useScaffoldContract } from "~~/hooks/scaffold-stark/useScaffoldContract";
-import { useScaffoldContractRead } from "~~/hooks/scaffold-stark/useScaffoldContractRead";
-import { useScaffoldContractWrite } from "~~/hooks/scaffold-stark/useScaffoldContractWrite";
-import { Button } from "@radix-ui/themes";
-import ConnectModal from "~~/components/wallet/ConnectModal";
-import { useAccount } from "@starknet-react/core";
 // import { Address } from "~~/components/scaffold-eth";
 
 const Home: NextPage = () => {

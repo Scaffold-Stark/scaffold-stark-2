@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNetwork } from "@starknet-react/core";
+import {useAccount} from "@starknet-react/core";
 import scaffoldConfig from "~~/scaffold.config";
 import { useGlobalState } from "~~/services/store/store";
 import { ChainWithAttributes } from "~~/utils/scaffold-stark";
@@ -9,7 +9,7 @@ import { ChainWithAttributes } from "~~/utils/scaffold-stark";
  * Retrieves the connected wallet's network from scaffold.config or defaults to the 0th network in the list if the wallet is not connected.
  */
 export function useTargetNetwork(): { targetNetwork: ChainWithAttributes } {
-  const { chain } = useNetwork();
+  const { chainId } = useAccount();
   const targetNetwork = useGlobalState(({ targetNetwork }) => targetNetwork);
   const setTargetNetwork = useGlobalState(
     ({ setTargetNetwork }) => setTargetNetwork
@@ -17,12 +17,12 @@ export function useTargetNetwork(): { targetNetwork: ChainWithAttributes } {
 
   useEffect(() => {
     const newSelectedNetwork = scaffoldConfig.targetNetworks.find(
-      (targetNetwork) => targetNetwork.id === chain?.id
+      (targetNetwork) => targetNetwork.id === chainId
     );
     if (newSelectedNetwork && newSelectedNetwork.id !== targetNetwork.id) {
       setTargetNetwork(newSelectedNetwork);
     }
-  }, [chain?.id, setTargetNetwork, targetNetwork.id]);
+  }, [chainId, setTargetNetwork, targetNetwork.id]);
 
   return {
     targetNetwork: {
