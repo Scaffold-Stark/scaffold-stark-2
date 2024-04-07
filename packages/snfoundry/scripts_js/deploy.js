@@ -7,7 +7,7 @@ const {
   ContractAddress,
   getChecksumAddress,
   CallData,
-  validateChecksumAddress,
+  TransactionStatus,
   addAddressPadding,
 } = require("starknet");
 const { hash } = require("starknet");
@@ -83,7 +83,10 @@ const deployContract = async (
       constructorCalldata,
     });
     await provider.waitForTransaction(
-      tryDeclareAndDeploy.deploy.transaction_hash
+      tryDeclareAndDeploy.deploy.transaction_hash,
+      {
+        successStates: [TransactionStatus.ACCEPTED_ON_L2],
+      }
     );
     classHash = tryDeclareAndDeploy.declare.class_hash;
     existingClass = await provider.getClassByHash(classHash);
