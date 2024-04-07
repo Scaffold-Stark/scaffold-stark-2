@@ -2,6 +2,9 @@ mod helloStarknet;
 mod simpleStorage;
 mod vote;
 mod challenge0;
+mod challenge1;
+mod challenge2;
+mod challenge3;
 
 use starknet::ContractAddress;
 
