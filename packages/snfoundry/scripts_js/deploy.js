@@ -94,7 +94,6 @@ const deployContract = async (
         // retryInterval: 10000, // we can retry in 10 seconds
       }
     );
-    console.log("Debug", debug);
     classHash = tryDeclareAndDeploy.declare.class_hash;
     existingClass = await provider.getClassByHash(classHash);
     contractAddress = tryDeclareAndDeploy.deploy.address;
