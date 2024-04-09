@@ -61,7 +61,7 @@ export const Footer = () => {
           <div className="flex justify-center items-center gap-2 text-sm w-full">
             <div className="text-center">
               <a
-                href="https://github.com/scaffold-eth/se-2"
+                href="https://github.com/Quantum3-Labs/scaffold-stark-2"
                 target="_blank"
                 rel="noreferrer"
                 className="link"
@@ -72,8 +72,18 @@ export const Footer = () => {
             <span>·</span>
             <div className="flex justify-center items-center gap-2">
               <p className="m-0 text-center">
-                Built with <HeartIcon className="inline-block h-4 w-4" /> at
+                Built with <HeartIcon className="inline-block h-4 w-4" /> by
               </p>
+              <a
+                className="flex justify-center items-center gap-1"
+                href="https://quantum3labs.com/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <BuidlGuidlLogo className="w-3 h-5 pb-1" />
+                <span className="link">Q3 Labs</span>
+              </a>
+              <p className="m-0 text-center">at</p>
               <a
                 className="flex justify-center items-center gap-1"
                 href="https://buidlguidl.com/"
