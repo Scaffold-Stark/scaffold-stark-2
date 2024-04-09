@@ -33,10 +33,10 @@ export const ScaffoldStarkAppWithProviders = ({children,}: {
   const isDarkMode = resolvedTheme === "dark";
   const [mounted, setMounted] = useState(false);
 
-  const provider = scaffoldConfig.rpcProviderApiKey == "" ? publicProvider() :
+  const provider = scaffoldConfig.rpcProviderUrl == "" ? publicProvider() :
     jsonRpcProvider({
       rpc: () => ({
-        nodeUrl: scaffoldConfig.rpcProviderApiKey,
+        nodeUrl: scaffoldConfig.rpcProviderUrl,
         chainId: starknetChainId(scaffoldConfig.targetNetworks[0].id)
       })
     })
