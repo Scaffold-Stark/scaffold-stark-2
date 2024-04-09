@@ -3,13 +3,15 @@ import * as chains from "@starknet-react/chains";
 export type ScaffoldConfig = {
   targetNetworks: readonly chains.Chain[];
   onlyLocalBurnerWallet: boolean;
+  rpcProviderUrl: string;
   walletAutoConnect: boolean;
 };
 
 const scaffoldConfig = {
-  targetNetworks: [chains.devnet],
+  targetNetworks: [chains.sepolia],
   // Only show the Burner Wallet when running on devnet
   onlyLocalBurnerWallet: false,
+  rpcProviderUrl: process.env.NEXT_PUBLIC_PROVIDER_URL || "",
   /**
    * Auto connect:
    * 1. If the user was connected into a wallet before, on page reload reconnect automatically

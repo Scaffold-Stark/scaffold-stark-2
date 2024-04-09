@@ -5,18 +5,14 @@ import {useEffect, useState} from "react";
 import {useTheme} from "next-themes";
 import {Toaster} from "react-hot-toast";
 import {
-  StarknetConfig,
-  publicProvider,
-  argent,
-  braavos,
-  useInjectedConnectors,
-  starkscan,
+  StarknetConfig, publicProvider, argent, braavos, useInjectedConnectors, starkscan, jsonRpcProvider, starknetChainId,
 } from "@starknet-react/core";
 import {Header} from "~~/components/Header";
 import {Footer} from "~~/components/Footer";
 import {ProgressBar} from "~~/components/scaffold-stark/ProgressBar";
 import {appChains} from "~~/services/web3/connectors";
 import {BurnerConnector} from "~~/services/web3/stark-burner/BurnerConnector";
+import scaffoldConfig from "~~/scaffold.config";
 
 const ScaffoldStarkApp = ({children}: { children: React.ReactNode }) => {
   return (
@@ -37,6 +33,14 @@ export const ScaffoldStarkAppWithProviders = ({children,}: {
   const isDarkMode = resolvedTheme === "dark";
   const [mounted, setMounted] = useState(false);
 
+  const provider = scaffoldConfig.rpcProviderUrl == "" ? publicProvider() :
+    jsonRpcProvider({
+      rpc: () => ({
+        nodeUrl: scaffoldConfig.rpcProviderUrl,
+        chainId: starknetChainId(scaffoldConfig.targetNetworks[0].id)
+      })
+    })
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -49,7 +53,7 @@ export const ScaffoldStarkAppWithProviders = ({children,}: {
   return (
     <StarknetConfig
       chains={appChains}
-      provider={publicProvider()}
+      provider={provider}
       connectors={connectors}
       explorer={starkscan}
     >

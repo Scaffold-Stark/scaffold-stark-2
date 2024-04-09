@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     HelloStarknet: {
       address:
-        "0x049596cd6bba05027f7928d893b5a204720e59c5591206ea4d957f29f3481a6a",
+        "0x03cde55282f0c58631a419898569c889b41142438482118c6e50f65c77ebf6fb",
       abi: [
         {
           type: "impl",
@@ -67,38 +67,70 @@ const deployedContracts = {
         },
       ],
     },
-    Challenge0: {
+    SimpleStorage: {
       address:
-        "0x0047466ee4e2950b249a27cc77d6eaecb30e28096d901a2bb1ee94654242d34f",
+        "0x06aa7ffead51a8bf475cd97b072bd4899e19018b6f0f3c423954b03231237d69",
       abi: [
         {
           type: "impl",
-          name: "ERC721MixinImpl",
-          interface_name: "openzeppelin::token::erc721::interface::ERC721ABI",
+          name: "SimpleStorageImpl",
+          interface_name: "contracts::simpleStorage::ISimpleStorage",
         },
         {
-          type: "struct",
-          name: "core::integer::u256",
-          members: [
+          type: "interface",
+          name: "contracts::simpleStorage::ISimpleStorage",
+          items: [
             {
-              name: "low",
-              type: "core::integer::u128",
+              type: "function",
+              name: "get_name",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::felt252",
+                },
+              ],
+              state_mutability: "view",
             },
             {
-              name: "high",
-              type: "core::integer::u128",
+              type: "function",
+              name: "set_name",
+              inputs: [
+                {
+                  name: "name",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
             },
           ],
         },
         {
-          type: "struct",
-          name: "core::array::Span::<core::felt252>",
-          members: [
+          type: "constructor",
+          name: "constructor",
+          inputs: [
             {
-              name: "snapshot",
-              type: "@core::array::Array::<core::felt252>",
+              name: "name",
+              type: "core::felt252",
             },
           ],
+        },
+        {
+          type: "event",
+          name: "contracts::simpleStorage::SimpleStorage::Event",
+          kind: "enum",
+          variants: [],
+        },
+      ],
+    },
+    Vote: {
+      address:
+        "0x035e2ca6c323204725495105c23353cd2645e264949fb0f8bce2144fbe695d50",
+      abi: [
+        {
+          type: "impl",
+          name: "VoteImpl",
+          interface_name: "contracts::vote::VoteTrait",
         },
         {
           type: "enum",
@@ -115,365 +147,198 @@ const deployedContracts = {
           ],
         },
         {
-          type: "struct",
-          name: "core::byte_array::ByteArray",
-          members: [
+          type: "interface",
+          name: "contracts::vote::VoteTrait",
+          items: [
             {
-              name: "data",
-              type: "core::array::Array::<core::bytes_31::bytes31>",
+              type: "function",
+              name: "get_vote_status",
+              inputs: [],
+              outputs: [
+                {
+                  type: "(core::integer::u8, core::integer::u8, core::integer::u8, core::integer::u8)",
+                },
+              ],
+              state_mutability: "view",
             },
             {
-              name: "pending_word",
-              type: "core::felt252",
+              type: "function",
+              name: "voter_can_vote",
+              inputs: [
+                {
+                  name: "user_address",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::bool",
+                },
+              ],
+              state_mutability: "view",
             },
             {
-              name: "pending_word_len",
-              type: "core::integer::u32",
+              type: "function",
+              name: "is_voter_registered",
+              inputs: [
+                {
+                  name: "address",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::bool",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "vote",
+              inputs: [
+                {
+                  name: "vote",
+                  type: "core::integer::u8",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
             },
           ],
         },
         {
+          type: "constructor",
+          name: "constructor",
+          inputs: [
+            {
+              name: "voter_1",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "voter_2",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "voter_3",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::vote::Vote::VoteCast",
+          kind: "struct",
+          members: [
+            {
+              name: "voter",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+            {
+              name: "vote",
+              type: "core::integer::u8",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::vote::Vote::UnauthorizedAttempt",
+          kind: "struct",
+          members: [
+            {
+              name: "unauthorized_address",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::vote::Vote::Event",
+          kind: "enum",
+          variants: [
+            {
+              name: "VoteCast",
+              type: "contracts::vote::Vote::VoteCast",
+              kind: "nested",
+            },
+            {
+              name: "UnauthorizedAttempt",
+              type: "contracts::vote::Vote::UnauthorizedAttempt",
+              kind: "nested",
+            },
+          ],
+        },
+      ],
+    },
+    Ownable: {
+      address:
+        "0x0133d989c25e6e6237c0b486478470960ae46878e1147ae9d14e9ccf40e88442",
+      abi: [
+        {
+          type: "impl",
+          name: "OwnableDataImpl",
+          interface_name: "contracts::IData",
+        },
+        {
           type: "interface",
-          name: "openzeppelin::token::erc721::interface::ERC721ABI",
+          name: "contracts::IData",
           items: [
             {
               type: "function",
-              name: "balance_of",
-              inputs: [
-                {
-                  name: "account",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::integer::u256",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "owner_of",
-              inputs: [
-                {
-                  name: "token_id",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "safe_transfer_from",
-              inputs: [
-                {
-                  name: "from",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "to",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "token_id",
-                  type: "core::integer::u256",
-                },
-                {
-                  name: "data",
-                  type: "core::array::Span::<core::felt252>",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "transfer_from",
-              inputs: [
-                {
-                  name: "from",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "to",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "token_id",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "approve",
-              inputs: [
-                {
-                  name: "to",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "token_id",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "set_approval_for_all",
-              inputs: [
-                {
-                  name: "operator",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "approved",
-                  type: "core::bool",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "get_approved",
-              inputs: [
-                {
-                  name: "token_id",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "is_approved_for_all",
-              inputs: [
-                {
-                  name: "owner",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "operator",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::bool",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "supports_interface",
-              inputs: [
-                {
-                  name: "interface_id",
-                  type: "core::felt252",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::bool",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "name",
+              name: "get_data",
               inputs: [],
               outputs: [
                 {
-                  type: "core::byte_array::ByteArray",
+                  type: "core::integer::u64",
                 },
               ],
               state_mutability: "view",
             },
             {
               type: "function",
-              name: "symbol",
+              name: "set_data",
+              inputs: [
+                {
+                  name: "new_value",
+                  type: "core::integer::u64",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+          ],
+        },
+        {
+          type: "impl",
+          name: "OwnableImpl",
+          interface_name: "contracts::IOwnable",
+        },
+        {
+          type: "interface",
+          name: "contracts::IOwnable",
+          items: [
+            {
+              type: "function",
+              name: "transfer_ownership",
+              inputs: [
+                {
+                  name: "new_owner",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "owner",
               inputs: [],
               outputs: [
                 {
-                  type: "core::byte_array::ByteArray",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "token_uri",
-              inputs: [
-                {
-                  name: "token_id",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::byte_array::ByteArray",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "balanceOf",
-              inputs: [
-                {
-                  name: "account",
                   type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::integer::u256",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "ownerOf",
-              inputs: [
-                {
-                  name: "tokenId",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "safeTransferFrom",
-              inputs: [
-                {
-                  name: "from",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "to",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "tokenId",
-                  type: "core::integer::u256",
-                },
-                {
-                  name: "data",
-                  type: "core::array::Span::<core::felt252>",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "transferFrom",
-              inputs: [
-                {
-                  name: "from",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "to",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "tokenId",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "setApprovalForAll",
-              inputs: [
-                {
-                  name: "operator",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "approved",
-                  type: "core::bool",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "getApproved",
-              inputs: [
-                {
-                  name: "tokenId",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "isApprovedForAll",
-              inputs: [
-                {
-                  name: "owner",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "operator",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::bool",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "tokenURI",
-              inputs: [
-                {
-                  name: "tokenId",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::byte_array::ByteArray",
                 },
               ],
               state_mutability: "view",
@@ -485,119 +350,319 @@ const deployedContracts = {
           name: "constructor",
           inputs: [
             {
-              name: "recipient",
-              type: "core::felt252",
+              name: "initial_owner",
+              type: "core::starknet::contract_address::ContractAddress",
             },
           ],
         },
         {
           type: "event",
-          name: "openzeppelin::token::erc721::erc721::ERC721Component::Transfer",
+          name: "contracts::ownable_component::OwnershipTransferred",
           kind: "struct",
           members: [
             {
-              name: "from",
+              name: "previous_owner",
               type: "core::starknet::contract_address::ContractAddress",
               kind: "key",
             },
             {
-              name: "to",
+              name: "new_owner",
               type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "token_id",
-              type: "core::integer::u256",
-              kind: "key",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin::token::erc721::erc721::ERC721Component::Approval",
-          kind: "struct",
-          members: [
-            {
-              name: "owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "approved",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "token_id",
-              type: "core::integer::u256",
-              kind: "key",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin::token::erc721::erc721::ERC721Component::ApprovalForAll",
-          kind: "struct",
-          members: [
-            {
-              name: "owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "operator",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "approved",
-              type: "core::bool",
               kind: "data",
             },
           ],
         },
         {
           type: "event",
-          name: "openzeppelin::token::erc721::erc721::ERC721Component::Event",
+          name: "contracts::ownable_component::Event",
           kind: "enum",
           variants: [
             {
-              name: "Transfer",
-              type: "openzeppelin::token::erc721::erc721::ERC721Component::Transfer",
-              kind: "nested",
-            },
-            {
-              name: "Approval",
-              type: "openzeppelin::token::erc721::erc721::ERC721Component::Approval",
-              kind: "nested",
-            },
-            {
-              name: "ApprovalForAll",
-              type: "openzeppelin::token::erc721::erc721::ERC721Component::ApprovalForAll",
+              name: "OwnershipTransferred",
+              type: "contracts::ownable_component::OwnershipTransferred",
               kind: "nested",
             },
           ],
         },
         {
           type: "event",
-          name: "openzeppelin::introspection::src5::SRC5Component::Event",
-          kind: "enum",
-          variants: [],
-        },
-        {
-          type: "event",
-          name: "contracts::challenge0::Challenge0::Event",
+          name: "contracts::Ownable::Event",
           kind: "enum",
           variants: [
             {
-              name: "ERC721Event",
-              type: "openzeppelin::token::erc721::erc721::ERC721Component::Event",
-              kind: "flat",
+              name: "OwnableEvent",
+              type: "contracts::ownable_component::Event",
+              kind: "nested",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  sepolia: {
+    HelloStarknet: {
+      address:
+        "0x06ebc9ea691324adae48e0ebfd858fb9cdb2052f16fc9337518b6e9ac78b4576",
+      abi: [
+        {
+          type: "impl",
+          name: "HelloStarknetImpl",
+          interface_name: "contracts::helloStarknet::IHelloStarknet",
+        },
+        {
+          type: "interface",
+          name: "contracts::helloStarknet::IHelloStarknet",
+          items: [
+            {
+              type: "function",
+              name: "increase_balance",
+              inputs: [
+                {
+                  name: "amount",
+                  type: "core::integer::u32",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
             },
             {
-              name: "SRC5Event",
-              type: "openzeppelin::introspection::src5::SRC5Component::Event",
-              kind: "flat",
+              type: "function",
+              name: "get_balance",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::integer::u32",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_balance_increment",
+              inputs: [
+                {
+                  name: "amount",
+                  type: "core::integer::u32",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::u32",
+                },
+              ],
+              state_mutability: "view",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::helloStarknet::HelloStarknet::Event",
+          kind: "enum",
+          variants: [],
+        },
+      ],
+    },
+    SimpleStorage: {
+      address:
+        "0x0131e61782d2a33b8c01bbe910ef9434e0d921c58c203ade5a18329e73c43a8f",
+      abi: [
+        {
+          type: "impl",
+          name: "SimpleStorageImpl",
+          interface_name: "contracts::simpleStorage::ISimpleStorage",
+        },
+        {
+          type: "interface",
+          name: "contracts::simpleStorage::ISimpleStorage",
+          items: [
+            {
+              type: "function",
+              name: "get_name",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::felt252",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "set_name",
+              inputs: [
+                {
+                  name: "name",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+          ],
+        },
+        {
+          type: "constructor",
+          name: "constructor",
+          inputs: [
+            {
+              name: "name",
+              type: "core::felt252",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::simpleStorage::SimpleStorage::Event",
+          kind: "enum",
+          variants: [],
+        },
+      ],
+    },
+    Vote: {
+      address:
+        "0x07e91c1964d3da4166c2cb9a15ed23fd98ed3ff3db2ba94359696f9dffa23e9c",
+      abi: [
+        {
+          type: "impl",
+          name: "VoteImpl",
+          interface_name: "contracts::vote::VoteTrait",
+        },
+        {
+          type: "enum",
+          name: "core::bool",
+          variants: [
+            {
+              name: "False",
+              type: "()",
+            },
+            {
+              name: "True",
+              type: "()",
+            },
+          ],
+        },
+        {
+          type: "interface",
+          name: "contracts::vote::VoteTrait",
+          items: [
+            {
+              type: "function",
+              name: "get_vote_status",
+              inputs: [],
+              outputs: [
+                {
+                  type: "(core::integer::u8, core::integer::u8, core::integer::u8, core::integer::u8)",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "voter_can_vote",
+              inputs: [
+                {
+                  name: "user_address",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::bool",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "is_voter_registered",
+              inputs: [
+                {
+                  name: "address",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::bool",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "vote",
+              inputs: [
+                {
+                  name: "vote",
+                  type: "core::integer::u8",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+          ],
+        },
+        {
+          type: "constructor",
+          name: "constructor",
+          inputs: [
+            {
+              name: "voter_1",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "voter_2",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "voter_3",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::vote::Vote::VoteCast",
+          kind: "struct",
+          members: [
+            {
+              name: "voter",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+            {
+              name: "vote",
+              type: "core::integer::u8",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::vote::Vote::UnauthorizedAttempt",
+          kind: "struct",
+          members: [
+            {
+              name: "unauthorized_address",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::vote::Vote::Event",
+          kind: "enum",
+          variants: [
+            {
+              name: "VoteCast",
+              type: "contracts::vote::Vote::VoteCast",
+              kind: "nested",
+            },
+            {
+              name: "UnauthorizedAttempt",
+              type: "contracts::vote::Vote::UnauthorizedAttempt",
+              kind: "nested",
             },
           ],
         },
