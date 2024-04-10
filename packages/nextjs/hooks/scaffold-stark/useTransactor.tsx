@@ -125,7 +125,7 @@ export const useTransactor = (
         notification.remove(notificationId);
       }
       console.error("⚡️ ~ file: useTransactor.ts ~ error", error);
-      const message = error;
+      const message = error.toString();
       notification.error(message);
       throw error;
     }
