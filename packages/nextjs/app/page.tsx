@@ -56,14 +56,14 @@ const Home: NextPage = () => {
                       </div>
                   </div>
               </div>
-              {lastChallenges.slice(3).map((challenge, index) => (
+              {lastChallenges.slice(1).map((challenge, index) => (
                   <ChallengeCard
                       key={index}
                       challenge={challenge.challenge}
                       title={challenge.title}
                       description={challenge.description}
                       imageUrl={challenge.imageUrl}
-                      buttonText="QUEST"
+                      buttonText="LOCK"
                       onButtonClick={() => {}}
                       end={challenge.end || false}
                       border={challenge.border !== undefined ? challenge.border : true}
