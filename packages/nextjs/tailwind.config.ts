@@ -68,7 +68,7 @@ module.exports = {
           "base-100": "#ffffff",
           "base-200": "#f4f8ff",
           "base-300": "#DAE8FF",
-          "base-content": "#212638",
+          "base-content": "#0C0C4F",
           info: "#93BBFB",
           success: "#34EEB6",
           warning: "#FFCF72",
@@ -98,7 +98,7 @@ module.exports = {
           neutral: "#F9FBFF",
           "neutral-content": "#385183",
           "base-100": "#385183",
-          "base-200": "#2A3655",
+          "base-200": "#1c2d49",
           "base-300": "#212638",
           "base-content": "#F9FBFF",
           info: "#385183",
@@ -130,6 +130,9 @@ module.exports = {
       animation: {
         "pulse-fast": "pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
+      // fontFamily: {
+      //   'codec': ['Codec Pro', 'sans-serif'],
+      // },
     },
   },
 };

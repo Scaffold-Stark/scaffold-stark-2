@@ -18,6 +18,7 @@ import {ProgressBar} from "~~/components/scaffold-stark/ProgressBar";
 import {appChains} from "~~/services/web3/connectors";
 import {BurnerConnector} from "~~/services/web3/stark-burner/BurnerConnector";
 
+
 const ScaffoldStarkApp = ({children}: { children: React.ReactNode }) => {
   return (
     <>
