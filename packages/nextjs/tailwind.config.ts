@@ -12,7 +12,7 @@ const config: Config = {
         mytheme: {
           primary: "#794BFC",
 
-          secondary: "F4F1FD",
+          secondary: "#F4F1FD",
 
           accent: "#ff00ff",
 
@@ -57,18 +57,18 @@ module.exports = {
     themes: [
       {
         light: {
-          primary: "#93BBFB",
+          primary: "#0C0C4F",
           "primary-content": "#212638",
-          secondary: "#DAE8FF",
-          "secondary-content": "#212638",
+          secondary: "#0C0C4F",
+          "secondary-content": "#E7F0FE",
           accent: "#93BBFB",
           "accent-content": "#212638",
           neutral: "#212638",
           "neutral-content": "#ffffff",
-          "base-100": "#ffffff",
+          "base-100": "#E7F0FE",
           "base-200": "#f4f8ff",
-          "base-300": "#DAE8FF",
-          "base-content": "#0C0C4F",
+          "base-300": "#0C0C4F",
+          "base-content": "#212638",
           info: "#93BBFB",
           success: "#34EEB6",
           warning: "#FFCF72",
@@ -89,17 +89,17 @@ module.exports = {
       },
       {
         dark: {
-          primary: "#212638",
+          primary: "#E7F0FE",
           "primary-content": "#F9FBFF",
-          secondary: "#323f61",
-          "secondary-content": "#F9FBFF",
+          secondary: "#1b2841",
+          "secondary-content": "#cfe2ff",
           accent: "#4969A6",
           "accent-content": "#F9FBFF",
           neutral: "#F9FBFF",
           "neutral-content": "#385183",
-          "base-100": "#385183",
+          "base-100": "#1b2841",
           "base-200": "#1c2d49",
-          "base-300": "#212638",
+          "base-300": "#E7F0FE",
           "base-content": "#F9FBFF",
           info: "#385183",
           success: "#34EEB6",

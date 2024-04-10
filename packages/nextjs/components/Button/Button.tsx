@@ -7,7 +7,7 @@ interface ButtonProps {
 
 const Button: React.FC<ButtonProps> = ({ onClick, children }) => {
     return (
-        <button className="py-[10px] px-[20px] bg-[#0C0C4F] text-white rounded-[8px]" onClick={onClick} type="button">
+        <button className="py-[10px] px-[20px] bg-base-300 text-base-100 rounded-[8px]" onClick={onClick} type="button">
             {children}
         </button>
     );
