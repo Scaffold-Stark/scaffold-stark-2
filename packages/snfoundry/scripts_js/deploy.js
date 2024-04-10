@@ -82,10 +82,10 @@ const deployContract = async (
         contract: compiledContractSierra,
         casm: compiledContractCasm,
         constructorCalldata,
+      },
+      {
+        maxFee: totalFee * 20n, // this optional max fee serves when error AccountValidation Failed or small fee on public networks , try 5n , 10n, 20n, 50n, 100n
       }
-      // {
-      //   maxFee: totalFee * 20n, // this optional max fee serves when error AccountValidation Failed or small fee on public networks , try 5n , 10n, 20n, 50n, 100n
-      // }
     );
     const debug = await provider.waitForTransaction(
       tryDeclareAndDeploy.deploy.transaction_hash,
