@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { InheritanceTooltip } from "./InheritanceTooltip";
 import { Abi } from "abi-wan-kanabi";
 import { Address } from "@starknet-react/chains";
 import {
@@ -12,7 +11,6 @@ import {
   getParsedContractFunctionArgs,
   transformAbiFunction,
 } from "~~/app/debug/_components/contract";
-import { notification } from "~~/utils/scaffold-stark";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { BlockNumber } from "starknet";
 import { useContractRead } from "@starknet-react/core";
@@ -87,7 +85,7 @@ export const ReadOnlyFunctionForm = ({
           }}
           disabled={!isLoading && isFetching}
         >
-          {(!isLoading && isFetching) && (
+          {!isLoading && isFetching && (
             <span className="loading loading-spinner loading-xs"></span>
           )}
           Read 📡
