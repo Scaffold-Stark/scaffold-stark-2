@@ -1,5 +1,12 @@
+use starknet::ContractAddress;
+
+#[starknet::interface]
+pub trait IChallenge0<T> {
+    fn mint_item(ref self: T, recipient: ContractAddress) -> u256;
+}
 #[starknet::contract]
 mod Challenge0 {
+    use super::IChallenge0;
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::token::erc721::ERC721Component;
     use starknet::ContractAddress;
@@ -10,10 +17,11 @@ mod Challenge0 {
     // ERC721Mixin
     #[abi(embed_v0)]
     impl ERC721MixinImpl = ERC721Component::ERC721MixinImpl<ContractState>;
+    //pub impl ERC721MetadataImpl = ERC721Component::ERC721MetadataImpl<ContractState>;
     impl ERC721InternalImpl = ERC721Component::InternalImpl<ContractState>;
 
     #[storage]
-    struct Storage {
+    pub struct Storage {
         #[substorage(v0)]
         erc721: ERC721Component::Storage,
         #[substorage(v0)]
@@ -30,34 +38,21 @@ mod Challenge0 {
     }
 
     #[constructor]
-    fn constructor(
-        ref self: ContractState,
-        recipient: felt252
-    ) {
-        //let arr = array![1, 2, 3];
-        let name:ByteArray = "YourCollectible";
-        let symbol:ByteArray = "YCB";
-        let base_uri:ByteArray = "https://ipfs.io/ipfs/QmfVMAmNM1kDEBYrC2TPzQDoCRFH6F5tE1e9Mr4FkkR5Xr"; // bison nft
-        //let token_id = arr.span();
+    fn constructor(ref self: ContractState) {
+        let name: ByteArray = "YourCollectible";
+        let symbol: ByteArray = "YCB";
+        let base_uri: ByteArray =
+            "https://ipfs.io/ipfs/QmfVMAmNM1kDEBYrC2TPzQDoCRFH6F5tE1e9Mr4FkkR5Xr"; // bison nft
 
         self.erc721.initializer(name, symbol, base_uri);
-        //self._mint_assets(recipient, token_id);
     }
 
-    #[generate_trait]
-    impl InternalImpl of InternalTrait {
-        /// Mints `token_ids` to `recipient`.
-        fn _mint_assets(
-            ref self: ContractState, recipient: ContractAddress, mut token_ids: Span<u256>
-        ) {
-            loop {
-                if token_ids.len() == 0 {
-                    break;
-                }
-                let id = *token_ids.pop_front().unwrap();
-
-                self.erc721._mint(recipient, id);
-            }
+    #[abi(embed_v0)]
+    pub impl Challenge0Impl of IChallenge0<ContractState> {
+        fn mint_item(ref self: ContractState, recipient: ContractAddress) -> u256 {
+            let id: u256 = 1;
+            self.erc721._mint(recipient, id); // _mint include _setTokenURI()
+            id
         }
     }
 }

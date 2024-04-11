@@ -129,24 +129,18 @@ const deployContract = async (
 };
 
 const deployScript = async () => {
-  const {
-    classHash: helloStarknetClassHash,
-    abi: helloStarknetAbi,
-    address: ContractAddress,
-  } = await deployContract(null, "HelloStarknet"); // can pass another argument for the exported contract name
-  await deployContract(
-    {
-      name: 1,
-    },
-    "SimpleStorage"
-  );
+  // const {
+  //   classHash: helloStarknetClassHash,
+  //   abi: helloStarknetAbi,
+  //   address: ContractAddress,
+  // } = await deployContract(null, "HelloStarknet"); // can pass another argument for the exported contract name
   // await deployContract(
   //   {
-  //     recipient: 1,
+  //     name: 1,
   //   },
-  //   "Challenge0"
+  //   "SimpleStorage"
   // );
-
+  await deployContract(null, "Challenge0");
   // await deployContract(
   //   {
   //     name: 1,
