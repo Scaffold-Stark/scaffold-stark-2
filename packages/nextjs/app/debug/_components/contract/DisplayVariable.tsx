@@ -70,7 +70,7 @@ export const DisplayVariable = ({
               showAnimation ? "bg-warning rounded-sm animate-pulse-fast" : ""
             }`}
           >
-            {displayTxResult(result, abiFunction?.outputs)}
+            {displayTxResult(result, false, abiFunction?.outputs)}
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ use starknet::ContractAddress;
 #[starknet::interface]
 pub trait IChallenge0<T> {
     fn mint_item(ref self: T, recipient: ContractAddress) -> u256;
+    fn mint_id(ref self: T, recipient: ContractAddress, id: u256);
 }
 #[starknet::contract]
 mod Challenge0 {
@@ -53,6 +54,9 @@ mod Challenge0 {
             let id: u256 = 1;
             self.erc721._mint(recipient, id); // _mint include _setTokenURI()
             id
+        }
+        fn mint_id(ref self: ContractState, recipient: ContractAddress, id: u256) {
+            self.erc721._mint(recipient, id);
         }
     }
 }

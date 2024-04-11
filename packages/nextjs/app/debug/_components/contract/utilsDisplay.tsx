@@ -20,8 +20,8 @@ type DisplayContent =
 
 export const displayTxResult = (
   displayContent: DisplayContent | DisplayContent[],
-  functionOutputs: readonly AbiOutput[] | null,
-  asText = false
+  asText: boolean,
+  functionOutputs: readonly AbiOutput[] = []
 ): string | ReactElement | number => {
   if (displayContent == null) {
     return "";
@@ -93,4 +93,4 @@ export const displayType = (type: string) => {
   return type.split("::").pop();
 };
 const displayTxResultAsText = (displayContent: DisplayContent) =>
-  displayTxResult(displayContent, null, true);
+  displayTxResult(displayContent, true);
