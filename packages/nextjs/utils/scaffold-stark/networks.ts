@@ -54,7 +54,7 @@ export function getBlockExplorerTxLink(network: string, txnHash: string) {
  */
 export function getBlockExplorerAddressLink(
   network: chains.Chain,
-  address: string
+  address: string,
 ) {
   const blockExplorerBaseURL = network.explorers?.starkscan[0];
   if (network.network === chains.devnet.network) {

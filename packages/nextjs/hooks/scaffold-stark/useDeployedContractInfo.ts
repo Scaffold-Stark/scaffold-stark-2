@@ -11,7 +11,7 @@ import { useProvider } from "@starknet-react/core";
 import { BlockIdentifier, RpcProvider } from "starknet";
 
 export const useDeployedContractInfo = <TContractName extends ContractName>(
-  contractName: TContractName
+  contractName: TContractName,
 ) => {
   const isMounted = useIsMounted();
   const { targetNetwork } = useTargetNetwork();
@@ -19,7 +19,7 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
     contractName as ContractName
   ] as Contract<TContractName>;
   const [status, setStatus] = useState<ContractCodeStatus>(
-    ContractCodeStatus.LOADING
+    ContractCodeStatus.LOADING,
   );
   const publicNodeUrl = targetNetwork.rpcUrls.public.http[0];
 
@@ -38,7 +38,7 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
       }
       const contractClasHash = await publicClient.getClassAt(
         deployedContract.address,
-        "Pending" as BlockIdentifier
+        "Pending" as BlockIdentifier,
       );
 
       if (!isMounted()) {

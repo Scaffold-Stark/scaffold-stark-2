@@ -89,7 +89,7 @@ export const Address = ({
 
   const blockExplorerAddressLink = getBlockExplorerAddressLink(
     targetNetwork,
-    checkSumAddress
+    checkSumAddress,
   );
   let displayAddress =
     checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4);

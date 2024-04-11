@@ -28,7 +28,7 @@ export const ContractUI = ({
 }: ContractUIProps) => {
   const [refreshDisplayVariables, triggerRefreshDisplayVariables] = useReducer(
     (value) => !value,
-    false
+    false,
   );
   const { targetNetwork } = useTargetNetwork();
   const { data: deployedContractData, isLoading: deployedContractLoading } =
