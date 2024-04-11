@@ -1,5 +1,5 @@
 import { AbiFunction, AbiParameter } from "~~/utils/scaffold-stark/contract";
-
+import { uint256 } from "starknet";
 /**
  * Generates a key based on function metadata
  */
@@ -32,7 +32,12 @@ const getInitialFormState = (abiFunction: AbiFunction) => {
 };
 
 // Recursive function to deeply parse JSON strings, correctly handling nested arrays and encoded JSON strings
-const deepParseValues = (value: any): any => {
+const deepParseValues = (value: any, keyAndType?: any): any => {
+  if (keyAndType) {
+    if (keyAndType.includes("core::integer::u256")) {
+      return uint256.bnToUint256(value);
+    }
+  }
   if (typeof value === "string") {
     if (isJsonString(value)) {
       const parsed = JSON.parse(value);
@@ -79,9 +84,7 @@ const deepParseValues = (value: any): any => {
 const getParsedContractFunctionArgs = (form: Record<string, any>) => {
   return Object.keys(form).map((key) => {
     const valueOfArg = form[key];
-
-    // Attempt to deeply parse JSON strings
-    return deepParseValues(valueOfArg);
+    return deepParseValues(valueOfArg, key);
   });
 };
 

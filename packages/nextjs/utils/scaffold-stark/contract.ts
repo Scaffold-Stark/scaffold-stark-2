@@ -98,7 +98,7 @@ export type AbiParameter = {
   name: string;
   type: string;
 };
-type AbiOutput = {
+export type AbiOutput = {
   type: string;
 };
 type AbiStateMutability = "view" | "external";
@@ -287,3 +287,5 @@ export type AbiFunctionOutputs<
   TAbi extends Abi,
   TFunctionName extends string
 > = ExtractAbiFunctionScaffold<TAbi, TFunctionName>["outputs"];
+
+/// export all the types from kanabi
