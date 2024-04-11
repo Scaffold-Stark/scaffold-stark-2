@@ -28,7 +28,7 @@ export const TxReceipt = (
           />
         ) : (
           <CopyToClipboard
-            text={displayTxResult(txResult) as string}
+            text={displayTxResult(txResult, false) as string}
             onCopy={() => {
               setTxResultCopied(true);
               setTimeout(() => {
@@ -49,7 +49,7 @@ export const TxReceipt = (
           <strong>Transaction Receipt</strong>
         </div>
         <div className="collapse-content overflow-auto bg-secondary rounded-t-none rounded-3xl">
-          <pre className="text-xs pt-4">{displayTxResult(txResult)}</pre>
+          <pre className="text-xs pt-4">{displayTxResult(txResult, false)}</pre>
         </div>
       </div>
     </div>

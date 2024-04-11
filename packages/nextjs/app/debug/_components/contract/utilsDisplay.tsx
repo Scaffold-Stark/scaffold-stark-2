@@ -1,4 +1,5 @@
 import { ReactElement } from "react";
+import { ByteArray, byteArray } from "starknet-dev";
 import {
   Uint256,
   validateAndParseAddress,
@@ -6,22 +7,35 @@ import {
 } from "starknet";
 import { Address } from "~~/components/scaffold-stark";
 import { replacer } from "~~/utils/scaffold-stark/common";
+import { AbiOutput } from "~~/utils/scaffold-stark/contract";
 
 type DisplayContent =
   | Uint256
   | string
   | bigint
   | boolean
-  | `0x${string}`
+  | Object
   | DisplayContent[]
   | unknown;
 
 export const displayTxResult = (
   displayContent: DisplayContent | DisplayContent[],
-  asText = false
+  asText: boolean,
+  functionOutputs: readonly AbiOutput[] = []
 ): string | ReactElement | number => {
   if (displayContent == null) {
     return "";
+  }
+  if (functionOutputs != null && functionOutputs.length != 0) {
+    if (
+      functionOutputs[0].type ===
+      "core::starknet::contract_address::ContractAddress"
+    ) {
+      const address = validateAndParseAddress(displayContent as string);
+      return asText ? address : <Address address={address as `0x${string}`} />;
+    } else if (functionOutputs[0].type === "core::byte_array::ByteArray") {
+      return byteArray.stringFromByteArray(displayContent as ByteArray);
+    }
   }
 
   if (typeof displayContent === "bigint") {
@@ -72,5 +86,11 @@ export const displayTxResult = (
   return JSON.stringify(displayContent, replacer, 2);
 };
 
+export const displayType = (type: string) => {
+  if (!type.includes("::")) {
+    return type;
+  }
+  return type.split("::").pop();
+};
 const displayTxResultAsText = (displayContent: DisplayContent) =>
   displayTxResult(displayContent, true);
