@@ -3,14 +3,10 @@ const path = require("path");
 const networks = require("./helpers/networks");
 const argv = require("yargs/yargs")(process.argv.slice(2)).argv;
 
-const {
-  ContractAddress,
-  getChecksumAddress,
-  CallData,
-  TransactionStatus,
-  addAddressPadding,
-} = require("starknet");
+const { TransactionStatus } = require("starknet");
 const { hash } = require("starknet");
+
+const { CallData } = require("starknet-dev");
 
 const networkName = argv.network;
 
@@ -129,18 +125,28 @@ const deployContract = async (
 };
 
 const deployScript = async () => {
-  // const {
-  //   classHash: helloStarknetClassHash,
-  //   abi: helloStarknetAbi,
-  //   address: ContractAddress,
-  // } = await deployContract(null, "HelloStarknet"); // can pass another argument for the exported contract name
+  const {
+    classHash: helloStarknetClassHash,
+    abi: helloStarknetAbi,
+    address: ContractAddress,
+  } = await deployContract(null, "HelloStarknet"); // can pass another argument for the exported contract name
+  await deployContract(
+    {
+      name: 1,
+    },
+    "SimpleStorage"
+  );
+
   // await deployContract(
   //   {
-  //     name: 1,
+  //     name: "MARQUIS",
+  //     symbol: "MARQ",
+  //     recipient: deployer.address,
+  //     fixed_supply: 100,
   //   },
-  //   "SimpleStorage"
+  //   "Challenge1"
   // );
-  await deployContract(null, "Challenge0");
+
   // await deployContract(
   //   {
   //     name: 1,
@@ -165,7 +171,8 @@ const deployScript = async () => {
 
   // await deployContract(
   //   {
-  //     public_key: "0x6e4fd4f9d6442e10cf8e20a799be3533be3756c5ea4d13e16a297d7d2717039",
+  //     public_key:
+  //       "0x6e4fd4f9d6442e10cf8e20a799be3533be3756c5ea4d13e16a297d7d2717039",
   //   },
   //   "Challenge3"
   // );
@@ -183,9 +190,8 @@ const deployScript = async () => {
   // );
   // await deployContract(
   //   {
-  //     initial_owner: addAddressPadding(
-  //       "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"
-  //     ),
+  //     initial_owner:
+  //       "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
   //   },
   //   "Ownable"
   // ); // simple storage receives an argument in the constructor
