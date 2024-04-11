@@ -36,7 +36,7 @@ export const ReadOnlyFunctionForm = ({
   );
   const [result, setResult] = useState<unknown>();
 
-  const { isFetching, refetch } = useContractRead({
+  const { isLoading, isFetching, refetch } = useContractRead({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
@@ -85,9 +85,9 @@ export const ReadOnlyFunctionForm = ({
             const { data } = await refetch();
             setResult(data);
           }}
-          disabled={isFetching}
+          disabled={!isLoading && isFetching}
         >
-          {isFetching && (
+          {(!isLoading && isFetching) && (
             <span className="loading loading-spinner loading-xs"></span>
           )}
           Read 📡
