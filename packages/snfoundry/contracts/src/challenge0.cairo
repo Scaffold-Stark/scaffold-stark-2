@@ -65,7 +65,8 @@ mod Challenge0 {
         fn mint_item(ref self: ContractState, recipient: ContractAddress) -> u256 {
             self._increment();
             let token_id = self._current();
-            self.erc721._mint(recipient, token_id); // _mint include _setTokenURI()
+            let data = array![].span();
+            self.erc721._safe_mint(recipient, token_id, data);
             token_id
         }
         fn mint_id(ref self: ContractState, recipient: ContractAddress, id: u256) {
