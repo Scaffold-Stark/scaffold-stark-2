@@ -604,7 +604,7 @@ const deployedContracts = {
     },
     Challenge0: {
       address:
-        "0x04c0c6e25c5390f336eb281aea82b675e9150702f1bcba64b144e7b61c02d356",
+        "0x047615b2387eed7eaeed17d87c357e00240f9e80d858b4d4ade2fd3c707a424c",
       abi: [
         {
           type: "impl",

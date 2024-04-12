@@ -25,7 +25,7 @@ mod Challenge0 {
     impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
 
     impl ERC721InternalImpl = ERC721Component::InternalImpl<ContractState>;
-    impl InternalImpl = OwnableComponent::InternalImpl<ContractState>;
+    impl OwnableInternalImpl = OwnableComponent::InternalImpl<ContractState>;
 
     #[storage]
     struct Storage {
@@ -34,7 +34,8 @@ mod Challenge0 {
         #[substorage(v0)]
         src5: SRC5Component::Storage,
         #[substorage(v0)]
-        ownable: OwnableComponent::Storage
+        ownable: OwnableComponent::Storage,
+        counter: u256
     }
 
     #[event]
@@ -62,12 +63,24 @@ mod Challenge0 {
     #[abi(embed_v0)]
     pub impl Challenge0Impl of IChallenge0<ContractState> {
         fn mint_item(ref self: ContractState, recipient: ContractAddress) -> u256 {
-            let id: u256 = 1;
-            self.erc721._mint(recipient, id); // _mint include _setTokenURI()
-            id
+            self._increment();
+            let token_id = self._current();
+            self.erc721._mint(recipient, token_id); // _mint include _setTokenURI()
+            token_id
         }
         fn mint_id(ref self: ContractState, recipient: ContractAddress, id: u256) {
             self.erc721._mint(recipient, id);
+        }
+    }
+
+    #[generate_trait]
+    impl InternalImpl of InternalTrait {
+        fn _increment(ref self: ContractState) {
+            self.counter.write(self.counter.read() + 1);
+        }
+
+        fn _current(ref self: ContractState) -> u256 {
+            self.counter.read()
         }
     }
 }
