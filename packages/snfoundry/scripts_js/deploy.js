@@ -138,7 +138,7 @@ const deployScript = async () => {
   // );
 
   await deployContract(
-    null,
+    {owner: deployer.address},
     "Challenge0"
   );
 

@@ -7,26 +7,34 @@ pub trait IChallenge0<T> {
 }
 #[starknet::contract]
 mod Challenge0 {
-    use super::IChallenge0;
+    use super::{IChallenge0, ContractAddress};
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::token::erc721::ERC721Component;
-    use starknet::ContractAddress;
+    use openzeppelin::access::ownable::OwnableComponent;
 
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
+    component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
+
 
     #[abi(embed_v0)]
     impl ERC721Impl = ERC721Component::ERC721Impl<ContractState>;
     #[abi(embed_v0)]
     impl ERC721MetadataImpl = ERC721Component::ERC721MetadataImpl<ContractState>;
+    #[abi(embed_v0)]
+    impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
+
     impl ERC721InternalImpl = ERC721Component::InternalImpl<ContractState>;
+    impl InternalImpl = OwnableComponent::InternalImpl<ContractState>;
 
     #[storage]
     struct Storage {
         #[substorage(v0)]
         erc721: ERC721Component::Storage,
         #[substorage(v0)]
-        src5: SRC5Component::Storage
+        src5: SRC5Component::Storage,
+        #[substorage(v0)]
+        ownable: OwnableComponent::Storage
     }
 
     #[event]
@@ -35,17 +43,20 @@ mod Challenge0 {
         #[flat]
         ERC721Event: ERC721Component::Event,
         #[flat]
-        SRC5Event: SRC5Component::Event
+        SRC5Event: SRC5Component::Event,
+        #[flat]
+        OwnableEvent: OwnableComponent::Event
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState) {
+    fn constructor(ref self: ContractState, owner: ContractAddress) {
         let name: ByteArray = "YourCollectible";
         let symbol: ByteArray = "YCB";
         let base_uri: ByteArray =
             "https://ipfs.io/ipfs/QmfVMAmNM1kDEBYrC2TPzQDoCRFH6F5tE1e9Mr4FkkR5Xr"; // bison nft
 
         self.erc721.initializer(name, symbol, base_uri);
+        self.ownable.initializer(owner);
     }
 
     #[abi(embed_v0)]
