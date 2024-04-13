@@ -2,7 +2,7 @@ use starknet::ContractAddress;
 
 #[starknet::interface]
 trait IChallenge0<T> {
-    fn mint_item(ref self: T, recipient: ContractAddress //, uri: ByteArray
+    fn mint_item(ref self: T, recipient: ContractAddress, uri: ByteArray
     ) -> u256;
     fn tokenIdCounter(self: @T) -> u256;
     fn full_token_uri(self: @T, token_id: u256) -> ByteArray;
@@ -65,13 +65,11 @@ mod Challenge0 {
     #[abi(embed_v0)]
     impl Challenge0Impl of IChallenge0<ContractState> {
         fn mint_item(
-            ref self: ContractState, recipient: ContractAddress //, uri: ByteArray
+            ref self: ContractState, recipient: ContractAddress, uri: ByteArray
         ) -> u256 {
             self._increment();
             let token_id = self._current();
             self.erc721._mint(recipient, token_id);
-            let uri: ByteArray =
-                "QmfVMAmNM1kDEBYrC2TPzQDoCRFH6F5tE1e9Mr4FkkR5Xr"; // Pass this as an argument
             self._setTokenURI(token_id, uri);
             token_id
         }
