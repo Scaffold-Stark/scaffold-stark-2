@@ -248,26 +248,25 @@ type UseScaffoldArgsParam<
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>
   >,
-> =
-  TFunctionName extends ExtractAbiFunctionNamesWithInputsScaffold<
-    ContractAbi<TContractName>
-  >
-    ? {
-        args: OptionalTupple<
-          UnionToIntersection<
-            ExtractArgs<
+> = TFunctionName extends ExtractAbiFunctionNamesWithInputsScaffold<
+  ContractAbi<TContractName>
+>
+  ? {
+      args: OptionalTupple<
+        UnionToIntersection<
+          ExtractArgs<
+            ContractAbi<TContractName>,
+            ExtractAbiFunctionScaffold<
               ContractAbi<TContractName>,
-              ExtractAbiFunctionScaffold<
-                ContractAbi<TContractName>,
-                TFunctionName
-              >
+              TFunctionName
             >
           >
-        >;
-      }
-    : {
-        args?: never;
-      };
+        >
+      >;
+    }
+  : {
+      args?: never;
+    };
 
 export type UseScaffoldReadConfig<
   TContractName extends ContractName,

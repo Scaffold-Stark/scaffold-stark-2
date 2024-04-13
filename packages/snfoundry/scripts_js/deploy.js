@@ -14,17 +14,17 @@ const { provider, deployer } = networks[networkName];
 const deployContract = async (
   constructorArgs,
   contractName,
-  exportContractName
+  exportContractName,
 ) => {
   const compiledContractCasm = JSON.parse(
     fs
       .readFileSync(
         path.resolve(
           __dirname,
-          `../contracts/target/dev/contracts_${contractName}.compiled_contract_class.json`
-        )
+          `../contracts/target/dev/contracts_${contractName}.compiled_contract_class.json`,
+        ),
       )
-      .toString("ascii")
+      .toString("ascii"),
   );
 
   const compiledContractSierra = JSON.parse(
@@ -32,10 +32,10 @@ const deployContract = async (
       .readFileSync(
         path.resolve(
           __dirname,
-          `../contracts/target/dev/contracts_${contractName}.contract_class.json`
-        )
+          `../contracts/target/dev/contracts_${contractName}.contract_class.json`,
+        ),
       )
-      .toString("ascii")
+      .toString("ascii"),
   );
 
   let classHash;
@@ -43,7 +43,7 @@ const deployContract = async (
   let contractAddress;
 
   const precomputedClassHash = hash.computeSierraContractClassHash(
-    compiledContractSierra
+    compiledContractSierra,
   );
   const contractCalldata = new CallData(compiledContractSierra.abi);
   const constructorCalldata = constructorArgs
@@ -60,7 +60,7 @@ const deployContract = async (
           contract: compiledContractSierra,
           casm: compiledContractCasm,
         },
-        {}
+        {},
       );
     totalFee = estimatedFeeDeclare * 2n;
   } catch (e) {
@@ -81,14 +81,14 @@ const deployContract = async (
       },
       {
         maxFee: totalFee * 20n, // this optional max fee serves when error AccountValidation Failed or small fee on public networks , try 5n , 10n, 20n, 50n, 100n
-      }
+      },
     );
     const debug = await provider.waitForTransaction(
       tryDeclareAndDeploy.deploy.transaction_hash,
       {
         successStates: [TransactionStatus.ACCEPTED_ON_L2],
         // retryInterval: 10000, // we can retry in 10 seconds
-      }
+      },
     );
     classHash = tryDeclareAndDeploy.declare.class_hash;
     existingClass = await provider.getClassByHash(classHash);
@@ -100,7 +100,7 @@ const deployContract = async (
   console.log("Deployed contract ", contractName, " at: ", contractAddress);
   const chainIdPath = path.resolve(
     __dirname,
-    `../deployments/${networkName}.json`
+    `../deployments/${networkName}.json`,
   );
   let deployments = {};
   if (fs.existsSync(chainIdPath)) {
@@ -138,8 +138,11 @@ const deployScript = async () => {
   // );
 
   await deployContract(
-    {owner: "0x4b3f4ba8c00a02b66142a4b1dd41a4dfab4f92650922a3280977b0f03c75ee1"}, // last account in devnet accounts
-    "Challenge0"
+    {
+      owner:
+        "0x4b3f4ba8c00a02b66142a4b1dd41a4dfab4f92650922a3280977b0f03c75ee1",
+    }, // last account in devnet accounts
+    "Challenge0",
   );
 
   // await deployContract(
