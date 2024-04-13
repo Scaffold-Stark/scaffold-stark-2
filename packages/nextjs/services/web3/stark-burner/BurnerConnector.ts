@@ -46,8 +46,8 @@ export class BurnerConnector extends InjectedConnector {
           chainId: starknetChainId(this.chain.id),
         }),
         address,
-        privateKey
-      )
+        privateKey,
+      ),
     );
   }
 

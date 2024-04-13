@@ -12,7 +12,8 @@ export const BurnerConnectorErrorList = {
 /**
  * A union of all the BurnerConnectorErrorList
  */
-export type BurnerConnectorErrorTypes = (typeof BurnerConnectorErrorList)[keyof typeof BurnerConnectorErrorList];
+export type BurnerConnectorErrorTypes =
+  (typeof BurnerConnectorErrorList)[keyof typeof BurnerConnectorErrorList];
 
 export class BurnerConnectorError extends Error {
   constructor(errorType: BurnerConnectorErrorTypes, message?: string) {

@@ -29,7 +29,7 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
   });
 
   const [displayUsdMode, setDisplayUsdMode] = useState(
-    price > 0 ? Boolean(usdMode) : false
+    price > 0 ? Boolean(usdMode) : false,
   );
 
   const toggleBalanceMode = () => {

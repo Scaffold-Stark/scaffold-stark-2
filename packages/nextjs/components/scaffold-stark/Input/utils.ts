@@ -79,7 +79,7 @@ export const UNSIGNED_NUMBER_REGEX = /^\.?\d+\.?\d*$/;
 export const isValidInteger = (
   dataType: IntegerVariant,
   value: bigint | string,
-  strict = true
+  strict = true,
 ) => {
   const isSigned = dataType.startsWith("i");
   const bitcount = Number(dataType.substring(isSigned ? 3 : 4));

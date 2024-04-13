@@ -4,13 +4,13 @@ import React, { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {Bars3Icon, BugAntIcon} from "@heroicons/react/24/outline";
+import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
 // import {
 //   FaucetButton,
 //   RainbowKitCustomConnectButton,
 // } from "~~/components/scaffold-eth";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
-import {CustomConnectButton} from "~~/components/scaffold-stark/CustomConnectButton";
+import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
 
 type HeaderMenuLink = {
   label: string;
@@ -64,7 +64,7 @@ export const Header = () => {
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   useOutsideClick(
     burgerMenuRef,
-    useCallback(() => setIsDrawerOpen(false), [])
+    useCallback(() => setIsDrawerOpen(false), []),
   );
 
   return (
@@ -117,7 +117,7 @@ export const Header = () => {
         </ul>
       </div>
       <div className="navbar-end flex-grow mr-4">
-        <CustomConnectButton/>
+        <CustomConnectButton />
       </div>
     </div>
   );

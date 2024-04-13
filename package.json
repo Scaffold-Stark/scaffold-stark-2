@@ -17,11 +17,14 @@
     "next:lint": "yarn workspace @ss-2/nextjs lint",
     "next:check-types": "yarn workspace @ss-2/nextjs check-types",
     "vercel": "yarn workspace @ss-2/nextjs vercel",
-    "vercel:yolo": "yarn workspace @ss-2/nextjs vercel:yolo"
+    "vercel:yolo": "yarn workspace @ss-2/nextjs vercel:yolo",
+    "format": "yarn workspace @ss-2/nextjs format && yarn workspace @ss-2/snfoundry format",
+    "format:check": "yarn workspace @ss-2/nextjs format:check"
   },
   "packageManager": "yarn@3.2.3",
   "devDependencies": {
-    "daisyui": "^4.7.3"
+    "daisyui": "^4.7.3",
+    "prettier": "^3.2.5"
   },
   "dependencies": {
     "postcss": "^8.4.38"

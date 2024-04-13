@@ -16,7 +16,7 @@ export const useScaffoldContractRead = <
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>,
     "view"
-  >
+  >,
 >({
   contractName,
   functionName,

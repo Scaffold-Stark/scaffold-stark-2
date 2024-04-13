@@ -6,7 +6,7 @@ import { uint256 } from "starknet";
 const getFunctionInputKey = (
   functionName: string,
   input: AbiParameter,
-  inputIndex: number
+  inputIndex: number,
 ): string => {
   const name = input?.name || `input_${inputIndex}_`;
   return functionName + "_" + name + "_" + input.type;
@@ -113,7 +113,7 @@ const transformAbiFunction = (abiFunction: AbiFunction): AbiFunction => {
   return {
     ...abiFunction,
     inputs: abiFunction.inputs.map((value) =>
-      adjustInput(value as AbiParameter)
+      adjustInput(value as AbiParameter),
     ),
   };
 };
