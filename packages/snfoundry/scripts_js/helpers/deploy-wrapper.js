@@ -9,5 +9,5 @@ require("child_process").execSync(
   "cd contracts && scarb build && node ../scripts_js/deploy.js --network " +
     process.env.NETWORK +
     " && node ../scripts_js/helpers/parseDeployments.js",
-  { stdio: "inherit" }
+  { stdio: "inherit" },
 );

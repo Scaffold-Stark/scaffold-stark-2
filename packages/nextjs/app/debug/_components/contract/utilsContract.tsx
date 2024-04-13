@@ -1,5 +1,6 @@
 import { AbiFunction, AbiParameter } from "~~/utils/scaffold-stark/contract";
 import { uint256 } from "starknet";
+import { byteArray } from "starknet-dev";
 /**
  * Generates a key based on function metadata
  */
@@ -36,6 +37,9 @@ const deepParseValues = (value: any, keyAndType?: any): any => {
   if (keyAndType) {
     if (keyAndType.includes("core::integer::u256")) {
       return uint256.bnToUint256(value);
+    }
+    if (keyAndType.includes("core::byte_array::ByteArray")) {
+      return byteArray.byteArrayFromString(value);
     }
   }
   if (typeof value === "string") {
