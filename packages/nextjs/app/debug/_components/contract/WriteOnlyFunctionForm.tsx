@@ -44,7 +44,7 @@ export const WriteOnlyFunctionForm = ({
 }: //   inheritedFrom,
 WriteOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
-    getInitialFormState(abiFunction)
+    getInitialFormState(abiFunction),
   );
   const { chain } = useNetwork();
   const writeTxn = useTransactor();
@@ -74,7 +74,7 @@ WriteOnlyFunctionFormProps) => {
       } catch (e: any) {
         console.error(
           "⚡️ ~ file: WriteOnlyFunctionForm.tsx:handleWrite ~ error",
-          e
+          e,
         );
       }
     }

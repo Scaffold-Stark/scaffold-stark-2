@@ -78,7 +78,7 @@ const Notification = ({
     {
       duration: status === "loading" ? Infinity : duration,
       position,
-    }
+    },
   );
 };
 

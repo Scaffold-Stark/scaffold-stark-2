@@ -132,7 +132,7 @@ export type UseScaffoldWriteConfig<
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>,
     "external"
-  >
+  >,
 > = {
   contractName: TContractName;
 } & IsContractDeclarationMissing<
@@ -199,13 +199,13 @@ type Expand<T> = T extends object
 // helper function will only take from interfaces : //TODO: see if we can make it more generic
 export type ExtractAbiFunctionNamesScaffold<
   TAbi extends Abi,
-  TAbiStateMutability extends AbiStateMutability = AbiStateMutability
+  TAbiStateMutability extends AbiStateMutability = AbiStateMutability,
 > = ExtractAbiFunctionsScaffold<TAbi, TAbiStateMutability>["name"];
 
 // helper function will only take from interfaces : //TODO: see if we can make it more generic
 export type ExtractAbiFunctionsScaffold<
   TAbi extends Abi,
-  TAbiStateMutability extends AbiStateMutability = AbiStateMutability
+  TAbiStateMutability extends AbiStateMutability = AbiStateMutability,
 > = Extract<
   ExtractAbiInterfaces<TAbi>["items"][number],
   {
@@ -217,7 +217,7 @@ export type ExtractAbiFunctionsScaffold<
 // helper function will only take from interfaces : //TODO: see if we can make it more generic
 export type ExtractAbiFunctionNamesWithInputsScaffold<
   TAbi extends Abi,
-  TAbiStateMutibility extends AbiStateMutability = AbiStateMutability
+  TAbiStateMutibility extends AbiStateMutability = AbiStateMutability,
 > = Exclude<
   Extract<
     ExtractAbiInterfaces<TAbi>["items"][number],
@@ -233,7 +233,7 @@ export type ExtractAbiFunctionNamesWithInputsScaffold<
 
 export type ExtractAbiFunctionScaffold<
   TAbi extends Abi,
-  TFunctionName extends ExtractAbiFunctionNamesScaffold<TAbi>
+  TFunctionName extends ExtractAbiFunctionNamesScaffold<TAbi>,
 > = Extract<
   ExtractAbiFunctionsScaffold<TAbi>,
   {
@@ -247,32 +247,33 @@ type UseScaffoldArgsParam<
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>
+  >,
+> =
+  TFunctionName extends ExtractAbiFunctionNamesWithInputsScaffold<
+    ContractAbi<TContractName>
   >
-> = TFunctionName extends ExtractAbiFunctionNamesWithInputsScaffold<
-  ContractAbi<TContractName>
->
-  ? {
-      args: OptionalTupple<
-        UnionToIntersection<
-          ExtractArgs<
-            ContractAbi<TContractName>,
-            ExtractAbiFunctionScaffold<
+    ? {
+        args: OptionalTupple<
+          UnionToIntersection<
+            ExtractArgs<
               ContractAbi<TContractName>,
-              TFunctionName
+              ExtractAbiFunctionScaffold<
+                ContractAbi<TContractName>,
+                TFunctionName
+              >
             >
           >
-        >
-      >;
-    }
-  : {
-      args?: never;
-    };
+        >;
+      }
+    : {
+        args?: never;
+      };
 
 export type UseScaffoldReadConfig<
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>
-  >
+  >,
 > = {
   contractName: TContractName;
 } & IsContractDeclarationMissing<
@@ -285,7 +286,7 @@ export type UseScaffoldReadConfig<
 
 export type AbiFunctionOutputs<
   TAbi extends Abi,
-  TFunctionName extends string
+  TFunctionName extends string,
 > = ExtractAbiFunctionScaffold<TAbi, TFunctionName>["outputs"];
 
 /// export all the types from kanabi

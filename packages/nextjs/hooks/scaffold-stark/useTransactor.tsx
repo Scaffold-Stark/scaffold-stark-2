@@ -13,7 +13,7 @@ import {
 import { useTargetNetwork } from "./useTargetNetwork";
 
 type TransactionFunc = (
-  tx: () => Promise<InvokeFunctionResponse> | Promise<string>
+  tx: () => Promise<InvokeFunctionResponse> | Promise<string>,
   // | SendTransactionParameters,
 ) => Promise<string | undefined>;
 
@@ -50,7 +50,7 @@ const TxnNotification = ({
  * @returns function that takes in transaction function as callback, shows UI feedback for transaction and returns a promise of the transaction hash
  */
 export const useTransactor = (
-  _walletClient?: AccountInterface
+  _walletClient?: AccountInterface,
 ): TransactionFunc => {
   let walletClient = _walletClient;
   const { account } = useAccount();
@@ -78,7 +78,7 @@ export const useTransactor = (
       });
 
       notificationId = notification.loading(
-        <TxnNotification message="Awaiting for user confirmation" />
+        <TxnNotification message="Awaiting for user confirmation" />,
       );
       if (typeof tx === "function") {
         // Tx is already prepared by the caller
@@ -103,12 +103,11 @@ export const useTransactor = (
         <TxnNotification
           message="Waiting for transaction to complete."
           blockExplorerLink={blockExplorerTxURL}
-        />
+        />,
       );
 
-      const transactionReceipt = await publicClient.waitForTransaction(
-        transactionHash
-      );
+      const transactionReceipt =
+        await publicClient.waitForTransaction(transactionHash);
       notification.remove(notificationId);
 
       notification.success(
@@ -118,7 +117,7 @@ export const useTransactor = (
         />,
         {
           icon: "🎉",
-        }
+        },
       );
     } catch (error: any) {
       if (notificationId) {

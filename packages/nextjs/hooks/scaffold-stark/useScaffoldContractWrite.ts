@@ -23,7 +23,7 @@ export const useScaffoldContractWrite = <
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>,
     "external"
-  >
+  >,
 >({
   contractName,
   functionName,
@@ -56,7 +56,7 @@ export const useScaffoldContractWrite = <
   } & UpdatedArgs = {}) => {
     if (!deployedContractData) {
       console.error(
-        "Target Contract is not deployed, did you forget to run `yarn deploy`?"
+        "Target Contract is not deployed, did you forget to run `yarn deploy`?",
       );
       return;
     }
@@ -90,7 +90,7 @@ export const useScaffoldContractWrite = <
           wagmiContractWrite.writeAsync({
             calls: newCalls as any[],
             options: newOptions ?? options,
-          })
+          }),
         );
 
         return writeTxResult;
