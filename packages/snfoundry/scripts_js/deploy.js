@@ -138,7 +138,7 @@ const deployScript = async () => {
   // );
 
   await deployContract(
-    {owner: deployer.address},
+    {owner: "0x4b3f4ba8c00a02b66142a4b1dd41a4dfab4f92650922a3280977b0f03c75ee1"}, // last account in devnet accounts
     "Challenge0"
   );
 

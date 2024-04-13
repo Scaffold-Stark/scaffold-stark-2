@@ -1,9 +1,11 @@
 use starknet::ContractAddress;
 
 #[starknet::interface]
-pub trait IChallenge0<T> {
-    fn mint_item(ref self: T, recipient: ContractAddress) -> u256;
-    fn mint_id(ref self: T, recipient: ContractAddress, id: u256);
+trait IChallenge0<T> {
+    fn mint_item(ref self: T, recipient: ContractAddress //, uri: ByteArray
+    ) -> u256;
+    fn tokenIdCounter(self: @T) -> u256;
+    fn full_token_uri(self: @T, token_id: u256) -> ByteArray;
 }
 #[starknet::contract]
 mod Challenge0 {
@@ -35,7 +37,8 @@ mod Challenge0 {
         src5: SRC5Component::Storage,
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
-        counter: u256
+        counter: u256,
+        token_uris: LegacyMap<u256, ByteArray>,
     }
 
     #[event]
@@ -53,24 +56,31 @@ mod Challenge0 {
     fn constructor(ref self: ContractState, owner: ContractAddress) {
         let name: ByteArray = "YourCollectible";
         let symbol: ByteArray = "YCB";
-        let base_uri: ByteArray =
-            "https://ipfs.io/ipfs/QmfVMAmNM1kDEBYrC2TPzQDoCRFH6F5tE1e9Mr4FkkR5Xr"; // bison nft
+        let base_uri: ByteArray = "https://ipfs.io/";
 
         self.erc721.initializer(name, symbol, base_uri);
         self.ownable.initializer(owner);
     }
 
     #[abi(embed_v0)]
-    pub impl Challenge0Impl of IChallenge0<ContractState> {
-        fn mint_item(ref self: ContractState, recipient: ContractAddress) -> u256 {
+    impl Challenge0Impl of IChallenge0<ContractState> {
+        fn mint_item(
+            ref self: ContractState, recipient: ContractAddress //, uri: ByteArray
+        ) -> u256 {
             self._increment();
             let token_id = self._current();
-            let data = array![].span();
-            self.erc721._safe_mint(recipient, token_id, data);
+            self.erc721._mint(recipient, token_id);
+            let uri: ByteArray =
+                "QmfVMAmNM1kDEBYrC2TPzQDoCRFH6F5tE1e9Mr4FkkR5Xr"; // Pass this as an argument
+            self._setTokenURI(token_id, uri);
             token_id
         }
-        fn mint_id(ref self: ContractState, recipient: ContractAddress, id: u256) {
-            self.erc721._mint(recipient, id);
+        fn tokenIdCounter(self: @ContractState) -> u256 {
+            self._current()
+        }
+
+        fn full_token_uri(self: @ContractState, token_id: u256) -> ByteArray {
+            format!("{}{}", self.erc721._base_uri(), self.token_uris.read(token_id))
         }
     }
 
@@ -80,8 +90,12 @@ mod Challenge0 {
             self.counter.write(self.counter.read() + 1);
         }
 
-        fn _current(ref self: ContractState) -> u256 {
+        fn _current(self: @ContractState) -> u256 {
             self.counter.read()
+        }
+
+        fn _setTokenURI(ref self: ContractState, token_id: u256, uri: ByteArray) {
+            self.token_uris.write(token_id, uri);
         }
     }
 }
