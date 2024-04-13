@@ -3,7 +3,7 @@ use starknet::ContractAddress;
 #[starknet::interface]
 trait IChallenge0<T> {
     fn mint_item(ref self: T, recipient: ContractAddress, uri: ByteArray) -> u256;
-    fn tokenIdCounter(self: @T) -> u256;
+    fn token_id_counter(self: @T) -> u256;
 }
 #[starknet::contract]
 mod Challenge0 {
@@ -62,7 +62,7 @@ mod Challenge0 {
     #[abi(embed_v0)]
     impl WrappedIERC721MetadataImpl of IERC721Metadata<ContractState> {
         fn token_uri(self: @ContractState, token_id: u256) -> ByteArray {
-            self._full_token_uri(token_id)
+            self._token_uri(token_id)
         }
         fn name(self: @ContractState) -> ByteArray {
             self.erc721.name()
@@ -78,10 +78,10 @@ mod Challenge0 {
             self._increment();
             let token_id = self._current();
             self.erc721._mint(recipient, token_id);
-            self._setTokenURI(token_id, uri);
+            self._set_token_uri(token_id, uri);
             token_id
         }
-        fn tokenIdCounter(self: @ContractState) -> u256 {
+        fn token_id_counter(self: @ContractState) -> u256 {
             self._current()
         }
     }
@@ -96,14 +96,14 @@ mod Challenge0 {
             self.counter.read()
         }
 
-        fn _full_token_uri(self: @ContractState, token_id: u256) -> ByteArray {
+        fn _token_uri(self: @ContractState, token_id: u256) -> ByteArray {
             assert(self.erc721._exists(token_id), ERC721Component::Errors::INVALID_TOKEN_ID);
             let base_uri = self.erc721._base_uri();
-            let token_uri = self.token_uris.read(token_id);
-            format!("{}{}", base_uri, token_uri)
+            let uri = self.token_uris.read(token_id);
+            format!("{}{}", base_uri, uri)
         }
 
-        fn _setTokenURI(ref self: ContractState, token_id: u256, uri: ByteArray) {
+        fn _set_token_uri(ref self: ContractState, token_id: u256, uri: ByteArray) {
             self.token_uris.write(token_id, uri);
         }
     }
