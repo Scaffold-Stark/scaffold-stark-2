@@ -2,10 +2,8 @@ use starknet::ContractAddress;
 
 #[starknet::interface]
 trait IChallenge0<T> {
-    fn mint_item(ref self: T, recipient: ContractAddress, uri: ByteArray
-    ) -> u256;
+    fn mint_item(ref self: T, recipient: ContractAddress, uri: ByteArray) -> u256;
     fn tokenIdCounter(self: @T) -> u256;
-    fn full_token_uri(self: @T, token_id: u256) -> ByteArray;
 }
 #[starknet::contract]
 mod Challenge0 {
@@ -13,6 +11,7 @@ mod Challenge0 {
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::token::erc721::ERC721Component;
     use openzeppelin::access::ownable::OwnableComponent;
+    use openzeppelin::token::erc721::interface::IERC721Metadata;
 
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
@@ -21,8 +20,6 @@ mod Challenge0 {
 
     #[abi(embed_v0)]
     impl ERC721Impl = ERC721Component::ERC721Impl<ContractState>;
-    #[abi(embed_v0)]
-    impl ERC721MetadataImpl = ERC721Component::ERC721MetadataImpl<ContractState>;
     #[abi(embed_v0)]
     impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
 
@@ -63,10 +60,21 @@ mod Challenge0 {
     }
 
     #[abi(embed_v0)]
+    impl WrappedIERC721MetadataImpl of IERC721Metadata<ContractState> {
+        fn token_uri(self: @ContractState, token_id: u256) -> ByteArray {
+            self._full_token_uri(token_id)
+        }
+        fn name(self: @ContractState) -> ByteArray {
+            self.erc721.name()
+        }
+        fn symbol(self: @ContractState) -> ByteArray {
+            self.erc721.symbol()
+        }
+    }
+
+    #[abi(embed_v0)]
     impl Challenge0Impl of IChallenge0<ContractState> {
-        fn mint_item(
-            ref self: ContractState, recipient: ContractAddress, uri: ByteArray
-        ) -> u256 {
+        fn mint_item(ref self: ContractState, recipient: ContractAddress, uri: ByteArray) -> u256 {
             self._increment();
             let token_id = self._current();
             self.erc721._mint(recipient, token_id);
@@ -75,10 +83,6 @@ mod Challenge0 {
         }
         fn tokenIdCounter(self: @ContractState) -> u256 {
             self._current()
-        }
-
-        fn full_token_uri(self: @ContractState, token_id: u256) -> ByteArray {
-            format!("{}{}", self.erc721._base_uri(), self.token_uris.read(token_id))
         }
     }
 
@@ -90,6 +94,13 @@ mod Challenge0 {
 
         fn _current(self: @ContractState) -> u256 {
             self.counter.read()
+        }
+
+        fn _full_token_uri(self: @ContractState, token_id: u256) -> ByteArray {
+            assert(self.erc721._exists(token_id), ERC721Component::Errors::INVALID_TOKEN_ID);
+            let base_uri = self.erc721._base_uri();
+            let token_uri = self.token_uris.read(token_id);
+            format!("{}{}", base_uri, token_uri)
         }
 
         fn _setTokenURI(ref self: ContractState, token_id: u256, uri: ByteArray) {
