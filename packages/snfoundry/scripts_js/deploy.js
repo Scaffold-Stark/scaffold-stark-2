@@ -10,27 +10,25 @@ const { CallData } = require("starknet-dev");
 const deployContract = require("./deploy_contract");
 
 const deployScript = async () => {
-  const {
-    classHash: helloStarknetClassHash,
-    abi: helloStarknetAbi,
-    address: ContractAddress,
-  } = await deployContract(null, "HelloStarknet"); // can pass another argument for the exported contract name
-  await deployContract(
-    {
-      name: 1,
-    },
-    "SimpleStorage"
-  );
-
+  // const {
+  //   classHash: helloStarknetClassHash,
+  //   abi: helloStarknetAbi,
+  //   address: ContractAddress,
+  // } = await deployContract(null, "HelloStarknet"); // can pass another argument for the exported contract name
   // await deployContract(
   //   {
-  //     name: "MARQUIS",
-  //     symbol: "MARQ",
-  //     recipient: deployer.address,
-  //     fixed_supply: 100,
+  //     name: 1,
   //   },
-  //   "Challenge1"
+  //   "SimpleStorage"
   // );
+
+  await deployContract(
+    {
+      owner:
+        "0x4b3f4ba8c00a02b66142a4b1dd41a4dfab4f92650922a3280977b0f03c75ee1",
+    }, // last account in devnet accounts
+    "Challenge0",
+  );
 
   // await deployContract(
   //   {
