@@ -3,7 +3,7 @@ mod simpleStorage;
 mod vote;
 mod challenge0;
 mod challenge1;
-mod challenge2;
+mod presetERC1155;
 mod challenge3;
 
 use starknet::ContractAddress;
