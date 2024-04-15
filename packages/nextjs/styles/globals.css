@@ -46,9 +46,8 @@ p {
 }
 .footer-header-landing {
   background-image: url("/footer-main-landing.png");
-  background-size: auto 130px;
+  background-size: contain;
   background-repeat: repeat-x;
-  background-position: bottom;
   width: 100%;
   height: 130px;
 }
