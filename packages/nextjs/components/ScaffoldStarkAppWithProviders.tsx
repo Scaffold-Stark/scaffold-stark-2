@@ -17,8 +17,11 @@ import { ProgressBar } from "~~/components/scaffold-stark/ProgressBar";
 import { appChains } from "~~/services/web3/connectors";
 import { BurnerConnector } from "~~/services/web3/stark-burner/BurnerConnector";
 import provider from "~~/services/web3/provider";
+import { useNativeCurrencyPrice } from "~~/hooks/scaffold-stark/useNativeCurrencyPrice";
 
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
+  useNativeCurrencyPrice();
+
   return (
     <>
       <div className="flex flex-col min-h-screen">
