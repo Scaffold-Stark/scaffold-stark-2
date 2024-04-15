@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useCallback, useRef, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { BugAntIcon} from "@heroicons/react/24/outline";
+
+import { BugAntIcon } from "@heroicons/react/24/outline";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
-import {CustomConnectButton} from "~~/components/scaffold-stark/CustomConnectButton";
+import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
 
 type HeaderMenuLink = {
   label: string;
@@ -59,13 +58,13 @@ export const Header = () => {
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   useOutsideClick(
     burgerMenuRef,
-    useCallback(() => setIsDrawerOpen(false), [])
+    useCallback(() => setIsDrawerOpen(false), []),
   );
 
   return (
     <div className="lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2 bg-base-100">
       <div className="navbar-end flex-grow mr-4">
-        <CustomConnectButton/>
+        <CustomConnectButton />
       </div>
     </div>
   );

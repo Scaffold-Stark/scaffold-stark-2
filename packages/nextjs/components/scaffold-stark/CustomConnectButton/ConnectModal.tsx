@@ -2,7 +2,7 @@ import Image from "next/image";
 import GenericModal from "./GenericModal";
 import { Connector, useConnect } from "@starknet-react/core";
 import { useEffect, useState } from "react";
-import {useLocalStorage} from "usehooks-ts";
+import { useLocalStorage } from "usehooks-ts";
 
 type Props = {
   isOpen: boolean;
@@ -28,8 +28,8 @@ const Wallet = ({
 }) => {
   const { connect } = useConnect();
   const isSvg = src?.startsWith("<svg");
-  const [_,setLastConnector] = useLocalStorage("lastUsedConnector", "", {
-    initializeWithValue: false
+  const [_, setLastConnector] = useLocalStorage("lastUsedConnector", "", {
+    initializeWithValue: false,
   });
 
   function handleConnectWallet(e: React.MouseEvent<HTMLButtonElement>): void {

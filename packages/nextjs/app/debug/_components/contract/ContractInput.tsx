@@ -14,6 +14,7 @@ import {
 } from "~~/components/scaffold-stark";
 // import { AbiParameterTuple } from "~~/utils/scaffold-eth/contract";
 import { AbiParameter } from "~~/utils/scaffold-stark/contract";
+import { displayType } from "./utilsDisplay";
 
 type ContractInputProps = {
   setForm: Dispatch<SetStateAction<Record<string, any>>>;
@@ -35,8 +36,8 @@ export const ContractInput = ({
     name: stateObjectKey,
     value: form?.[stateObjectKey],
     placeholder: paramType.name
-      ? `${paramType.type} ${paramType.name}`
-      : paramType.type,
+      ? `${displayType(paramType.type)} ${paramType.name}`
+      : displayType(paramType.type),
     onChange: (value: any) => {
       setForm((form) => ({ ...form, [stateObjectKey]: value }));
     },
@@ -95,7 +96,7 @@ export const ContractInput = ({
           </span>
         )}
         <span className="block text-xs font-extralight leading-none">
-          {paramType.type}
+          {displayType(paramType.type)}
         </span>
       </div>
       {renderInput()}

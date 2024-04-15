@@ -5,10 +5,12 @@ export const useSwitchNetwork = () => {
         await window.starknet.request({
           type: "wallet_switchStarknetChain",
           params: {
-            chainId: `SN_${network == "mainnet" ? "MAIN" : network.toUpperCase()}`
-          }
+            chainId: `SN_${
+              network == "mainnet" ? "MAIN" : network.toUpperCase()
+            }`,
+          },
         });
       }
-    }
-  }
-}
+    },
+  };
+};

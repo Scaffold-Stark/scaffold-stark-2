@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { InheritanceTooltip } from "./InheritanceTooltip";
 import { Abi } from "abi-wan-kanabi";
 import { Address } from "@starknet-react/chains";
 import {
@@ -12,7 +11,6 @@ import {
   getParsedContractFunctionArgs,
   transformAbiFunction,
 } from "~~/app/debug/_components/contract";
-import { notification } from "~~/utils/scaffold-stark";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { BlockNumber } from "starknet";
 import { useContractRead } from "@starknet-react/core";
@@ -32,11 +30,11 @@ export const ReadOnlyFunctionForm = ({
   abi,
 }: ReadOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
-    getInitialFormState(abiFunction)
+    getInitialFormState(abiFunction),
   );
   const [result, setResult] = useState<unknown>();
 
-  const { isFetching, refetch } = useContractRead({
+  const { isLoading, isFetching, refetch } = useContractRead({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
@@ -74,7 +72,7 @@ export const ReadOnlyFunctionForm = ({
             <div className="bg-secondary rounded-3xl text-sm px-4 py-1.5 break-words">
               <p className="font-bold m-0 mb-1">Result:</p>
               <pre className="whitespace-pre-wrap break-words">
-                {displayTxResult(result)}
+                {displayTxResult(result, false, abiFunction?.outputs)}
               </pre>
             </div>
           )}
@@ -83,12 +81,11 @@ export const ReadOnlyFunctionForm = ({
           className="btn btn-secondary btn-sm"
           onClick={async () => {
             const { data } = await refetch();
-            console.log(data);
             setResult(data);
           }}
-          disabled={isFetching}
+          disabled={!isLoading && isFetching}
         >
-          {isFetching && (
+          {!isLoading && isFetching && (
             <span className="loading loading-spinner loading-xs"></span>
           )}
           Read 📡

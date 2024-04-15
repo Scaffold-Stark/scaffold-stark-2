@@ -3,14 +3,10 @@ const path = require("path");
 const networks = require("./helpers/networks");
 const argv = require("yargs/yargs")(process.argv.slice(2)).argv;
 
-const {
-  ContractAddress,
-  getChecksumAddress,
-  CallData,
-  TransactionStatus,
-  addAddressPadding,
-} = require("starknet");
+const { TransactionStatus } = require("starknet");
 const { hash } = require("starknet");
+
+const { CallData } = require("starknet-dev");
 
 const networkName = argv.network;
 
@@ -18,17 +14,17 @@ const { provider, deployer } = networks[networkName];
 const deployContract = async (
   constructorArgs,
   contractName,
-  exportContractName
+  exportContractName,
 ) => {
   const compiledContractCasm = JSON.parse(
     fs
       .readFileSync(
         path.resolve(
           __dirname,
-          `../contracts/target/dev/contracts_${contractName}.compiled_contract_class.json`
-        )
+          `../contracts/target/dev/contracts_${contractName}.compiled_contract_class.json`,
+        ),
       )
-      .toString("ascii")
+      .toString("ascii"),
   );
 
   const compiledContractSierra = JSON.parse(
@@ -36,10 +32,10 @@ const deployContract = async (
       .readFileSync(
         path.resolve(
           __dirname,
-          `../contracts/target/dev/contracts_${contractName}.contract_class.json`
-        )
+          `../contracts/target/dev/contracts_${contractName}.contract_class.json`,
+        ),
       )
-      .toString("ascii")
+      .toString("ascii"),
   );
 
   let classHash;
@@ -47,7 +43,7 @@ const deployContract = async (
   let contractAddress;
 
   const precomputedClassHash = hash.computeSierraContractClassHash(
-    compiledContractSierra
+    compiledContractSierra,
   );
   const contractCalldata = new CallData(compiledContractSierra.abi);
   const constructorCalldata = constructorArgs
@@ -64,7 +60,7 @@ const deployContract = async (
           contract: compiledContractSierra,
           casm: compiledContractCasm,
         },
-        {}
+        {},
       );
     totalFee = estimatedFeeDeclare * 2n;
   } catch (e) {
@@ -85,14 +81,14 @@ const deployContract = async (
       },
       {
         maxFee: totalFee * 20n, // this optional max fee serves when error AccountValidation Failed or small fee on public networks , try 5n , 10n, 20n, 50n, 100n
-      }
+      },
     );
     const debug = await provider.waitForTransaction(
       tryDeclareAndDeploy.deploy.transaction_hash,
       {
         successStates: [TransactionStatus.ACCEPTED_ON_L2],
         // retryInterval: 10000, // we can retry in 10 seconds
-      }
+      },
     );
     classHash = tryDeclareAndDeploy.declare.class_hash;
     existingClass = await provider.getClassByHash(classHash);
@@ -104,7 +100,7 @@ const deployContract = async (
   console.log("Deployed contract ", contractName, " at: ", contractAddress);
   const chainIdPath = path.resolve(
     __dirname,
-    `../deployments/${networkName}.json`
+    `../deployments/${networkName}.json`,
   );
   let deployments = {};
   if (fs.existsSync(chainIdPath)) {
@@ -129,23 +125,25 @@ const deployContract = async (
 };
 
 const deployScript = async () => {
-  const {
-    classHash: helloStarknetClassHash,
-    abi: helloStarknetAbi,
-    address: ContractAddress,
-  } = await deployContract(null, "HelloStarknet"); // can pass another argument for the exported contract name
-  await deployContract(
-    {
-      name: 1,
-    },
-    "SimpleStorage"
-  );
+  // const {
+  //   classHash: helloStarknetClassHash,
+  //   abi: helloStarknetAbi,
+  //   address: ContractAddress,
+  // } = await deployContract(null, "HelloStarknet"); // can pass another argument for the exported contract name
   // await deployContract(
   //   {
-  //     recipient: 1,
+  //     name: 1,
   //   },
-  //   "Challenge0"
+  //   "SimpleStorage"
   // );
+
+  await deployContract(
+    {
+      owner:
+        "0x4b3f4ba8c00a02b66142a4b1dd41a4dfab4f92650922a3280977b0f03c75ee1",
+    }, // last account in devnet accounts
+    "Challenge0",
+  );
 
   // await deployContract(
   //   {
@@ -171,7 +169,8 @@ const deployScript = async () => {
 
   // await deployContract(
   //   {
-  //     public_key: "0x6e4fd4f9d6442e10cf8e20a799be3533be3756c5ea4d13e16a297d7d2717039",
+  //     public_key:
+  //       "0x6e4fd4f9d6442e10cf8e20a799be3533be3756c5ea4d13e16a297d7d2717039",
   //   },
   //   "Challenge3"
   // );
@@ -189,9 +188,8 @@ const deployScript = async () => {
   // );
   // await deployContract(
   //   {
-  //     initial_owner: addAddressPadding(
-  //       "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"
-  //     ),
+  //     initial_owner:
+  //       "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
   //   },
   //   "Ownable"
   // ); // simple storage receives an argument in the constructor

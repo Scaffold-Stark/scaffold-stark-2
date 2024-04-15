@@ -44,28 +44,12 @@ export const WriteOnlyFunctionForm = ({
 }: //   inheritedFrom,
 WriteOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
-    getInitialFormState(abiFunction)
+    getInitialFormState(abiFunction),
   );
   const { chain } = useNetwork();
   const writeTxn = useTransactor();
   const { targetNetwork } = useTargetNetwork();
   const writeDisabled = !chain || chain?.network !== targetNetwork.network;
-  //   const { contract } = useContract({
-  //     address: contractAddress,
-  //     abi: [...abi],
-  //   });
-
-  //   const calls = useMemo(() => {
-  //     if (!contract) return [];
-  //     if (form) {
-  //       const args = getParsedContractFunctionArgs(form);
-  //       return contract.populateTransaction[abiFunction.name](
-  //         1 //  TODO Fix this type
-  //       );
-  //     } else {
-  //       return contract.populateTransaction[abiFunction.name]();
-  //     }
-  //   }, [contract, form, abiFunction]);
 
   const {
     data: result,
@@ -90,7 +74,7 @@ WriteOnlyFunctionFormProps) => {
       } catch (e: any) {
         console.error(
           "⚡️ ~ file: WriteOnlyFunctionForm.tsx:handleWrite ~ error",
-          e
+          e,
         );
       }
     }
