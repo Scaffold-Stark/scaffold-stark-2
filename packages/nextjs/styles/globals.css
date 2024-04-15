@@ -2,7 +2,6 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-
 :root,
 [data-theme] {
   background: oklch(var(--b2));
@@ -45,9 +44,10 @@ p {
   background-image: url("/footer-main-landing.png");
   background-size: auto 130px;
   background-repeat: repeat-x;
+  background-position: bottom;
   width: 100%;
   height: 130px;
-  position: relative;
+
 }
 .bg-banner-join{
   background-image: url("/bgBanner_join.png");
@@ -60,7 +60,7 @@ p {
 .bg-ft-join{
   background-image: url("/ft-join.png");
   background-position: bottom;
-  background-size: auto;
+  background-size: contain;
   background-repeat: repeat-x;
   width: 100%;
 }
@@ -69,7 +69,7 @@ p {
   transform: translateX(calc(-50% - 2px));
 }
 
-@media (max-width: 630px) {
+@media (max-width: 639px) {
   .footer-header-landing {
     background-size: auto 70px;
     width: 100%;
@@ -77,6 +77,47 @@ p {
   }
   .bg-landing{
     background-size: contain;
+  }
+  .bg-ft-join{
+    background-size: auto 102px;
+    display: flex;
+    font-size: 16px;
+    text-align: center;
+    padding: 0;
+  }
+}
+@media (min-width: 640px) and (max-width: 768px) {
+  .footer-header-landing {
+    background-size: auto 70px;
+    width: 100%;
+    height: 70px;
+  }
+  .bg-landing{
+    background-size: contain;
+  }
+  .bg-ft-join{
+    background-size: auto 102px;
+    display: flex;
+    font-size: 16px;
+    text-align: center;
+    padding: 0;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+  .footer-header-landing {
+    background-size: auto 84px;
+    width: 100%;
+    height: 90px;
+  }
+  .bg-landing{
+    background-size: contain;
+  }
+  .bg-ft-join{
+    display: flex;
+    font-size: 14px;
+    text-align: center;
+
   }
 }
 

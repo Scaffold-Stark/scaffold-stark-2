@@ -135,6 +135,9 @@ module.exports = {
         'md': {'min': '640px', 'max': '767px'},
         'lg': {'min': '768px', 'max': '1023px'},
       },
+      fontFamily: {
+        'sans': ['Space Grotesk', 'sans-serif'],
+      },
     },
   },
 };
