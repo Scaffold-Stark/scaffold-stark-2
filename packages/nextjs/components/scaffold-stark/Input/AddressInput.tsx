@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { blo } from "blo";
 import { useDebounceValue } from "usehooks-ts";
 import { CommonInputProps, InputBase } from "~~/components/scaffold-stark";
@@ -19,8 +19,8 @@ export const AddressInput = ({
   // Debounce the input to keep clean RPC calls when resolving ENS names
   // If the input is an address, we don't need to debounce it
   const [_debouncedValue] = useDebounceValue(value, 500);
-  const debouncedValue = isAddress(value) ? value : _debouncedValue;
-  const isDebouncedValueLive = debouncedValue === value;
+  //const debouncedValue = isAddress(value) ? value : _debouncedValue;
+  //const isDebouncedValueLive = debouncedValue === value;
 
   // If the user changes the input after an ENS name is already resolved, we want to remove the stale result
   //const settledValue = isDebouncedValueLive ? debouncedValue : undefined;
