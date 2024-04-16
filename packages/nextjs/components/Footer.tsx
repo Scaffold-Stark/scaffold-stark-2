@@ -5,9 +5,11 @@ import { BuidlGuidlLogo } from "~~/components/assets/BuidlGuidlLogo";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { useGlobalState } from "~~/services/store/store";
 import { devnet } from "@starknet-react/chains";
-import { CurrencyDollarIcon } from "@heroicons/react/16/solid";
 import Link from "next/link";
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import {
+  CurrencyDollarIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/24/outline";
 
 /**
  * Site footer
@@ -38,7 +40,7 @@ export const Footer = () => {
                 <Link
                   href="/blockexplorer"
                   passHref
-                  className="btn btn-primary btn-sm font-normal gap-1"
+                  className="btn btn-primary btn-sm font-normal gap-1 text-base-100"
                 >
                   <MagnifyingGlassIcon className="h-4 w-4" />
                   <span>Block Explorer</span>
