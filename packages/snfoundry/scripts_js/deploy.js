@@ -1,13 +1,4 @@
-const fs = require("fs");
-const path = require("path");
-const networks = require("./helpers/networks");
-const argv = require("yargs/yargs")(process.argv.slice(2)).argv;
-
-const { TransactionStatus } = require("starknet");
-const { hash } = require("starknet");
-
-const { CallData } = require("starknet-dev");
-const deployContract = require("./deploy_contract");
+const { deployContract } = require("./deploy_contract");
 
 const deployScript = async () => {
   // const {
@@ -27,7 +18,7 @@ const deployScript = async () => {
       owner:
         "0x4b3f4ba8c00a02b66142a4b1dd41a4dfab4f92650922a3280977b0f03c75ee1",
     }, // last account in devnet accounts
-    "Challenge0",
+    "Challenge0"
   );
 
   // await deployContract(
