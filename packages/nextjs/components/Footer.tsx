@@ -11,6 +11,7 @@ import { BuidlGuidlLogo } from "~~/components/assets/BuidlGuidlLogo";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { useGlobalState } from "~~/services/store/store";
 import { devnet } from "@starknet-react/chains";
+import { Faucet } from "~~/components/scaffold-stark/Faucet";
 // import { Faucet } from "~~/components/scaffold-eth";
 // import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 // import { useGlobalState } from "~~/services/store/store";
@@ -40,7 +41,7 @@ export const Footer = () => {
             )}
             {isLocalNetwork && (
               <>
-                {/*<Faucet />*/}
+                <Faucet />
                 <Link
                   href="/blockexplorer"
                   passHref
