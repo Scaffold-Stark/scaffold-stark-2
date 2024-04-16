@@ -6,6 +6,7 @@ mod challenge1;
 mod challenge2;
 mod challenge3;
 mod presetERC20;
+mod exampleExternalContract;
 
 use starknet::ContractAddress;
 

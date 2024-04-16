@@ -21,7 +21,13 @@ const deployScript = async () => {
   //   "Challenge0"
   // );
 
-  await deployContract(null,"Challenge1");
+  const values = {
+      classHash: helloStarknetClassHash,
+      abi: helloStarknetAbi,
+      address: ContractAddress,
+    } = await deployContract(null, "ExampleExternalContract");
+  await deployContract({ external_contract_address: values.address }
+    , "Challenge1");
 
   //   await deployContract(
   //   {
