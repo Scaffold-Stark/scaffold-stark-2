@@ -4,6 +4,7 @@ import { useDebounceValue } from "usehooks-ts";
 import { CommonInputProps, InputBase } from "~~/components/scaffold-stark";
 import { Address } from "@starknet-react/chains";
 import { isAddress } from "~~/utils/scaffold-stark/common";
+import Image from "next/image";
 
 /**
  * Address input with ENS name resolution
@@ -22,7 +23,7 @@ export const AddressInput = ({
   const isDebouncedValueLive = debouncedValue === value;
 
   // If the user changes the input after an ENS name is already resolved, we want to remove the stale result
-  const settledValue = isDebouncedValueLive ? debouncedValue : undefined;
+  //const settledValue = isDebouncedValueLive ? debouncedValue : undefined;
 
   // const {
   //   data: ensAddress,
@@ -36,7 +37,7 @@ export const AddressInput = ({
   //   cacheTime: 30_000,
   // });
   //
-  const [enteredEnsName, setEnteredEnsName] = useState<string>();
+  //const [enteredEnsName, setEnteredEnsName] = useState<string>();
   // const {
   //   data: ensName,
   //   isLoading: isEnsNameLoading,
@@ -67,7 +68,7 @@ export const AddressInput = ({
 
   const handleChange = useCallback(
     (newValue: Address) => {
-      setEnteredEnsName(undefined);
+      //setEnteredEnsName(undefined);
       onChange(newValue);
     },
     [onChange],
@@ -119,7 +120,7 @@ export const AddressInput = ({
         // Don't want to use nextJS Image here (and adding remote patterns for the URL)
         // eslint-disable-next-line @next/next/no-img-element
         value && (
-          <img
+          <Image
             alt=""
             className="!rounded-full"
             src={blo(value as `0x${string}`)}
