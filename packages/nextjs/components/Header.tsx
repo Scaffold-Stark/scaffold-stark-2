@@ -11,6 +11,7 @@ import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
 // } from "~~/components/scaffold-eth";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
+import { FaucetButton } from "~~/components/scaffold-stark/FaucetButton";
 
 type HeaderMenuLink = {
   label: string;
@@ -118,6 +119,7 @@ export const Header = () => {
       </div>
       <div className="navbar-end flex-grow mr-4">
         <CustomConnectButton />
+        <FaucetButton />
       </div>
     </div>
   );
