@@ -5,7 +5,7 @@ const priceCache: Record<string, number> = {};
 
 export const fetchPriceFromCoingecko = async (
   targetNetwork: ChainWithAttributes,
-  retryCount = 3 // Maximum retry attempts
+  retryCount = 3, // Maximum retry attempts
 ): Promise<number> => {
   const { symbol } = targetNetwork.nativeCurrency;
   if (
@@ -36,8 +36,8 @@ export const fetchPriceFromCoingecko = async (
       error,
     );
     if (retryCount > 0) {
-      console.log('Retrying after 1 second...');
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
+      console.log("Retrying after 1 second...");
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1 second
       return fetchPriceFromCoingecko(targetNetwork, retryCount - 1);
     }
     return 0;

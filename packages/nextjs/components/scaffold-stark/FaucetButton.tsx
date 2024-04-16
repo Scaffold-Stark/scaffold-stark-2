@@ -5,7 +5,7 @@ import { BanknotesIcon } from "@heroicons/react/24/outline";
 import { mintEth } from "~~/services/web3/faucet";
 import { Address, devnet } from "@starknet-react/chains";
 import { useAccount, useBalance, useNetwork } from "@starknet-react/core";
-import {useTargetNetwork} from "~~/hooks/scaffold-stark/useTargetNetwork";
+import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 
 // Number of ETH faucet sends to an address
 const NUM_OF_ETH = "1";
