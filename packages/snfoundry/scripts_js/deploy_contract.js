@@ -1,10 +1,13 @@
 const fs = require("fs");
 const path = require("path");
 const networks = require("./helpers/networks");
-const {hash, CallData, TransactionStatus} = require("starknet");
+const argv = require("yargs/yargs")(process.argv.slice(2)).argv;
+const { hash, TransactionStatus } = require("starknet");
+const { CallData } = require("starknet-dev");
+
 const networkName = argv.network;
 
-const {provider, deployer} = networks[networkName];
+const { provider, deployer } = networks[networkName];
 const deployContract = async (
   constructorArgs,
   contractName,
@@ -48,7 +51,7 @@ const deployContract = async (
   let totalFee = 0n;
 
   try {
-    const {suggestedMaxFee: estimatedFeeDeclare} =
+    const { suggestedMaxFee: estimatedFeeDeclare } =
       await deployer.estimateDeclareFee(
         {
           contract: compiledContractSierra,
@@ -58,7 +61,7 @@ const deployContract = async (
       );
     totalFee = estimatedFeeDeclare * 2n;
   } catch (e) {
-    const {suggestedMaxFee: estimatedFeeDeploy} =
+    const { suggestedMaxFee: estimatedFeeDeploy } =
       await deployer.estimateDeployFee({
         classHash: precomputedClassHash,
         constructorCalldata,
@@ -118,4 +121,6 @@ const deployContract = async (
   };
 };
 
-export default deployContract
+module.exports = {
+  deployContract,
+};
