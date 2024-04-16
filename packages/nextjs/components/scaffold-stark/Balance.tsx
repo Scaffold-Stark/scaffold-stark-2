@@ -70,7 +70,12 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
         {displayUsdMode ? (
           <>
             <span className="text-[0.8em] font-bold mr-1">$</span>
-            <span>{(formattedBalance * price).toFixed(2)}</span>
+            <span>
+              {(formattedBalance * price).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </span>
           </>
         ) : (
           <>
