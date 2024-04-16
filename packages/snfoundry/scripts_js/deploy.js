@@ -13,25 +13,26 @@ const deployScript = async () => {
   //   "SimpleStorage"
   // );
 
-  await deployContract(
-    {
-      owner:
-        "0x4b3f4ba8c00a02b66142a4b1dd41a4dfab4f92650922a3280977b0f03c75ee1",
-    }, // last account in devnet accounts
-    "Challenge0"
-  );
-
   // await deployContract(
   //   {
-  //     name: 1,
-  //     symbol: 2,
+  //     owner:
+  //       "0x4b3f4ba8c00a02b66142a4b1dd41a4dfab4f92650922a3280977b0f03c75ee1",
+  //   }, // last account in devnet accounts
+  //   "Challenge0"
+  // );
+
+  await deployContract(null,"Challenge1");
+
+  //   await deployContract(
+  //   {
+  //     name: "Marquis",
+  //     symbol: "MRQ",
   //     fixed_supply: 10,
   //     recipient:
   //       "0x06072Bb27d275a0bC1deBf1753649b8721CF845B681A48443Ac46baF45769f8E",
   //   },
-  //   "Challenge1"
+  //   "PresetERC20"
   // );
-
   // await deployContract(
   //   {
   //     base_uri: CallData.byteArrayFromString("https://example.com/"),
