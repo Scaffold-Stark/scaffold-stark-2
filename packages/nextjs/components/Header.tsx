@@ -5,6 +5,7 @@ import React, { useCallback, useRef, useState } from "react";
 import { BugAntIcon } from "@heroicons/react/24/outline";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
+import { FaucetButton } from "~~/components/scaffold-stark/FaucetButton";
 
 type HeaderMenuLink = {
   label: string;
@@ -39,6 +40,7 @@ export const Header = () => {
     <div className="lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2 bg-base-100">
       <div className="navbar-end flex-grow mr-4">
         <CustomConnectButton />
+        <FaucetButton />
       </div>
     </div>
   );
