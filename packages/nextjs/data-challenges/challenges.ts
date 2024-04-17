@@ -6,7 +6,7 @@ const allChallenges = [
       "🎫 Create a simple NFT to learn basics of scaffold-Stark. You'll use 👷‍♀️ HardHat to compile and deploy smart contracts. Then, you'll use a template React app full of important Ethereum components and hooks. Finally, you'll deploy an NFT to a public network to share with friends! 🚀",
     imageUrl: "/simpleNFT.png",
     end: true,
-    id: "challenge-0-simple-nft",
+    id: "challenge0",
   },
   {
     challenge: "Challenge #1",

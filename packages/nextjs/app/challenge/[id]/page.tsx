@@ -12,7 +12,7 @@ const PageView: React.FC = () => {
   useEffect(() => {
     const getMarkdown = async () => {
       const response = await fetch(
-        `https://raw.githubusercontent.com/scaffold-eth/se-2-challenges/${id}/README.md`,
+        `https://raw.githubusercontent.com/Quantum3-Labs/speedrunstark/${id}/README.md`,
       );
       const markdownData = await response.text();
       setMarkdown(markdownData);
