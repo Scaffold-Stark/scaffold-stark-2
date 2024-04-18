@@ -12,6 +12,8 @@ pub trait IChallenge1<T> {
     fn threshold(self: @T) -> u256;
     fn total_balance(self: @T) -> u256;
     fn time_left(self: @T) -> u64;
+    fn caller_address(self: @T) -> ContractAddress;
+    fn contract_address(self: @T) -> ContractAddress;
 }
 
 #[starknet::contract]
@@ -111,6 +113,14 @@ mod Challenge1 {
             } else {
                 0
             }
+        }
+
+        fn caller_address(self: @ContractState) -> ContractAddress {
+            get_caller_address()
+        }
+
+        fn contract_address(self: @ContractState) -> ContractAddress {
+            get_contract_address()
         }
     }
 
