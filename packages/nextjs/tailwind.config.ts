@@ -57,10 +57,10 @@ module.exports = {
     themes: [
       {
         light: {
-          primary: "#93BBFB",
+          primary: "#7E94FF",
           "primary-content": "#212638",
           secondary: "#DAE8FF",
-          "secondary-content": "#212638",
+          "secondary-content": "#7E94FF",
           accent: "#93BBFB",
           "accent-content": "#212638",
           neutral: "#212638",
