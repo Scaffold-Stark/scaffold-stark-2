@@ -7,6 +7,7 @@ import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { FaucetButton } from "~~/components/scaffold-stark/FaucetButton";
 
 type HeaderMenuLink = {
   label: string;
@@ -55,6 +56,7 @@ export const Header = () => {
       </div>
       <div className="navbar-end flex-grow pr-8 py-[8px]">
         <CustomConnectButton />
+        <FaucetButton />
       </div>
     </div>
   );
