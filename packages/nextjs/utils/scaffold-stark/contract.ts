@@ -295,7 +295,7 @@ export type AbiFunctionOutputs<
 
 export function getFunctionsByStateMutability(
   abi: Abi,
-  stateMutability: AbiStateMutability
+  stateMutability: AbiStateMutability,
 ): AbiFunction[] {
   return abi
     .reduce((acc, part) => {
