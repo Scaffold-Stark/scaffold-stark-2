@@ -6,6 +6,7 @@ import {
   ContractName,
   GenericContract,
   InheritedFunctions,
+  getFunctionsByStateMutability,
 } from "~~/utils/scaffold-stark/contract";
 
 export const ContractWriteMethods = ({
@@ -19,35 +20,14 @@ export const ContractWriteMethods = ({
     return null;
   }
 
-  const functionsToDisplay = ((deployedContractData.abi || []) as Abi)
-    .reduce((acc, part) => {
-      if (part.type === "function") {
-        acc.push(part);
-      } else if (part.type === "interface" && Array.isArray(part.items)) {
-        part.items.forEach((item) => {
-          if (item.type === "function") {
-            acc.push(item);
-          }
-        });
-      }
-      return acc;
-    }, [] as AbiFunction[])
-    .filter((fn) => {
-      const isWriteableFunction = fn.state_mutability == "external";
-      return isWriteableFunction;
-    })
-    .map((fn) => {
-      return {
-        fn,
-        // inheritedFrom: (
-        //   (deployedContractData as GenericContract)
-        //     ?.inheritedFunctions as InheritedFunctions
-        // )?.[fn.name],
-      };
-    });
-  // .sort((a, b) =>
-  //   b.inheritedFrom ? b.inheritedFrom.localeCompare(a.inheritedFrom) : 1
-  // );
+  const functionsToDisplay = getFunctionsByStateMutability(
+    (deployedContractData.abi || []) as Abi,
+    "external",
+  ).map((fn) => {
+    return {
+      fn,
+    };
+  });
 
   if (!functionsToDisplay.length) {
     return <>No write methods</>;
