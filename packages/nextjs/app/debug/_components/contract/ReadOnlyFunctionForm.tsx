@@ -32,9 +32,9 @@ export const ReadOnlyFunctionForm = ({
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialFormState(abiFunction),
   );
-  const [inputValue, setInputValue] = useState<any>();
+  const [inputValue, setInputValue] = useState<any | undefined>(undefined);
 
-  const { isLoading, isFetching, data } = useContractRead({
+  const { isFetching, data } = useContractRead({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
@@ -48,10 +48,7 @@ export const ReadOnlyFunctionForm = ({
     return (
       <ContractInput
         key={key}
-        setForm={(updatedFormValue) => {
-          setInputValue(undefined);
-          setForm(updatedFormValue);
-        }}
+        setForm={setForm}
         form={form}
         stateObjectKey={key}
         paramType={input}
@@ -82,9 +79,9 @@ export const ReadOnlyFunctionForm = ({
           onClick={async () => {
             setInputValue(getParsedContractFunctionArgs(form));
           }}
-          disabled={!isLoading && isFetching}
+          disabled={inputValue && isFetching}
         >
-          {!isLoading && isFetching && (
+          {inputValue && isFetching && (
             <span className="loading loading-spinner loading-xs"></span>
           )}
           Read 📡
