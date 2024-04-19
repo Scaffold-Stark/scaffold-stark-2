@@ -1,20 +1,19 @@
-
 interface ButtonProps {
-    children: string;
-    size?: "small" | "large";
-    onClick?: () => void;
-  }
-  
-  const ButtonStyle = ({ children, size = "small", onClick }: ButtonProps) => {
-    const isSmall = size === "small";
-    return (
-      <button
-        onClick={onClick}
-        className={`btn btn-secondary base_button__${isSmall ? "small" : "large"}`}
-      >
-        {children}
-      </button>
-    );
-  };
+  children: string;
+  size?: "small" | "large";
+  onClick?: () => void;
+}
 
-export default ButtonStyle
+const ButtonStyle = ({ children, size = "small", onClick }: ButtonProps) => {
+  const isSmall = size === "small";
+  return (
+    <button
+      onClick={onClick}
+      className={`btn btn-secondary base_button__${isSmall ? "small" : "large"}`}
+    >
+      {children}
+    </button>
+  );
+};
+
+export default ButtonStyle;

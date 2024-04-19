@@ -2,8 +2,7 @@ import { useState } from "react";
 import { NFTMetaData } from "~~/utils/scaffold-stark/simpleNFT/nftsMetadata";
 import ButtonStyle from "../ButtonStyle/ButtonStyle";
 
-export const NFTCard = ({ nft }:any) => {
-
+export const NFTCard = ({ nft }: any) => {
   return (
     <div className="card card-compact bg-base-100 shadow-lg sm:min-w-[300px] shadow-secondary">
       <figure className="relative">
@@ -40,10 +39,7 @@ export const NFTCard = ({ nft }:any) => {
           /> */}
         </div>
         <div className="card-actions justify-end">
-          <ButtonStyle
-          >
-            Send
-          </ButtonStyle>
+          <ButtonStyle>Send</ButtonStyle>
         </div>
       </div>
     </div>

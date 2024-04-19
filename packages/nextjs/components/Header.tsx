@@ -4,12 +4,14 @@ import React, { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {   ArrowDownTrayIcon,
+import {
+  ArrowDownTrayIcon,
   ArrowPathIcon,
   ArrowUpTrayIcon,
   Bars3Icon,
   BugAntIcon,
-  PhotoIcon,} from "@heroicons/react/24/outline";
+  PhotoIcon,
+} from "@heroicons/react/24/outline";
 // import {
 //   FaucetButton,
 //   RainbowKitCustomConnectButton,

@@ -18,23 +18,23 @@ const IpfsUpload: NextPage = () => {
     setMounted(true);
   }, []);
 
-//   const handleIpfsUpload = async () => {
-//     setLoading(true);
-//     const notificationId = notification.loading("Uploading to IPFS...");
-//     try {
-//       const uploadedItem = await addToIPFS(yourJSON);
-//       notification.remove(notificationId);
-//       notification.success("Uploaded to IPFS");
+  //   const handleIpfsUpload = async () => {
+  //     setLoading(true);
+  //     const notificationId = notification.loading("Uploading to IPFS...");
+  //     try {
+  //       const uploadedItem = await addToIPFS(yourJSON);
+  //       notification.remove(notificationId);
+  //       notification.success("Uploaded to IPFS");
 
-//       setUploadedIpfsPath(uploadedItem.path);
-//     } catch (error) {
-//       notification.remove(notificationId);
-//       notification.error("Error uploading to IPFS");
-//       console.log(error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
+  //       setUploadedIpfsPath(uploadedItem.path);
+  //     } catch (error) {
+  //       notification.remove(notificationId);
+  //       notification.error("Error uploading to IPFS");
+  //       console.log(error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
   return (
     <>
@@ -49,13 +49,13 @@ const IpfsUpload: NextPage = () => {
             src={yourJSON}
             theme="solarized"
             enableClipboard={false}
-            onEdit={edit => {
+            onEdit={(edit) => {
               setYourJSON(edit.updated_src);
             }}
-            onAdd={add => {
+            onAdd={(add) => {
               setYourJSON(add.updated_src);
             }}
-            onDelete={del => {
+            onDelete={(del) => {
               setYourJSON(del.updated_src);
             }}
           />

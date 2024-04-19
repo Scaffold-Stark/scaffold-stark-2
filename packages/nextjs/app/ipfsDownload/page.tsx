@@ -17,23 +17,23 @@ const IpfsDownload: NextPage = () => {
     setMounted(true);
   }, []);
 
-//   const handleIpfsDownload = async () => {
-//     setLoading(true);
-//     const notificationId = notification.loading("Getting data from IPFS");
-//     try {
-//       const metaData = await getMetadataFromIPFS(ipfsPath);
-//       notification.remove(notificationId);
-//       notification.success("Downloaded from IPFS");
+  //   const handleIpfsDownload = async () => {
+  //     setLoading(true);
+  //     const notificationId = notification.loading("Getting data from IPFS");
+  //     try {
+  //       const metaData = await getMetadataFromIPFS(ipfsPath);
+  //       notification.remove(notificationId);
+  //       notification.success("Downloaded from IPFS");
 
-//       setYourJSON(metaData);
-//     } catch (error) {
-//       notification.remove(notificationId);
-//       notification.error("Error downloading from IPFS");
-//       console.log(error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
+  //       setYourJSON(metaData);
+  //     } catch (error) {
+  //       notification.remove(notificationId);
+  //       notification.error("Error downloading from IPFS");
+  //       console.log(error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
   return (
     <>
@@ -41,18 +41,20 @@ const IpfsDownload: NextPage = () => {
         <h1 className="text-center mb-4">
           <span className="block text-4xl font-bold">Download from IPFS</span>
         </h1>
-        <div className={`flex border-2 border-accent/95 bg-base-200 rounded-full text-accent w-96`}>
+        <div
+          className={`flex border-2 border-accent/95 bg-base-200 rounded-full text-accent w-96`}
+        >
           <input
             className="input input-ghost focus:outline-none focus:bg-transparent focus:text-secondary-content h-[2.2rem] min-h-[2.2rem] px-4 border w-full font-medium placeholder:text-accent/50 text-secondary-content/75"
             placeholder="IPFS CID"
             value={ipfsPath}
-            onChange={e => setIpfsPath(e.target.value)}
+            onChange={(e) => setIpfsPath(e.target.value)}
             autoComplete="off"
           />
         </div>
         <ButtonStyle
-          // className={`btn btn-secondary my-6 ${loading ? "loading" : ""}`}
-          // disabled={loading}
+        // className={`btn btn-secondary my-6 ${loading ? "loading" : ""}`}
+        // disabled={loading}
         //   onClick={handleIpfsDownload}
         >
           Download from IPFS
@@ -64,13 +66,13 @@ const IpfsDownload: NextPage = () => {
             src={yourJSON}
             theme="solarized"
             enableClipboard={false}
-            onEdit={edit => {
+            onEdit={(edit) => {
               setYourJSON(edit.updated_src);
             }}
-            onAdd={add => {
+            onAdd={(add) => {
               setYourJSON(add.updated_src);
             }}
-            onDelete={del => {
+            onDelete={(del) => {
               setYourJSON(del.updated_src);
             }}
           />
