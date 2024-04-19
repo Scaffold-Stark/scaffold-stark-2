@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTargetNetwork } from "./useTargetNetwork";
 import {
   useDeployedContractInfo,
@@ -10,6 +10,8 @@ import {
   ContractName,
   ExtractAbiFunctionNamesScaffold,
   UseScaffoldWriteConfig,
+  getFunctionsByStateMutability,
+  parseFunctionParams,
 } from "~~/utils/scaffold-stark/contract";
 import { useContractWrite, useNetwork } from "@starknet-react/core";
 import { notification } from "~~/utils/scaffold-stark";
@@ -34,13 +36,32 @@ export const useScaffoldContractWrite = <
   const { chain } = useNetwork();
   const writeTx = useTransactor();
   const { targetNetwork } = useTargetNetwork();
+
+  // Memoize the ABI function retrieval
+  const abiFunction = useMemo(
+    () =>
+      getFunctionsByStateMutability(
+        deployedContractData?.abi || [],
+        "external"
+      ).find((fn) => fn.name === functionName),
+    [deployedContractData?.abi, functionName]
+  );
+
+  // Memoize parsing function parameters
+  const parsedParams = useMemo(() => {
+    if (args && abiFunction) {
+      return parseFunctionParams(abiFunction, args as any[]);
+    }
+    return [];
+  }, [args, abiFunction]);
+
   const wagmiContractWrite = useContractWrite({
     calls: deployedContractData
       ? [
           {
             contractAddress: deployedContractData?.address,
             entrypoint: functionName,
-            calldata: args as any[],
+            calldata: parsedParams,
           },
         ]
       : [],
@@ -56,7 +77,7 @@ export const useScaffoldContractWrite = <
   } & UpdatedArgs = {}) => {
     if (!deployedContractData) {
       console.error(
-        "Target Contract is not deployed, did you forget to run `yarn deploy`?",
+        "Target Contract is not deployed, did you forget to run `yarn deploy`?"
       );
       return;
     }
@@ -68,20 +89,18 @@ export const useScaffoldContractWrite = <
       console.error("You are on the wrong network");
       return;
     }
-    const newCalls =
-      newArgs && deployedContractData
-        ? [
-            {
-              contractAddress: deployedContractData.address,
-              entrypoint: functionName,
-              calldata: newArgs as any[],
-            },
-          ]
-        : {
-            contractAddress: deployedContractData.address,
-            entrypoint: functionName,
-            calldata: args as any[],
-          };
+
+    let newParsedParams =
+      newArgs && abiFunction
+        ? parseFunctionParams(abiFunction, newArgs as any[])
+        : parsedParams;
+    const newCalls = [
+      {
+        contractAddress: deployedContractData.address,
+        entrypoint: functionName,
+        calldata: newParsedParams,
+      },
+    ];
 
     if (wagmiContractWrite.writeAsync) {
       try {
@@ -90,7 +109,7 @@ export const useScaffoldContractWrite = <
           wagmiContractWrite.writeAsync({
             calls: newCalls as any[],
             options: newOptions ?? options,
-          }),
+          })
         );
 
         return writeTxResult;

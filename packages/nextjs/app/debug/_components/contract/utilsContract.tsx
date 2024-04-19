@@ -1,4 +1,8 @@
-import { AbiFunction, AbiParameter } from "~~/utils/scaffold-stark/contract";
+import {
+  AbiFunction,
+  AbiParameter,
+  parseParamWithType,
+} from "~~/utils/scaffold-stark/contract";
 import { uint256 } from "starknet";
 import { byteArray } from "starknet-dev";
 /**
@@ -7,7 +11,7 @@ import { byteArray } from "starknet-dev";
 const getFunctionInputKey = (
   functionName: string,
   input: AbiParameter,
-  inputIndex: number,
+  inputIndex: number
 ): string => {
   const name = input?.name || `input_${inputIndex}_`;
   return functionName + "_" + name + "_" + input.type;
@@ -35,12 +39,7 @@ const getInitialFormState = (abiFunction: AbiFunction) => {
 // Recursive function to deeply parse JSON strings, correctly handling nested arrays and encoded JSON strings
 const deepParseValues = (value: any, keyAndType?: any): any => {
   if (keyAndType) {
-    if (keyAndType.includes("core::integer::u256")) {
-      return uint256.bnToUint256(value);
-    }
-    if (keyAndType.includes("core::byte_array::ByteArray")) {
-      return byteArray.byteArrayFromString(value);
-    }
+    return parseParamWithType(keyAndType, value);
   }
   if (typeof value === "string") {
     if (isJsonString(value)) {
@@ -117,7 +116,7 @@ const transformAbiFunction = (abiFunction: AbiFunction): AbiFunction => {
   return {
     ...abiFunction,
     inputs: abiFunction.inputs.map((value) =>
-      adjustInput(value as AbiParameter),
+      adjustInput(value as AbiParameter)
     ),
   };
 };
