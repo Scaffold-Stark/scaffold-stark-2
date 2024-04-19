@@ -3,6 +3,7 @@
 import { lazy, useEffect, useState } from "react";
 import type { NextPage } from "next";
 import { notification } from "~~/utils/scaffold-stark/notification";
+import ButtonStyle from "~~/components/ButtonStyle/ButtonStyle";
 // import { getMetadataFromIPFS } from "~~/utils/simpleNFT/ipfs-fetch";
 
 const LazyReactJson = lazy(() => import("react-json-view"));
@@ -49,13 +50,13 @@ const IpfsDownload: NextPage = () => {
             autoComplete="off"
           />
         </div>
-        <button
-          className={`btn btn-secondary my-6 ${loading ? "loading" : ""}`}
-          disabled={loading}
+        <ButtonStyle
+          // className={`btn btn-secondary my-6 ${loading ? "loading" : ""}`}
+          // disabled={loading}
         //   onClick={handleIpfsDownload}
         >
           Download from IPFS
-        </button>
+        </ButtonStyle>
 
         {mounted && (
           <LazyReactJson

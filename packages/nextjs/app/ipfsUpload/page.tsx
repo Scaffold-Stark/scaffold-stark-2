@@ -5,6 +5,7 @@ import type { NextPage } from "next";
 import { notification } from "~~/utils/scaffold-stark/notification";
 // import { addToIPFS } from "~~/utils/simpleNFT/ipfs-fetch";
 import nftsMetadata from "~~/utils/scaffold-stark/simpleNFT/nftsMetadata";
+import ButtonStyle from "~~/components/ButtonStyle/ButtonStyle";
 
 const LazyReactJson = lazy(() => import("react-json-view"));
 
@@ -59,13 +60,11 @@ const IpfsUpload: NextPage = () => {
             }}
           />
         )}
-        <button
-          className={`btn btn-secondary mt-4 ${loading ? "loading" : ""}`}
-          disabled={loading}
+        <ButtonStyle
         //   onClick={handleIpfsUpload}
         >
           Upload to IPFS
-        </button>
+        </ButtonStyle>
         {/* {uploadedIpfsPath && (
           <div className="mt-4">
             <a href={`https://ipfs.io/ipfs/${uploadedIpfsPath}`} target="_blank" rel="noreferrer">
