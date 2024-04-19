@@ -9,6 +9,7 @@ const spaceGrotesk = Space_Grotesk({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Starknet Speedrun",
   description: "Fast track your starknet journey",
+  icons: "/icon-starknet.svg",
 };
 
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {

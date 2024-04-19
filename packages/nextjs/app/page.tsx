@@ -5,7 +5,11 @@ import Image from "next/image";
 import StepInstruction from "~~/components/StepInstruction/StepInstruction";
 import ChallengeCard from "~~/components/ChallengeCard/ChallengeCard";
 import { firstChallenges, lastChallenges } from "~~/data-challenges/challenges";
+import { useRouter } from "next/navigation";
+
 const Home: NextPage = () => {
+  const router = useRouter();
+
   return (
     <div>
       <div className="w-full flex items-center justify-center flex-col bg-landing gap-10 bg-base-100 text-primary sm:gap-3 ">
@@ -48,15 +52,15 @@ const Home: NextPage = () => {
       </div>
       <div className="w-full flex justify-center text-lg flex-col items-center text-primary ">
         <div className="w-full px-[20px] flex justify-center flex-col items-center sm:pr-[35px]">
-          {firstChallenges.slice(0, 3).map((challenge, index) => (
+          {firstChallenges.slice(0, 3).map((challenge) => (
             <ChallengeCard
-              key={index}
+              key={challenge.id}
               challenge={challenge.challenge}
               title={challenge.title}
               description={challenge.description}
               imageUrl={challenge.imageUrl}
               buttonText="QUEST"
-              onButtonClick={() => {}}
+              onButtonClick={() => router.push(`/challenge/${challenge.id}`)}
               end={challenge.end || false}
               border={challenge.border !== undefined ? challenge.border : true}
             />
@@ -86,15 +90,15 @@ const Home: NextPage = () => {
           </div>
         </div>
         <div className="w-full px-[20px] flex justify-center flex-col items-center">
-          {lastChallenges.slice(1).map((challenge, index) => (
+          {lastChallenges.slice(1).map((challenge) => (
             <ChallengeCard
-              key={index}
+              key={challenge.id}
               challenge={challenge.challenge}
               title={challenge.title}
               description={challenge.description}
               imageUrl={challenge.imageUrl}
               buttonText="LOCK"
-              onButtonClick={() => {}}
+              onButtonClick={() => router.push(`/challenge/${challenge.id}`)}
               end={challenge.end || false}
               border={challenge.border !== undefined ? challenge.border : true}
             />

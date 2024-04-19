@@ -27,7 +27,7 @@ export function useTargetNetwork(): { targetNetwork: ChainWithAttributes } {
   return {
     targetNetwork: {
       ...targetNetwork,
-      //   ...NETWORKS_EXTRA_DATA[targetNetwork.id],
+      //   ...NETWORKS_EXTRA_DATA[targetNetwork.page.tsx],
     },
   };
 }
