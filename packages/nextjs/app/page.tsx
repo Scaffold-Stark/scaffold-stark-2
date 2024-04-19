@@ -50,7 +50,7 @@ const Home: NextPage = () => {
         </div>
         <div className="footer-header-landing"></div>
       </div>
-      <div className="w-full flex justify-center text-lg flex-col items-center text-primary ">
+      <div className="w-full flex justify-center text-lg flex-col items-center text-primary bg-">
         <div className="w-full px-[20px] flex justify-center flex-col items-center sm:pr-[35px]">
           {firstChallenges.slice(0, 3).map((challenge) => (
             <ChallengeCard
@@ -77,7 +77,7 @@ const Home: NextPage = () => {
               </div>
               <div className="flex lg:justify-center">
                 <div className="max-w-[430px] w-full py-20 pl-20 sm:py-0 sm:pl-3 sm:flex lg:pl-0  lg:pt-0">
-                  <span className="sm:text-[12px] sm:text-center ">
+                  <span className="sm:text-[12px] sm:text-center leading-7 sm:text-xs">
                     The BuidlGuidl is a curated group of Ethereum builders
                     creating products, prototypes, and tutorials to enrich the
                     web3 ecosystem. A place to show off your builds and meet
@@ -97,7 +97,7 @@ const Home: NextPage = () => {
               title={challenge.title}
               description={challenge.description}
               imageUrl={challenge.imageUrl}
-              buttonText="LOCK"
+              buttonText="QUEST"
               onButtonClick={() => router.push(`/challenge/${challenge.id}`)}
               end={challenge.end || false}
               border={challenge.border !== undefined ? challenge.border : true}

@@ -38,7 +38,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
         <div className="max-w-[500px] flex flex-col gap-4 ">
           <span>{challenge}</span>
           <h2 className="text-2xl sm:text-[16px] sm:m-0">{title}</h2>
-          <p className="sm:m-0">{description}</p>
+          <p className="sm:m-0 leading-7 sm:text-xs">{description}</p>
           <div className="sm:pt-[10px]">
             <Button onClick={onButtonClick}>{buttonText}</Button>
           </div>
