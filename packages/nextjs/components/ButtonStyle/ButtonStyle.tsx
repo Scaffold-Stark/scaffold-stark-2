@@ -9,7 +9,7 @@ const ButtonStyle = ({ children, size = "small", onClick }: ButtonProps) => {
   return (
     <button
       onClick={onClick}
-      className={`btn btn-secondary base_button__${isSmall ? "small" : "large"}`}
+      className={`btn btn-secondary my-4 base_button__${isSmall ? "small" : "large"}`}
     >
       {children}
     </button>
