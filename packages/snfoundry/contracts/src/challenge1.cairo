@@ -131,7 +131,7 @@ mod Challenge1 {
             // self
             //     .token
             //     .read()
-            //     .transferFrom(get_contract_address(), external_contract_address, amount);
+            //     .transfer(external_contract_address, amount);
             external_contract_dispatcher.complete(amount);
         }
         fn _not_completed(ref self: ContractState) {
