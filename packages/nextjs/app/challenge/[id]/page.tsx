@@ -62,11 +62,9 @@ const PageView: React.FC = () => {
               </pre>
             ),
             code: ({ children }) => (
-              <div className="max-w-[500px] sm:w-[300px] ">
-                <code className="text-sm rounded bg-secondary-content text-secondary max-w-[500px] px-[4px] sm:text-xs leading-7">
-                  {children}
-                </code>
-              </div>
+              <code className="text-sm rounded bg-secondary-content text-secondary max-w-[500px] px-[4px] sm:text-xs leading-7">
+                {children}
+              </code>
             ),
             blockquote: ({ children }) => (
               <blockquote className="text-justify sm:text-xs leading-7">
