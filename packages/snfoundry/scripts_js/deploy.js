@@ -41,16 +41,17 @@ const deployScript = async () => {
   //   },
   //   "PresetERC20"
   // );
-  // await deployContract(
-  //   {
-  //     base_uri: CallData.byteArrayFromString("https://example.com/"),
-  //     // recipient:
-  //     //   "0x06072Bb27d275a0bC1deBf1753649b8721CF845B681A48443Ac46baF45769f8E",
-  //     // token_ids: 2,
-  //     // values: 100,
-  //   },
-  //   "Challenge2"
-  // );
+
+  await deployContract(
+    {
+      base_uri: "https://example.com/",
+      recipient:
+        "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+      token_ids: [2],
+      values: [100],
+    },
+    "PresetERC1155"
+  );
 
   // await deployContract(
   //   {
