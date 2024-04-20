@@ -4,6 +4,7 @@ import scaffoldConfig from "~~/scaffold.config";
 type ChainAttributes = {
   // color | [lightThemeColor, darkThemeColor]
   color: string | [string, string];
+  nativeCurrencyTokenAddress?: string;
 };
 
 export type ChainWithAttributes = chains.Chain & Partial<ChainAttributes>;

@@ -13,6 +13,8 @@ import {
   UseContractWriteProps,
 } from "@starknet-react/core";
 import { Address } from "@starknet-react/chains";
+import { uint256 } from "starknet";
+import { byteArray } from "starknet-dev";
 
 type ConfiguredChainId =
   (typeof scaffoldConfig)["targetNetworks"][0]["network"];
@@ -290,3 +292,51 @@ export type AbiFunctionOutputs<
 > = ExtractAbiFunctionScaffold<TAbi, TFunctionName>["outputs"];
 
 /// export all the types from kanabi
+
+export function getFunctionsByStateMutability(
+  abi: Abi,
+  stateMutability: AbiStateMutability,
+): AbiFunction[] {
+  return abi
+    .reduce((acc, part) => {
+      if (part.type === "function") {
+        acc.push(part);
+      } else if (part.type === "interface" && Array.isArray(part.items)) {
+        part.items.forEach((item) => {
+          if (item.type === "function") {
+            acc.push(item);
+          }
+        });
+      }
+      return acc;
+    }, [] as AbiFunction[])
+    .filter((fn) => {
+      const isWriteableFunction = fn.state_mutability == stateMutability;
+      return isWriteableFunction;
+    });
+}
+
+export function parseParamWithType(paramType: string, param: any) {
+  if (paramType.includes("core::integer::u256")) {
+    return uint256.bnToUint256(param);
+  } else if (paramType.includes("core::byte_array::ByteArray")) {
+    return byteArray.byteArrayFromString(param);
+  } else {
+    return param;
+  }
+}
+
+export function parseFunctionParams(abiFunction: AbiFunction, inputs: any[]) {
+  let parsedInputs: any[] = [];
+
+  //check inputs length
+  if (abiFunction.inputs.length !== inputs.length) {
+    return inputs;
+  }
+
+  inputs.forEach((input, idx) => {
+    const paramType = abiFunction.inputs[idx].type;
+    parsedInputs.push(parseParamWithType(paramType, input));
+  });
+  return parsedInputs;
+}
