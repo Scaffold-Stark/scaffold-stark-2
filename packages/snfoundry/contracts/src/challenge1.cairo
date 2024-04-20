@@ -128,10 +128,7 @@ mod Challenge1 {
                 contract_address: external_contract_address
             };
             // Todo in UI: Staker contract should approve to transfer the staked_amount to the external contract
-            // self
-            //     .token
-            //     .read()
-            //     .transfer(external_contract_address, amount);
+            self.token.read().transfer(external_contract_address, amount);
             external_contract_dispatcher.complete(amount);
         }
         fn _not_completed(ref self: ContractState) {
