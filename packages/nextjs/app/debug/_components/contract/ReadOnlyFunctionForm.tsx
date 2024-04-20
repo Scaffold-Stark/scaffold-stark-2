@@ -32,13 +32,13 @@ export const ReadOnlyFunctionForm = ({
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialFormState(abiFunction),
   );
-  const [result, setResult] = useState<unknown>();
+  const [inputValue, setInputValue] = useState<any>();
 
-  const { isLoading, isFetching, refetch } = useContractRead({
+  const { isLoading, isFetching, data } = useContractRead({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
-    args: getParsedContractFunctionArgs(form),
+    args: inputValue,
     enabled: false, // TODO : notify when failed - add error
     blockIdentifier: "pending" as BlockNumber,
   });
@@ -49,7 +49,7 @@ export const ReadOnlyFunctionForm = ({
       <ContractInput
         key={key}
         setForm={(updatedFormValue) => {
-          setResult(undefined);
+          setInputValue(undefined);
           setForm(updatedFormValue);
         }}
         form={form}
@@ -68,11 +68,11 @@ export const ReadOnlyFunctionForm = ({
       {inputElements}
       <div className="flex justify-between gap-2 flex-wrap">
         <div className="flex-grow w-4/5">
-          {result !== null && result !== undefined && (
+          {data !== null && data !== undefined && (
             <div className="bg-secondary rounded-3xl text-sm px-4 py-1.5 break-words">
               <p className="font-bold m-0 mb-1">Result:</p>
               <pre className="whitespace-pre-wrap break-words">
-                {displayTxResult(result, false, abiFunction?.outputs)}
+                {displayTxResult(data, false, abiFunction?.outputs)}
               </pre>
             </div>
           )}
@@ -80,8 +80,7 @@ export const ReadOnlyFunctionForm = ({
         <button
           className="btn btn-secondary btn-sm"
           onClick={async () => {
-            const { data } = await refetch();
-            setResult(data);
+            setInputValue(getParsedContractFunctionArgs(form));
           }}
           disabled={!isLoading && isFetching}
         >
