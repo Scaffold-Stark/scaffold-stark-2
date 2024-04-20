@@ -12,7 +12,7 @@ const config: Config = {
         mytheme: {
           primary: "#794BFC",
 
-          secondary: "F4F1FD",
+          secondary: "#F4F1FD",
 
           accent: "#ff00ff",
 
@@ -65,9 +65,9 @@ module.exports = {
           "accent-content": "#212638",
           neutral: "#212638",
           "neutral-content": "#ffffff",
-          "base-100": "#ffffff",
+          "base-100": "#E7F0FE",
           "base-200": "#f4f8ff",
-          "base-300": "#DAE8FF",
+          "base-300": "#0C0C4F",
           "base-content": "#212638",
           info: "#93BBFB",
           success: "#34EEB6",
@@ -89,17 +89,17 @@ module.exports = {
       },
       {
         dark: {
-          primary: "#212638",
+          primary: "#E7F0FE",
           "primary-content": "#F9FBFF",
-          secondary: "#323f61",
-          "secondary-content": "#F9FBFF",
+          secondary: "#1b2841",
+          "secondary-content": "#cfe2ff",
           accent: "#4969A6",
           "accent-content": "#F9FBFF",
           neutral: "#F9FBFF",
           "neutral-content": "#385183",
-          "base-100": "#385183",
-          "base-200": "#2A3655",
-          "base-300": "#212638",
+          "base-100": "#1b2841",
+          "base-200": "#1c2d49",
+          "base-300": "#E7F0FE",
           "base-content": "#F9FBFF",
           info: "#385183",
           success: "#34EEB6",
@@ -129,6 +129,14 @@ module.exports = {
       },
       animation: {
         "pulse-fast": "pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+      },
+      screens: {
+        sm: { max: "639px" },
+        md: { min: "640px", max: "767px" },
+        lg: { min: "768px", max: "1023px" },
+      },
+      fontFamily: {
+        sans: ["Space Grotesk", "sans-serif"],
       },
     },
   },

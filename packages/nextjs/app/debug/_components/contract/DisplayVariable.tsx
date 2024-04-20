@@ -27,6 +27,7 @@ export const DisplayVariable = ({
 }: DisplayVariableProps) => {
   const {
     data: result,
+    isLoading,
     isFetching,
     refetch,
   } = useContractRead({
@@ -52,7 +53,7 @@ export const DisplayVariable = ({
           className="btn btn-ghost btn-xs"
           onClick={async () => await refetch()}
         >
-          {isFetching ? (
+          {!isLoading && isFetching ? (
             <span className="loading loading-spinner loading-xs"></span>
           ) : (
             <ArrowPathIcon

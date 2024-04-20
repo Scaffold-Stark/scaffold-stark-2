@@ -1,26 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import type { NextPage } from "next";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 // import { Address } from "~~/components/scaffold-eth";
 
 const Home: NextPage = () => {
-  // const { data } = useScaffoldContractRead({
-  //   contractName: "HelloStarknet",
-  //   functionName: "get_balance6",
-  // });
 
-  // console.log(data);
-
-  // const { writeAsync } = useScaffoldContractWrite({
-  //   contractName: "HelloStarknet",
-  //   functionName: "increase_balance",
-  //   args: [1],
-  // });
-
-  // console.log(data, isLoading);
   return (
     <>
       <div className="flex items-center flex-col flex-grow pt-10">
