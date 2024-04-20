@@ -19,5 +19,5 @@ export const useAutoConnect = (): void => {
         connect({ connector });
       }
     }
-  }, [wagmiWalletValue, connectors, connect]);
+  }, []);
 };
