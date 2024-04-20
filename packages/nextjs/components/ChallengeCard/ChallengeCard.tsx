@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Button from "~~/components/Button/Button";
 
@@ -40,7 +40,12 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
           <h2 className="text-2xl sm:text-[16px] sm:m-0">{title}</h2>
           <p className="sm:m-0 leading-7 sm:text-xs">{description}</p>
           <div className="sm:pt-[10px]">
-            <Button onClick={onButtonClick}>{buttonText}</Button>
+            <Button
+              onClick={onButtonClick}
+              isDisable={buttonText === "COMING SOON"}
+            >
+              {buttonText}
+            </Button>
           </div>
         </div>
         <div>

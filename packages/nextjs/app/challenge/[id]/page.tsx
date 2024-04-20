@@ -33,7 +33,7 @@ const PageView: React.FC = () => {
   };
   return (
     <div className=" flex items-center w-full justify-center sm:text-[12px] ">
-      <div className="max-w-[860px] py-20 sm:max-w-[400px] sm:py-5 sm:px-5 leading-7">
+      <div className="max-w-[860px] py-20 sm:w-full sm:py-5 sm:px-5 ">
         <ReactMarkdown components={getMarkdownComponents()}>
           {markdown}
         </ReactMarkdown>
