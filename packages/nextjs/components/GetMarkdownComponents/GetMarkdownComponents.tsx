@@ -14,10 +14,20 @@ export const getMarkdownComponents = (): Components => {
         {children}
       </h2>
     ),
+    h3: ({ children }) => (
+      <h3 className="text-primary text-xl font-bold py-3 sm:text-sm sm:m-0">
+        {children}
+      </h3>
+    ),
     p: ({ children }) => (
       <p className="text-primary text-base sm:text-xs lg:text-sm text-justify max-w-[860px] sm:max-w-[400px] sm:overflow-auto ">
         {children}
       </p>
+    ),
+    strong: ({ children }) => (
+      <strong className="text-primary text-base sm:text-xs lg:text-sm">
+        {children}
+      </strong>
     ),
     div: ({ children }) => <div className="text-primary py-3">{children}</div>,
     a: ({ children, href }) => (
