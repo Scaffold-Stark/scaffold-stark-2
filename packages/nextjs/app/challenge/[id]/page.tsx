@@ -1,14 +1,15 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useParams } from "next/navigation";
+import { getMarkdownComponents } from "~~/components/GetMarkdownComponents/GetMarkdownComponents";
+import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 
 // eslint-disable-next-line react/display-name
 
 const PageView: React.FC = () => {
   const { id } = useParams();
-
   const [markdown, setMarkdown] = useState<string>();
 
   useEffect(() => {
@@ -18,66 +19,32 @@ const PageView: React.FC = () => {
         // `https://raw.githubusercontent.com/scaffold-eth/se-2-challenges/challenge-0-simple-nft/README.md`,
       );
       const markdownData = await response.text();
+
       setMarkdown(markdownData);
     };
 
     getMarkdown();
   }, [id]);
+  const handleClick = () => {
+    window.open(
+      `https://github.com/Quantum3-Labs/speedrunstark/tree/${id}`,
+      "_blank",
+    );
+  };
   return (
     <div className=" flex items-center w-full justify-center sm:text-[12px] ">
       <div className="max-w-[860px] py-20 sm:max-w-[400px] sm:py-5 sm:px-5 leading-7">
-        <ReactMarkdown
-          components={{
-            h1: ({ children }) => {
-              return (
-                <h1 className="text-primary text-4xl font-bold py-4 border-b border-[#1c2d49] leading-7 mb-2 sm:text-lg ">
-                  {children}
-                </h1>
-              );
-            },
-            h2: ({ children }) => (
-              <h2 className="text-primary text-3xl font-bold leading-7 py-3 sm:text-sm sm:m-0">
-                {children}
-              </h2>
-            ),
-            p: ({ children }) => (
-              <p className="text-primary text-base sm:text-xs leading-7 text-justify max-w-[860px] sm:max-w-[400px]">
-                {children}
-              </p>
-            ),
-            div: ({ children }) => (
-              <div className="text-primary py-3">{children}</div>
-            ),
-            a: ({ children, href }) => (
-              <a
-                className="text-accent cursor-pointer sm:text-xs leading-7"
-                href={href}
-              >
-                {children}
-              </a>
-            ),
-            pre: ({ children }) => (
-              <pre className="bg-secondary-content text-secondary rounded p-5 sm:text-xs leading-7">
-                {children}
-              </pre>
-            ),
-            code: ({ children }) => (
-              <code className="text-sm rounded bg-secondary-content text-secondary max-w-[500px] px-[4px] sm:text-xs leading-7">
-                {children}
-              </code>
-            ),
-            blockquote: ({ children }) => (
-              <blockquote className="text-justify sm:text-xs leading-7">
-                {children}
-              </blockquote>
-            ),
-            li: ({ children }) => (
-              <li className="list-disc sm:text-xs leading-7">{children}</li>
-            ),
-          }}
-        >
+        <ReactMarkdown components={getMarkdownComponents()}>
           {markdown}
         </ReactMarkdown>
+        <div className="w-full flex justify-center">
+          <button
+            className="rounded-full border py-2 px-3 font-medium hover:bg-secondary-content flex items-center justify-center gap-1 text-center"
+            onClick={handleClick}
+          >
+            View it on Github <ArrowTopRightOnSquareIcon className="w-[20px]" />
+          </button>
+        </div>
       </div>
     </div>
   );

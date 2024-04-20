@@ -97,7 +97,7 @@ const Home: NextPage = () => {
               title={challenge.title}
               description={challenge.description}
               imageUrl={challenge.imageUrl}
-              buttonText="QUEST"
+              buttonText="COMING SOON"
               onButtonClick={() => router.push(`/challenge/${challenge.id}`)}
               end={challenge.end || false}
               border={challenge.border !== undefined ? challenge.border : true}
