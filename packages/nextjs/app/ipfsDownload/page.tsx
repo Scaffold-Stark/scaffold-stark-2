@@ -4,7 +4,7 @@ import { lazy, useEffect, useState } from "react";
 import type { NextPage } from "next";
 import { notification } from "~~/utils/scaffold-stark/notification";
 import ButtonStyle from "~~/components/ButtonStyle/ButtonStyle";
-// import { getMetadataFromIPFS } from "~~/utils/simpleNFT/ipfs-fetch";
+import { getMetadataFromIPFS } from "~~/utils/scaffold-stark/simpleNFT/ipfs-fetch";
 
 const LazyReactJson = lazy(() => import("react-json-view"));
 
@@ -17,23 +17,23 @@ const IpfsDownload: NextPage = () => {
     setMounted(true);
   }, []);
 
-  //   const handleIpfsDownload = async () => {
-  //     setLoading(true);
-  //     const notificationId = notification.loading("Getting data from IPFS");
-  //     try {
-  //       const metaData = await getMetadataFromIPFS(ipfsPath);
-  //       notification.remove(notificationId);
-  //       notification.success("Downloaded from IPFS");
+  const handleIpfsDownload = async () => {
+    setLoading(true);
+    const notificationId = notification.loading("Getting data from IPFS");
+    try {
+      const metaData = await getMetadataFromIPFS(ipfsPath);
+      notification.remove(notificationId);
+      notification.success("Downloaded from IPFS");
 
-  //       setYourJSON(metaData);
-  //     } catch (error) {
-  //       notification.remove(notificationId);
-  //       notification.error("Error downloading from IPFS");
-  //       console.log(error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+      setYourJSON(metaData);
+    } catch (error) {
+      notification.remove(notificationId);
+      notification.error("Error downloading from IPFS");
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -52,13 +52,13 @@ const IpfsDownload: NextPage = () => {
             autoComplete="off"
           />
         </div>
-        <ButtonStyle
-        // className={`btn btn-secondary my-6 ${loading ? "loading" : ""}`}
-        // disabled={loading}
-        //   onClick={handleIpfsDownload}
+        <button
+          className={`btn btn-secondary my-6 ${loading ? "loading" : ""}`}
+          disabled={loading}
+          onClick={handleIpfsDownload}
         >
           Download from IPFS
-        </ButtonStyle>
+        </button>
 
         {mounted && (
           <LazyReactJson

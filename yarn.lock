@@ -1618,8 +1618,8 @@ __metadata:
     react-copy-to-clipboard: ^5.1.0
     react-dom: ^18
     react-hot-toast: ^2.4.1
-    react-markdown: ^9.0.1
     react-json-view: ^1.21.3
+    react-markdown: ^9.0.1
     starknet: 5.25.0
     starknet-dev: "npm:starknet@6.7.0"
     tailwindcss: ^3.3.0
@@ -1657,8 +1657,6 @@ __metadata:
 "@starknet-react/core@npm:^2.3.0":
   version: 2.6.1
   resolution: "@starknet-react/core@npm:2.6.1"
-  version: 2.6.1
-  resolution: "@starknet-react/core@npm:2.6.1"
   dependencies:
     "@starknet-react/chains": ^0.1.7
     "@tanstack/react-query": ^5.0.1
@@ -1669,7 +1667,6 @@ __metadata:
     get-starknet-core: ^3.2.0
     react: ^18.0
     starknet: ^5.25.0
-  checksum: a6b02ad8827a5a769bc46c010157df51fd6a3ff43356513a4ef6d35a08b10f9e738444b3964618bc9cd630cb55403feb9169a470beba027ff2522e998e21d4ab
   checksum: a6b02ad8827a5a769bc46c010157df51fd6a3ff43356513a4ef6d35a08b10f9e738444b3964618bc9cd630cb55403feb9169a470beba027ff2522e998e21d4ab
   languageName: node
   linkType: hard
@@ -1861,18 +1858,13 @@ __metadata:
 "@types/react-dom@npm:^18":
   version: 18.2.25
   resolution: "@types/react-dom@npm:18.2.25"
-  version: 18.2.25
-  resolution: "@types/react-dom@npm:18.2.25"
   dependencies:
     "@types/react": "*"
-  checksum: 85f9278d6456c6cdc76da6806a33b472588cdd029b08dde32e8b5636b25a3eae529b4ac2e08c848a3d7ca44e4e97ee9a3df406c96fa0768de935c8eed6e07590
   checksum: 85f9278d6456c6cdc76da6806a33b472588cdd029b08dde32e8b5636b25a3eae529b4ac2e08c848a3d7ca44e4e97ee9a3df406c96fa0768de935c8eed6e07590
   languageName: node
   linkType: hard
 
 "@types/react@npm:*, @types/react@npm:^18":
-  version: 18.2.79
-  resolution: "@types/react@npm:18.2.79"
   version: 18.2.79
   resolution: "@types/react@npm:18.2.79"
   dependencies:
@@ -1893,7 +1885,6 @@ __metadata:
   version: 2.0.10
   resolution: "@types/unist@npm:2.0.10"
   checksum: e2924e18dedf45f68a5c6ccd6015cd62f1643b1b43baac1854efa21ae9e70505db94290434a23da1137d9e31eb58e54ca175982005698ac37300a1c889f6c4aa
-  checksum: 85aa96e0e88725c84d8fc5f04f10a4da6a1f507dde33557ac9cc211414756867721264bfefd9e02bae1288ce2905351d949b652b931e734ea24519ee5c625138
   languageName: node
   linkType: hard
 
@@ -2779,9 +2770,6 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.30001579, caniuse-lite@npm:^1.0.30001587, caniuse-lite@npm:^1.0.30001599":
-  version: 1.0.30001610
-  resolution: "caniuse-lite@npm:1.0.30001610"
-  checksum: 580c7367aafd7e524f4e3f0e8b22ac08d081a4d44ceece211f1758e214df9a87961750fb1e1ee28a2cd2830f0daf3edafe5e1d87bf1eefbbe7c6cf3d00e2979d
   version: 1.0.30001611
   resolution: "caniuse-lite@npm:1.0.30001611"
   checksum: c5beb4a0aaabe24b01a577122c61e20ca0614d2e3adfd2e4de8dbdb8529eb9dba9922be8fd8be9eba48b6cadaada0b338aa3e0d0a17f42f6b3e9a614492c029a
@@ -3082,14 +3070,11 @@ __metadata:
 "daisyui@npm:^4.7.3":
   version: 4.10.2
   resolution: "daisyui@npm:4.10.2"
-  version: 4.10.2
-  resolution: "daisyui@npm:4.10.2"
   dependencies:
     css-selector-tokenizer: ^0.8
     culori: ^3
     picocolors: ^1
     postcss-js: ^4
-  checksum: 520571f366eb74ed631b17be54254d6affb345a3eaab21ad0791cdc98d87372b7327738bbc4f4a100b56702610b77687eaec6952994bd3315cb8b8dd8e1fa5c9
   checksum: 520571f366eb74ed631b17be54254d6affb345a3eaab21ad0791cdc98d87372b7327738bbc4f4a100b56702610b77687eaec6952994bd3315cb8b8dd8e1fa5c9
   languageName: node
   linkType: hard
@@ -3328,12 +3313,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.668":
-  version: 1.4.738
-  resolution: "electron-to-chromium@npm:1.4.738"
-  checksum: 9adef299a9115f507389d2918162e12ab9dc8bff5e0b372bf05d795539c3b5ffa3ff029ab3db4e2d4d3dbebd38ec8bb931adc3e8f987170f93926d684b94a16c
-  version: 1.4.744
-  resolution: "electron-to-chromium@npm:1.4.744"
-  checksum: 917a178500bd8a78ae73c2ad9e71981922ec47e443ca1dfdfbc7a343334e6dfbbaa28e612313710c35b6538b1332dc4d14dd533eb274a587ffad79b3f9908989
+  version: 1.4.745
+  resolution: "electron-to-chromium@npm:1.4.745"
+  checksum: f73b576108863cad160deb22b8e8c6754a8b16b22cda90cfce038a755f886be9c03fb8360bbd7c9d28ddd184800d0d6bd430a11f9289316145f0b28321dfe71d
   languageName: node
   linkType: hard
 
@@ -3893,11 +3875,11 @@ __metadata:
   linkType: hard
 
 "eslint-plugin-react-hooks@npm:^4.5.0 || 5.0.0-canary-7118f5dd7-20230705":
-  version: 4.6.0
-  resolution: "eslint-plugin-react-hooks@npm:4.6.0"
+  version: 5.0.0-canary-7118f5dd7-20230705
+  resolution: "eslint-plugin-react-hooks@npm:5.0.0-canary-7118f5dd7-20230705"
   peerDependencies:
     eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
-  checksum: 23001801f14c1d16bf0a837ca7970d9dd94e7b560384b41db378b49b6e32dc43d6e2790de1bd737a652a86f81a08d6a91f402525061b47719328f586a57e86c3
+  checksum: 20e334e60bf5e56cf9f760598411847525c3ff826e6ae7757c8efdc60b33d47a97ddbe1b94ce95956ea9f7bbef37995b19c716be50bd44e6a1e789cba08b6224
   languageName: node
   linkType: hard
 
@@ -7061,27 +7043,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-markdown@npm:^9.0.1":
-  version: 9.0.1
-  resolution: "react-markdown@npm:9.0.1"
-  dependencies:
-    "@types/hast": ^3.0.0
-    devlop: ^1.0.0
-    hast-util-to-jsx-runtime: ^2.0.0
-    html-url-attributes: ^3.0.0
-    mdast-util-to-hast: ^13.0.0
-    remark-parse: ^11.0.0
-    remark-rehype: ^11.0.0
-    unified: ^11.0.0
-    unist-util-visit: ^5.0.0
-    vfile: ^6.0.0
-  peerDependencies:
-    "@types/react": ">=18"
-    react: ">=18"
-  checksum: ca1daa650d48b84a5a9771683cdb3f3d2d418247ce0faf73ede3207c65f2a21cdebb9df37afda67f6fc8f0f0a7b9ce00eb239781954a4d6c7ad88ea4df068add
-  languageName: node
-  linkType: hard
-
 "react-json-view@npm:^1.21.3":
   version: 1.21.3
   resolution: "react-json-view@npm:1.21.3"
@@ -7101,6 +7062,27 @@ __metadata:
   version: 3.0.4
   resolution: "react-lifecycles-compat@npm:3.0.4"
   checksum: a904b0fc0a8eeb15a148c9feb7bc17cec7ef96e71188280061fc340043fd6d8ee3ff233381f0e8f95c1cf926210b2c4a31f38182c8f35ac55057e453d6df204f
+  languageName: node
+  linkType: hard
+
+"react-markdown@npm:^9.0.1":
+  version: 9.0.1
+  resolution: "react-markdown@npm:9.0.1"
+  dependencies:
+    "@types/hast": ^3.0.0
+    devlop: ^1.0.0
+    hast-util-to-jsx-runtime: ^2.0.0
+    html-url-attributes: ^3.0.0
+    mdast-util-to-hast: ^13.0.0
+    remark-parse: ^11.0.0
+    remark-rehype: ^11.0.0
+    unified: ^11.0.0
+    unist-util-visit: ^5.0.0
+    vfile: ^6.0.0
+  peerDependencies:
+    "@types/react": ">=18"
+    react: ">=18"
+  checksum: ca1daa650d48b84a5a9771683cdb3f3d2d418247ce0faf73ede3207c65f2a21cdebb9df37afda67f6fc8f0f0a7b9ce00eb239781954a4d6c7ad88ea4df068add
   languageName: node
   linkType: hard
 

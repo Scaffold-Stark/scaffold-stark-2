@@ -3,7 +3,7 @@
 import { lazy, useEffect, useState } from "react";
 import type { NextPage } from "next";
 import { notification } from "~~/utils/scaffold-stark/notification";
-// import { addToIPFS } from "~~/utils/simpleNFT/ipfs-fetch";
+import { addToIPFS } from "~~/utils/scaffold-stark/simpleNFT/ipfs-fetch";
 import nftsMetadata from "~~/utils/scaffold-stark/simpleNFT/nftsMetadata";
 import ButtonStyle from "~~/components/ButtonStyle/ButtonStyle";
 
@@ -18,23 +18,23 @@ const IpfsUpload: NextPage = () => {
     setMounted(true);
   }, []);
 
-  //   const handleIpfsUpload = async () => {
-  //     setLoading(true);
-  //     const notificationId = notification.loading("Uploading to IPFS...");
-  //     try {
-  //       const uploadedItem = await addToIPFS(yourJSON);
-  //       notification.remove(notificationId);
-  //       notification.success("Uploaded to IPFS");
+  const handleIpfsUpload = async () => {
+    setLoading(true);
+    const notificationId = notification.loading("Uploading to IPFS...");
+    try {
+      const uploadedItem = await addToIPFS(yourJSON);
+      notification.remove(notificationId);
+      notification.success("Uploaded to IPFS");
 
-  //       setUploadedIpfsPath(uploadedItem.path);
-  //     } catch (error) {
-  //       notification.remove(notificationId);
-  //       notification.error("Error uploading to IPFS");
-  //       console.log(error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+      setUploadedIpfsPath(uploadedItem.path);
+    } catch (error) {
+      notification.remove(notificationId);
+      notification.error("Error uploading to IPFS");
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -60,18 +60,24 @@ const IpfsUpload: NextPage = () => {
             }}
           />
         )}
-        <ButtonStyle
-        //   onClick={handleIpfsUpload}
+        <button
+          className={`btn btn-secondary my-4 ${loading ? "loading" : ""}`}
+          disabled={loading}
+          onClick={handleIpfsUpload}
         >
           Upload to IPFS
-        </ButtonStyle>
-        {/* {uploadedIpfsPath && (
+        </button>
+        {uploadedIpfsPath && (
           <div className="mt-4">
-            <a href={`https://ipfs.io/ipfs/${uploadedIpfsPath}`} target="_blank" rel="noreferrer">
+            <a
+              href={`https://ipfs.io/ipfs/${uploadedIpfsPath}`}
+              target="_blank"
+              rel="noreferrer"
+            >
               {`https://ipfs.io/ipfs/${uploadedIpfsPath}`}
             </a>
           </div>
-        )} */}
+        )}
       </div>
     </>
   );

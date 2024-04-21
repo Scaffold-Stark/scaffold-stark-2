@@ -1,8 +1,20 @@
 import { useState } from "react";
 import { NFTMetaData } from "~~/utils/scaffold-stark/simpleNFT/nftsMetadata";
 import ButtonStyle from "../ButtonStyle/ButtonStyle";
+import { useScaffoldContractWrite } from "~~/hooks/scaffold-stark/useScaffoldContractWrite";
+import { Collectible } from "./MyHoldings";
+import { Address } from "../scaffold-stark";
+import { AddressInput } from "../scaffold-stark";
+export const NFTCard = ({ nft }: { nft: Collectible }) => {
+  const [transferToAddress, setTransferToAddress] = useState("");
 
-export const NFTCard = ({ nft }: any) => {
+  // const { writeAsync: transferNFT } = useScaffoldContractWrite({
+  //   contractName: "Challenge0",
+  //    functionName: "transfer_from",
+  //   args: [nft.owner, transferToAddress, BigInt(nft.id.toString())],
+  //  });
+
+  //  console.log(transferNFT)
   return (
     <div className="card card-compact bg-base-100 shadow-lg sm:min-w-[300px] shadow-secondary">
       <figure className="relative">
@@ -28,15 +40,16 @@ export const NFTCard = ({ nft }: any) => {
         </div>
         <div className="flex space-x-3 mt-1 items-center">
           <span className="text-lg font-semibold">Owner : </span>
-          {/* <Address address={nft.owner} /> */}
+          {nft.owner}
+          {/* <Address address={nft.owner} />   */}
         </div>
         <div className="flex flex-col my-2 space-y-1">
           <span className="text-lg font-semibold mb-1">Transfer To: </span>
-          {/* <AddressInput
+          <AddressInput
             value={transferToAddress}
             placeholder="receiver address"
-            onChange={newValue => setTransferToAddress(newValue)}
-          /> */}
+            onChange={(newValue) => setTransferToAddress(newValue)}
+          />
         </div>
         <div className="card-actions justify-end">
           <ButtonStyle>Send</ButtonStyle>

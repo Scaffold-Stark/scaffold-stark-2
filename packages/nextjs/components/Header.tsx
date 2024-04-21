@@ -1,9 +1,9 @@
-"use client";
-
-import React, { useCallback, useRef, useState } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useOutsideClick } from "~~/hooks/scaffold-stark";
+import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
 import {
   ArrowDownTrayIcon,
   ArrowPathIcon,
@@ -12,12 +12,6 @@ import {
   BugAntIcon,
   PhotoIcon,
 } from "@heroicons/react/24/outline";
-// import {
-//   FaucetButton,
-//   RainbowKitCustomConnectButton,
-// } from "~~/components/scaffold-eth";
-import { useOutsideClick } from "~~/hooks/scaffold-stark";
-import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
 
 type HeaderMenuLink = {
   label: string;
@@ -79,16 +73,19 @@ export const HeaderMenuLinks = () => {
   );
 };
 
-/**
- * Site header
- */
 export const Header = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const burgerMenuRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
   useOutsideClick(
     burgerMenuRef,
     useCallback(() => setIsDrawerOpen(false), []),
   );
+
+  const toggleDrawer = () => {
+    setIsDrawerOpen((prevIsOpenState) => !prevIsOpenState);
+  };
 
   return (
     <div className="sticky lg:static top-0 navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary px-0 sm:px-2">
@@ -99,9 +96,7 @@ export const Header = () => {
             className={`ml-1 btn btn-ghost ${
               isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"
             }`}
-            onClick={() => {
-              setIsDrawerOpen((prevIsOpenState) => !prevIsOpenState);
-            }}
+            onClick={toggleDrawer}
           >
             <Bars3Icon className="h-1/2" />
           </label>

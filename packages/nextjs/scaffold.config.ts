@@ -9,7 +9,7 @@ export type ScaffoldConfig = {
 };
 
 const scaffoldConfig = {
-  targetNetworks: [chains.sepolia],
+  targetNetworks: [chains.devnet],
   // Only show the Burner Wallet when running on sefolia
   onlyLocalBurnerWallet: false,
   rpcProviderUrl: process.env.NEXT_PUBLIC_PROVIDER_URL || "",
