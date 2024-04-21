@@ -11,7 +11,7 @@ const StepInstruction: React.FC<StepInstructionProps> = ({ number, text }) => {
       <div className="w-6 h-6 rounded-full bg-gradient-linear text-white text-center sm:w-5 sm:h-5">
         {number}
       </div>
-      <span className="text-center text-[16px] sm:text-[12px]">{text}</span>
+      <span className="text-center text-[16px] sm:text-xs ">{text}</span>
     </div>
   );
 };
