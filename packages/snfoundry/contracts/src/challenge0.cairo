@@ -5,10 +5,14 @@ trait IChallenge0<T> {
     fn mint_item(ref self: T, recipient: ContractAddress, uri: ByteArray) -> u256;
     fn token_id_counter(self: @T) -> u256;
     fn token_of_owner_by_index(self: @T, owner: ContractAddress, index: u256) -> u256;
+    fn total_supply(self: @T) -> u32;
 }
 #[starknet::contract]
 mod Challenge0 {
+    use core::traits::TryInto;
+    use core::traits::Into;
     use super::{IChallenge0, ContractAddress};
+    use core::num::traits::zero::Zero;
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::token::erc721::ERC721Component;
     use openzeppelin::access::ownable::OwnableComponent;
@@ -40,7 +44,11 @@ mod Challenge0 {
         // Mapping from owner to list of owned token IDs
         owned_tokens: LegacyMap<(ContractAddress, u256), u256>,
         // Mapping from token ID to index of the owner tokens list
-        owned_tokens_index: LegacyMap<u256, u256>
+        owned_tokens_index: LegacyMap<u256, u256>,
+        // Array with all token ids, used for enumeration
+        all_tokens: Array<u256>,
+        // Mapping from token id to position in the allTokens array
+        all_tokens_index: LegacyMap<u256, u256>
     }
 
     #[event]
@@ -95,6 +103,9 @@ mod Challenge0 {
             assert(index < self.erc721.balance_of(owner), 'Owner index out of bounds');
             self.owned_tokens.read((owner, index))
         }
+        fn total_supply(self: @ContractState) -> u32 {
+            self.all_tokens.read().len()
+        }
     }
 
     #[generate_trait]
@@ -148,11 +159,42 @@ mod Challenge0 {
             self.owned_tokens_index.write(token_id, 0);
         }
 
+        // ToDo: handle array limitations
+        // fn _remove_token_from_all_tokens_enumeration(ref self: ContractState, token_id: u256) {
+        //     let last_token_index: u256 = (self.all_tokens.read().len() - 1).into();
+        //     let token_index = self.all_tokens_index.read(token_id);
+
+        //     let last_token_id = *self.all_tokens.read().at(last_token_index.try_into().unwrap());
+
+        //     self.all_tokens.write(token_index, last_token_id);
+        //     self.all_tokens_index.write(last_token_id, token_index);
+
+        //     self.all_tokens.write(last_token_index, 0);
+        //     self.all_tokens_index.write(token_id, 0);
+        // }
+
+        fn _add_token_to_all_tokens_enumeration(ref self: ContractState, token_id: u256) {
+            let length: u256 = self.all_tokens.read().len().into();
+            self.all_tokens_index.write(token_id, length);
+        }
+
         fn _before_token_transfer(
-            ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256
+            ref self: ContractState,
+            from: ContractAddress,
+            to: ContractAddress,
+            first_token_id: u256,
+            batch_size: u256
         ) {
-            self._remove_token_from_owner_enumeration(from, token_id);
-            self._add_token_to_owner_enumeration(to, token_id);
+            assert(batch_size <= 1, 'Consecutive transfers error');
+            if (from == Zero::zero()) {
+                self._add_token_to_all_tokens_enumeration(first_token_id);
+            } else if (from != to) {
+                self._remove_token_from_owner_enumeration(from, first_token_id);
+            }
+            if (to == Zero::zero()) {//self._remove_token_from_all_tokens_enumeration(first_token_id);
+            } else if (to != from) {
+                self._add_token_to_owner_enumeration(to, first_token_id);
+            }
         }
     }
 }
