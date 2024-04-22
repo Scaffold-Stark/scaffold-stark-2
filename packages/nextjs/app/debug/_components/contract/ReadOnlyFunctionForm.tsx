@@ -1,47 +1,42 @@
 "use client";
 
-import { useState } from "react";
-import { Abi } from "abi-wan-kanabi";
-import { Address } from "@starknet-react/chains";
+import {useState, useRef} from "react";
+import {Abi} from "abi-wan-kanabi";
+import {Address} from "@starknet-react/chains";
 import {
-  //   ContractInput,
   displayTxResult,
   getFunctionInputKey,
   getInitialFormState,
   getParsedContractFunctionArgs,
   transformAbiFunction,
 } from "~~/app/debug/_components/contract";
-import { AbiFunction } from "~~/utils/scaffold-stark/contract";
-import { BlockNumber } from "starknet";
-import { useContractRead } from "@starknet-react/core";
-import { ContractInput } from "./ContractInput";
+import {AbiFunction} from "~~/utils/scaffold-stark/contract";
+import {BlockNumber} from "starknet";
+import {useContractRead} from "@starknet-react/core";
+import {ContractInput} from "./ContractInput";
 
 type ReadOnlyFunctionFormProps = {
   contractAddress: Address;
   abiFunction: AbiFunction;
-  //   inheritedFrom?: string;
   abi: Abi;
 };
 
-export const ReadOnlyFunctionForm = ({
-  contractAddress,
-  abiFunction,
-  //   inheritedFrom,
-  abi,
-}: ReadOnlyFunctionFormProps) => {
+export const ReadOnlyFunctionForm = ({contractAddress, abiFunction, abi,}: ReadOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialFormState(abiFunction),
   );
   const [inputValue, setInputValue] = useState<any | undefined>(undefined);
+  const lastForm = useRef(form);
 
-  const { isFetching, data } = useContractRead({
+  const {isFetching, data, refetch} = useContractRead({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
     args: inputValue,
-    enabled: false, // TODO : notify when failed - add error
+    enabled: false,
     blockIdentifier: "pending" as BlockNumber,
   });
+
   const transformedFunction = transformAbiFunction(abiFunction);
   const inputElements = transformedFunction.inputs.map((input, inputIndex) => {
     const key = getFunctionInputKey(abiFunction.name, input, inputIndex);
@@ -56,11 +51,20 @@ export const ReadOnlyFunctionForm = ({
     );
   });
 
+  const handleRead = async () => {
+    const newInputValue = getParsedContractFunctionArgs(form);
+    if (JSON.stringify(form) === JSON.stringify(lastForm.current)) {
+      await refetch();
+    } else {
+      setInputValue(newInputValue);
+      lastForm.current = form;
+    }
+  }
+
   return (
     <div className="flex flex-col gap-3 py-5 first:pt-0 last:pb-1">
       <p className="font-medium my-0 break-words">
         {abiFunction.name}
-        {/* <InheritanceTooltip inheritedFrom={inheritedFrom} /> */}
       </p>
       {inputElements}
       <div className="flex justify-between gap-2 flex-wrap">
@@ -76,9 +80,7 @@ export const ReadOnlyFunctionForm = ({
         </div>
         <button
           className="btn btn-secondary btn-sm"
-          onClick={async () => {
-            setInputValue(getParsedContractFunctionArgs(form));
-          }}
+          onClick={handleRead}
           disabled={inputValue && isFetching}
         >
           {inputValue && isFetching && (

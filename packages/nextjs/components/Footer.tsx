@@ -12,6 +12,7 @@ import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { useGlobalState } from "~~/services/store/store";
 import { devnet } from "@starknet-react/chains";
 import { Faucet } from "~~/components/scaffold-stark/Faucet";
+import {getBlockExplorerLink} from "~~/utils/scaffold-stark";
 // import { Faucet } from "~~/components/scaffold-eth";
 // import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 // import { useGlobalState } from "~~/services/store/store";
@@ -43,7 +44,9 @@ export const Footer = () => {
               <>
                 <Faucet />
                 <Link
-                  href="/blockexplorer"
+                  href={getBlockExplorerLink(targetNetwork)}
+                  target={"_blank"}
+                  rel={"noopener noreferrer"}
                   passHref
                   className="btn btn-primary btn-sm font-normal gap-1"
                 >
