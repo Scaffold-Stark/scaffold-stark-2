@@ -175,4 +175,6 @@ const ethAbi = [
   { type: "function", name: "renounceOwnership", inputs: [], outputs: [] },
 ];
 
+export const ethContractAddress = "0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7";
+
 export default ethAbi;
