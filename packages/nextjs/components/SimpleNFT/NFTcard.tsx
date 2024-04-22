@@ -3,6 +3,7 @@ import ButtonStyle from "../ButtonStyle/ButtonStyle";
 import { Collectible } from "./MyHoldings";
 import { AddressInput } from "../scaffold-stark";
 import { Address } from "../scaffold-stark";
+import { Address as AddressType } from "@starknet-react/chains";
 export const NFTCard = ({ nft }: { nft: Collectible }) => {
   const [transferToAddress, setTransferToAddress] = useState("");
 
@@ -38,7 +39,7 @@ export const NFTCard = ({ nft }: { nft: Collectible }) => {
         </div>
         <div className="flex space-x-3 mt-1 items-center">
           <span className="text-lg font-semibold">Owner : </span>
-          <Address address={nft.owner} />
+          <Address address={nft.owner as AddressType} />
         </div>
         <div className="flex flex-col my-2 space-y-1">
           <span className="text-lg font-semibold mb-1">Transfer To: </span>
