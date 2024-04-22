@@ -36,11 +36,11 @@ const Home: NextPage = () => {
             />
             <StepInstruction
               number={2}
-              text="Then use Scaffold-Stark to copy/paste each Cairo concept and tinker: global units, primitives, mappings, structs, modifiers, events, inheritance, sending eth, and payable/fallback functions."
+              text="Then use Scaffold-Stark to copy/paste each Cairo concept and tinker: Contract's State, storage variables, custom types, interface, mappings, events, traits, constructors, and public/private functions."
             />
             <StepInstruction
               number={3}
-              text="Watch this getting started playlist to become a power user and eth scripter."
+              text="Watch this getting started playlist to become a power user and cairo scripter."
             />
             <StepInstruction
               number={4}
@@ -72,17 +72,17 @@ const Home: NextPage = () => {
             <div className="max-w-[1280px] flex justify-around flex-col w-full border-l-[5px] border-base-300 sm:justify-start sm:items-center sm:border-l-[3px] lg:border-l-[3px] pt-[20px]">
               <div className="bg-banner-join flex justify-center h-[130px] w-full text-secondary font-black text-7xl items-center sm:text-3xl sm:h-[80px]">
                 <span className="font-black font-['system-ui']">
-                  JOiN BUiLDGUiLD
+                  JOiN CORE-STARS
                 </span>
               </div>
               <div className="flex lg:justify-center">
                 <div className="max-w-[430px] w-full py-20 pl-20 sm:py-0 sm:pl-3 sm:flex lg:pl-0  lg:pt-0">
                   <span className="sm:text-[12px] sm:text-center leading-7 sm:text-xs">
-                    The BuidlGuidl is a curated group of Ethereum builders
+                    The Core-Stars is a curated group of Starknet builders
                     creating products, prototypes, and tutorials to enrich the
                     web3 ecosystem. A place to show off your builds and meet
                     other builders. Start crafting your Web3 portfolio by
-                    submitting your DEX, Multisig or SVG NFT build.
+                    submitting your DEX, onchain Game or SVG NFT build.
                   </span>
                 </div>
               </div>
