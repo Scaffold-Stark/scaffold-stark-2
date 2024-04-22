@@ -7,35 +7,22 @@ import { MyHoldings } from "~~/components/SimpleNFT/MyHoldings";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-stark/useScaffoldContractRead";
 import { useScaffoldContractWrite } from "~~/hooks/scaffold-stark/useScaffoldContractWrite";
 import { notification } from "~~/utils/scaffold-stark";
-import { addToIPFS } from "~~/utils/scaffold-stark/simpleNFT/ipfs-fetch";
-import { useScaffoldContract } from "~~/hooks/scaffold-stark/useScaffoldContract";
-import nftsMetadata from "~~/utils/scaffold-stark/simpleNFT/nftsMetadata";
+import { addToIPFS } from "~~/utils/simpleNFT/ipfs-fetch";
+import nftsMetadata from "~~/utils/simpleNFT/nftsMetadata";
 
 const MyNFTs: NextPage = () => {
   const { address: connectedAddress, isConnected, isConnecting } = useAccount();
-  console.log(connectedAddress);
 
-  const { data: yourCollectibleContract } = useScaffoldContract({
-    contractName: "Challenge0",
-  });
-
-  const { writeAsync: mintItem, error: error } = useScaffoldContractWrite({
+  const { writeAsync: mintItem } = useScaffoldContractWrite({
     contractName: "Challenge0",
     functionName: "mint_item",
-    args: [
-      connectedAddress ?? "",
-      `[${new TextEncoder().encode("Your string here").toString()}]`,
-    ],
+    args: [connectedAddress, ""],
   });
-
-  // console.log(mintItem)
-  // console.log(error)
 
   const { data: tokenIdCounter } = useScaffoldContractRead({
     contractName: "Challenge0",
     functionName: "token_id_counter",
     watch: true,
-    cacheOnBlock: true,
   });
 
   const handleMintItem = async () => {

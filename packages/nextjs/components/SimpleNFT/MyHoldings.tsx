@@ -6,8 +6,9 @@ import { useAccount } from "@starknet-react/core";
 import { useScaffoldContract } from "~~/hooks/scaffold-stark/useScaffoldContract";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-stark/useScaffoldContractRead";
 import { notification } from "~~/utils/scaffold-stark";
-import { getMetadataFromIPFS } from "~~/utils/scaffold-stark/simpleNFT/ipfs-fetch";
-import { NFTMetaData } from "~~/utils/scaffold-stark/simpleNFT/nftsMetadata";
+import { getMetadataFromIPFS } from "~~/utils/simpleNFT/ipfs-fetch";
+import { NFTMetaData } from "~~/utils/simpleNFT/nftsMetadata";
+import { decodeBigIntArrayToText } from "~~/utils/scaffold-stark/contractsData";
 
 export interface Collectible extends Partial<NFTMetaData> {
   id: number;
@@ -24,14 +25,11 @@ export const MyHoldings = () => {
     contractName: "Challenge0",
   });
 
-  // console.log(connectedAddress)
   const { data: myTotalBalance } = useScaffoldContractRead({
     contractName: "Challenge0",
     functionName: "balance_of",
-    args: [connectedAddress],
+    args: [connectedAddress ?? ""],
   });
-
-  console.log(myTotalBalance);
 
   useEffect(() => {
     const updateMyCollectibles = async (): Promise<void> => {
@@ -47,22 +45,22 @@ export const MyHoldings = () => {
       const totalBalance = parseInt(myTotalBalance.toString());
       for (let tokenIndex = 0; tokenIndex < totalBalance; tokenIndex++) {
         try {
-          const tokenId =
-            await yourCollectibleContract.read.tokenOfOwnerByIndex([
-              connectedAddress,
-              BigInt(tokenIndex),
-            ]);
-
-          const tokenURI = await yourCollectibleContract.read.tokenURI([
-            tokenId,
-          ]);
-
-          const ipfsHash = tokenURI.replace("https://ipfs.io/ipfs/", "");
+          const tokenURI = decodeBigIntArrayToText(
+            (
+              await yourCollectibleContract.functions["token_uri"](
+                BigInt(tokenIndex + 1),
+              )
+            ).data,
+          );
+          const ipfsHash = tokenURI.replace(
+            /https:\/\/ipfs\.io\/(ipfs\/)?/,
+            "",
+          );
 
           const nftMetadata: NFTMetaData = await getMetadataFromIPFS(ipfsHash);
 
           collectibleUpdate.push({
-            id: parseInt(tokenId.toString()),
+            id: parseInt(tokenIndex.toString()),
             uri: tokenURI,
             owner: connectedAddress,
             ...nftMetadata,

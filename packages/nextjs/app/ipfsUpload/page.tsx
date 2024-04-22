@@ -3,9 +3,8 @@
 import { lazy, useEffect, useState } from "react";
 import type { NextPage } from "next";
 import { notification } from "~~/utils/scaffold-stark/notification";
-import { addToIPFS } from "~~/utils/scaffold-stark/simpleNFT/ipfs-fetch";
-import nftsMetadata from "~~/utils/scaffold-stark/simpleNFT/nftsMetadata";
-import ButtonStyle from "~~/components/ButtonStyle/ButtonStyle";
+import { addToIPFS } from "~~/utils/simpleNFT/ipfs-fetch";
+import nftsMetadata from "~~/utils/simpleNFT/nftsMetadata";
 
 const LazyReactJson = lazy(() => import("react-json-view"));
 

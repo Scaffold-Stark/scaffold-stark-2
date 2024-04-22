@@ -1,9 +1,6 @@
 import { useState } from "react";
-import { NFTMetaData } from "~~/utils/scaffold-stark/simpleNFT/nftsMetadata";
 import ButtonStyle from "../ButtonStyle/ButtonStyle";
-import { useScaffoldContractWrite } from "~~/hooks/scaffold-stark/useScaffoldContractWrite";
 import { Collectible } from "./MyHoldings";
-import { Address } from "../scaffold-stark";
 import { AddressInput } from "../scaffold-stark";
 export const NFTCard = ({ nft }: { nft: Collectible }) => {
   const [transferToAddress, setTransferToAddress] = useState("");
