@@ -37,7 +37,10 @@ mod Challenge0 {
         ownable: OwnableComponent::Storage,
         counter: u256,
         token_uris: LegacyMap<u256, ByteArray>,
-        owned_tokens: LegacyMap<(ContractAddress, u256), u256>
+        // Mapping from owner to list of owned token IDs
+        owned_tokens: LegacyMap<(ContractAddress, u256), u256>,
+        // Mapping from token ID to index of the owner tokens list
+        owned_tokens_index: LegacyMap<u256, u256>
     }
 
     #[event]
@@ -113,6 +116,43 @@ mod Challenge0 {
 
         fn _set_token_uri(ref self: ContractState, token_id: u256, uri: ByteArray) {
             self.token_uris.write(token_id, uri);
+        }
+
+        fn _add_token_to_owner_enumeration(
+            ref self: ContractState, recipient: ContractAddress, token_id: u256
+        ) {
+            let length = self.erc721.balance_of(recipient);
+            self.owned_tokens.write((recipient, length), token_id);
+            self.owned_tokens_index.write(token_id, length);
+        }
+
+        fn _remove_token_from_owner_enumeration(
+            ref self: ContractState, from: ContractAddress, token_id: u256
+        ) {
+            // To prevent a gap in from's tokens array, we store the last token in the index of the token to delete, and
+            // then delete the last slot (swap and pop).
+            let last_token_index = self.erc721.balance_of(from) - 1;
+            let token_index = self.owned_tokens_index.read(token_id);
+
+            // When the token to delete is the last token, the swap operation is unnecessary
+            if (token_index != last_token_index) {
+                let last_token_id = self.owned_tokens.read((from, last_token_index));
+                // Move the last token to the slot of the to-delete token
+                self.owned_tokens.write((from, token_index), last_token_id);
+                // Update the moved token's index
+                self.owned_tokens_index.write(last_token_id, token_index);
+            }
+
+            // Clear the last slot
+            self.owned_tokens.write((from, last_token_index), 0);
+            self.owned_tokens_index.write(token_id, 0);
+        }
+
+        fn _before_token_transfer(
+            ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256
+        ) {
+            self._remove_token_from_owner_enumeration(from, token_id);
+            self._add_token_to_owner_enumeration(to, token_id);
         }
     }
 }
