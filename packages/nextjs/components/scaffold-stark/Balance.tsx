@@ -5,7 +5,7 @@ import { Address } from "@starknet-react/chains";
 import { useContractRead } from "@starknet-react/core";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { useGlobalState } from "~~/services/store/store";
-import ethAbi from "~~/utils/ethAbi";
+import ethAbi, { ethContractAddress } from "~~/utils/ethAbi";
 import { BlockNumber } from "starknet";
 
 type BalanceProps = {
@@ -26,8 +26,7 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
   );
 
   const { data, isLoading, isError } = useContractRead({
-    address:
-      "0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7",
+    address: ethContractAddress,
     watch: true,
     abi: ethAbi,
     functionName: "balanceOf",
