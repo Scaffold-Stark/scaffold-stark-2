@@ -2,6 +2,7 @@ import { useState } from "react";
 import ButtonStyle from "../ButtonStyle/ButtonStyle";
 import { Collectible } from "./MyHoldings";
 import { AddressInput } from "../scaffold-stark";
+import { Address } from "../scaffold-stark";
 export const NFTCard = ({ nft }: { nft: Collectible }) => {
   const [transferToAddress, setTransferToAddress] = useState("");
 
@@ -18,7 +19,7 @@ export const NFTCard = ({ nft }: { nft: Collectible }) => {
         {/* eslint-disable-next-line  */}
         <img src={nft.image} alt="NFT Image" className="h-60 min-w-full" />
         <figcaption className="glass absolute bottom-4 left-4 p-4 w-25 rounded-xl">
-          <span className="text-white "># N°</span>
+          <span className="text-white "># {nft.id}</span>
         </figcaption>
       </figure>
       <div className="card-body space-y-3">
@@ -37,8 +38,7 @@ export const NFTCard = ({ nft }: { nft: Collectible }) => {
         </div>
         <div className="flex space-x-3 mt-1 items-center">
           <span className="text-lg font-semibold">Owner : </span>
-          {nft.owner}
-          {/* <Address address={nft.owner} />   */}
+          <Address address={nft.owner} />
         </div>
         <div className="flex flex-col my-2 space-y-1">
           <span className="text-lg font-semibold mb-1">Transfer To: </span>
