@@ -1,13 +1,17 @@
-"use client";
-
-import React, { useCallback, useRef, useState } from "react";
-
-import { BugAntIcon } from "@heroicons/react/24/outline";
+import React, { useState, useRef, useCallback } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { FaucetButton } from "~~/components/scaffold-stark/FaucetButton";
+import {
+  ArrowDownTrayIcon,
+  ArrowPathIcon,
+  ArrowUpTrayIcon,
+  Bars3Icon,
+  BugAntIcon,
+  PhotoIcon,
+} from "@heroicons/react/24/outline";
 
 type HeaderMenuLink = {
   label: string;
@@ -17,8 +21,24 @@ type HeaderMenuLink = {
 
 export const menuLinks: HeaderMenuLink[] = [
   {
-    label: "Home",
-    href: "/",
+    label: "My NFTs",
+    href: "/myNFTs",
+    icon: <PhotoIcon className="h-4 w-4" />,
+  },
+  {
+    label: "Transfers",
+    href: "/transfers",
+    icon: <ArrowPathIcon className="h-4 w-4" />,
+  },
+  {
+    label: "IPFS Upload",
+    href: "/ipfsUpload",
+    icon: <ArrowUpTrayIcon className="h-4 w-4" />,
+  },
+  {
+    label: "IPFS Download",
+    href: "/ipfsDownload",
+    icon: <ArrowDownTrayIcon className="h-4 w-4" />,
   },
   {
     label: "Debug Contracts",
@@ -27,38 +47,95 @@ export const menuLinks: HeaderMenuLink[] = [
   },
 ];
 
-/**
- * Site header
- */
+export const HeaderMenuLinks = () => {
+  const pathname = usePathname();
+
+  return (
+    <>
+      {menuLinks.map(({ label, href, icon }) => {
+        const isActive = pathname === href;
+        return (
+          <li key={href}>
+            <Link
+              href={href}
+              passHref
+              className={`${
+                isActive ? "bg-base-300 shadow-md text-base-100" : ""
+              } hover:bg-base-300 hover:shadow-md hover:text-base-100 focus:!bg-secondary active:!text-neutral py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col`}
+            >
+              {icon}
+              <span>{label}</span>
+            </Link>
+          </li>
+        );
+      })}
+    </>
+  );
+};
+
 export const Header = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+
   useOutsideClick(
     burgerMenuRef,
     useCallback(() => setIsDrawerOpen(false), []),
   );
 
+  const toggleDrawer = () => {
+    setIsDrawerOpen((prevIsOpenState) => !prevIsOpenState);
+  };
+
   return (
-    <div
-      className={`lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2 bg-base-100 ${pathname !== "/" ? "border-b border-[#1c2d49] bg-base-400" : ""}`}
-    >
-      <div className="pl-8 sm:pl-0">
-        {pathname !== "/" && (
-          <button onClick={() => (window.location.href = "/")}>
+    <div className="sticky lg:static top-0 navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 text-primary shadow-md shadow-secondary px-0 sm:px-2">
+      <div className="navbar-start w-auto lg:w-1/2">
+        <div className="lg:hidden dropdown" ref={burgerMenuRef}>
+          <label
+            tabIndex={0}
+            className={`ml-1 btn btn-ghost ${
+              isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"
+            }`}
+            onClick={toggleDrawer}
+          >
+            <Bars3Icon className="h-1/2" />
+          </label>
+          {isDrawerOpen && (
+            <ul
+              tabIndex={0}
+              className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
+              onClick={() => {
+                setIsDrawerOpen(false);
+              }}
+            >
+              <HeaderMenuLinks />
+            </ul>
+          )}
+        </div>
+        <Link
+          href="/"
+          passHref
+          className="hidden lg:flex items-center gap-2 ml-4 mr-6 shrink-0"
+        >
+          <div className="flex relative w-10 h-10">
             <Image
-              src={"/logo-header.svg"}
-              alt={"logo header"}
-              width={200}
-              height={65}
-              className="sm:w-[130px] "
+              alt="SE2 logo"
+              className="cursor-pointer"
+              fill
+              src="/challenge-icon-starknet.svg"
             />
-          </button>
-        )}
+          </div>
+          <div className="flex flex-col">
+            <span className="font-bold leading-tight">Scaffold-Stark</span>
+            <span className="text-xs">Starknet dev stack</span>
+          </div>
+        </Link>
+        <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">
+          <HeaderMenuLinks />
+        </ul>
       </div>
-      <div className="navbar-end flex-grow pr-8 py-[8px] sm:pr-0 leading-7">
+      <div className="navbar-end flex-grow mr-4">
         <CustomConnectButton />
-        <FaucetButton />
       </div>
     </div>
   );

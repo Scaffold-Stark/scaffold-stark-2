@@ -18,6 +18,12 @@ import { appChains } from "~~/services/web3/connectors";
 import { BurnerConnector } from "~~/services/web3/stark-burner/BurnerConnector";
 import provider from "~~/services/web3/provider";
 import { useNativeCurrencyPrice } from "~~/hooks/scaffold-stark/useNativeCurrencyPrice";
+// import { Space_Grotesk } from "@next/font/google";
+// import scaffoldConfig from "~~/scaffold.config";
+
+// const spaceGrotesk = Space_Grotesk({
+//   subsets: ["latin"],
+// });
 
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
   useNativeCurrencyPrice();
@@ -26,7 +32,7 @@ const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
     <>
       <div className="flex flex-col min-h-screen">
         <Header />
-        <main className="relative flex flex-col flex-1">{children}</main>
+        <main className={`relative flex flex-col flex-1 `}>{children}</main>
         <Footer />
       </div>
       <Toaster />

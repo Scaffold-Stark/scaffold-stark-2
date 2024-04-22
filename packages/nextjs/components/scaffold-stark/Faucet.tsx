@@ -51,7 +51,7 @@ export const Faucet = () => {
     <div>
       <label
         htmlFor="faucet-modal"
-        className="btn btn-primary btn-sm font-normal gap-1"
+        className="btn btn-primary btn-sm font-normal gap-1 text-base-100"
       >
         <BanknotesIcon className="h-4 w-4" />
         <span>Faucet</span>
