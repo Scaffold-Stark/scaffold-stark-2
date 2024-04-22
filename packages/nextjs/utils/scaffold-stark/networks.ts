@@ -73,11 +73,10 @@ export function getBlockExplorerLink(network: chains.Chain) {
   switch (network) {
     case chains.mainnet:
       return "https://starkscan.co/";
+    default:
     case chains.devnet:
     case chains.sepolia:
       return "https://sepolia.starkscan.co/";
-    default:
-      return "https://sepolia.starkscan.co/"
   }
 }
 

@@ -1,8 +1,8 @@
 "use client";
 
-import {useState, useRef} from "react";
-import {Abi} from "abi-wan-kanabi";
-import {Address} from "@starknet-react/chains";
+import { useState, useRef } from "react";
+import { Abi } from "abi-wan-kanabi";
+import { Address } from "@starknet-react/chains";
 import {
   displayTxResult,
   getFunctionInputKey,
@@ -10,10 +10,10 @@ import {
   getParsedContractFunctionArgs,
   transformAbiFunction,
 } from "~~/app/debug/_components/contract";
-import {AbiFunction} from "~~/utils/scaffold-stark/contract";
-import {BlockNumber} from "starknet";
-import {useContractRead} from "@starknet-react/core";
-import {ContractInput} from "./ContractInput";
+import { AbiFunction } from "~~/utils/scaffold-stark/contract";
+import { BlockNumber } from "starknet";
+import { useContractRead } from "@starknet-react/core";
+import { ContractInput } from "./ContractInput";
 
 type ReadOnlyFunctionFormProps = {
   contractAddress: Address;
@@ -21,14 +21,18 @@ type ReadOnlyFunctionFormProps = {
   abi: Abi;
 };
 
-export const ReadOnlyFunctionForm = ({contractAddress, abiFunction, abi,}: ReadOnlyFunctionFormProps) => {
+export const ReadOnlyFunctionForm = ({
+  contractAddress,
+  abiFunction,
+  abi,
+}: ReadOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialFormState(abiFunction),
   );
   const [inputValue, setInputValue] = useState<any | undefined>(undefined);
   const lastForm = useRef(form);
 
-  const {isFetching, data, refetch} = useContractRead({
+  const { isFetching, data, refetch } = useContractRead({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
@@ -59,13 +63,11 @@ export const ReadOnlyFunctionForm = ({contractAddress, abiFunction, abi,}: ReadO
       setInputValue(newInputValue);
       lastForm.current = form;
     }
-  }
+  };
 
   return (
     <div className="flex flex-col gap-3 py-5 first:pt-0 last:pb-1">
-      <p className="font-medium my-0 break-words">
-        {abiFunction.name}
-      </p>
+      <p className="font-medium my-0 break-words">{abiFunction.name}</p>
       {inputElements}
       <div className="flex justify-between gap-2 flex-wrap">
         <div className="flex-grow w-4/5">
