@@ -4,6 +4,7 @@ use starknet::ContractAddress;
 trait IChallenge0<T> {
     fn mint_item(ref self: T, recipient: ContractAddress, uri: ByteArray) -> u256;
     fn token_id_counter(self: @T) -> u256;
+    fn token_of_owner_by_index(self: @T, owner: ContractAddress, index: u256) -> u256;
 }
 #[starknet::contract]
 mod Challenge0 {
@@ -36,6 +37,7 @@ mod Challenge0 {
         ownable: OwnableComponent::Storage,
         counter: u256,
         token_uris: LegacyMap<u256, ByteArray>,
+        owned_tokens: LegacyMap<(ContractAddress, u256), u256>
     }
 
     #[event]
@@ -83,6 +85,12 @@ mod Challenge0 {
         }
         fn token_id_counter(self: @ContractState) -> u256 {
             self._current()
+        }
+        fn token_of_owner_by_index(
+            self: @ContractState, owner: ContractAddress, index: u256
+        ) -> u256 {
+            assert(index < self.erc721.balance_of(owner), 'Owner index out of bounds');
+            self.owned_tokens.read((owner, index))
         }
     }
 
