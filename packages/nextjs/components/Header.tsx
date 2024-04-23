@@ -2,7 +2,6 @@ import React, { useCallback, useRef, useState } from "react";
 import { BugAntIcon } from "@heroicons/react/24/outline";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { FaucetButton } from "~~/components/scaffold-stark/FaucetButton";
 import HeaderLogo from "./HeaderLogo";
@@ -40,7 +39,7 @@ export const Header = () => {
     >
       <div className="pl-8 sm:pl-0">
         <button onClick={() => (window.location.href = "/")}>
-        <HeaderLogo /> 
+          <HeaderLogo />
         </button>
       </div>
       <div className="navbar-end flex-grow pr-8 py-[8px] sm:pr-0 leading-7">
