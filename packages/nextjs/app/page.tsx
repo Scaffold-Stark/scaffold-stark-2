@@ -6,6 +6,9 @@ import StepInstruction from "~~/components/StepInstruction/StepInstruction";
 import ChallengeCard from "~~/components/ChallengeCard/ChallengeCard";
 import { firstChallenges, lastChallenges } from "~~/data-challenges/challenges";
 import { useRouter } from "next/navigation";
+import localFont from "@next/font/local";
+
+const myFont = localFont({ src: "./font/codec.ttf" });
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -25,7 +28,9 @@ const Home: NextPage = () => {
             <span className="text-center">
               Learn how to build on Starknet; the superpowers and the gotchas.
             </span>
-            <h1 className="text-8xl font-black text-center sm:text-6xl font-['system-ui']">
+            <h1
+              className={`text-8xl font-black text-center sm:text-6xl ${myFont.className}`}
+            >
               SPEEDRUN STARKNET
             </h1>
           </div>
