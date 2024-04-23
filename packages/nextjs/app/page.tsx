@@ -6,10 +6,10 @@ import StepInstruction from "~~/components/StepInstruction/StepInstruction";
 import ChallengeCard from "~~/components/ChallengeCard/ChallengeCard";
 import { firstChallenges, lastChallenges } from "~~/data-challenges/challenges";
 import { useRouter } from "next/navigation";
+import SpeedStarknetIcon from "~~/components/icons/SpeedStarknetIcon";
 
 const Home: NextPage = () => {
   const router = useRouter();
-
   return (
     <div>
       <div className="w-full flex items-center justify-center flex-col bg-landing gap-10 bg-base-100 text-primary sm:gap-3 ">
@@ -25,9 +25,13 @@ const Home: NextPage = () => {
             <span className="text-center">
               Learn how to build on Starknet; the superpowers and the gotchas.
             </span>
-            <h1 className="text-8xl font-black text-center sm:text-6xl font-['system-ui']">
-              SPEEDRUN STARKNET
-            </h1>
+            <svg
+              viewBox="0 0 540 155"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <SpeedStarknetIcon />
+            </svg>
           </div>
           <div className="flex flex-col gap-5 bg-base-100 sm:px-[20px] ">
             <StepInstruction
