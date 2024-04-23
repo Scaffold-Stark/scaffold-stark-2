@@ -8,7 +8,7 @@ import { firstChallenges, lastChallenges } from "~~/data-challenges/challenges";
 import { useRouter } from "next/navigation";
 import localFont from "@next/font/local";
 
-const myFont = localFont({ src: "./font/codec.ttf" });
+const myFont = localFont({ src: "../font/codec.ttf" });
 
 const Home: NextPage = () => {
   const router = useRouter();
