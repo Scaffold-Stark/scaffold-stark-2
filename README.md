@@ -16,6 +16,9 @@ scarb --version
 
 If your local Scarb version is not `2.5.4`, you need to install it.
 
+<details>
+<summary><b>Installation Process</b></summary>
+
 To install Scarb, please refer to the [installation instructions](https://docs.swmansion.com/scarb/download).
 We strongly recommend that you install
 Scarb via [asdf](https://docs.swmansion.com/scarb/download.html#install-via-asdf), a CLI tool that can manage
@@ -50,6 +53,8 @@ will install the version `2.5.4` of Scarb.
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh -s -- -v 2.5.4
 ```
+
+</details>
 
 ## Compatible versions
 
