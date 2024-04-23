@@ -38,9 +38,11 @@ export const Header = () => {
       className={`lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2 bg-base-100 ${pathname !== "/" ? "border-b border-[#1c2d49] bg-base-400" : ""}`}
     >
       <div className="pl-8 sm:pl-0">
-        <button onClick={() => (window.location.href = "/")}>
-          <HeaderLogo />
-        </button>
+      {pathname !== "/" && (
+            <button onClick={() => (window.location.href = "/")}>
+              <HeaderLogo />
+            </button>
+      )}
       </div>
       <div className="navbar-end flex-grow pr-8 py-[8px] sm:pr-0 leading-7">
         <CustomConnectButton />
