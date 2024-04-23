@@ -14,7 +14,7 @@ import {
 } from "@heroicons/react/24/outline";
 import MenuItem from "~~/components/MenuItem/MenuItem";
 
- export type HeaderMenuLink = {
+export type HeaderMenuLink = {
   label: string;
   href: string;
   icon?: React.ReactNode;
@@ -55,9 +55,7 @@ export const HeaderMenuLinks = () => {
     <>
       {menuLinks.map((link) => {
         const isActive = pathname === link.href;
-        return (
-            <MenuItem key={link.href} link={link} isActive={isActive}/>
-        );
+        return <MenuItem key={link.href} link={link} isActive={isActive} />;
       })}
     </>
   );
