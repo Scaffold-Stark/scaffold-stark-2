@@ -4,7 +4,7 @@ import { useState } from "react";
 import { BanknotesIcon } from "@heroicons/react/24/outline";
 import { mintEth } from "~~/services/web3/faucet";
 import { Address, devnet } from "@starknet-react/chains";
-import { useAccount, useBalance, useNetwork } from "@starknet-react/core";
+import { useAccount, useBalance } from "@starknet-react/core";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 
 // Number of ETH faucet sends to an address
@@ -42,7 +42,7 @@ export const FaucetButton = () => {
   };
 
   // Render only on local chain
-  if (targetNetwork.id !== devnet.id) {
+  if (targetNetwork.id !== devnet.id || address == undefined) {
     return null;
   }
 

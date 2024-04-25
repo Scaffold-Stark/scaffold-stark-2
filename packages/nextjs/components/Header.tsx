@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,6 +14,7 @@ import {
   PhotoIcon,
 } from "@heroicons/react/24/outline";
 import MenuItem from "~~/components/MenuItem/MenuItem";
+
 
 export type HeaderMenuLink = {
   label: string;
@@ -48,6 +50,7 @@ export const menuLinks: HeaderMenuLink[] = [
   },
 ];
 
+
 export const HeaderMenuLinks = () => {
   const pathname = usePathname();
 
@@ -60,6 +63,7 @@ export const HeaderMenuLinks = () => {
     </>
   );
 };
+
 
 export const Header = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);

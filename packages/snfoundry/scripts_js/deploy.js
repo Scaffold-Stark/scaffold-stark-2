@@ -13,14 +13,6 @@ const deployScript = async () => {
   //   "SimpleStorage"
   // );
 
- await deployContract(
-    {
-       owner:
-        "0x4b3f4ba8c00a02b66142a4b1dd41a4dfab4f92650922a3280977b0f03c75ee1",
-    }, // last account in devnet accounts
-     "Challenge0",
-    );
-
   // await deployContract(
   //   {
   //     owner:
@@ -28,6 +20,7 @@ const deployScript = async () => {
   //   }, // last account in devnet accounts
   //   "Challenge0"
   // );
+
 
   // const values = {
   //     classHash: helloStarknetClassHash,
