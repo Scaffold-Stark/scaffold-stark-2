@@ -1,11 +1,4 @@
-const { deployContract } = require("./deploy_contract");
-const argv = require("yargs/yargs")(process.argv.slice(2)).argv;
-const networks = require("./helpers/networks");
-const networkName = argv.network;
-const { deployer } = networks[networkName];
-const last_devnet_account = "0x4b3f4ba8c00a02b66142a4b1dd41a4dfab4f92650922a3280977b0f03c75ee1";
-const deployer_address = deployer.address || last_devnet_account
-
+const { deployer, deployContract } = require("./deploy_contract");
 const deployScript = async () => {
   // const {
   //   classHash: helloStarknetClassHash,
@@ -18,10 +11,9 @@ const deployScript = async () => {
   //   },
   //   "SimpleStorage"
   // );
-
   await deployContract(
     {
-      owner: deployer_address,
+      owner: deployer.address // the deployer address is the owner of the contract
     },
     "Challenge0"
   );
