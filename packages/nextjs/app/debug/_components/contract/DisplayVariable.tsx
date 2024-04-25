@@ -46,7 +46,7 @@ export const DisplayVariable = ({
   return (
     <div className="space-y-1 pb-2">
       <div className="flex items-center">
-        <h3 className="font-medium text-lg mb-0 break-all">
+        <h3 className="font-medium text-[15px] mb-0 break-all text-neutral-content ">
           {abiFunction.name}
         </h3>
         <button

@@ -36,8 +36,8 @@ export function DebugContracts() {
                 <button
                   className={`btn btn-secondary btn-sm font-light hover:border-transparent ${
                     contractName === selectedContract
-                      ? "bg-base-300 hover:bg-base-300 no-animation"
-                      : "bg-base-100 hover:bg-secondary"
+                      ? "bg-base-300 hover:bg-base-300 no-animation text-base-100 "
+                      : "bg-base-100 hover:bg-secondary  hover:text-neutral-content text-primary"
                   }`}
                   key={contractName}
                   onClick={() => setSelectedContract(contractName)}

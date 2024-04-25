@@ -138,7 +138,7 @@ WriteOnlyFunctionFormProps) => {
             }`}
           >
             <button
-              className="btn btn-secondary btn-sm"
+              className="btn btn-secondary btn-sm bg-primary text-neutral-content "
               disabled={writeDisabled || isLoading}
               onClick={handleWrite}
             >
@@ -151,7 +151,7 @@ WriteOnlyFunctionFormProps) => {
         </div>
       </div>
       {zeroInputs && txResult ? (
-        <div className="flex-grow basis-0">
+        <div className="flex-grow basis-0 ">
           <TxReceipt txResult={txResult} />
         </div>
       ) : null}

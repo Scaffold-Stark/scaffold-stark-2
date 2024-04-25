@@ -78,7 +78,7 @@ export const ReadOnlyFunctionForm = ({
           )}
         </div>
         <button
-          className="btn btn-secondary btn-sm"
+          className="btn btn-secondary btn-sm bg-primary text-neutral-content"
           onClick={async () => {
             setInputValue(getParsedContractFunctionArgs(form));
           }}
