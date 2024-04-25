@@ -21,26 +21,36 @@ const deployScript = async () => {
     "Challenge0"
   );
 
-  // await deployContract(
+  // const values = {
+  //     classHash: helloStarknetClassHash,
+  //     abi: helloStarknetAbi,
+  //     address: ContractAddress,
+  //   } = await deployContract(null, "ExampleExternalContract");
+  // await deployContract({ external_contract_address: values.address, eth_contract_address: "0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7" }
+  //   , "Challenge1");
+  
+
+  //await deployContract(null, "TransferETH");
+  //   await deployContract(
   //   {
-  //     name: 1,
-  //     symbol: 2,
+  //     name: "Marquis",
+  //     symbol: "MRQ",
   //     fixed_supply: 10,
   //     recipient:
   //       "0x06072Bb27d275a0bC1deBf1753649b8721CF845B681A48443Ac46baF45769f8E",
   //   },
-  //   "Challenge1"
+  //   "PresetERC20"
   // );
 
   // await deployContract(
   //   {
-  //     base_uri: CallData.byteArrayFromString("https://example.com/"),
-  //     // recipient:
-  //     //   "0x06072Bb27d275a0bC1deBf1753649b8721CF845B681A48443Ac46baF45769f8E",
-  //     // token_ids: 2,
-  //     // values: 100,
+  //     base_uri: "https://example.com/",
+  //     recipient:
+  //       "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+  //     token_ids: [2],
+  //     values: [100],
   //   },
-  //   "Challenge2"
+  //   "PresetERC1155"
   // );
 
   // await deployContract(

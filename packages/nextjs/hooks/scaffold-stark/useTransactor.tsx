@@ -106,8 +106,6 @@ export const useTransactor = (
         />,
       );
 
-      const transactionReceipt =
-        await publicClient.waitForTransaction(transactionHash);
       notification.remove(notificationId);
 
       notification.success(
