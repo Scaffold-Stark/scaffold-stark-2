@@ -178,4 +178,6 @@ const ethAbi = [
 export const ethContractAddress =
   "0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7";
 
+export const ethDecimals = BigInt("1000000000000000000");
+
 export default ethAbi;
