@@ -1,21 +1,12 @@
 import scaffoldConfig from "~~/scaffold.config";
 import deployedContractsData from "~~/contracts/deployedContracts";
 import predeployedContracts from "~~/contracts/predeployedContracts";
-import type {
-  ExtractAbiFunction,
-  FunctionArgs,
-  Abi,
-  ExtractAbiInterfaces,
-  ExtractArgs,
-} from "abi-wan-kanabi/dist/kanabi";
-import {
-  UseContractReadProps,
-  UseContractWriteProps,
-} from "@starknet-react/core";
-import { Address } from "@starknet-react/chains";
-import { uint256 } from "starknet";
-import { byteArray } from "starknet-dev";
-import type { MergeDeepRecord } from "type-fest/source/merge-deep";
+import type {Abi, ExtractAbiInterfaces, ExtractArgs,} from "abi-wan-kanabi/dist/kanabi";
+import {UseContractReadProps, UseContractWriteProps,} from "@starknet-react/core";
+import {Address} from "@starknet-react/chains";
+import {uint256} from "starknet";
+import {byteArray} from "starknet-dev";
+import type {MergeDeepRecord} from "type-fest/source/merge-deep";
 
 type AddExternalFlag<T> = {
   [network in keyof T]: {
@@ -309,13 +300,13 @@ export function getFunctionsByStateMutability(
       return acc;
     }, [] as AbiFunction[])
     .filter((fn) => {
-      const isWriteableFunction = fn.state_mutability == stateMutability;
-      return isWriteableFunction;
+      return fn.state_mutability == stateMutability;
     });
 }
 
 export function parseParamWithType(paramType: string, param: any) {
   if (paramType.includes("core::integer::u256")) {
+    if (param.toString().includes(".")) return param;
     return uint256.bnToUint256(param);
   } else if (paramType.includes("core::byte_array::ByteArray")) {
     return byteArray.byteArrayFromString(param);
