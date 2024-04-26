@@ -1,12 +1,19 @@
 import scaffoldConfig from "~~/scaffold.config";
 import deployedContractsData from "~~/contracts/deployedContracts";
 import predeployedContracts from "~~/contracts/predeployedContracts";
-import type {Abi, ExtractAbiInterfaces, ExtractArgs,} from "abi-wan-kanabi/dist/kanabi";
-import {UseContractReadProps, UseContractWriteProps,} from "@starknet-react/core";
-import {Address} from "@starknet-react/chains";
-import {uint256} from "starknet";
-import {byteArray} from "starknet-dev";
-import type {MergeDeepRecord} from "type-fest/source/merge-deep";
+import type {
+  Abi,
+  ExtractAbiInterfaces,
+  ExtractArgs,
+} from "abi-wan-kanabi/dist/kanabi";
+import {
+  UseContractReadProps,
+  UseContractWriteProps,
+} from "@starknet-react/core";
+import { Address } from "@starknet-react/chains";
+import { uint256 } from "starknet";
+import { byteArray } from "starknet-dev";
+import type { MergeDeepRecord } from "type-fest/source/merge-deep";
 
 type AddExternalFlag<T> = {
   [network in keyof T]: {
