@@ -37,7 +37,6 @@ export const useScaffoldContractWrite = <
   const writeTx = useTransactor();
   const { targetNetwork } = useTargetNetwork();
 
-  // Memoize the ABI function retrieval
   const abiFunction = useMemo(
     () =>
       getFunctionsByStateMutability(
@@ -47,7 +46,6 @@ export const useScaffoldContractWrite = <
     [deployedContractData?.abi, functionName],
   );
 
-  // Memoize parsing function parameters
   const parsedParams = useMemo(() => {
     if (args && abiFunction) {
       return parseFunctionParams(abiFunction, args as any[]);
@@ -126,8 +124,6 @@ export const useScaffoldContractWrite = <
 
   return {
     ...wagmiContractWrite,
-    // isMining,
-    // Overwrite wagmi's write async
     writeAsync: sendContractWriteTx,
   };
 };

@@ -29,7 +29,9 @@ export const Footer = () => {
               <>
                 <Faucet />
                 <Link
-                  href="/blockexplorer"
+                  href={getBlockExplorerLink(targetNetwork)}
+                  target={"_blank"}
+                  rel={"noopener noreferrer"}
                   passHref
                   className="btn btn-primary btn-sm font-normal gap-1 text-base-100"
                 >
