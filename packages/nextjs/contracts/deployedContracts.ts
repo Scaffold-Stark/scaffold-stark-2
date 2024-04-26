@@ -3,6 +3,71 @@
  * You should not edit it manually or your changes might be overwritten.
  */
 
-const deployedContracts = {} as const;
+const deployedContracts = {
+  devnet: {
+    HelloStarknet: {
+      address:
+        "0x0619d92d75e9cdc92f6ece726cc95370655211ccfdcbbb9aba26ffc2efa9049e",
+      abi: [
+        {
+          type: "impl",
+          name: "HelloStarknetImpl",
+          interface_name: "contracts::helloStarknet::IHelloStarknet",
+        },
+        {
+          type: "interface",
+          name: "contracts::helloStarknet::IHelloStarknet",
+          items: [
+            {
+              type: "function",
+              name: "increase_balance",
+              inputs: [
+                {
+                  name: "amount",
+                  type: "core::integer::u32",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "get_balance",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::integer::u32",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_balance_increment",
+              inputs: [
+                {
+                  name: "amount",
+                  type: "core::integer::u32",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::u32",
+                },
+              ],
+              state_mutability: "view",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "contracts::helloStarknet::HelloStarknet::Event",
+          kind: "enum",
+          variants: [],
+        },
+      ],
+    },
+  },
+} as const;
 
 export default deployedContracts;
