@@ -22,23 +22,13 @@ export type HeaderMenuLink = {
 
 export const menuLinks: HeaderMenuLink[] = [
   {
-    label: "My NFTs",
-    href: "/myNFTs",
+    label: "Example View 1",
+    href: "/exampleView1",
     icon: <PhotoIcon className="h-4 w-4" />,
   },
   {
-    label: "Transfers",
-    href: "/transfers",
-    icon: <ArrowPathIcon className="h-4 w-4" />,
-  },
-  {
-    label: "IPFS Upload",
-    href: "/ipfsUpload",
-    icon: <ArrowUpTrayIcon className="h-4 w-4" />,
-  },
-  {
-    label: "IPFS Download",
-    href: "/ipfsDownload",
+    label: "Example View 2",
+    href: "/exampleView2",
     icon: <ArrowDownTrayIcon className="h-4 w-4" />,
   },
   {
