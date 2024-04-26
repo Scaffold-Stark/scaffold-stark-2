@@ -1,10 +1,10 @@
 const { deployer, deployContract } = require("./deploy_contract");
-const deployScript = async () => {
-  const {
-    classHash: helloStarknetClassHash,
-    abi: helloStarknetAbi,
-    address: ContractAddress,
-  } = await deployContract(null, "HelloStarknet"); // can pass another argument for the exported contract name
+ const deployScript = async () => {
+//   const {
+//     classHash: helloStarknetClassHash,
+//     abi: helloStarknetAbi,
+//     address: ContractAddress,
+//   } = await deployContract(null, "HelloStarknet"); // can pass another argument for the exported contract name
   // await deployContract(
   //   {
   //     name: 1,
