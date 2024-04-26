@@ -35,7 +35,7 @@ const Wallet = ({
   function handleConnectWallet(e: React.MouseEvent<HTMLButtonElement>): void {
     connect({ connector });
     closeModal(e);
-    setLastConnector(connector.name);
+    setLastConnector(connector.id);
   }
 
   return (

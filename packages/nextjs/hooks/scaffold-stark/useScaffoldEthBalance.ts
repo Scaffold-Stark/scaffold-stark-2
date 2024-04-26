@@ -1,43 +1,43 @@
-import { useGlobalState } from "~~/services/store/store";
-import { useEffect, useState } from "react";
-import { useContractRead } from "@starknet-react/core";
-import ethAbi, { ethContractAddress, ethDecimals } from "~~/utils/eth";
-import { BlockNumber, uint256 } from "starknet";
-import { Address } from "@starknet-react/chains";
+import {useGlobalState} from "~~/services/store/store";
+import {useEffect, useState} from "react";
+import {BlockNumber} from "starknet";
+import {Address} from "@starknet-react/chains";
+import {useScaffoldContractRead} from "~~/hooks/scaffold-stark/useScaffoldContractRead";
+import {ethDecimals} from "~~/utils/scaffold-stark/common";
 
 type UseScaffoldEthBalanceProps = {
   address?: Address | string;
+  amount?: bigint;
 };
 
-const useScaffoldEthBalance = ({ address }: UseScaffoldEthBalanceProps) => {
+const useScaffoldEthBalance = ({address, amount}: UseScaffoldEthBalanceProps) => {
   const price = useGlobalState((state) => state.nativeCurrencyPrice);
-  const [balance, setBalance] = useState("0");
+  const [balance, setBalance] = useState(amount !== undefined ? formatBalance(amount) : "0");
 
-  const { data, ...props } = useContractRead({
-    address: ethContractAddress,
-    watch: true,
-    abi: ethAbi,
-    functionName: "balanceOf",
+  const {data, ...props} = useScaffoldContractRead({
+    contractName: "Eth",
+    functionName: "balance_of",
     args: [address as string],
     blockIdentifier: "pending" as BlockNumber,
+    watch: true
   });
 
   useEffect(() => {
     // @ts-ignore
-    if (data && data.balance !== undefined) {
+    if (data !== undefined) {
       // @ts-ignore
-      const balanceBigInt = uint256.uint256ToBN(data.balance);
-      const integerPart = balanceBigInt / ethDecimals;
-      const remainder = balanceBigInt % ethDecimals;
-
-      const remainderStr = remainder
-        .toString()
-        .padStart(ethDecimals.toString().length, "0");
-      const decimalPart = remainderStr.slice(0, 4);
-
-      setBalance(`${integerPart}.${decimalPart}`);
+      setBalance(formatBalance(data));
     }
   }, [data]);
+
+  function formatBalance(balanceBigInt: bigint) {
+    const integerPart = balanceBigInt / ethDecimals;
+    const remainder = balanceBigInt % ethDecimals;
+
+    const remainderStr = remainder.toString().padStart(18, "0");
+    const decimalPart = remainderStr.slice(0, 4);
+    return `${integerPart}.${decimalPart}`;
+  }
 
   return {
     price,
