@@ -4,8 +4,9 @@ import { useState } from "react";
 import { BanknotesIcon } from "@heroicons/react/24/outline";
 import { mintEth } from "~~/services/web3/faucet";
 import { Address, devnet } from "@starknet-react/chains";
-import { useAccount, useBalance } from "@starknet-react/core";
+import { useAccount } from "@starknet-react/core";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
+import useScaffoldEthBalance from "~~/hooks/scaffold-stark/useScaffoldEthBalance";
 
 // Number of ETH faucet sends to an address
 const NUM_OF_ETH = "1";
@@ -15,11 +16,7 @@ const NUM_OF_ETH = "1";
  */
 export const FaucetButton = () => {
   const { address } = useAccount();
-  const { data: balance, refetch } = useBalance({
-    address,
-    watch: true,
-    refetchInterval: 4500,
-  });
+  const { balance } = useScaffoldEthBalance({ address });
 
   const { targetNetwork } = useTargetNetwork();
 
@@ -33,7 +30,6 @@ export const FaucetButton = () => {
     try {
       setLoading(true);
       await mintEth(address as Address, NUM_OF_ETH);
-      await refetch();
       setLoading(false);
     } catch (error) {
       console.error("⚡️ ~ file: FaucetButton.tsx:sendETH ~ error", error);
@@ -46,7 +42,7 @@ export const FaucetButton = () => {
     return null;
   }
 
-  const isBalanceZero = balance && balance.value === 0n;
+  const isBalanceZero = balance && balance === "0";
 
   return (
     <div
