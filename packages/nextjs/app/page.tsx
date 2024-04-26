@@ -3,7 +3,6 @@
 import Link from "next/link";
 import type { NextPage } from "next";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useScaffoldMultiContractWrite } from "~~/hooks/scaffold-stark/useScaffoldMultiContractWrite";
 // import { Address } from "~~/components/scaffold-eth";
 
 const Home: NextPage = () => {
@@ -19,24 +18,6 @@ const Home: NextPage = () => {
   //   functionName: "increase_balance",
   //   args: [1],
   // });
-
-  const { writeAsync } = useScaffoldMultiContractWrite({
-    calls: [
-      {
-        contractName: "HelloStarknet",
-        functionName: "increase_balance",
-        args: [1],
-      },
-      {
-        contractName: "Challenge0",
-        functionName: "mint_item",
-        args: [
-          "0x04e124bc6c25f26d6667fc79fe283c4b9de7ab4c89408cda992b822a6ec7ee0a",
-          "ssss",
-        ],
-      },
-    ],
-  });
 
   // console.log(data, isLoading);
   return (
@@ -93,13 +74,13 @@ const Home: NextPage = () => {
             </div>
           </div>
         </div>
-        <div
+        {/* <div
           onClick={() => {
             writeAsync();
           }}
         >
           TEST TX
-        </div>
+        </div> */}
       </div>
     </>
   );
