@@ -12,9 +12,7 @@ export const useAutoConnect = (): void => {
 
   useEffect(() => {
     if (scaffoldConfig.walletAutoConnect) {
-      const connector = connectors.find(
-        (conn) => conn.id == wagmiWalletValue,
-      );
+      const connector = connectors.find((conn) => conn.id == wagmiWalletValue);
       if (connector) {
         connect({ connector });
       }

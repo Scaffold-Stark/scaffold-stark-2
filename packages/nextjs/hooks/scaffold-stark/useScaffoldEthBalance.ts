@@ -1,25 +1,30 @@
-import {useGlobalState} from "~~/services/store/store";
-import {useEffect, useState} from "react";
-import {BlockNumber} from "starknet";
-import {Address} from "@starknet-react/chains";
-import {useScaffoldContractRead} from "~~/hooks/scaffold-stark/useScaffoldContractRead";
-import {ethDecimals} from "~~/utils/scaffold-stark/common";
+import { useGlobalState } from "~~/services/store/store";
+import { useEffect, useState } from "react";
+import { BlockNumber } from "starknet";
+import { Address } from "@starknet-react/chains";
+import { useScaffoldContractRead } from "~~/hooks/scaffold-stark/useScaffoldContractRead";
+import { ethDecimals } from "~~/utils/scaffold-stark/common";
 
 type UseScaffoldEthBalanceProps = {
   address?: Address | string;
   amount?: bigint;
 };
 
-const useScaffoldEthBalance = ({address, amount}: UseScaffoldEthBalanceProps) => {
+const useScaffoldEthBalance = ({
+  address,
+  amount,
+}: UseScaffoldEthBalanceProps) => {
   const price = useGlobalState((state) => state.nativeCurrencyPrice);
-  const [balance, setBalance] = useState(amount !== undefined ? formatBalance(amount) : "0");
+  const [balance, setBalance] = useState(
+    amount !== undefined ? formatBalance(amount) : "0",
+  );
 
-  const {data, ...props} = useScaffoldContractRead({
+  const { data, ...props } = useScaffoldContractRead({
     contractName: "Eth",
     functionName: "balance_of",
     args: [address as string],
     blockIdentifier: "pending" as BlockNumber,
-    watch: true
+    watch: true,
   });
 
   useEffect(() => {
