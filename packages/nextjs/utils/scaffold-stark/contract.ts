@@ -1,6 +1,6 @@
 import scaffoldConfig from "~~/scaffold.config";
 import deployedContractsData from "~~/contracts/deployedContracts";
-// import externalContractsData from "~~/contracts/externalContracts";
+import predeployedContracts from "~~/contracts/predeployedContracts";
 import type {
   ExtractAbiFunction,
   FunctionArgs,
@@ -13,6 +13,15 @@ import {
   UseContractWriteProps,
 } from "@starknet-react/core";
 import { Address } from "@starknet-react/chains";
+import { uint256 } from "starknet";
+import { byteArray } from "starknet-dev";
+import type { MergeDeepRecord } from "type-fest/source/merge-deep";
+
+type AddExternalFlag<T> = {
+  [network in keyof T]: {
+    [ContractName in keyof T[network]]: T[network][ContractName];
+  };
+};
 
 type ConfiguredChainId =
   (typeof scaffoldConfig)["targetNetworks"][0]["network"];
@@ -22,13 +31,6 @@ type Contracts = ContractsDeclaration[ConfiguredChainId];
 export type ContractName = keyof Contracts;
 export type Contract<TContractName extends ContractName> =
   Contracts[TContractName];
-type AddExternalFlag<T> = {
-  [ChainId in keyof T]: {
-    [ContractName in keyof T[ChainId]]: T[ChainId][ContractName] & {
-      external?: true;
-    };
-  };
-};
 export enum ContractCodeStatus {
   "LOADING",
   "DEPLOYED",
@@ -45,40 +47,43 @@ export type GenericContractsDeclaration = {
   };
 };
 
-// const deepMergeContracts = <
-//   L extends Record<PropertyKey, any>,
-//   E extends Record<PropertyKey, any>
-// >(
-//   local: L,
-//   external: E
-// ) => {
-//   const result: Record<PropertyKey, any> = {};
-//   const allKeys = Array.from(
-//     new Set([...Object.keys(external), ...Object.keys(local)])
-//   );
-//   for (const key of allKeys) {
-//     if (!external[key]) {
-//       result[key] = local[key];
-//       continue;
-//     }
-//     const amendedExternal = Object.fromEntries(
-//       Object.entries(
-//         external[key] as Record<string, Record<string, unknown>>
-//       ).map(([contractName, declaration]) => [
-//         contractName,
-//         { ...declaration, external: true },
-//       ])
-//     );
-//     result[key] = { ...local[key], ...amendedExternal };
-//   }
-//   return result as MergeDeepRecord<
-//     AddExternalFlag<L>,
-//     AddExternalFlag<E>,
-//     { arrayMergeMode: "replace" }
-//   >;
-// };
+const deepMergeContracts = <
+  L extends Record<PropertyKey, any>,
+  E extends Record<PropertyKey, any>,
+>(
+  local: L,
+  external: E,
+) => {
+  const result: Record<PropertyKey, any> = {};
+  const allKeys = Array.from(
+    new Set([...Object.keys(local), ...Object.keys(external)]),
+  );
+  for (const key of allKeys) {
+    if (!external[key]) {
+      result[key] = local[key];
+      continue;
+    }
+    const amendedExternal = Object.fromEntries(
+      Object.entries(
+        external[key] as Record<string, Record<string, unknown>>,
+      ).map(([contractName, declaration]) => [
+        contractName,
+        { ...declaration },
+      ]),
+    );
+    result[key] = { ...local[key], ...amendedExternal };
+  }
+  return result as MergeDeepRecord<
+    AddExternalFlag<L>,
+    AddExternalFlag<E>,
+    { arrayMergeMode: "spread" }
+  >;
+};
 
-const contractsData = deployedContractsData;
+const contractsData = deepMergeContracts(
+  deployedContractsData,
+  predeployedContracts,
+);
 
 type IsContractDeclarationMissing<TYes, TNo> = typeof contractsData extends {
   [key in ConfiguredChainId]: any;
@@ -290,3 +295,51 @@ export type AbiFunctionOutputs<
 > = ExtractAbiFunctionScaffold<TAbi, TFunctionName>["outputs"];
 
 /// export all the types from kanabi
+
+export function getFunctionsByStateMutability(
+  abi: Abi,
+  stateMutability: AbiStateMutability,
+): AbiFunction[] {
+  return abi
+    .reduce((acc, part) => {
+      if (part.type === "function") {
+        acc.push(part);
+      } else if (part.type === "interface" && Array.isArray(part.items)) {
+        part.items.forEach((item) => {
+          if (item.type === "function") {
+            acc.push(item);
+          }
+        });
+      }
+      return acc;
+    }, [] as AbiFunction[])
+    .filter((fn) => {
+      const isWriteableFunction = fn.state_mutability == stateMutability;
+      return isWriteableFunction;
+    });
+}
+
+export function parseParamWithType(paramType: string, param: any) {
+  if (paramType.includes("core::integer::u256")) {
+    return uint256.bnToUint256(param);
+  } else if (paramType.includes("core::byte_array::ByteArray")) {
+    return byteArray.byteArrayFromString(param);
+  } else {
+    return param;
+  }
+}
+
+export function parseFunctionParams(abiFunction: AbiFunction, inputs: any[]) {
+  let parsedInputs: any[] = [];
+
+  //check inputs length
+  if (abiFunction.inputs.length !== inputs.length) {
+    return inputs;
+  }
+
+  inputs.forEach((input, idx) => {
+    const paramType = abiFunction.inputs[idx].type;
+    parsedInputs.push(parseParamWithType(paramType, input));
+  });
+  return parsedInputs;
+}

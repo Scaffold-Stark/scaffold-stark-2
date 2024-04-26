@@ -96,7 +96,11 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
           <>
             <span className="text-[0.8em] font-bold mr-1">$</span>
             <span>
+<<<<<<< HEAD
               {(parseFloat(balance) * price).toLocaleString("en-US", {
+=======
+              {usdValue.toLocaleString("en-US", {
+>>>>>>> main
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}
