@@ -11,6 +11,7 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import { Faucet } from "./scaffold-stark";
+import { getBlockExplorerLink } from "~~/utils/scaffold-stark";
 
 /**
  * Site footer
@@ -39,7 +40,9 @@ export const Footer = () => {
               <>
                 <Faucet />
                 <Link
-                  href="/blockexplorer"
+                  href={getBlockExplorerLink(targetNetwork)}
+                  target={"_blank"}
+                  rel={"noopener noreferrer"}
                   passHref
                   className="btn btn-primary btn-sm font-normal gap-1 text-base-100 border-base-100 "
                 >

@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import { Address } from "@starknet-react/chains";
-import { useBalance } from "@starknet-react/core";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
-import { useGlobalState } from "~~/services/store/store";
+import useScaffoldEthBalance from "~~/hooks/scaffold-stark/useScaffoldEthBalance";
 
 type BalanceProps = {
   address?: Address;
@@ -17,17 +16,8 @@ type BalanceProps = {
  */
 export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
   const { targetNetwork } = useTargetNetwork();
-
-  const price = useGlobalState((state) => state.nativeCurrencyPrice);
-  const {
-    data: balance,
-    isError,
-    isLoading,
-  } = useBalance({
-    address,
-    watch: true,
-  });
-
+  const { price, balance, usdValue, isLoading, isError } =
+    useScaffoldEthBalance({ address });
   const [displayUsdMode, setDisplayUsdMode] = useState(
     price > 0 ? Boolean(usdMode) : false,
   );
@@ -59,7 +49,7 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
     );
   }
 
-  const formattedBalance = balance ? Number(balance.formatted) : 0;
+  //const formattedBalance = balance ? Number(balance.formatted) : 0;
 
   return (
     <button
@@ -71,7 +61,7 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
           <>
             <span className="text-[0.8em] font-bold mr-1">$</span>
             <span>
-              {(formattedBalance * price).toLocaleString("en-US", {
+              {usdValue.toLocaleString("en-US", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}
@@ -79,7 +69,7 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
           </>
         ) : (
           <>
-            <span>{formattedBalance.toFixed(4)}</span>
+            <span>{balance}</span>
             <span className="text-[0.8em] font-bold ml-1">
               {targetNetwork.nativeCurrency.symbol}
             </span>
