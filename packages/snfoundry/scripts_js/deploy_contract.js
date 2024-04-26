@@ -122,5 +122,5 @@ const deployContract = async (
 };
 
 module.exports = {
-  deployContract,
+  deployContract, deployer
 };
