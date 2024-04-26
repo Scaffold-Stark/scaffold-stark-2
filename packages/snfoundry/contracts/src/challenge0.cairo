@@ -295,7 +295,8 @@ mod Challenge0 {
             } else if (from != to) {
                 self._remove_token_from_owner_enumeration(from, first_token_id);
             }
-            if (to == Zero::zero()) { //self._remove_token_from_all_tokens_enumeration(first_token_id);
+            if (to == Zero::zero()) { 
+                self._remove_token_from_all_tokens_enumeration(first_token_id);
             } else if (to != from) {
                 self._add_token_to_owner_enumeration(to, first_token_id);
             }
