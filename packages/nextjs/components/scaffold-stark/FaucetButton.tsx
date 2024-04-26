@@ -38,7 +38,7 @@ export const FaucetButton = () => {
   };
 
   // Render only on local chain
-  if (targetNetwork.id !== devnet.id) {
+  if (targetNetwork.id !== devnet.id || address == undefined) {
     return null;
   }
 
