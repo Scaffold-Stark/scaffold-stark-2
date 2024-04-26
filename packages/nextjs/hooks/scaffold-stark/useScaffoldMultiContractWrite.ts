@@ -35,7 +35,7 @@ export const useScaffoldMultiContractWrite = <
       }
       return acc;
     },
-    {} as Record<TContractName, Contract<TContractName>>,
+    {} as Record<TContractName, Contract<TContractName>>
   );
 
   return useContractWrite({
@@ -45,7 +45,7 @@ export const useScaffoldMultiContractWrite = <
           calldata: call.args,
           contractAddress: uniqueContracts[call.contractName]?.address,
           entrypoint: call.functionName,
-        }) as Call,
+        }) as Call
     ),
     options,
   });
