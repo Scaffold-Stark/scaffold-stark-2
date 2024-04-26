@@ -2,8 +2,6 @@ import scaffoldConfig from "~~/scaffold.config";
 import deployedContractsData from "~~/contracts/deployedContracts";
 import predeployedContracts from "~~/contracts/predeployedContracts";
 import type {
-  ExtractAbiFunction,
-  FunctionArgs,
   Abi,
   ExtractAbiInterfaces,
   ExtractArgs,
@@ -13,7 +11,7 @@ import {
   UseContractWriteProps,
 } from "@starknet-react/core";
 import { Address } from "@starknet-react/chains";
-import { uint256 } from "starknet";
+import { uint256, validateAndParseAddress } from "starknet";
 import { byteArray } from "starknet-dev";
 import type { MergeDeepRecord } from "type-fest/source/merge-deep";
 
@@ -31,6 +29,7 @@ type Contracts = ContractsDeclaration[ConfiguredChainId];
 export type ContractName = keyof Contracts;
 export type Contract<TContractName extends ContractName> =
   Contracts[TContractName];
+
 export enum ContractCodeStatus {
   "LOADING",
   "DEPLOYED",
@@ -309,8 +308,7 @@ export function getFunctionsByStateMutability(
       return acc;
     }, [] as AbiFunction[])
     .filter((fn) => {
-      const isWriteableFunction = fn.state_mutability == stateMutability;
-      return isWriteableFunction;
+      return fn.state_mutability == stateMutability;
     });
 }
 
@@ -319,6 +317,12 @@ export function parseParamWithType(paramType: string, param: any) {
     return uint256.bnToUint256(param);
   } else if (paramType.includes("core::byte_array::ByteArray")) {
     return byteArray.byteArrayFromString(param);
+  } else if (paramType.includes("core::felt252")) {
+    return feltToAscii(param);
+  } else if (
+    paramType.includes("core::starknet::contract_address::ContractAddress")
+  ) {
+    return validateAndParseAddress(param);
   } else {
     return param;
   }
@@ -337,4 +341,14 @@ export function parseFunctionParams(abiFunction: AbiFunction, inputs: any[]) {
     parsedInputs.push(parseParamWithType(paramType, input));
   });
   return parsedInputs;
+}
+
+export function feltToAscii(feltBigInt: bigint) {
+  let asciiString = "";
+  while (feltBigInt > 0n) {
+    const charCode = feltBigInt & 0xffn;
+    asciiString = String.fromCharCode(Number(charCode)) + asciiString;
+    feltBigInt >>= 8n;
+  }
+  return asciiString;
 }

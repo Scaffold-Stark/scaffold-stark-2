@@ -7,7 +7,7 @@ import {
 } from "starknet";
 import { Address } from "~~/components/scaffold-stark";
 import { replacer } from "~~/utils/scaffold-stark/common";
-import { AbiOutput } from "~~/utils/scaffold-stark/contract";
+import { AbiOutput, feltToAscii } from "~~/utils/scaffold-stark/contract";
 
 type DisplayContent =
   | Uint256
@@ -35,6 +35,8 @@ export const displayTxResult = (
       return asText ? address : <Address address={address as `0x${string}`} />;
     } else if (functionOutputs[0].type === "core::byte_array::ByteArray") {
       return byteArray.stringFromByteArray(displayContent as ByteArray);
+    } else if (functionOutputs[0].type === "core::felt252") {
+      return feltToAscii(displayContent as bigint);
     }
   }
 
