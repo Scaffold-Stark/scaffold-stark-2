@@ -52,11 +52,11 @@ const deepMergeContracts = <
   E extends Record<PropertyKey, any>,
 >(
   local: L,
-  external: E
+  external: E,
 ) => {
   const result: Record<PropertyKey, any> = {};
   const allKeys = Array.from(
-    new Set([...Object.keys(local), ...Object.keys(external)])
+    new Set([...Object.keys(local), ...Object.keys(external)]),
   );
   for (const key of allKeys) {
     if (!external[key]) {
@@ -65,8 +65,11 @@ const deepMergeContracts = <
     }
     const amendedExternal = Object.fromEntries(
       Object.entries(
-        external[key] as Record<string, Record<string, unknown>>
-      ).map(([contractName, declaration]) => [contractName, { ...declaration }])
+        external[key] as Record<string, Record<string, unknown>>,
+      ).map(([contractName, declaration]) => [
+        contractName,
+        { ...declaration },
+      ]),
     );
     result[key] = { ...local[key], ...amendedExternal };
   }
@@ -79,7 +82,7 @@ const deepMergeContracts = <
 
 const contractsData = deepMergeContracts(
   deployedContractsData,
-  predeployedContracts
+  predeployedContracts,
 );
 
 type IsContractDeclarationMissing<TYes, TNo> = typeof contractsData extends {
@@ -295,7 +298,7 @@ export type AbiFunctionOutputs<
 
 export function getFunctionsByStateMutability(
   abi: Abi,
-  stateMutability: AbiStateMutability
+  stateMutability: AbiStateMutability,
 ): AbiFunction[] {
   return abi
     .reduce((acc, part) => {
