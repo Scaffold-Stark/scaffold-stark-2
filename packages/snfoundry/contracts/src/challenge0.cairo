@@ -26,14 +26,13 @@ mod Challenge0 {
     use openzeppelin::token::erc721::ERC721Component;
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::token::erc721::interface::IERC721Metadata;
+    use openzeppelin::token::erc721::interface::IERC721;
+    use starknet::get_caller_address;
 
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
 
-
-    #[abi(embed_v0)]
-    impl ERC721Impl = ERC721Component::ERC721Impl<ContractState>;
     #[abi(embed_v0)]
     impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
 
@@ -120,6 +119,48 @@ mod Challenge0 {
     }
 
     #[abi(embed_v0)]
+    impl WrappedIERC721Impl of IERC721<ContractState> {
+        fn balance_of(self: @ContractState, account: ContractAddress) -> u256 {
+            self.erc721.balance_of(account)
+        }
+        fn owner_of(self: @ContractState, token_id: u256) -> ContractAddress {
+            self.erc721.owner_of(token_id)
+        }
+        fn safe_transfer_from(
+            ref self: ContractState,
+            from: ContractAddress,
+            to: ContractAddress,
+            token_id: u256,
+            data: Span<felt252>
+        ) {
+            self.erc721.safe_transfer_from(from, to, token_id, data)
+        }
+        // Override transfer_from to use the internal fn _before_token_transfer()
+        fn transfer_from(
+            ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256
+        ) {
+            self._transfer_from(from, to, token_id)
+        }
+        fn approve(ref self: ContractState, to: ContractAddress, token_id: u256) {
+            self.erc721.approve(to, token_id)
+        }
+        fn set_approval_for_all(
+            ref self: ContractState, operator: ContractAddress, approved: bool
+        ) {
+            self.erc721.set_approval_for_all(operator, approved)
+        }
+        fn get_approved(self: @ContractState, token_id: u256) -> ContractAddress {
+            self.erc721.get_approved(token_id)
+        }
+        fn is_approved_for_all(
+            self: @ContractState, owner: ContractAddress, operator: ContractAddress
+        ) -> bool {
+            self.erc721.is_approved_for_all(owner, operator)
+        }
+    }
+
+
+    #[abi(embed_v0)]
     impl IERC721EnumerableImpl of IERC721Enumerable<ContractState> {
         fn token_of_owner_by_index(
             self: @ContractState, owner: ContractAddress, index: u256
@@ -140,6 +181,38 @@ mod Challenge0 {
             assert(!self.erc721._exists(token_id), ERC721Component::Errors::ALREADY_MINTED);
             self._before_token_transfer(Zero::zero(), recipient, token_id, 1);
             self.erc721._mint(recipient, token_id);
+        }
+
+        fn _transfer(
+            ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256
+        ) {
+            assert(!to.is_zero(), ERC721Component::Errors::INVALID_RECEIVER);
+            let owner = self.erc721._owner_of(token_id);
+            assert(from == owner, ERC721Component::Errors::WRONG_SENDER);
+
+            self._before_token_transfer(from, to, token_id, 1);
+
+            assert(from == owner, ERC721Component::Errors::WRONG_SENDER);
+
+            // Implicit clear approvals, no need to emit an event
+            self.erc721.ERC721_token_approvals.write(token_id, Zero::zero());
+
+            self.erc721.ERC721_balances.write(from, self.erc721.ERC721_balances.read(from) - 1);
+            self.erc721.ERC721_balances.write(to, self.erc721.ERC721_balances.read(to) + 1);
+            self.erc721.ERC721_owners.write(token_id, to);
+
+            self.erc721.emit(ERC721Component::Transfer { from, to, token_id });
+        }
+
+        fn _transfer_from(
+            ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256
+        ) {
+            assert(
+                self.erc721._is_approved_or_owner(get_caller_address(), token_id),
+                ERC721Component::Errors::UNAUTHORIZED
+            );
+
+            self._transfer(from, to, token_id);
         }
 
         //  ICounter internal functions
@@ -222,7 +295,8 @@ mod Challenge0 {
             } else if (from != to) {
                 self._remove_token_from_owner_enumeration(from, first_token_id);
             }
-            if (to == Zero::zero()) { //self._remove_token_from_all_tokens_enumeration(first_token_id);
+            if (to == Zero::zero()) { 
+                self._remove_token_from_all_tokens_enumeration(first_token_id);
             } else if (to != from) {
                 self._add_token_to_owner_enumeration(to, first_token_id);
             }

@@ -11,21 +11,25 @@ const deployScript = async () => {
   //   },
   //   "SimpleStorage"
   // );
+  // await deployContract(
+  //   {
+  //     owner: deployer.address, // the deployer address is the owner of the contract
+  //   },
+  //   "Challenge0"
+  // );
+  const values = ({
+    classHash: helloStarknetClassHash,
+    abi: helloStarknetAbi,
+    address: ContractAddress,
+  } = await deployContract(null, "ExampleExternalContract"));
   await deployContract(
     {
-      owner: deployer.address, // the deployer address is the owner of the contract
+      external_contract_address: values.address,
+      eth_contract_address:
+        "0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7",
     },
-    "Challenge0"
+    "Challenge1"
   );
-
-  // const values = {
-  //     classHash: helloStarknetClassHash,
-  //     abi: helloStarknetAbi,
-  //     address: ContractAddress,
-  //   } = await deployContract(null, "ExampleExternalContract");
-  // await deployContract({ external_contract_address: values.address, eth_contract_address: "0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7" }
-  //   , "Challenge1");
-
   //await deployContract(null, "TransferETH");
   //   await deployContract(
   //   {
@@ -37,7 +41,6 @@ const deployScript = async () => {
   //   },
   //   "PresetERC20"
   // );
-
   // await deployContract(
   //   {
   //     base_uri: "https://example.com/",
@@ -48,7 +51,6 @@ const deployScript = async () => {
   //   },
   //   "PresetERC1155"
   // );
-
   // await deployContract(
   //   {
   //     public_key:
@@ -56,7 +58,6 @@ const deployScript = async () => {
   //   },
   //   "Challenge3"
   // );
-
   // await deployContract(
   //   {
   //     voter_1:
