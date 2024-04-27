@@ -69,6 +69,11 @@ const deployContract = async (
     totalFee = estimatedFeeDeploy * 2n;
   }
 
+  if (totalFee === 0n) {
+    console.error("Failed to estimate fee, setting up fee to 0.001 eth");
+    totalFee = 500000000000000n;
+  }
+
   try {
     const tryDeclareAndDeploy = await deployer.declareAndDeploy(
       {
@@ -80,15 +85,6 @@ const deployContract = async (
         maxFee: totalFee * 20n, // this optional max fee serves when error AccountValidation Failed or small fee on public networks , try 5n , 10n, 20n, 50n, 100n
       }
     );
-    const debug = await provider.waitForTransaction(
-      tryDeclareAndDeploy.deploy.transaction_hash,
-      {
-        successStates: [TransactionStatus.ACCEPTED_ON_L2],
-        // retryInterval: 10000, // we can retry in 10 seconds
-      }
-    );
-    classHash = tryDeclareAndDeploy.declare.class_hash;
-    existingClass = await provider.getClassByHash(classHash);
     contractAddress = tryDeclareAndDeploy.deploy.address;
     contractAddress = "0x" + contractAddress.slice(2).padStart(64, "0");
   } catch (e) {
@@ -116,11 +112,11 @@ const deployContract = async (
 
   return {
     classHash: classHash,
-    abi: JSON.stringify(existingClass.abi),
     address: contractAddress,
   };
 };
 
 module.exports = {
-  deployContract, deployer
+  deployContract,
+  deployer,
 };
