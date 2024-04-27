@@ -6,6 +6,7 @@ import {
 } from "@starknet-react/core/src/connectors/base";
 import { Chain, devnet } from "@starknet-react/chains";
 import scaffoldConfig from "~~/scaffold.config";
+import { BurnerAccount, burnerAccounts } from "~~/utils/devnetAccounts";
 
 export const burnerWalletId = "burner-wallet";
 export const burnerWalletName = "Burner Wallet";
@@ -15,6 +16,7 @@ const burnerWalletIcon =
 // https://github.com/apibara/starknet-react/blob/main/packages/core/src/connectors/injected.ts
 export class BurnerConnector extends InjectedConnector {
   chain: Chain = devnet;
+  burnerAccount: BurnerAccount = burnerAccounts[0];
 
   constructor() {
     super({
@@ -36,17 +38,14 @@ export class BurnerConnector extends InjectedConnector {
   }
 
   async account(): Promise<AccountInterface> {
-    const address =
-      "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691";
-    const privateKey = "0x71d7bb07b9a64f6f78ac4c816aff4da9";
     return Promise.resolve(
       new Account(
         new RpcProvider({
           nodeUrl: this.chain.rpcUrls.public.http[0],
           chainId: starknetChainId(this.chain.id),
         }),
-        address,
-        privateKey,
+        this.burnerAccount.accountAddress,
+        this.burnerAccount.privateKey,
       ),
     );
   }
@@ -70,7 +69,7 @@ export class BurnerConnector extends InjectedConnector {
     return Promise.resolve((await this.account()).address !== "");
   }
 
-  async connect(): Promise<Required<ConnectorData>> {
+  async connect(): Promise<ConnectorData> {
     return Promise.resolve({
       account: (await this.account()).address,
       chainId: this.chain.id,
