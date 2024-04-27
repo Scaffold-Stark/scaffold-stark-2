@@ -1,6 +1,7 @@
 // To be used in JSON.stringify when a field might be bigint
 // https://wagmi.sh/react/faq#bigint-serialization
 import { Address } from "@starknet-react/chains";
+import { BigNumberish } from "starknet";
 
 export const replacer = (_key: string, value: unknown) =>
   typeof value === "bigint" ? value.toString() : value;
@@ -12,3 +13,13 @@ export function isAddress(address: string): address is Address {
 }
 
 export const ethDecimals = BigInt("1000000000000000000");
+
+export function formatEth(value: BigNumberish, decimals: number = 4) {
+  const balanceBigInt = BigInt(value);
+  const integerPart = balanceBigInt / ethDecimals;
+  const remainder = balanceBigInt % ethDecimals;
+
+  const remainderStr = remainder.toString().padStart(18, "0");
+  const decimalPart = remainderStr.slice(0, decimals);
+  return `${integerPart}.${decimalPart}`;
+}

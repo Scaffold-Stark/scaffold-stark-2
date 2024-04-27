@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Address } from "@starknet-react/chains";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import useScaffoldEthBalance from "~~/hooks/scaffold-stark/useScaffoldEthBalance";
+import { useGlobalState } from "~~/services/store/store";
+import { formatEth } from "~~/utils/scaffold-stark/common";
 
 type BalanceProps = {
   address?: Address;
@@ -15,12 +17,13 @@ type BalanceProps = {
  * Display (ETH & USD) balance of an ETH address.
  */
 export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
+  const price = useGlobalState((state) => state.nativeCurrencyPrice);
   const { targetNetwork } = useTargetNetwork();
-  const { price, balance, usdValue, isLoading, isError } =
-    useScaffoldEthBalance({ address });
+  const { balance, isLoading, isError } = useScaffoldEthBalance({ address });
   const [displayUsdMode, setDisplayUsdMode] = useState(
     price > 0 ? Boolean(usdMode) : false,
   );
+  const formattedBalance = formatEth(balance ?? 0);
 
   const toggleBalanceMode = () => {
     if (price > 0) {
@@ -61,7 +64,7 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
           <>
             <span className="text-[0.8em] font-bold mr-1">$</span>
             <span>
-              {usdValue.toLocaleString("en-US", {
+              {(parseFloat(formattedBalance) * price).toLocaleString("en-US", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}
@@ -69,7 +72,7 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
           </>
         ) : (
           <>
-            <span>{balance}</span>
+            <span>{formattedBalance}</span>
             <span className="text-[0.8em] font-bold ml-1">
               {targetNetwork.nativeCurrency.symbol}
             </span>

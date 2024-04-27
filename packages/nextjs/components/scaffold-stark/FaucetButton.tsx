@@ -42,7 +42,7 @@ export const FaucetButton = () => {
     return null;
   }
 
-  const isBalanceZero = balance && balance === "0";
+  const isBalanceZero = balance && balance === 0n;
 
   return (
     <div
