@@ -3,7 +3,7 @@ const allChallenges = [
     challenge: "Challenge #0",
     title: "🎟 Simple NFT Example",
     description:
-      "🎫 Create a simple NFT to learn basics of scaffold-Stark. You'll use 👷‍♀️ HardHat to compile and deploy smart contracts. Then, you'll use a template React app full of important Ethereum components and hooks. Finally, you'll deploy an NFT to a public network to share with friends! 🚀",
+      "🎫 Create a simple NFT to learn basics of 🏗 Scaffold-Stark. You'll use Scarb to compile and Starknet.js to deploy smart contracts. Then, you'll use a template React app full of important Starknet components and hooks. Finally, you'll deploy an NFT to a public network to share with friends! 🚀",
     imageUrl: "/simpleNFT.png",
     end: true,
     id: "simple-nft-example",
@@ -12,7 +12,7 @@ const allChallenges = [
     challenge: "Challenge #1",
     title: "🥩 Decentralized Staking App",
     description:
-      "🦸 A superpower of Ethereum is allowing you, the builder, to create a simple set of rules that an adversarial group of players can use to work together. In this challenge, you create a decentralized application where users can coordinate a group funding effort. The users only have to trust the code.",
+      "🦸 A superpower of Starknet is allowing you, the builder, to create a simple set of rules that an adversarial group of players can use to work together. In this challenge, you create a decentralized application where users can coordinate a group funding effort. The users only have to trust the code.",
     imageUrl: "/stakingToken.png",
     id: "decentralized-staking",
   },
@@ -20,7 +20,7 @@ const allChallenges = [
     challenge: "Challenge #2",
     title: "🏵 Token Vendor",
     description:
-      "🤖 Smart contracts are kind of like always on vending machines that anyone can access. Let's make a decentralized, digital currency (an ERC20 token). Then, let's build an unstoppable vending machine that will buy and sell the currency. We'll learn about the approve pattern for ERC20s and how contract to contract interactions work.",
+      "🤖 Smart contracts are kind of like always on vending machines that anyone can access. Let's make a decentralized, digital currency (an ERC20 token in Cairo for Starknet). Then, let's build an unstoppable vending machine that will buy and sell the currency. We'll learn about the approve pattern for ERC20s and how contract to contract interactions work.",
     imageUrl: "/tokenVendor.png",
     border: false,
     id: "token-vendor",
@@ -37,7 +37,7 @@ const allChallenges = [
     challenge: "Challenge #4",
     title: "⚖️ Build a DEX",
     description:
-      "💵 Build an exchange that swaps ETH to tokens and tokens to ETH. 💰 This is possible because the smart contract holds reserves of both assets and has a price function based on the ratio of the reserves. Liquidity providers are issued a token that represents their share of the reserves and fees...",
+      "💵 Build an exchange that swaps ETH to STRK token and STRK token to ETH. 💰 This is possible because the smart contract holds reserves of both assets and has a price function based on the ratio of the reserves. Liquidity providers are issued a token that represents their share of the reserves and fees...",
     imageUrl: "/dex.png",
     id: "build-a-dex",
   },
