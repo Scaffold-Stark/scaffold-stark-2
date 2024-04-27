@@ -2,8 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const networks = require("./helpers/networks");
 const argv = require("yargs/yargs")(process.argv.slice(2)).argv;
-const { hash, TransactionStatus } = require("starknet");
-const { CallData } = require("starknet-dev");
+const { CallData, hash } = require("starknet-dev");
 
 const networkName = argv.network;
 
@@ -35,8 +34,6 @@ const deployContract = async (
       .toString("ascii")
   );
 
-  let classHash;
-  let existingClass;
   let contractAddress;
 
   const precomputedClassHash = hash.computeSierraContractClassHash(
@@ -50,26 +47,32 @@ const deployContract = async (
 
   let totalFee = 0n;
 
-  try {
-    const { suggestedMaxFee: estimatedFeeDeclare } =
-      await deployer.estimateDeclareFee(
-        {
-          contract: compiledContractSierra,
-          casm: compiledContractCasm,
-        },
-        {}
-      );
-    totalFee = estimatedFeeDeclare * 2n;
-  } catch (e) {
-    const { suggestedMaxFee: estimatedFeeDeploy } =
-      await deployer.estimateDeployFee({
-        classHash: precomputedClassHash,
-        constructorCalldata,
-      });
-    totalFee = estimatedFeeDeploy * 2n;
-  }
+  let existingClassHash;
 
-  if (totalFee === 0n) {
+  try {
+    existingClassHash = await provider.getClassByHash(precomputedClassHash);
+  } catch (e) {}
+
+  try {
+    if (!existingClassHash) {
+      const { suggestedMaxFee: estimatedFeeDeclare } =
+        await deployer.estimateDeclareFee(
+          {
+            contract: compiledContractSierra,
+            casm: compiledContractCasm,
+          },
+          {}
+        );
+      totalFee += estimatedFeeDeclare * 2n;
+    } else {
+      const { suggestedMaxFee: estimatedFeeDeploy } =
+        await deployer.estimateDeployFee({
+          classHash: precomputedClassHash,
+          constructorCalldata,
+        });
+      totalFee += estimatedFeeDeploy * 2n;
+    }
+  } catch (e) {
     console.error("Failed to estimate fee, setting up fee to 0.001 eth");
     totalFee = 500000000000000n;
   }
@@ -103,15 +106,14 @@ const deployContract = async (
   let finalContractName = exportContractName || contractName;
 
   deployments[finalContractName] = {
-    classHash: classHash,
+    classHash: precomputedClassHash,
     address: contractAddress,
     contract: contractName,
   };
 
   fs.writeFileSync(chainIdPath, JSON.stringify(deployments, null, 2));
-
   return {
-    classHash: classHash,
+    classHash: precomputedClassHash,
     address: contractAddress,
   };
 };
