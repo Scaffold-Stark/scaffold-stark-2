@@ -32,7 +32,6 @@ const useScaffoldEthBalance = ({ address }: UseScaffoldEthBalanceProps) => {
 
       const remainderStr = remainder
         .toString()
-        .padStart(ethDecimals.toString().length, "0");
       const decimalPart = remainderStr.slice(0, 4);
 
       setBalance(`${integerPart}.${decimalPart}`);
