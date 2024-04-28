@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     YourToken: {
       address:
-        "0x0300bf142dbd2624f761f4a95c211feadd1e92972ff2e873483b9e23c0d3588c",
+        "0x0036e3ef2381c6ac6c4431698ec14cc0f3d4c0748e19e30ec47eb46044c5efd5",
       abi: [
         {
           type: "impl",
@@ -321,7 +321,7 @@ const deployedContracts = {
     },
     Challenge2: {
       address:
-        "0x01eaf7f857f3cf91641b767c94911444eea69fa0ecf8f94a4d1bf3a9e75c8058",
+        "0x06ceb667e220991585c239168fe5a5e91a919954af1fec5f9e9d8c7003728d1b",
       abi: [
         {
           type: "impl",
@@ -351,7 +351,7 @@ const deployedContracts = {
               name: "buy_tokens",
               inputs: [
                 {
-                  name: "amount",
+                  name: "eth_amount_wei",
                   type: "core::integer::u256",
                 },
               ],
@@ -362,6 +362,18 @@ const deployedContracts = {
               type: "function",
               name: "withdraw",
               inputs: [],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "sell_tokens",
+              inputs: [
+                {
+                  name: "amount_tokens",
+                  type: "core::integer::u256",
+                },
+              ],
               outputs: [],
               state_mutability: "external",
             },

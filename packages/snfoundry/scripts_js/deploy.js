@@ -34,24 +34,24 @@ const deployScript = async () => {
   }
     , "Challenge2");
   
-  const { trasaction_hash } = await deployer.execute(
-    [
-      {
-        contractAddress: your_token.address,
-        callldata: [
-          ch2.address,
-          {
-            low: 300,
-            high: 0,
-          }
-        ],
-        entrypoint: "transfer",
-      }
-    ],
-    {
-      maxFee: 1e18
-    }
-  );
+  // const { trasaction_hash } = await deployer.execute(
+  //   [
+  //     {
+  //       contractAddress: your_token.address,
+  //       calldata: [
+  //         ch2.address,
+  //         {
+  //           low: 300,
+  //           high: 0,
+  //         }
+  //       ],
+  //       entrypoint: "transfer",
+  //     }
+  //   ],
+  //   {
+  //     maxFee: 1e18
+  //   }
+  // );
 
   // console.log("Transaction hash: ", trasaction_hash);
   
