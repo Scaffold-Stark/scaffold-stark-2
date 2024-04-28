@@ -1,5 +1,4 @@
-const { deployContract } = require("./deploy_contract");
-
+const { deployer, deployContract } = require("./deploy_contract");
 const deployScript = async () => {
   // await deployContract(
   //   {
@@ -42,7 +41,6 @@ const deployScript = async () => {
   //   },
   //   "PresetERC20"
   // );
-
   // await deployContract(
   //   {
   //     base_uri: "https://example.com/",
@@ -53,7 +51,6 @@ const deployScript = async () => {
   //   },
   //   "PresetERC1155"
   // );
-
   // await deployContract(
   //   {
   //     public_key:
