@@ -16,20 +16,45 @@ const deployScript = async () => {
   // await deployContract({ external_contract_address: values.address, eth_contract_address: "0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7" }
   //   , "Challenge1");
   
-    await deployContract(
+  const your_token = await deployContract(
     {
       name: "Gold",
       symbol: "GLD",
-      fixed_supply: 1000,
+      fixed_supply: 2000,
       recipient:
         "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
     },
     "YourToken"
     );
   
-  // await deployContract({ external_contract_address: values.address, eth_contract_address: "0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7" }
-  //   , "Challenge1");
+  const ch2 = await deployContract({
+    token_address: your_token.address,
+    eth_contract_address: "0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7",
+    owner: "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"
+  }
+    , "Challenge2");
+  
+  const { trasaction_hash } = await deployer.execute(
+    [
+      {
+        contractAddress: your_token.address,
+        callldata: [
+          ch2.address,
+          {
+            low: 300,
+            high: 0,
+          }
+        ],
+        entrypoint: "transfer",
+      }
+    ],
+    {
+      maxFee: 1e18
+    }
+  );
 
+  // console.log("Transaction hash: ", trasaction_hash);
+  
   //await deployContract(null, "TransferETH");
   //   await deployContract(
   //   {
