@@ -64,12 +64,7 @@ const deepMergeContracts = <
       continue;
     }
     const amendedExternal = Object.fromEntries(
-      Object.entries(
-        external[key] as Record<string, Record<string, unknown>>,
-      ).map(([contractName, declaration]) => [
-        contractName,
-        { ...declaration },
-      ]),
+      Object.entries(external[key] as Record<string, Record<string, unknown>>),
     );
     result[key] = { ...local[key], ...amendedExternal };
   }
