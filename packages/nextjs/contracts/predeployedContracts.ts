@@ -53,33 +53,6 @@ const preDeployedContracts = {
               state_mutability: "view",
             },
             {
-              name: "total_supply",
-              type: "function",
-              inputs: [],
-              outputs: [
-                {
-                  type: "core::integer::u256",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              name: "balance_of",
-              type: "function",
-              inputs: [
-                {
-                  name: "account",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::integer::u256",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
               name: "allowance",
               type: "function",
               inputs: [
@@ -103,30 +76,6 @@ const preDeployedContracts = {
               name: "transfer",
               type: "function",
               inputs: [
-                {
-                  name: "recipient",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "amount",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::bool",
-                },
-              ],
-              state_mutability: "external",
-            },
-            {
-              name: "transfer_from",
-              type: "function",
-              inputs: [
-                {
-                  name: "sender",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
                 {
                   name: "recipient",
                   type: "core::starknet::contract_address::ContractAddress",
