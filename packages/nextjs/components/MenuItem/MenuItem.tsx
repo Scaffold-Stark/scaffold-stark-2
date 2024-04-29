@@ -8,7 +8,7 @@ interface MenuItemProps {
 }
 
 const MenuItem: React.FC<MenuItemProps> = ({ link, isActive }) => {
-  console.log({ isActive }, link.label);
+  //console.log({ isActive }, link.label);
   return (
     <li key={link.href}>
       <Link
