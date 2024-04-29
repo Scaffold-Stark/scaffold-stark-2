@@ -40,7 +40,7 @@ const Wallet = ({
           />
         )}
       </div>
-      <p className="flex-1 text-base-100">{connector.name}</p>
+      <p className="flex-1 text-white">{connector.name}</p>
     </button>
   );
 };
