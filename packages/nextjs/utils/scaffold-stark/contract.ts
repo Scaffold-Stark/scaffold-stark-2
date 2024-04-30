@@ -315,6 +315,7 @@ export function getFunctionsByStateMutability(
 }
 
 // TODO: in the future when param decoding is standarized in wallets argent and braavos we can return the object
+// TODO : starknet react makes an input validation so we need to return objects for function reads
 function tryParsingParamReturnValues(fn: (x: any) => {}, param: any) {
   try {
     const objectValue = fn(param);
@@ -328,21 +329,51 @@ function tryParsingParamReturnValues(fn: (x: any) => {}, param: any) {
   }
 }
 
-export function parseParamWithType(paramType: string, param: any) {
-  if (paramType.includes("core::integer::u256")) {
-    return tryParsingParamReturnValues(uint256.bnToUint256, param);
-  } else if (paramType.includes("core::byte_array::ByteArray")) {
-    return tryParsingParamReturnValues(byteArray.byteArrayFromString, param);
-  } else if (
-    paramType.includes("core::starknet::contract_address::ContractAddress")
-  ) {
-    return tryParsingParamReturnValues(validateAndParseAddress, param);
-  } else {
-    return tryParsingParamReturnValues((x) => x, param);
+function tryParsingParamReturnObject(fn: (x: any) => {}, param: any) {
+  try {
+    return fn(param);
+  } catch (e) {
+    return param;
   }
 }
 
-export function parseFunctionParams(abiFunction: AbiFunction, inputs: any[]) {
+export function parseParamWithType(
+  paramType: string,
+  param: any,
+  isRead: boolean,
+) {
+  if (isRead) {
+    if (paramType.includes("core::integer::u256")) {
+      return tryParsingParamReturnObject(uint256.bnToUint256, param);
+    } else if (paramType.includes("core::byte_array::ByteArray")) {
+      return tryParsingParamReturnObject(byteArray.byteArrayFromString, param);
+    } else if (
+      paramType.includes("core::starknet::contract_address::ContractAddress")
+    ) {
+      return tryParsingParamReturnObject(validateAndParseAddress, param);
+    } else {
+      return tryParsingParamReturnObject((x) => x, param);
+    }
+  } else {
+    if (paramType.includes("core::integer::u256")) {
+      return tryParsingParamReturnValues(uint256.bnToUint256, param);
+    } else if (paramType.includes("core::byte_array::ByteArray")) {
+      return tryParsingParamReturnValues(byteArray.byteArrayFromString, param);
+    } else if (
+      paramType.includes("core::starknet::contract_address::ContractAddress")
+    ) {
+      return tryParsingParamReturnValues(validateAndParseAddress, param);
+    } else {
+      return tryParsingParamReturnValues((x) => x, param);
+    }
+  }
+}
+
+export function parseFunctionParams(
+  abiFunction: AbiFunction,
+  inputs: any[],
+  isRead: boolean,
+) {
   let parsedInputs: any[] = [];
 
   //check inputs length
@@ -352,7 +383,7 @@ export function parseFunctionParams(abiFunction: AbiFunction, inputs: any[]) {
 
   inputs.forEach((input, idx) => {
     const paramType = abiFunction.inputs[idx].type;
-    parsedInputs.push(parseParamWithType(paramType, input));
+    parsedInputs.push(parseParamWithType(paramType, input, isRead));
   });
   return parsedInputs;
 }
