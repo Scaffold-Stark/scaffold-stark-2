@@ -318,7 +318,11 @@ export function getFunctionsByStateMutability(
 function tryParsingParamReturnValues(fn: (x: any) => {}, param: any) {
   try {
     const objectValue = fn(param);
-    return Object.values(objectValue);
+    if (typeof objectValue === "object" && objectValue !== null) {
+      return Object.values(objectValue);
+    } else {
+      return objectValue;
+    }
   } catch (e) {
     return param;
   }
