@@ -37,25 +37,29 @@ const getInitialFormState = (abiFunction: AbiFunction) => {
 };
 
 // Recursive function to deeply parse JSON strings, correctly handling nested arrays and encoded JSON strings
-const deepParseValues = (value: any, keyAndType?: any): any => {
+const deepParseValues = (
+  value: any,
+  isRead: boolean,
+  keyAndType?: any,
+): any => {
   if (keyAndType) {
-    return parseParamWithType(keyAndType, value);
+    return parseParamWithType(keyAndType, value, isRead);
   }
   if (typeof value === "string") {
     if (isJsonString(value)) {
       const parsed = JSON.parse(value);
-      return deepParseValues(parsed);
+      return deepParseValues(parsed, isRead);
     } else {
       // It's a string but not a JSON string, return as is
       return value;
     }
   } else if (Array.isArray(value)) {
     // If it's an array, recursively parse each element
-    return value.map((element) => deepParseValues(element));
+    return value.map((element) => deepParseValues(element, isRead));
   } else if (typeof value === "object" && value !== null) {
     // If it's an object, recursively parse each value
     return Object.entries(value).reduce((acc: any, [key, val]) => {
-      acc[key] = deepParseValues(val);
+      acc[key] = deepParseValues(val, isRead);
       return acc;
     }, {});
   }
@@ -84,10 +88,13 @@ const deepParseValues = (value: any, keyAndType?: any): any => {
 /**
  * parses form input with array support
  */
-const getParsedContractFunctionArgs = (form: Record<string, any>) => {
+const getParsedContractFunctionArgs = (
+  form: Record<string, any>,
+  isRead: boolean,
+) => {
   return Object.keys(form).map((key) => {
     const valueOfArg = form[key];
-    return deepParseValues(valueOfArg, key);
+    return deepParseValues(valueOfArg, isRead, key);
   });
 };
 
