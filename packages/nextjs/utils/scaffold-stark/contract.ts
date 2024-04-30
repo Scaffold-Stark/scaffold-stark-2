@@ -314,6 +314,7 @@ export function getFunctionsByStateMutability(
     });
 }
 
+// TODO: in the future when param decoding is standarized in wallets argent and braavos we can return the object
 function tryParsingParamReturnValues(fn: (x: any) => {}, param: any) {
   try {
     const objectValue = fn(param);
