@@ -7,6 +7,7 @@ mod presetERC20;
 mod exampleExternalContract;
 mod transferETH;
 mod presetERC1155;
+mod helloStarknet;
 
 use starknet::ContractAddress;
 
