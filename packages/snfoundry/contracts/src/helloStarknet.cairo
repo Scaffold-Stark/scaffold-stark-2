@@ -15,7 +15,7 @@ mod HelloStarknet {
     #[abi(embed_v0)]
     impl HelloStarknetImpl of super::IHelloStarknet<ContractState> {
         fn increase_balance(ref self: ContractState, amount: u32) {
-            assert(amount !=0, 'amount cannot be 0');
+            assert(amount != 0, 'amount cannot be 0');
             self.balance.write(self.balance.read() + amount);
         }
 
