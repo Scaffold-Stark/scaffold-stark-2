@@ -60,8 +60,11 @@ mod Challenge2 {
             let tokens_to_buy = eth_amount_wei * TokensPerEth / Eth;
             let vendor_token_balance = self.your_token.read().balance_of(get_contract_address());
             assert(vendor_token_balance >= tokens_to_buy, 'Not Enough tokens');
-            //approve the contract to transfer the tokens
-            //self.erc20_token.read().transferFrom(get_caller_address(),get_contract_address(), eth_amount_wei);
+            //call fn approve() on UI 
+            self
+                .erc20_token
+                .read()
+                .transferFrom(get_caller_address(), get_contract_address(), eth_amount_wei);
             let sent = self.your_token.read().transfer(get_caller_address(), tokens_to_buy);
             assert(sent, 'Token Transfer failed');
         }
@@ -78,12 +81,12 @@ mod Challenge2 {
             let eth_amount_wei = amount_tokens * Eth / TokensPerEth;
             let contract_eth_balance = self.erc20_token.read().balanceOf(get_caller_address());
             assert(contract_eth_balance >= eth_amount_wei, 'Not Enough tokens');
-            // approve the contract to transfer the tokens
-            // let sent = self
-            //     .your_token
-            //     .read()
-            //     .transfer_from(get_caller_address(), get_contract_address(), amount_tokens);
-            // assert(sent, 'Tokens Transfer failed');
+            // call fn approve() on UI 
+            let sent = self
+                .your_token
+                .read()
+                .transfer_from(get_caller_address(), get_contract_address(), amount_tokens);
+            assert(sent, 'Tokens Transfer failed');
 
             let sent = self.erc20_token.read().transfer(get_caller_address(), eth_amount_wei);
             assert(sent, 'Eth Transfer failed');
