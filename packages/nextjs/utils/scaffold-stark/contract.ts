@@ -2,8 +2,6 @@ import scaffoldConfig from "~~/scaffold.config";
 import deployedContractsData from "~~/contracts/deployedContracts";
 import predeployedContracts from "~~/contracts/predeployedContracts";
 import type {
-  ExtractAbiFunction,
-  FunctionArgs,
   Abi,
   ExtractAbiInterfaces,
   ExtractArgs,
@@ -12,10 +10,10 @@ import {
   UseContractReadProps,
   UseContractWriteProps,
 } from "@starknet-react/core";
-import { Address } from "@starknet-react/chains";
-import { uint256, validateAndParseAddress } from "starknet";
-import { byteArray } from "starknet-dev";
-import type { MergeDeepRecord } from "type-fest/source/merge-deep";
+import {Address} from "@starknet-react/chains";
+import {uint256, validateAndParseAddress} from "starknet";
+import {byteArray} from "starknet-dev";
+import type {MergeDeepRecord} from "type-fest/source/merge-deep";
 
 type AddExternalFlag<T> = {
   [network in keyof T]: {
@@ -31,6 +29,7 @@ type Contracts = ContractsDeclaration[ConfiguredChainId];
 export type ContractName = keyof Contracts;
 export type Contract<TContractName extends ContractName> =
   Contracts[TContractName];
+
 export enum ContractCodeStatus {
   "LOADING",
   "DEPLOYED",
@@ -66,7 +65,7 @@ const deepMergeContracts = <
     const amendedExternal = Object.fromEntries(
       Object.entries(external[key] as Record<string, Record<string, unknown>>),
     );
-    result[key] = { ...local[key], ...amendedExternal };
+    result[key] = {...local[key], ...amendedExternal};
   }
   return result as MergeDeepRecord<
     AddExternalFlag<L>,
@@ -81,8 +80,8 @@ const contractsData = deepMergeContracts(
 );
 
 type IsContractDeclarationMissing<TYes, TNo> = typeof contractsData extends {
-  [key in ConfiguredChainId]: any;
-}
+    [key in ConfiguredChainId]: any;
+  }
   ? TNo
   : TYes;
 
@@ -137,16 +136,16 @@ export type UseScaffoldWriteConfig<
   contractName: TContractName;
 } & IsContractDeclarationMissing<
   Partial<UseContractWriteProps> & {
-    functionName: string;
-    args: any[];
-  },
+  functionName: string;
+  args: any[];
+},
   {
     functionName: TFunctionName;
   } & Omit<
-    UseContractWriteProps,
-    "chainId" | "abi" | "address" | "functionName" | "mode"
-  > &
-    UseScaffoldArgsParam<TContractName, TFunctionName>
+  UseContractWriteProps,
+  "chainId" | "abi" | "address" | "functionName" | "mode"
+> &
+  UseScaffoldArgsParam<TContractName, TFunctionName>
 >;
 // export type UseScaffoldWriteConfig = {
 //   calls: Array<{
@@ -250,24 +249,24 @@ type UseScaffoldArgsParam<
   >,
 > =
   TFunctionName extends ExtractAbiFunctionNamesWithInputsScaffold<
-    ContractAbi<TContractName>
-  >
+      ContractAbi<TContractName>
+    >
     ? {
-        args: OptionalTupple<
-          UnionToIntersection<
-            ExtractArgs<
+      args: OptionalTupple<
+        UnionToIntersection<
+          ExtractArgs<
+            ContractAbi<TContractName>,
+            ExtractAbiFunctionScaffold<
               ContractAbi<TContractName>,
-              ExtractAbiFunctionScaffold<
-                ContractAbi<TContractName>,
-                TFunctionName
-              >
+              TFunctionName
             >
           >
-        >;
-      }
+        >
+      >;
+    }
     : {
-        args?: never;
-      };
+      args?: never;
+    };
 
 export type UseScaffoldReadConfig<
   TContractName extends ContractName,
@@ -281,7 +280,7 @@ export type UseScaffoldReadConfig<
   {
     functionName: TFunctionName;
   } & UseScaffoldArgsParam<TContractName, TFunctionName> &
-    Omit<UseContractReadProps, "chainId" | "abi" | "address" | "functionName">
+  Omit<UseContractReadProps, "chainId" | "abi" | "address" | "functionName">
 >;
 
 export type AbiFunctionOutputs<
@@ -386,4 +385,14 @@ export function parseFunctionParams(
     parsedInputs.push(parseParamWithType(paramType, input, isRead));
   });
   return parsedInputs;
+}
+
+export function feltToHex(feltBigInt: bigint) {
+  let hexString = "";
+  while (feltBigInt > 0n) {
+    const byte = feltBigInt & 0xffn;
+    hexString = byte.toString(16).padStart(2, '0') + hexString;
+    feltBigInt >>= 8n;
+  }
+  return ("0x" + hexString) || "0x0";
 }
