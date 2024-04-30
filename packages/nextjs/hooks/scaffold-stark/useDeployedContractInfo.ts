@@ -10,7 +10,7 @@ import {
 import { BlockIdentifier, RpcProvider } from "starknet";
 
 export const useDeployedContractInfo = <TContractName extends ContractName>(
-  contractName: TContractName
+  contractName: TContractName,
 ) => {
   const isMounted = useIsMounted();
   const { targetNetwork } = useTargetNetwork();
@@ -18,7 +18,7 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
     contractName as ContractName
   ] as Contract<TContractName>;
   const [status, setStatus] = useState<ContractCodeStatus>(
-    ContractCodeStatus.LOADING
+    ContractCodeStatus.LOADING,
   );
   const publicNodeUrl = targetNetwork.rpcUrls.public.http[0];
 
@@ -38,7 +38,7 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
 
       const contractClasHash = await publicClient.getClassHashAt(
         deployedContract.address,
-        "pending" as BlockIdentifier
+        "pending" as BlockIdentifier,
       );
 
       if (!isMounted()) {
