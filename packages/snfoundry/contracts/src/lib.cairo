@@ -1,13 +1,13 @@
-mod helloStarknet;
-mod simpleStorage;
-mod vote;
 mod challenge0;
 mod challenge1;
-mod presetERC1155;
+mod challenge2;
+mod yourToken;
 mod challenge3;
 mod presetERC20;
 mod exampleExternalContract;
 mod transferETH;
+mod presetERC1155;
+mod helloStarknet;
 
 use starknet::ContractAddress;
 
