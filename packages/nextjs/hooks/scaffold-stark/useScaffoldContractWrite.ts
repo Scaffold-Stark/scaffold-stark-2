@@ -48,7 +48,7 @@ export const useScaffoldContractWrite = <
 
   const parsedParams = useMemo(() => {
     if (args && abiFunction) {
-      return parseFunctionParams(abiFunction, args as any[]);
+      return parseFunctionParams(abiFunction, args as any[], false).flat();
     }
     return [];
   }, [args, abiFunction]);
@@ -90,7 +90,7 @@ export const useScaffoldContractWrite = <
 
     let newParsedParams =
       newArgs && abiFunction
-        ? parseFunctionParams(abiFunction, newArgs as any[])
+        ? parseFunctionParams(abiFunction, newArgs as any[], false).flat()
         : parsedParams;
     const newCalls = [
       {
