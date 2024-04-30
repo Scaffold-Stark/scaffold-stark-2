@@ -16,7 +16,7 @@ const NUM_OF_ETH = "1";
  */
 export const FaucetButton = () => {
   const { address } = useAccount();
-  const { balance } = useScaffoldEthBalance({ address });
+  const { value } = useScaffoldEthBalance({ address });
 
   const { targetNetwork } = useTargetNetwork();
 
@@ -42,7 +42,7 @@ export const FaucetButton = () => {
     return null;
   }
 
-  const isBalanceZero = balance && balance === "0";
+  const isBalanceZero = value && value === 0n;
 
   return (
     <div

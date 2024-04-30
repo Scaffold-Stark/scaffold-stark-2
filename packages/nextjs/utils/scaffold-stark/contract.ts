@@ -2,6 +2,8 @@ import scaffoldConfig from "~~/scaffold.config";
 import deployedContractsData from "~~/contracts/deployedContracts";
 import predeployedContracts from "~~/contracts/predeployedContracts";
 import type {
+  ExtractAbiFunction,
+  FunctionArgs,
   Abi,
   ExtractAbiInterfaces,
   ExtractArgs,
@@ -29,7 +31,6 @@ type Contracts = ContractsDeclaration[ConfiguredChainId];
 export type ContractName = keyof Contracts;
 export type Contract<TContractName extends ContractName> =
   Contracts[TContractName];
-
 export enum ContractCodeStatus {
   "LOADING",
   "DEPLOYED",
@@ -308,27 +309,71 @@ export function getFunctionsByStateMutability(
       return acc;
     }, [] as AbiFunction[])
     .filter((fn) => {
-      return fn.state_mutability == stateMutability;
+      const isWriteableFunction = fn.state_mutability == stateMutability;
+      return isWriteableFunction;
     });
 }
 
-export function parseParamWithType(paramType: string, param: any) {
-  if (paramType.includes("core::integer::u256")) {
-    return uint256.bnToUint256(param);
-  } else if (paramType.includes("core::byte_array::ByteArray")) {
-    return byteArray.byteArrayFromString(param);
-  } else if (paramType.includes("core::felt252")) {
-    return feltToAscii(param);
-  } else if (
-    paramType.includes("core::starknet::contract_address::ContractAddress")
-  ) {
-    return validateAndParseAddress(param);
-  } else {
+// TODO: in the future when param decoding is standarized in wallets argent and braavos we can return the object
+// TODO : starknet react makes an input validation so we need to return objects for function reads
+function tryParsingParamReturnValues(fn: (x: any) => {}, param: any) {
+  try {
+    const objectValue = fn(param);
+    if (typeof objectValue === "object" && objectValue !== null) {
+      return Object.values(objectValue);
+    } else {
+      return objectValue;
+    }
+  } catch (e) {
     return param;
   }
 }
 
-export function parseFunctionParams(abiFunction: AbiFunction, inputs: any[]) {
+function tryParsingParamReturnObject(fn: (x: any) => {}, param: any) {
+  try {
+    return fn(param);
+  } catch (e) {
+    return param;
+  }
+}
+
+export function parseParamWithType(
+  paramType: string,
+  param: any,
+  isRead: boolean,
+) {
+  if (isRead) {
+    if (paramType.includes("core::integer::u256")) {
+      return tryParsingParamReturnObject(uint256.bnToUint256, param);
+    } else if (paramType.includes("core::byte_array::ByteArray")) {
+      return tryParsingParamReturnObject(byteArray.byteArrayFromString, param);
+    } else if (
+      paramType.includes("core::starknet::contract_address::ContractAddress")
+    ) {
+      return tryParsingParamReturnObject(validateAndParseAddress, param);
+    } else {
+      return tryParsingParamReturnObject((x) => x, param);
+    }
+  } else {
+    if (paramType.includes("core::integer::u256")) {
+      return tryParsingParamReturnValues(uint256.bnToUint256, param);
+    } else if (paramType.includes("core::byte_array::ByteArray")) {
+      return tryParsingParamReturnValues(byteArray.byteArrayFromString, param);
+    } else if (
+      paramType.includes("core::starknet::contract_address::ContractAddress")
+    ) {
+      return tryParsingParamReturnValues(validateAndParseAddress, param);
+    } else {
+      return tryParsingParamReturnValues((x) => x, param);
+    }
+  }
+}
+
+export function parseFunctionParams(
+  abiFunction: AbiFunction,
+  inputs: any[],
+  isRead: boolean,
+) {
   let parsedInputs: any[] = [];
 
   //check inputs length
@@ -338,17 +383,7 @@ export function parseFunctionParams(abiFunction: AbiFunction, inputs: any[]) {
 
   inputs.forEach((input, idx) => {
     const paramType = abiFunction.inputs[idx].type;
-    parsedInputs.push(parseParamWithType(paramType, input));
+    parsedInputs.push(parseParamWithType(paramType, input, isRead));
   });
   return parsedInputs;
-}
-
-export function feltToAscii(feltBigInt: bigint) {
-  let asciiString = "";
-  while (feltBigInt > 0n) {
-    const charCode = feltBigInt & 0xffn;
-    asciiString = String.fromCharCode(Number(charCode)) + asciiString;
-    feltBigInt >>= 8n;
-  }
-  return asciiString;
 }

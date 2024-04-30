@@ -7,7 +7,6 @@ import {
   Contract,
   contracts,
 } from "~~/utils/scaffold-stark/contract";
-import { useProvider } from "@starknet-react/core";
 import { BlockIdentifier, RpcProvider } from "starknet";
 
 export const useDeployedContractInfo = <TContractName extends ContractName>(
@@ -36,9 +35,10 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
         setStatus(ContractCodeStatus.NOT_FOUND);
         return;
       }
-      const contractClasHash = await publicClient.getClassAt(
+
+      const contractClasHash = await publicClient.getClassHashAt(
         deployedContract.address,
-        "Pending" as BlockIdentifier,
+        "pending" as BlockIdentifier,
       );
 
       if (!isMounted()) {
