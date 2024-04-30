@@ -24,7 +24,7 @@ const GenericModal = ({
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className={`bg-primary rounded-[25px] flex flex-col border-[1px] border-solid border-outline-grey transition-[opacity,transform] duration-500 ease-in-out ${
+            className={`bg-primary rounded-[25px] flex flex-col border-[1px] border-solid border-base-100 transition-[opacity,transform] duration-500 ease-in-out ${
               animate
                 ? "translate-y-0 opacity-100"
                 : "translate-y-full opacity-0"

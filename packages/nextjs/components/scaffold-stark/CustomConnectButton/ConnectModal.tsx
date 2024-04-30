@@ -75,15 +75,15 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
       isOpen={isOpen}
       onClose={closeModal}
       animate={animate}
-      className={`w-[90vw] mx-auto md:h-[30rem] md:w-[45rem] text-white `}
+      className={`w-[90vw] mx-auto md:h-[30rem] md:w-[45rem]`}
     >
       <div className="flex p-4 w-full lg:p-0 lg:grid lg:grid-cols-5">
         <div className="basis-5/6 lg:col-span-2  lg:border-r-[1px] lg:border-solid lg:border-base-100 lg:py-4 lg:pl-8">
-          <h2 className="text-center my-4 lg:text-start font-bold text-base-100 text-[1.125em]">
+          <h2 className="text-center my-4 lg:text-start font-bold text-white text-[1.125em]">
             Connect a Wallet
           </h2>
         </div>
-        <div className="ml-auto lg:col-span-3 lg:py-4 lg:pr-8">
+        <div className="ml-auto lg:col-span-3 lg:py-4 lg:pr-8 text-base-100">
           <button
             onClick={(e) => {
               closeModal(e);
@@ -107,7 +107,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
       </div>
       <div className="flex flex-col flex-1 justify-between lg:grid lg:grid-cols-5 ">
         <div className="px-8  lg:h-full lg:col-span-2  lg:border-r-[1px] lg:border-solid lg:border-base-100">
-          <h4 className="mb-[1rem] text-base-100 font-semibold">Popular</h4>
+          <h4 className="mb-[1rem] text-white font-semibold">Popular</h4>
 
           <div className="flex flex-col gap-4 py-8">
             {connectors.map((connector, index) => (
@@ -135,7 +135,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
             </div>
           ) : (
             <>
-              <h2 className="lg:text-center lg:mb-[3rem] lg:text-[1.125em] text-base-100 font-bold">
+              <h2 className="lg:text-center lg:mb-[3rem] lg:text-[1.125em] text-white font-bold">
                 What is a wallet?
               </h2>
               <article className="hidden lg:flex  flex-col gap-8 place-content-center text-[0.875em] justify-self-center self-center ">
@@ -153,10 +153,10 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                     />
                   </div>
                   <div className="col-span-8 flex flex-col gap-2 ">
-                    <h4 className="text-[1.14em] text-base-100 font-bold">
+                    <h4 className="text-[1.14em] font-bold text-white">
                       A home for your digital assets
                     </h4>
-                    <p className="text-base-100">
+                    <p className="text-white">
                       Wallets are used to send, receive, store, and display
                       digital assets like Ethereum and NFTs.
                     </p>
@@ -176,10 +176,10 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                     />
                   </div>
                   <div className="col-span-8 flex flex-col gap-2 ">
-                    <h4 className="text-[1.14em] text-base-100 font-bold">
+                    <h4 className="text-[1.14em] font-bold text-white">
                       A new way to sign-in
                     </h4>
-                    <p className="text-base-100 pb-2">
+                    <p className="text-white pb-2">
                       Instead of creating new accounts and passwords on every
                       website, just connect your wallet.
                     </p>

@@ -36,7 +36,7 @@ export const ReadOnlyFunctionForm = ({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
-    args: inputValue,
+    args: inputValue ? inputValue.flat() : [],
     enabled: false,
     blockIdentifier: "pending" as BlockNumber,
   });
@@ -56,7 +56,7 @@ export const ReadOnlyFunctionForm = ({
   });
 
   const handleRead = async () => {
-    const newInputValue = getParsedContractFunctionArgs(form);
+    const newInputValue = getParsedContractFunctionArgs(form, true);
     if (JSON.stringify(form) === JSON.stringify(lastForm.current)) {
       await refetch();
     } else {
