@@ -60,7 +60,7 @@ WriteOnlyFunctionFormProps) => {
       {
         contractAddress,
         entrypoint: abiFunction.name,
-        calldata: getParsedContractFunctionArgs(form),
+        calldata: getParsedContractFunctionArgs(form).flat(),
       },
     ],
   });

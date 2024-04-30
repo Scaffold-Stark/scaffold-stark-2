@@ -13,7 +13,7 @@ import {
   UseContractWriteProps,
 } from "@starknet-react/core";
 import { Address } from "@starknet-react/chains";
-import { uint256 } from "starknet";
+import { uint256, validateAndParseAddress } from "starknet";
 import { byteArray } from "starknet-dev";
 import type { MergeDeepRecord } from "type-fest/source/merge-deep";
 
@@ -314,13 +314,26 @@ export function getFunctionsByStateMutability(
     });
 }
 
+function tryParsingParamReturnValues(fn: (x: any) => {}, param: any) {
+  try {
+    const objectValue = fn(param);
+    return Object.values(objectValue);
+  } catch (e) {
+    return param;
+  }
+}
+
 export function parseParamWithType(paramType: string, param: any) {
   if (paramType.includes("core::integer::u256")) {
-    return uint256.bnToUint256(param);
+    return tryParsingParamReturnValues(uint256.bnToUint256, param);
   } else if (paramType.includes("core::byte_array::ByteArray")) {
-    return byteArray.byteArrayFromString(param);
+    return tryParsingParamReturnValues(byteArray.byteArrayFromString, param);
+  } else if (
+    paramType.includes("core::starknet::contract_address::ContractAddress")
+  ) {
+    return tryParsingParamReturnValues(validateAndParseAddress, param);
   } else {
-    return param;
+    return tryParsingParamReturnValues((x) => x, param);
   }
 }
 

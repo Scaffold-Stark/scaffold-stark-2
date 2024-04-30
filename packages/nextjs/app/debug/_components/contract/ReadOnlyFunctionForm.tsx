@@ -36,7 +36,7 @@ export const ReadOnlyFunctionForm = ({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
-    args: inputValue,
+    args: inputValue ? inputValue.flat() : [],
     enabled: false,
     blockIdentifier: "pending" as BlockNumber,
   });
