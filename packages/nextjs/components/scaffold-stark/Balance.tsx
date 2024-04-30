@@ -5,7 +5,6 @@ import { Address } from "@starknet-react/chains";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import useScaffoldEthBalance from "~~/hooks/scaffold-stark/useScaffoldEthBalance";
 import { useGlobalState } from "~~/services/store/store";
-import { formatEth } from "~~/utils/scaffold-stark/common";
 
 type BalanceProps = {
   address?: Address;
@@ -19,11 +18,12 @@ type BalanceProps = {
 export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
   const price = useGlobalState((state) => state.nativeCurrencyPrice);
   const { targetNetwork } = useTargetNetwork();
-  const { balance, isLoading, isError } = useScaffoldEthBalance({ address });
+  const { formatted, isLoading, isError } = useScaffoldEthBalance({
+    address,
+  });
   const [displayUsdMode, setDisplayUsdMode] = useState(
     price > 0 ? Boolean(usdMode) : false,
   );
-  const formattedBalance = formatEth(balance ?? 0);
 
   const toggleBalanceMode = () => {
     if (price > 0) {
@@ -31,7 +31,7 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
     }
   };
 
-  if (!address || isLoading || balance === null) {
+  if (!address || isLoading || formatted === null) {
     return (
       <div className="animate-pulse flex space-x-4">
         <div className="rounded-md bg-slate-300 h-6 w-6"></div>
@@ -64,7 +64,7 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
           <>
             <span className="text-[0.8em] font-bold mr-1">$</span>
             <span>
-              {(parseFloat(formattedBalance) * price).toLocaleString("en-US", {
+              {(parseFloat(formatted) * price).toLocaleString("en-US", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}
@@ -72,7 +72,7 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
           </>
         ) : (
           <>
-            <span>{formattedBalance}</span>
+            <span>{parseFloat(formatted).toFixed(4)}</span>
             <span className="text-[0.8em] font-bold ml-1">
               {targetNetwork.nativeCurrency.symbol}
             </span>

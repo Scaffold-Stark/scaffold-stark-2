@@ -1,10 +1,11 @@
 import { Address } from "@starknet-react/chains";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-stark/useScaffoldContractRead";
 import { useDeployedContractInfo } from "./useDeployedContractInfo";
-import { useContractRead } from "@starknet-react/core";
+import { useBalance, useContractRead } from "@starknet-react/core";
 import { useTargetNetwork } from "./useTargetNetwork";
 import { BlockNumber } from "starknet";
 import { Abi } from "abi-wan-kanabi";
+import { formatUnits } from "ethers";
 
 type UseScaffoldEthBalanceProps = {
   address?: Address | string;
@@ -22,8 +23,12 @@ const useScaffoldEthBalance = ({ address }: UseScaffoldEthBalanceProps) => {
     args: address ? [address] : [],
     blockIdentifier: "pending" as BlockNumber,
   });
+
   return {
-    balance: data as unknown as bigint,
+    value: data as unknown as bigint,
+    decimals: 18,
+    symbol: "ETH",
+    formatted: data ? formatUnits(data as unknown as bigint) : "0",
     ...props,
   };
 };
