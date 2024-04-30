@@ -63,9 +63,6 @@ WriteOnlyFunctionFormProps) => {
         calldata: getParsedContractFunctionArgs(form, false).flat(),
       },
     ],
-    options: {
-      maxFee: 100000000000000000,
-    },
   });
 
   const handleWrite = async () => {
