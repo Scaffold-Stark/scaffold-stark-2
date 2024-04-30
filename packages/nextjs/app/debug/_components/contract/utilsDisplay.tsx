@@ -6,8 +6,8 @@ import {
   validateChecksumAddress,
 } from "starknet";
 import { Address } from "~~/components/scaffold-stark";
-import { replacer } from "~~/utils/scaffold-stark/common";
-import { AbiOutput, feltToHex } from "~~/utils/scaffold-stark/contract";
+import { feltToHex, replacer } from "~~/utils/scaffold-stark/common";
+import { AbiOutput } from "~~/utils/scaffold-stark/contract";
 
 type DisplayContent =
   | Uint256

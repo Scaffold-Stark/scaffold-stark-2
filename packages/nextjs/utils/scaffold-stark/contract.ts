@@ -386,13 +386,3 @@ export function parseFunctionParams(
   });
   return parsedInputs;
 }
-
-export function feltToHex(feltBigInt: bigint) {
-  let hexString = "";
-  while (feltBigInt > 0n) {
-    const byte = feltBigInt & 0xffn;
-    hexString = byte.toString(16).padStart(2, "0") + hexString;
-    feltBigInt >>= 8n;
-  }
-  return "0x" + hexString || "0x0";
-}
