@@ -65,9 +65,6 @@ export const useScaffoldMultiContractWrite = <
   // TODO add custom options
   const wagmiContractWrite = useContractWrite({
     calls: parsedCalls,
-    options: {
-      maxFee: 1000000000000000n,
-    },
   });
 
   const sendContractWriteTx = async () => {
