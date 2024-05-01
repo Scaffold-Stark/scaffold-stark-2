@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     TestTypes: {
       address:
-        "0x01d6f0c4f17798b4a7c816f7d413a0f113c800f076276d67e0e3d9e73f8b2d8e",
+        "0x0064a0387faee742d0652a369615def34494bb6294f2a5003ccf6eb613daf235",
       abi: [
         {
           type: "impl",
@@ -25,6 +25,38 @@ const deployedContracts = {
             {
               name: "high",
               type: "core::integer::u128",
+            },
+          ],
+        },
+        {
+          type: "enum",
+          name: "core::bool",
+          variants: [
+            {
+              name: "False",
+              type: "()",
+            },
+            {
+              name: "True",
+              type: "()",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "core::byte_array::ByteArray",
+          members: [
+            {
+              name: "data",
+              type: "core::array::Array::<core::bytes_31::bytes31>",
+            },
+            {
+              name: "pending_word",
+              type: "core::felt252",
+            },
+            {
+              name: "pending_word_len",
+              type: "core::integer::u32",
             },
           ],
         },
@@ -262,6 +294,66 @@ const deployedContracts = {
               outputs: [
                 {
                   type: "core::integer::u256",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "set_bool",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::bool",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "get_bool",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::bool",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "toggle_bool",
+              inputs: [],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "void",
+              inputs: [],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_byte_array",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::byte_array::ByteArray",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "get_byte_array",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::byte_array::ByteArray",
                 },
               ],
               state_mutability: "view",

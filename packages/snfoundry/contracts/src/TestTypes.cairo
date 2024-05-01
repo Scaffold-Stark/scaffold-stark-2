@@ -26,6 +26,18 @@ pub trait ITestTypes<TContractState> {
 
     fn get_uint256(self: @TContractState) -> u256;
     fn get_uint256_increment(self: @TContractState, amount: u256) -> u256;
+
+    // Methods for boolean values
+    fn set_bool(ref self: TContractState, value: bool);
+    fn get_bool(self: @TContractState) -> bool;
+    fn toggle_bool(ref self: TContractState);
+
+    // Method for a void type action
+    fn void(ref self: TContractState);
+
+    // Methods for boolean values
+    fn set_byte_array(ref self: TContractState, value: ByteArray);
+    fn get_byte_array(self: @TContractState) -> ByteArray;
 }
 
 #[starknet::contract]
@@ -38,7 +50,9 @@ mod TestTypes {
         uint64: u64,
         uint128: u128,
         uint256: u256,
-    //  balance7: u512,
+        //  balance7: u512,
+        bool_value: bool,
+        byte_array: ByteArray,
     }
 
     #[abi(embed_v0)]
@@ -119,6 +133,31 @@ mod TestTypes {
 
         fn get_uint256_increment(self: @ContractState, amount: u256) -> u256 {
             self.uint256.read() + amount
+        }
+
+
+        fn set_bool(ref self: ContractState, value: bool) {
+            self.bool_value.write(value);
+        }
+
+        fn get_bool(self: @ContractState) -> bool {
+            self.bool_value.read()
+        }
+
+        fn toggle_bool(ref self: ContractState) {
+            let current = self.bool_value.read();
+            self.bool_value.write(!current);
+        }
+
+        fn void(ref self: ContractState) {}
+
+
+        fn set_byte_array(ref self: ContractState, value: ByteArray) {
+            self.byte_array.write(value);
+        }
+
+        fn get_byte_array(self: @ContractState) -> ByteArray {
+            self.byte_array.read()
         }
     }
 }
