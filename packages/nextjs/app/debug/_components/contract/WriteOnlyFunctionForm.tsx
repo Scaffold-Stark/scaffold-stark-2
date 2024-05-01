@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { InheritanceTooltip } from "./InheritanceTooltip";
+import { useEffect, useState } from "react";
 // import { Abi, AbiFunction } from "abitype";
 // import { Address, TransactionReceipt } from "viem";
 // import { useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
@@ -13,10 +12,8 @@ import {
   getParsedContractFunctionArgs,
   transformAbiFunction,
 } from "~~/app/debug/_components/contract";
-import { IntegerInput } from "~~/components/scaffold-stark";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import {
-  useContract,
   useContractWrite,
   useNetwork,
   useWaitForTransaction,
@@ -24,7 +21,7 @@ import {
 import { Abi } from "abi-wan-kanabi";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { Address } from "@starknet-react/chains";
-import { InvokeTransactionReceiptResponse, uint256 } from "starknet";
+import { InvokeTransactionReceiptResponse } from "starknet";
 import { TxReceipt } from "./TxReceipt";
 import { useTransactor } from "~~/hooks/scaffold-stark";
 
@@ -72,9 +69,13 @@ WriteOnlyFunctionFormProps) => {
         await writeTxn(makeWriteWithParams);
         onChange();
       } catch (e: any) {
+        const errorPattern = /Contract (.*?)"}/;
+        const match = errorPattern.exec(e.message);
+        const message = match ? match[1] : e.message;
+
         console.error(
           "⚡️ ~ file: WriteOnlyFunctionForm.tsx:handleWrite ~ error",
-          e,
+          message,
         );
       }
     }
