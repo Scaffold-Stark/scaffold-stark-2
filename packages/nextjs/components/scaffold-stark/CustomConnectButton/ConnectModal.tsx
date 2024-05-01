@@ -124,26 +124,24 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
           {isBurnerWallet ? (
             <div className="flex flex-col max-h-[400px] overflow-y-auto pb-[20px] items-center justify-center">
               {burnerAccounts.map((burnerAcc, ix) => (
-                  // eslint-disable-next-line react/jsx-key
-                  <div className="w-full flex flex-col">
-                    <button
-                        key={burnerAcc.publicKey}
-                        className=" rounded-md hover:bg-base-100 py-2"
-                        onClick={(e) => handleConnectBurner(e, ix)}
-                    >
-                      {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}
-                    </button>
-                  </div>
-
+                // eslint-disable-next-line react/jsx-key
+                <div className="w-full flex flex-col">
+                  <button
+                    key={burnerAcc.publicKey}
+                    className=" rounded-md hover:bg-base-100 py-2"
+                    onClick={(e) => handleConnectBurner(e, ix)}
+                  >
+                    {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}
+                  </button>
+                </div>
               ))}
             </div>
           ) : (
-              <>
-                <h2 className="lg:text-center lg:mb-[3rem] lg:text-[1.125em] font-bold">
-                  What is a wallet?
-                </h2>
-                <article
-                    className="hidden lg:flex  flex-col gap-8 place-content-center text-[0.875em] justify-self-center self-center ">
+            <>
+              <h2 className="lg:text-center lg:mb-[3rem] lg:text-[1.125em] font-bold">
+                What is a wallet?
+              </h2>
+              <article className="hidden lg:flex  flex-col gap-8 place-content-center text-[0.875em] justify-self-center self-center ">
                 <div className="grid grid-cols-10 items-center  gap-4">
                   <div className="col-span-2 border-solid border-[2px] border-base-100 rounded-[10px] h-[3rem] w-[3rem]">
                     <Image
