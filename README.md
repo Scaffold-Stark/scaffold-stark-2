@@ -1,4 +1,4 @@
-# 🏗 Scaffold-ETH 2
+# 🏗 Scaffold-Stark 2
 
 <h4 align="center">
   <a href="">Documentation</a> |
