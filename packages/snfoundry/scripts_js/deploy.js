@@ -1,6 +1,12 @@
-const { deployer, deployContract } = require("./deploy_contract");
+const { deployContract } = require("./deploy_contract");
+
 const deployScript = async () => {
-  await deployContract(null, "HelloStarknet");
+
+  await deployContract(
+    { }, 
+    "TestTypes"
+  );
+
 };
 
 deployScript()
