@@ -1,3 +1,22 @@
+# 🏗 Scaffold-ETH 2
+
+<h4 align="center">
+  <a href="">Documentation</a> |
+  <a href="">Website</a>
+</h4>
+
+🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on Starknet blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+
+⚙️ Built using NextJS, Starknet.js, Scarb, Wagmi, Cairo and Typescript.
+
+- ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
+- 🪝 **[Custom hooks]()**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
+- 🧱 [**Components**](): Collection of common web3 components to quickly build your frontend.
+- 🔥 **Burner Wallet & Prefunded Account**: Quickly test your application with a burner wallet and prefunded accounts.
+- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with Starknet network.
+
+![Debug Contracts tab](./assests/debug-contracts.png)
+
 ## Requirements
 
 Before you begin, you need to install the following tools:
@@ -102,7 +121,7 @@ yarn deploy --network {NETWORK_NAME} // when NETWORK_NAME is not specified, it d
 
 **Note:** To use sepolia tesnet, you have to set {NETWORK_NAME} to `sepolia`.
 
-This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts_js/deploy` to deploy the contract to the network. You can also customize the deploy script.
+This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts_js/deploy.js` to deploy the contract to the network. You can also customize the deploy script.
 
 5. On a third terminal, start your NextJS app:
 
