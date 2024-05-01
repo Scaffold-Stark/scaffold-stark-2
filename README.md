@@ -7,10 +7,10 @@
 
 🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on Starknet blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
 
-⚙️ Built using NextJS, Starknet.js, Scarb, Wagmi, Cairo and Typescript.
+⚙️ Built using NextJS, Starknet.js, Scarb, Starknet-React, Cairo and Typescript.
 
 - ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
-- 🪝 **[Custom hooks]()**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
+- 🪝 **[Custom hooks]()**: Collection of React hooks wrapper around [starknet-react](https://starknet-react.com/) to simplify interactions with smart contracts with typescript autocompletion.
 - 🧱 [**Components**](): Collection of common web3 components to quickly build your frontend.
 - 🔥 **Burner Wallet & Prefunded Account**: Quickly test your application with a burner wallet and prefunded accounts.
 - 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with Starknet network.
@@ -130,5 +130,3 @@ yarn start
 ```
 
 Visit your app on: `http://localhost:3000`.
-
-video demo [here](https://www.loom.com/share/0a0b23aa9eb34c32ad9be5b68f82817e)
