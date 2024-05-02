@@ -79,7 +79,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
     >
       <div className="flex p-4 w-full lg:p-0 lg:grid lg:grid-cols-5">
         <div className="basis-5/6 lg:col-span-2  lg:border-r-[1px] lg:border-solid lg:border-base-100 lg:py-4 lg:pl-8">
-          <h2 className="text-center my-4 lg:text-start font-bold text-white text-[1.125em]">
+          <h2 className="text-center my-4 lg:text-start font-bold text-base-100 text-[1.125em]">
             Connect a Wallet
           </h2>
         </div>
@@ -89,7 +89,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
               closeModal(e);
               e.stopPropagation();
             }}
-            className="w-8 h-8  grid place-content-center rounded-full bg-outline-grey  "
+            className="w-8 h-8  grid place-content-center rounded-full bg-outline-grey text-base-100"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -107,7 +107,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
       </div>
       <div className="flex flex-col flex-1 justify-between lg:grid lg:grid-cols-5 ">
         <div className="px-8  lg:h-full lg:col-span-2  lg:border-r-[1px] lg:border-solid lg:border-base-100">
-          <h4 className="mb-[1rem] text-white font-semibold">Popular</h4>
+          <h4 className="mb-[1rem] text-base-100 font-semibold">Popular</h4>
 
           <div className="flex flex-col gap-4 py-8">
             {connectors.map((connector, index) => (
@@ -120,22 +120,25 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
             ))}
           </div>
         </div>
-        <div className="p-4 border-t-[.5px] border-solid  border-red h-fit lg:h-full lg:border-none lg:col-span-3 lg:px-8 lg:py-0 lg:flex lg:flex-col">
+        <div className=" h-fit lg:h-full lg:border-none lg:col-span-3 lg:px-8 lg:py-0 lg:flex lg:flex-col pb-[20px]">
           {isBurnerWallet ? (
-            <div className="flex flex-col">
+            <div className="flex flex-col max-h-[400px] overflow-y-auto pb-[20px] items-center justify-center">
               {burnerAccounts.map((burnerAcc, ix) => (
-                <button
-                  key={burnerAcc.publicKey}
-                  className="my-2"
-                  onClick={(e) => handleConnectBurner(e, ix)}
-                >
-                  {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}
-                </button>
+                // eslint-disable-next-line react/jsx-key
+                <div className="w-full flex flex-col">
+                  <button
+                    key={burnerAcc.publicKey}
+                    className=" rounded-md text-base-100 hover:bg-base-100 hover:text-base-300 py-2"
+                    onClick={(e) => handleConnectBurner(e, ix)}
+                  >
+                    {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}
+                  </button>
+                </div>
               ))}
             </div>
           ) : (
             <>
-              <h2 className="lg:text-center lg:mb-[3rem] lg:text-[1.125em] text-white font-bold">
+              <h2 className="lg:text-center lg:mb-[3rem] lg:text-[1.125em] text-base-100 font-bold">
                 What is a wallet?
               </h2>
               <article className="hidden lg:flex  flex-col gap-8 place-content-center text-[0.875em] justify-self-center self-center ">
@@ -153,10 +156,10 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                     />
                   </div>
                   <div className="col-span-8 flex flex-col gap-2 ">
-                    <h4 className="text-[1.14em] font-bold text-white">
+                    <h4 className="text-[1.14em] font-bold text-base-100">
                       A home for your digital assets
                     </h4>
-                    <p className="text-white">
+                    <p className="text-base-100">
                       Wallets are used to send, receive, store, and display
                       digital assets like Ethereum and NFTs.
                     </p>
@@ -176,10 +179,10 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                     />
                   </div>
                   <div className="col-span-8 flex flex-col gap-2 ">
-                    <h4 className="text-[1.14em] font-bold text-white">
+                    <h4 className="text-[1.14em] font-bold text-base-100">
                       A new way to sign-in
                     </h4>
-                    <p className="text-white pb-2">
+                    <p className="text-base-100 pb-2">
                       Instead of creating new accounts and passwords on every
                       website, just connect your wallet.
                     </p>
