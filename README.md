@@ -19,69 +19,9 @@ Before you begin, you need to install the following tools:
 Then download the challenge to your computer and install dependencies by running:
 
 ```sh
-scarb --version
-```
-
-If your local Scarb version is not `2.5.4`, you need to install it.
-
-<details>
-<summary><b>Installation Process</b></summary>
-
-To install Scarb, please refer to the [installation instructions](https://docs.swmansion.com/scarb/download).
-We strongly recommend that you install
-Scarb via [asdf](https://docs.swmansion.com/scarb/download.html#install-via-asdf), a CLI tool that can manage
-multiple language runtime versions on a per-project basis.
-This will ensure that the version of Scarb you use to work on a project always matches the one defined in the
-project settings, avoiding problems related to version mismatches.
-
-Please refer to the [asdf documentation](https://asdf-vm.com/guide/getting-started.html) to install all
-prerequisites.
-
-Once you have `asdf` installed locally, you can download Scarb plugin with the following command:
-
-```bash
-asdf plugin add scarb
-```
-
-This will allow you to download specific versions. You can choose the same version as the Dojo's Cairo version, for example, 2.5.4, with the following command:
-
-```bash
-asdf install scarb 2.5.4
-```
-
-and set a global version:
-
-```bash
-asdf global scarb 2.5.4
-```
-
-Otherwise, you can simply run the following command in your terminal, and follow the onscreen instructions. This
-will install the version `2.5.4` of Scarb.
-
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh -s -- -v 2.5.4
-```
-
-</details>
-
-## Compatible versions
-
-- scarb - v2.5.4
-- cairo - v2.5.4
-- starknet - v2.5.4
-- sierra - v1.4.0
-- rpc - v0.5.1
-
-## Quickstart
-
-To get started with Scaffold-Stark 2, follow the steps below:
-
-1. Clone this repo and install dependencies
-
-```bash
-git clone https://github.com/Quantum3-Labs/scaffold-stark-2 --recurse-submodules
-cd scaffold-stark-2
->>>>>>> main
+git clone https://github.com/scaffold-eth/se-2-challenges.git challenge-0-simple-nft
+cd challenge-0-simple-nft
+git checkout challenge-0-simple-nft
 yarn install
 ```
 

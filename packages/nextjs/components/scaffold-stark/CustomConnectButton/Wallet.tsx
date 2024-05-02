@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Connector } from "@starknet-react/core";
 import Image from "next/image";
 
@@ -15,11 +15,15 @@ const Wallet = ({
   ) => void;
 }) => {
   const isSvg = connector.icon.light?.startsWith("<svg");
+  const [clicked, setClicked] = useState(false);
 
   return (
     <button
-      className="flex gap-4 items-center text-start p-[.2rem] hover:bg-outline-grey hover:rounded-[10px] transition-all cursor-pointer"
-      onClick={(e) => handleConnectWallet(e, connector)}
+      className={`flex gap-4 items-center text-start p-[.2rem] hover:bg-outline-grey rounded-[10px] transition-all cursor-pointer hover:bg-base-100 pl-3 ${clicked ? "bg-base-100" : ""}`}
+      onClick={(e) => {
+        setClicked(true);
+        handleConnectWallet(e, connector);
+      }}
     >
       <div className="h-[2.2rem] w-[2.2rem] rounded-[5px]">
         {isSvg ? (

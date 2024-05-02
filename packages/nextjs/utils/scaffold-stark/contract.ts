@@ -2,8 +2,6 @@ import scaffoldConfig from "~~/scaffold.config";
 import deployedContractsData from "~~/contracts/deployedContracts";
 import predeployedContracts from "~~/contracts/predeployedContracts";
 import type {
-  ExtractAbiFunction,
-  FunctionArgs,
   Abi,
   ExtractAbiInterfaces,
   ExtractArgs,
@@ -31,6 +29,7 @@ type Contracts = ContractsDeclaration[ConfiguredChainId];
 export type ContractName = keyof Contracts;
 export type Contract<TContractName extends ContractName> =
   Contracts[TContractName];
+
 export enum ContractCodeStatus {
   "LOADING",
   "DEPLOYED",
@@ -243,7 +242,7 @@ export type ExtractAbiFunctionScaffold<
 
 // let emerson = singleFunction extends listOfFunctions ? true : false;
 
-type UseScaffoldArgsParam<
+export type UseScaffoldArgsParam<
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>
