@@ -94,7 +94,7 @@ const Home: NextPage = () => {
           </div>
         </div>
         <div className="w-full px-[20px] flex justify-center flex-col items-center">
-          {lastChallenges.slice(1).map((challenge) => (
+          {lastChallenges.slice(0).map((challenge) => (
             <ChallengeCard
               key={challenge.id}
               challenge={challenge.challenge}
