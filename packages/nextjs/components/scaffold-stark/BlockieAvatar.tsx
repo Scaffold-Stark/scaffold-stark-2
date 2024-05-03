@@ -4,7 +4,7 @@ import { blo } from "blo";
 
 interface BlockieAvatarProps {
   address: string;
-  ensImage?: string;
+  ensImage?: string | null;
   size: number;
 }
 
