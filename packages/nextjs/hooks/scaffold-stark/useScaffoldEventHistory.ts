@@ -4,14 +4,20 @@ import { useInterval } from "usehooks-ts";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import scaffoldConfig from "~~/scaffold.config";
 import { replacer } from "~~/utils/scaffold-stark/common";
-import { Abi, ExtractAbiEvent, ExtractAbiEventNames } from "abi-wan-kanabi/dist/kanabi";
 import {
-  ContractAbi, ContractName, UseScaffoldEventHistoryConfig,
+  Abi,
+  ExtractAbiEvent,
+  ExtractAbiEventNames,
+} from "abi-wan-kanabi/dist/kanabi";
+import {
+  ContractAbi,
+  ContractName,
+  UseScaffoldEventHistoryConfig,
   // UseScaffoldEventHistoryData,
 } from "~~/utils/scaffold-stark/contract";
-import {devnet} from "@starknet-react/chains";
-import {useProvider} from "@starknet-react/core";
-import {hash, RpcProvider} from "starknet";
+import { devnet } from "@starknet-react/chains";
+import { useProvider } from "@starknet-react/core";
+import { hash, RpcProvider } from "starknet";
 
 /**
  * Reads events from a deployed contract
@@ -42,14 +48,21 @@ export const useScaffoldEventHistory = <
   receiptData,
   watch,
   enabled = true,
-}: UseScaffoldEventHistoryConfig<TContractName, TEventName, TBlockData, TTransactionData, TReceiptData>) => {
+}: UseScaffoldEventHistoryConfig<
+  TContractName,
+  TEventName,
+  TBlockData,
+  TTransactionData,
+  TReceiptData
+>) => {
   const [events, setEvents] = useState<any[]>();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [fromBlockUpdated, setFromBlockUpdated] = useState<bigint>(fromBlock);
 
-  const { data: deployedContractData, isLoading: deployedContractLoading } = useDeployedContractInfo(contractName);
-  const {provider} = useProvider();
+  const { data: deployedContractData, isLoading: deployedContractLoading } =
+    useDeployedContractInfo(contractName);
+  const { provider } = useProvider();
   const { targetNetwork } = useTargetNetwork();
 
   const publicClient = useMemo(() => {
@@ -70,19 +83,27 @@ export const useScaffoldEventHistory = <
       }
 
       const event = (deployedContractData.abi as Abi).find(
-        part => part.type === "event" && part.name === eventName,
+        (part) => part.type === "event" && part.name === eventName,
       ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
 
-      const blockNumber = (await publicClient.getBlockLatestAccepted()).block_number;
+      const blockNumber = (await publicClient.getBlockLatestAccepted())
+        .block_number;
 
-      if ((fromBlock && blockNumber >= fromBlock) || blockNumber >= fromBlockUpdated) {
-        const logs = (await publicClient.getEvents({
-          chunk_size: 100,
-          keys: [[hash.getSelectorFromName(event.name.split("::").slice(-1)[0])]],
-          address: deployedContractData?.address,
-          from_block: {block_number: Number(fromBlock || fromBlockUpdated)},
-          to_block: {block_number: blockNumber}
-        })).events;
+      if (
+        (fromBlock && blockNumber >= fromBlock) ||
+        blockNumber >= fromBlockUpdated
+      ) {
+        const logs = (
+          await publicClient.getEvents({
+            chunk_size: 100,
+            keys: [
+              [hash.getSelectorFromName(event.name.split("::").slice(-1)[0])],
+            ],
+            address: deployedContractData?.address,
+            from_block: { block_number: Number(fromBlock || fromBlockUpdated) },
+            to_block: { block_number: blockNumber },
+          })
+        ).events;
         setFromBlockUpdated(BigInt(blockNumber + 1));
 
         const newEvents = [];
@@ -96,11 +117,15 @@ export const useScaffoldEventHistory = <
                 : await publicClient.getBlockWithTxHashes(logs[i].block_hash),
             transaction:
               transactionData && logs[i].transaction_hash !== null
-                ? await publicClient.getBlockWithTxHashes(logs[i].transaction_hash)
+                ? await publicClient.getBlockWithTxHashes(
+                    logs[i].transaction_hash,
+                  )
                 : null,
             receipt:
               receiptData && logs[i].transaction_hash !== null
-                ? await publicClient.getTransactionReceipt(logs[i].transaction_hash)
+                ? await publicClient.getTransactionReceipt(
+                    logs[i].transaction_hash,
+                  )
                 : null,
           });
         }
@@ -157,12 +182,15 @@ export const useScaffoldEventHistory = <
         readEvents();
       }
     },
-    watch ? (targetNetwork.id !== devnet.id ? scaffoldConfig.pollingInterval : 4_000) : null,
+    watch
+      ? targetNetwork.id !== devnet.id
+        ? scaffoldConfig.pollingInterval
+        : 4_000
+      : null,
   );
 
   const eventHistoryData = useMemo(
-    () =>
-      events?.map(addIndexedArgsToEvent),
+    () => events?.map(addIndexedArgsToEvent),
     [events],
   );
 

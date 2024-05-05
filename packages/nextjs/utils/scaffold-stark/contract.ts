@@ -2,7 +2,8 @@ import scaffoldConfig from "~~/scaffold.config";
 import deployedContractsData from "~~/contracts/deployedContracts";
 import predeployedContracts from "~~/contracts/predeployedContracts";
 import type {
-  Abi, ExtractAbiEventNames,
+  Abi,
+  ExtractAbiEventNames,
   ExtractAbiInterfaces,
   ExtractArgs,
 } from "abi-wan-kanabi/dist/kanabi";
