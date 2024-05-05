@@ -2,7 +2,7 @@ import scaffoldConfig from "~~/scaffold.config";
 import deployedContractsData from "~~/contracts/deployedContracts";
 import predeployedContracts from "~~/contracts/predeployedContracts";
 import type {
-  Abi,
+  Abi, ExtractAbiEventNames,
   ExtractAbiInterfaces,
   ExtractArgs,
 } from "abi-wan-kanabi/dist/kanabi";
@@ -287,6 +287,49 @@ export type AbiFunctionOutputs<
   TAbi extends Abi,
   TFunctionName extends string,
 > = ExtractAbiFunctionScaffold<TAbi, TFunctionName>["outputs"];
+
+/*export type AbiEventInputs<TAbi extends Abi, TEventName extends ExtractAbiEventNames<TAbi>> = ExtractAbiEvent<
+  TAbi,
+  TEventName
+>["inputs"];
+
+type IndexedEventInputs<
+  TContractName extends ContractName,
+  TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
+> = Extract<AbiEventInputs<ContractAbi<TContractName>, TEventName>[number], { indexed: true }>;
+
+export type EventFilters<
+  TContractName extends ContractName,
+  TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
+> = IsContractDeclarationMissing<
+  any,
+  IndexedEventInputs<TContractName, TEventName> extends never
+    ? never
+    : {
+      [Key in IsContractDeclarationMissing<
+        any,
+        IndexedEventInputs<TContractName, TEventName>["name"]
+      >]?: AbiParameterToPrimitiveType<Extract<IndexedEventInputs<TContractName, TEventName>, { name: Key }>>;
+    }
+>;*/
+
+export type UseScaffoldEventHistoryConfig<
+  TContractName extends ContractName,
+  TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
+  TBlockData extends boolean = false,
+  TTransactionData extends boolean = false,
+  TReceiptData extends boolean = false,
+> = {
+  contractName: TContractName;
+  eventName: IsContractDeclarationMissing<string, TEventName>;
+  fromBlock: bigint;
+  filters?: any;
+  blockData?: TBlockData;
+  transactionData?: TTransactionData;
+  receiptData?: TReceiptData;
+  watch?: boolean;
+  enabled?: boolean;
+};
 
 /// export all the types from kanabi
 
