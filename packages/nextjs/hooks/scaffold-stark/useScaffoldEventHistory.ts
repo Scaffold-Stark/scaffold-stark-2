@@ -13,7 +13,6 @@ import {
   ContractAbi,
   ContractName,
   UseScaffoldEventHistoryConfig,
-  // UseScaffoldEventHistoryData,
 } from "~~/utils/scaffold-stark/contract";
 import { devnet } from "@starknet-react/chains";
 import { useProvider } from "@starknet-react/core";
@@ -85,7 +84,7 @@ export const useScaffoldEventHistory = <
       const event = (deployedContractData.abi as Abi).find(
         (part) => part.type === "event" && part.name === eventName,
       ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
-      console.log(event);
+
       const blockNumber = (await publicClient.getBlockLatestAccepted())
         .block_number;
 
@@ -209,16 +208,71 @@ export const useScaffoldEventHistory = <
 
 export const addIndexedArgsToEvent = (event: any, abiEvent: any) => {
   const args: Record<string, any> = {};
+  let keyIndex = 1; // Start after the event name hash
+  let dataIndex = 0;
 
-  abiEvent.members.forEach((member: any, index: number) => {
-    if (member.kind === "key" || member.kind === "data") {
-      args[index] = event.log.keys[index + 1];
-      args[member.name] = event.log.keys[index + 1];
+  const parseValue = (
+    array: string[],
+    index: number,
+    type: string,
+    isKey: boolean,
+  ) => {
+    if (type === "ByteArray") {
+      const size = parseInt(array[index], 16); // Number of elements in ByteArray
+      const data = array.slice(index + 1, index + 1 + size);
+      if (isKey) {
+        keyIndex += index + 1 + size;
+      } else {
+        dataIndex += index + 1 + size;
+      }
+      return {
+        data,
+        pending_word: array[index + 1 + size],
+        pending_word_len: parseInt(array[1 + (index + 1 + size)], 16),
+      };
+    } else if (
+      [
+        "bool",
+        "u8",
+        "u16",
+        "u32",
+        "u128",
+        "usize",
+        "felt252",
+        "ContractAddress",
+      ].includes(type)
+    ) {
+      if (isKey) {
+        keyIndex++;
+      } else {
+        dataIndex++;
+      }
+      return array[index];
+    } else if (type === "u256") {
+      const value = { low: array[index], high: array[index + 1] };
+      if (isKey) {
+        keyIndex += 2;
+      } else {
+        dataIndex += 2;
+      }
+      return value;
     }
-  });
+    return array[index];
+  };
+
+  abiEvent.members.forEach(
+    (member: { type: string; kind: string; name: string }) => {
+      const type = member.type.split("::").slice(-1)[0];
+      if (member.kind === "key") {
+        args[member.name] = parseValue(event.log.keys, keyIndex, type, true);
+      } else if (member.kind === "data") {
+        args[member.name] = parseValue(event.log.data, dataIndex, type, false);
+      }
+    },
+  );
 
   return {
-    ...event,
     args,
+    ...event,
   };
 };
