@@ -49,15 +49,15 @@ export const Address = ({
   //   const checkSumAddress = address ? address : undefined;
 
   const { targetNetwork } = useTargetNetwork();
-  const { data: fetchedProfile } = useStarkProfile({ address });
+  //const { data: fetchedProfile } = useStarkProfile({ address });
 
   // We need to apply this pattern to avoid Hydration errors.
-  useEffect(() => {
-    if (fetchedProfile) {
-      setEns(fetchedProfile.name);
-      setEnsAvatar(fetchedProfile.profilePicture);
-    }
-  }, [fetchedProfile]);
+  // useEffect(() => {
+  //   if (fetchedProfile) {
+  //     setEns(fetchedProfile.name);
+  //     setEnsAvatar(fetchedProfile.profilePicture);
+  //   }
+  // }, [fetchedProfile]);
 
   // Skeleton UI
   if (!checkSumAddress) {
