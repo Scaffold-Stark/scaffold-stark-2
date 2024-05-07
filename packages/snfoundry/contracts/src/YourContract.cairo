@@ -5,6 +5,7 @@ pub trait IYourContract<TContractState> {
     fn gretting(self: @TContractState) -> ByteArray;
     fn set_gretting(ref self: TContractState, new_greeting: ByteArray, amount_eth: u256);
     fn withdraw(ref self: TContractState);
+    fn premium(self: @TContractState) -> bool;
 }
 
 #[starknet::contract]
@@ -34,8 +35,8 @@ mod YourContract {
     struct GreetingChanged {
         #[key]
         greeting_setter: ContractAddress,
-        #[key]
-        new_greeting: ByteArray,
+        // #[key]
+        // new_greeting: ByteArray,
         premium: bool,
         value: u256,
     }
@@ -66,16 +67,15 @@ mod YourContract {
         fn set_gretting(ref self: ContractState, new_greeting: ByteArray, amount_eth: u256) {
             self.greeting.write(new_greeting);
             self.total_counter.write(self.total_counter.read() + 1);
-            let user_address = get_caller_address();
-            let user_counter = self.user_gretting_counter.read(user_address);
-            self.user_gretting_counter.write(user_address, user_counter + 1);
+            let user_counter = self.user_gretting_counter.read(get_caller_address());
+            self.user_gretting_counter.write(get_caller_address(), user_counter + 1);
 
             if amount_eth > 0 {
                 // call approve on UI
                 self
                     .eth_token
                     .read()
-                    .transferFrom(user_address, get_contract_address(), amount_eth);
+                    .transferFrom(get_caller_address(), get_contract_address(), amount_eth);
                 self.premium.write(true);
             } else {
                 self.premium.write(false);
@@ -83,10 +83,8 @@ mod YourContract {
             self
                 .emit(
                     GreetingChanged {
-                        greeting_setter: user_address,
-                        new_greeting: self.greeting.read(),
-                        premium: self.premium.read(),
-                        value: amount_eth
+                        greeting_setter: get_caller_address(), //new_greeting: self.greeting.read(),
+                        premium: true, value: 100
                     }
                 );
         }
@@ -94,6 +92,9 @@ mod YourContract {
             self.ownable.assert_only_owner();
             let balance = self.eth_token.read().balanceOf(get_contract_address());
             self.eth_token.read().transfer(self.ownable.owner(), balance);
+        }
+        fn premium(self: @ContractState) -> bool {
+            self.premium.read()
         }
     }
 }
