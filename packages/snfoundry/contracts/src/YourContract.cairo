@@ -14,7 +14,6 @@ mod YourContract {
     use super::{ContractAddress, IYourContract};
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
-
     use starknet::{get_caller_address, get_contract_address};
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
@@ -54,7 +53,10 @@ mod YourContract {
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, owner: ContractAddress) {
+    fn constructor(
+        ref self: ContractState, owner: ContractAddress, eth_contract_address: ContractAddress
+    ) {
+        self.eth_token.write(IERC20CamelDispatcher { contract_address: eth_contract_address });
         self.greeting.write("Building Unstoppable Apps!!!");
         self.ownable.initializer(owner);
     }
