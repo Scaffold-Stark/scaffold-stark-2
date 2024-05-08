@@ -35,8 +35,8 @@ mod YourContract {
     struct GreetingChanged {
         #[key]
         greeting_setter: ContractAddress,
-        // #[key]
-        // new_greeting: ByteArray,
+        #[key]
+        new_greeting: ByteArray,
         premium: bool,
         value: u256,
     }
@@ -83,8 +83,10 @@ mod YourContract {
             self
                 .emit(
                     GreetingChanged {
-                        greeting_setter: get_caller_address(), //new_greeting: self.greeting.read(),
-                        premium: true, value: 100
+                        greeting_setter: get_caller_address(),
+                        new_greeting: self.greeting.read(),
+                        premium: true,
+                        value: 100
                     }
                 );
         }
