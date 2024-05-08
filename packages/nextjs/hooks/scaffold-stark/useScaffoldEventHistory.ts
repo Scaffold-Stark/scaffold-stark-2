@@ -12,6 +12,7 @@ import {
 import {
   ContractAbi,
   ContractName,
+  parseParamWithType,
   UseScaffoldEventHistoryConfig,
 } from "~~/utils/scaffold-stark/contract";
 import { devnet } from "@starknet-react/chains";
@@ -217,7 +218,7 @@ export const addIndexedArgsToEvent = (event: any, abiEvent: any) => {
     type: string,
     isKey: boolean,
   ) => {
-    if (type === "ByteArray") {
+    if (type.includes("core::byte_array::ByteArray")) {
       const size = parseInt(array[index], 16); // Number of elements in ByteArray
       const data = array.slice(index + 1, index + 1 + size);
       if (isKey) {
@@ -225,21 +226,32 @@ export const addIndexedArgsToEvent = (event: any, abiEvent: any) => {
       } else {
         dataIndex += index + 1 + size;
       }
-      return {
-        data,
-        pending_word: array[index + 1 + size],
-        pending_word_len: parseInt(array[1 + (index + 1 + size)], 16),
-      };
+
+      return parseParamWithType(
+        type,
+        {
+          data,
+          pending_word: array[index + 1 + size],
+          pending_word_len: parseInt(array[1 + (index + 1 + size)], 16),
+        },
+        true,
+      );
+    } else if (type.includes("core::bool")) {
+      if (isKey) {
+        keyIndex++;
+      } else {
+        dataIndex++;
+      }
+      return Boolean(parseInt(array[index], 16));
     } else if (
       [
-        "bool",
-        "u8",
-        "u16",
-        "u32",
-        "u128",
-        "usize",
-        "felt252",
-        "ContractAddress",
+        "core::integer::u8",
+        "core::integer::u16",
+        "core::integer::u32",
+        "core::integer::u128",
+        "core::integer::usize",
+        "core::felt252",
+        "core::starknet::contract_address::ContractAddress",
       ].includes(type)
     ) {
       if (isKey) {
@@ -247,26 +259,35 @@ export const addIndexedArgsToEvent = (event: any, abiEvent: any) => {
       } else {
         dataIndex++;
       }
-      return array[index];
-    } else if (type === "u256") {
+      return parseParamWithType(type, array[index], true);
+    } else if (type.includes("core::integer::u256")) {
       const value = { low: array[index], high: array[index + 1] };
       if (isKey) {
         keyIndex += 2;
       } else {
         dataIndex += 2;
       }
-      return value;
+      return parseParamWithType(type, value, true);
     }
     return array[index];
   };
 
   abiEvent.members.forEach(
     (member: { type: string; kind: string; name: string }) => {
-      const type = member.type.split("::").slice(-1)[0];
       if (member.kind === "key") {
-        args[member.name] = parseValue(event.log.keys, keyIndex, type, true);
+        args[member.name] = parseValue(
+          event.log.keys,
+          keyIndex,
+          member.type,
+          true,
+        );
       } else if (member.kind === "data") {
-        args[member.name] = parseValue(event.log.data, dataIndex, type, false);
+        args[member.name] = parseValue(
+          event.log.data,
+          dataIndex,
+          member.type,
+          false,
+        );
       }
     },
   );

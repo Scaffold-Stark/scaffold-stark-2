@@ -387,9 +387,19 @@ export function parseParamWithType(
 ) {
   if (isRead) {
     if (paramType.includes("core::integer::u256")) {
-      return tryParsingParamReturnObject(uint256.bnToUint256, param);
+      return tryParsingParamReturnObject(uint256.uint256ToBN, param);
     } else if (paramType.includes("core::byte_array::ByteArray")) {
-      return tryParsingParamReturnObject(byteArray.byteArrayFromString, param);
+      if (typeof param === "string") {
+        return tryParsingParamReturnObject(
+          byteArray.byteArrayFromString,
+          param,
+        );
+      } else {
+        return tryParsingParamReturnObject(
+          byteArray.stringFromByteArray,
+          param,
+        );
+      }
     } else if (
       paramType.includes("core::starknet::contract_address::ContractAddress")
     ) {
