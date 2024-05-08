@@ -110,14 +110,13 @@ export const useScaffoldEventHistory = <
         for (let i = logs.length - 1; i >= 0; i--) {
           newEvents.push({
             log: logs[i],
-            // args: logs[i].args,
             block:
               blockData && logs[i].block_hash === null
                 ? null
                 : await publicClient.getBlockWithTxHashes(logs[i].block_hash),
             transaction:
               transactionData && logs[i].transaction_hash !== null
-                ? await publicClient.getBlockWithTxHashes(
+                ? await publicClient.getTransactionByHash(
                     logs[i].transaction_hash,
                   )
                 : null,
