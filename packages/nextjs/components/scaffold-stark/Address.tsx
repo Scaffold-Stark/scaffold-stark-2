@@ -5,9 +5,7 @@ import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Address as AddressType } from "@starknet-react/chains";
 import { getChecksumAddress, validateChecksumAddress } from "starknet";
-// import { Address as AddressType, getAddress, isAddress } from "star";
 import { devnet } from "@starknet-react/chains";
-// import { useEnsAvatar, useEnsName } from "wagmi";
 import {
   CheckCircleIcon,
   DocumentDuplicateIcon,
@@ -15,6 +13,8 @@ import {
 // import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
+import { useStarkProfile } from "@starknet-react/core";
+import { BlockieAvatar } from "~~/components/scaffold-stark/BlockieAvatar";
 
 type AddressProps = {
   address?: AddressType;
@@ -49,27 +49,15 @@ export const Address = ({
   //   const checkSumAddress = address ? address : undefined;
 
   const { targetNetwork } = useTargetNetwork();
-
-  //   const { data: fetchedEns } = useEnsName({
-  //     address: checkSumAddress,
-  //     enabled: isAddress(checkSumAddress ?? ""),
-  //     chainId: 1,
-  //   });
-  //   const { data: fetchedEnsAvatar } = useEnsAvatar({
-  //     name: fetchedEns,
-  //     enabled: Boolean(fetchedEns),
-  //     chainId: 1,
-  //     cacheTime: 30_000,
-  //   });
+  //const { data: fetchedProfile } = useStarkProfile({ address });
 
   // We need to apply this pattern to avoid Hydration errors.
-  //   useEffect(() => {
-  //     setEns(fetchedEns);
-  //   }, [fetchedEns]);
-
-  //   useEffect(() => {
-  //     setEnsAvatar(fetchedEnsAvatar);
-  //   }, [fetchedEnsAvatar]);
+  // useEffect(() => {
+  //   if (fetchedProfile) {
+  //     setEns(fetchedProfile.name);
+  //     setEnsAvatar(fetchedProfile.profilePicture);
+  //   }
+  // }, [fetchedProfile]);
 
   // Skeleton UI
   if (!checkSumAddress) {
@@ -103,11 +91,11 @@ export const Address = ({
   return (
     <div className="flex items-center">
       <div className="flex-shrink-0">
-        {/* <BlockieAvatar
+        <BlockieAvatar
           address={checkSumAddress}
           ensImage={ensAvatar}
           size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
-        /> */}
+        />
       </div>
       {disableAddressLink ? (
         <span className={`ml-1.5 text-${size} font-normal`}>
