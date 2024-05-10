@@ -1,12 +1,17 @@
+use starknet::ContractAddress;
 #[starknet::interface]
 pub trait IHelloStarknet<TContractState> {
     fn increase_balance(ref self: TContractState, amount: u32);
     fn get_balance(self: @TContractState) -> u32;
     fn get_balance_and_balance(self: @TContractState) -> (u32, u32);
+    fn get_caller_and_get_contract(self: @TContractState) -> (ContractAddress, ContractAddress);
 }
 
 #[starknet::contract]
 mod HelloStarknet {
+    use super::ContractAddress;
+    use starknet::{get_contract_address, get_caller_address};
+
     #[storage]
     struct Storage {
         balance: u32,
@@ -44,6 +49,12 @@ mod HelloStarknet {
         fn get_balance_and_balance(self: @ContractState) -> (u32, u32) {
             let balance = self.balance.read();
             (balance, balance)
+        }
+
+        fn get_caller_and_get_contract(
+            self: @ContractState
+        ) -> (super::ContractAddress, super::ContractAddress) {
+            (get_caller_address(), get_contract_address())
         }
     }
 }
