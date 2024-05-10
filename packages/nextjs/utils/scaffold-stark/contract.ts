@@ -15,6 +15,8 @@ import { Address } from "@starknet-react/chains";
 import { uint256, validateAndParseAddress } from "starknet";
 import { byteArray } from "starknet-dev";
 import type { MergeDeepRecord } from "type-fest/source/merge-deep";
+import { feltToHex } from "~~/utils/scaffold-stark/common";
+import { CairoTypes } from "~~/utils/scaffold-stark/types";
 
 type AddExternalFlag<T> = {
   [network in keyof T]: {
@@ -386,9 +388,9 @@ export function parseParamWithType(
   isRead: boolean,
 ) {
   if (isRead) {
-    if (paramType.includes("core::integer::u256")) {
+    if (paramType.includes(CairoTypes.u256)) {
       return tryParsingParamReturnObject(uint256.uint256ToBN, param);
-    } else if (paramType.includes("core::byte_array::ByteArray")) {
+    } else if (paramType.includes(CairoTypes.ByteArray)) {
       if (typeof param === "string") {
         return tryParsingParamReturnObject(
           byteArray.byteArrayFromString,
@@ -400,21 +402,19 @@ export function parseParamWithType(
           param,
         );
       }
-    } else if (
-      paramType.includes("core::starknet::contract_address::ContractAddress")
-    ) {
+    } else if (paramType.includes(CairoTypes.ContractAddress)) {
       return tryParsingParamReturnObject(validateAndParseAddress, param);
+    } else if (paramType.includes(CairoTypes.felt252)) {
+      return feltToHex(param);
     } else {
       return tryParsingParamReturnObject((x) => x, param);
     }
   } else {
-    if (paramType.includes("core::integer::u256")) {
+    if (paramType.includes(CairoTypes.u256)) {
       return tryParsingParamReturnValues(uint256.bnToUint256, param);
-    } else if (paramType.includes("core::byte_array::ByteArray")) {
+    } else if (paramType.includes(CairoTypes.ByteArray)) {
       return tryParsingParamReturnValues(byteArray.byteArrayFromString, param);
-    } else if (
-      paramType.includes("core::starknet::contract_address::ContractAddress")
-    ) {
+    } else if (paramType.includes(CairoTypes.ContractAddress)) {
       return tryParsingParamReturnValues(validateAndParseAddress, param);
     } else {
       return tryParsingParamReturnValues((x) => x, param);
