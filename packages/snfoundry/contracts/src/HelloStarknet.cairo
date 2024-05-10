@@ -2,7 +2,7 @@
 pub trait IHelloStarknet<TContractState> {
     fn increase_balance(ref self: TContractState, amount: u32);
     fn get_balance(self: @TContractState) -> u32;
-    fn get_balance_increment(self: @TContractState, amount: u32) -> u32;
+    fn get_balance_and_balance(self: @TContractState) -> (u32, u32);
 }
 
 #[starknet::contract]
@@ -41,8 +41,9 @@ mod HelloStarknet {
             self.balance.read()
         }
 
-        fn get_balance_increment(self: @ContractState, amount: u32) -> u32 {
-            self.balance.read() + amount
+        fn get_balance_and_balance(self: @ContractState) -> (u32, u32) {
+            let balance = self.balance.read();
+            (balance, balance)
         }
     }
 }
