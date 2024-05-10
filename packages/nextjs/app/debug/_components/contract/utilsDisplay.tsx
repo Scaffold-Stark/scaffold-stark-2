@@ -6,7 +6,8 @@ import {
   AbiOutput,
   parseParamWithType,
 } from "~~/utils/scaffold-stark/contract";
-import { CairoTypes } from "~~/utils/scaffold-stark/types";
+import { isCairoContractAddress } from "~~/utils/scaffold-stark/types";
+import { formatEther } from "ethers";
 
 type DisplayContent =
   | Uint256
@@ -39,7 +40,7 @@ export const displayTxResult = (
       ) {
         return asNumber;
       } else {
-        return "Ξ " + parsedParam / BigInt(10 ** 18);
+        return "Ξ " + formatEther(parsedParam);
       }
     }
 
@@ -60,7 +61,7 @@ export const displayTxResult = (
       );
     }
 
-    return type.includes(CairoTypes.ContractAddress) &&
+    return isCairoContractAddress(type) &&
       validateChecksumAddress(parsedParam) &&
       !asText ? (
       <Address address={parsedParam as `0x${string}`} />
