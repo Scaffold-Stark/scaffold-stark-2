@@ -1,13 +1,13 @@
 import { ReactElement } from "react";
-import { ByteArray, byteArray } from "starknet-dev";
-import {
-  Uint256,
-  validateAndParseAddress,
-  validateChecksumAddress,
-} from "starknet";
+import { Uint256, validateChecksumAddress } from "starknet";
 import { Address } from "~~/components/scaffold-stark";
-import { feltToHex, replacer } from "~~/utils/scaffold-stark/common";
-import { AbiOutput } from "~~/utils/scaffold-stark/contract";
+import { replacer } from "~~/utils/scaffold-stark/common";
+import {
+  AbiOutput,
+  parseParamWithType,
+} from "~~/utils/scaffold-stark/contract";
+import { isCairoContractAddress } from "~~/utils/scaffold-stark/types";
+import { formatEther } from "ethers";
 
 type DisplayContent =
   | Uint256
@@ -26,73 +26,54 @@ export const displayTxResult = (
   if (displayContent == null) {
     return "";
   }
-  if (functionOutputs != null && functionOutputs.length != 0) {
-    if (
-      functionOutputs[0].type ===
-      "core::starknet::contract_address::ContractAddress"
-    ) {
-      const address = validateAndParseAddress(displayContent as string);
-      return asText ? address : <Address address={address as `0x${string}`} />;
-    } else if (functionOutputs[0].type === "core::byte_array::ByteArray") {
-      return byteArray.stringFromByteArray(displayContent as ByteArray);
-    } else if (functionOutputs[0].type === "core::felt252") {
-      return feltToHex(displayContent as bigint);
-    }
-  }
 
-  if (typeof displayContent === "bigint") {
-    try {
-      const asNumber = Number(displayContent);
+  if (functionOutputs != null && functionOutputs.length != 0) {
+    const type = functionOutputs[0].type;
+    const parsedParam = parseParamWithType(type, displayContent, true);
+
+    if (typeof parsedParam === "bigint") {
+      const asNumber = Number(parsedParam);
       if (
+        !isNaN(asNumber) &&
         asNumber <= Number.MAX_SAFE_INTEGER &&
         asNumber >= Number.MIN_SAFE_INTEGER
       ) {
         return asNumber;
       } else {
-        // return "Ξ" + formatEther(displayContent); // TODO fix this
+        return "Ξ " + formatEther(parsedParam);
       }
-    } catch (e) {
-      //   return "Ξ" + formatEther(displayContent);
     }
-  }
 
-  if (
-    typeof displayContent === "string" &&
-    displayContent.startsWith("0x") &&
-    validateChecksumAddress(displayContent)
-  ) {
-    return asText ? (
-      displayContent
+    if (Array.isArray(parsedParam)) {
+      const mostReadable = (v: DisplayContent) =>
+        ["number", "boolean"].includes(typeof v) ? v : displayTxResultAsText(v);
+      const displayable = JSON.stringify(
+        parsedParam.map(mostReadable),
+        replacer,
+      );
+
+      return asText ? (
+        displayable
+      ) : (
+        <span style={{ overflowWrap: "break-word", width: "100%" }}>
+          {displayable.replaceAll(",", ",\n")}
+        </span>
+      );
+    }
+
+    return isCairoContractAddress(type) &&
+      validateChecksumAddress(parsedParam) &&
+      !asText ? (
+      <Address address={parsedParam as `0x${string}`} />
     ) : (
-      <Address address={displayContent as `0x${string}`} />
-    );
-  }
-
-  if (Array.isArray(displayContent)) {
-    const mostReadable = (v: DisplayContent) =>
-      ["number", "boolean"].includes(typeof v) ? v : displayTxResultAsText(v);
-    const displayable = JSON.stringify(
-      displayContent.map(mostReadable),
-      replacer,
-    );
-
-    return asText ? (
-      displayable
-    ) : (
-      <span style={{ overflowWrap: "break-word", width: "100%" }}>
-        {displayable.replaceAll(",", ",\n")}
-      </span>
+      parsedParam
     );
   }
 
   return JSON.stringify(displayContent, replacer, 2);
 };
 
-export const displayType = (type: string) => {
-  if (!type.includes("::")) {
-    return type;
-  }
-  return type.split("::").pop();
-};
+export const displayType = (type: string) =>
+  type.includes("::") ? type.split("::").pop() : type;
 const displayTxResultAsText = (displayContent: DisplayContent) =>
   displayTxResult(displayContent, true);
