@@ -19,6 +19,7 @@ import { feltToHex } from "~~/utils/scaffold-stark/common";
 import {
   isCairoBool,
   isCairoByteArray,
+  isCairoBytes31,
   isCairoContractAddress,
   isCairoFelt,
   isCairoU256,
@@ -397,25 +398,19 @@ export function parseParamWithType(
     if (isCairoU256(paramType)) {
       return tryParsingParamReturnObject(uint256.uint256ToBN, param);
     } else if (isCairoByteArray(paramType)) {
-      if (typeof param === "string") {
-        return tryParsingParamReturnObject(
-          byteArray.byteArrayFromString,
-          param,
-        );
-      } else {
-        return tryParsingParamReturnObject(
-          byteArray.stringFromByteArray,
-          param,
-        );
-      }
+      return tryParsingParamReturnObject(byteArray.stringFromByteArray, param);
     } else if (isCairoContractAddress(paramType)) {
       return tryParsingParamReturnObject(validateAndParseAddress, param);
     } else if (isCairoFelt(paramType)) {
       return feltToHex(param);
     } else if (isCairoBool(paramType)) {
-      return typeof param === "string"
-        ? Boolean(parseInt(param, 16))
-        : String(param);
+      const value = parseInt(param, 16);
+      return isNaN(value) ? param : Boolean(value);
+    } else if (isCairoBytes31(paramType)) {
+      return tryParsingParamReturnValues(
+        (x: bigint) => `0x${x.toString(16)}`,
+        param,
+      );
     } else {
       return tryParsingParamReturnObject((x) => x, param);
     }
