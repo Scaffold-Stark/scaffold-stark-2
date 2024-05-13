@@ -6,8 +6,8 @@ process.env.NETWORK = argv.network || "devnet";
 
 // Execute the deploy script
 require("child_process").execSync(
-  "cd contracts && scarb build && node ../scripts_js/deploy.js --network " +
+  "cd contracts && scarb build && node ../scripts-js/deploy.js --network " +
     process.env.NETWORK +
-    " && node ../scripts_js/helpers/parseDeployments.js",
-  { stdio: "inherit" },
+    " && node ../scripts-js/helpers/parse-deployments.js",
+  { stdio: "inherit" }
 );
