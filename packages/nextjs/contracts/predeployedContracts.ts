@@ -177,6 +177,40 @@ const preDeployedContracts = {
             },
           ],
         },
+        {
+          kind: "struct",
+          name: "openzeppelin::token::erc20_v070::erc20::ERC20::Transfer",
+          type: "event",
+          members: [
+            {
+              kind: "data",
+              name: "from",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              kind: "data",
+              name: "to",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              kind: "data",
+              name: "value",
+              type: "core::integer::u256",
+            },
+          ],
+        },
+        {
+          kind: "enum",
+          name: "openzeppelin::token::erc20_v070::erc20::ERC20::Event",
+          type: "event",
+          variants: [
+            {
+              kind: "nested",
+              name: "Transfer",
+              type: "openzeppelin::token::erc20_v070::erc20::ERC20::Transfer",
+            },
+          ],
+        },
       ],
     },
   },
@@ -399,6 +433,40 @@ const preDeployedContracts = {
                 },
               ],
               state_mutability: "external",
+            },
+          ],
+        },
+        {
+          kind: "struct",
+          name: "openzeppelin::token::erc20_v070::erc20::ERC20::Transfer",
+          type: "event",
+          members: [
+            {
+              kind: "data",
+              name: "from",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              kind: "data",
+              name: "to",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              kind: "data",
+              name: "value",
+              type: "core::integer::u256",
+            },
+          ],
+        },
+        {
+          kind: "enum",
+          name: "openzeppelin::token::erc20_v070::erc20::ERC20::Event",
+          type: "event",
+          variants: [
+            {
+              kind: "nested",
+              name: "Transfer",
+              type: "openzeppelin::token::erc20_v070::erc20::ERC20::Transfer",
             },
           ],
         },
