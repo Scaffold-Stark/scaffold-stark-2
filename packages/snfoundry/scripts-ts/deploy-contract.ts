@@ -1,17 +1,18 @@
-const fs = require("fs");
-const path = require("path");
-const networks = require("./helpers/networks");
-const argv = require("yargs/yargs")(process.argv.slice(2)).argv;
-const { CallData, hash } = require("starknet-dev");
+import fs from "fs";
+import path from "path";
+import { networks } from "./helpers/networks";
+import yargs from "yargs";
+import { CallData, hash } from "starknet-dev";
 
-const networkName = argv.network;
+const argv = yargs(process.argv.slice(2)).argv;
+const networkName = argv["network"];
 
 const { provider, deployer } = networks[networkName];
 const deployContract = async (
-  constructorArgs,
-  contractName,
-  exportContractName
-) => {
+  constructorArgs: Record<string, any> | undefined,
+  contractName: string,
+  exportContractName?: string
+): Promise<{classHash: string, address: string}> => {
   const compiledContractCasm = JSON.parse(
     fs
       .readFileSync(
@@ -34,7 +35,7 @@ const deployContract = async (
       .toString("ascii")
   );
 
-  let contractAddress;
+  let contractAddress: string;
 
   const precomputedClassHash = hash.computeSierraContractClassHash(
     compiledContractSierra
@@ -45,9 +46,9 @@ const deployContract = async (
     : [];
   console.log("Deploying Contract ", contractName);
 
-  let totalFee = 0n;
+  let totalFee: bigint = 0n;
 
-  let existingClassHash;
+  let existingClassHash: any;
 
   try {
     existingClassHash = await provider.getClassByHash(precomputedClassHash);
@@ -88,8 +89,7 @@ const deployContract = async (
         maxFee: totalFee * 20n, // this optional max fee serves when error AccountValidation Failed or small fee on public networks , try 5n , 10n, 20n, 50n, 100n
       }
     );
-    contractAddress = tryDeclareAndDeploy.deploy.address;
-    contractAddress = "0x" + contractAddress.slice(2).padStart(64, "0");
+    contractAddress = "0x" + tryDeclareAndDeploy.deploy.address.slice(2).padStart(64, "0");
   } catch (e) {
     console.log("Error", e);
   }
@@ -122,7 +122,4 @@ const deployContract = async (
   };
 };
 
-module.exports = {
-  deployContract,
-  deployer,
-};
+export { deployContract, deployer };
