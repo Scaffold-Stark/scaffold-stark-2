@@ -1,3 +1,5 @@
 mod YourContract;
 #[cfg(test)]
-mod TestContract;
+mod test {
+    mod TestContract;
+}
