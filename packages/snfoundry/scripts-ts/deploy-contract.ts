@@ -1,18 +1,20 @@
 import fs from "fs";
 import path from "path";
-import { networks } from "./helpers/networks";
+import {networks} from "./helpers/networks";
 import yargs from "yargs";
-import { CallData, hash } from "starknet-dev";
+import {CallData, hash} from "starknet-dev";
+import {Network} from "./types";
+import {LegacyContractClass, CompiledSierra} from "starknet";
 
 const argv = yargs(process.argv.slice(2)).argv;
-const networkName = argv["network"];
+const networkName: string = argv["network"];
 
-const { provider, deployer } = networks[networkName];
+const {provider, deployer}: Network = networks[networkName];
 const deployContract = async (
-  constructorArgs: Record<string, any> | undefined,
+  constructorArgs: { owner: string } | undefined,
   contractName: string,
   exportContractName?: string
-): Promise<{classHash: string, address: string}> => {
+): Promise<{ classHash: string, address: string }> => {
   const compiledContractCasm = JSON.parse(
     fs
       .readFileSync(
@@ -48,15 +50,16 @@ const deployContract = async (
 
   let totalFee: bigint = 0n;
 
-  let existingClassHash: any;
+  let existingClassHash: LegacyContractClass | Omit<CompiledSierra, "sierra_program_debug_info">;
 
   try {
     existingClassHash = await provider.getClassByHash(precomputedClassHash);
-  } catch (e) {}
+  } catch (e) {
+  }
 
   try {
     if (!existingClassHash) {
-      const { suggestedMaxFee: estimatedFeeDeclare } =
+      const {suggestedMaxFee: estimatedFeeDeclare} =
         await deployer.estimateDeclareFee(
           {
             contract: compiledContractSierra,
@@ -66,7 +69,7 @@ const deployContract = async (
         );
       totalFee += estimatedFeeDeclare * 2n;
     } else {
-      const { suggestedMaxFee: estimatedFeeDeploy } =
+      const {suggestedMaxFee: estimatedFeeDeploy} =
         await deployer.estimateDeployFee({
           classHash: precomputedClassHash,
           constructorCalldata,
@@ -122,4 +125,4 @@ const deployContract = async (
   };
 };
 
-export { deployContract, deployer };
+export {deployContract, provider, deployer};
