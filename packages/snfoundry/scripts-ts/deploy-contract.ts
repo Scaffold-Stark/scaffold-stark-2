@@ -1,20 +1,20 @@
 import fs from "fs";
 import path from "path";
-import {networks} from "./helpers/networks";
+import { networks } from "./helpers/networks";
 import yargs from "yargs";
-import {CallData, hash} from "starknet-dev";
-import {Network} from "./types";
-import {LegacyContractClass, CompiledSierra, RawArgs} from "starknet";
+import { CallData, hash } from "starknet-dev";
+import { Network } from "./types";
+import { LegacyContractClass, CompiledSierra, RawArgs } from "starknet";
 
 const argv = yargs(process.argv.slice(2)).argv;
 const networkName: string = argv["network"];
 
-const {provider, deployer}: Network = networks[networkName];
+const { provider, deployer }: Network = networks[networkName];
 const deployContract = async (
   constructorArgs: RawArgs,
   contractName: string,
   exportContractName?: string
-): Promise<{ classHash: string, address: string }> => {
+): Promise<{ classHash: string; address: string }> => {
   const compiledContractCasm = JSON.parse(
     fs
       .readFileSync(
@@ -50,16 +50,17 @@ const deployContract = async (
 
   let totalFee: bigint = 0n;
 
-  let existingClassHash: LegacyContractClass | Omit<CompiledSierra, "sierra_program_debug_info">;
+  let existingClassHash:
+    | LegacyContractClass
+    | Omit<CompiledSierra, "sierra_program_debug_info">;
 
   try {
     existingClassHash = await provider.getClassByHash(precomputedClassHash);
-  } catch (e) {
-  }
+  } catch (e) {}
 
   try {
     if (!existingClassHash) {
-      const {suggestedMaxFee: estimatedFeeDeclare} =
+      const { suggestedMaxFee: estimatedFeeDeclare } =
         await deployer.estimateDeclareFee(
           {
             contract: compiledContractSierra,
@@ -69,7 +70,7 @@ const deployContract = async (
         );
       totalFee += estimatedFeeDeclare * 2n;
     } else {
-      const {suggestedMaxFee: estimatedFeeDeploy} =
+      const { suggestedMaxFee: estimatedFeeDeploy } =
         await deployer.estimateDeployFee({
           classHash: precomputedClassHash,
           constructorCalldata,
@@ -92,7 +93,8 @@ const deployContract = async (
         maxFee: totalFee * 20n, // this optional max fee serves when error AccountValidation Failed or small fee on public networks , try 5n , 10n, 20n, 50n, 100n
       }
     );
-    contractAddress = "0x" + tryDeclareAndDeploy.deploy.address.slice(2).padStart(64, "0");
+    contractAddress =
+      "0x" + tryDeclareAndDeploy.deploy.address.slice(2).padStart(64, "0");
   } catch (e) {
     console.log("Error", e);
   }
@@ -125,4 +127,4 @@ const deployContract = async (
   };
 };
 
-export {deployContract, provider, deployer};
+export { deployContract, provider, deployer };

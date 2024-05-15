@@ -6,7 +6,8 @@
     "deploy": "ts-node scripts-ts/helpers/deploy-wrapper.ts",
     "test": "cd contracts && snforge test",
     "compile": "cd contracts && scarb build",
-    "format": "cd local-devnet/scripts && sh format.sh"
+    "format": "prettier --write . && cd local-devnet/scripts && sh format.sh",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
     "@types/node": "^20",

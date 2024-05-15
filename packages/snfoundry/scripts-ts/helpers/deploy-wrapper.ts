@@ -8,9 +8,11 @@ interface CommandLineOptions {
   network?: string; // The --network option
 }
 
-const argv = yargs(process.argv.slice(2)).options({
-  network: { type: 'string' },
-}).parseSync() as CommandLineOptions;
+const argv = yargs(process.argv.slice(2))
+  .options({
+    network: { type: "string" },
+  })
+  .parseSync() as CommandLineOptions;
 
 // Set the NETWORK environment variable based on the --network argument
 process.env.NETWORK = argv.network || "devnet";
@@ -18,8 +20,8 @@ process.env.NETWORK = argv.network || "devnet";
 // Execute the deploy script
 execSync(
   "cd contracts && scarb build && ts-node ../scripts-ts/deploy.ts --network " +
-  process.env.NETWORK +
-  " && ts-node ../scripts-ts/helpers/parse-deployments.ts" +
-  " && cd ../.. && yarn format",
+    process.env.NETWORK +
+    " && ts-node ../scripts-ts/helpers/parse-deployments.ts" +
+    " && cd ../.. && yarn format",
   { stdio: "inherit" }
 );

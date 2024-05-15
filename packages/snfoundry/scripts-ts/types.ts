@@ -1,8 +1,11 @@
-import {Account, RpcProvider} from "starknet";
+import { Account, RpcProvider } from "starknet";
 
-export type Networks = Record<"devnet" | "goerli" | "sepolia" | "mainnet", Network>;
+export type Networks = Record<
+  "devnet" | "goerli" | "sepolia" | "mainnet",
+  Network
+>;
 
 export type Network = {
-  provider: RpcProvider,
-  deployer: Account
+  provider: RpcProvider;
+  deployer: Account;
 };
