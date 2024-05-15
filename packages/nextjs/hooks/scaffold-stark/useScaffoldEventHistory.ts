@@ -18,6 +18,15 @@ import {
 import { devnet } from "@starknet-react/chains";
 import { useProvider } from "@starknet-react/core";
 import { hash, RpcProvider } from "starknet";
+import {
+  isCairoBigInt,
+  isCairoBool,
+  isCairoByteArray,
+  isCairoContractAddress,
+  isCairoFelt,
+  isCairoInt,
+  isCairoU256,
+} from "~~/utils/scaffold-stark/types";
 
 /**
  * Reads events from a deployed contract
@@ -217,7 +226,7 @@ export const addIndexedArgsToEvent = (event: any, abiEvent: any) => {
     type: string,
     isKey: boolean,
   ) => {
-    if (type.includes("core::byte_array::ByteArray")) {
+    if (isCairoByteArray(type)) {
       const size = parseInt(array[index], 16); // Number of elements in ByteArray
       const data = array.slice(index + 1, index + 1 + size);
       if (isKey) {
@@ -235,7 +244,7 @@ export const addIndexedArgsToEvent = (event: any, abiEvent: any) => {
         },
         true,
       );
-    } else if (type.includes("core::bool")) {
+    } else if (isCairoBool(type)) {
       if (isKey) {
         keyIndex++;
       } else {
@@ -243,15 +252,10 @@ export const addIndexedArgsToEvent = (event: any, abiEvent: any) => {
       }
       return Boolean(parseInt(array[index], 16));
     } else if (
-      [
-        "core::integer::u8",
-        "core::integer::u16",
-        "core::integer::u32",
-        "core::integer::u128",
-        "core::integer::usize",
-        "core::felt252",
-        "core::starknet::contract_address::ContractAddress",
-      ].includes(type)
+      isCairoContractAddress(type) ||
+      isCairoInt(type) ||
+      isCairoBigInt(type) ||
+      isCairoFelt(type)
     ) {
       if (isKey) {
         keyIndex++;
@@ -259,7 +263,7 @@ export const addIndexedArgsToEvent = (event: any, abiEvent: any) => {
         dataIndex++;
       }
       return parseParamWithType(type, array[index], true);
-    } else if (type.includes("core::integer::u256")) {
+    } else if (isCairoU256(type)) {
       const value = { low: array[index], high: array[index + 1] };
       if (isKey) {
         keyIndex += 2;

@@ -94,13 +94,17 @@ const deployContract = async (
     console.log("Error", e);
   }
   console.log("Deployed contract ", contractName, " at: ", contractAddress);
-  const chainIdPath = path.resolve(
+  const networkPath = path.resolve(
     __dirname,
-    `../deployments/${networkName}.json`
+    `../deployments/${networkName}_latest.json`
   );
   let deployments = {};
-  if (fs.existsSync(chainIdPath)) {
-    deployments = JSON.parse(fs.readFileSync(chainIdPath).toString());
+  if (fs.existsSync(networkPath)) {
+    const currentTimestamp = new Date().getTime();
+    fs.renameSync(
+      networkPath,
+      networkPath.replace("_latest.json", `_${currentTimestamp}.json`)
+    );
   }
 
   let finalContractName = exportContractName || contractName;
@@ -111,7 +115,7 @@ const deployContract = async (
     contract: contractName,
   };
 
-  fs.writeFileSync(chainIdPath, JSON.stringify(deployments, null, 2));
+  fs.writeFileSync(networkPath, JSON.stringify(deployments, null, 2));
   return {
     classHash: precomputedClassHash,
     address: contractAddress,

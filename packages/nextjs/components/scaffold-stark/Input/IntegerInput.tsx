@@ -5,6 +5,7 @@ import {
   IntegerVariant,
   isValidInteger,
 } from "~~/components/scaffold-stark";
+import { parseEther } from "ethers";
 
 type IntegerInputProps = CommonInputProps<string | bigint> & {
   variant?: IntegerVariant;
@@ -25,10 +26,8 @@ export const IntegerInput = ({
     if (!value) {
       return;
     }
-    if (typeof value === "bigint") {
-      return onChange(value * 10n ** 18n);
-    }
-    return onChange(BigInt(Math.round(Number(value) * 10 ** 18)));
+
+    return onChange(parseEther(value.toString()).toString());
   }, [onChange, value]);
 
   useEffect(() => {
