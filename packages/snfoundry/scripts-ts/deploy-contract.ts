@@ -4,14 +4,14 @@ import {networks} from "./helpers/networks";
 import yargs from "yargs";
 import {CallData, hash} from "starknet-dev";
 import {Network} from "./types";
-import {LegacyContractClass, CompiledSierra} from "starknet";
+import {LegacyContractClass, CompiledSierra, RawArgs} from "starknet";
 
 const argv = yargs(process.argv.slice(2)).argv;
 const networkName: string = argv["network"];
 
 const {provider, deployer}: Network = networks[networkName];
 const deployContract = async (
-  constructorArgs: { owner: string } | undefined,
+  constructorArgs: RawArgs,
   contractName: string,
   exportContractName?: string
 ): Promise<{ classHash: string, address: string }> => {
