@@ -19,7 +19,7 @@ const Wallet = ({
 
   return (
     <button
-      className={`flex gap-4 items-center text-base-100 p-[.2rem] hover:bg-outline-grey rounded-[10px] transition-all cursor-pointer hover:bg-base-100 hover:text-base-300 pl-3 ${clicked ? "bg-base-100" : ""}`}
+      className={`flex gap-4 items-center text-base-100 p-[.2rem] hover:bg-outline-grey rounded-[10px] transition-all cursor-pointer hover:bg-primary-content border-2 border-primary-content pl-3 ${clicked ? "bg-primary-content" : ""}`}
       onClick={(e) => {
         setClicked(true);
         handleConnectWallet(e, connector);
