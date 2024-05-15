@@ -1,17 +1,15 @@
-/dist
+.vscode/**
+node_modules
+local-devnet
+package-lock.json
+.idea
 
-# Dependency directories
-node_modules/
-
-# yarn
+# yarn / eslint
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-.idea
 .eslintcache
-
-# macos files
 .DS_Store

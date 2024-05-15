@@ -1,34 +1,49 @@
 {
-  "name": "ss-2",
-  "version": "0.0.2",
+  "name": "create-stark",
+  "version": "0.0.1",
   "author": "Q3 Labs",
   "license": "MIT",
-  "private": true,
-  "workspaces": {
-    "packages": [
-      "packages/snfoundry",
-      "packages/nextjs"
-    ]
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Quantum3-Labs/scaffold-stark-2.git"
   },
+  "type": "module",
+  "main": "dist/cli.js",
+  "bin": "bin/create-dapp-ss2.js",
   "scripts": {
-    "chain": "yarn workspace @ss-2/snfoundry chain",
-    "deploy": "yarn workspace @ss-2/snfoundry deploy",
-    "test": "yarn workspace @ss-2/snfoundry test",
-    "compile": "yarn workspace @ss-2/snfoundry compile",
-    "start": "yarn workspace @ss-2/nextjs dev",
-    "next:lint": "yarn workspace @ss-2/nextjs lint",
-    "next:check-types": "yarn workspace @ss-2/nextjs check-types",
-    "vercel": "yarn workspace @ss-2/nextjs vercel",
-    "vercel:yolo": "yarn workspace @ss-2/nextjs vercel:yolo",
-    "format": "yarn workspace @ss-2/nextjs format && yarn workspace @ss-2/snfoundry format",
-    "format:check": "yarn workspace @ss-2/nextjs format:check"
+    "build": "rollup -c rollup.config.js",
+    "dev": "rollup -c rollup.config.js --watch",
+    "cli": "node bin/create-dapp-se2.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "changeset:release": "yarn build && changeset publish"
   },
-  "packageManager": "yarn@3.2.3",
   "devDependencies": {
-    "daisyui": "^4.7.3",
-    "prettier": "^3.2.5"
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "11.1.0",
+    "@types/glob": "^8.1.0",
+    "@types/inquirer": "9.0.3",
+    "@types/listr": "0.14.4",
+    "@types/ncp": "2.0.5",
+    "@types/node": "18.16.0",
+    "@types/prettier": "^3.0.0",
+    "prettier": "^3.2.5",
+    "rollup": "3.21.0",
+    "rollup-plugin-auto-external": "2.0.0",
+    "tslib": "2.5.0",
+    "typescript": "5.0.4"
   },
   "dependencies": {
-    "postcss": "^8.4.38"
-  }
+    "@changesets/cli": "^2.26.2",
+    "arg": "5.0.2",
+    "chalk": "5.2.0",
+    "execa": "7.1.1",
+    "glob": "^10.3.15",
+    "handlebars": "^4.7.7",
+    "inquirer": "9.2.0",
+    "listr": "0.14.3",
+    "merge-packages": "^0.1.6",
+    "ncp": "2.0.0",
+    "pkg-install": "1.0.0"
+  },
+  "packageManager": "yarn@3.5.0"
 }
