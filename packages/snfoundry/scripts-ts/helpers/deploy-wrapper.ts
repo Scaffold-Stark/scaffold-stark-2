@@ -19,6 +19,7 @@ process.env.NETWORK = argv.network || "devnet";
 execSync(
   "cd contracts && scarb build && ts-node ../scripts-ts/deploy.ts --network " +
   process.env.NETWORK +
-  " && ts-node ../scripts-ts/helpers/parse-deployments.ts",
+  " && ts-node ../scripts-ts/helpers/parse-deployments.ts" +
+  " && cd ../.. && yarn format",
   { stdio: "inherit" }
 );
