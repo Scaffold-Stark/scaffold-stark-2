@@ -123,7 +123,7 @@ yarn deploy --network {NETWORK_NAME} // when NETWORK_NAME is not specified, it d
 
 **Note:** To use sepolia tesnet, you have to set {NETWORK_NAME} to `sepolia`.
 
-This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts_js/deploy.js` to deploy the contract to the network. You can also customize the deploy script.
+This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/contracts/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts_js/deploy.js` to deploy the contract to the network. You can also customize the deploy script.
 
 5. On a third terminal, start your NextJS app:
 
