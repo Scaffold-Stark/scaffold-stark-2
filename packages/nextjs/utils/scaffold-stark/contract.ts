@@ -3,6 +3,7 @@ import deployedContractsData from "~~/contracts/deployedContracts";
 import predeployedContracts from "~~/contracts/predeployedContracts";
 import type {
   Abi,
+  ExtractAbiEventNames,
   ExtractAbiInterfaces,
   ExtractArgs,
 } from "abi-wan-kanabi/dist/kanabi";
@@ -14,6 +15,15 @@ import { Address } from "@starknet-react/chains";
 import { uint256, validateAndParseAddress } from "starknet";
 import { byteArray } from "starknet-dev";
 import type { MergeDeepRecord } from "type-fest/source/merge-deep";
+import { feltToHex } from "~~/utils/scaffold-stark/common";
+import {
+  isCairoBool,
+  isCairoByteArray,
+  isCairoBytes31,
+  isCairoContractAddress,
+  isCairoFelt,
+  isCairoU256,
+} from "~~/utils/scaffold-stark/types";
 
 type AddExternalFlag<T> = {
   [network in keyof T]: {
@@ -242,7 +252,7 @@ export type ExtractAbiFunctionScaffold<
 
 // let emerson = singleFunction extends listOfFunctions ? true : false;
 
-type UseScaffoldArgsParam<
+export type UseScaffoldArgsParam<
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>
@@ -287,6 +297,49 @@ export type AbiFunctionOutputs<
   TAbi extends Abi,
   TFunctionName extends string,
 > = ExtractAbiFunctionScaffold<TAbi, TFunctionName>["outputs"];
+
+/*export type AbiEventInputs<TAbi extends Abi, TEventName extends ExtractAbiEventNames<TAbi>> = ExtractAbiEvent<
+  TAbi,
+  TEventName
+>["inputs"];
+
+type IndexedEventInputs<
+  TContractName extends ContractName,
+  TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
+> = Extract<AbiEventInputs<ContractAbi<TContractName>, TEventName>[number], { indexed: true }>;
+
+export type EventFilters<
+  TContractName extends ContractName,
+  TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
+> = IsContractDeclarationMissing<
+  any,
+  IndexedEventInputs<TContractName, TEventName> extends never
+    ? never
+    : {
+      [Key in IsContractDeclarationMissing<
+        any,
+        IndexedEventInputs<TContractName, TEventName>["name"]
+      >]?: AbiParameterToPrimitiveType<Extract<IndexedEventInputs<TContractName, TEventName>, { name: Key }>>;
+    }
+>;*/
+
+export type UseScaffoldEventHistoryConfig<
+  TContractName extends ContractName,
+  TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
+  TBlockData extends boolean = false,
+  TTransactionData extends boolean = false,
+  TReceiptData extends boolean = false,
+> = {
+  contractName: TContractName;
+  eventName: IsContractDeclarationMissing<string, TEventName>;
+  fromBlock: bigint;
+  filters?: any;
+  blockData?: TBlockData;
+  transactionData?: TTransactionData;
+  receiptData?: TReceiptData;
+  watch?: boolean;
+  enabled?: boolean;
+};
 
 /// export all the types from kanabi
 
@@ -342,25 +395,31 @@ export function parseParamWithType(
   isRead: boolean,
 ) {
   if (isRead) {
-    if (paramType.includes("core::integer::u256")) {
-      return tryParsingParamReturnObject(uint256.bnToUint256, param);
-    } else if (paramType.includes("core::byte_array::ByteArray")) {
-      return tryParsingParamReturnObject(byteArray.byteArrayFromString, param);
-    } else if (
-      paramType.includes("core::starknet::contract_address::ContractAddress")
-    ) {
+    if (isCairoU256(paramType)) {
+      return tryParsingParamReturnObject(uint256.uint256ToBN, param);
+    } else if (isCairoByteArray(paramType)) {
+      return tryParsingParamReturnObject(byteArray.stringFromByteArray, param);
+    } else if (isCairoContractAddress(paramType)) {
       return tryParsingParamReturnObject(validateAndParseAddress, param);
+    } else if (isCairoFelt(paramType)) {
+      return feltToHex(param);
+    } else if (isCairoBool(paramType)) {
+      const value = parseInt(param, 16);
+      return isNaN(value) ? param : Boolean(value);
+    } else if (isCairoBytes31(paramType)) {
+      return tryParsingParamReturnValues(
+        (x: bigint) => `0x${x.toString(16)}`,
+        param,
+      );
     } else {
       return tryParsingParamReturnObject((x) => x, param);
     }
   } else {
-    if (paramType.includes("core::integer::u256")) {
+    if (isCairoU256(paramType)) {
       return tryParsingParamReturnValues(uint256.bnToUint256, param);
-    } else if (paramType.includes("core::byte_array::ByteArray")) {
+    } else if (isCairoByteArray(paramType)) {
       return tryParsingParamReturnValues(byteArray.byteArrayFromString, param);
-    } else if (
-      paramType.includes("core::starknet::contract_address::ContractAddress")
-    ) {
+    } else if (isCairoContractAddress(paramType)) {
       return tryParsingParamReturnValues(validateAndParseAddress, param);
     } else {
       return tryParsingParamReturnValues((x) => x, param);

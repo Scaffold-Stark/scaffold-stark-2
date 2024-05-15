@@ -1,3 +1,22 @@
+# 🏗 Scaffold-Stark 2
+
+<h4 align="center">
+  <a href="">Documentation</a> |
+  <a href="">Website</a>
+</h4>
+
+🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on Starknet blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+
+⚙️ Built using NextJS, Starknet.js, Scarb, Starknet-React, Starknet Foundry and Typescript.
+
+- ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
+- 🪝 **[Custom hooks]()**: Collection of React hooks wrapper around [starknet-react](https://starknet-react.com/) to simplify interactions with smart contracts with typescript autocompletion.
+- 🧱 [**Components**](): Collection of common web3 components to quickly build your frontend.
+- 🔥 **Burner Wallet & Prefunded Account**: Quickly test your application with a burner wallet and prefunded accounts.
+- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with Starknet network.
+
+![Debug Contracts tab](./assests/debug-contracts.png)
+
 ## Requirements
 
 Before you begin, you need to install the following tools:
@@ -6,7 +25,7 @@ Before you begin, you need to install the following tools:
 - Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
 - [Git](https://git-scm.com/downloads)
 
-### Install scarb
+### Scarb version
 
 To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.5.4`. To accomplish this, first check your local Scarb version:
 
@@ -17,7 +36,7 @@ scarb --version
 If your local Scarb version is not `2.5.4`, you need to install it.
 
 <details>
-<summary><b>Installation Process</b></summary>
+<summary><b>Scarb Installation Process</b></summary>
 
 To install Scarb, please refer to the [installation instructions](https://docs.swmansion.com/scarb/download).
 We strongly recommend that you install
@@ -76,9 +95,11 @@ cd scaffold-stark-2
 yarn install
 ```
 
-2. Prepare your environment variables. Since we are using localhost(devnet), **you can skip this step!**. But if you want use the .env file, you can fill the envs related to devnet with any predeployed contract address and private key from starknet-devnet.
+2. Prepare your environment variables.
 
-**Note:** You can also use sepolia testnet, to do that, you need to fill the envs related to sepolia testnet with your own contract address and private key.
+Since we are using localhost(devnet), **you can skip this step!**. But if you want use the .env file aniway, you can fill the envs related to devnet with any predeployed contract address and private key from starknet-devnet.
+
+**Note:** In case you want to deploy on Sepolia, you need to fill the envs related to sepolia testnet with your own contract address and private key.
 
 ```bash
 cp packages/snfoundry/.env.example packages/snfoundry/.env
@@ -92,7 +113,7 @@ cp packages/snfoundry/.env.example packages/snfoundry/.env
 yarn chain
 ```
 
-This command starts a local Starknet network using Devnet. The network runs on your local machine and can be used for testing and development.
+This command starts a local Starknet network using Devnet. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `scaffold.config.ts`.
 
 4. On a second terminal, deploy the sample contract:
 
@@ -102,7 +123,7 @@ yarn deploy --network {NETWORK_NAME} // when NETWORK_NAME is not specified, it d
 
 **Note:** To use sepolia tesnet, you have to set {NETWORK_NAME} to `sepolia`.
 
-This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts_js/deploy` to deploy the contract to the network. You can also customize the deploy script.
+This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/contracts/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts_js/deploy.js` to deploy the contract to the network. You can also customize the deploy script.
 
 5. On a third terminal, start your NextJS app:
 
@@ -110,6 +131,23 @@ This command deploys a sample smart contract to the local network. The contract 
 yarn start
 ```
 
-Visit your app on: `http://localhost:3000`.
+Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
 
-video demo [here](https://www.loom.com/share/0a0b23aa9eb34c32ad9be5b68f82817e)
+**What's next**:
+
+- Edit your smart contract `YourContract.cairo` in `packages/snfoundry/contracts/src`
+- Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
+- Edit your deployment scripts in `packages/snfoundry/script-js/deploy.js`
+- Edit your smart contract test in: `packages/snfoundry/contracts/src/test`. To run test use `yarn test`
+
+## Documentation (comming soon)
+
+Visit our [docs](https://docs.scaffoldstarknet.com) to learn how to start building with Scaffold-Stark 2.
+
+To know more about its features, check out our [website](https://scaffoldstark.com).
+
+## Contributing to Scaffold-Stark 2
+
+We welcome contributions to Scaffold-Stark 2!
+
+Please see [CONTRIBUTING.MD](https://github.com/Quantum3-Labs/scaffold-stark-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-Stark 2.
