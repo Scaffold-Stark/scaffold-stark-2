@@ -21,7 +21,7 @@
     "vercel": "yarn workspace @ss-2/nextjs vercel",
     "vercel:yolo": "yarn workspace @ss-2/nextjs vercel:yolo",
     "format": "yarn workspace @ss-2/nextjs format && yarn workspace @ss-2/snfoundry format",
-    "format:check": "yarn workspace @ss-2/nextjs format:check"
+    "format:check": "yarn workspace @ss-2/nextjs format:check && yarn workspace @ss-2/snfoundry format:check"
   },
   "packageManager": "yarn@3.2.3",
   "devDependencies": {
