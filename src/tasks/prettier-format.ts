@@ -1,23 +1,15 @@
-import * as prettier from "prettier";
-import fs from "fs";
-import { glob } from 'glob';
+import { execa } from "execa";
 
 export async function prettierFormat(targetDir: string) {
   try {
-    const files = glob.sync(`${targetDir}/**/*.{ts,js,json,css,md}`, { nodir: true });
+    const result = await execa("yarn", ["format"], { cwd: targetDir });
 
-    for (const file of files) {
-      const fileContents = fs.readFileSync(file, "utf8");
-      const options = await prettier.resolveConfig(file);
-
-      if (options) {
-        const formatted = await prettier.format(fileContents, { ...options, filepath: file });
-        fs.writeFileSync(file, formatted);
-      }
+    if (result.failed) {
+      throw new Error("There was a problem running the format command");
     }
-
-    return true;
   } catch (error) {
-    throw new Error("Failed to format files", { cause: error });
+    throw new Error("Failed to create directory", { cause: error });
   }
+
+  return true;
 }

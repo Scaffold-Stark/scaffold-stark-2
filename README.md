@@ -69,7 +69,7 @@ Visit our [docs](https://docs.scaffoldstark.io) to learn how to start building w
 
 To know more about its features, check out our [website](https://scaffoldstark.io).
 
-## Contributing to create-eth
+## Contributing to create-stark
 
 We welcome contributions to create-stark and Scaffold-Stark 2!
 

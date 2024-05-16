@@ -82,7 +82,7 @@ export async function promptForMissingOptions(
       .filter(isExtension)
       .map((ext) => extensionDict[ext])
       .filter(isDefined);
-    console.log(extensions, question.extensions)
+
     const hasNoneOption = question.extensions.includes(null)
 
     questions.push({

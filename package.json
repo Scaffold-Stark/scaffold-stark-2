@@ -5,7 +5,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Quantum3-Labs/scaffold-stark-2.git"
+    "url": "https://github.com/Quantum3-Labs/create-stark.git"
   },
   "type": "module",
   "main": "dist/cli.js",
@@ -13,7 +13,7 @@
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "dev": "rollup -c rollup.config.js --watch",
-    "cli": "node bin/create-dapp-se2.js",
+    "cli": "node bin/create-dapp-ss2.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "changeset:release": "yarn build && changeset publish"
   },
