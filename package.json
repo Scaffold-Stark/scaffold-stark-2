@@ -1,6 +1,6 @@
 {
   "name": "create-stark",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Q3 Labs",
   "license": "MIT",
   "repository": {
@@ -25,8 +25,6 @@
     "@types/listr": "0.14.4",
     "@types/ncp": "2.0.5",
     "@types/node": "18.16.0",
-    "@types/prettier": "^3.0.0",
-    "prettier": "^3.2.5",
     "rollup": "3.21.0",
     "rollup-plugin-auto-external": "2.0.0",
     "tslib": "2.5.0",
