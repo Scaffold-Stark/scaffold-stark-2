@@ -10,6 +10,7 @@ import type {
   CairoFunction,
   CairoInt,
   CairoSecp256k1Point,
+  CairoTuple,
   CairoU256,
   CairoVoid,
 } from "abi-wan-kanabi/dist/kanabi";
@@ -56,3 +57,6 @@ export const isCairoSecp256k1Point = (
 
 export const isCairoFelt = (type: string): type is CairoFelt =>
   type.includes("core::felt252");
+
+export const isCairoTuple = (type: string): type is CairoTuple =>
+  /\(([^)]+)\)/i.test(type);
