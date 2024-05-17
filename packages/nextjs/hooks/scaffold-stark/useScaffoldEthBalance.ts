@@ -1,8 +1,6 @@
 import { Address } from "@starknet-react/chains";
-import { useScaffoldContractRead } from "~~/hooks/scaffold-stark/useScaffoldContractRead";
 import { useDeployedContractInfo } from "./useDeployedContractInfo";
-import { useBalance, useContractRead } from "@starknet-react/core";
-import { useTargetNetwork } from "./useTargetNetwork";
+import { useContractRead } from "@starknet-react/core";
 import { BlockNumber } from "starknet";
 import { Abi } from "abi-wan-kanabi";
 import { formatUnits } from "ethers";

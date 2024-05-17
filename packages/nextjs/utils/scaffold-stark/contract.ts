@@ -15,6 +15,15 @@ import { Address } from "@starknet-react/chains";
 import { uint256, validateAndParseAddress } from "starknet";
 import { byteArray } from "starknet-dev";
 import type { MergeDeepRecord } from "type-fest/source/merge-deep";
+import { feltToHex } from "~~/utils/scaffold-stark/common";
+import {
+  isCairoBool,
+  isCairoByteArray,
+  isCairoBytes31,
+  isCairoContractAddress,
+  isCairoFelt,
+  isCairoU256,
+} from "~~/utils/scaffold-stark/types";
 
 type AddExternalFlag<T> = {
   [network in keyof T]: {
@@ -386,35 +395,31 @@ export function parseParamWithType(
   isRead: boolean,
 ) {
   if (isRead) {
-    if (paramType.includes("core::integer::u256")) {
+    if (isCairoU256(paramType)) {
       return tryParsingParamReturnObject(uint256.uint256ToBN, param);
-    } else if (paramType.includes("core::byte_array::ByteArray")) {
-      if (typeof param === "string") {
-        return tryParsingParamReturnObject(
-          byteArray.byteArrayFromString,
-          param,
-        );
-      } else {
-        return tryParsingParamReturnObject(
-          byteArray.stringFromByteArray,
-          param,
-        );
-      }
-    } else if (
-      paramType.includes("core::starknet::contract_address::ContractAddress")
-    ) {
+    } else if (isCairoByteArray(paramType)) {
+      return tryParsingParamReturnObject(byteArray.stringFromByteArray, param);
+    } else if (isCairoContractAddress(paramType)) {
       return tryParsingParamReturnObject(validateAndParseAddress, param);
+    } else if (isCairoFelt(paramType)) {
+      return feltToHex(param);
+    } else if (isCairoBool(paramType)) {
+      const value = parseInt(param, 16);
+      return isNaN(value) ? param : Boolean(value);
+    } else if (isCairoBytes31(paramType)) {
+      return tryParsingParamReturnValues(
+        (x: bigint) => `0x${x.toString(16)}`,
+        param,
+      );
     } else {
       return tryParsingParamReturnObject((x) => x, param);
     }
   } else {
-    if (paramType.includes("core::integer::u256")) {
+    if (isCairoU256(paramType)) {
       return tryParsingParamReturnValues(uint256.bnToUint256, param);
-    } else if (paramType.includes("core::byte_array::ByteArray")) {
+    } else if (isCairoByteArray(paramType)) {
       return tryParsingParamReturnValues(byteArray.byteArrayFromString, param);
-    } else if (
-      paramType.includes("core::starknet::contract_address::ContractAddress")
-    ) {
+    } else if (isCairoContractAddress(paramType)) {
       return tryParsingParamReturnValues(validateAndParseAddress, param);
     } else {
       return tryParsingParamReturnValues((x) => x, param);
