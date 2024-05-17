@@ -17,7 +17,7 @@ import { notification } from "~~/utils/scaffold-stark";
 import { useMemo } from "react";
 import { useTransactor } from "./useTransactor";
 
-export const useScaffoldMultiContractWrite = <
+export const useScaffoldWriteContract = <
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>,

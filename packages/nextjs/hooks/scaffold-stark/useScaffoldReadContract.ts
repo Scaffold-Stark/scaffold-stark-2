@@ -1,7 +1,5 @@
-import { useTargetNetwork } from "./useTargetNetwork";
 import { useContractRead } from "@starknet-react/core";
-import { ExtractAbiFunctionNames } from "abi-wan-kanabi/dist/kanabi";
-import { BlockIdentifier, BlockNumber, BlockTag } from "starknet";
+import { BlockNumber } from "starknet";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import {
   AbiFunctionOutputs,
@@ -11,7 +9,7 @@ import {
   UseScaffoldReadConfig,
 } from "~~/utils/scaffold-stark/contract";
 
-export const useScaffoldContractRead = <
+export const useScaffoldReadContract = <
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>,
