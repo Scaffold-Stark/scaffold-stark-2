@@ -1,9 +1,7 @@
 import { deployContract, deployer } from "./deploy-contract";
 
 const deployScript = async (): Promise<void> => {
-  await deployContract(null,
-    "HelloStarknet",
-  );
+  await deployContract(null, "HelloStarknet");
 };
 
 deployScript()
