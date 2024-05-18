@@ -408,7 +408,11 @@ export function parseParamWithType(
     } else if (isCairoFelt(paramType)) {
       return feltToHex(param);
     } else if (isCairoBool(paramType)) {
-      return (param as string).startsWith("0x0") ? "false" : "true";
+      return typeof param === "boolean"
+        ? param
+        : (param as string).startsWith("0x0")
+          ? "false"
+          : "true";
     } else if (isCairoBytes31(paramType)) {
       return tryParsingParamReturnObject(
         (x: bigint) => `0x${x.toString(16)}`,
