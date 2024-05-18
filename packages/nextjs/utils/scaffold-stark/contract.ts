@@ -17,11 +17,13 @@ import { byteArray } from "starknet-dev";
 import type { MergeDeepRecord } from "type-fest/source/merge-deep";
 import { feltToHex } from "~~/utils/scaffold-stark/common";
 import {
+  isCairoBigInt,
   isCairoBool,
   isCairoByteArray,
   isCairoBytes31,
   isCairoContractAddress,
   isCairoFelt,
+  isCairoInt,
   isCairoTuple,
   isCairoU256,
 } from "~~/utils/scaffold-stark/types";
@@ -406,12 +408,16 @@ export function parseParamWithType(
     } else if (isCairoFelt(paramType)) {
       return feltToHex(param);
     } else if (isCairoBool(paramType)) {
-      return "0x0" === param ? "false" : "true";
+      return (param as string).startsWith("0x0") ? "false" : "true";
     } else if (isCairoBytes31(paramType)) {
-      return tryParsingParamReturnValues(
+      return tryParsingParamReturnObject(
         (x: bigint) => `0x${x.toString(16)}`,
         param,
       );
+    } else if (isCairoInt(paramType)) {
+      return tryParsingParamReturnObject((x) => parseInt(x, 16), param);
+    } else if (isCairoBigInt(paramType)) {
+      return tryParsingParamReturnObject((x) => BigInt(x), param);
     } else {
       return tryParsingParamReturnObject((x) => x, param);
     }
@@ -424,6 +430,13 @@ export function parseParamWithType(
       return tryParsingParamReturnValues(byteArray.byteArrayFromString, param);
     } else if (isCairoContractAddress(paramType)) {
       return tryParsingParamReturnValues(validateAndParseAddress, param);
+    } else if (isCairoBool(paramType)) {
+      return param == "false" ? "0x0" : "0x1";
+    } else if (isCairoInt(paramType) || isCairoBigInt(paramType)) {
+      return tryParsingParamReturnObject(
+        (x: number | bigint) => x.toString(16),
+        param,
+      );
     } else {
       return tryParsingParamReturnValues((x) => x, param);
     }
