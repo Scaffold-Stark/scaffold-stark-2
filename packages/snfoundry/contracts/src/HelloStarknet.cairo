@@ -5,6 +5,7 @@ pub trait IHelloStarknet<TContractState> {
     fn get_balance(self: @TContractState) -> u32;
     fn get_balance_and_balance(self: @TContractState) -> (u32, u32);
     fn get_caller_and_get_contract(self: @TContractState) -> (ContractAddress, ContractAddress);
+//fn is_even_balance(self: @TContractState) -> bool;
 }
 
 #[starknet::contract]
@@ -56,5 +57,8 @@ mod HelloStarknet {
         ) -> (super::ContractAddress, super::ContractAddress) {
             (get_caller_address(), get_contract_address())
         }
+    // fn is_even_balance(self: @ContractState) -> bool {
+    //     self.get_balance() % 2 == 0
+    // }
     }
 }
