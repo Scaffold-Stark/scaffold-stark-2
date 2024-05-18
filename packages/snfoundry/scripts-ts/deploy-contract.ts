@@ -6,6 +6,12 @@ import { CallData, hash } from "starknet-dev";
 import { Network } from "./types";
 import { LegacyContractClass, CompiledSierra, RawArgs } from "starknet";
 
+let isFirstDeployment = true;
+
+const resetDeploymentState = () => {
+  isFirstDeployment = true;
+};
+
 const argv = yargs(process.argv.slice(2)).argv;
 const networkName: string = argv["network"];
 
@@ -104,12 +110,30 @@ const deployContract = async (
     `../deployments/${networkName}_latest.json`
   );
   let deployments = {};
-  if (fs.existsSync(networkPath)) {
-    const currentTimestamp = new Date().getTime();
-    fs.renameSync(
-      networkPath,
-      networkPath.replace("_latest.json", `_${currentTimestamp}.json`)
-    );
+
+  if (isFirstDeployment) {
+    if (fs.existsSync(networkPath)) {
+      const currentTimestamp = new Date().getTime();
+      const backupPath = networkPath.replace(
+        "_latest.json",
+        `_${currentTimestamp}.json`
+      );
+      fs.renameSync(networkPath, backupPath);
+
+      // Load existing deployments
+      const existingDeployments = JSON.parse(
+        fs.readFileSync(backupPath).toString()
+      );
+      deployments = { ...existingDeployments };
+    }
+    isFirstDeployment = false;
+  } else {
+    if (fs.existsSync(networkPath)) {
+      const existingDeployments = JSON.parse(
+        fs.readFileSync(networkPath).toString()
+      );
+      deployments = { ...existingDeployments };
+    }
   }
 
   let finalContractName = exportContractName || contractName;
@@ -127,4 +151,4 @@ const deployContract = async (
   };
 };
 
-export { deployContract, provider, deployer };
+export { deployContract, provider, deployer, resetDeploymentState };
