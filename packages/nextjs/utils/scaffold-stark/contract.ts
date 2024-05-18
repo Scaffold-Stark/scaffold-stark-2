@@ -415,7 +415,10 @@ export function parseParamWithType(
         param,
       );
     } else if (isCairoInt(paramType)) {
-      return tryParsingParamReturnObject((x) => parseInt(x, 16), param);
+      return tryParsingParamReturnObject(
+        (x) => (typeof x === "bigint" ? Number(x) : parseInt(x, 16)),
+        param,
+      );
     } else if (isCairoBigInt(paramType)) {
       return tryParsingParamReturnObject((x) => BigInt(x), param);
     } else {
@@ -432,11 +435,6 @@ export function parseParamWithType(
       return tryParsingParamReturnValues(validateAndParseAddress, param);
     } else if (isCairoBool(paramType)) {
       return param == "false" ? "0x0" : "0x1";
-    } else if (isCairoInt(paramType) || isCairoBigInt(paramType)) {
-      return tryParsingParamReturnObject(
-        (x: number | bigint) => x.toString(16),
-        param,
-      );
     } else {
       return tryParsingParamReturnValues((x) => x, param);
     }
@@ -499,7 +497,9 @@ function objectToCairoTuple(obj: { [key: number]: any }, type: string): string {
       const index = parseInt(key, 10);
       const value = obj[index];
       const valueType = types[index];
-      return isCairoTuple(valueType) ? objectToCairoTuple(value, type) : value;
+      return isCairoTuple(valueType)
+        ? objectToCairoTuple(value, type)
+        : parseParamWithType(valueType, value, true);
     })
     .join(", ");
 
