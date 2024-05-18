@@ -1,21 +1,23 @@
+import { useMemo } from "react";
 import { useTargetNetwork } from "./useTargetNetwork";
-// import {useTransactor,} from "~~/hooks/scaffold-stark";
 import {
-  Contract,
+  useDeployedContractInfo,
+  useTransactor,
+} from "~~/hooks/scaffold-stark";
+import {
   ContractAbi,
   ContractName,
-  contracts,
   ExtractAbiFunctionNamesScaffold,
   getFunctionsByStateMutability,
   parseFunctionParams,
-  UseScaffoldArgsParam,
   UseScaffoldWriteConfig,
 } from "~~/utils/scaffold-stark/contract";
 import { useContractWrite, useNetwork } from "@starknet-react/core";
-import { InvocationsDetails } from "starknet";
 import { notification } from "~~/utils/scaffold-stark";
-import { useMemo } from "react";
-import { useTransactor } from "./useTransactor";
+
+type UpdatedArgs = Parameters<
+  ReturnType<typeof useContractWrite>["writeAsync"]
+>[0];
 
 export const useScaffoldWriteContract = <
   TContractName extends ContractName,
@@ -24,52 +26,58 @@ export const useScaffoldWriteContract = <
     "external"
   >,
 >({
-  calls,
+  contractName,
+  functionName,
+  args,
   options,
-}: {
-  calls: Array<UseScaffoldWriteConfig<TContractName, TFunctionName>>;
-  options?: InvocationsDetails;
-}) => {
-  const { targetNetwork } = useTargetNetwork();
+}: UseScaffoldWriteConfig<TContractName, TFunctionName>) => {
+  const { data: deployedContractData } = useDeployedContractInfo(contractName);
   const { chain } = useNetwork();
   const writeTx = useTransactor();
+  const { targetNetwork } = useTargetNetwork();
 
-  const parsedCalls = useMemo(() => {
-    if (calls) {
-      return calls.map((call) => {
-        const functionName = call.functionName;
-        const contractName = call.contractName;
-        const unParsedArgs = call.args as any[];
-        const contract = contracts?.[targetNetwork.network]?.[
-          contractName as ContractName
-        ] as Contract<TContractName>;
+  const abiFunction = useMemo(
+    () =>
+      getFunctionsByStateMutability(
+        deployedContractData?.abi || [],
+        "external",
+      ).find((fn) => fn.name === functionName),
+    [deployedContractData?.abi, functionName],
+  );
 
-        const abiFunction = getFunctionsByStateMutability(
-          contract?.abi || [],
-          "external",
-        ).find((fn) => fn.name === functionName);
-
-        return {
-          contractAddress: contract?.address,
-          entrypoint: functionName,
-          calldata:
-            abiFunction && unParsedArgs
-              ? parseFunctionParams(abiFunction, unParsedArgs, false).flat()
-              : [],
-        };
-      });
-    } else {
-      return [];
+  const parsedParams = useMemo(() => {
+    if (args && abiFunction) {
+      return parseFunctionParams(abiFunction, args as any[], false).flat();
     }
-  }, [calls]);
+    return [];
+  }, [args, abiFunction]);
 
-  // TODO add custom options
   const wagmiContractWrite = useContractWrite({
-    calls: parsedCalls,
+    calls: deployedContractData
+      ? [
+          {
+            contractAddress: deployedContractData?.address,
+            entrypoint: functionName,
+            calldata: parsedParams,
+          },
+        ]
+      : [],
     options,
   });
 
-  const sendContractWriteTx = async () => {
+  const sendContractWriteTx = async ({
+    args: newArgs,
+    options: newOptions,
+  }: {
+    args?: UseScaffoldWriteConfig<TContractName, TFunctionName>["args"];
+    options?: UseScaffoldWriteConfig<TContractName, TFunctionName>["options"];
+  } & UpdatedArgs = {}) => {
+    if (!deployedContractData) {
+      console.error(
+        "Target Contract is not deployed, did you forget to run `yarn deploy`?",
+      );
+      return;
+    }
     if (!chain?.id) {
       console.error("Please connect your wallet");
       return;
@@ -79,10 +87,27 @@ export const useScaffoldWriteContract = <
       return;
     }
 
+    let newParsedParams =
+      newArgs && abiFunction
+        ? parseFunctionParams(abiFunction, newArgs as any[], false).flat()
+        : parsedParams;
+    const newCalls = [
+      {
+        contractAddress: deployedContractData.address,
+        entrypoint: functionName,
+        calldata: newParsedParams,
+      },
+    ];
+
     if (wagmiContractWrite.writeAsync) {
       try {
         // setIsMining(true);
-        return await writeTx(() => wagmiContractWrite.writeAsync());
+        return await writeTx(() =>
+          wagmiContractWrite.writeAsync({
+            calls: newCalls as any[],
+            options: newOptions ?? options,
+          }),
+        );
       } catch (e: any) {
         throw e;
       } finally {
@@ -99,17 +124,3 @@ export const useScaffoldWriteContract = <
     writeAsync: sendContractWriteTx,
   };
 };
-
-export function createContractCall<
-  TContractName extends ContractName,
-  TFunctionName extends ExtractAbiFunctionNamesScaffold<
-    ContractAbi<TContractName>,
-    "external"
-  >,
->(
-  contractName: TContractName,
-  functionName: TFunctionName,
-  args: UseScaffoldArgsParam<TContractName, TFunctionName>["args"],
-) {
-  return { contractName, functionName, args };
-}

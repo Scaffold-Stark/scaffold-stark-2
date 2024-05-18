@@ -9,12 +9,17 @@ import { LegacyContractClass, CompiledSierra, RawArgs } from "starknet";
 const argv = yargs(process.argv.slice(2)).argv;
 const networkName: string = argv["network"];
 
+let deployments = {};
+
 const { provider, deployer }: Network = networks[networkName];
 const deployContract = async (
   constructorArgs: RawArgs,
   contractName: string,
   exportContractName?: string
-): Promise<{ classHash: string; address: string }> => {
+): Promise<{
+  classHash: string;
+  address: string;
+}> => {
   const compiledContractCasm = JSON.parse(
     fs
       .readFileSync(
@@ -99,18 +104,6 @@ const deployContract = async (
     console.log("Error", e);
   }
   console.log("Deployed contract ", contractName, " at: ", contractAddress);
-  const networkPath = path.resolve(
-    __dirname,
-    `../deployments/${networkName}_latest.json`
-  );
-  let deployments = {};
-  if (fs.existsSync(networkPath)) {
-    const currentTimestamp = new Date().getTime();
-    fs.renameSync(
-      networkPath,
-      networkPath.replace("_latest.json", `_${currentTimestamp}.json`)
-    );
-  }
 
   let finalContractName = exportContractName || contractName;
 
@@ -120,11 +113,27 @@ const deployContract = async (
     contract: contractName,
   };
 
-  fs.writeFileSync(networkPath, JSON.stringify(deployments, null, 2));
   return {
     classHash: precomputedClassHash,
     address: contractAddress,
   };
 };
 
-export { deployContract, provider, deployer };
+const exportDeployments = () => {
+  const networkPath = path.resolve(
+    __dirname,
+    `../deployments/${networkName}_latest.json`
+  );
+
+  if (fs.existsSync(networkPath)) {
+    const currentTimestamp = new Date().getTime();
+    fs.renameSync(
+      networkPath,
+      networkPath.replace("_latest.json", `_${currentTimestamp}.json`)
+    );
+  }
+
+  fs.writeFileSync(networkPath, JSON.stringify(deployments, null, 2));
+};
+
+export { deployContract, provider, deployer, exportDeployments };
