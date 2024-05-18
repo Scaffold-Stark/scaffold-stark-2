@@ -17,11 +17,14 @@ import { byteArray } from "starknet-dev";
 import type { MergeDeepRecord } from "type-fest/source/merge-deep";
 import { feltToHex } from "~~/utils/scaffold-stark/common";
 import {
+  isCairoBigInt,
   isCairoBool,
   isCairoByteArray,
   isCairoBytes31,
   isCairoContractAddress,
   isCairoFelt,
+  isCairoInt,
+  isCairoTuple,
   isCairoU256,
 } from "~~/utils/scaffold-stark/types";
 
@@ -361,8 +364,7 @@ export function getFunctionsByStateMutability(
       return acc;
     }, [] as AbiFunction[])
     .filter((fn) => {
-      const isWriteableFunction = fn.state_mutability == stateMutability;
-      return isWriteableFunction;
+      return fn.state_mutability == stateMutability;
     });
 }
 
@@ -395,7 +397,9 @@ export function parseParamWithType(
   isRead: boolean,
 ) {
   if (isRead) {
-    if (isCairoU256(paramType)) {
+    if (isCairoTuple(paramType)) {
+      return objectToCairoTuple(param, paramType);
+    } else if (isCairoU256(paramType)) {
       return tryParsingParamReturnObject(uint256.uint256ToBN, param);
     } else if (isCairoByteArray(paramType)) {
       return tryParsingParamReturnObject(byteArray.stringFromByteArray, param);
@@ -404,23 +408,37 @@ export function parseParamWithType(
     } else if (isCairoFelt(paramType)) {
       return feltToHex(param);
     } else if (isCairoBool(paramType)) {
-      const value = parseInt(param, 16);
-      return isNaN(value) ? param : Boolean(value);
+      return typeof param === "boolean"
+        ? param
+        : (param as string).startsWith("0x0")
+          ? "false"
+          : "true";
     } else if (isCairoBytes31(paramType)) {
-      return tryParsingParamReturnValues(
+      return tryParsingParamReturnObject(
         (x: bigint) => `0x${x.toString(16)}`,
         param,
       );
+    } else if (isCairoInt(paramType)) {
+      return tryParsingParamReturnObject(
+        (x) => (typeof x === "bigint" ? Number(x) : parseInt(x, 16)),
+        param,
+      );
+    } else if (isCairoBigInt(paramType)) {
+      return tryParsingParamReturnObject((x) => BigInt(x), param);
     } else {
       return tryParsingParamReturnObject((x) => x, param);
     }
   } else {
-    if (isCairoU256(paramType)) {
+    if (isCairoTuple(paramType)) {
+      return stringToObjectTuple(param, paramType);
+    } else if (isCairoU256(paramType)) {
       return tryParsingParamReturnValues(uint256.bnToUint256, param);
     } else if (isCairoByteArray(paramType)) {
       return tryParsingParamReturnValues(byteArray.byteArrayFromString, param);
     } else if (isCairoContractAddress(paramType)) {
       return tryParsingParamReturnValues(validateAndParseAddress, param);
+    } else if (isCairoBool(paramType)) {
+      return param == "false" ? "0x0" : "0x1";
     } else {
       return tryParsingParamReturnValues((x) => x, param);
     }
@@ -444,4 +462,65 @@ export function parseFunctionParams(
     parsedInputs.push(parseParamWithType(paramType, input, isRead));
   });
   return parsedInputs;
+}
+
+function parseTuple(value: string): string[] {
+  const values: string[] = [];
+  let depth = 0;
+  let current = "";
+
+  for (const char of value) {
+    if (char === "(") {
+      if (depth > 0) {
+        current += char;
+      }
+      depth++;
+    } else if (char === ")") {
+      depth--;
+      if (depth > 0) {
+        current += char;
+      } else {
+        values.push(current.trim());
+        current = "";
+      }
+    } else if (char === "," && depth === 1) {
+      values.push(current.trim());
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+
+  return values;
+}
+
+function objectToCairoTuple(obj: { [key: number]: any }, type: string): string {
+  const types = parseTuple(type);
+  const values = Object.keys(obj)
+    .map((key) => {
+      const index = parseInt(key, 10);
+      const value = obj[index];
+      const valueType = types[index];
+      return isCairoTuple(valueType)
+        ? objectToCairoTuple(value, type)
+        : parseParamWithType(valueType, value, true);
+    })
+    .join(", ");
+
+  return `(${values})`;
+}
+
+function stringToObjectTuple(
+  tupleString: string,
+  paramType: string,
+): { [key: number]: any } {
+  const values = parseTuple(tupleString);
+  const types = parseTuple(paramType);
+
+  const obj: { [key: number]: any } = {};
+  values.forEach((value, index) => {
+    obj[index] = parseParamWithType(types[index], value, false);
+  });
+
+  return obj;
 }

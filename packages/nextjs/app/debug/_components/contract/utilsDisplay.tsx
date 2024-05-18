@@ -6,7 +6,10 @@ import {
   AbiOutput,
   parseParamWithType,
 } from "~~/utils/scaffold-stark/contract";
-import { isCairoContractAddress } from "~~/utils/scaffold-stark/types";
+import {
+  isCairoContractAddress,
+  isCairoTuple,
+} from "~~/utils/scaffold-stark/types";
 import { formatEther } from "ethers";
 
 type DisplayContent =
@@ -26,7 +29,6 @@ export const displayTxResult = (
   if (displayContent == null) {
     return "";
   }
-
   if (functionOutputs != null && functionOutputs.length != 0) {
     const type = functionOutputs[0].type;
     const parsedParam = parseParamWithType(type, displayContent, true);
@@ -61,12 +63,16 @@ export const displayTxResult = (
       );
     }
 
+    if (isCairoTuple(type)) {
+      return parsedParam;
+    }
+
     return isCairoContractAddress(type) &&
       validateChecksumAddress(parsedParam) &&
       !asText ? (
       <Address address={parsedParam as `0x${string}`} />
     ) : (
-      parsedParam
+      parsedParam.toString()
     );
   }
 
