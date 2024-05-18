@@ -23,9 +23,9 @@ export const useScaffoldMultiWriteContract = <
     "external"
   >,
 >({
-    calls,
-    options,
-  }: {
+  calls,
+  options,
+}: {
   calls: Array<UseScaffoldWriteConfig<TContractName, TFunctionName>>;
   options?: InvocationsDetails;
 }) => {
@@ -41,7 +41,7 @@ export const useScaffoldMultiWriteContract = <
         const unParsedArgs = call.args as any[];
         const contract = contracts?.[targetNetwork.network]?.[
           contractName as ContractName
-          ] as Contract<TContractName>;
+        ] as Contract<TContractName>;
 
         const abiFunction = getFunctionsByStateMutability(
           contract?.abi || [],

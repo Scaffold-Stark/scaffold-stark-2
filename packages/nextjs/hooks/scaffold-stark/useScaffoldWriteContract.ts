@@ -1,6 +1,9 @@
-import {useMemo} from "react";
-import {useTargetNetwork} from "./useTargetNetwork";
-import {useDeployedContractInfo, useTransactor,} from "~~/hooks/scaffold-stark";
+import { useMemo } from "react";
+import { useTargetNetwork } from "./useTargetNetwork";
+import {
+  useDeployedContractInfo,
+  useTransactor,
+} from "~~/hooks/scaffold-stark";
 import {
   ContractAbi,
   ContractName,
@@ -9,8 +12,8 @@ import {
   parseFunctionParams,
   UseScaffoldWriteConfig,
 } from "~~/utils/scaffold-stark/contract";
-import {useContractWrite, useNetwork} from "@starknet-react/core";
-import {notification} from "~~/utils/scaffold-stark";
+import { useContractWrite, useNetwork } from "@starknet-react/core";
+import { notification } from "~~/utils/scaffold-stark";
 
 type UpdatedArgs = Parameters<
   ReturnType<typeof useContractWrite>["writeAsync"]
@@ -23,11 +26,11 @@ export const useScaffoldWriteContract = <
     "external"
   >,
 >({
-    contractName,
-    functionName,
-    args,
-    options,
-  }: UseScaffoldWriteConfig<TContractName, TFunctionName>) => {
+  contractName,
+  functionName,
+  args,
+  options,
+}: UseScaffoldWriteConfig<TContractName, TFunctionName>) => {
   const { data: deployedContractData } = useDeployedContractInfo(contractName);
   const { chain } = useNetwork();
   const writeTx = useTransactor();
@@ -52,20 +55,20 @@ export const useScaffoldWriteContract = <
   const wagmiContractWrite = useContractWrite({
     calls: deployedContractData
       ? [
-        {
-          contractAddress: deployedContractData?.address,
-          entrypoint: functionName,
-          calldata: parsedParams,
-        },
-      ]
+          {
+            contractAddress: deployedContractData?.address,
+            entrypoint: functionName,
+            calldata: parsedParams,
+          },
+        ]
       : [],
     options,
   });
 
   const sendContractWriteTx = async ({
-                                       args: newArgs,
-                                       options: newOptions,
-                                     }: {
+    args: newArgs,
+    options: newOptions,
+  }: {
     args?: UseScaffoldWriteConfig<TContractName, TFunctionName>["args"];
     options?: UseScaffoldWriteConfig<TContractName, TFunctionName>["options"];
   } & UpdatedArgs = {}) => {
