@@ -1,4 +1,4 @@
-import {deployContract, deployer, exportDeployments} from "./deploy-contract";
+import { deployContract, deployer, exportDeployments } from "./deploy-contract";
 
 const deployScript = async (): Promise<void> => {
   await deployContract(
