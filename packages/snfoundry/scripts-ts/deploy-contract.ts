@@ -6,21 +6,20 @@ import { CallData, hash } from "starknet-dev";
 import { Network } from "./types";
 import { LegacyContractClass, CompiledSierra, RawArgs } from "starknet";
 
-let isFirstDeployment = true;
-
-const resetDeploymentState = () => {
-  isFirstDeployment = true;
-};
-
 const argv = yargs(process.argv.slice(2)).argv;
 const networkName: string = argv["network"];
+
+let deployments = {};
 
 const { provider, deployer }: Network = networks[networkName];
 const deployContract = async (
   constructorArgs: RawArgs,
   contractName: string,
   exportContractName?: string
-): Promise<{ classHash: string; address: string }> => {
+): Promise<{
+  classHash: string;
+  address: string;
+}> => {
   const compiledContractCasm = JSON.parse(
     fs
       .readFileSync(
@@ -105,36 +104,6 @@ const deployContract = async (
     console.log("Error", e);
   }
   console.log("Deployed contract ", contractName, " at: ", contractAddress);
-  const networkPath = path.resolve(
-    __dirname,
-    `../deployments/${networkName}_latest.json`
-  );
-  let deployments = {};
-
-  if (isFirstDeployment) {
-    if (fs.existsSync(networkPath)) {
-      const currentTimestamp = new Date().getTime();
-      const backupPath = networkPath.replace(
-        "_latest.json",
-        `_${currentTimestamp}.json`
-      );
-      fs.renameSync(networkPath, backupPath);
-
-      // Load existing deployments
-      const existingDeployments = JSON.parse(
-        fs.readFileSync(backupPath).toString()
-      );
-      deployments = { ...existingDeployments };
-    }
-    isFirstDeployment = false;
-  } else {
-    if (fs.existsSync(networkPath)) {
-      const existingDeployments = JSON.parse(
-        fs.readFileSync(networkPath).toString()
-      );
-      deployments = { ...existingDeployments };
-    }
-  }
 
   let finalContractName = exportContractName || contractName;
 
@@ -144,11 +113,27 @@ const deployContract = async (
     contract: contractName,
   };
 
-  fs.writeFileSync(networkPath, JSON.stringify(deployments, null, 2));
   return {
     classHash: precomputedClassHash,
     address: contractAddress,
   };
 };
 
-export { deployContract, provider, deployer, resetDeploymentState };
+const exportDeployments = () => {
+  const networkPath = path.resolve(
+    __dirname,
+    `../deployments/${networkName}_latest.json`
+  );
+
+  if (fs.existsSync(networkPath)) {
+    const currentTimestamp = new Date().getTime();
+    fs.renameSync(
+      networkPath,
+      networkPath.replace("_latest.json", `_${currentTimestamp}.json`)
+    );
+  }
+
+  fs.writeFileSync(networkPath, JSON.stringify(deployments, null, 2));
+};
+
+export { deployContract, provider, deployer, exportDeployments };

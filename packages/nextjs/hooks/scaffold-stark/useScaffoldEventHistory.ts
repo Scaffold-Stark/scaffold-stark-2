@@ -25,6 +25,7 @@ import {
   isCairoContractAddress,
   isCairoFelt,
   isCairoInt,
+  isCairoTuple,
   isCairoU256,
 } from "~~/utils/scaffold-stark/types";
 
@@ -244,18 +245,13 @@ export const addIndexedArgsToEvent = (event: any, abiEvent: any) => {
         },
         true,
       );
-    } else if (isCairoBool(type)) {
-      if (isKey) {
-        keyIndex++;
-      } else {
-        dataIndex++;
-      }
-      return Boolean(parseInt(array[index], 16));
     } else if (
       isCairoContractAddress(type) ||
       isCairoInt(type) ||
       isCairoBigInt(type) ||
-      isCairoFelt(type)
+      isCairoFelt(type) ||
+      isCairoBool(type) ||
+      isCairoTuple(type)
     ) {
       if (isKey) {
         keyIndex++;
