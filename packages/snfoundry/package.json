@@ -6,8 +6,8 @@
     "deploy": "ts-node scripts-ts/helpers/deploy-wrapper.ts",
     "test": "cd contracts && snforge test",
     "compile": "cd contracts && scarb build",
-    "format": "prettier --write . && cd local-devnet/scripts && sh format.sh",
-    "format:check": "prettier --check ."
+    "format": "prettier --write 'scripts-ts/**/*.{ts,tsx}' && cargo +nightly fmt --manifest-path local-devnet/Cargo.toml --all && cd contracts && scarb fmt",
+    "format:check": "prettier --check 'scripts-ts/**/*.{ts,tsx}' && cargo +nightly fmt --manifest-path local-devnet/Cargo.toml --all -- --check && cd contracts && scarb fmt --check"
   },
   "devDependencies": {
     "@types/node": "^20",
