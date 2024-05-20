@@ -12,12 +12,22 @@ import {
 import {
   ContractAbi,
   ContractName,
+  parseParamWithType,
   UseScaffoldEventHistoryConfig,
-  // UseScaffoldEventHistoryData,
 } from "~~/utils/scaffold-stark/contract";
 import { devnet } from "@starknet-react/chains";
 import { useProvider } from "@starknet-react/core";
 import { hash, RpcProvider } from "starknet";
+import {
+  isCairoBigInt,
+  isCairoBool,
+  isCairoByteArray,
+  isCairoContractAddress,
+  isCairoFelt,
+  isCairoInt,
+  isCairoTuple,
+  isCairoU256,
+} from "~~/utils/scaffold-stark/types";
 
 /**
  * Reads events from a deployed contract
@@ -110,14 +120,13 @@ export const useScaffoldEventHistory = <
         for (let i = logs.length - 1; i >= 0; i--) {
           newEvents.push({
             log: logs[i],
-            // args: logs[i].args,
             block:
               blockData && logs[i].block_hash === null
                 ? null
                 : await publicClient.getBlockWithTxHashes(logs[i].block_hash),
             transaction:
               transactionData && logs[i].transaction_hash !== null
-                ? await publicClient.getBlockWithTxHashes(
+                ? await publicClient.getTransactionByHash(
                     logs[i].transaction_hash,
                   )
                 : null,
@@ -189,10 +198,16 @@ export const useScaffoldEventHistory = <
       : null,
   );
 
-  const eventHistoryData = useMemo(
-    () => events?.map(addIndexedArgsToEvent),
-    [events],
-  );
+  const eventHistoryData = useMemo(() => {
+    if (deployedContractData) {
+      const abiEvent = (deployedContractData.abi as Abi).find(
+        (part) => part.type === "event" && part.name === eventName,
+      ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
+
+      return events?.map((event) => addIndexedArgsToEvent(event, abiEvent));
+    }
+    return [];
+  }, [deployedContractData, events, eventName]);
 
   return {
     data: eventHistoryData,
@@ -201,10 +216,83 @@ export const useScaffoldEventHistory = <
   };
 };
 
-export const addIndexedArgsToEvent = (event: any) => {
-  if (event.args && !Array.isArray(event.args)) {
-    return { ...event, args: { ...event.args, ...Object.values(event.args) } };
-  }
+export const addIndexedArgsToEvent = (event: any, abiEvent: any) => {
+  const args: Record<string, any> = {};
+  let keyIndex = 1; // Start after the event name hash
+  let dataIndex = 0;
 
-  return event;
+  const parseValue = (
+    array: string[],
+    index: number,
+    type: string,
+    isKey: boolean,
+  ) => {
+    if (isCairoByteArray(type)) {
+      const size = parseInt(array[index], 16); // Number of elements in ByteArray
+      const data = array.slice(index + 1, index + 1 + size);
+      if (isKey) {
+        keyIndex += index + 1 + size;
+      } else {
+        dataIndex += index + 1 + size;
+      }
+
+      return parseParamWithType(
+        type,
+        {
+          data,
+          pending_word: array[index + 1 + size],
+          pending_word_len: parseInt(array[1 + (index + 1 + size)], 16),
+        },
+        true,
+      );
+    } else if (
+      isCairoContractAddress(type) ||
+      isCairoInt(type) ||
+      isCairoBigInt(type) ||
+      isCairoFelt(type) ||
+      isCairoBool(type) ||
+      isCairoTuple(type)
+    ) {
+      if (isKey) {
+        keyIndex++;
+      } else {
+        dataIndex++;
+      }
+      return parseParamWithType(type, array[index], true);
+    } else if (isCairoU256(type)) {
+      const value = { low: array[index], high: array[index + 1] };
+      if (isKey) {
+        keyIndex += 2;
+      } else {
+        dataIndex += 2;
+      }
+      return parseParamWithType(type, value, true);
+    }
+    return array[index];
+  };
+
+  abiEvent.members.forEach(
+    (member: { type: string; kind: string; name: string }) => {
+      if (member.kind === "key") {
+        args[member.name] = parseValue(
+          event.log.keys,
+          keyIndex,
+          member.type,
+          true,
+        );
+      } else if (member.kind === "data") {
+        args[member.name] = parseValue(
+          event.log.data,
+          dataIndex,
+          member.type,
+          false,
+        );
+      }
+    },
+  );
+
+  return {
+    args,
+    ...event,
+  };
 };

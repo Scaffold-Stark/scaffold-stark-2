@@ -3,13 +3,18 @@
   "version": "0.0.1",
   "scripts": {
     "chain": "cd local-devnet && cargo run -- --seed 0 --account-class cairo1",
-    "deploy": "node scripts_js/helpers/deploy-wrapper.js",
-    "prev-deploy": "scarb build && node scripts_js/deploy.js ${1} > ./scripts_js/deployOutput.txt && node ./scripts_js/parseDeployOutput.js",
-    "bare-deploy": "scripts_js/deploy.js",
-    "format": "cd local-devnet/scripts && sh format.sh"
+    "deploy": "ts-node scripts-ts/helpers/deploy-wrapper.ts",
+    "test": "cd contracts && snforge test",
+    "compile": "cd contracts && scarb build",
+    "format": "prettier --write . && cd local-devnet/scripts && sh format.sh",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
+    "@types/node": "^20",
     "@types/prettier": "^2",
+    "@types/yargs": "^17.0.32",
+    "ts-node": "^10.9.2",
+    "typescript": "^5",
     "yargs": "^17.7.2"
   },
   "dependencies": {

@@ -1,5 +1,4 @@
 import { useTargetNetwork } from "./useTargetNetwork";
-// import {useTransactor,} from "~~/hooks/scaffold-stark";
 import {
   Contract,
   ContractAbi,
@@ -17,7 +16,7 @@ import { notification } from "~~/utils/scaffold-stark";
 import { useMemo } from "react";
 import { useTransactor } from "./useTransactor";
 
-export const useScaffoldMultiContractWrite = <
+export const useScaffoldMultiWriteContract = <
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>,

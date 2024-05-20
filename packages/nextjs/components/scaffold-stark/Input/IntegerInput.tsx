@@ -2,12 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import {
   CommonInputProps,
   InputBase,
-  IntegerVariant,
   isValidInteger,
 } from "~~/components/scaffold-stark";
+import { parseEther } from "ethers";
 
 type IntegerInputProps = CommonInputProps<string | bigint> & {
-  variant?: IntegerVariant;
+  variant?: string;
   disableMultiplyBy1e18?: boolean;
 };
 
@@ -17,7 +17,7 @@ export const IntegerInput = ({
   name,
   placeholder,
   disabled,
-  variant = IntegerVariant.UINT256,
+  variant = "core::integer::u256",
   disableMultiplyBy1e18 = false,
 }: IntegerInputProps) => {
   const [inputError, setInputError] = useState(false);
@@ -25,10 +25,8 @@ export const IntegerInput = ({
     if (!value) {
       return;
     }
-    if (typeof value === "bigint") {
-      return onChange(value * 10n ** 18n);
-    }
-    return onChange(BigInt(Math.round(Number(value) * 10 ** 18)));
+
+    return onChange(parseEther(value.toString()).toString());
   }, [onChange, value]);
 
   useEffect(() => {

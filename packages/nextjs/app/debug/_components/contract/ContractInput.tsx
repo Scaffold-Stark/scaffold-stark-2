@@ -10,11 +10,15 @@ import {
   //   BytesInput,
   //   InputBase,
   IntegerInput,
-  IntegerVariant,
 } from "~~/components/scaffold-stark";
 // import { AbiParameterTuple } from "~~/utils/scaffold-eth/contract";
 import { AbiParameter } from "~~/utils/scaffold-stark/contract";
 import { displayType } from "./utilsDisplay";
+import {
+  isCairoBigInt,
+  isCairoInt,
+  isCairoU256,
+} from "~~/utils/scaffold-stark";
 
 type ContractInputProps = {
   setForm: Dispatch<SetStateAction<Record<string, any>>>;
@@ -39,7 +43,15 @@ export const ContractInput = ({
       ? `${displayType(paramType.type)} ${paramType.name}`
       : displayType(paramType.type),
     onChange: (value: any) => {
-      setForm((form) => ({ ...form, [stateObjectKey]: value }));
+      setForm((form) => ({
+        ...form,
+        [stateObjectKey]:
+          isCairoInt(paramType.type) ||
+          isCairoBigInt(paramType.type) ||
+          isCairoU256(paramType.type)
+            ? Number(value)
+            : value,
+      }));
     },
   };
 
@@ -64,23 +76,12 @@ export const ContractInput = ({
       //     );
       default:
         // Handling 'int' types and 'tuple[]' types
-        if (paramType.type.includes("int") && !paramType.type.includes("[")) {
-          return (
-            <IntegerInput
-              {...inputProps}
-              variant={paramType.type as IntegerVariant}
-            />
-          );
-        } else if (paramType.type.startsWith("tuple[")) {
-          return (
-            // <TupleArray
-            //   setParentForm={setForm}
-            //   parentForm={form}
-            //   abiTupleParameter={paramType as AbiParameterTuple}
-            //   parentStateObjectKey={stateObjectKey}
-            // />
-            <div></div>
-          );
+        if (
+          isCairoInt(paramType.type) ||
+          isCairoBigInt(paramType.type) ||
+          isCairoU256(paramType.type)
+        ) {
+          return <IntegerInput {...inputProps} variant={paramType.type} />;
         } else {
           return <InputBase {...inputProps} />;
         }

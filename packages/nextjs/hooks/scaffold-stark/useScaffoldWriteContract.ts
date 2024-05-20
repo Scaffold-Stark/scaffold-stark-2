@@ -1,17 +1,16 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useTargetNetwork } from "./useTargetNetwork";
 import {
   useDeployedContractInfo,
   useTransactor,
 } from "~~/hooks/scaffold-stark";
-// import { notification } from "~~/utils/scaffold-stark";
 import {
   ContractAbi,
   ContractName,
   ExtractAbiFunctionNamesScaffold,
-  UseScaffoldWriteConfig,
   getFunctionsByStateMutability,
   parseFunctionParams,
+  UseScaffoldWriteConfig,
 } from "~~/utils/scaffold-stark/contract";
 import { useContractWrite, useNetwork } from "@starknet-react/core";
 import { notification } from "~~/utils/scaffold-stark";
@@ -20,7 +19,7 @@ type UpdatedArgs = Parameters<
   ReturnType<typeof useContractWrite>["writeAsync"]
 >[0];
 
-export const useScaffoldContractWrite = <
+export const useScaffoldWriteContract = <
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>,
@@ -103,14 +102,12 @@ export const useScaffoldContractWrite = <
     if (wagmiContractWrite.writeAsync) {
       try {
         // setIsMining(true);
-        const writeTxResult = await writeTx(() =>
+        return await writeTx(() =>
           wagmiContractWrite.writeAsync({
             calls: newCalls as any[],
             options: newOptions ?? options,
           }),
         );
-
-        return writeTxResult;
       } catch (e: any) {
         throw e;
       } finally {
