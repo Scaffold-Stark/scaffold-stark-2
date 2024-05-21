@@ -1,0 +1,4 @@
+[submodule "packages/snfoundry/local-devnet"]
+	path = packages/snfoundry/local-devnet
+	url = https://github.com/0xSpaceShard/starknet-devnet-rs
+	branch = json-rpc-v0.5.1

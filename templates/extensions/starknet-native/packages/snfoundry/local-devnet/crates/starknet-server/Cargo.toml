@@ -1,0 +1,55 @@
+[package]
+name = "starknet-server"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "starknet-devnet"
+path = "src/main.rs"
+
+[dependencies]
+
+# devnet
+cairo-lang-starknet = { workspace = true }
+random-number-generator = { workspace = true }
+server = { path = "../server" }
+starknet-core = { workspace = true }
+starknet-types = { workspace = true }
+starknet-rs-core = { workspace = true }
+starknet-rs-providers = { workspace = true }
+starknet-rs-signers = { workspace = true }
+starknet-rs-accounts = { workspace = true }
+url = { workspace = true }
+
+# axum
+axum = { workspace = true }
+hyper = { workspace = true }
+
+# async
+tokio = { workspace = true, features = ["signal"] }
+async-trait = { workspace = true }
+
+# tracing
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+# misc
+clap = { workspace = true }
+serde_json = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+
+[dev-dependencies]
+ethers = { workspace = true }
+lazy_static = { workspace = true }
+starknet-rs-accounts = { workspace = true }
+starknet-rs-contract = { workspace = true }
+starknet-rs-signers = { workspace = true }
+starknet-core = { workspace = true, features = ["test_utils"] }
+rand = { workspace = true }
+rand_chacha = { workspace = true }
+regex_generate = { workspace = true }
+serde_yaml = { workspace = true }

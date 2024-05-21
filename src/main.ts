@@ -38,7 +38,7 @@ export async function createProject(options: Options) {
     },
     {
       title: `📦 Installing dependencies with yarn, this could take a while`,
-      task: () => installPackages(targetDirectory),
+      task: () => installPackages(targetDirectory, options),
       skip: () => {
         if (!options.install) {
           return "Manually skipped";
@@ -56,7 +56,7 @@ export async function createProject(options: Options) {
     },
     {
       title: `📡 Initializing Git repository`,
-      task: () => createFirstGitCommit(targetDirectory, options),
+      task: () => createFirstGitCommit(targetDirectory),
     },
   ]);
 

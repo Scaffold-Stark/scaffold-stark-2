@@ -22,16 +22,9 @@ async function checkoutLatestTag(submodulePath: string): Promise<void> {
 }
 
 export async function createFirstGitCommit(
-  targetDir: string,
-  options: Options
+  targetDir: string
 ) {
   try {
-    // Condition to check if 'devnet' is included and only update submodules
-    if (options.extensions?.includes("scaffold-stark")) {
-      await execa("git", ["submodule", "update", "--init", "--recursive"], {
-        cwd: targetDir,
-      });
-    }
 
     await execa("git", ["add", "-A"], { cwd: targetDir });
     await execa(

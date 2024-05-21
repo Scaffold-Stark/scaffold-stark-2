@@ -1,0 +1,77 @@
+[workspace]
+
+resolver = "2"
+members = [
+	"crates/server",
+	"crates/starknet-server",
+	"crates/types",
+	"crates/random-number-generator",
+	"crates/starknet",
+]
+
+[profile.release]
+panic = "unwind"
+
+[workspace.package]
+authors = ["Mario"]
+version = "0.1.0"
+edition = "2021"
+repository = ""
+
+
+[workspace.dependencies]
+
+# axum
+axum = { version = "0.5" }
+hyper = "0.14"
+tower-http = { version = "0.4", features = ["full"] }
+tower = { version = "0.4", features = ["full"] }
+
+# rpc
+rpc-core = { git = "https://github.com/foundry-rs/foundry", rev = "5f2262736feaeabadeef2ae989a78e9b43da8eee", package = "anvil-rpc" }
+
+# async
+tokio = { version = "1", features = ["time", "macros", "rt-multi-thread", "signal"] }
+futures = "0.3"
+async-trait = "0.1"
+
+# tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+
+# misc
+base64 = { version = "0.21.2" }
+clap = { version = "4.3.2", features = ["derive"] }
+flate2 = { version = "1.0.26" }
+serde = { version = "1.0.171", features = ["derive"] }
+serde_json = { version = "1.0.81" }
+serde_yaml = { version = "0.9.27" }
+thiserror = { version = "1.0.32" }
+anyhow = "1"
+indexmap = "2.0.0"
+rand = "0.8.5"
+rand_chacha = "0.3.1"
+regex_generate = "0.2.3"
+
+# Starknet dependencies
+starknet_api = { version = "0.6.0-rc2", features = ["testing"] }
+blockifier = { git = "https://github.com/starkware-libs/blockifier", rev = "v0.4.0-rc8", package = "blockifier" }
+starknet-rs-signers = { git = "https://github.com/xJonathanLEI/starknet-rs", rev = "a35ce22be52bf33b8e544d0df926031b0ec7d761", package="starknet-signers" }
+starknet-rs-ff = { git = "https://github.com/xJonathanLEI/starknet-rs", rev = "a35ce22be52bf33b8e544d0df926031b0ec7d761", package = "starknet-ff" }
+starknet-rs-core = {  git = "https://github.com/xJonathanLEI/starknet-rs", rev = "a35ce22be52bf33b8e544d0df926031b0ec7d761", package = "starknet-core" }
+starknet-rs-providers = {  git = "https://github.com/xJonathanLEI/starknet-rs", rev = "a35ce22be52bf33b8e544d0df926031b0ec7d761", package = "starknet-providers" }
+starknet-rs-accounts = { git = "https://github.com/xJonathanLEI/starknet-rs", rev = "a35ce22be52bf33b8e544d0df926031b0ec7d761", package = "starknet-accounts" }
+starknet-rs-contract = { git = "https://github.com/xJonathanLEI/starknet-rs", rev = "a35ce22be52bf33b8e544d0df926031b0ec7d761", package = "starknet-contract" }
+starknet-rs-crypto = { git = "https://github.com/xJonathanLEI/starknet-rs", rev = "a35ce22be52bf33b8e544d0df926031b0ec7d761", package = "starknet-crypto" }
+cairo-felt = { version = "0.8.5", package = "cairo-felt" }
+cairo-lang-starknet = { version = "2.4.0-rc2", package = "cairo-lang-starknet" }
+url = "2.4"
+
+# Inner dependencies
+starknet-types = { path = "crates/types", package = "types" }
+starknet-core = { path = "crates/starknet", package = "starknet" }
+random-number-generator = { path = "crates/random-number-generator", package = "random-number-generator" }
+num-bigint = { version = "0.4" }
+
+lazy_static = { version = "1.4.0" }
+ethers = { version = "2.0.11" }

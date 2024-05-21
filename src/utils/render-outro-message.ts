@@ -1,6 +1,5 @@
-import type { Options } from "../types";
+import type {Options} from "../types";
 import chalk from "chalk";
-import { execa } from "execa";
 
 export async function renderOutroMessage(options: Options) {
   let message = `
@@ -12,19 +11,19 @@ export async function renderOutroMessage(options: Options) {
   ${chalk.dim("cd")} ${options.project}
   `;
 
-  if (
-    options.extensions.includes("scaffold-stark")
-  ) {
-    message += `
+  // if (
+  //   options.extensions.includes("scaffold-stark")
+  // ) {
+  // }
+  message += `
     \t${chalk.bold("Start the local development node")}
     \t${chalk.dim("yarn")} chain
     `;
 
-    message += `
+  message += `
     \t${chalk.bold("In a new terminal window, deploy your contracts")}
     \t${chalk.dim("yarn")} deploy
    `;
-  }
 
   message += `
   \t${chalk.bold("In a new terminal window, start the frontend")}

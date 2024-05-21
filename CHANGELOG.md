@@ -1,5 +1,9 @@
 # create-stark
 
+## 0.0.3
+- Sync with scaffold-stark
+- Add local_devnet
+
 ## 0.0.2
 
 ### Patch Changes

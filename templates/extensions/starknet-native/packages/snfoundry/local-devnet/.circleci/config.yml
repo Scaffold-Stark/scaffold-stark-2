@@ -1,0 +1,124 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/configuration-reference
+version: 2.1
+
+aliases:
+  - &on_main
+    context: spaceshard
+    filters:
+      branches:
+        only:
+          - main
+
+  - &on_main_after_test_and_build
+    <<: *on_main
+    requires:
+      - build-and-test
+      - image-build-amd
+      - image-build-arm
+
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/configuration-reference/#jobs
+jobs:
+  build-and-test:
+    parameters:
+      cargo_cache_key:
+        type: string
+    docker:
+      - image: cimg/rust:1.70.0
+    resource_class: xlarge
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - << parameters.cargo_cache_key >>
+      - run:
+          # this step doesn't need to be cached, it's relatively fast (15s on Docker/X-Large)
+          name: Install nightly
+          command: rustup install nightly
+      - run:
+          name: Install foundry
+          command: ./scripts/install_foundry.sh
+      - run:
+          name: Build
+          command: cargo build --release
+      - run:
+          name: Clippy check
+          command: ./scripts/clippy_check.sh
+      - run:
+          name: Format check
+          command: cargo +nightly fmt --all --check
+      - save_cache:
+          # Caching dependencies for future use
+          # Build and Clippy steps generate their own target artifacts
+          # Test also generates, but significantly more
+          # Compromise: saving before Test
+          paths:
+            - /home/circleci/.cargo/registry
+            - target/debug/.fingerprint
+            - target/debug/build
+            - target/debug/deps
+            - target/release/.fingerprint
+            - target/release/build
+            - target/release/deps
+          key: << parameters.cargo_cache_key >>
+      - run:
+          name: Test
+          # if jobs not limited - fails
+          # problem: https://app.circleci.com/pipelines/github/0xSpaceShard/starknet-devnet-rs/339/workflows/97e98c29-1563-4aa0-b716-4bfd023c563e/jobs/335/steps
+          # solution: https://stackoverflow.com/questions/71962406/how-to-use-less-memory-when-compiling-to-avoid-killing-the-build
+          command: cargo test --jobs 7
+
+  image-build-amd:
+    docker:
+      - image: cimg/base:2021.04
+    resource_class: large
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.7
+      - run:
+          name: Build amd images
+          command: ./docker/image_build.sh
+          environment:
+            ARCH_SUFFIX: "-amd"
+            REMOTE: true
+
+  image-build-arm:
+    machine:
+      image: ubuntu-2004:202111-02
+    resource_class: arm.large
+    steps:
+      - checkout
+      - run:
+          name: Build arm images
+          command: ./docker/image_build.sh
+          environment:
+            ARCH_SUFFIX: -arm
+            REMOTE: ""
+
+  create-joint-image-manifest:
+    docker:
+      - image: cimg/base:2021.04
+    resource_class: medium
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.7
+      - run:
+          name: Create and push joint image manifest
+          command: ./docker/create_joint_image_manifest.sh
+
+# Orchestrate jobs using workflows
+# See: https://circleci.com/docs/configuration-reference/#workflows
+workflows:
+  main:
+    jobs:
+      - build-and-test:
+          cargo_cache_key: cargo-cache-{{ checksum "Cargo.lock" }}-v1
+      - image-build-amd:
+          <<: *on_main
+      - image-build-arm:
+          <<: *on_main
+      - create-joint-image-manifest:
+          <<: *on_main_after_test_and_build

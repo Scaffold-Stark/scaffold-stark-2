@@ -15,7 +15,7 @@ type NonNullableRawOptions = {
 
 export type Options = NonNullableRawOptions;
 
-export type Extension = "scaffold-stark"
+export type Extension = "starknet-native" | "dojo";
 
 type NullExtension = null;
 export type ExtensionOrNull = Extension | NullExtension;

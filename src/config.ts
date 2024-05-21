@@ -5,9 +5,9 @@ const config: Config = {
     typedQuestion({
       type: "single-select",
       name: "chain-type",
-      message: "What chain do you want to use?",
-      extensions: ["scaffold-stark"],
-      default: "scaffold-stark",
+      message: "What framework do you want to use?",
+      extensions: ["starknet-native", "dojo"],
+      default: "starknet-native",
     }),
   ],
 };
