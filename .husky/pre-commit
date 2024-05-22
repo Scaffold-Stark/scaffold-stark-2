@@ -1,4 +1,13 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+cd packages/snfoundry/local-devnet
+
+if [ -n "$(git status --porcelain)" ]; then
+  echo "Error: Commits to scaffold stark that include changes in local-devnet are not allowed."
+  exit 1
+fi
+
+cd -
+
 npm run format:check
