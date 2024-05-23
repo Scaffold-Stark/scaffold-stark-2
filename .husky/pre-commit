@@ -1,13 +1,16 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-cd packages/snfoundry/local-devnet
+# Navigate to the root directory of your repository
+cd $(git rev-parse --show-toplevel)
 
-if [ -n "$(git status --porcelain)" ]; then
-  echo "Error: Commits to scaffold stark that include changes in local-devnet are not allowed."
+# Use git status --porcelain to check for changes in the local-devnet directory
+CHANGED=$(git status --porcelain | grep "packages/snfoundry/local-devnet")
+
+# Check if there are changes
+if [ ! -z "$CHANGED" ]; then
+  echo "Error: Changes detected in packages/snfoundry/local-devnet"
   exit 1
 fi
-
-cd -
 
 npm run format:check
