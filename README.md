@@ -153,11 +153,10 @@ Visit your app on: `http://localhost:3000`. You can interact with your smart con
 - Edit your deployment scripts in `packages/snfoundry/script-js/deploy.js`
 - Edit your smart contract test in: `packages/snfoundry/contracts/src/test`. To run test use `yarn test`
 
-## Documentation (comming soon)
+Documentation (Coming Soon)
+Explore our documentation to learn how to start building with Scaffold-Stark 2.
 
-Visit our [docs](https://docs.scaffoldstarknet.com) to learn how to start building with Scaffold-Stark 2.
-
-To know more about its features, check out our [website](https://scaffoldstark.com).
+For more information on its features, visit our website.
 
 ## Contributing to Scaffold-Stark 2
 
