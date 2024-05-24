@@ -110,7 +110,7 @@ yarn install
 
 2. Prepare your environment variables.
 
-Since we are using localhost(devnet), **you can skip this step!**. But if you want use the .env file aniway, you can fill the envs related to devnet with any predeployed contract address and private key from starknet-devnet.
+Since you are using localhost(devnet), **you can skip this step!**. But if you want use the .env file anyway, you can fill the envs related to devnet with any predeployed contract address and private key from starknet-devnet.
 
 **Note:** In case you want to deploy on Sepolia, you need to fill the envs related to sepolia testnet with your own contract address and private key.
 
@@ -153,8 +153,9 @@ Visit your app on: `http://localhost:3000`. You can interact with your smart con
 - Edit your deployment scripts in `packages/snfoundry/script-js/deploy.js`
 - Edit your smart contract test in: `packages/snfoundry/contracts/src/test`. To run test use `yarn test`
 
-Documentation (Coming Soon)
-Explore our documentation to learn how to start building with Scaffold-Stark 2.
+## Documentation (Coming Soon)
+
+We are working on the documentation to learn how to start building with Scaffold-Stark 2.
 
 For more information on its features, visit our website.
 
