@@ -34,6 +34,14 @@ jobs:
         run: yarn install --immutable
         working-directory: ./packages/nextjs
 
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: default
+          toolchain: nightly
+          target: x86_64-unknown-linux-gnu
+          override: true
+
       - name: Check Code Format
         run: npm run format:check
 
