@@ -21,11 +21,14 @@
     "vercel": "yarn workspace @ss-2/nextjs vercel",
     "vercel:yolo": "yarn workspace @ss-2/nextjs vercel:yolo",
     "format": "yarn workspace @ss-2/nextjs format && yarn workspace @ss-2/snfoundry format",
-    "format:check": "yarn workspace @ss-2/nextjs format:check && yarn workspace @ss-2/snfoundry format:check"
+    "format:check": "yarn workspace @ss-2/nextjs format:check && yarn workspace @ss-2/snfoundry format:check",
+    "prepare": "husky"
   },
   "packageManager": "yarn@3.2.3",
   "devDependencies": {
     "daisyui": "^4.7.3",
+    "husky": "^9.0.11",
+    "pinst": "^3.0.0",
     "prettier": "^3.2.5"
   },
   "dependencies": {
