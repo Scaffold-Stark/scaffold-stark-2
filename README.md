@@ -136,7 +136,7 @@ yarn deploy --network {NETWORK_NAME} // when NETWORK_NAME is not specified, it d
 
 **Note:** To use sepolia tesnet, you have to set {NETWORK_NAME} to `sepolia`.
 
-This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/contracts/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts_js/deploy.js` to deploy the contract to the network. You can also customize the deploy script.
+This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/contracts/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts-ts/deploy.ts` to deploy the contract to the network. You can also customize the deploy script.
 
 5. On a third terminal, start your NextJS app:
 
@@ -150,8 +150,8 @@ Visit your app on: `http://localhost:3000`. You can interact with your smart con
 
 - Edit your smart contract `YourContract.cairo` in `packages/snfoundry/contracts/src`
 - Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
-- Edit your deployment scripts in `packages/snfoundry/script-ts/deploy.js`
-- Edit your smart contract tests in: `packages/snfoundry/contracts/src/test`. To run tests use `yarn test`
+- Edit your deployment scripts in `packages/snfoundry/script-ts/deploy.ts`
+- Edit your smart contract tests in `packages/snfoundry/contracts/src/test`. To run tests use `yarn test`
 
 ## Documentation (Coming Soon)
 
