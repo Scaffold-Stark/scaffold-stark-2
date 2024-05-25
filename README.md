@@ -1,8 +1,8 @@
 # 🏗 Scaffold-Stark 2
 
 <h4 align="center">
-  <a href="">Documentation</a> |
-  <a href="">Website</a>
+  <a href="https://www.docs.scaffoldstark.com/">Documentation</a> |
+  <a href="https://www.scaffoldstark.com/">Website</a>
 </h4>
 
 🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on Starknet blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
