@@ -155,9 +155,9 @@ Visit your app on: `http://localhost:3000`. You can interact with your smart con
 
 ## Documentation (Coming Soon)
 
-We are working on the documentation to learn how to start building with Scaffold-Stark 2.
+Visit our [docs](https://www.docs.scaffoldstark.com/) to learn how to start building with Scaffold-Stark 2.
 
-For more information on its features, visit our website.
+To know more about its features, check out our [website](https://scaffoldstark.com)
 
 ## Contributing to Scaffold-Stark 2
 
