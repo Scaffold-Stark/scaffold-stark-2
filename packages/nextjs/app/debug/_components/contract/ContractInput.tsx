@@ -45,12 +45,7 @@ export const ContractInput = ({
     onChange: (value: any) => {
       setForm((form) => ({
         ...form,
-        [stateObjectKey]:
-          isCairoInt(paramType.type) ||
-          isCairoBigInt(paramType.type) ||
-          isCairoU256(paramType.type)
-            ? Number(value)
-            : value,
+        [stateObjectKey]: value,
       }));
     },
   };
