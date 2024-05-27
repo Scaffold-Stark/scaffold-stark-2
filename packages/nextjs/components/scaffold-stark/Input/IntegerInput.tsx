@@ -29,7 +29,7 @@ export const IntegerInput = ({
     return inputError
       ? onChange(value)
       : onChange(parseEther(value.toString()).toString());
-  }, [onChange, value]);
+  }, [onChange, value, inputError]);
 
   useEffect(() => {
     setInputError(!isValidInteger(variant, value));
