@@ -9,8 +9,8 @@ This is an alternative method of installing Scaffold-Stark. Instead of directly 
 
 <h4 align="center">
   <a href="https://github.com/Quantum3-Labs/scaffold-stark-2">SS-2 Repo</a> |
-  <a href="#">SS-2 Docs</a> |
-  <a href="#">SS-2 Website</a>
+  <a href="https://www.docs.scaffoldstark.com/">SS-2 Docs</a> |
+  <a href="https://www.scaffoldstark.com/">SS-2 Website</a>
 </h4>
 
 ## Requirements
@@ -65,9 +65,9 @@ Visit your app on: `http://localhost:3000`. You can interact with your smart con
 
 ## Documentation
 
-Visit our [docs](https://docs.scaffoldstark.io) to learn how to start building with Scaffold-Stark 2.
+Visit our [docs](https://www.docs.scaffoldstark.com/) to learn how to start building with Scaffold-Stark 2.
 
-To know more about its features, check out our [website](https://scaffoldstark.io).
+To know more about its features, check out our [website](https://www.scaffoldstark.com/).
 
 ## Contributing to create-stark
 
@@ -75,5 +75,5 @@ We welcome contributions to create-stark and Scaffold-Stark 2!
 
 For more information and guidelines for contributing, please see:
 
-- [create-stark CONTRIBUTING.MD](https://github.com/scaffold-stark/create-stark/blob/main/CONTRIBUTING.md) if you want to contribute to the CLI.
-- [Scaffold-Stark 2 CONTRIBUTING.MD](https://github.com/scaffold-stark/scaffold-stark-2/blob/main/CONTRIBUTING.md) if you want to contribute to SS-2 base code.
+- [create-stark CONTRIBUTING.MD](https://github.com/Quantum3-Labs/create-stark/blob/main/CONTRIBUTING.md) if you want to contribute to the CLI.
+- [Scaffold-Stark 2 CONTRIBUTING.MD](https://github.com/Quantum3-Labs/scaffold-stark-2/blob/main/CONTRIBUTING.md) if you want to contribute to SS-2 base code.
