@@ -9,6 +9,7 @@
 
 ⚙️ Built using NextJS, Starknet.js, Scarb, Starknet-React, Starknet Foundry and Typescript.
 
+- ✅ **Contract Fast Reload**: Your frontend quickly auto-adapts to your smart contract as you (re)deploy it.
 - 🪝 **[Custom hooks]()**: Collection of React hooks wrapper around [starknet-react](https://starknet-react.com/) to simplify interactions with smart contracts with typescript autocompletion.
 - 🧱 [**Components**](): Collection of common web3 components to quickly build your frontend.
 - 🔥 **Burner Wallet & Prefunded Account**: Quickly test your application with a burner wallet and prefunded accounts.
