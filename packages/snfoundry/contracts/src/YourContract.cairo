@@ -6,6 +6,26 @@ pub trait IYourContract<TContractState> {
     fn set_gretting(ref self: TContractState, new_greeting: ByteArray, amount_eth: u256);
     fn withdraw(ref self: TContractState);
     fn premium(self: @TContractState) -> bool;
+    fn testStruct(self: @TContractState) -> SimpleStruct;
+    fn testStructAsInput( ref self: TContractState, simple_struct: SimpleStruct);
+    fn testEnum(self: @TContractState) -> Direction;
+    fn testEnumAsInput(ref self: TContractState, direction: Direction);
+}
+#[derive(Serde, Copy, Drop, Introspect)]
+enum Direction {
+    None,
+    Left,
+    Right,
+    Up,
+    Down,
+}
+
+#[derive(Serde, Copy, Drop, Introspect)]
+struct SimpleStruct {
+    #[key]
+    player: ContractAddress,
+    remaining: u8,
+    last_direction: Direction
 }
 
 #[starknet::contract]
@@ -14,7 +34,7 @@ mod YourContract {
     use openzeppelin::access::ownable::ownable::OwnableComponent::InternalTrait;
     use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
     use starknet::{get_caller_address, get_contract_address};
-    use super::{ContractAddress, IYourContract};
+    use super::{ContractAddress, IYourContract, SimpleStruct, Direction };
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
 
@@ -101,6 +121,23 @@ mod YourContract {
         }
         fn premium(self: @ContractState) -> bool {
             self.premium.read()
+        }
+        fn testStruct(self: @ContractState) -> SimpleStruct {
+            SimpleStruct {
+                player: get_caller_address(),
+                remaining: 10,
+                last_direction: Direction::Right,
+            }
+        }
+        fn testStructAsInput(ref self: ContractState, simple_struct: SimpleStruct) {
+            // assert_eq!(simple_struct.player, get_caller_address());
+            // assert_eq!(simple_struct.remaining, 10);
+        }
+        fn testEnum(self: @ContractState) -> Direction {
+            Direction::Right
+        }
+        fn testEnumAsInput(ref self: ContractState, direction: Direction) {
+            // assert_eq!(direction, Direction::Right);
         }
     }
 }
