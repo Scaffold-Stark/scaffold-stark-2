@@ -1,25 +1,39 @@
 use starknet::ContractAddress;
 
+#[derive(Drop, Serde, starknet::Store)]
+enum SampleEnum {
+    enum1: u64,
+    enum2,
+    enum3,
+}
+
+#[derive(Drop, Serde, starknet::Store)]
+struct SampleStruct {
+    id: u256,
+    name: ByteArray,
+    status: SampleEnum,
+}
+
+#[derive(Drop, Serde, starknet::Store)]
+struct SampleNestedStruct {
+    user: ContractAddress,
+    data: SampleStruct,
+    status: SampleEnum,
+}
+
 #[starknet::interface]
 pub trait IYourContract<TContractState> {
     fn gretting(self: @TContractState) -> ByteArray;
     fn set_gretting(ref self: TContractState, new_greeting: ByteArray, amount_eth: u256);
     fn withdraw(ref self: TContractState);
     fn premium(self: @TContractState) -> bool;
-    // fn test_simple_enum_read(self: @TContractState) -> SampleEnum;
-    // fn test_simple_enum_write(ref self: TContractState, sample_enum: SampleEnum);
-}
-
-#[derive(Serde, Copy, Drop, Introspect)]
-enum SampleEnum {
-    ENUM1,
-    ENUM2,
-    ENUM3,
+    fn test_simple_enum_read(self: @TContractState) -> SampleEnum;
+    fn test_simple_enum_write(ref self: TContractState, sample_enum: SampleEnum);
 }
 
 #[starknet::contract]
 mod YourContract {
-    use super::{ContractAddress, IYourContract, SampleEnum};
+    use super::{ContractAddress, IYourContract, SampleEnum, SampleNestedStruct, SampleStruct};
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
     use starknet::{get_caller_address, get_contract_address};
@@ -58,7 +72,9 @@ mod YourContract {
         premium: bool,
         total_counter: u256,
         user_gretting_counter: LegacyMap<ContractAddress, u256>,
-        // sample_enum: SampleEnum,  // TODO , this fails
+        sample_enum: SampleEnum,
+        sample_struct: SampleStruct,
+        sample_nested_struct: SampleNestedStruct,
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
     }
@@ -69,6 +85,7 @@ mod YourContract {
         self.eth_token.write(IERC20CamelDispatcher { contract_address: eth_contract_address });
         self.greeting.write("Building Unstoppable Apps!!!");
         self.ownable.initializer(owner);
+        self.sample_enum.write(SampleEnum::enum1(1));
     }
 
     #[abi(embed_v0)]
@@ -76,7 +93,7 @@ mod YourContract {
         fn gretting(self: @ContractState) -> ByteArray {
             self.greeting.read()
         }
-        
+
         fn set_gretting(ref self: ContractState, new_greeting: ByteArray, amount_eth: u256) {
             self.greeting.write(new_greeting);
             self.total_counter.write(self.total_counter.read() + 1);
@@ -84,20 +101,24 @@ mod YourContract {
             self.user_gretting_counter.write(get_caller_address(), user_counter + 1);
 
             if amount_eth > 0 {
-                self.eth_token.read().transferFrom(get_caller_address(), get_contract_address(), amount_eth);
+                self
+                    .eth_token
+                    .read()
+                    .transferFrom(get_caller_address(), get_contract_address(), amount_eth);
                 self.premium.write(true);
             } else {
                 self.premium.write(false);
             }
 
-            self.emit(
-                GreetingChanged {
-                    greeting_setter: get_caller_address(),
-                    new_greeting: self.greeting.read(),
-                    premium: true,
-                    value: 100,
-                }
-            );
+            self
+                .emit(
+                    GreetingChanged {
+                        greeting_setter: get_caller_address(),
+                        new_greeting: self.greeting.read(),
+                        premium: true,
+                        value: 100,
+                    }
+                );
         }
 
         fn withdraw(ref self: ContractState) {
@@ -109,13 +130,11 @@ mod YourContract {
         fn premium(self: @ContractState) -> bool {
             self.premium.read()
         }
-
-        // fn test_simple_enum_read(self: @ContractState) -> SampleEnum {
-        //     self.sample_enum.read()
-        // }
-
-        // fn test_simple_enum_write(ref self: ContractState, sample_enum: SampleEnum) {
-        //     self.sample_enum.write(sample_enum);
-        // }
+        fn test_simple_enum_read(self: @ContractState) -> SampleEnum {
+            self.sample_enum.read()
+        }
+        fn test_simple_enum_write(ref self: ContractState, sample_enum: SampleEnum) {
+            self.sample_enum.write(sample_enum);
+        }
     }
 }
