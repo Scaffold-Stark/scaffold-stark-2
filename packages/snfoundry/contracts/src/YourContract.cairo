@@ -1,4 +1,5 @@
 use starknet::ContractAddress;
+
 #[starknet::interface]
 pub trait IYourContract<TContractState> {
     fn gretting(self: @TContractState) -> ByteArray;
@@ -6,7 +7,7 @@ pub trait IYourContract<TContractState> {
     fn withdraw(ref self: TContractState);
     fn premium(self: @TContractState) -> bool;
     // fn test_simple_enum_read(self: @TContractState) -> SampleEnum;
-    // fn test_simple_enum_write(ref self: TContractState, direction: SampleEnum);
+    // fn test_simple_enum_write(ref self: TContractState, sample_enum: SampleEnum);
 }
 
 #[derive(Serde, Copy, Drop, Introspect)]
@@ -20,7 +21,6 @@ enum SampleEnum {
 mod YourContract {
     use super::{ContractAddress, IYourContract, SampleEnum};
     use openzeppelin::access::ownable::OwnableComponent;
-    use openzeppelin::access::ownable::ownable::OwnableComponent::InternalTrait;
     use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
     use starknet::{get_caller_address, get_contract_address};
 
@@ -38,7 +38,7 @@ mod YourContract {
     enum Event {
         #[flat]
         OwnableEvent: OwnableComponent::Event,
-        GreetingChanged: GreetingChanged
+        GreetingChanged: GreetingChanged,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -51,7 +51,6 @@ mod YourContract {
         value: u256,
     }
 
-
     #[storage]
     struct Storage {
         eth_token: IERC20CamelDispatcher,
@@ -59,6 +58,7 @@ mod YourContract {
         premium: bool,
         total_counter: u256,
         user_gretting_counter: LegacyMap<ContractAddress, u256>,
+        // sample_enum: SampleEnum,  // TODO , this fails
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
     }
@@ -76,6 +76,7 @@ mod YourContract {
         fn gretting(self: @ContractState) -> ByteArray {
             self.greeting.read()
         }
+        
         fn set_gretting(ref self: ContractState, new_greeting: ByteArray, amount_eth: u256) {
             self.greeting.write(new_greeting);
             self.total_counter.write(self.total_counter.read() + 1);
@@ -83,30 +84,28 @@ mod YourContract {
             self.user_gretting_counter.write(get_caller_address(), user_counter + 1);
 
             if amount_eth > 0 {
-                // call approve on UI
-                self
-                    .eth_token
-                    .read()
-                    .transferFrom(get_caller_address(), get_contract_address(), amount_eth);
+                self.eth_token.read().transferFrom(get_caller_address(), get_contract_address(), amount_eth);
                 self.premium.write(true);
             } else {
                 self.premium.write(false);
             }
-            self
-                .emit(
-                    GreetingChanged {
-                        greeting_setter: get_caller_address(),
-                        new_greeting: self.greeting.read(),
-                        premium: true,
-                        value: 100
-                    }
-                );
+
+            self.emit(
+                GreetingChanged {
+                    greeting_setter: get_caller_address(),
+                    new_greeting: self.greeting.read(),
+                    premium: true,
+                    value: 100,
+                }
+            );
         }
+
         fn withdraw(ref self: ContractState) {
             self.ownable.assert_only_owner();
             let balance = self.eth_token.read().balanceOf(get_contract_address());
             self.eth_token.read().transfer(self.ownable.owner(), balance);
         }
+
         fn premium(self: @ContractState) -> bool {
             self.premium.read()
         }
