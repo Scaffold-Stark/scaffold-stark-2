@@ -26,15 +26,13 @@ export const IntegerInput = ({
       return;
     }
 
-    return onChange(parseEther(value.toString()).toString());
-  }, [onChange, value]);
+    return inputError
+      ? onChange(value)
+      : onChange(parseEther(value.toString()).toString());
+  }, [onChange, value, inputError]);
 
   useEffect(() => {
-    if (isValidInteger(variant, value, false)) {
-      setInputError(false);
-    } else {
-      setInputError(true);
-    }
+    setInputError(!isValidInteger(variant, value));
   }, [value, variant]);
 
   return (
