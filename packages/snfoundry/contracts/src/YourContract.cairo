@@ -1,40 +1,28 @@
 use starknet::ContractAddress;
-
 #[starknet::interface]
 pub trait IYourContract<TContractState> {
     fn gretting(self: @TContractState) -> ByteArray;
     fn set_gretting(ref self: TContractState, new_greeting: ByteArray, amount_eth: u256);
     fn withdraw(ref self: TContractState);
     fn premium(self: @TContractState) -> bool;
-    fn testStruct(self: @TContractState) -> SimpleStruct;
-    fn testStructAsInput( ref self: TContractState, simple_struct: SimpleStruct);
-    fn testEnum(self: @TContractState) -> Direction;
-    fn testEnumAsInput(ref self: TContractState, direction: Direction);
-}
-#[derive(Serde, Copy, Drop, Introspect)]
-enum Direction {
-    None,
-    Left,
-    Right,
-    Up,
-    Down,
+    // fn test_simple_enum_read(self: @TContractState) -> SampleEnum;
+    // fn test_simple_enum_write(ref self: TContractState, direction: SampleEnum);
 }
 
 #[derive(Serde, Copy, Drop, Introspect)]
-struct SimpleStruct {
-    #[key]
-    player: ContractAddress,
-    remaining: u8,
-    last_direction: Direction
+enum SampleEnum {
+    ENUM1,
+    ENUM2,
+    ENUM3,
 }
 
 #[starknet::contract]
 mod YourContract {
+    use super::{ContractAddress, IYourContract, SampleEnum};
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::access::ownable::ownable::OwnableComponent::InternalTrait;
     use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
     use starknet::{get_caller_address, get_contract_address};
-    use super::{ContractAddress, IYourContract, SimpleStruct, Direction };
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
 
@@ -122,22 +110,13 @@ mod YourContract {
         fn premium(self: @ContractState) -> bool {
             self.premium.read()
         }
-        fn testStruct(self: @ContractState) -> SimpleStruct {
-            SimpleStruct {
-                player: get_caller_address(),
-                remaining: 10,
-                last_direction: Direction::Right,
-            }
-        }
-        fn testStructAsInput(ref self: ContractState, simple_struct: SimpleStruct) {
-            // assert_eq!(simple_struct.player, get_caller_address());
-            // assert_eq!(simple_struct.remaining, 10);
-        }
-        fn testEnum(self: @ContractState) -> Direction {
-            Direction::Right
-        }
-        fn testEnumAsInput(ref self: ContractState, direction: Direction) {
-            // assert_eq!(direction, Direction::Right);
-        }
+
+        // fn test_simple_enum_read(self: @ContractState) -> SampleEnum {
+        //     self.sample_enum.read()
+        // }
+
+        // fn test_simple_enum_write(ref self: ContractState, sample_enum: SampleEnum) {
+        //     self.sample_enum.write(sample_enum);
+        // }
     }
 }
