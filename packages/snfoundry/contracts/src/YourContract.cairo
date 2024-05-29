@@ -2,9 +2,9 @@ use starknet::ContractAddress;
 
 #[derive(Drop, Serde, starknet::Store)]
 enum SampleEnum {
-    enum1: u64,
-    enum2,
-    enum3,
+    enum1: u256,
+    enum2: u256,
+    enum3: ByteArray,
 }
 
 #[derive(Drop, Serde, starknet::Store)]
@@ -29,6 +29,10 @@ pub trait IYourContract<TContractState> {
     fn premium(self: @TContractState) -> bool;
     fn test_simple_enum_read(self: @TContractState) -> SampleEnum;
     fn test_simple_enum_write(ref self: TContractState, sample_enum: SampleEnum);
+    fn test_struct_read(self: @TContractState) -> SampleStruct;
+    fn test_struct_write(ref self: TContractState, sample_struct: SampleStruct);
+    fn test_nested_struct_read(self: @TContractState) -> SampleNestedStruct;
+    fn test_nested_struct_write(ref self: TContractState, sample_nested_struct: SampleNestedStruct);
 }
 
 #[starknet::contract]
@@ -135,6 +139,24 @@ mod YourContract {
         }
         fn test_simple_enum_write(ref self: ContractState, sample_enum: SampleEnum) {
             self.sample_enum.write(sample_enum);
+        }
+        fn test_struct_read(self: @ContractState) -> SampleStruct {
+            // make a simple struct
+            let sample_struct = SampleStruct {
+                id: 1,
+                name: "sample",
+                status: SampleEnum::enum1(1),
+            };
+            sample_struct
+        }
+        fn test_struct_write(ref self: ContractState, sample_struct: SampleStruct) {
+            self.sample_struct.write(sample_struct);
+        }
+        fn test_nested_struct_read(self: @ContractState) -> SampleNestedStruct {
+            self.sample_nested_struct.read()
+        }
+        fn test_nested_struct_write(ref self: ContractState, sample_nested_struct: SampleNestedStruct) {
+            self.sample_nested_struct.write(sample_nested_struct);
         }
     }
 }
