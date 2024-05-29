@@ -34,6 +34,9 @@ jobs:
         run: yarn install --immutable
         working-directory: ./packages/nextjs
 
+      - name: Install scarb
+        run: curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh -s -- -v 2.5.4
+
       - name: Check Code Format
         run: npm run format:check
 
