@@ -10,7 +10,7 @@ import {
 const getFunctionInputKey = (
   functionName: string,
   input: AbiParameter,
-  inputIndex: number
+  inputIndex: number,
 ): string => {
   const name = input?.name || `input_${inputIndex}_`;
   return functionName + "_" + name + "_" + input.type;
@@ -39,7 +39,7 @@ const getInitialFormState = (abiFunction: AbiFunction) => {
 const deepParseValues = (
   value: any,
   isRead: boolean,
-  keyAndType?: any
+  keyAndType?: any,
 ): any => {
   if (keyAndType) {
     return parseParamWithType(keyAndType, value, isRead);
@@ -89,7 +89,7 @@ const deepParseValues = (
  */
 const getParsedContractFunctionArgs = (
   form: Record<string, any>,
-  isRead: boolean
+  isRead: boolean,
 ) => {
   return Object.keys(form).map((key) => {
     const valueOfArg = form[key];
@@ -122,7 +122,7 @@ const transformAbiFunction = (abiFunction: AbiFunction): AbiFunction => {
   return {
     ...abiFunction,
     inputs: abiFunction.inputs.map((value) =>
-      adjustInput(value as AbiParameter)
+      adjustInput(value as AbiParameter),
     ),
   };
 };
