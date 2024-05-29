@@ -5,7 +5,7 @@ const priceCache: Record<string, number> = {};
 
 export const fetchPriceFromCoingecko = async (
   targetNetwork: ChainWithAttributes,
-  retryCount = 3, // Maximum retry attempts
+  retryCount = 3,
 ): Promise<number> => {
   const { symbol } = targetNetwork.nativeCurrency;
   if (
@@ -22,24 +22,42 @@ export const fetchPriceFromCoingecko = async (
     return priceCache[symbol];
   }
 
-  try {
-    const response = await fetch(
-      `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`,
-    );
-    const data = await response.json();
-    const price = data.ethereum.usd;
-    priceCache[symbol] = price; // Update cache with new price
-    return price;
-  } catch (error) {
-    console.error(
-      `useNativeCurrencyPrice - Error fetching ${symbol} price from Coingecko: `,
-      error,
-    );
-    if (retryCount > 0) {
-      console.log("Retrying after 1 second...");
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1 second
-      return fetchPriceFromCoingecko(targetNetwork, retryCount - 1);
-    }
-    return 0;
-  }
+  return updatePriceCache(symbol, retryCount);
 };
+
+const updatePriceCache = async (
+  symbol: string,
+  retries = 3,
+): Promise<number> => {
+  let attempt = 0;
+  while (attempt < retries) {
+    try {
+      const response = await fetch(
+        `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`,
+      );
+      const data = await response.json();
+      const price = data.ethereum.usd;
+      priceCache[symbol] = price;
+      console.log(`Price updated for ${symbol}: ${price}`);
+      return price;
+    } catch (error) {
+      console.error(
+        `Attempt ${attempt + 1} - Error fetching ${symbol} price from Coingecko: `,
+        error,
+      );
+      attempt++;
+      if (attempt === retries) {
+        console.error(`Failed to fetch price after ${retries} attempts.`);
+        return priceCache[symbol] || 0;
+      }
+    }
+  }
+  return priceCache[symbol] || 0;
+};
+
+setInterval(() => {
+  Object.keys(priceCache).forEach((symbol) => {
+    console.log(`Updating price for ${symbol}`);
+    updatePriceCache(symbol);
+  });
+}, 300000);
