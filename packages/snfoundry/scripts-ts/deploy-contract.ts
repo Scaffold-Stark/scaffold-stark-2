@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { networks } from "./helpers/networks";
 import yargs from "yargs";
-import { CallData, hash } from "starknet-dev";
+import { CallData, hash } from "starknet";
 import { Network } from "./types";
 import { LegacyContractClass, CompiledSierra, RawArgs } from "starknet";
 

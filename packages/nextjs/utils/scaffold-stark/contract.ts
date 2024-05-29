@@ -13,7 +13,7 @@ import {
 } from "@starknet-react/core";
 import { Address } from "@starknet-react/chains";
 import { uint256, validateAndParseAddress } from "starknet";
-import { byteArray } from "starknet-dev";
+import { byteArray } from "starknet";
 import type { MergeDeepRecord } from "type-fest/source/merge-deep";
 import { feltToHex } from "~~/utils/scaffold-stark/common";
 import {
@@ -64,11 +64,11 @@ const deepMergeContracts = <
   E extends Record<PropertyKey, any>,
 >(
   local: L,
-  external: E,
+  external: E
 ) => {
   const result: Record<PropertyKey, any> = {};
   const allKeys = Array.from(
-    new Set([...Object.keys(local), ...Object.keys(external)]),
+    new Set([...Object.keys(local), ...Object.keys(external)])
   );
   for (const key of allKeys) {
     if (!external[key]) {
@@ -76,7 +76,7 @@ const deepMergeContracts = <
       continue;
     }
     const amendedExternal = Object.fromEntries(
-      Object.entries(external[key] as Record<string, Record<string, unknown>>),
+      Object.entries(external[key] as Record<string, Record<string, unknown>>)
     );
     result[key] = { ...local[key], ...amendedExternal };
   }
@@ -89,7 +89,7 @@ const deepMergeContracts = <
 
 const contractsData = deepMergeContracts(
   deployedContractsData,
-  predeployedContracts,
+  predeployedContracts
 );
 
 type IsContractDeclarationMissing<TYes, TNo> = typeof contractsData extends {
@@ -348,7 +348,7 @@ export type UseScaffoldEventHistoryConfig<
 
 export function getFunctionsByStateMutability(
   abi: Abi,
-  stateMutability: AbiStateMutability,
+  stateMutability: AbiStateMutability
 ): AbiFunction[] {
   return abi
     .reduce((acc, part) => {
@@ -394,7 +394,7 @@ function tryParsingParamReturnObject(fn: (x: any) => {}, param: any) {
 export function parseParamWithType(
   paramType: string,
   param: any,
-  isRead: boolean,
+  isRead: boolean
 ) {
   if (isRead) {
     if (isCairoTuple(paramType)) {
@@ -416,12 +416,12 @@ export function parseParamWithType(
     } else if (isCairoBytes31(paramType)) {
       return tryParsingParamReturnObject(
         (x: bigint) => `0x${x.toString(16)}`,
-        param,
+        param
       );
     } else if (isCairoInt(paramType)) {
       return tryParsingParamReturnObject(
         (x) => (typeof x === "bigint" ? Number(x) : parseInt(x, 16)),
-        param,
+        param
       );
     } else if (isCairoBigInt(paramType)) {
       return tryParsingParamReturnObject((x) => BigInt(x), param);
@@ -448,7 +448,7 @@ export function parseParamWithType(
 export function parseFunctionParams(
   abiFunction: AbiFunction,
   inputs: any[],
-  isRead: boolean,
+  isRead: boolean
 ) {
   let parsedInputs: any[] = [];
 
@@ -512,7 +512,7 @@ function objectToCairoTuple(obj: { [key: number]: any }, type: string): string {
 
 function stringToObjectTuple(
   tupleString: string,
-  paramType: string,
+  paramType: string
 ): { [key: number]: any } {
   const values = parseTuple(tupleString);
   const types = parseTuple(paramType);
