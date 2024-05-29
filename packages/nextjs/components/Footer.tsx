@@ -89,7 +89,7 @@ export const Footer = () => {
             <span>·</span>
             <div className="text-center">
               <a
-                href="https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA"
+                href="https://t.me/+wO3PtlRAreo4MDI9"
                 target="_blank"
                 rel="noreferrer"
                 className="link"

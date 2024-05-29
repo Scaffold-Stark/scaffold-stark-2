@@ -56,7 +56,7 @@ const Home: NextPage = () => {
       </div>
       <div className="w-full flex justify-center text-lg flex-col items-center text-primary bg-">
         <div className="w-full px-[20px] flex justify-center flex-col items-center sm:pr-[35px]">
-          {firstChallenges.slice(0, 3).map((challenge) => (
+          {firstChallenges.slice(0, 4).map((challenge) => (
             <ChallengeCard
               key={challenge.id}
               challenge={challenge.challenge}
