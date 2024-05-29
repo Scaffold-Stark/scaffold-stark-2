@@ -17,10 +17,15 @@ import { displayType } from "./utilsDisplay";
 import {
   isCairoBigInt,
   isCairoInt,
+  isCairoType,
   isCairoU256,
+  isStructOrEnum,
 } from "~~/utils/scaffold-stark";
+import { Struct } from "./Struct";
+import { Abi } from "abi-wan-kanabi";
 
 type ContractInputProps = {
+  abi?: Abi;
   setForm: Dispatch<SetStateAction<Record<string, any>>>;
   form: Record<string, any> | undefined;
   stateObjectKey: string;
@@ -31,6 +36,7 @@ type ContractInputProps = {
  * Generic Input component to handle input's based on their function param type
  */
 export const ContractInput = ({
+  abi,
   setForm,
   form,
   stateObjectKey,
@@ -51,35 +57,26 @@ export const ContractInput = ({
   };
 
   const renderInput = () => {
-    switch (paramType.type) {
-      //   case "address":
-      //     return <AddressInput {...inputProps} />;
-      //   case "bytes32":
-      //     return <Bytes32Input {...inputProps} />;
-      //   case "bytes":
-      //     return <BytesInput {...inputProps} />;
-      //   case "string":
-      //     return <InputBase {...inputProps} />;
-      //   case "tuple":
-      //     return (
-      //       <Tuple
-      //         setParentForm={setForm}
-      //         parentForm={form}
-      //         abiTupleParameter={paramType as AbiParameterTuple}
-      //         parentStateObjectKey={stateObjectKey}
-      //       />
-      //     );
-      default:
-        // Handling 'int' types and 'tuple[]' types
-        if (
-          isCairoInt(paramType.type) ||
-          isCairoBigInt(paramType.type) ||
-          isCairoU256(paramType.type)
-        ) {
-          return <IntegerInput {...inputProps} variant={paramType.type} />;
-        } else {
-          return <InputBase {...inputProps} />;
-        }
+    if (
+      isCairoInt(paramType.type) ||
+      isCairoBigInt(paramType.type) ||
+      isCairoU256(paramType.type)
+    ) {
+      return <IntegerInput {...inputProps} variant={paramType.type} />;
+    } else if (isCairoType(paramType.type)) {
+      return <InputBase {...inputProps} />;
+    } else {
+      const filteredAbi = abi?.filter(isStructOrEnum);
+      return (
+        <Struct
+          parentForm={form}
+          setParentForm={setForm}
+          parentStateObjectKey={stateObjectKey}
+          abiMember={filteredAbi?.find(
+            (member) => member.name === paramType.type,
+          )}
+        />
+      );
     }
   };
 

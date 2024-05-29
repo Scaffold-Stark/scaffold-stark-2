@@ -14,6 +14,7 @@ import type {
   CairoU256,
   CairoVoid,
 } from "abi-wan-kanabi/dist/kanabi";
+import { AbiEnum, AbiStruct } from "./contract";
 
 export const isCairoInt = (type: string): type is CairoInt =>
   /^core::integer::u(8|16|32)$/.test(type);
@@ -60,3 +61,26 @@ export const isCairoFelt = (type: string): type is CairoFelt =>
 
 export const isCairoTuple = (type: string): type is CairoTuple =>
   /\(([^)]+)\)/i.test(type);
+
+export const isCairoType = (type: string): boolean => {
+  return (
+    isCairoInt(type) ||
+    isCairoBigInt(type) ||
+    isCairoU256(type) ||
+    isCairoContractAddress(type) ||
+    isCairoEthAddress(type) ||
+    isCairoClassHash(type) ||
+    isCairoFunction(type) ||
+    isCairoVoid(type) ||
+    isCairoBool(type) ||
+    isCairoBytes31(type) ||
+    isCairoByteArray(type) ||
+    isCairoSecp256k1Point(type) ||
+    isCairoFelt(type) ||
+    isCairoTuple(type)
+  );
+};
+
+export function isStructOrEnum(member: any): member is AbiStruct | AbiEnum {
+  return member.type === "struct" || member.type === "enum";
+}

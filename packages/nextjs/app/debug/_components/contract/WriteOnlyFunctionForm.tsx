@@ -96,6 +96,7 @@ WriteOnlyFunctionFormProps) => {
     const key = getFunctionInputKey(abiFunction.name, input, inputIndex);
     return (
       <ContractInput
+        abi={abi}
         key={key}
         setForm={(updatedFormValue) => {
           setDisplayedTxResult(undefined);

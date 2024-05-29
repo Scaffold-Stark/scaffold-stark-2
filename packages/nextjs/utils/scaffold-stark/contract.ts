@@ -15,7 +15,7 @@ import { Address } from "@starknet-react/chains";
 import { uint256, validateAndParseAddress } from "starknet";
 import { byteArray } from "starknet";
 import type { MergeDeepRecord } from "type-fest/source/merge-deep";
-import { feltToHex } from "~~/utils/scaffold-stark/common";
+import { feltToHex, replacer } from "~~/utils/scaffold-stark/common";
 import {
   isCairoBigInt,
   isCairoBool,
@@ -135,6 +135,16 @@ export type AbiFunction = {
   inputs: readonly AbiParameter[];
   outputs: readonly AbiOutput[];
   state_mutability: AbiStateMutability;
+};
+export type AbiStruct = {
+  type: "struct";
+  name: string;
+  members: readonly AbiParameter[];
+};
+export type AbiEnum = {
+  type: "enum";
+  name: string;
+  variants: readonly AbiParameter[];
 };
 
 export const contracts = contractsData as GenericContractsDeclaration | null;
@@ -426,7 +436,10 @@ export function parseParamWithType(
     } else if (isCairoBigInt(paramType)) {
       return tryParsingParamReturnObject((x) => BigInt(x), param);
     } else {
-      return tryParsingParamReturnObject((x) => x, param);
+      return tryParsingParamReturnObject(
+        (x) => JSON.stringify(param, replacer),
+        param,
+      );
     }
   } else {
     if (isCairoTuple(paramType)) {
