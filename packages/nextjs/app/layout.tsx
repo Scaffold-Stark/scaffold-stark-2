@@ -7,7 +7,7 @@ import { Space_Grotesk } from "next/font/google";
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Scaffold-Stark",
+  title: "Speedrun Stark",
   description: "Fast track your starknet journey",
   icons: "/logo.ico",
 };
