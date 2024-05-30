@@ -37,10 +37,10 @@ pub trait IYourContract<TContractState> {
 
 #[starknet::contract]
 mod YourContract {
-    use super::{ContractAddress, IYourContract, SampleEnum, SampleNestedStruct, SampleStruct};
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
     use starknet::{get_caller_address, get_contract_address};
+    use super::{ContractAddress, IYourContract, SampleEnum, SampleNestedStruct, SampleStruct};
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
 
@@ -143,9 +143,7 @@ mod YourContract {
         fn test_struct_read(self: @ContractState) -> SampleStruct {
             // make a simple struct
             let sample_struct = SampleStruct {
-                id: 1,
-                name: "sample",
-                status: SampleEnum::enum1(1),
+                id: 1, name: "sample", status: SampleEnum::enum1(1),
             };
             sample_struct
         }
@@ -155,7 +153,9 @@ mod YourContract {
         fn test_nested_struct_read(self: @ContractState) -> SampleNestedStruct {
             self.sample_nested_struct.read()
         }
-        fn test_nested_struct_write(ref self: ContractState, sample_nested_struct: SampleNestedStruct) {
+        fn test_nested_struct_write(
+            ref self: ContractState, sample_nested_struct: SampleNestedStruct
+        ) {
             self.sample_nested_struct.write(sample_nested_struct);
         }
     }

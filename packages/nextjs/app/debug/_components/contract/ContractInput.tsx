@@ -1,17 +1,7 @@
 "use client";
 
 import { Dispatch, SetStateAction } from "react";
-// import { Tuple } from "./Tuple";
-// import { TupleArray } from "./TupleArray";
-import {
-  InputBase,
-  //   AddressInput,
-  //   Bytes32Input,
-  //   BytesInput,
-  //   InputBase,
-  IntegerInput,
-} from "~~/components/scaffold-stark";
-// import { AbiParameterTuple } from "~~/utils/scaffold-eth/contract";
+import { InputBase, IntegerInput } from "~~/components/scaffold-stark";
 import { AbiParameter } from "~~/utils/scaffold-stark/contract";
 import { displayType } from "./utilsDisplay";
 import {
@@ -19,7 +9,6 @@ import {
   isCairoInt,
   isCairoType,
   isCairoU256,
-  isStructOrEnum,
 } from "~~/utils/scaffold-stark";
 import { Struct } from "./Struct";
 import { Abi } from "abi-wan-kanabi";
@@ -66,13 +55,23 @@ export const ContractInput = ({
     } else if (isCairoType(paramType.type)) {
       return <InputBase {...inputProps} />;
     } else {
-      const filteredAbi = abi?.filter(isStructOrEnum);
+      console.log(
+        abi?.find(
+          // @ts-ignore
+          (member) => member.name === paramType.type,
+        ),
+        paramType.type,
+        abi,
+      );
       return (
         <Struct
+          abi={abi}
           parentForm={form}
           setParentForm={setForm}
           parentStateObjectKey={stateObjectKey}
-          abiMember={filteredAbi?.find(
+          // @ts-ignore
+          abiMember={abi?.find(
+            // @ts-ignore
             (member) => member.name === paramType.type,
           )}
         />

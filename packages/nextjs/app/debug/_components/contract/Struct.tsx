@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
-import {
-  getFunctionInputKey,
-  getInitialFormState,
-  getInitialTupleFormState,
-} from "./utilsContract";
+import { getFunctionInputKey, getInitialTupleFormState } from "./utilsContract";
 import { AbiEnum, AbiStruct } from "~~/utils/scaffold-stark/contract";
 import { replacer } from "~~/utils/scaffold-stark/common";
 import { ContractInput } from "./ContractInput";
+import { Abi } from "abi-wan-kanabi";
 
 type StructProps = {
+  abi?: Abi;
   parentForm: Record<string, any> | undefined;
   setParentForm: (form: Record<string, any>) => void;
   parentStateObjectKey: string;
@@ -20,6 +18,7 @@ export const Struct = ({
   setParentForm,
   parentStateObjectKey,
   abiMember,
+  abi,
 }: StructProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialTupleFormState(
@@ -62,28 +61,30 @@ export const Struct = ({
           {abiMember.type === "struct"
             ? abiMember.members.map((member, index) => {
                 const key = getFunctionInputKey(
-                  abiMember.name || "stuple",
+                  abiMember.name || "struct",
                   member,
                   index,
                 );
                 return (
                   <ContractInput
+                    abi={abi}
                     setForm={setForm}
                     form={form}
                     key={index}
                     stateObjectKey={key}
-                    paramType={member}
+                    paramType={{ name: member.name, type: member.type }}
                   />
                 );
               })
             : abiMember.variants.map((variant, index) => {
                 const key = getFunctionInputKey(
-                  abiMember.name || "stuple",
+                  abiMember.name || "tuple",
                   variant,
                   index,
                 );
                 return (
                   <ContractInput
+                    abi={abi}
                     setForm={setForm}
                     form={form}
                     key={index}
