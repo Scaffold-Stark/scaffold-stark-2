@@ -11,7 +11,6 @@ pub trait IYourContract<TContractState> {
 #[starknet::contract]
 mod YourContract {
     use openzeppelin::access::ownable::OwnableComponent;
-    use openzeppelin::access::ownable::ownable::OwnableComponent::InternalTrait;
     use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
     use starknet::{get_caller_address, get_contract_address};
     use super::{ContractAddress, IYourContract};
