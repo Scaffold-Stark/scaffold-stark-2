@@ -1,7 +1,4 @@
-use contracts::YourContract::{
-    IYourContractSafeDispatcher, IYourContractSafeDispatcherTrait, IYourContractDispatcher,
-    IYourContractDispatcherTrait
-};
+use contracts::YourContract::{IYourContractDispatcher, IYourContractDispatcherTrait};
 use openzeppelin::tests::utils::constants::OWNER;
 use openzeppelin::utils::serde::SerializedAppend;
 use snforge_std::{declare, ContractClassTrait};
