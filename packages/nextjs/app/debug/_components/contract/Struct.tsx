@@ -59,7 +59,7 @@ export const Struct = ({
 
   return (
     <div>
-      <div className="collapse collapse-arrow bg-base-200 pl-4 py-1.5 border-2 border-secondary">
+      <div className="collapse bg-base-200 pl-4 pt-1.5 pb-2 border-2 border-secondary custom-after">
         <input type="checkbox" className="min-h-fit peer" />
         <div className="collapse-title p-0 min-h-fit peer-checked:mb-2 text-primary-content/50">
           <p className="m-0 p-0 text-[1rem]">{abiMember.type}</p>
