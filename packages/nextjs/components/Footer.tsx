@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-// import { devnet } from "viem/chains";
+
 import {
   CurrencyDollarIcon,
   MagnifyingGlassIcon,
@@ -13,9 +13,6 @@ import { useGlobalState } from "~~/services/store/store";
 import { devnet } from "@starknet-react/chains";
 import { Faucet } from "~~/components/scaffold-stark/Faucet";
 import { getBlockExplorerLink } from "~~/utils/scaffold-stark";
-// import { Faucet } from "~~/components/scaffold-eth";
-// import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
-// import { useGlobalState } from "~~/services/store/store";
 
 /**
  * Site footer

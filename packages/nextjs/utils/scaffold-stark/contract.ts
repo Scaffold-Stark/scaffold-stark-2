@@ -160,16 +160,6 @@ export type UseScaffoldWriteConfig<
   > &
     UseScaffoldArgsParam<TContractName, TFunctionName>
 >;
-// export type UseScaffoldWriteConfig = {
-//   calls: Array<{
-//     contractName: ContractName;
-//     functionName: ExtractAbiFunctionNamesScaffold<
-//       ContractAbi<ContractName>,
-//       "external"
-//     >;
-//     args: any[]; // You can further refine this type based on your contract ABI
-//   }>;
-// };
 
 type InferContractAbi<TContract> = TContract extends { abi: infer TAbi }
   ? TAbi
