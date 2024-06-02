@@ -55,14 +55,6 @@ export const ContractInput = ({
     } else if (isCairoType(paramType.type)) {
       return <InputBase {...inputProps} />;
     } else {
-      console.log(
-        abi?.find(
-          // @ts-ignore
-          (member) => member.name === paramType.type,
-        ),
-        paramType.type,
-        abi,
-      );
       return (
         <Struct
           abi={abi}

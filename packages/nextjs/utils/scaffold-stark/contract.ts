@@ -12,7 +12,7 @@ import {
   UseContractWriteProps,
 } from "@starknet-react/core";
 import { Address } from "@starknet-react/chains";
-import { uint256, validateAndParseAddress } from "starknet";
+import { CairoCustomEnum, uint256, validateAndParseAddress } from "starknet";
 import { byteArray } from "starknet";
 import type { MergeDeepRecord } from "type-fest/source/merge-deep";
 import { feltToHex, replacer } from "~~/utils/scaffold-stark/common";
@@ -453,7 +453,44 @@ export function parseParamWithType(
     } else if (isCairoBool(paramType)) {
       return param == "false" ? "0x0" : "0x1";
     } else {
-      return tryParsingParamReturnValues((x) => x, param);
+      try {
+        if (typeof param.variant == "object" && param.variant != null) {
+          const parsedVariant = Object.keys(param.variant).reduce(
+            (acc, key) => {
+              if (param.variant[key].value == "") return acc;
+              acc[key] = isCairoU256(param.variant[key].type)
+                ? uint256.bnToUint256(param.variant[key].value)
+                : isCairoByteArray(param.variant[key].type)
+                  ? byteArray.byteArrayFromString(param.variant[key].value)
+                  : parseParamWithType(
+                      param.variant[key].type,
+                      param.variant[key].value,
+                      false,
+                    );
+              return acc;
+            },
+            {} as Record<string, any>,
+          );
+          return new CairoCustomEnum(parsedVariant);
+        } else {
+          return Object.keys(param).reduce((acc, key) => {
+            const parsed = parseParamWithType(
+              param[key].type,
+              param[key].value,
+              false,
+            );
+            if (Array.isArray(parsed)) {
+              acc.push(...parsed);
+            } else {
+              acc.push(parsed);
+            }
+            return acc;
+          }, [] as any[]);
+        }
+      } catch (err) {
+        console.log(err);
+        return param;
+      }
     }
   }
 }

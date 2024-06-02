@@ -33,17 +33,24 @@ export const Struct = ({
 
     if (abiMember.type === "struct") {
       abiMember.members.forEach((member, index) => {
-        argsStruct[member.name || `input_${index}_`] = values[index];
+        argsStruct[member.name || `input_${index}_`] = {
+          type: member.type,
+          value: values[index],
+        };
       });
     } else {
       abiMember.variants.forEach((variant, index) => {
-        argsStruct[variant.name || `input_${index}_`] = values[index];
+        argsStruct[variant.name || `input_${index}_`] = {
+          type: variant.type,
+          value: values[index],
+        };
       });
     }
 
     setParentForm({
       ...parentForm,
-      [parentStateObjectKey]: JSON.stringify(argsStruct, replacer),
+      [parentStateObjectKey]:
+        abiMember.type === "struct" ? argsStruct : { variant: argsStruct },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [abiMember, JSON.stringify(form, replacer)]);
