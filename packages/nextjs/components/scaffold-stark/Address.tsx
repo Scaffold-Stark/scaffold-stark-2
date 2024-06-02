@@ -10,7 +10,6 @@ import {
   CheckCircleIcon,
   DocumentDuplicateIcon,
 } from "@heroicons/react/24/outline";
-// import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
 import { useStarkProfile } from "@starknet-react/core";
@@ -49,6 +48,8 @@ export const Address = ({
   //   const checkSumAddress = address ? address : undefined;
 
   const { targetNetwork } = useTargetNetwork();
+
+  // TODO add starkprofile | not working on devnet now
   //const { data: fetchedProfile } = useStarkProfile({ address });
 
   // We need to apply this pattern to avoid Hydration errors.
