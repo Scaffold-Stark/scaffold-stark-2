@@ -1,0 +1,17 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+DESIRED_COMMIT="46e0ec032956f0e7cbe0330f32b6b31eff824087"
+
+cd packages/snfoundry/local-devnet
+
+LAST_COMMIT=$(git log -1 --format="%H")
+
+if [ "$LAST_COMMIT" != "$DESIRED_COMMIT" ]; then
+  echo "FAIL: Last local-devnet commit ($LAST_COMMIT) is not the desired ($DESIRED_COMMIT)."
+  exit 1
+fi
+
+cd -
+
+npm run format:check
