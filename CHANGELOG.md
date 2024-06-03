@@ -1,5 +1,10 @@
 # create-stark
 
+## 0.0.4
+
+- Fix submodule update when installing dependencies
+- Sync with current scaffold-stark
+
 ## 0.0.3
 - Sync with scaffold-stark
 - Add local_devnet
