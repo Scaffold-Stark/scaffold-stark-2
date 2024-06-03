@@ -27,13 +27,10 @@ export const useNativeCurrencyPrice = () => {
   }, [targetNetwork]);
 
   // Get the price of ETH from Coingecko at a given interval
-  useInterval(
-    async () => {
-      const price = await fetchPriceFromCoingecko(targetNetwork);
-      setNativeCurrencyPrice(price);
-    },
-    scaffoldConfig.pollingInterval ? 4000 : scaffoldConfig.pollingInterval,
-  );
+  useInterval(async () => {
+    const price = await fetchPriceFromCoingecko(targetNetwork);
+    setNativeCurrencyPrice(price);
+  }, scaffoldConfig.pollingInterval);
 
   //return nativeCurrencyPrice;
 };

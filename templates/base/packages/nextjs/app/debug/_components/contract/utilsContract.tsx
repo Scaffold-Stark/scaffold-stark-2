@@ -3,8 +3,6 @@ import {
   AbiParameter,
   parseParamWithType,
 } from "~~/utils/scaffold-stark/contract";
-import { uint256 } from "starknet";
-import { byteArray } from "starknet-dev";
 /**
  * Generates a key based on function metadata
  */
@@ -36,7 +34,6 @@ const getInitialFormState = (abiFunction: AbiFunction) => {
   return initialForm;
 };
 
-// Recursive function to deeply parse JSON strings, correctly handling nested arrays and encoded JSON strings
 const deepParseValues = (
   value: any,
   isRead: boolean,
@@ -99,24 +96,9 @@ const getParsedContractFunctionArgs = (
 };
 
 const adjustInput = (input: AbiParameter): AbiParameter => {
-  //   if (input.type.startsWith("tuple[")) {
-  //     const depth = (input.type.match(/\[\]/g) || []).length;
-  //     return {
-  //       ...input,
-  //       components: transformComponents(input.components, depth, {
-  //         internalType: input.internalType || "struct",
-  //         name: input.name,
-  //       }),
-  //     };
-  //   } else if (input.components) {
   return {
     ...input,
-    // components: input.components.map((value) =>
-    //   adjustInput(value as AbiParameterTuple)
-    // ),
   };
-  //   }
-  //   return input;
 };
 
 const transformAbiFunction = (abiFunction: AbiFunction): AbiFunction => {
