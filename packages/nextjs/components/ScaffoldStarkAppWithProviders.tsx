@@ -49,7 +49,7 @@ export const ScaffoldStarkAppWithProviders = ({
   const { connectors } = useInjectedConnectors({
     // Show these connectors if the user has no connector installed.
     recommended: [argent(), braavos(), new BurnerConnector()],
-    order: "random"
+    order: "random",
   });
 
   return (
