@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { Uint256, validateChecksumAddress } from "starknet";
+import { CairoCustomEnum, Uint256, validateChecksumAddress } from "starknet";
 import { Address } from "~~/components/scaffold-stark";
 import { replacer } from "~~/utils/scaffold-stark/common";
 import {
@@ -30,8 +30,14 @@ export const displayTxResult = (
     return "";
   }
   if (functionOutputs != null && functionOutputs.length != 0) {
+    if (displayContent instanceof CairoCustomEnum) {
+      return JSON.stringify({[displayContent.activeVariant()]: displayContent.unwrap()}, replacer);
+    }
+
     const type = functionOutputs[0].type;
     const parsedParam = parseParamWithType(type, displayContent, true);
+
+    if (typeof parsedParam === "object") return JSON.stringify(parsedParam, replacer);
 
     if (typeof parsedParam === "bigint") {
       const asNumber = Number(parsedParam);

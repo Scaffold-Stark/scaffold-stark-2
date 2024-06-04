@@ -141,11 +141,7 @@ mod YourContract {
             self.sample_enum.write(sample_enum);
         }
         fn test_struct_read(self: @ContractState) -> SampleStruct {
-            // make a simple struct
-            let sample_struct = SampleStruct {
-                id: 1, name: "sample", status: SampleEnum::enum1(1),
-            };
-            sample_struct
+            self.sample_struct.read()
         }
         fn test_struct_write(ref self: ContractState, sample_struct: SampleStruct) {
             self.sample_struct.write(sample_struct);

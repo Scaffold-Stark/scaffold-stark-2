@@ -168,7 +168,7 @@ export type UseScaffoldWriteConfig<
     UseContractWriteProps,
     "chainId" | "abi" | "address" | "functionName" | "mode"
   > &
-    UseScaffoldArgsParam<TContractName, TFunctionName>
+  UseScaffoldArgsParam<TContractName, TFunctionName>
 >;
 // export type UseScaffoldWriteConfig = {
 //   calls: Array<{
@@ -209,13 +209,13 @@ type OptionalTupple<T> = T extends readonly [infer H, ...infer R]
   : T;
 type UnionToIntersection<U> = Expand<
   (U extends any ? (k: U) => void : never) extends (k: infer I) => void
-    ? I
-    : never
+  ? I
+  : never
 >;
 type Expand<T> = T extends object
   ? T extends infer O
-    ? { [K in keyof O]: O[K] }
-    : never
+  ? { [K in keyof O]: O[K] }
+  : never
   : T;
 
 // helper function will only take from interfaces : //TODO: see if we can make it more generic
@@ -274,22 +274,22 @@ export type UseScaffoldArgsParam<
   TFunctionName extends ExtractAbiFunctionNamesWithInputsScaffold<
     ContractAbi<TContractName>
   >
-    ? {
-        args: OptionalTupple<
-          UnionToIntersection<
-            ExtractArgs<
-              ContractAbi<TContractName>,
-              ExtractAbiFunctionScaffold<
-                ContractAbi<TContractName>,
-                TFunctionName
-              >
-            >
+  ? {
+    args: OptionalTupple<
+      UnionToIntersection<
+        ExtractArgs<
+          ContractAbi<TContractName>,
+          ExtractAbiFunctionScaffold<
+            ContractAbi<TContractName>,
+            TFunctionName
           >
-        >;
-      }
-    : {
-        args?: never;
-      };
+        >
+      >
+    >;
+  }
+  : {
+    args?: never;
+  };
 
 export type UseScaffoldReadConfig<
   TContractName extends ContractName,
@@ -303,7 +303,7 @@ export type UseScaffoldReadConfig<
   {
     functionName: TFunctionName;
   } & UseScaffoldArgsParam<TContractName, TFunctionName> &
-    Omit<UseContractReadProps, "chainId" | "abi" | "address" | "functionName">
+  Omit<UseContractReadProps, "chainId" | "abi" | "address" | "functionName">
 >;
 
 export type AbiFunctionOutputs<
@@ -437,7 +437,7 @@ export function parseParamWithType(
       return tryParsingParamReturnObject((x) => BigInt(x), param);
     } else {
       return tryParsingParamReturnObject(
-        (x) => JSON.stringify(param, replacer),
+        (x) => x,
         param,
       );
     }
@@ -455,23 +455,28 @@ export function parseParamWithType(
     } else {
       try {
         if (typeof param.variant == "object" && param.variant != null) {
-          const parsedVariant = Object.keys(param.variant).reduce(
-            (acc, key) => {
-              if (param.variant[key].value == "") return acc;
-              acc[key] = isCairoU256(param.variant[key].type)
-                ? uint256.bnToUint256(param.variant[key].value)
-                : isCairoByteArray(param.variant[key].type)
-                  ? byteArray.byteArrayFromString(param.variant[key].value)
-                  : parseParamWithType(
+          const parsedVariant = Object.keys(param.variant)
+            .reduce(
+              (acc, key) => {
+                if (param.variant[key].value == "" || param.variant[key].value == undefined) {
+                  acc[key] = undefined;
+                  return acc;
+                };
+
+                acc[key] = isCairoU256(param.variant[key].type)
+                  ? uint256.bnToUint256(param.variant[key].value)
+                  : isCairoByteArray(param.variant[key].type)
+                    ? byteArray.byteArrayFromString(param.variant[key].value)
+                    : parseParamWithType(
                       param.variant[key].type,
                       param.variant[key].value,
                       false,
                     );
-              return acc;
-            },
-            {} as Record<string, any>,
-          );
-          return new CairoCustomEnum(parsedVariant);
+                return acc;
+              },
+              {} as Record<string, any>,
+            );
+          return Object.values(parsedVariant).length > 0 ? new CairoCustomEnum(parsedVariant) : undefined;
         } else {
           return Object.keys(param).reduce((acc, key) => {
             const parsed = parseParamWithType(
@@ -479,10 +484,13 @@ export function parseParamWithType(
               param[key].value,
               false,
             );
-            if (Array.isArray(parsed)) {
-              acc.push(...parsed);
-            } else {
-              acc.push(parsed);
+
+            if (parsed !== undefined && parsed !== "") {
+              if (Array.isArray(parsed)) {
+                acc.push(...parsed);
+              } else {
+                acc.push(parsed);
+              }
             }
             return acc;
           }, [] as any[]);
