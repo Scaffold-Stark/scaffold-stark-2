@@ -36,10 +36,18 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
         return;
       }
 
-      const contractClasHash = await publicClient.getClassHashAt(
-        deployedContract.address,
-        "pending" as BlockIdentifier,
-      );
+      let contractClasHash: string | undefined = undefined;
+      try {
+        contractClasHash = await publicClient.getClassHashAt(
+          deployedContract.address,
+          "pending" as BlockIdentifier,
+        );
+      } catch (error) {
+        console.error(
+          "⚡️ ~ file: useDeployedContractInfo.ts:useEffect ~ error",
+          error,
+        );
+      }
 
       if (!isMounted()) {
         return;
