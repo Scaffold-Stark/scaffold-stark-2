@@ -21,9 +21,6 @@ type ContractInputProps = {
   paramType: AbiParameter;
 };
 
-/**
- * Generic Input component to handle input's based on their function param type
- */
 export const ContractInput = ({
   abi,
   setForm,
