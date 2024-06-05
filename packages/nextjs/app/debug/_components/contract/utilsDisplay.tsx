@@ -31,13 +31,17 @@ export const displayTxResult = (
   }
   if (functionOutputs != null && functionOutputs.length != 0) {
     if (displayContent instanceof CairoCustomEnum) {
-      return JSON.stringify({[displayContent.activeVariant()]: displayContent.unwrap()}, replacer);
+      return JSON.stringify(
+        { [displayContent.activeVariant()]: displayContent.unwrap() },
+        replacer,
+      );
     }
 
     const type = functionOutputs[0].type;
     const parsedParam = parseParamWithType(type, displayContent, true);
 
-    if (typeof parsedParam === "object") return JSON.stringify(parsedParam, replacer);
+    if (typeof parsedParam === "object")
+      return JSON.stringify(parsedParam, replacer);
 
     if (typeof parsedParam === "bigint") {
       const asNumber = Number(parsedParam);

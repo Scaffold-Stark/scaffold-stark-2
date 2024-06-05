@@ -35,9 +35,9 @@ p {
   position: absolute !important;
   display: block !important;
   height: 0.5rem !important; /* 8px */
-  width: 0.5rem !important;  /* 8px */
-  top: 1.4rem !important;    /* Custom value */
-  right: 1.4rem !important;  /* Custom value */
+  width: 0.5rem !important; /* 8px */
+  top: 1.4rem !important; /* Custom value */
+  right: 1.4rem !important; /* Custom value */
   transform: translateY(-100%) rotate(45deg) !important;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
   content: "" !important;
