@@ -89,12 +89,10 @@ If your Starknet Foundry version is not `0.23.0`, you need to install it.
 
 ## Compatible versions
 
-- scarb - v2.5.4
-- cairo - v2.5.4
-- starknet - v2.5.4
-- snforge - v0.23.0 // starknet foundry
-- sierra - v1.4.0
-- rpc - v0.5.1
+- Scarb - v2.5.4
+- Snforge - v0.23
+- Cairo - v2.5.4
+- Rpc - v0.5.1
 
 ## Quickstart
 
