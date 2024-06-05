@@ -92,6 +92,7 @@ If your Starknet Foundry version is not `0.23.0`, you need to install it.
 - Scarb - v2.5.4
 - Snforge - v0.23
 - Cairo - v2.5.4
+- Rpc - v0.5.1
 
 ## Quickstart
 
