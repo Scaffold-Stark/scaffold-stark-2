@@ -1630,22 +1630,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@ss-2/snfoundry@workspace:packages/snfoundry":
-  version: 0.0.0-use.local
-  resolution: "@ss-2/snfoundry@workspace:packages/snfoundry"
-  dependencies:
-    "@types/prettier": ^2
-    dotenv: ^16.3.1
-    envfile: ^6.18.0
-    prettier: ^2.8.8
-    starknet: 5.25.0
-    starknet-dev: "npm:starknet@6.7.0"
-    toml: ^3.0.0
-    tslib: ^2.6.2
-    yargs: ^17.7.2
-  languageName: unknown
-  linkType: soft
-
 "@starknet-react/chains@npm:^0.1.7":
   version: 0.1.7
   resolution: "@starknet-react/chains@npm:0.1.7"
@@ -1828,13 +1812,6 @@ __metadata:
   version: 0.2.3
   resolution: "@types/nprogress@npm:0.2.3"
   checksum: 2bd96ba1167f548e8f898ae8a790b6501a5422217621c9b8ea75962f3e8473f0e371058b79d83e04e80a6bfee2d66fc6612cdb28296648007b35d3c2a6d64e5c
-  languageName: node
-  linkType: hard
-
-"@types/prettier@npm:^2":
-  version: 2.7.3
-  resolution: "@types/prettier@npm:2.7.3"
-  checksum: 705384209cea6d1433ff6c187c80dcc0b95d99d5c5ce21a46a9a58060c527973506822e428789d842761e0280d25e3359300f017fbe77b9755bc772ab3dc2f83
   languageName: node
   linkType: hard
 
@@ -3255,13 +3232,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.3.1":
-  version: 16.4.5
-  resolution: "dotenv@npm:16.4.5"
-  checksum: 301a12c3d44fd49888b74eb9ccf9f07a1f5df43f489e7fcb89647a2edcd84c42d6bc349dc8df099cd18f07c35c7b04685c1a4f3e6a6a9e6b30f8d48c15b7f49c
-  languageName: node
-  linkType: hard
-
 "eastasianwidth@npm:^0.2.0":
   version: 0.2.0
   resolution: "eastasianwidth@npm:0.2.0"
@@ -3350,15 +3320,6 @@ __metadata:
   version: 2.2.1
   resolution: "env-paths@npm:2.2.1"
   checksum: 65b5df55a8bab92229ab2b40dad3b387fad24613263d103a97f91c9fe43ceb21965cd3392b1ccb5d77088021e525c4e0481adb309625d0cb94ade1d1fb8dc17e
-  languageName: node
-  linkType: hard
-
-"envfile@npm:^6.18.0":
-  version: 6.22.0
-  resolution: "envfile@npm:6.22.0"
-  bin:
-    envfile: bin.cjs
-  checksum: 95e29f82be5f1365bf3dc3b324576c5df69fbc9b28238cf876cff08124307693e49cf0d9df6ba8735d42b35b6f59ec01fda28435b839319652e9618a1430aa6b
   languageName: node
   linkType: hard
 
@@ -6763,15 +6724,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.8.8":
-  version: 2.8.8
-  resolution: "prettier@npm:2.8.8"
-  bin:
-    prettier: bin-prettier.js
-  checksum: b49e409431bf129dd89238d64299ba80717b57ff5a6d1c1a8b1a28b590d998a34e083fa13573bc732bb8d2305becb4c9a4407f8486c81fa7d55100eb08263cf8
-  languageName: node
-  linkType: hard
-
 "prettier@npm:^3.2.5":
   version: 3.2.5
   resolution: "prettier@npm:3.2.5"
@@ -7899,13 +7851,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"toml@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "toml@npm:3.0.0"
-  checksum: 5d7f1d8413ad7780e9bdecce8ea4c3f5130dd53b0a4f2e90b93340979a137739879d7b9ce2ce05c938b8cc828897fe9e95085197342a1377dd8850bf5125f15f
-  languageName: node
-  linkType: hard
-
 "tough-cookie@npm:^4.0.0":
   version: 4.1.3
   resolution: "tough-cookie@npm:4.1.3"
@@ -8038,7 +7983,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.4.0, tslib@npm:^2.6.2":
+"tslib@npm:^2.0.0, tslib@npm:^2.1.0, tslib@npm:^2.4.0":
   version: 2.6.2
   resolution: "tslib@npm:2.6.2"
   checksum: 329ea56123005922f39642318e3d1f0f8265d1e7fcb92c633e0809521da75eeaca28d2cf96d7248229deb40e5c19adf408259f4b9640afd20d13aecc1430f3ad
