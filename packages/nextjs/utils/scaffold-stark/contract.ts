@@ -243,8 +243,6 @@ export type ExtractAbiFunctionScaffold<
   }
 >;
 
-// let emerson = singleFunction extends listOfFunctions ? true : false;
-
 export type UseScaffoldArgsParam<
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
@@ -290,31 +288,6 @@ export type AbiFunctionOutputs<
   TAbi extends Abi,
   TFunctionName extends string,
 > = ExtractAbiFunctionScaffold<TAbi, TFunctionName>["outputs"];
-
-/*export type AbiEventInputs<TAbi extends Abi, TEventName extends ExtractAbiEventNames<TAbi>> = ExtractAbiEvent<
-  TAbi,
-  TEventName
->["inputs"];
-
-type IndexedEventInputs<
-  TContractName extends ContractName,
-  TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
-> = Extract<AbiEventInputs<ContractAbi<TContractName>, TEventName>[number], { indexed: true }>;
-
-export type EventFilters<
-  TContractName extends ContractName,
-  TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
-> = IsContractDeclarationMissing<
-  any,
-  IndexedEventInputs<TContractName, TEventName> extends never
-    ? never
-    : {
-      [Key in IsContractDeclarationMissing<
-        any,
-        IndexedEventInputs<TContractName, TEventName>["name"]
-      >]?: AbiParameterToPrimitiveType<Extract<IndexedEventInputs<TContractName, TEventName>, { name: Key }>>;
-    }
->;*/
 
 export type UseScaffoldEventHistoryConfig<
   TContractName extends ContractName,
