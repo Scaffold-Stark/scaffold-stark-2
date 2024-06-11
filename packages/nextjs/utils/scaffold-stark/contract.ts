@@ -17,6 +17,7 @@ import { byteArray } from "starknet-dev";
 import type { MergeDeepRecord } from "type-fest/source/merge-deep";
 import { feltToHex } from "~~/utils/scaffold-stark/common";
 import {
+  isCairoArray,
   isCairoBigInt,
   isCairoBool,
   isCairoByteArray,
@@ -402,6 +403,18 @@ export function parseParamWithType(
       return tryParsingParamReturnValues(validateAndParseAddress, param);
     } else if (isCairoBool(paramType)) {
       return param == "false" ? "0x0" : "0x1";
+    } else if (isCairoArray(paramType)) {
+      const genericType = paramType.split("::").pop();
+      if (genericType) {
+        // @ts-ignore
+        return [
+          param.split(",").map((item) => {
+            return parseParamWithType(genericType, item, isRead);
+          }),
+        ];
+      } else {
+        return param;
+      }
     } else {
       return tryParsingParamReturnValues((x) => x, param);
     }

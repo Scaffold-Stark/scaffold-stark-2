@@ -60,3 +60,6 @@ export const isCairoFelt = (type: string): type is CairoFelt =>
 
 export const isCairoTuple = (type: string): type is CairoTuple =>
   /\(([^)]+)\)/i.test(type);
+
+export const isCairoArray = (type: string): boolean =>
+  type.includes("core::array");
