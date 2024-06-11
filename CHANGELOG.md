@@ -1,5 +1,13 @@
 # create-stark
 
+## 0.0.6
+
+- Sync feats with scaffold-stark-2
+
+## 0.0.5
+
+- Sync feats with scaffold-stark-2
+
 ## 0.0.4
 
 - Fix submodule update when installing dependencies

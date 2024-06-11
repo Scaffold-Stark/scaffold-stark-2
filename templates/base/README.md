@@ -89,12 +89,10 @@ If your Starknet Foundry version is not `0.23.0`, you need to install it.
 
 ## Compatible versions
 
-- scarb - v2.5.4
-- cairo - v2.5.4
-- starknet - v2.5.4
-- snforge - v0.23.0 // starknet foundry
-- sierra - v1.4.0
-- rpc - v0.5.1
+- Scarb - v2.5.4
+- Snforge - v0.23
+- Cairo - v2.5.4
+- Rpc - v0.5.1
 
 ## Quickstart
 
@@ -110,7 +108,7 @@ yarn install
 
 2. Prepare your environment variables.
 
-By defauly Scaffold-Stark 2 takes the first prefunded account from `starknet-devnet` as a deployer address, thus **you can skip this step!**. But if you want use the .env file anyway, you can fill the envs related to devnet with any other predeployed contract address and private key from starknet-devnet.
+By default Scaffold-Stark 2 takes the first prefunded account from `starknet-devnet` as a deployer address, thus **you can skip this step!**. But if you want use the .env file anyway, you can fill the envs related to devnet with any other predeployed contract address and private key from starknet-devnet.
 
 **Note:** In case you want to deploy on Sepolia, you need to fill the envs related to sepolia testnet with your own contract address and private key.
 
@@ -126,7 +124,10 @@ cp packages/snfoundry/.env.example packages/snfoundry/.env
 yarn chain
 ```
 
-This command starts a local Starknet network using Devnet. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `scaffold.config.ts`.
+This command starts a local Starknet network using Devnet. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `scaffold.config.ts` for your nextjs app.
+
+**Note:** If you are on sepolia or mainnet, for a better user experience on your app, you can get a dedicated RPC from [Infura dashboard](https://www.infura.io/). A default is provided [here](https://github.com/Quantum3-Labs/scaffold-stark-2/tree/main/packages/nextjs/.env.example), in order to use this, you have to run `cp packages/nextjs/.env.example packages/nextjs/.env.local`
+
 
 4. On a second terminal, deploy the sample contract:
 
@@ -135,6 +136,7 @@ yarn deploy --network {NETWORK_NAME} // when NETWORK_NAME is not specified, it d
 ```
 
 **Note:** To use sepolia tesnet, you have to set {NETWORK_NAME} to `sepolia`.
+
 
 This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/contracts/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts-ts/deploy.ts` to deploy the contract to the network. You can also customize the deploy script.
 
