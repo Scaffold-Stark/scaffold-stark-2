@@ -99,7 +99,6 @@ mod YourContract {
             self.eth_token.read().transfer(self.ownable.owner(), balance);
         }
         fn premium(self: @ContractState) -> bool {
-            println!("test");
             self.premium.read()
         }
     }
