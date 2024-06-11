@@ -406,8 +406,8 @@ export function parseParamWithType(
     } else if (isCairoArray(paramType)) {
       const genericType = paramType.split("::").pop();
       if (genericType) {
-        // @ts-ignore
         return [
+          // @ts-ignore
           param.split(",").map((item) => {
             return parseParamWithType(genericType, item, isRead);
           }),
