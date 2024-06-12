@@ -63,3 +63,9 @@ export const isCairoTuple = (type: string): type is CairoTuple =>
 
 export const isCairoArray = (type: string): boolean =>
   type.includes("core::array");
+
+export const isCairoOption = (type: string): boolean =>
+  type.includes("core::option");
+
+export const isCairoResult = (type: string): boolean =>
+  type.includes("core::result");

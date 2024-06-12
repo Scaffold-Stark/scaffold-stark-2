@@ -80,11 +80,14 @@ export const displayTxResult = (
 };
 
 export const displayType = (type: string) => {
-  if (type.includes("array")) {
+  if (type.includes("array") || type.includes("option")) {
     const types = type.split("::");
     const gType = types.pop();
     const arrayType = types.slice(-2)[0];
     return `${arrayType}<${gType}`;
+  } else if (type.includes("result")) {
+    const types = type.split("::");
+    return `${types.at(-4)}<${types.at(-2)?.split(",").at(0)},${types.at(-1)}`;
   } else if (type.includes("::")) {
     return type.split("::").pop();
   }

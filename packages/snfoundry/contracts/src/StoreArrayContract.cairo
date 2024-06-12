@@ -68,6 +68,10 @@ impl StoreFelt252Array of Store<Array<felt252>> {
 pub trait IStoreArrayContract<TContractState> {
     fn store_array(ref self: TContractState, arr: Array<felt252>);
     fn read_array(self: @TContractState) -> Array<felt252>;
+    fn read_option(self: @TContractState) -> Option<felt252>;
+    fn write_option(ref self: TContractState, opt: Option<felt252>);
+    fn read_result(self: @TContractState) -> Result<felt252, felt252>;
+    fn write_result(ref self: TContractState, res: Result<felt252, felt252>);
 }
 
 #[starknet::contract]
@@ -76,7 +80,9 @@ mod StoreArrayContract {
 
     #[storage]
     struct Storage {
-        arr: Array<felt252>
+        arr: Array<felt252>,
+        opt: Option<felt252>,
+        res: Result<felt252, felt252>,
     }
 
     #[abi(embed_v0)]
@@ -87,6 +93,22 @@ mod StoreArrayContract {
 
         fn read_array(self: @ContractState) -> Array<felt252> {
             self.arr.read()
+        }
+
+        fn read_option(self: @ContractState) -> Option<felt252> {
+            self.opt.read()
+        }
+
+        fn write_option(ref self: ContractState, opt: Option<felt252>) {
+            self.opt.write(opt)
+        }
+
+        fn read_result(self: @ContractState) -> Result<felt252, felt252> {
+            self.res.read()
+        }
+
+        fn write_result(ref self: ContractState, res: Result<felt252, felt252>) {
+            self.res.write(res)
         }
     }
 }

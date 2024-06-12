@@ -12,7 +12,14 @@ import {
   UseContractWriteProps,
 } from "@starknet-react/core";
 import { Address } from "@starknet-react/chains";
-import { uint256, validateAndParseAddress } from "starknet";
+import {
+  CairoOption,
+  CairoOptionVariant,
+  CairoResult,
+  CairoResultVariant,
+  uint256,
+  validateAndParseAddress,
+} from "starknet";
 import { byteArray } from "starknet-dev";
 import type { MergeDeepRecord } from "type-fest/source/merge-deep";
 import { feltToHex } from "~~/utils/scaffold-stark/common";
@@ -25,6 +32,8 @@ import {
   isCairoContractAddress,
   isCairoFelt,
   isCairoInt,
+  isCairoOption,
+  isCairoResult,
   isCairoTuple,
   isCairoU256,
 } from "~~/utils/scaffold-stark/types";
@@ -361,6 +370,7 @@ function tryParsingParamReturnObject(fn: (x: any) => {}, param: any) {
   }
 }
 
+//@ts-ignore
 export function parseParamWithType(
   paramType: string,
   param: any,
@@ -376,6 +386,22 @@ export function parseParamWithType(
           ? //@ts-ignore
             param.map((item) => parseParamWithType(genericType, item, isRead))
           : param;
+      }, param);
+    } else if (isCairoOption(paramType)) {
+      //@ts-ignore
+      return tryParsingParamReturnObject((x) => {
+        const option = x as CairoOption<any>;
+        return option.isNone()
+          ? "None"
+          : `Some(${parseParamWithType(paramType.split("<").pop()!, option.unwrap(), isRead)})`;
+      }, param);
+    } else if (isCairoResult(paramType)) {
+      return tryParsingParamReturnObject((x) => {
+        const result = x as CairoResult<any, any>;
+        const [ok, error] = parseGenericType(paramType);
+        return result.isOk()
+          ? `Ok(${parseParamWithType(ok, result.unwrap(), isRead)})`
+          : `Err(${parseParamWithType(error, result.unwrap(), isRead)})`;
       }, param);
     } else if (isCairoU256(paramType)) {
       return tryParsingParamReturnObject(uint256.uint256ToBN, param);
@@ -429,6 +455,38 @@ export function parseParamWithType(
       } else {
         return param;
       }
+    } else if (isCairoOption(paramType)) {
+      if (param === "None") {
+        return new CairoOption(CairoOptionVariant.None);
+      }
+      const type = parseGenericType(paramType);
+      const parsedParam = param.slice(5, param.length - 1);
+      //@ts-ignore
+      const parsedValue = parseParamWithType(
+        type as string,
+        parsedParam,
+        isRead,
+      );
+      return new CairoOption(CairoOptionVariant.Some, parsedValue);
+    } else if (isCairoResult(paramType)) {
+      const isOk = (param as string).toLowerCase().includes("ok");
+      const [ok, error] = parseGenericType(paramType);
+      const contentStartIndex = isOk ? 3 : 4;
+      const contentEndIndex = (param as string).length - 1;
+      const content = (param as string).slice(
+        contentStartIndex,
+        contentEndIndex,
+      );
+      //@ts-ignore
+      const parsedValue = parseParamWithType(
+        isOk ? ok : error,
+        content,
+        isRead,
+      );
+      return new CairoResult(
+        isOk ? CairoResultVariant.Ok : CairoResultVariant.Err,
+        parsedValue,
+      );
     } else {
       return tryParsingParamReturnValues((x) => x, param);
     }
@@ -513,4 +571,19 @@ function stringToObjectTuple(
   });
 
   return obj;
+}
+
+function parseGenericType(typeString: string): string[] | string {
+  const match = typeString.match(/<([^>]*(?:<(?:[^<>]*|<[^>]*>)*>[^>]*)*)>/);
+  if (!match) return typeString;
+
+  const content = match[1];
+  // Check if the content is a tuple (enclosed in parentheses)
+  if (content.startsWith("(") && content.endsWith(")")) {
+    return content; // Return the tuple as a single string
+  }
+
+  // Split by commas that are not inside parentheses
+  const types = content.split(/,(?![^\(\)]*\))/);
+  return types.map((type) => type.trim()); // Trim whitespace around types
 }
