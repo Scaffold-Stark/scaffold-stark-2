@@ -363,6 +363,14 @@ export function parseParamWithType(
   if (isRead) {
     if (isCairoTuple(paramType)) {
       return objectToCairoTuple(param, paramType);
+    } else if (isCairoArray(paramType)) {
+      return tryParsingParamReturnObject((param) => {
+        const genericType = paramType.split("::").pop();
+        return genericType
+          ? //@ts-ignore
+            param.map((item) => parseParamWithType(genericType, item, isRead))
+          : param;
+      }, param);
     } else if (isCairoU256(paramType)) {
       return tryParsingParamReturnObject(uint256.uint256ToBN, param);
     } else if (isCairoByteArray(paramType)) {

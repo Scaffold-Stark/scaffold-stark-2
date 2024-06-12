@@ -79,7 +79,16 @@ export const displayTxResult = (
   return JSON.stringify(displayContent, replacer, 2);
 };
 
-export const displayType = (type: string) =>
-  type.includes("::") ? type.split("::").pop() : type;
+export const displayType = (type: string) => {
+  if (type.includes("array")) {
+    const types = type.split("::");
+    const gType = types.pop();
+    const arrayType = types.slice(-2)[0];
+    return `${arrayType}<${gType}`;
+  } else if (type.includes("::")) {
+    return type.split("::").pop();
+  }
+  return type;
+};
 const displayTxResultAsText = (displayContent: DisplayContent) =>
   displayTxResult(displayContent, true);

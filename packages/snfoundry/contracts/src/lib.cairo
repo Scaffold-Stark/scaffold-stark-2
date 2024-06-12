@@ -1,8 +1,8 @@
-mod MyToken;
-// mod YourContract;
-//#[cfg(test)]
-//mod test {
-//    mod TestContract;
-//}
+mod StoreArrayContract;
+mod YourContract;
 
+#[cfg(test)]
+mod test {
+    mod TestContract;
+}
 
