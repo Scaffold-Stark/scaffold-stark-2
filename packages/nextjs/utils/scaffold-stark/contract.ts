@@ -205,15 +205,21 @@ export type ExtractAbiFunctionNamesScaffold<
 > = ExtractAbiFunctionsScaffold<TAbi, TAbiStateMutability>["name"];
 
 // helper function will only take from interfaces : //TODO: see if we can make it more generic
+// helper function will only take from interfaces : //TODO: see if we can make it more generic
 export type ExtractAbiFunctionsScaffold<
   TAbi extends Abi,
   TAbiStateMutability extends AbiStateMutability = AbiStateMutability,
 > = Extract<
   ExtractAbiInterfaces<TAbi>["items"][number],
-  {
-    type: "function";
-    state_mutability: TAbiStateMutability;
-  }
+  | {
+      state_mutability: TAbiStateMutability;
+    }
+  | Extract<
+      TAbi[number],
+      {
+        type: "function";
+      }
+    >
 >;
 
 // helper function will only take from interfaces : //TODO: see if we can make it more generic
