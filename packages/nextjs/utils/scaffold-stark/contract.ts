@@ -466,7 +466,7 @@ export function parseParamWithType(
             {} as Record<string, any>,
           );
           return Object.values(parsedVariant).length > 0
-            ? new CairoCustomEnum(parsedVariant)
+            ? [[new CairoCustomEnum(parsedVariant)]]
             : undefined;
         } else {
           return Object.keys(param).reduce((acc, key) => {
