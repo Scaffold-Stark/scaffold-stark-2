@@ -7,6 +7,12 @@ const deployScript = async (): Promise<void> => {
     },
     "StoreArrayContract"
   );
+  await deployContract(
+    {
+      owner: deployer.address, // the deployer address is the owner of the contract
+    },
+    "YourContract"
+  );
 };
 
 deployScript()
