@@ -69,3 +69,16 @@ export const isCairoOption = (type: string): boolean =>
 
 export const isCairoResult = (type: string): boolean =>
   type.includes("core::result");
+
+export function parseGenericType(typeString: string): string[] | string {
+  const match = typeString.match(/<([^>]*(?:<(?:[^<>]*|<[^>]*>)*>[^>]*)*)>/);
+  if (!match) return typeString;
+
+  const content = match[1];
+  if (content.startsWith("(") && content.endsWith(")")) {
+    return content; // Return the tuple as a single string
+  }
+
+  const types = content.split(/,(?![^\(\)]*\))/);
+  return types.map((type) => type.trim());
+}

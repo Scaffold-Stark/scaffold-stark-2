@@ -36,6 +36,7 @@ import {
   isCairoResult,
   isCairoTuple,
   isCairoU256,
+  parseGenericType,
 } from "~~/utils/scaffold-stark/types";
 
 type AddExternalFlag<T> = {
@@ -375,13 +376,14 @@ export function parseParamWithType(
   paramType: string,
   param: any,
   isRead: boolean,
+  parseReturnObj: boolean = true,
 ) {
   if (isRead) {
     if (isCairoTuple(paramType)) {
       return objectToCairoTuple(param, paramType);
     } else if (isCairoArray(paramType)) {
       return tryParsingParamReturnObject((param) => {
-        const genericType = paramType.split("::").pop();
+        const genericType = parseGenericType(paramType)[0];
         return genericType
           ? //@ts-ignore
             param.map((item) => parseParamWithType(genericType, item, isRead))
@@ -396,6 +398,7 @@ export function parseParamWithType(
           : `Some(${parseParamWithType(paramType.split("<").pop()!, option.unwrap(), isRead)})`;
       }, param);
     } else if (isCairoResult(paramType)) {
+      //@ts-ignore
       return tryParsingParamReturnObject((x) => {
         const result = x as CairoResult<any, any>;
         const [ok, error] = parseGenericType(paramType);
@@ -435,26 +438,33 @@ export function parseParamWithType(
   } else {
     if (isCairoTuple(paramType)) {
       return stringToObjectTuple(param, paramType);
-    } else if (isCairoU256(paramType)) {
-      return tryParsingParamReturnValues(uint256.bnToUint256, param);
-    } else if (isCairoByteArray(paramType)) {
-      return tryParsingParamReturnValues(byteArray.byteArrayFromString, param);
-    } else if (isCairoContractAddress(paramType)) {
-      return tryParsingParamReturnValues(validateAndParseAddress, param);
-    } else if (isCairoBool(paramType)) {
-      return param == "false" ? "0x0" : "0x1";
     } else if (isCairoArray(paramType)) {
-      const genericType = paramType.split("::").pop();
+      const genericType = parseGenericType(paramType)[0];
       if (genericType) {
+        //@ts-ignore
         return [
-          // @ts-ignore
-          param.split(",").map((item) => {
-            return parseParamWithType(genericType, item, isRead);
-          }),
+          param
+            .split(",")
+            //@ts-ignore
+            .map((item) =>
+              parseParamWithType(genericType, item, isRead, false),
+            ),
         ];
       } else {
         return param;
       }
+    } else if (isCairoU256(paramType)) {
+      return parseReturnObj
+        ? tryParsingParamReturnObject(uint256.bnToUint256, param)
+        : uint256.bnToUint256(param);
+    } else if (isCairoByteArray(paramType)) {
+      return parseReturnObj
+        ? tryParsingParamReturnObject(byteArray.byteArrayFromString, param)
+        : byteArray.byteArrayFromString(param);
+    } else if (isCairoContractAddress(paramType)) {
+      return tryParsingParamReturnValues(validateAndParseAddress, param);
+    } else if (isCairoBool(paramType)) {
+      return param == "false" ? "0x0" : "0x1";
     } else if (isCairoOption(paramType)) {
       if (param === "None") {
         return new CairoOption(CairoOptionVariant.None);
@@ -571,19 +581,4 @@ function stringToObjectTuple(
   });
 
   return obj;
-}
-
-function parseGenericType(typeString: string): string[] | string {
-  const match = typeString.match(/<([^>]*(?:<(?:[^<>]*|<[^>]*>)*>[^>]*)*)>/);
-  if (!match) return typeString;
-
-  const content = match[1];
-  // Check if the content is a tuple (enclosed in parentheses)
-  if (content.startsWith("(") && content.endsWith(")")) {
-    return content; // Return the tuple as a single string
-  }
-
-  // Split by commas that are not inside parentheses
-  const types = content.split(/,(?![^\(\)]*\))/);
-  return types.map((type) => type.trim()); // Trim whitespace around types
 }
