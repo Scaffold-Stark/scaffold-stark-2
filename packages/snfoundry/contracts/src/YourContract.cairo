@@ -33,6 +33,24 @@ pub trait IYourContract<TContractState> {
     fn test_struct_write(ref self: TContractState, sample_struct: SampleStruct);
     fn test_nested_struct_read(self: @TContractState) -> SampleNestedStruct;
     fn test_nested_struct_write(ref self: TContractState, sample_nested_struct: SampleNestedStruct);
+
+    fn test_write_span_felt(ref self: TContractState, span: Span<felt252>);
+    fn test_write_span_u256(ref self: TContractState, span: Span<u256>);
+    fn test_write_span_bool(ref self: TContractState, span: Span<bool>);
+    fn test_write_span_address(ref self: TContractState, span: Span<ContractAddress>);
+    fn test_write_span_byte_array(ref self: TContractState, span: Span<ByteArray>);
+
+    // special
+    fn test_double_input_span(ref self: TContractState, span1: Span<u256>, span2: Span<u256>);
+
+    // test reads
+    fn get_last_span_data_felt(self: @TContractState) -> (felt252, felt252);
+    fn get_last_span_data_u256(self: @TContractState) -> (felt252, u256);
+    fn get_last_span_data_bool(self: @TContractState) -> (felt252, bool);
+    fn get_last_span_data_address(self: @TContractState) -> (felt252, ContractAddress);
+    fn get_last_span_data_byte_array(self: @TContractState) -> (felt252, ByteArray);
+
+    fn test_read_double_input_span(ref self: TContractState) -> (u256, u256);
 }
 
 #[starknet::contract]
@@ -81,6 +99,15 @@ mod YourContract {
         sample_nested_struct: SampleNestedStruct,
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
+        test_last_write_span_length: felt252,
+        test_2nd_last_item_span_felt: felt252,
+        test_2nd_last_item_span_u256: u256,
+        test_2nd_last_item_span_bool: bool,
+        test_2nd_last_item_span_address: ContractAddress,
+        test_2nd_last_item_span_byte_array: ByteArray,
+        test_2nd_last_item_span_contract_address: ContractAddress,
+        test_double_input_span_last_2nd_item1: u256,
+        test_double_input_span_last_2nd_item2: u256,
     }
 
     #[constructor]
@@ -153,6 +180,132 @@ mod YourContract {
             ref self: ContractState, sample_nested_struct: SampleNestedStruct
         ) {
             self.sample_nested_struct.write(sample_nested_struct);
+        }
+
+        fn test_write_span_felt(ref self: ContractState, mut span: Span<felt252>) {
+            self.test_last_write_span_length.write(span.len().into());
+
+            // get second item with loop like in previous function and pop;
+            loop {
+                if span.len() == 2 {
+                    let second_item = *span.pop_back().unwrap();
+                    self.test_2nd_last_item_span_felt.write(second_item);
+                    break;
+                }
+                let useless_item = *span.pop_front().unwrap();
+            };
+        }
+
+        fn test_write_span_u256(ref self: ContractState, mut span: Span<u256>) {
+            self.test_last_write_span_length.write(span.len().into());
+
+            // get second item with loop like in previous function and pop;
+            loop {
+                if span.len() == 2 {
+                    let second_item = *span.pop_front().unwrap();
+                    self.test_2nd_last_item_span_u256.write(second_item);
+                    break;
+                }
+                let useless_item = *span.pop_front().unwrap();
+            };
+        }
+
+        fn test_write_span_bool(ref self: ContractState, mut span: Span<bool>) {
+            self.test_last_write_span_length.write(span.len().into());
+
+            // get second item with loop like in previous function and pop;
+            loop {
+                if span.len() == 2 {
+                    let second_item = *span.pop_front().unwrap();
+                    self.test_2nd_last_item_span_bool.write(second_item);
+                    break;
+                }
+                let useless_item = *span.pop_front().unwrap();
+            };
+        }
+
+        fn test_write_span_address(ref self: ContractState, mut span: Span<ContractAddress>) {
+            self.test_last_write_span_length.write(span.len().into());
+
+            // get second item with loop like in previous function and pop;
+            loop {
+                if span.len() == 2 {
+                    let second_item = *span.pop_front().unwrap();
+                    self.test_2nd_last_item_span_address.write(second_item);
+                    break;
+                }
+                let useless_item = *span.pop_front().unwrap();
+            };
+        }
+
+        fn test_write_span_byte_array(ref self: ContractState, mut span: Span<ByteArray>) {
+            self.test_last_write_span_length.write(span.len().into());
+        // only write the length of the string array
+
+        // get second item with loop like in previous function and pop;
+        // loop {
+        //     if span.len() == 2 {
+        //         let mut second_item = *span.pop_front().unwrap();
+        //         self.test_2nd_last_item_span_byte_array.write(second_item);
+        //         break;
+        //     }
+        //     let useless_item = *span.pop_front().unwrap();
+        // };
+        }
+
+        fn test_double_input_span(
+            ref self: ContractState, mut span1: Span<u256>, mut span2: Span<u256>
+        ) {
+            // only write the length of the string array
+
+            // get second item with loop like in previous function and pop;
+            loop {
+                if span1.len() == 2 {
+                    let mut second_item = *span1.pop_front().unwrap();
+                    let mut second_item2 = *span2.pop_front().unwrap();
+                    self.test_double_input_span_last_2nd_item1.write(second_item);
+                    self.test_double_input_span_last_2nd_item2.write(second_item2);
+                    break;
+                }
+                let useless_item = *span1.pop_front().unwrap();
+                let useless_item2 = *span2.pop_front().unwrap();
+            };
+        }
+
+        fn test_read_double_input_span(ref self: ContractState) -> (u256, u256) {
+            let last_2nd_item1 = self.test_double_input_span_last_2nd_item1.read();
+            let last_2nd_item2 = self.test_double_input_span_last_2nd_item2.read();
+            (last_2nd_item1, last_2nd_item2)
+        }
+
+        fn get_last_span_data_felt(self: @ContractState) -> (felt252, felt252) {
+            let last_span_length = self.test_last_write_span_length.read();
+            let second_last_item = self.test_2nd_last_item_span_felt.read();
+            (last_span_length, second_last_item)
+        }
+
+        fn get_last_span_data_u256(self: @ContractState) -> (felt252, u256) {
+            let last_span_length = self.test_last_write_span_length.read();
+            let second_last_item = self.test_2nd_last_item_span_u256.read();
+            (last_span_length, second_last_item)
+        }
+
+        fn get_last_span_data_bool(self: @ContractState) -> (felt252, bool) {
+            let last_span_length = self.test_last_write_span_length.read();
+            let second_last_item = self.test_2nd_last_item_span_bool.read();
+            (last_span_length, second_last_item)
+        }
+
+        fn get_last_span_data_address(self: @ContractState) -> (felt252, ContractAddress) {
+            let last_span_length = self.test_last_write_span_length.read();
+            let second_last_item = self.test_2nd_last_item_span_address.read();
+            (last_span_length, second_last_item)
+        }
+
+        fn get_last_span_data_byte_array(self: @ContractState) -> (felt252, ByteArray) {
+            let last_span_length = self.test_last_write_span_length.read();
+            let second_last_item = self.test_2nd_last_item_span_byte_array.read();
+            (last_span_length, second_last_item)
         }
     }
 }

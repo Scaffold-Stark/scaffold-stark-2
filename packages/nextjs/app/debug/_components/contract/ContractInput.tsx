@@ -5,6 +5,7 @@ import { InputBase, IntegerInput } from "~~/components/scaffold-stark";
 import { AbiParameter } from "~~/utils/scaffold-stark/contract";
 import { displayType } from "./utilsDisplay";
 import {
+  isCairoArray,
   isCairoBigInt,
   isCairoInt,
   isCairoType,
@@ -44,9 +45,10 @@ export const ContractInput = ({
 
   const renderInput = () => {
     if (
-      isCairoInt(paramType.type) ||
-      isCairoBigInt(paramType.type) ||
-      isCairoU256(paramType.type)
+      !isCairoArray(paramType.type) &&
+      (isCairoInt(paramType.type) ||
+        isCairoBigInt(paramType.type) ||
+        isCairoU256(paramType.type))
     ) {
       return <IntegerInput {...inputProps} variant={paramType.type} />;
     } else if (isCairoType(paramType.type)) {
