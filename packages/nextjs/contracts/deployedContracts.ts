@@ -5,257 +5,84 @@
 
 const deployedContracts = {
   devnet: {
-    YourContract: {
+    StarkPrice: {
       address:
-        "0x065ab1377854f0089058d2e4d5650add61f87c061b907c5ce3f280fb3ab50028",
+        "0x0449c7c91757ca068b00a2f2f227b18f52b9de08e3c2c624e6495bf2e4a0122a",
       abi: [
         {
           type: "impl",
-          name: "YourContractImpl",
-          interface_name: "contracts::YourContract::IYourContract",
-        },
-        {
-          type: "struct",
-          name: "core::byte_array::ByteArray",
-          members: [
-            {
-              name: "data",
-              type: "core::array::Array::<core::bytes_31::bytes31>",
-            },
-            {
-              name: "pending_word",
-              type: "core::felt252",
-            },
-            {
-              name: "pending_word_len",
-              type: "core::integer::u32",
-            },
-          ],
-        },
-        {
-          type: "struct",
-          name: "core::integer::u256",
-          members: [
-            {
-              name: "low",
-              type: "core::integer::u128",
-            },
-            {
-              name: "high",
-              type: "core::integer::u128",
-            },
-          ],
-        },
-        {
-          type: "enum",
-          name: "core::bool",
-          variants: [
-            {
-              name: "False",
-              type: "()",
-            },
-            {
-              name: "True",
-              type: "()",
-            },
-          ],
+          name: "StarkImpl",
+          interface_name: "contracts::cryptos::StarkPrice::IStarkPrice",
         },
         {
           type: "interface",
-          name: "contracts::YourContract::IYourContract",
-          items: [
-            {
-              type: "function",
-              name: "gretting",
-              inputs: [],
-              outputs: [
-                {
-                  type: "core::byte_array::ByteArray",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "set_gretting",
-              inputs: [
-                {
-                  name: "new_greeting",
-                  type: "core::byte_array::ByteArray",
-                },
-                {
-                  name: "amount_eth",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "withdraw",
-              inputs: [],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "premium",
-              inputs: [],
-              outputs: [
-                {
-                  type: "core::bool",
-                },
-              ],
-              state_mutability: "view",
-            },
-          ],
-        },
-        {
-          type: "impl",
-          name: "OwnableImpl",
-          interface_name: "openzeppelin::access::ownable::interface::IOwnable",
-        },
-        {
-          type: "interface",
-          name: "openzeppelin::access::ownable::interface::IOwnable",
-          items: [
-            {
-              type: "function",
-              name: "owner",
-              inputs: [],
-              outputs: [
-                {
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "transfer_ownership",
-              inputs: [
-                {
-                  name: "new_owner",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "renounce_ownership",
-              inputs: [],
-              outputs: [],
-              state_mutability: "external",
-            },
-          ],
+          name: "contracts::cryptos::StarkPrice::IStarkPrice",
+          items: [],
         },
         {
           type: "constructor",
           name: "constructor",
-          inputs: [
-            {
-              name: "owner",
-              type: "core::starknet::contract_address::ContractAddress",
-            },
-          ],
+          inputs: [],
         },
         {
           type: "event",
-          name: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferred",
-          kind: "struct",
-          members: [
-            {
-              name: "previous_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "new_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
-          kind: "struct",
-          members: [
-            {
-              name: "previous_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "new_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin::access::ownable::ownable::OwnableComponent::Event",
+          name: "contracts::cryptos::StarkPrice::StarkPrice::Event",
           kind: "enum",
-          variants: [
-            {
-              name: "OwnershipTransferred",
-              type: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferred",
-              kind: "nested",
-            },
-            {
-              name: "OwnershipTransferStarted",
-              type: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
-              kind: "nested",
-            },
-          ],
+          variants: [],
+        },
+      ],
+    },
+    BitcoinPrice: {
+      address:
+        "0x06b31d92f1cf52ccad0154e2f758e05996aa81b6aeb9f09fc0d7897c3b13d588",
+      abi: [
+        {
+          type: "impl",
+          name: "BitcoinImpl",
+          interface_name: "contracts::cryptos::BitcoinPrice::IBitcoinPrice",
+        },
+        {
+          type: "interface",
+          name: "contracts::cryptos::BitcoinPrice::IBitcoinPrice",
+          items: [],
+        },
+        {
+          type: "constructor",
+          name: "constructor",
+          inputs: [],
         },
         {
           type: "event",
-          name: "contracts::YourContract::YourContract::GreetingChanged",
-          kind: "struct",
-          members: [
-            {
-              name: "greeting_setter",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "new_greeting",
-              type: "core::byte_array::ByteArray",
-              kind: "key",
-            },
-            {
-              name: "premium",
-              type: "core::bool",
-              kind: "data",
-            },
-            {
-              name: "value",
-              type: "core::integer::u256",
-              kind: "data",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "contracts::YourContract::YourContract::Event",
+          name: "contracts::cryptos::BitcoinPrice::BitcoinPrice::Event",
           kind: "enum",
-          variants: [
-            {
-              name: "OwnableEvent",
-              type: "openzeppelin::access::ownable::ownable::OwnableComponent::Event",
-              kind: "flat",
-            },
-            {
-              name: "GreetingChanged",
-              type: "contracts::YourContract::YourContract::GreetingChanged",
-              kind: "nested",
-            },
-          ],
+          variants: [],
+        },
+      ],
+    },
+    EtherPrice: {
+      address:
+        "0x02de4499f60bd3d0e498757ee113e554a38649cc938bb507d205ecf1467011f1",
+      abi: [
+        {
+          type: "impl",
+          name: "EtherImpl",
+          interface_name: "contracts::cryptos::EtherPrice::IEtherPrice",
+        },
+        {
+          type: "interface",
+          name: "contracts::cryptos::EtherPrice::IEtherPrice",
+          items: [],
+        },
+        {
+          type: "constructor",
+          name: "constructor",
+          inputs: [],
+        },
+        {
+          type: "event",
+          name: "contracts::cryptos::EtherPrice::EtherPrice::Event",
+          kind: "enum",
+          variants: [],
         },
       ],
     },

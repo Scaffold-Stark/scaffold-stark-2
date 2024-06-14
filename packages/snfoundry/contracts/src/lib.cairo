@@ -1,5 +1,1 @@
-mod YourContract;
-#[cfg(test)]
-mod test {
-    mod TestContract;
-}
+pub mod cryptos;
