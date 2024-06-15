@@ -14,8 +14,9 @@ import { BlockieAvatar, isENS } from "~~/components/scaffold-stark";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { getTargetNetworks } from "~~/utils/scaffold-stark";
 import { Address } from "@starknet-react/chains";
-import { useDisconnect, useStarkProfile } from "@starknet-react/core";
+import { useDisconnect } from "@starknet-react/core";
 import { getStarknetPFPIfExists } from "~~/utils/profile";
+import useConditionalStarkProfile from "~~/hooks/useConditionalStarkProfile";
 
 const allowedNetworks = getTargetNetworks();
 
@@ -36,9 +37,7 @@ export const AddressInfoDropdown = ({
 
   const [addressCopied, setAddressCopied] = useState(false);
 
-  const { data: profile } = useStarkProfile({
-    address,
-  });
+  const { data: profile } = useConditionalStarkProfile(address);
 
   const [selectingNetwork, setSelectingNetwork] = useState(false);
   const dropdownRef = useRef<HTMLDetailsElement>(null);

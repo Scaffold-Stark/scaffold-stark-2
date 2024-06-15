@@ -12,9 +12,9 @@ import {
 } from "@heroicons/react/24/outline";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
-import { useStarkProfile } from "@starknet-react/core";
 import { BlockieAvatar } from "~~/components/scaffold-stark/BlockieAvatar";
 import { getStarknetPFPIfExists } from "~~/utils/profile";
+import useConditionalStarkProfile from "~~/hooks/useConditionalStarkProfile";
 
 type AddressProps = {
   address?: AddressType;
@@ -46,12 +46,10 @@ export const Address = ({
   const [ensAvatar, setEnsAvatar] = useState<string | null>();
   const [addressCopied, setAddressCopied] = useState(false);
   const checkSumAddress = address ? getChecksumAddress(address) : undefined;
-  const { data: profile } = useStarkProfile({
-    address,
-  });
-  //   const checkSumAddress = address ? address : undefined;
-
   const { targetNetwork } = useTargetNetwork();
+  const { data: profile } = useConditionalStarkProfile(address);
+
+  //   const checkSumAddress = address ? address : undefined;
 
   // TODO add starkprofile | not working on devnet now
   //const { data: fetchedProfile } = useStarkProfile({ address });
