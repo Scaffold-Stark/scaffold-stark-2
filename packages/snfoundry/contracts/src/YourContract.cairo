@@ -74,7 +74,7 @@ mod YourContract {
             self.user_gretting_counter.write(get_caller_address(), user_counter + 1);
 
             if amount_eth > 0 {
-                // call approve on UI
+                // call `approve` on ETH contract before transfer amount_eth
                 self
                     .eth_token
                     .read()

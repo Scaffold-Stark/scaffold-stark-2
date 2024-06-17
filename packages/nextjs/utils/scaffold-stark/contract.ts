@@ -337,7 +337,7 @@ export function getFunctionsByStateMutability(
     });
 }
 
-// TODO: in the future when param decoding is standarized in wallets argent and braavos we can return the object
+// TODO: in the future when param decoding is standardized in wallets argent and braavos we can return the object
 // TODO : starknet react makes an input validation so we need to return objects for function reads
 function tryParsingParamReturnValues(fn: (x: any) => {}, param: any) {
   try {
