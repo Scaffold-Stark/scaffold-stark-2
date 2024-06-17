@@ -15,6 +15,8 @@ import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { getTargetNetworks } from "~~/utils/scaffold-stark";
 import { Address } from "@starknet-react/chains";
 import { useDisconnect } from "@starknet-react/core";
+import { getStarknetPFPIfExists } from "~~/utils/profile";
+import useConditionalStarkProfile from "~~/hooks/useConditionalStarkProfile";
 
 const allowedNetworks = getTargetNetworks();
 
@@ -35,6 +37,8 @@ export const AddressInfoDropdown = ({
 
   const [addressCopied, setAddressCopied] = useState(false);
 
+  const { data: profile } = useConditionalStarkProfile(address);
+
   const [selectingNetwork, setSelectingNetwork] = useState(false);
   const dropdownRef = useRef<HTMLDetailsElement>(null);
   const closeDropdown = () => {
@@ -50,11 +54,23 @@ export const AddressInfoDropdown = ({
           tabIndex={0}
           className="btn btn-secondary btn-sm pl-0 pr-2 shadow-md dropdown-toggle gap-0 !h-auto"
         >
-          <BlockieAvatar address={address} size={30} ensImage={ensAvatar} />
+          {getStarknetPFPIfExists(profile?.profilePicture) ? (
+            //eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={profile?.profilePicture}
+              alt="Profile Picture"
+              className="rounded-full h-8 w-8"
+              width={30}
+              height={30}
+            />
+          ) : (
+            <BlockieAvatar address={address} size={30} ensImage={ensAvatar} />
+          )}
           <span className="ml-2 mr-1">
             {isENS(displayName)
               ? displayName
-              : address?.slice(0, 6) + "..." + address?.slice(-4)}
+              : profile?.name ||
+                address?.slice(0, 6) + "..." + address?.slice(-4)}
           </span>
           <ChevronDownIcon className="h-6 w-4 ml-2 sm:ml-0" />
         </summary>
