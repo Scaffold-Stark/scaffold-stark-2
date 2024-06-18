@@ -30,6 +30,7 @@ const Crash = () => {
   const [cashoutAt, setCashoutAt] = useState<number>(2.0);
   const [currentMultiplier, setCurrentMultiplier] = useState<number>(1.0);
   const [cashedOutMultiplier, setCashedOutMultiplier] = useState<number>(1.0);
+  const [isCashedOut, setIsCashedOut] = useState<boolean>(false);
   const [isCrashed, setIsCrashed] = useState<boolean>(false);
   const [roundActive, setRoundActive] = useState<boolean>(false);
   const [randomCrash, setRandomCrash] = useState<number>(Math.random() * 5 + 1);
@@ -87,26 +88,32 @@ const Crash = () => {
   }, [currentMultiplier]);
 
   const startRound = () => {
-    setCurrentMultiplier(1.0);
-    setIsCrashed(false);
-    setRandomCrash(Math.random() * 5 + 1);
-    setRoundActive(true);
-    setTime(0);
-    setData({
-      labels: [],
-      datasets: [
-        {
-          label: 'Multiplier',
-          data: [],
-          borderColor: 'rgba(255, 206, 86, 1)',
-          backgroundColor: 'rgba(255, 206, 86, 0.2)',
-        },
-      ],
-    });
+    if (betAmount > 0) {
+      setCurrentMultiplier(1.0);
+      setIsCrashed(false);
+      setIsCashedOut(false);
+      setRandomCrash(Math.random() * 5 + 1);
+      setRoundActive(true);
+      setTime(0);
+      setData({
+        labels: [],
+        datasets: [
+          {
+            label: 'Multiplier',
+            data: [],
+            borderColor: 'rgba(255, 206, 86, 1)',
+            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+          },
+        ],
+      });
+    }
   };
 
-  const stopRound = () => {
-    setCashedOutMultiplier(currentMultiplier);
+  const cashoutRound = () => {
+    if (!isCashedOut) {
+      setIsCashedOut(true);
+      setCashedOutMultiplier(currentMultiplier);
+    }
   };
 
   return (
@@ -125,6 +132,7 @@ const Crash = () => {
             value={betAmount}
             onChange={(e) => setBetAmount(parseFloat(e.target.value))}
             disabled={roundActive}
+            required
           />
         </div>
 
@@ -150,14 +158,14 @@ const Crash = () => {
 
           <button
             className="w-1/2 bg-red-600 py-2 rounded-md ml-2"
-            onClick={stopRound}
-            disabled={!roundActive}
+            onClick={cashoutRound}
+            disabled={!roundActive || isCashedOut || isCrashed}
           >
             Cashout
           </button>
         </div>
 
-        { cashedOutMultiplier == 1.0 ? (
+        { !isCashedOut ? (
             <div className="mt-4 bg-gray-800 p-2 rounded-md">
               <h3 className="text-lg mb-2">Profit on Win</h3>
               <div className="text-xl">{(betAmount * (currentMultiplier - 1)).toFixed(8)} ETH</div>
@@ -201,6 +209,17 @@ const Crash = () => {
             <span>0s</span>
             <span>{time.toFixed(1)}s</span>
           </div>
+        </div>
+        <div className="mt-4">
+          <div className="flex justify-between text-3xl pt-3 mt-4 mb-3">
+            <div className="ml-2">{currentMultiplier.toFixed(2)}x</div>
+          </div>
+          <br/>
+          { isCashedOut && (
+            <div className="flex items-center">
+              <div className="ml-2 text-lg">Cashed out at {cashedOutMultiplier.toFixed(2)}x</div>
+            </div>
+          )}
         </div>
       </div>
     </div>
