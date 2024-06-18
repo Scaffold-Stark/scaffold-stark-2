@@ -1,3 +1,4 @@
+
 #[starknet::interface]
 pub trait IEtherPrice<TContractState> {}
 
