@@ -38,12 +38,12 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
     { id: "" },
     {
       initializeWithValue: false,
-    },
+    }
   );
 
   function handleConnectWallet(
     e: React.MouseEvent<HTMLButtonElement>,
-    connector: Connector,
+    connector: Connector
   ): void {
     if (connector.id === "burner-wallet") {
       setIsBurnerWallet(true);
@@ -57,10 +57,10 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
 
   function handleConnectBurner(
     e: React.MouseEvent<HTMLButtonElement>,
-    ix: number,
+    ix: number
   ) {
     const connector = connectors.find(
-      (it) => it.id == "burner-wallet",
+      (it) => it.id == "burner-wallet"
     ) as BurnerConnector;
     if (connector) {
       connector.burnerAccount = burnerAccounts[ix];
@@ -75,7 +75,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
       isOpen={isOpen}
       onClose={closeModal}
       animate={animate}
-      className={`w-[90vw] mx-auto md:max-h-[30rem] md:max-w-[45rem]`}
+      className={`w-[90vw] mx-auto md:max-h-[30rem] md:max-w-[45rem] bg-[#141438]`}
     >
       <div className="flex p-4 w-full lg:p-0 lg:grid lg:grid-cols-5">
         <div className="basis-5/6 lg:col-span-2   lg:py-4 lg:pl-8">
