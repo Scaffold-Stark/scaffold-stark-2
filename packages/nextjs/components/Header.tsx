@@ -8,6 +8,8 @@ import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
 import { FaucetButton } from "~~/components/scaffold-stark/FaucetButton";
+import { Button } from "~~/Uikit/components/ui/button";
+import ConnectModal from "./scaffold-stark/CustomConnectButton/ConnectModal";
 
 type HeaderMenuLink = {
   label: string;
@@ -57,16 +59,28 @@ export const HeaderMenuLinks = () => {
  * Site header
  */
 export const Header = () => {
+  const [modalOpen, setModalOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   useOutsideClick(
     burgerMenuRef,
-    useCallback(() => setIsDrawerOpen(false), []),
+    useCallback(() => setIsDrawerOpen(false), [])
   );
 
+  const handleWalletConnect = () => {
+    setModalOpen(true);
+  };
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
+
   return (
-    <div className="sticky lg:static top-0 navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary px-0 sm:px-2">
-      <div className="navbar-start w-auto lg:w-1/2">
+    <div className="sticky flex lg:static top-0 navbar bg-[#141438] min-h-0 flex-shrink-0 justify-between z-20 shadow-md px-6 h-16 items-center">
+      {/* <Button>test</Button>
+      <button className="text-white px-4 sm:px-8 py-2 sm:py-3 bg-sky-700 hover:bg-sky-800">
+        ...
+      </button> */}
+      {/* <div className="navbar-start w-auto lg:w-1/2">
         <div className="lg:hidden dropdown" ref={burgerMenuRef}>
           <label
             tabIndex={0}
@@ -112,11 +126,14 @@ export const Header = () => {
         <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">
           <HeaderMenuLinks />
         </ul>
-      </div>
-      <div className="navbar-end flex-grow mr-4">
-        <CustomConnectButton />
-        <FaucetButton />
-      </div>
+      </div> */}
+      <Image
+        src={"/starksight.png"}
+        alt={"starksight"}
+        width={250}
+        height={60}
+      />
+      <CustomConnectButton />
     </div>
   );
 };

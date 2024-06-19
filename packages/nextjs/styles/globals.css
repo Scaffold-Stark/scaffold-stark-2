@@ -1,32 +1,59 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root,
-[data-theme] {
-  background: oklch(var(--b2));
+@layer base {
+  :root {
+    --background: 0 100% 3%;
+    --foreground: 60 30% 96%;
+    --muted: 0 12% 15%;
+    --muted-foreground: 0 12% 65%;
+    --popover: 0 100% 0%;
+    --popover-foreground: 0 0% 100%;
+    --card: 0 100% 1%;
+    --card-foreground: 0 0% 100%;
+    --border: 0 90% 8%;
+    --input: 0 90% 11%;
+    --primary: 355 69% 29%;
+    --primary-foreground: 355 69% 89%;
+    --secondary: 355 30% 75%;
+    --secondary-foreground: 355 30% 15%;
+    --accent: 0 100% 18%;
+    --accent-foreground: 0 100% 78%;
+    --destructive: 10 82% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 355 69% 29%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 100% 3%;
+    --foreground: 60 30% 96%;
+    --muted: 0 12% 15%;
+    --muted-foreground: 0 12% 65%;
+    --popover: 0 100% 0%;
+    --popover-foreground: 0 0% 100%;
+    --card: 0 100% 1%;
+    --card-foreground: 0 0% 100%;
+    --border: 0 90% 8%;
+    --input: 0 90% 11%;
+    --primary: 355 69% 29%;
+    --primary-foreground: 355 69% 89%;
+    --secondary: 355 30% 75%;
+    --secondary-foreground: 355 30% 15%;
+    --accent: 0 100% 18%;
+    --accent-foreground: 0 100% 78%;
+    --destructive: 10 82% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 355 69% 29%;
+  }
 }
 
-body {
-  min-height: 100vh;
-}
-
-h1,
-h2,
-h3,
-h4 {
-  margin-bottom: 0.5rem;
-  line-height: 1;
-}
-
-p {
-  margin: 1rem 0;
-}
-
-.btn {
-  @apply shadow-md;
-}
-
-.btn.btn-ghost {
-  @apply shadow-none;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
