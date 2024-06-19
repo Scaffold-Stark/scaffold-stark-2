@@ -8,10 +8,8 @@ pub mod EtherPrice {
     struct Storage {}
 
     #[constructor]
-    fn constructor(ref self: ContractState) {  
-    }
+    fn constructor(ref self: ContractState) {}
 
     #[abi(embed_v0)]
-    impl EtherImpl of IEtherPrice<ContractState> {
-    }
+    impl EtherImpl of IEtherPrice<ContractState> {}
 }

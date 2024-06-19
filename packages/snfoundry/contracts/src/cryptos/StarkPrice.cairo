@@ -8,10 +8,8 @@ pub mod StarkPrice {
     struct Storage {}
 
     #[constructor]
-    fn constructor(ref self: ContractState) {  
-    }
+    fn constructor(ref self: ContractState) {}
 
     #[abi(embed_v0)]
-    impl StarkImpl of IStarkPrice<ContractState> {
-    }
+    impl StarkImpl of IStarkPrice<ContractState> {}
 }

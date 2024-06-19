@@ -6,6 +6,7 @@ name = "contracts"
 version = "0.1.0"
 dependencies = [
  "openzeppelin",
+ "pragma_lib",
  "snforge_std",
 ]
 
@@ -13,6 +14,11 @@ dependencies = [
 name = "openzeppelin"
 version = "0.10.0"
 source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v0.10.0#d77082732daab2690ba50742ea41080eb23299d3"
+
+[[package]]
+name = "pragma_lib"
+version = "1.0.0"
+source = "git+https://github.com/astraly-labs/pragma-lib.git#fe9a46743254182ac331da488ccfc05e0185cdd0"
 
 [[package]]
 name = "snforge_std"

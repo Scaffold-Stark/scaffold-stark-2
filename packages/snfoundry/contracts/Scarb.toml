@@ -9,9 +9,15 @@ edition = "2023_11"
 starknet = ">=2.5.4"
 openzeppelin = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", tag = "v0.10.0" }
 snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry", tag = "v0.23.0" }
+pragma_lib = { git = "https://github.com/astraly-labs/pragma-lib.git"}
 
 [[target.starknet-contract]]
 casm = true
 
 [tool.fmt]
 sort-module-level-items = true
+
+[[tool.snforge.fork]]
+name = "TEST"
+url = "https://rpc.nethermind.io/mainnet-juno/?apikey=Zh5vBpotTbH8DlbCyWqyuQHARB2O5A2gGVck3gzBNXkXlqAP"
+block_id.number = "649020"
