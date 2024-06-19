@@ -296,12 +296,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/font@npm:^14.2.2":
-  version: 14.2.2
-  resolution: "@next/font@npm:14.2.2"
+"@next/font@npm:^14.2.4":
+  version: 14.2.4
+  resolution: "@next/font@npm:14.2.4"
   peerDependencies:
     next: "*"
-  checksum: 0dc19c1b1d6b406ce60c0ebc25bc02b5414b7d9cc994a864ae1b5d826ed0e07a4e91a50d6070b71b90dd4da1a4c50017e00ff74a6c499cd34130955d5a66255f
+  checksum: ee04b899b2e7b9c82c63874bb6f3daba53a1295749322e0e54761a16c7dae1d58b497c3f73776f12c9fd2aee22fa2702a3081692383f93d003d7725130ce1ab2
   languageName: node
   linkType: hard
 
@@ -1592,7 +1592,7 @@ __metadata:
   resolution: "@ss-2/nextjs@workspace:packages/nextjs"
   dependencies:
     "@heroicons/react": ^2.1.3
-    "@next/font": ^14.2.2
+    "@next/font": ^14.2.4
     "@radix-ui/react-icons": 1.3.0
     "@radix-ui/themes": 2.0.3
     "@starknet-react/chains": ^0.1.7

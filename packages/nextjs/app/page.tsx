@@ -6,14 +6,17 @@ import StepInstruction from "~~/components/StepInstruction/StepInstruction";
 import ChallengeCard from "~~/components/ChallengeCard/ChallengeCard";
 import { firstChallenges, lastChallenges } from "~~/data-challenges/challenges";
 import { useRouter } from "next/navigation";
+import localFont from "@next/font/local";
 import SpeedStarknetIcon from "~~/components/icons/SpeedStarknetIcon";
+
+const codec = localFont({ src: "../font/codec.ttf" });
 
 const Home: NextPage = () => {
   const router = useRouter();
   return (
     <div>
       <div className="w-full flex items-center justify-center flex-col bg-landing gap-10 bg-base-100 text-primary sm:gap-3 ">
-        <div className="w-full flex flex-col items-center gap-10 sm:gap-5">
+        <div className="w-full flex flex-col items-center gap-8 sm:gap-5">
           <div className="w-full flex items-center justify-center flex-col gap-10 sm:px-[20px] sm:gap-5 sm:text-[12px] max-w-[600px] ">
             <Image
               src={"/Starknet-icon.svg"}
@@ -25,13 +28,11 @@ const Home: NextPage = () => {
             <span className="text-center">
               Learn how to build on Starknet; the superpowers and the gotchas.
             </span>
-            <svg
-              viewBox="0 0 540 155"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+            <h1
+              className={`text-8xl font-black text-center sm:text-6xl ${codec.className}`}
             >
-              <SpeedStarknetIcon />
-            </svg>
+              SPEEDRUN STARKNET
+            </h1>
           </div>
           <div className="flex flex-col gap-5 bg-base-100 sm:px-[20px] ">
             <StepInstruction
