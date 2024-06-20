@@ -75,15 +75,15 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
       isOpen={isOpen}
       onClose={closeModal}
       animate={animate}
-      className={`w-[90vw] mx-auto md:max-h-[30rem] md:max-w-[45rem] bg-[#141438]`}
+      className={`w-[90vw] mx-auto md:max-h-[30rem] md:max-w-[25rem] bg-background border border-border pb-4`}
     >
-      <div className="flex p-4 w-full lg:p-0 lg:grid lg:grid-cols-5">
+      <div className="flex p-4 w-full lg:p-0 ">
         <div className="basis-5/6 lg:col-span-2   lg:py-4 lg:pl-8">
           <h2 className="text-center my-4 lg:text-start font-bold text-base-100 text-[1.125em]">
             Connect a Wallet
           </h2>
         </div>
-        <div className="ml-auto lg:col-span-3 lg:py-4 lg:pr-8 text-base-100">
+        <div className="ml-auto lg:col-span-3 lg:py-4 lg:pr-8 text-base-100 self-center">
           <button
             onClick={(e) => {
               closeModal(e);
@@ -105,21 +105,23 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
           </button>
         </div>
       </div>
-      <div className="flex flex-col flex-1 justify-between lg:grid lg:grid-cols-5 ">
+      <div className="flex flex-col flex-1 justify-between  ">
         <div className="px-8 lg:h-full lg:col-span-2  ">
-          <h4 className="mb-[1rem] text-base-100 font-semibold">Popular</h4>
+          {/*  <h4 className="mb-[1rem] text-base-100 font-semibold">Popular</h4> */}
           <div className="flex flex-col gap-4 ">
-            {connectors.map((connector, index) => (
-              <Wallet
-                key={connector.id || index}
-                connector={connector}
-                loader={loader}
-                handleConnectWallet={handleConnectWallet}
-              />
-            ))}
+            {connectors
+              .filter((connector) => connector.name !== "Burner Wallet")
+              .map((connector, index) => (
+                <Wallet
+                  key={connector.id || index}
+                  connector={connector}
+                  loader={loader}
+                  handleConnectWallet={handleConnectWallet}
+                />
+              ))}
           </div>
         </div>
-        <div className=" h-fit lg:h-full lg:border-none lg:col-span-3 lg:px-8 lg:py-0 lg:flex lg:flex-col pb-[20px]">
+        {/*  <div className=" h-fit lg:h-full lg:border-none lg:col-span-3 lg:px-8 lg:py-0 lg:flex lg:flex-col pb-[20px]">
           {isBurnerWallet ? (
             <>
               <div className="text-base-100 font-medium">
@@ -197,7 +199,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
               </article>
             </>
           )}
-        </div>
+        </div> */}
       </div>
     </GenericModal>
   );

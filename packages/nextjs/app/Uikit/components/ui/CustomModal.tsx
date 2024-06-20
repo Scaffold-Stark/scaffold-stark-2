@@ -30,7 +30,7 @@ const ConnectModal = ({
       isOpen={isOpen}
       onClose={closeModal}
       animate={animate}
-      className={`w-[90vw] mx-auto md:max-h-[30rem] md:max-w-[45rem] bg-[#141438]`}
+      className={`w-[90vw] mx-auto md:max-h-[30rem] md:max-w-[30rem] bg-background border border-border pb-4`}
     >
       <div className="flex p-4 w-full lg:p-0 lg:grid lg:grid-cols-5">
         <div
@@ -63,7 +63,7 @@ const ConnectModal = ({
           </button>
         </div>
       </div>
-      <div style={{ padding: "2rem" }}>{children}</div>
+      <div className="px-8 pb-3">{children}</div>
     </GenericModal>
   );
 };

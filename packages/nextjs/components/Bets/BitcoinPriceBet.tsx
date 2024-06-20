@@ -57,17 +57,9 @@ function BitcoinPriceBet({
 
   return (
     <div>
-      <div className="grid grid-cols-2 gap-4">
-        <Card>
-          <CardHeader className="p-6">
-            <CardTitle>Your Balance</CardTitle>
-          </CardHeader>
-          <CardContent className="flex items-center justify-center text-4xl font-bold">
-            <Balance address={address} />
-          </CardContent>
-        </Card>
+      <div>
         {isLoading ? (
-          <Card>
+          <Card className="w-full">
             <CardHeader>
               <CardTitle>Statistics</CardTitle>
             </CardHeader>
@@ -128,7 +120,13 @@ function BitcoinPriceBet({
       </div>
       <div className="mt-6 space-y-4">
         <div className="grid gap-2">
-          <Label htmlFor="bet-amount">Enter Bet Amount</Label>
+          <div className="flex justify-between">
+            <Label htmlFor="bet-amount">Enter Bet Amount</Label>
+            <Label htmlFor="bet-amount" className="text-muted-foreground flex">
+              {`Balance `}&nbsp;
+              <Balance address={address} />
+            </Label>
+          </div>
           <Input
             id="bet-amount"
             type="number"
@@ -139,7 +137,7 @@ function BitcoinPriceBet({
         </div>
         <div className="flex gap-4">
           <Button
-            className="flex-1 bg-blue-900"
+            className="flex-1"
             onClick={() => {
               writeAsyncYes();
             }}
@@ -147,8 +145,8 @@ function BitcoinPriceBet({
             Vote Yes
           </Button>
           <Button
-            variant="outline"
-            className="flex-1 bg-[#A2190F]"
+            variant={"destructive"}
+            className="flex-1"
             onClick={() => {
               writeAsyncNo();
             }}

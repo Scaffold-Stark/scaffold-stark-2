@@ -11,7 +11,7 @@ const Wallet = ({
   loader: ({ src }: { src: string }) => string;
   handleConnectWallet: (
     e: React.MouseEvent<HTMLButtonElement>,
-    connector: Connector,
+    connector: Connector
   ) => void;
 }) => {
   const isSvg = connector.icon.light?.startsWith("<svg");
@@ -25,7 +25,7 @@ const Wallet = ({
         handleConnectWallet(e, connector);
       }}
     >
-      <div className="h-[2.2rem] w-[2.2rem] rounded-[5px]">
+      <div className="h-[2.4rem] w-[2.2rem] rounded-[5px] p-1">
         {isSvg ? (
           <div
             className="h-full w-full object-cover rounded-[5px]"

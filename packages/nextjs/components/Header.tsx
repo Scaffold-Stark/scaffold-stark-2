@@ -10,6 +10,7 @@ import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectB
 import { FaucetButton } from "~~/components/scaffold-stark/FaucetButton";
 
 import ConnectModal from "./scaffold-stark/CustomConnectButton/ConnectModal";
+import { Button } from "~~/app/Uikit/components/ui/button";
 
 type HeaderMenuLink = {
   label: string;
@@ -127,12 +128,18 @@ export const Header = () => {
           <HeaderMenuLinks />
         </ul>
       </div> */}
-      <Image
-        src={"/starksight-green.png"}
-        alt={"starksight"}
-        width={250}
-        height={60}
-      />
+      <div className="flex justify-center items-center">
+        <Image
+          src={"/starksight-green.png"}
+          alt={"starksight"}
+          width={250}
+          height={60}
+        />
+        <Button variant={"ghost"} className="text-end">
+          My bets
+        </Button>
+      </div>
+
       <CustomConnectButton />
     </div>
   );

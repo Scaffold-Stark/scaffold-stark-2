@@ -49,7 +49,7 @@ const Skeleton = () => {
           style={{
             maxHeight: i === 0 ? "100" + "%" : "50" + "%",
           }}
-          className={`flex flex-row rounded p-2  items-center space-x-2 w-full h-4 ${i === 0 ? "bg-primary" : "bg-secondary"}`}
+          className={`flex flex-row rounded p-2 items-center space-x-2 w-full h-4 ${i === 0 ? "bg-primary" : "bg-destructive"}`}
         ></motion.div>
       ))}
     </motion.div>

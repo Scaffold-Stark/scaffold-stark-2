@@ -45,7 +45,7 @@ export const BentoGrid = ({
     <div
       style={{ gridTemplateColumns: "repeat(3, minmax(0, 1fr))" }}
       className={cn(
-        "grid md:auto-rows-[18rem] grid-cols-1 gap-4 max-w-7xl mx-auto ",
+        "grid md:auto-rows-[18rem] grid-cols-1 gap-10 max-w-7xl mx-auto ",
         className
       )}
     >
