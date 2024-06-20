@@ -1,14 +1,11 @@
-import { Button } from "~~/Uikit/components/ui/button";
-import { Input } from "~~/Uikit/components/ui/input";
-import { Label } from "~~/Uikit/components/ui/label";
 import { useAccount, useNetwork } from "@starknet-react/core";
 import React from "react";
 import {
+  Card,
+  CardContent,
   CardHeader,
   CardTitle,
-  CardContent,
-  Card,
-} from "~~/Uikit/components/ui/card";
+} from "~~/app/Uikit/components/ui/card";
 import { Balance } from "../scaffold-stark";
 import {
   createContractCall,
@@ -16,6 +13,9 @@ import {
 } from "~~/hooks/scaffold-stark/useScaffoldMultiWriteContract";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { formatUnits } from "ethers";
+import { Button } from "~~/app/Uikit/components/ui/button";
+import { Input } from "~~/app/Uikit/components/ui/input";
+import { Label } from "~~/app/Uikit/components/ui/label";
 
 const SkeletonShort = () => {
   return (

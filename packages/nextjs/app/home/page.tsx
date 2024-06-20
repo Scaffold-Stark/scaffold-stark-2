@@ -1,16 +1,23 @@
 import React from "react";
 import Image from "next/image";
-import LinearGradient from "~~/Uikit/components/ui/linear-gradient";
-import { WobbleCard } from "~~/Uikit/components/ui/wobble-card";
+
 import { BetsOverview } from "./BetsOverview";
+import { FlipWords } from "../Uikit/components/ui/flip-words";
+import { WobbleCard } from "../Uikit/components/ui/wobble-card";
+import LinearGradient from "../Uikit/components/ui/linear-gradient";
+
 function Home() {
+  const words = ["better", "cute", "beautiful", "modern"];
   return (
-    <div className="bg-[#141438] min-h-screen flex justify-center px-4">
-      <LinearGradient />
+    <div className=" min-h-screen flex justify-center px-4">
+      {/*  <LinearGradient /> */}
       <div className=" mx-auto w-full max-w-7xl pt-12">
+        {/*   Build
+        <FlipWords words={words} /> <br />
+        websites with Aceternity UI */}
         <BetsOverview />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 max-w-7xl mx-auto w-full my-20">
-          <WobbleCard
+          {/* <WobbleCard
             containerClassName="col-span-1 lg:col-span-2 h-full bg-[#f2a900e3] min-h-[500px] lg:min-h-[300px]"
             className=""
           >
@@ -56,7 +63,7 @@ function Home() {
               alt="stark token image"
               className="absolute -right-10 md:-right-[40%] lg:-right-[15%] -bottom-44 object-contain rounded-2xl"
             />
-          </WobbleCard>
+          </WobbleCard> */}
         </div>
       </div>
     </div>

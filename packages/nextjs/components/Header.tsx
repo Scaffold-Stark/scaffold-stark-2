@@ -8,7 +8,7 @@ import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
 import { FaucetButton } from "~~/components/scaffold-stark/FaucetButton";
-import { Button } from "~~/Uikit/components/ui/button";
+
 import ConnectModal from "./scaffold-stark/CustomConnectButton/ConnectModal";
 
 type HeaderMenuLink = {
@@ -75,7 +75,7 @@ export const Header = () => {
   };
 
   return (
-    <div className="sticky flex lg:static top-0 navbar bg-[#141438] min-h-0 flex-shrink-0 justify-between z-20 shadow-md px-6 h-16 items-center">
+    <div className="sticky flex lg:static top-0 navbar bg-background border-b border-border min-h-0 flex-shrink-0 justify-between z-20 shadow-md px-6 h-16 items-center">
       {/* <Button>test</Button>
       <button className="text-white px-4 sm:px-8 py-2 sm:py-3 bg-sky-700 hover:bg-sky-800">
         ...
@@ -128,7 +128,7 @@ export const Header = () => {
         </ul>
       </div> */}
       <Image
-        src={"/starksight.png"}
+        src={"/starksight-green.png"}
         alt={"starksight"}
         width={250}
         height={60}

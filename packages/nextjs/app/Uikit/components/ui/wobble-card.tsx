@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { cn } from "~~/Uikit/lib/utils";
+import { cn } from "../../lib/utils";
 
 export const WobbleCard = ({
   children,

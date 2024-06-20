@@ -12,7 +12,7 @@ import { useAccount, useNetwork } from "@starknet-react/core";
 import { Address } from "@starknet-react/chains";
 import { useState } from "react";
 import ConnectModal from "./ConnectModal";
-import { Button } from "~~/Uikit/components/ui/button";
+import { Button } from "~~/app/Uikit/components/ui/button";
 
 /**
  * Custom Connect Button (watch balance + custom design)

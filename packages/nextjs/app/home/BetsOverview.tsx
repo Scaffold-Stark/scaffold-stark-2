@@ -4,8 +4,7 @@ import React from "react";
 
 import { motion } from "framer-motion";
 import { Bitcoin } from "lucide-react";
-import { BentoGrid, BentoGridItem } from "~~/Uikit/components/ui/bento-grid";
-import { cn } from "~~/Uikit/lib/utils";
+
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
 import {
   formatDate,
@@ -13,6 +12,10 @@ import {
 } from "~~/utils/scaffold-stark/common";
 import BitcoinPriceBet from "~~/components/Bets/BitcoinPriceBet";
 import { formatUnits } from "ethers";
+import { BentoGrid, BentoGridItem } from "../Uikit/components/ui/bento-grid";
+import { cn } from "../Uikit/lib/utils";
+import { title } from "process";
+
 const Skeleton = () => {
   const variants = {
     initial: {
@@ -37,7 +40,7 @@ const Skeleton = () => {
       initial="initial"
       animate="animate"
       whileHover="hover"
-      className="flex w-full h-full min-h-[6rem] dark:bg-dot-white/[0.2] bg-dot-black/[0.2] space-y-2 items-end self-center"
+      className="flex w-full h-full min-h-[6rem] dark:bg-dot-white/[0.2] bg-dot-black/[0.2] space-y-2 items-end self-center space-x-8"
     >
       {arr.map((_, i) => (
         <motion.div
@@ -46,7 +49,7 @@ const Skeleton = () => {
           style={{
             maxHeight: i === 0 ? "100" + "%" : "50" + "%",
           }}
-          className={`flex flex-row rounded border border-neutral-100 dark:border-white/[0.2] p-2  items-center space-x-2 w-[20%] h-4 ${i === 0 ? "bg-blue-900" : "bg-[#A2190F]"}`}
+          className={`flex flex-row rounded p-2  items-center space-x-2 w-full h-4 ${i === 0 ? "bg-primary" : "bg-secondary"}`}
         ></motion.div>
       ))}
     </motion.div>
@@ -90,7 +93,7 @@ export function BetsOverview() {
         />
       ),
     },
-    /* {
+    {
       title: "Automated Proofreading",
       description: (
         <span className="text-sm">
@@ -134,10 +137,10 @@ export function BetsOverview() {
       header: <Skeleton />,
       className: "md:col-span-1",
       icon: <Bitcoin className="h-4 w-4 text-neutral-500 mt-5" />,
-    }, */
+    },
   ];
   return (
-    <BentoGrid className="mx-auto md:auto-rows-[20rem]">
+    <BentoGrid className="mx-auto md:auto-rows-[24rem]">
       {items.map((item, i) => (
         <BentoGridItem
           key={i}

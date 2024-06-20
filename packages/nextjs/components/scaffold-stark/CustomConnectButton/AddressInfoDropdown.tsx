@@ -19,10 +19,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "~~/Uikit/components/ui/dropdown-menu";
+} from "~~/app/Uikit/components/ui/dropdown-menu";
 
 const allowedNetworks = getTargetNetworks();
 
