@@ -1,7 +1,8 @@
 import { cn } from "~~/Uikit/lib/utils";
-import LinearGradient from "./linear-gradient";
-import { Skeleton } from "@radix-ui/themes";
-import { Balance } from "~~/components/scaffold-stark";
+import CustomModal from "./CustomModal";
+import { useState } from "react";
+import { useAccount, useNetwork } from "@starknet-react/core";
+import ConnectModal from "~~/components/scaffold-stark/CustomConnectButton/ConnectModal";
 
 const SkeletonShort = () => {
   return (
@@ -60,6 +61,8 @@ export const BentoGridItem = ({
   header,
   icon,
   isLoading,
+  modelTitle,
+  modalContent,
 }: {
   headerTitle?: string | React.ReactNode;
   className?: string;
@@ -68,7 +71,11 @@ export const BentoGridItem = ({
   header?: React.ReactNode;
   icon?: React.ReactNode;
   isLoading?: boolean;
+  modelTitle?: string;
+  modalContent?: React.ReactNode;
 }) => {
+  const { address, status, chainId, ...props } = useAccount();
+  const [modalOpen, setModalOpen] = useState(false);
   if (isLoading) {
     return (
       <div
@@ -92,25 +99,39 @@ export const BentoGridItem = ({
     );
   }
   return (
-    <div
-      className={cn(
-        "relative row-span-1 rounded-xl group/bento hover:shadow-xl transition duration-200 shadow-input dark:shadow-none p-4 dark:bg-[#141438] dark:border-white/[0.2] bg-white border-transparent justify-between flex flex-col space-y-4",
-        className
-      )}
-      style={{ backgroundColor: "#20204f" }}
-    >
-      {headerTitle}
+    <>
+      <div
+        onClick={() => setModalOpen(true)}
+        className={cn(
+          "relative row-span-1 rounded-xl group/bento hover:shadow-xl transition duration-200 shadow-input dark:shadow-none p-4 dark:bg-[#141438] dark:border-white/[0.2] bg-white border-transparent justify-between flex flex-col space-y-4 cursor-pointer",
+          className
+        )}
+        style={{ backgroundColor: "#20204f" }}
+      >
+        {headerTitle}
 
-      {header}
-      <div className="group-hover/bento:translate-x-2 transition duration-200">
-        {icon}
-        <div className="font-sans font-bold text-neutral-600 dark:text-neutral-200 mb-2 mt-2">
-          {title}
-        </div>
-        <div className="font-sans font-normal text-neutral-600 text-xs dark:text-neutral-300">
-          {description}
+        {header}
+        <div className="group-hover/bento:translate-x-2 transition duration-200">
+          {icon}
+          <div className="font-sans font-bold text-neutral-600 dark:text-neutral-200 mb-2 mt-2">
+            {title}
+          </div>
+          <div className="font-sans font-normal text-neutral-600 text-xs dark:text-neutral-300">
+            {description}
+          </div>
         </div>
       </div>
-    </div>
+      {status === "disconnected" ? (
+        <ConnectModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+      ) : (
+        <CustomModal
+          title={modelTitle}
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+        >
+          {modalContent}
+        </CustomModal>
+      )}
+    </>
   );
 };

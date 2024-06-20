@@ -58,8 +58,6 @@ function Home() {
             />
           </WobbleCard>
         </div>
-
-        {/*  <VotePreviewCards /> */}
       </div>
     </div>
   );

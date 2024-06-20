@@ -3,7 +3,6 @@
 import React from "react";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { Bitcoin } from "lucide-react";
 import { BentoGrid, BentoGridItem } from "~~/Uikit/components/ui/bento-grid";
 import { cn } from "~~/Uikit/lib/utils";
@@ -12,8 +11,7 @@ import {
   formatDate,
   parseBitcoinPriceToNumber,
 } from "~~/utils/scaffold-stark/common";
-import { getAllContracts } from "~~/utils/scaffold-stark/contractsData";
-
+import BitcoinPriceBet from "~~/components/Bets/BitcoinPriceBet";
 const Skeleton = () => {
   const variants = {
     initial: {
@@ -81,6 +79,10 @@ export function BetsOverview() {
       className: "md:col-span-1",
       icon: <Bitcoin className="h-4 w-4 text-neutral-500 mt-5" />,
       isLoading: isLoading,
+      modelTitle: `Bitcoin above  ${parseBitcoinPriceToNumber(
+        bitcoinPriceData?.reference_token_price
+      )} before ${formatDate(bitcoinPriceData?.end_date)}?`,
+      modalContent: <BitcoinPriceBet />,
     },
     /* {
       title: "Automated Proofreading",
@@ -140,6 +142,8 @@ export function BetsOverview() {
           icon={item.icon}
           isLoading={item.isLoading}
           headerTitle={item.headerTitle}
+          modelTitle={item.modelTitle}
+          modalContent={item.modalContent}
         />
       ))}
     </BentoGrid>
