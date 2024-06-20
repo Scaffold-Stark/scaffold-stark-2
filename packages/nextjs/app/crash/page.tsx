@@ -1,7 +1,7 @@
 "use client";
 
 
-
+import type { NextPage } from "next";
 import { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -14,6 +14,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import { notification } from "~~/utils/scaffold-stark";
 
 ChartJS.register(
   CategoryScale,
@@ -25,7 +26,7 @@ ChartJS.register(
   Legend
 );
 
-const Crash = () => {
+const Crash: NextPage = () => {
   const [betAmount, setBetAmount] = useState<number>(0);
   const [cashoutAt, setCashoutAt] = useState<number>(2.0);
   const [currentMultiplier, setCurrentMultiplier] = useState<number>(1.0);
@@ -33,7 +34,8 @@ const Crash = () => {
   const [isCashedOut, setIsCashedOut] = useState<boolean>(false);
   const [isCrashed, setIsCrashed] = useState<boolean>(false);
   const [roundActive, setRoundActive] = useState<boolean>(false);
-  const [randomCrash, setRandomCrash] = useState<number>(Math.random() * 5 + 1);
+  const [randomCrash, setRandomCrash] = useState<number>(Math.random() * 2 + 1);
+  const [betHistory, setBetHistory] = useState<number[]>([]);
   const [time, setTime] = useState<number>(0);
   const [data, setData] = useState<{ labels: number[]; datasets: any[] }>({
     labels: [],
@@ -56,6 +58,7 @@ const Crash = () => {
           if (prev >= randomCrash) {
             setIsCrashed(true);
             clearInterval(interval as NodeJS.Timeout);
+            setRoundActive(false);
             return prev;
           }
           return prev + 0.01;
@@ -85,7 +88,16 @@ const Crash = () => {
         ],
       }));
     }
+    if (currentMultiplier >= cashoutAt) {
+      cashoutRound();
+    }
   }, [currentMultiplier]);
+
+  useEffect(() => {
+    if (isCrashed) {
+      setBetHistory((prev) => [...prev, betAmount]);
+    }
+  }, [isCrashed]);
 
   const startRound = () => {
     if (betAmount > 0) {
@@ -106,6 +118,8 @@ const Crash = () => {
           },
         ],
       });
+    } else {
+      notification.warning('Please enter a valid bet amount');
     }
   };
 
@@ -117,11 +131,11 @@ const Crash = () => {
   };
 
   return (
-    <div className="bg-gray-900 text-white p-4 rounded-md w-full max-w-4xl mx-auto flex flex-col md:flex-row md:space-x-4">
+    <div className="bg-gray-900 text-white p-4 mt-12 rounded-md w-full max-w-5xl mx-auto flex flex-col md:flex-row md:space-x-8">
       <div className="w-full md:w-1/3 mb-4 md:mb-0">
         <div className="flex justify-between items-center mb-4">
           <button className="bg-gray-700 py-2 px-4 rounded-md">Manual</button>
-          <button className="bg-gray-800 py-2 px-4 rounded-md">Auto</button>
+          {/* <button className="bg-gray-800 py-2 px-4 rounded-md">Auto</button> */}
         </div>
 
         <div className="mb-4">
@@ -180,9 +194,9 @@ const Crash = () => {
         <div className="mt-4 bg-gray-800 p-2 rounded-md">
           <h3 className="text-lg mb-2">Bet History</h3>
           <ul className="text-sm">
-            <li>Hidden - ₹25.00</li>
-            <li>Hidden - ₹62.19</li>
-            <li>Hidden - ₹62.50</li>
+            {betHistory.map((bet, index) => (
+              <li key={index}>Bet {index + 1}: {bet.toFixed(8)} ETH</li>
+            ))}
           </ul>
         </div>
       </div>
