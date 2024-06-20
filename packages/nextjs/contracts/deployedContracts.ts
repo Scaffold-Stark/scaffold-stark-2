@@ -404,6 +404,8 @@ const deployedContracts = {
   },
   sepolia: {
     BitcoinPrice: {
+      address:
+        "0x05487fcd7f40cb3414829f9ba37ee92e6da1affe9b5a95659ac17a65f5abbad3",
       abi: [
         {
           type: "impl",

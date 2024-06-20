@@ -59,7 +59,6 @@ export const WobbleCard = ({
             transition: "transform 0.1s ease-out",
             paddingLeft: "3rem",
             paddingTop: "3rem",
-            overflow: "hidden",
           }}
           className={cn("h-full px-4 py-20 sm:px-10", className)}
         >
@@ -82,6 +81,8 @@ const Noise = () => {
         position: "absolute",
         inset: "0px",
         opacity: 0.1,
+        transform: "scale(1.2)",
+        maskImage: "radial-gradient(circle, #fff, transparent 75%)",
       }}
     ></div>
   );

@@ -2,16 +2,14 @@ import React from "react";
 import Image from "next/image";
 import LinearGradient from "~~/Uikit/components/ui/linear-gradient";
 import { WobbleCard } from "~~/Uikit/components/ui/wobble-card";
-import VotePreviewCards from "./VotePreviewCards";
-import { BentoGridThirdDemo } from "./BentoDemo";
-
+import { BetsOverview } from "./BetsOverview";
 function Home() {
   return (
     <div className="bg-[#141438] min-h-screen flex justify-center px-4">
       <LinearGradient />
       <div className=" mx-auto w-full max-w-7xl pt-12">
-        <BentoGridThirdDemo />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 max-w-7xl mx-auto w-full mt-20">
+        <BetsOverview />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 max-w-7xl mx-auto w-full my-20">
           <WobbleCard
             containerClassName="col-span-1 lg:col-span-2 h-full bg-[#f2a900e3] min-h-[500px] lg:min-h-[300px]"
             className=""

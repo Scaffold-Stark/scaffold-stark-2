@@ -17,7 +17,7 @@ const deployScript = async (): Promise<void> => {
       vote_date_limit: 4102444800,
       reference_token_price: 6525086109850,
       pragmaAddress:
-        "0x2a85bd616f912537c50a49a4076db02c00b29b2cdc8a197ce92ed1837fa875b",
+        "0x36031daa264c24520b11d93af622c848b2499b66b41d611bac95e13cfca131a",
     },
     "BitcoinPrice"
   );
