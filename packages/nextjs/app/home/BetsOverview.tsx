@@ -12,6 +12,7 @@ import {
   parseBitcoinPriceToNumber,
 } from "~~/utils/scaffold-stark/common";
 import BitcoinPriceBet from "~~/components/Bets/BitcoinPriceBet";
+import { formatUnits } from "ethers";
 const Skeleton = () => {
   const variants = {
     initial: {
@@ -63,7 +64,7 @@ export function BetsOverview() {
     {
       headerTitle: (
         <span className="self-center">
-          {`Prize Pool ${parseFloat(bitcoinPriceData?.total_amount).toFixed(4)}`}{" "}
+          {`Prize Pool ${parseFloat(formatUnits(bitcoinPriceData?.total_amount || "0")).toFixed(4)}`}{" "}
           <span className="text-[0.8em] font-bold ml-1">{"ETH"}</span>
         </span>
       ),
@@ -82,7 +83,12 @@ export function BetsOverview() {
       modelTitle: `Bitcoin above  ${parseBitcoinPriceToNumber(
         bitcoinPriceData?.reference_token_price
       )} before ${formatDate(bitcoinPriceData?.end_date)}?`,
-      modalContent: <BitcoinPriceBet />,
+      modalContent: (
+        <BitcoinPriceBet
+          bitcoinPriceData={bitcoinPriceData}
+          isLoading={isLoading}
+        />
+      ),
     },
     /* {
       title: "Automated Proofreading",
