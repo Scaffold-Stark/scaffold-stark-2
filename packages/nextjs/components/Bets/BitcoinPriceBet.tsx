@@ -1,4 +1,5 @@
 import { useAccount, useNetwork } from "@starknet-react/core";
+import { Address as AddressType } from "@starknet-react/chains";
 import React from "react";
 import {
   Card,
@@ -124,7 +125,7 @@ function BitcoinPriceBet({
             <Label htmlFor="bet-amount">Enter Bet Amount</Label>
             <Label htmlFor="bet-amount" className="text-muted-foreground flex">
               {`Balance `}&nbsp;
-              <Balance address={address} />
+              <Balance address={address as AddressType} />
             </Label>
           </div>
           <Input

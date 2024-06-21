@@ -15,7 +15,9 @@ const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
       <body>
         <ThemeProvider enableSystem defaultTheme="dark" attribute="class">
           <ScaffoldStarkAppWithProviders>
-            {children}
+            <div className=" min-h-screen flex justify-center px-4">
+              <div className=" mx-auto w-full max-w-7xl pt-12">{children}</div>
+            </div>
           </ScaffoldStarkAppWithProviders>
         </ThemeProvider>
       </body>

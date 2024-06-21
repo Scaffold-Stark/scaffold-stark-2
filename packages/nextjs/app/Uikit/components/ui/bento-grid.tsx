@@ -4,36 +4,8 @@ import { useAccount, useNetwork } from "@starknet-react/core";
 import ConnectModal from "~~/components/scaffold-stark/CustomConnectButton/ConnectModal";
 import { cn } from "../../lib/utils";
 import { Button } from "./button";
+import { SkeletonLong, SkeletonShort, SkeletonHeader } from "./skeletons";
 
-const SkeletonShort = () => {
-  return (
-    <div className="animate-pulse flex space-x-4">
-      <div className="flex items-center space-y-6">
-        <div className="h-3 w-28 bg-slate-300 rounded"></div>
-      </div>
-    </div>
-  );
-};
-
-const SkeletonLong = () => {
-  return (
-    <div className="animate-pulse flex space-x-4">
-      <div className="flex items-center space-y-6 w-full">
-        <div className="h-3 w-full bg-slate-300 rounded"></div>
-      </div>
-    </div>
-  );
-};
-
-const SkeletonHeader = () => {
-  return (
-    <div className="animate-pulse flex space-x-4 h-full">
-      <div className="flex items-center space-y-6 w-full">
-        <div className="h-full w-full bg-slate-300 rounded"></div>
-      </div>
-    </div>
-  );
-};
 export const BentoGrid = ({
   className,
   children,
@@ -81,17 +53,15 @@ export const BentoGridItem = ({
     return (
       <div
         className={cn(
-          "relative row-span-1 rounded-xl group/bento hover:shadow-xl transition duration-200 shadow-input dark:shadow-none p-4 dark:bg-[#141438] dark:border-white/[0.2] bg-white border-transparent justify-between flex flex-col space-y-4 h-full",
+          "relative row-span-1 rounded-xl group/bento hover:shadow-xl transition duration-200 shadow-input dark:shadow-none p-4 bg-background border border-border justify-between flex flex-col space-y-4 h-full",
           className
         )}
-        style={{ backgroundColor: "#20204f" }}
       >
+        {<SkeletonLong />}
+        {<SkeletonShort />}
         {<SkeletonHeader />}
         <div className="group-hover/bento:translate-x-2 transition duration-200">
-          {icon}
-          <div className="font-sans font-bold text-neutral-600 dark:text-neutral-200 mb-2 mt-2">
-            {<SkeletonShort />}
-          </div>
+          <div className="font-sans font-bold text-neutral-600 dark:text-neutral-200 mb-2 mt-2"></div>
           <div className="font-sans font-normal text-neutral-600 text-xs dark:text-neutral-300">
             {<SkeletonLong />}
           </div>

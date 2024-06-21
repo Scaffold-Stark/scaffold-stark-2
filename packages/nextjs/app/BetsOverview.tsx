@@ -12,9 +12,10 @@ import {
 } from "~~/utils/scaffold-stark/common";
 import BitcoinPriceBet from "~~/components/Bets/BitcoinPriceBet";
 import { formatUnits } from "ethers";
-import { BentoGrid, BentoGridItem } from "../Uikit/components/ui/bento-grid";
-import { cn } from "../Uikit/lib/utils";
+
 import { title } from "process";
+import { BentoGrid, BentoGridItem } from "./Uikit/components/ui/bento-grid";
+import { cn } from "./Uikit/lib/utils";
 
 const Skeleton = () => {
   const variants = {
