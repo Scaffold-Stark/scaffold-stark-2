@@ -95,7 +95,7 @@ function BitcoinPriceBet({
                 <span>Total Yes Bet</span>
                 <span className="font-medium">
                   {parseFloat(
-                    formatUnits(bitcoinPriceData?.total_amount_yes)
+                    formatUnits(bitcoinPriceData?.total_amount_yes),
                   ).toFixed(4)}
                 </span>
               </div>
@@ -103,7 +103,7 @@ function BitcoinPriceBet({
                 <span>Total No Bet</span>
                 <span className="font-medium">
                   {parseFloat(
-                    formatUnits(bitcoinPriceData?.total_amount_no)
+                    formatUnits(bitcoinPriceData?.total_amount_no),
                   ).toFixed(4)}
                 </span>
               </div>
@@ -111,7 +111,7 @@ function BitcoinPriceBet({
                 <span>Prize Pool</span>
                 <span className="font-medium text-green-500">
                   {parseFloat(
-                    formatUnits(bitcoinPriceData?.total_amount)
+                    formatUnits(bitcoinPriceData?.total_amount),
                   ).toFixed(4)}
                 </span>
               </div>

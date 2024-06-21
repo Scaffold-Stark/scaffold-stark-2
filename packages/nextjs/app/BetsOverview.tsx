@@ -83,7 +83,7 @@ export function BetsOverview() {
       description: (
         <span className="text-sm">
           {`Bitcoin above  ${parseBitcoinPriceToNumber(
-            bitcoinPriceData?.reference_token_price
+            bitcoinPriceData?.reference_token_price,
           )} before ${formatDate(bitcoinPriceData?.end_date)}?`}
         </span>
       ),
@@ -91,11 +91,11 @@ export function BetsOverview() {
         <Skeleton
           percentageYes={calculatePercentage(
             bitcoinPriceData?.total_amount_yes,
-            bitcoinPriceData?.total_amount
+            bitcoinPriceData?.total_amount,
           )}
           percentageNo={calculatePercentage(
             bitcoinPriceData?.total_amount_no,
-            bitcoinPriceData?.total_amount
+            bitcoinPriceData?.total_amount,
           )}
         />
       ),
@@ -103,7 +103,7 @@ export function BetsOverview() {
       icon: <Bitcoin className="h-4 w-4 text-neutral-500 mt-5" />,
       isLoading: isLoading,
       modelTitle: `Bitcoin above  ${parseBitcoinPriceToNumber(
-        bitcoinPriceData?.reference_token_price
+        bitcoinPriceData?.reference_token_price,
       )} before ${formatDate(bitcoinPriceData?.end_date)}?`,
       modalContent: (
         <BitcoinPriceBet

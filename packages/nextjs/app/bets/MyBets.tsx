@@ -54,7 +54,7 @@ function MyBets() {
     {
       id: 1,
       name: `Bitcoin above  ${parseBitcoinPriceToNumber(
-        bitcoinPriceData?.reference_token_price
+        bitcoinPriceData?.reference_token_price,
       )} before ${formatDate(bitcoinPriceData?.end_date)}?`,
       category: "Cryptos",
       amount: `${parseFloat(formatUnits(bitcoin_yes_balance || "0")).toFixed(4)}`,

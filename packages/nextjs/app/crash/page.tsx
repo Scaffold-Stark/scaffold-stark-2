@@ -1,9 +1,8 @@
 "use client";
 
-
 import type { NextPage } from "next";
-import { useState, useEffect } from 'react';
-import { Line } from 'react-chartjs-2';
+import { useState, useEffect } from "react";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -13,7 +12,7 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
+} from "chart.js";
 import { notification } from "~~/utils/scaffold-stark";
 
 ChartJS.register(
@@ -23,7 +22,7 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 const Crash: NextPage = () => {
@@ -41,10 +40,10 @@ const Crash: NextPage = () => {
     labels: [],
     datasets: [
       {
-        label: 'Multiplier',
+        label: "Multiplier",
         data: [],
-        borderColor: 'rgba(255, 206, 86, 1)',
-        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+        borderColor: "rgba(255, 206, 86, 1)",
+        backgroundColor: "rgba(255, 206, 86, 0.2)",
       },
     ],
   });
@@ -111,15 +110,15 @@ const Crash: NextPage = () => {
         labels: [],
         datasets: [
           {
-            label: 'Multiplier',
+            label: "Multiplier",
             data: [],
-            borderColor: 'rgba(255, 206, 86, 1)',
-            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+            borderColor: "rgba(255, 206, 86, 1)",
+            backgroundColor: "rgba(255, 206, 86, 0.2)",
           },
         ],
       });
     } else {
-      notification.warning('Please enter a valid bet amount');
+      notification.warning("Please enter a valid bet amount");
     }
   };
 
@@ -179,23 +178,29 @@ const Crash: NextPage = () => {
           </button>
         </div>
 
-        { !isCashedOut ? (
-            <div className="mt-4 bg-gray-800 p-2 rounded-md">
-              <h3 className="text-lg mb-2">Profit on Win</h3>
-              <div className="text-xl">{(betAmount * (currentMultiplier - 1)).toFixed(8)} ETH</div>
+        {!isCashedOut ? (
+          <div className="mt-4 bg-gray-800 p-2 rounded-md">
+            <h3 className="text-lg mb-2">Profit on Win</h3>
+            <div className="text-xl">
+              {(betAmount * (currentMultiplier - 1)).toFixed(8)} ETH
             </div>
-          ):
-            <div className="mt-4 bg-gray-800 p-2 rounded-md">
-              <h3 className="text-lg mb-2">Profit Won</h3>
-              <div className="text-xl">{(betAmount * (cashedOutMultiplier - 1)).toFixed(8)} ETH</div>
+          </div>
+        ) : (
+          <div className="mt-4 bg-gray-800 p-2 rounded-md">
+            <h3 className="text-lg mb-2">Profit Won</h3>
+            <div className="text-xl">
+              {(betAmount * (cashedOutMultiplier - 1)).toFixed(8)} ETH
             </div>
-        }
+          </div>
+        )}
 
         <div className="mt-4 bg-gray-800 p-2 rounded-md">
           <h3 className="text-lg mb-2">Bet History</h3>
           <ul className="text-sm">
             {betHistory.map((bet, index) => (
-              <li key={index}>Bet {index + 1}: {bet.toFixed(8)} ETH</li>
+              <li key={index}>
+                Bet {index + 1}: {bet.toFixed(8)} ETH
+              </li>
             ))}
           </ul>
         </div>
@@ -203,20 +208,25 @@ const Crash: NextPage = () => {
 
       <div className="w-full md:w-2/3">
         <div className="relative h-64">
-          <Line data={data} options={{ 
-            maintainAspectRatio: false, 
-            scales: {
-              x: {
-                ticks: {
-                  display: false
-                }
-              }
-            } 
-          }}/>
+          <Line
+            data={data}
+            options={{
+              maintainAspectRatio: false,
+              scales: {
+                x: {
+                  ticks: {
+                    display: false,
+                  },
+                },
+              },
+            }}
+          />
         </div>
         <div className="mt-4">
           <div className="flex items-center">
-            <div className={`h-2 flex-grow ${isCrashed ? 'bg-red-500' : 'bg-yellow-500'}`}></div>
+            <div
+              className={`h-2 flex-grow ${isCrashed ? "bg-red-500" : "bg-yellow-500"}`}
+            ></div>
             <div className="ml-2">{currentMultiplier.toFixed(2)}x</div>
           </div>
           <div className="flex justify-between text-sm mt-2">
@@ -228,10 +238,12 @@ const Crash: NextPage = () => {
           <div className="flex justify-between text-3xl pt-3 mt-4 mb-3">
             <div className="ml-2">{currentMultiplier.toFixed(2)}x</div>
           </div>
-          <br/>
-          { isCashedOut && (
+          <br />
+          {isCashedOut && (
             <div className="flex items-center">
-              <div className="ml-2 text-lg">Cashed out at {cashedOutMultiplier.toFixed(2)}x</div>
+              <div className="ml-2 text-lg">
+                Cashed out at {cashedOutMultiplier.toFixed(2)}x
+              </div>
             </div>
           )}
         </div>

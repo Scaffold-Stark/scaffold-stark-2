@@ -18,7 +18,7 @@ export const BentoGrid = ({
       style={{ gridTemplateColumns: "repeat(3, minmax(0, 1fr))" }}
       className={cn(
         "grid md:auto-rows-[18rem] grid-cols-1 gap-10 max-w-7xl mx-auto ",
-        className
+        className,
       )}
     >
       {children}
@@ -54,7 +54,7 @@ export const BentoGridItem = ({
       <div
         className={cn(
           "relative row-span-1 rounded-xl group/bento hover:shadow-xl transition duration-200 shadow-input dark:shadow-none p-4 bg-background border border-border justify-between flex flex-col space-y-4 h-full",
-          className
+          className,
         )}
       >
         {<SkeletonLong />}
@@ -74,7 +74,7 @@ export const BentoGridItem = ({
       <div
         className={cn(
           "relative row-span-1 rounded-xl group/bento hover:shadow-xl transition duration-200 shadow-input bg-card border border-border justify-between flex flex-col space-y-4 p-6",
-          className
+          className,
         )}
       >
         <div className="space-y-2">
