@@ -87,6 +87,11 @@ export const Header = () => {
             </Button>
           </Link>
         ) : null}
+        <Link href={"/crash"}>
+          <Button variant={"ghost"} className="text-end">
+            Crash game
+          </Button>
+        </Link>
       </div>
 
       <CustomConnectButton />

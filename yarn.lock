@@ -2131,9 +2131,9 @@ __metadata:
     abi-wan-kanabi: ^2.2.2
     autoprefixer: ^10.0.1
     blo: ^1.1.1
+    chart.js: ^4.4.3
     class-variance-authority: ^0.7.0
     clsx: ^2.1.1
-    chart.js: ^4.4.3
     daisyui: ^4.7.3
     eslint: ^8
     eslint-config-next: 14.1.3
