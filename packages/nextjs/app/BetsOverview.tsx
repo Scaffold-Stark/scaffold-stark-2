@@ -7,6 +7,7 @@ import { Bitcoin } from "lucide-react";
 
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
 import {
+  calculatePercentage,
   formatDate,
   parseBitcoinPriceToNumber,
 } from "~~/utils/scaffold-stark/common";
@@ -17,7 +18,13 @@ import { title } from "process";
 import { BentoGrid, BentoGridItem } from "./Uikit/components/ui/bento-grid";
 import { cn } from "./Uikit/lib/utils";
 
-const Skeleton = () => {
+const Skeleton = ({
+  percentageYes,
+  percentageNo,
+}: {
+  percentageYes: number;
+  percentageNo: number;
+}) => {
   const variants = {
     initial: {
       height: 0,
@@ -48,7 +55,7 @@ const Skeleton = () => {
           key={"skelenton-two" + i}
           variants={variants}
           style={{
-            maxHeight: i === 0 ? "100" + "%" : "50" + "%",
+            maxHeight: i === 0 ? percentageYes + "%" : percentageNo + "%",
           }}
           className={`flex flex-row rounded p-2 items-center space-x-2 w-full h-4 ${i === 0 ? "bg-primary" : "bg-destructive"}`}
         ></motion.div>
@@ -80,7 +87,18 @@ export function BetsOverview() {
           )} before ${formatDate(bitcoinPriceData?.end_date)}?`}
         </span>
       ),
-      header: <Skeleton />,
+      header: (
+        <Skeleton
+          percentageYes={calculatePercentage(
+            bitcoinPriceData?.total_amount_yes,
+            bitcoinPriceData?.total_amount
+          )}
+          percentageNo={calculatePercentage(
+            bitcoinPriceData?.total_amount_no,
+            bitcoinPriceData?.total_amount
+          )}
+        />
+      ),
       className: "md:col-span-1",
       icon: <Bitcoin className="h-4 w-4 text-neutral-500 mt-5" />,
       isLoading: isLoading,
@@ -101,7 +119,18 @@ export function BetsOverview() {
           Let AI handle the proofreading of your documents.
         </span>
       ),
-      header: <Skeleton />,
+      header: <Skeleton percentageYes={80} percentageNo={20} />,
+      className: "md:col-span-1",
+      icon: <Bitcoin className="h-4 w-4 text-neutral-500 mt-5" />,
+    },
+    {
+      title: "Automated Proofreading2",
+      description: (
+        <span className="text-sm">
+          Let AI handle the proofreading of your documents.
+        </span>
+      ),
+      header: <Skeleton percentageYes={10} percentageNo={90} />,
       className: "md:col-span-1",
       icon: <Bitcoin className="h-4 w-4 text-neutral-500 mt-5" />,
     },
@@ -112,18 +141,7 @@ export function BetsOverview() {
           Let AI handle the proofreading of your documents.
         </span>
       ),
-      header: <Skeleton />,
-      className: "md:col-span-1",
-      icon: <Bitcoin className="h-4 w-4 text-neutral-500 mt-5" />,
-    },
-    {
-      title: "Automated Proofreading",
-      description: (
-        <span className="text-sm">
-          Let AI handle the proofreading of your documents.
-        </span>
-      ),
-      header: <Skeleton />,
+      header: <Skeleton percentageYes={40} percentageNo={60} />,
       className: "md:col-span-1",
       icon: <Bitcoin className="h-4 w-4 text-neutral-500 mt-5" />,
     },
@@ -135,7 +153,7 @@ export function BetsOverview() {
           Let AI handle the proofreading of your documents.
         </span>
       ),
-      header: <Skeleton />,
+      header: <Skeleton percentageYes={100} percentageNo={0} />,
       className: "md:col-span-1",
       icon: <Bitcoin className="h-4 w-4 text-neutral-500 mt-5" />,
     },

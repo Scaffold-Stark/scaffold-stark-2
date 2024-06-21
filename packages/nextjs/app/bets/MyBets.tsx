@@ -15,6 +15,7 @@ import { Card } from "../Uikit/components/ui/card";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
 import {
   formatDate,
+  isDatePassed,
   parseBitcoinPriceToNumber,
 } from "~~/utils/scaffold-stark/common";
 import {
@@ -26,6 +27,9 @@ import { formatUnits } from "ethers";
 import ConnectModal from "~~/components/scaffold-stark/CustomConnectButton/ConnectModal";
 import CustomModal from "../Uikit/components/ui/CustomModal";
 import BitcoinPriceBet from "~~/components/Bets/BitcoinPriceBet";
+import { n } from "@starknet-react/core/dist/index-79NvzQC9";
+import { Label } from "../Uikit/components/ui/label";
+import { Badge } from "../Uikit/components/ui/badge";
 
 function MyBets() {
   const { address, status, chainId, ...props } = useAccount();
@@ -45,6 +49,7 @@ function MyBets() {
     });
 
   const isLoading = isLoadingBitcoinPrice || isLoading_yes_bitcoin_amount;
+
   const bets = [
     {
       id: 1,
@@ -54,6 +59,7 @@ function MyBets() {
       category: "Cryptos",
       amount: `${parseFloat(formatUnits(bitcoin_yes_balance || "0")).toFixed(4)}`,
       choice: true,
+      betInfos: bitcoinPriceData,
       modalContent: (
         <BitcoinPriceBet
           bitcoinPriceData={bitcoinPriceData}
@@ -169,6 +175,7 @@ function MyBets() {
         </DropdownMenu>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {filteredBets.length === 0 && "No bets with this category."}
         {filteredBets.map((bet) => {
           return (
             <div key={bet.id}>
@@ -180,18 +187,30 @@ function MyBets() {
                     Bet amount : {bet.amount} ETH
                   </p>
                   <p
-                    className={`${bet.choice ? "text-green-500" : "text-red-500"} font-bold mb-2`}
+                    className={`${bet.choice ? "text-primary" : "text-destructive"} font-bold mb-2`}
                   >
                     Your choice : {bet.choice ? "Yes" : "No"}
                   </p>
                 </div>
-                <Button
-                  variant="outline"
-                  className="mt-4"
-                  onClick={() => setModalOpen(true)}
-                >
-                  Reinforce position
-                </Button>
+                {isDatePassed(bet.betInfos?.end_date || 0n) &&
+                bet.betInfos?.is_token_price_end_set ? (
+                  <Button className="mt-4" onClick={() => setModalOpen(true)}>
+                    Claim Rewards
+                  </Button>
+                ) : isDatePassed(bet.betInfos?.end_date || 0n) &&
+                  !bet.betInfos?.is_token_price_end_set ? (
+                  <Badge variant={"secondary"} className="text-center h-10">
+                    Waiting for results to be set...
+                  </Badge>
+                ) : (
+                  <Button
+                    variant="outline"
+                    className="mt-4"
+                    onClick={() => setModalOpen(true)}
+                  >
+                    Reinforce position
+                  </Button>
+                )}
               </Card>
               {status === "disconnected" ? (
                 <ConnectModal

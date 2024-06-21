@@ -45,3 +45,20 @@ export function formatDate(timestamp: string): string {
 
   return `${month} ${day}`;
 }
+
+export function isDatePassed(dateU64: bigint): boolean {
+  const dateInMillis = Number(dateU64) * 1000;
+  const date = new Date(dateInMillis);
+  const now = new Date();
+
+  return date < now;
+}
+
+export function calculatePercentage(amount: bigint, total: bigint): number {
+  if (total === 0n) {
+    return 0;
+  }
+
+  const percentage = (Number(amount) / Number(total)) * 100;
+  return percentage;
+}
