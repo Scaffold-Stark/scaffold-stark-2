@@ -9,18 +9,36 @@ function Home() {
     quote: string;
     name: string;
     title: string;
+    image?: React.ReactNode;
   }[] = [
     {
-      quote:
-        "The only limit to our realization of tomorrow is our doubts of today.",
+      quote: "Crypto Bets",
       name: "Franklin D. Roosevelt",
       title: "32nd President of the United States",
+      image: (
+        <Image
+          src={"/bitcoin-paysage2.jpg"}
+          alt={"bitcoin"}
+          width={450}
+          height={50}
+          className="h-full w-full "
+        />
+      ),
     },
     {
       quote:
         "Success usually comes to those who are too busy to be looking for it.",
       name: "Henry David Thoreau",
       title: "Philosopher and Author",
+      image: (
+        <Image
+          src={"/bitcoin-paysage2.jpg"}
+          alt={"bitcoin"}
+          width={450}
+          height={50}
+          className="h-full w-full "
+        />
+      ),
     },
     {
       quote: "Don't watch the clock; do what it does. Keep going.",

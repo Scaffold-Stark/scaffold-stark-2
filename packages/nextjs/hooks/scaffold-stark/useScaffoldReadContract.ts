@@ -33,7 +33,7 @@ export const useScaffoldReadContract = <
     blockIdentifier: "pending" as BlockNumber,
     ...(readConfig as any),
   }) as Omit<ReturnType<typeof useContractRead>, "data" | "refetch"> & {
-    data: AbiFunctionOutputs<ContractAbi, TFunctionName> | undefined;
+    data: any;
     // refetch: (options?: {
     //   throwOnError: boolean;
     //   cancelRefetch: boolean;

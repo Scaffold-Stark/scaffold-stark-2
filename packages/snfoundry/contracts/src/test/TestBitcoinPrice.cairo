@@ -18,14 +18,14 @@ fn deploy_contract(name: ByteArray) -> ContractAddress {
     let contract = declare(name).unwrap();
     let mut calldata = array![];
 
-    let end_vote_bet_timestamp: u64 = 4102444800; // 1er janvier 2100
-    let end_bet_timestamp: u64 = 4102444800_u64; // 1 février 2100
+    let end_vote_bet_timestamp: u64 = 1719168900000;
+    let end_bet_timestamp: u64 = 1719168900000_u64;
     let oracle_address: ContractAddress = contract_address_const::<
         0x2a85bd616f912537c50a49a4076db02c00b29b2cdc8a197ce92ed1837fa875b
     >();
     calldata.append_serde(end_vote_bet_timestamp);
     calldata.append_serde(end_bet_timestamp);
-    calldata.append_serde(6525086109850_u256);
+    calldata.append_serde(6525086850_u256);
     calldata.append_serde(OWNER());
     calldata.append_serde(oracle_address);
     let (contract_address, _) = contract.deploy(@calldata).unwrap();
@@ -237,10 +237,7 @@ fn test_claim_rewards() {
 
     start_warp(CheatTarget::All, 4102444801_u64); // Change blocktimestamp
 
-    prank(
-        CheatTarget::One(eth_token.contract_address), contract_address, CheatSpan::TargetCalls(1)
-    );
-    eth_token.approve(contract_address, 2);
+  
     prank(
         CheatTarget::One(contract_address),
         0x0213c67ed78bc280887234fe5ed5e77272465317978ae86c25a71531d9332a2d.try_into().unwrap(),

@@ -9,7 +9,7 @@ import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldRead
 import {
   calculatePercentage,
   formatDate,
-  parseBitcoinPriceToNumber,
+  parseTokenPriceToNumber,
 } from "~~/utils/scaffold-stark/common";
 import BitcoinPriceBet from "~~/components/Bets/BitcoinPriceBet";
 import { formatUnits } from "ethers";
@@ -65,12 +65,21 @@ const Skeleton = ({
 };
 
 export function BetsOverview() {
-  const { data: bitcoinPriceData, isLoading } = useScaffoldReadContract({
-    contractName: "BitcoinPrice",
-    functionName: "get_current_bet",
-    args: [],
-  });
+  const { data: bitcoinPriceData, isLoading: isLoadingBitcoinPrice } =
+    useScaffoldReadContract({
+      contractName: "BitcoinPrice",
+      functionName: "get_current_bet",
+      args: undefined,
+    });
 
+  const { data: etherPriceData, isLoading: isLoadingEtherPrice } =
+    useScaffoldReadContract({
+      contractName: "EtherPrice",
+      functionName: "get_current_bet",
+      args: undefined,
+    });
+
+  const isLoading = isLoadingBitcoinPrice || isLoadingEtherPrice;
   const items = [
     {
       headerTitle: (
@@ -82,8 +91,8 @@ export function BetsOverview() {
       title: `Crypto Price Bet`,
       description: (
         <span className="text-sm">
-          {`Bitcoin above  ${parseBitcoinPriceToNumber(
-            bitcoinPriceData?.reference_token_price,
+          {`Bitcoin above  ${parseTokenPriceToNumber(
+            bitcoinPriceData?.reference_token_price
           )} before ${formatDate(bitcoinPriceData?.end_date)}?`}
         </span>
       ),
@@ -91,48 +100,57 @@ export function BetsOverview() {
         <Skeleton
           percentageYes={calculatePercentage(
             bitcoinPriceData?.total_amount_yes,
-            bitcoinPriceData?.total_amount,
+            bitcoinPriceData?.total_amount
           )}
           percentageNo={calculatePercentage(
             bitcoinPriceData?.total_amount_no,
-            bitcoinPriceData?.total_amount,
+            bitcoinPriceData?.total_amount
           )}
         />
       ),
       className: "md:col-span-1",
-      icon: <Bitcoin className="h-4 w-4 text-neutral-500 mt-5" />,
-      isLoading: isLoading,
-      modelTitle: `Bitcoin above  ${parseBitcoinPriceToNumber(
-        bitcoinPriceData?.reference_token_price,
+      modelTitle: `Bitcoin above  ${parseTokenPriceToNumber(
+        bitcoinPriceData?.reference_token_price
       )} before ${formatDate(bitcoinPriceData?.end_date)}?`,
       modalContent: (
         <BitcoinPriceBet
           bitcoinPriceData={bitcoinPriceData}
-          isLoading={isLoading}
+          isLoading={isLoadingBitcoinPrice}
         />
       ),
     },
     {
-      title: "Automated Proofreading",
-      description: (
-        <span className="text-sm">
-          Let AI handle the proofreading of your documents.
+      headerTitle: (
+        <span className="self-center">
+          {`Prize Pool ${parseFloat(formatUnits(etherPriceData?.total_amount || "0")).toFixed(4)}`}{" "}
+          <span className="text-[0.8em] font-bold ml-1">{"ETH"}</span>
         </span>
       ),
-      header: <Skeleton percentageYes={80} percentageNo={20} />,
-      className: "md:col-span-1",
-      icon: <Bitcoin className="h-4 w-4 text-neutral-500 mt-5" />,
-    },
-    {
-      title: "Automated Proofreading2",
+      title: `Crypto Price Bet`,
       description: (
         <span className="text-sm">
-          Let AI handle the proofreading of your documents.
+          {`Ether above  ${parseTokenPriceToNumber(
+            etherPriceData?.reference_token_price
+          )} before ${formatDate(etherPriceData?.end_date)}?`}
         </span>
       ),
-      header: <Skeleton percentageYes={10} percentageNo={90} />,
+      header: (
+        <Skeleton
+          percentageYes={calculatePercentage(
+            etherPriceData?.total_amount_yes,
+            etherPriceData?.total_amount
+          )}
+          percentageNo={calculatePercentage(
+            etherPriceData?.total_amount_no,
+            etherPriceData?.total_amount
+          )}
+        />
+      ),
       className: "md:col-span-1",
-      icon: <Bitcoin className="h-4 w-4 text-neutral-500 mt-5" />,
+      modelTitle: `ether above  ${parseTokenPriceToNumber(
+        etherPriceData?.reference_token_price
+      )} before ${formatDate(etherPriceData?.end_date)}?`,
+      modalContent: <div></div>,
     },
     {
       title: "Automated Proofreading",
@@ -143,7 +161,6 @@ export function BetsOverview() {
       ),
       header: <Skeleton percentageYes={40} percentageNo={60} />,
       className: "md:col-span-1",
-      icon: <Bitcoin className="h-4 w-4 text-neutral-500 mt-5" />,
     },
 
     {
@@ -155,11 +172,10 @@ export function BetsOverview() {
       ),
       header: <Skeleton percentageYes={100} percentageNo={0} />,
       className: "md:col-span-1",
-      icon: <Bitcoin className="h-4 w-4 text-neutral-500 mt-5" />,
     },
   ];
   return (
-    <BentoGrid className="mx-auto md:auto-rows-[24rem]">
+    <BentoGrid className="mx-auto md:auto-rows-[24rem]" isLoading={isLoading}>
       {items.map((item, i) => (
         <BentoGridItem
           key={i}
@@ -167,8 +183,6 @@ export function BetsOverview() {
           description={item.description}
           header={item.header}
           className={cn("[&>p:text-lg]", item.className)}
-          icon={item.icon}
-          isLoading={item.isLoading}
           headerTitle={item.headerTitle}
           modelTitle={item.modelTitle}
           modalContent={item.modalContent}

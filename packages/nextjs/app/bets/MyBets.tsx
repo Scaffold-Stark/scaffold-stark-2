@@ -16,7 +16,7 @@ import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldRead
 import {
   formatDate,
   isDatePassed,
-  parseBitcoinPriceToNumber,
+  parseTokenPriceToNumber,
 } from "~~/utils/scaffold-stark/common";
 import {
   SkeletonHeader,
@@ -30,6 +30,10 @@ import BitcoinPriceBet from "~~/components/Bets/BitcoinPriceBet";
 import { n } from "@starknet-react/core/dist/index-79NvzQC9";
 import { Label } from "../Uikit/components/ui/label";
 import { Badge } from "../Uikit/components/ui/badge";
+import {
+  createContractCall,
+  useScaffoldMultiWriteContract,
+} from "~~/hooks/scaffold-stark/useScaffoldMultiWriteContract";
 
 function MyBets() {
   const { address, status, chainId, ...props } = useAccount();
@@ -45,16 +49,30 @@ function MyBets() {
     useScaffoldReadContract({
       contractName: "BitcoinPrice",
       functionName: "get_own_yes_amount",
-      args: [Number(bitcoinPriceData?.id)],
+      args: [address as string, Number(bitcoinPriceData?.id)],
     });
 
+  const { data: bitcoin_no_balance, isLoading: isLoading_no_bitcoin_amount } =
+    useScaffoldReadContract({
+      contractName: "BitcoinPrice",
+      functionName: "get_own_no_amount",
+      args: [address as string, Number(bitcoinPriceData?.id)],
+    });
+
+  const { writeAsync: claimBitcoinRewards } = useScaffoldMultiWriteContract({
+    calls: [
+      createContractCall("BitcoinPrice", "claimRewards", [
+        Number(bitcoinPriceData?.id),
+      ]),
+    ],
+  });
   const isLoading = isLoadingBitcoinPrice || isLoading_yes_bitcoin_amount;
 
   const bets = [
     {
       id: 1,
-      name: `Bitcoin above  ${parseBitcoinPriceToNumber(
-        bitcoinPriceData?.reference_token_price,
+      name: `Bitcoin above  ${parseTokenPriceToNumber(
+        bitcoinPriceData?.reference_token_price
       )} before ${formatDate(bitcoinPriceData?.end_date)}?`,
       category: "Cryptos",
       amount: `${parseFloat(formatUnits(bitcoin_yes_balance || "0")).toFixed(4)}`,
@@ -66,6 +84,24 @@ function MyBets() {
           isLoading={isLoadingBitcoinPrice}
         />
       ),
+      display: bitcoin_yes_balance > 0,
+    },
+    {
+      id: 2,
+      name: `Bitcoin above  ${parseTokenPriceToNumber(
+        bitcoinPriceData?.reference_token_price
+      )} before ${formatDate(bitcoinPriceData?.end_date)}?`,
+      category: "Cryptos",
+      amount: `${parseFloat(formatUnits(bitcoin_no_balance || "0")).toFixed(4)}`,
+      choice: false,
+      betInfos: bitcoinPriceData,
+      modalContent: (
+        <BitcoinPriceBet
+          bitcoinPriceData={bitcoinPriceData}
+          isLoading={isLoadingBitcoinPrice}
+        />
+      ),
+      display: bitcoin_no_balance > 0,
     },
     /* {
       id: 2,
@@ -97,13 +133,10 @@ function MyBets() {
     }, */
   ];
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const filteredBets = useMemo(() => {
-    if (selectedCategory === "all") {
-      return bets;
-    } else {
-      return bets.filter((bet) => bet.category === selectedCategory);
-    }
-  }, [selectedCategory, bitcoinPriceData]);
+  const filteredBets =
+    selectedCategory === "all"
+      ? bets
+      : bets.filter((bet) => bet.category === selectedCategory);
 
   if (isLoading) {
     return (
@@ -176,59 +209,66 @@ function MyBets() {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filteredBets.length === 0 && "No bets with this category."}
-        {filteredBets.map((bet) => {
-          return (
-            <div key={bet.id}>
-              <Card className="shadow-md rounded-lg p-4 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-lg font-bold mb-2">{bet.name}</h3>
-                  <p className="text-gray-500 mb-2">{bet.category}</p>
-                  <p className="text-gray-500 mb-2">
-                    Bet amount : {bet.amount} ETH
-                  </p>
-                  <p
-                    className={`${bet.choice ? "text-primary" : "text-destructive"} font-bold mb-2`}
-                  >
-                    Your choice : {bet.choice ? "Yes" : "No"}
-                  </p>
-                </div>
-                {isDatePassed(bet.betInfos?.end_date || 0n) &&
-                bet.betInfos?.is_token_price_end_set ? (
-                  <Button className="mt-4" onClick={() => setModalOpen(true)}>
-                    Claim Rewards
-                  </Button>
-                ) : isDatePassed(bet.betInfos?.end_date || 0n) &&
-                  !bet.betInfos?.is_token_price_end_set ? (
-                  <Badge variant={"secondary"} className="text-center h-10">
-                    Waiting for results to be set...
-                  </Badge>
+        {filteredBets
+          .filter((bet) => bet.display === true)
+          .map((bet) => {
+            return (
+              <div key={bet.id}>
+                <Card className="shadow-md rounded-lg p-4 flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold mb-2">{bet.name}</h3>
+                    <p className="text-gray-500 mb-2">{bet.category}</p>
+                    <p className="text-gray-500 mb-2">
+                      Bet amount : {bet.amount} ETH
+                    </p>
+                    <p
+                      className={`${bet.choice ? "text-primary" : "text-destructive"} font-bold mb-2`}
+                    >
+                      Your choice : {bet.choice ? "Yes" : "No"}
+                    </p>
+                  </div>
+                  {isDatePassed(bet.betInfos?.end_date || 0n) &&
+                  bet.betInfos?.is_token_price_end_set ? (
+                    <Button
+                      className="mt-4"
+                      onClick={() => {
+                        claimBitcoinRewards();
+                      }}
+                    >
+                      Claim Rewards
+                    </Button>
+                  ) : isDatePassed(bet.betInfos?.end_date || 0n) &&
+                    !bet.betInfos?.is_token_price_end_set ? (
+                    <Badge variant={"secondary"} className="text-center h-10">
+                      Waiting for results to be set...
+                    </Badge>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      className="mt-4"
+                      onClick={() => setModalOpen(true)}
+                    >
+                      Reinforce position
+                    </Button>
+                  )}
+                </Card>
+                {status === "disconnected" ? (
+                  <ConnectModal
+                    isOpen={modalOpen}
+                    onClose={() => setModalOpen(false)}
+                  />
                 ) : (
-                  <Button
-                    variant="outline"
-                    className="mt-4"
-                    onClick={() => setModalOpen(true)}
+                  <CustomModal
+                    title={bet.name}
+                    isOpen={modalOpen}
+                    onClose={() => setModalOpen(false)}
                   >
-                    Reinforce position
-                  </Button>
+                    {bet.modalContent}
+                  </CustomModal>
                 )}
-              </Card>
-              {status === "disconnected" ? (
-                <ConnectModal
-                  isOpen={modalOpen}
-                  onClose={() => setModalOpen(false)}
-                />
-              ) : (
-                <CustomModal
-                  title={bet.name}
-                  isOpen={modalOpen}
-                  onClose={() => setModalOpen(false)}
-                >
-                  {bet.modalContent}
-                </CustomModal>
-              )}
-            </div>
-          );
-        })}
+              </div>
+            );
+          })}
       </div>
     </div>
   );
