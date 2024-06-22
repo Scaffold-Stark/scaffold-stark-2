@@ -21,8 +21,8 @@ pub trait IBitcoinPrice<TContractState> {
     fn vote_yes(ref self: TContractState, amount_eth: u256);
     fn vote_no(ref self: TContractState, amount_eth: u256);
     fn get_current_bet(self: @TContractState) -> BetInfos;
-    fn get_own_yes_amount(self: @TContractState, bet_id: u64) -> u256;
-    fn get_own_no_amount(self: @TContractState, bet_id: u64) -> u256;
+    fn get_own_yes_amount(self: @TContractState, contract_address: ContractAddress, bet_id: u64) -> u256;
+    fn get_own_no_amount(self: @TContractState, contract_address: ContractAddress, bet_id: u64) -> u256;
     fn claimRewards(ref self: TContractState, bet_id: u64) -> u256;
     fn set_pragma_checkpoint(self: @TContractState);
     fn set_bet_result_price(ref self: TContractState);
@@ -288,11 +288,11 @@ pub mod BitcoinPrice {
         fn get_current_bet(self: @ContractState) -> BetInfos {
             self.current_bet.read()
         }
-        fn get_own_yes_amount(self: @ContractState, bet_id: u64) -> u256 {
-            self.user_bet_yes_amount.read((get_caller_address(), bet_id))
+        fn get_own_yes_amount(self: @ContractState, contract_address: ContractAddress, bet_id: u64) -> u256 {
+            self.user_bet_yes_amount.read((contract_address, bet_id))
         }
-        fn get_own_no_amount(self: @ContractState, bet_id: u64) -> u256 {
-            self.user_bet_no_amount.read((get_caller_address(), bet_id))
+        fn get_own_no_amount(self: @ContractState, contract_address: ContractAddress, bet_id: u64) -> u256 {
+            self.user_bet_no_amount.read((contract_address, bet_id))
         }
     }
 }

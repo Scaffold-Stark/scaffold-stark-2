@@ -134,6 +134,10 @@ const deployedContracts = {
               name: "get_own_yes_amount",
               inputs: [
                 {
+                  name: "contract_address",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+                {
                   name: "bet_id",
                   type: "core::integer::u64",
                 },
@@ -149,6 +153,10 @@ const deployedContracts = {
               type: "function",
               name: "get_own_no_amount",
               inputs: [
+                {
+                  name: "contract_address",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
                 {
                   name: "bet_id",
                   type: "core::integer::u64",
@@ -405,7 +413,7 @@ const deployedContracts = {
   sepolia: {
     BitcoinPrice: {
       address:
-        "0x05487fcd7f40cb3414829f9ba37ee92e6da1affe9b5a95659ac17a65f5abbad3",
+        "0x06eb23b3c740004007c45892ac967d93fbacd041cf37844d258f758526121f40",
       abi: [
         {
           type: "impl",
@@ -534,6 +542,10 @@ const deployedContracts = {
               name: "get_own_yes_amount",
               inputs: [
                 {
+                  name: "contract_address",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+                {
                   name: "bet_id",
                   type: "core::integer::u64",
                 },
@@ -549,6 +561,10 @@ const deployedContracts = {
               type: "function",
               name: "get_own_no_amount",
               inputs: [
+                {
+                  name: "contract_address",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
                 {
                   name: "bet_id",
                   type: "core::integer::u64",
