@@ -19,6 +19,10 @@ export function parseTokenPriceToNumber(price: string) {
   return Math.floor(Number(price) / 100000000);
 }
 
+export function parseStarkPriceToNumber(price: string) {
+  return Number(price) / 100000000;
+}
+
 // Convert u64 timestamp to a human readable date
 export function formatDate(timestamp: string): string {
   const timestampNumber = Number(timestamp);

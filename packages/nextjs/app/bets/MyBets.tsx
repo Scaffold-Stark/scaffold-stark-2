@@ -16,6 +16,7 @@ import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldRead
 import {
   formatDate,
   isDatePassed,
+  parseStarkPriceToNumber,
   parseTokenPriceToNumber,
 } from "~~/utils/scaffold-stark/common";
 import {
@@ -35,6 +36,7 @@ import {
   useScaffoldMultiWriteContract,
 } from "~~/hooks/scaffold-stark/useScaffoldMultiWriteContract";
 import EtherPriceBet from "~~/components/Bets/EtherPriceBet";
+import StarkPriceBet from "~~/components/Bets/StarkPriceBet";
 
 function MyBets() {
   const { address, status, chainId, ...props } = useAccount();
@@ -68,6 +70,7 @@ function MyBets() {
     ],
   });
 
+  /* ETHER Price bets */
   const { data: etherPriceData, isLoading: isLoadingEtherPrice } =
     useScaffoldReadContract({
       contractName: "EtherPrice",
@@ -96,13 +99,46 @@ function MyBets() {
       ]),
     ],
   });
+
+  /* Stark Price bets */
+  const { data: starkPriceData, isLoading: isLoadingStarkPrice } =
+    useScaffoldReadContract({
+      contractName: "StarkPrice",
+      functionName: "get_current_bet",
+      args: undefined,
+    });
+
+  const { data: stark_yes_balance, isLoading: isLoading_yes_stark_amount } =
+    useScaffoldReadContract({
+      contractName: "StarkPrice",
+      functionName: "get_own_yes_amount",
+      args: [address as string, Number(starkPriceData?.id)],
+    });
+
+  const { data: stark_no_balance, isLoading: isLoading_no_stark_amount } =
+    useScaffoldReadContract({
+      contractName: "StarkPrice",
+      functionName: "get_own_no_amount",
+      args: [address as string, Number(starkPriceData?.id)],
+    });
+
+  const { writeAsync: claimStarkRewards } = useScaffoldMultiWriteContract({
+    calls: [
+      createContractCall("StarkPrice", "claimRewards", [
+        Number(starkPriceData?.id),
+      ]),
+    ],
+  });
   const isLoading =
     isLoadingBitcoinPrice ||
     isLoading_yes_bitcoin_amount ||
     isLoading_no_bitcoin_amount ||
     isLoadingEtherPrice ||
     isLoading_yes_ether_amount ||
-    isLoading_no_ether_amount;
+    isLoading_no_ether_amount ||
+    isLoadingStarkPrice ||
+    isLoading_yes_stark_amount ||
+    isLoading_no_stark_amount;
 
   const bets = [
     {
@@ -121,6 +157,7 @@ function MyBets() {
         />
       ),
       display: bitcoin_yes_balance > 0,
+      claimFunction: claimBitcoinRewards,
     },
     {
       id: 2,
@@ -138,6 +175,7 @@ function MyBets() {
         />
       ),
       display: bitcoin_no_balance > 0,
+      claimFunction: claimBitcoinRewards,
     },
     {
       id: 3,
@@ -155,6 +193,7 @@ function MyBets() {
         />
       ),
       display: ether_yes_balance > 0,
+      claimFunction: claimEtherRewards,
     },
     {
       id: 4,
@@ -172,6 +211,43 @@ function MyBets() {
         />
       ),
       display: ether_no_balance > 0,
+      claimFunction: claimStarkRewards,
+    },
+    {
+      id: 5,
+      name: `Stark above  ${parseStarkPriceToNumber(
+        starkPriceData?.reference_token_price
+      ).toFixed(2)} before ${formatDate(starkPriceData?.end_date)}?`,
+      category: "Cryptos",
+      amount: `${parseFloat(formatUnits(stark_yes_balance || "0")).toFixed(4)}`,
+      choice: true,
+      betInfos: starkPriceData,
+      modalContent: (
+        <StarkPriceBet
+          starkPriceData={starkPriceData}
+          isLoading={isLoadingStarkPrice}
+        />
+      ),
+      display: stark_yes_balance > 0,
+      claimFunction: claimStarkRewards,
+    },
+    {
+      id: 6,
+      name: `Stark above  ${parseStarkPriceToNumber(
+        starkPriceData?.reference_token_price
+      ).toFixed(2)} before ${formatDate(starkPriceData?.end_date)}?`,
+      category: "Cryptos",
+      amount: `${parseFloat(formatUnits(stark_no_balance || "0")).toFixed(4)}`,
+      choice: false,
+      betInfos: starkPriceData,
+      modalContent: (
+        <StarkPriceBet
+          starkPriceData={starkPriceData}
+          isLoading={isLoadingStarkPrice}
+        />
+      ),
+      display: stark_no_balance > 0,
+      claimFunction: claimStarkRewards,
     },
   ];
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -274,7 +350,7 @@ function MyBets() {
                     <Button
                       className="mt-4"
                       onClick={() => {
-                        claimBitcoinRewards();
+                        bet.claimFunction();
                       }}
                     >
                       Claim Rewards

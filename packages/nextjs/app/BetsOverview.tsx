@@ -9,6 +9,7 @@ import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldRead
 import {
   calculatePercentage,
   formatDate,
+  parseStarkPriceToNumber,
   parseTokenPriceToNumber,
 } from "~~/utils/scaffold-stark/common";
 import BitcoinPriceBet from "~~/components/Bets/BitcoinPriceBet";
@@ -19,6 +20,7 @@ import { BentoGrid, BentoGridItem } from "./Uikit/components/ui/bento-grid";
 import { cn } from "./Uikit/lib/utils";
 import AnimatedGradientText from "./Uikit/components/ui/animated-text";
 import EtherPriceBet from "~~/components/Bets/EtherPriceBet";
+import StarkPriceBet from "~~/components/Bets/StarkPriceBet";
 
 const Skeleton = ({
   percentageYes,
@@ -85,7 +87,15 @@ export function BetsOverview() {
       args: undefined,
     });
 
-  const isLoading = isLoadingBitcoinPrice || isLoadingEtherPrice;
+  const { data: starkPriceData, isLoading: isLoadingStarkPrice } =
+    useScaffoldReadContract({
+      contractName: "StarkPrice",
+      functionName: "get_current_bet",
+      args: undefined,
+    });
+
+  const isLoading =
+    isLoadingBitcoinPrice || isLoadingEtherPrice || isLoadingStarkPrice;
   const items = [
     {
       headerTitle: (
@@ -176,14 +186,48 @@ export function BetsOverview() {
       ),
     },
     {
-      title: "Automated Proofreading",
+      headerTitle: (
+        <AnimatedGradientText>
+          🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
+          <span
+            className={cn(
+              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`
+            )}
+          >
+            {`Prize Pool ${parseFloat(formatUnits(starkPriceData?.total_amount || "0")).toFixed(4)} ETH`}
+          </span>
+        </AnimatedGradientText>
+      ),
+      title: `Crypto Price Bet`,
       description: (
         <span className="text-sm">
-          Let AI handle the proofreading of your documents.
+          {`Stark above  ${parseStarkPriceToNumber(
+            starkPriceData?.reference_token_price
+          ).toFixed(2)} before ${formatDate(starkPriceData?.end_date)}?`}
         </span>
       ),
-      header: <Skeleton percentageYes={40} percentageNo={60} />,
+      header: (
+        <Skeleton
+          percentageYes={calculatePercentage(
+            starkPriceData?.total_amount_yes,
+            starkPriceData?.total_amount
+          )}
+          percentageNo={calculatePercentage(
+            starkPriceData?.total_amount_no,
+            starkPriceData?.total_amount
+          )}
+        />
+      ),
       className: "md:col-span-1",
+      modelTitle: `Stark above  ${parseStarkPriceToNumber(
+        starkPriceData?.reference_token_price
+      ).toFixed(2)} before ${formatDate(starkPriceData?.end_date)}?`,
+      modalContent: (
+        <StarkPriceBet
+          starkPriceData={starkPriceData}
+          isLoading={isLoadingStarkPrice}
+        />
+      ),
     },
 
     {
