@@ -229,16 +229,72 @@ export function BetsOverview() {
         />
       ),
     },
-
+    /* Coming soon bets */
     {
-      title: "Automated Proofreading",
+      headerTitle: (
+        <AnimatedGradientText>
+          🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
+          <span
+            className={cn(
+              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`
+            )}
+          >
+            {`Prize Pool 999999 ETH`}
+          </span>
+        </AnimatedGradientText>
+      ),
+      title: `Degen Bet`,
       description: (
-        <span className="text-sm">
-          Let AI handle the proofreading of your documents.
-        </span>
+        <span className="text-sm">{`Eli Ben-Sasson president of the SEC ?`}</span>
+      ),
+      header: <Skeleton percentageYes={70} percentageNo={30} />,
+      className: "md:col-span-1",
+      modelTitle: `Eli Ben-Sasson president of the SEC ?`,
+      modalContent: <>Coming soon...</>,
+    },
+    {
+      headerTitle: (
+        <AnimatedGradientText>
+          🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
+          <span
+            className={cn(
+              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`
+            )}
+          >
+            {`Prize Pool 13490 ETH`}
+          </span>
+        </AnimatedGradientText>
+      ),
+      title: `Sport Bet`,
+      description: (
+        <span className="text-sm">{`France winner of the Europa league ?`}</span>
       ),
       header: <Skeleton percentageYes={100} percentageNo={0} />,
       className: "md:col-span-1",
+      modelTitle: `France winner of the Europa league ?`,
+      modalContent: <>Coming soon...</>,
+    },
+    {
+      headerTitle: (
+        <AnimatedGradientText>
+          🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
+          <span
+            className={cn(
+              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`
+            )}
+          >
+            {`Prize Pool 190 ETH`}
+          </span>
+        </AnimatedGradientText>
+      ),
+      title: `Political bet`,
+      description: (
+        <span className="text-sm">{`Donald Trump wins the Presidential Election?`}</span>
+      ),
+      header: <Skeleton percentageYes={45} percentageNo={55} />,
+      className: "md:col-span-1",
+      modelTitle: `Donald Trump wins the Presidential Election?`,
+      modalContent: <>Coming soon...</>,
     },
   ];
   return (

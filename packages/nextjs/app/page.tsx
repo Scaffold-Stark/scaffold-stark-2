@@ -7,14 +7,10 @@ import { BetsOverview } from "./BetsOverview";
 function Home() {
   const items: {
     quote: string;
-    name: string;
-    title: string;
     image?: React.ReactNode;
   }[] = [
     {
       quote: "Crypto Bets",
-      name: "Franklin D. Roosevelt",
-      title: "32nd President of the United States",
       image: (
         <Image
           src={"/bitcoin-paysage2.jpg"}
@@ -26,9 +22,7 @@ function Home() {
       ),
     },
     {
-      quote: "Politic Bets",
-      name: "Franklin D. Roosevelt",
-      title: "32nd President of the United States",
+      quote: "Political bets",
       image: (
         <Image
           src={"/politics.jpg"}
@@ -41,11 +35,9 @@ function Home() {
     },
     {
       quote: "Sports Bets",
-      name: "Henry David Thoreau",
-      title: "Philosopher and Author",
       image: (
         <Image
-          src={"/sports.jpg"}
+          src={"/sports.png"}
           alt={"bitcoin"}
           width={626}
           height={432}
@@ -55,11 +47,9 @@ function Home() {
     },
     {
       quote: "Degens Bets",
-      name: "Franklin D. Roosevelt",
-      title: "32nd President of the United States",
       image: (
         <Image
-          src={"/degens.jpg"}
+          src={"/pepe.png"}
           alt={"bitcoin"}
           width={350}
           height={50}
@@ -69,8 +59,6 @@ function Home() {
     },
     {
       quote: "Crypto Bets",
-      name: "Franklin D. Roosevelt",
-      title: "32nd President of the United States",
       image: (
         <Image
           src={"/bitcoin-paysage2.jpg"}
@@ -82,9 +70,7 @@ function Home() {
       ),
     },
     {
-      quote: "Politic Bets",
-      name: "Franklin D. Roosevelt",
-      title: "32nd President of the United States",
+      quote: "Political bets",
       image: (
         <Image
           src={"/politics.jpg"}
@@ -97,11 +83,9 @@ function Home() {
     },
     {
       quote: "Sports Bets",
-      name: "Henry David Thoreau",
-      title: "Philosopher and Author",
       image: (
         <Image
-          src={"/sports.jpg"}
+          src={"/sports.png"}
           alt={"bitcoin"}
           width={626}
           height={432}
@@ -111,11 +95,9 @@ function Home() {
     },
     {
       quote: "Degens Bets",
-      name: "Franklin D. Roosevelt",
-      title: "32nd President of the United States",
       image: (
         <Image
-          src={"/degens.jpg"}
+          src={"/pepe.png"}
           alt={"bitcoin"}
           width={350}
           height={50}

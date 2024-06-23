@@ -14,8 +14,6 @@ export const InfiniteMovingCards = ({
   items: {
     image?: React.ReactNode;
     quote: string;
-    name: string;
-    title: string;
   }[];
   direction?: "left" | "right";
   speed?: "fast" | "normal" | "slow";
@@ -94,7 +92,7 @@ export const InfiniteMovingCards = ({
               background:
                 "linear-gradient(180deg, var(--slate-800), var(--slate-900)",
             }} */
-            key={item.name}
+            key={idx}
           >
             <div className="flex items-end absolute inset-0 bg-gradient-to-t from-black to-[hsl(var(--primary)/49%)] px-8 py-6 via-black/70">
               <blockquote>
