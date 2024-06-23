@@ -26,10 +26,51 @@ function Home() {
       ),
     },
     {
-      quote:
-        "Success usually comes to those who are too busy to be looking for it.",
+      quote: "Politic Bets",
+      name: "Franklin D. Roosevelt",
+      title: "32nd President of the United States",
+      image: (
+        <Image
+          src={"/politics.jpg"}
+          alt={"bitcoin"}
+          width={450}
+          height={50}
+          className="h-full w-full "
+        />
+      ),
+    },
+    {
+      quote: "Sports Bets",
       name: "Henry David Thoreau",
       title: "Philosopher and Author",
+      image: (
+        <Image
+          src={"/sports.jpg"}
+          alt={"bitcoin"}
+          width={626}
+          height={432}
+          className="h-full w-full "
+        />
+      ),
+    },
+    {
+      quote: "Degens Bets",
+      name: "Franklin D. Roosevelt",
+      title: "32nd President of the United States",
+      image: (
+        <Image
+          src={"/degens.jpg"}
+          alt={"bitcoin"}
+          width={350}
+          height={50}
+          className="h-full w-full "
+        />
+      ),
+    },
+    {
+      quote: "Crypto Bets",
+      name: "Franklin D. Roosevelt",
+      title: "32nd President of the United States",
       image: (
         <Image
           src={"/bitcoin-paysage2.jpg"}
@@ -41,46 +82,46 @@ function Home() {
       ),
     },
     {
-      quote: "Don't watch the clock; do what it does. Keep going.",
-      name: "Sam Levenson",
-      title: "Humorist and Writer",
+      quote: "Politic Bets",
+      name: "Franklin D. Roosevelt",
+      title: "32nd President of the United States",
+      image: (
+        <Image
+          src={"/politics.jpg"}
+          alt={"bitcoin"}
+          width={450}
+          height={50}
+          className="h-full w-full "
+        />
+      ),
     },
     {
-      quote:
-        "The future belongs to those who believe in the beauty of their dreams.",
-      name: "Eleanor Roosevelt",
-      title: "Former First Lady of the United States",
+      quote: "Sports Bets",
+      name: "Henry David Thoreau",
+      title: "Philosopher and Author",
+      image: (
+        <Image
+          src={"/sports.jpg"}
+          alt={"bitcoin"}
+          width={626}
+          height={432}
+          className="h-full w-full "
+        />
+      ),
     },
     {
-      quote: "The best way to predict the future is to create it.",
-      name: "Peter Drucker",
-      title: "Management Consultant and Author",
-    },
-    {
-      quote: "You miss 100% of the shots you don’t take.",
-      name: "Wayne Gretzky",
-      title: "Professional Hockey Player",
-    },
-    {
-      quote: "I have not failed. I've just found 10,000 ways that won't work.",
-      name: "Thomas Edison",
-      title: "Inventor and Businessman",
-    },
-    {
-      quote:
-        "The road to success and the road to failure are almost exactly the same.",
-      name: "Colin R. Davis",
-      title: "Conductor",
-    },
-    {
-      quote: "Opportunities don't happen, you create them.",
-      name: "Chris Grosser",
-      title: "Photographer and Entrepreneur",
-    },
-    {
-      quote: "Don't be afraid to give up the good to go for the great.",
-      name: "John D. Rockefeller",
-      title: "Business Magnate and Philanthropist",
+      quote: "Degens Bets",
+      name: "Franklin D. Roosevelt",
+      title: "32nd President of the United States",
+      image: (
+        <Image
+          src={"/degens.jpg"}
+          alt={"bitcoin"}
+          width={350}
+          height={50}
+          className="h-full w-full "
+        />
+      ),
     },
   ];
   return (

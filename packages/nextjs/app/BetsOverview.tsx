@@ -3,7 +3,7 @@
 import React from "react";
 
 import { motion } from "framer-motion";
-import { Bitcoin } from "lucide-react";
+import { Bitcoin, ChevronRight } from "lucide-react";
 
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
 import {
@@ -17,6 +17,7 @@ import { formatUnits } from "ethers";
 import { title } from "process";
 import { BentoGrid, BentoGridItem } from "./Uikit/components/ui/bento-grid";
 import { cn } from "./Uikit/lib/utils";
+import AnimatedGradientText from "./Uikit/components/ui/animated-text";
 
 const Skeleton = ({
   percentageYes,
@@ -57,8 +58,12 @@ const Skeleton = ({
           style={{
             maxHeight: i === 0 ? percentageYes + "%" : percentageNo + "%",
           }}
-          className={`flex flex-row rounded p-2 items-center space-x-2 w-full h-4 ${i === 0 ? "bg-primary" : "bg-destructive"}`}
-        ></motion.div>
+          className={`flex flex-row rounded p-3 items-center justify-center space-x-2 w-full h-4 ${i === 0 ? "bg-primary" : "bg-destructive"}`}
+        >
+          {i === 0
+            ? Math.round(percentageYes) + "%"
+            : Math.round(percentageNo) + "%"}
+        </motion.div>
       ))}
     </motion.div>
   );
@@ -83,10 +88,16 @@ export function BetsOverview() {
   const items = [
     {
       headerTitle: (
-        <span className="self-center">
-          {`Prize Pool ${parseFloat(formatUnits(bitcoinPriceData?.total_amount || "0")).toFixed(4)}`}{" "}
-          <span className="text-[0.8em] font-bold ml-1">{"ETH"}</span>
-        </span>
+        <AnimatedGradientText>
+          🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
+          <span
+            className={cn(
+              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`
+            )}
+          >
+            {`Prize Pool ${parseFloat(formatUnits(bitcoinPriceData?.total_amount || "0")).toFixed(4)} ETH`}
+          </span>
+        </AnimatedGradientText>
       ),
       title: `Crypto Price Bet`,
       description: (
@@ -121,10 +132,16 @@ export function BetsOverview() {
     },
     {
       headerTitle: (
-        <span className="self-center">
-          {`Prize Pool ${parseFloat(formatUnits(etherPriceData?.total_amount || "0")).toFixed(4)}`}{" "}
-          <span className="text-[0.8em] font-bold ml-1">{"ETH"}</span>
-        </span>
+        <AnimatedGradientText>
+          🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
+          <span
+            className={cn(
+              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`
+            )}
+          >
+            {`Prize Pool ${parseFloat(formatUnits(etherPriceData?.total_amount || "0")).toFixed(4)} ETH`}
+          </span>
+        </AnimatedGradientText>
       ),
       title: `Crypto Price Bet`,
       description: (
