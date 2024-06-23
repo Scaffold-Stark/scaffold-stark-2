@@ -18,6 +18,7 @@ import { title } from "process";
 import { BentoGrid, BentoGridItem } from "./Uikit/components/ui/bento-grid";
 import { cn } from "./Uikit/lib/utils";
 import AnimatedGradientText from "./Uikit/components/ui/animated-text";
+import EtherPriceBet from "~~/components/Bets/EtherPriceBet";
 
 const Skeleton = ({
   percentageYes,
@@ -167,7 +168,12 @@ export function BetsOverview() {
       modelTitle: `ether above  ${parseTokenPriceToNumber(
         etherPriceData?.reference_token_price
       )} before ${formatDate(etherPriceData?.end_date)}?`,
-      modalContent: <div></div>,
+      modalContent: (
+        <EtherPriceBet
+          etherPriceData={etherPriceData}
+          isLoading={isLoadingEtherPrice}
+        />
+      ),
     },
     {
       title: "Automated Proofreading",

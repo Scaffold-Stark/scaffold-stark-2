@@ -34,6 +34,7 @@ import {
   createContractCall,
   useScaffoldMultiWriteContract,
 } from "~~/hooks/scaffold-stark/useScaffoldMultiWriteContract";
+import EtherPriceBet from "~~/components/Bets/EtherPriceBet";
 
 function MyBets() {
   const { address, status, chainId, ...props } = useAccount();
@@ -66,7 +67,42 @@ function MyBets() {
       ]),
     ],
   });
-  const isLoading = isLoadingBitcoinPrice || isLoading_yes_bitcoin_amount;
+
+  const { data: etherPriceData, isLoading: isLoadingEtherPrice } =
+    useScaffoldReadContract({
+      contractName: "EtherPrice",
+      functionName: "get_current_bet",
+      args: undefined,
+    });
+
+  const { data: ether_yes_balance, isLoading: isLoading_yes_ether_amount } =
+    useScaffoldReadContract({
+      contractName: "EtherPrice",
+      functionName: "get_own_yes_amount",
+      args: [address as string, Number(etherPriceData?.id)],
+    });
+
+  const { data: ether_no_balance, isLoading: isLoading_no_ether_amount } =
+    useScaffoldReadContract({
+      contractName: "EtherPrice",
+      functionName: "get_own_no_amount",
+      args: [address as string, Number(etherPriceData?.id)],
+    });
+
+  const { writeAsync: claimEtherRewards } = useScaffoldMultiWriteContract({
+    calls: [
+      createContractCall("EtherPrice", "claimRewards", [
+        Number(etherPriceData?.id),
+      ]),
+    ],
+  });
+  const isLoading =
+    isLoadingBitcoinPrice ||
+    isLoading_yes_bitcoin_amount ||
+    isLoading_no_bitcoin_amount ||
+    isLoadingEtherPrice ||
+    isLoading_yes_ether_amount ||
+    isLoading_no_ether_amount;
 
   const bets = [
     {
@@ -103,34 +139,40 @@ function MyBets() {
       ),
       display: bitcoin_no_balance > 0,
     },
-    /* {
-      id: 2,
-      name: "Plus de 3 buts marqués",
-      category: "Football",
-      amount: 20,
-      choice: false,
-    },
     {
       id: 3,
-      name: "Podium pour le pilote X",
-      category: "Formule 1",
-      amount: 30,
+      name: `Ether above  ${parseTokenPriceToNumber(
+        etherPriceData?.reference_token_price
+      )} before ${formatDate(etherPriceData?.end_date)}?`,
+      category: "Cryptos",
+      amount: `${parseFloat(formatUnits(ether_yes_balance || "0")).toFixed(4)}`,
       choice: true,
+      betInfos: etherPriceData,
+      modalContent: (
+        <EtherPriceBet
+          etherPriceData={etherPriceData}
+          isLoading={isLoadingEtherPrice}
+        />
+      ),
+      display: ether_yes_balance > 0,
     },
     {
       id: 4,
-      name: "Victoire de l'équipe B",
-      category: "Football",
-      amount: 40,
+      name: `Ether above  ${parseTokenPriceToNumber(
+        etherPriceData?.reference_token_price
+      )} before ${formatDate(etherPriceData?.end_date)}?`,
+      category: "Cryptos",
+      amount: `${parseFloat(formatUnits(ether_no_balance || "0")).toFixed(4)}`,
       choice: false,
+      betInfos: etherPriceData,
+      modalContent: (
+        <EtherPriceBet
+          etherPriceData={etherPriceData}
+          isLoading={isLoadingEtherPrice}
+        />
+      ),
+      display: ether_no_balance > 0,
     },
-    {
-      id: 5,
-      name: "Plus de 100 points marqués",
-      category: "Basket",
-      amount: 25,
-      choice: true,
-    }, */
   ];
   const [selectedCategory, setSelectedCategory] = useState("all");
   const filteredBets =
