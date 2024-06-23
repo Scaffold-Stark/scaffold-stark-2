@@ -26,6 +26,7 @@ pub trait IEtherPrice<TContractState> {
     fn claimRewards(ref self: TContractState, bet_id: u64) -> u256;
     fn set_pragma_checkpoint(self: @TContractState);
     fn set_bet_result_price(ref self: TContractState);
+    fn get_contract_current_timestamp(self: @TContractState) -> u64;
 // TODO: owner claim balance of contract
 // TODO: owner set new bet
 }
@@ -126,7 +127,7 @@ pub mod EtherPrice {
     }
 
     fn assert_bet_period_validity(self: @ContractState) {
-        let current_timestamp = get_current_timestamp();
+        let current_timestamp = get_current_timestamp() * 1000;
         let start_vote_bet_timestamp = self.current_bet.read().begin_date;
         let end_vote_bet_timestamp = self.current_bet.read().vote_date_limit;
         assert!(current_timestamp >= start_vote_bet_timestamp, "Vote has not started yet");
@@ -134,9 +135,9 @@ pub mod EtherPrice {
     }
 
     fn assert_current_bet_ended(self: @ContractState) {
-        let current_timestamp = get_current_timestamp();
+        let current_timestamp = get_current_timestamp() * 1000;
         let end_bet_timestamp = self.current_bet.read().end_date;
-        assert!(current_timestamp > end_bet_timestamp, "Bet is not over yet");
+        assert!(current_timestamp >= end_bet_timestamp, "Bet is not over yet");
     }
 
     fn claimYes(ref self: ContractState, caller_address: ContractAddress, bet: BetInfos) -> u256 {
@@ -152,13 +153,14 @@ pub mod EtherPrice {
             self
                 .eth_token
                 .read()
-                .transferFrom(
-                    get_contract_address(), caller_address, amount_user_in_yes_pool + amount_earned
+                .transfer(
+                 caller_address, amount_user_in_yes_pool + amount_earned
                 );
 
             self.user_bet_yes_amount.write((caller_address, bet.id), 0);
             return amount_user_in_yes_pool + amount_earned;
         }
+       
         0_u256
     }
 
@@ -176,8 +178,8 @@ pub mod EtherPrice {
             self
                 .eth_token
                 .read()
-                .transferFrom(
-                    get_contract_address(), caller_address, amount_user_in_no_pool + amount_earned
+                .transfer(
+                 caller_address, amount_user_in_no_pool + amount_earned
                 );
 
             self.user_bet_no_amount.write((caller_address, bet.id), 0);
@@ -293,6 +295,9 @@ pub mod EtherPrice {
         }
         fn get_own_no_amount(self: @ContractState, contract_address: ContractAddress, bet_id: u64) -> u256 {
             self.user_bet_no_amount.read((contract_address, bet_id))
+        }
+        fn get_contract_current_timestamp(self: @ContractState) -> u64 {
+            get_current_timestamp()
         }
     }
 }

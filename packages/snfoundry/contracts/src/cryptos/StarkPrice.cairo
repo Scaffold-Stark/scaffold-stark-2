@@ -26,6 +26,7 @@ pub trait IStarkPrice<TContractState> {
     fn claimRewards(ref self: TContractState, bet_id: u64) -> u256;
     fn set_pragma_checkpoint(self: @TContractState);
     fn set_bet_result_price(ref self: TContractState);
+    fn get_contract_current_timestamp(self: @TContractState) -> u64;
 // TODO: owner claim balance of contract
 // TODO: owner set new bet
 }
@@ -57,7 +58,7 @@ pub mod StarkPrice {
     const ETH_CONTRACT_ADDRESS: felt252 =
         0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7;
 
-    const KEY: felt252 = 6004514686061859652; // felt252 conversion of "STRK/USD"
+        const KEY: felt252 = 6004514686061859652; // felt252 conversion of "STRK/USD"
 
     #[event]
     #[derive(Drop, starknet::Event)]
@@ -98,7 +99,7 @@ pub mod StarkPrice {
         self.eth_token.write(IERC20CamelDispatcher { contract_address: eth_contract_address });
         self.total_bets.write(1); // First bet when contract is created
 
-        let strk_price = self.pragma.get_asset_price_median(pragmaAddress, DataType::SpotEntry(KEY));
+        let btc_price = self.pragma.get_asset_price_median(pragmaAddress, DataType::SpotEntry(KEY));
 
         let current_bet = BetInfos {
             id: 1,
@@ -107,7 +108,7 @@ pub mod StarkPrice {
             total_amount_no: 0,
             begin_date: get_current_timestamp(),
             end_date: end_date,
-            token_price_start: strk_price.into(), // 8 decimals
+            token_price_start: btc_price.into(), // 8 decimals
             reference_token_price: reference_token_price,
             vote_date_limit: vote_date_limit,
             is_token_price_end_set: false,
@@ -126,7 +127,7 @@ pub mod StarkPrice {
     }
 
     fn assert_bet_period_validity(self: @ContractState) {
-        let current_timestamp = get_current_timestamp();
+        let current_timestamp = get_current_timestamp() * 1000;
         let start_vote_bet_timestamp = self.current_bet.read().begin_date;
         let end_vote_bet_timestamp = self.current_bet.read().vote_date_limit;
         assert!(current_timestamp >= start_vote_bet_timestamp, "Vote has not started yet");
@@ -134,9 +135,9 @@ pub mod StarkPrice {
     }
 
     fn assert_current_bet_ended(self: @ContractState) {
-        let current_timestamp = get_current_timestamp();
+        let current_timestamp = get_current_timestamp() * 1000;
         let end_bet_timestamp = self.current_bet.read().end_date;
-        assert!(current_timestamp > end_bet_timestamp, "Bet is not over yet");
+        assert!(current_timestamp >= end_bet_timestamp, "Bet is not over yet");
     }
 
     fn claimYes(ref self: ContractState, caller_address: ContractAddress, bet: BetInfos) -> u256 {
@@ -152,13 +153,14 @@ pub mod StarkPrice {
             self
                 .eth_token
                 .read()
-                .transferFrom(
-                    get_contract_address(), caller_address, amount_user_in_yes_pool + amount_earned
+                .transfer(
+                 caller_address, amount_user_in_yes_pool + amount_earned
                 );
 
             self.user_bet_yes_amount.write((caller_address, bet.id), 0);
             return amount_user_in_yes_pool + amount_earned;
         }
+       
         0_u256
     }
 
@@ -176,8 +178,8 @@ pub mod StarkPrice {
             self
                 .eth_token
                 .read()
-                .transferFrom(
-                    get_contract_address(), caller_address, amount_user_in_no_pool + amount_earned
+                .transfer(
+                 caller_address, amount_user_in_no_pool + amount_earned
                 );
 
             self.user_bet_no_amount.write((caller_address, bet.id), 0);
@@ -293,6 +295,9 @@ pub mod StarkPrice {
         }
         fn get_own_no_amount(self: @ContractState, contract_address: ContractAddress, bet_id: u64) -> u256 {
             self.user_bet_no_amount.read((contract_address, bet_id))
+        }
+        fn get_contract_current_timestamp(self: @ContractState) -> u64 {
+            get_current_timestamp()
         }
     }
 }
