@@ -91,7 +91,7 @@ function EtherPriceBet({ etherPriceData, isLoading }: EtherPriceBetProps) {
               <h2 className="text-white text-sm">Total Yes</h2>
               <p className="text-primary text-2xl font-bold">
                 {parseFloat(
-                  formatUnits(etherPriceData?.total_amount_yes)
+                  formatUnits(etherPriceData?.total_amount_yes),
                 ).toFixed(4)}
                 &nbsp;ETH
               </p>
@@ -103,7 +103,7 @@ function EtherPriceBet({ etherPriceData, isLoading }: EtherPriceBetProps) {
               <h2 className="text-white text-sm">Total No</h2>
               <p className="text-destructive text-2xl font-bold">
                 {parseFloat(
-                  formatUnits(etherPriceData?.total_amount_no)
+                  formatUnits(etherPriceData?.total_amount_no),
                 ).toFixed(4)}
                 &nbsp;ETH
               </p>

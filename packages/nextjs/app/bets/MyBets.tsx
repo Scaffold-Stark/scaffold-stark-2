@@ -144,7 +144,7 @@ function MyBets() {
     {
       id: 1,
       name: `Bitcoin above  ${parseTokenPriceToNumber(
-        bitcoinPriceData?.reference_token_price
+        bitcoinPriceData?.reference_token_price,
       )} before ${formatDate(bitcoinPriceData?.end_date)}?`,
       category: "Cryptos",
       amount: `${parseFloat(formatUnits(bitcoin_yes_balance || "0")).toFixed(4)}`,
@@ -162,7 +162,7 @@ function MyBets() {
     {
       id: 2,
       name: `Bitcoin above  ${parseTokenPriceToNumber(
-        bitcoinPriceData?.reference_token_price
+        bitcoinPriceData?.reference_token_price,
       )} before ${formatDate(bitcoinPriceData?.end_date)}?`,
       category: "Cryptos",
       amount: `${parseFloat(formatUnits(bitcoin_no_balance || "0")).toFixed(4)}`,
@@ -180,7 +180,7 @@ function MyBets() {
     {
       id: 3,
       name: `Ether above  ${parseTokenPriceToNumber(
-        etherPriceData?.reference_token_price
+        etherPriceData?.reference_token_price,
       )} before ${formatDate(etherPriceData?.end_date)}?`,
       category: "Cryptos",
       amount: `${parseFloat(formatUnits(ether_yes_balance || "0")).toFixed(4)}`,
@@ -198,7 +198,7 @@ function MyBets() {
     {
       id: 4,
       name: `Ether above  ${parseTokenPriceToNumber(
-        etherPriceData?.reference_token_price
+        etherPriceData?.reference_token_price,
       )} before ${formatDate(etherPriceData?.end_date)}?`,
       category: "Cryptos",
       amount: `${parseFloat(formatUnits(ether_no_balance || "0")).toFixed(4)}`,
@@ -216,7 +216,7 @@ function MyBets() {
     {
       id: 5,
       name: `Stark above  ${parseStarkPriceToNumber(
-        starkPriceData?.reference_token_price
+        starkPriceData?.reference_token_price,
       ).toFixed(2)} before ${formatDate(starkPriceData?.end_date)}?`,
       category: "Cryptos",
       amount: `${parseFloat(formatUnits(stark_yes_balance || "0")).toFixed(4)}`,
@@ -234,7 +234,7 @@ function MyBets() {
     {
       id: 6,
       name: `Stark above  ${parseStarkPriceToNumber(
-        starkPriceData?.reference_token_price
+        starkPriceData?.reference_token_price,
       ).toFixed(2)} before ${formatDate(starkPriceData?.end_date)}?`,
       category: "Cryptos",
       amount: `${parseFloat(formatUnits(stark_no_balance || "0")).toFixed(4)}`,

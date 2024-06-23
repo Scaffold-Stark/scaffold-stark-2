@@ -94,7 +94,7 @@ function BitcoinPriceBet({
               <h2 className="text-white text-sm">Total Yes</h2>
               <p className="text-primary text-2xl font-bold">
                 {parseFloat(
-                  formatUnits(bitcoinPriceData?.total_amount_yes)
+                  formatUnits(bitcoinPriceData?.total_amount_yes),
                 ).toFixed(4)}
                 &nbsp;ETH
               </p>
@@ -106,7 +106,7 @@ function BitcoinPriceBet({
               <h2 className="text-white text-sm">Total No</h2>
               <p className="text-destructive text-2xl font-bold">
                 {parseFloat(
-                  formatUnits(bitcoinPriceData?.total_amount_no)
+                  formatUnits(bitcoinPriceData?.total_amount_no),
                 ).toFixed(4)}
                 &nbsp;ETH
               </p>

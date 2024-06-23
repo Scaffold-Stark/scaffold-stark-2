@@ -103,7 +103,7 @@ export function BetsOverview() {
           🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
           <span
             className={cn(
-              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`
+              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`,
             )}
           >
             {`Prize Pool ${parseFloat(formatUnits(bitcoinPriceData?.total_amount || "0")).toFixed(4)} ETH`}
@@ -114,7 +114,7 @@ export function BetsOverview() {
       description: (
         <span className="text-sm">
           {`Bitcoin above  ${parseTokenPriceToNumber(
-            bitcoinPriceData?.reference_token_price
+            bitcoinPriceData?.reference_token_price,
           )} before ${formatDate(bitcoinPriceData?.end_date)}?`}
         </span>
       ),
@@ -122,17 +122,17 @@ export function BetsOverview() {
         <Skeleton
           percentageYes={calculatePercentage(
             bitcoinPriceData?.total_amount_yes,
-            bitcoinPriceData?.total_amount
+            bitcoinPriceData?.total_amount,
           )}
           percentageNo={calculatePercentage(
             bitcoinPriceData?.total_amount_no,
-            bitcoinPriceData?.total_amount
+            bitcoinPriceData?.total_amount,
           )}
         />
       ),
       className: "md:col-span-1",
       modelTitle: `Bitcoin above  ${parseTokenPriceToNumber(
-        bitcoinPriceData?.reference_token_price
+        bitcoinPriceData?.reference_token_price,
       )} before ${formatDate(bitcoinPriceData?.end_date)}?`,
       modalContent: (
         <BitcoinPriceBet
@@ -147,7 +147,7 @@ export function BetsOverview() {
           🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
           <span
             className={cn(
-              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`
+              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`,
             )}
           >
             {`Prize Pool ${parseFloat(formatUnits(etherPriceData?.total_amount || "0")).toFixed(4)} ETH`}
@@ -158,7 +158,7 @@ export function BetsOverview() {
       description: (
         <span className="text-sm">
           {`Ether above  ${parseTokenPriceToNumber(
-            etherPriceData?.reference_token_price
+            etherPriceData?.reference_token_price,
           )} before ${formatDate(etherPriceData?.end_date)}?`}
         </span>
       ),
@@ -166,17 +166,17 @@ export function BetsOverview() {
         <Skeleton
           percentageYes={calculatePercentage(
             etherPriceData?.total_amount_yes,
-            etherPriceData?.total_amount
+            etherPriceData?.total_amount,
           )}
           percentageNo={calculatePercentage(
             etherPriceData?.total_amount_no,
-            etherPriceData?.total_amount
+            etherPriceData?.total_amount,
           )}
         />
       ),
       className: "md:col-span-1",
       modelTitle: `ether above  ${parseTokenPriceToNumber(
-        etherPriceData?.reference_token_price
+        etherPriceData?.reference_token_price,
       )} before ${formatDate(etherPriceData?.end_date)}?`,
       modalContent: (
         <EtherPriceBet
@@ -191,7 +191,7 @@ export function BetsOverview() {
           🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
           <span
             className={cn(
-              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`
+              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`,
             )}
           >
             {`Prize Pool ${parseFloat(formatUnits(starkPriceData?.total_amount || "0")).toFixed(4)} ETH`}
@@ -202,7 +202,7 @@ export function BetsOverview() {
       description: (
         <span className="text-sm">
           {`Stark above  ${parseStarkPriceToNumber(
-            starkPriceData?.reference_token_price
+            starkPriceData?.reference_token_price,
           ).toFixed(2)} before ${formatDate(starkPriceData?.end_date)}?`}
         </span>
       ),
@@ -210,17 +210,17 @@ export function BetsOverview() {
         <Skeleton
           percentageYes={calculatePercentage(
             starkPriceData?.total_amount_yes,
-            starkPriceData?.total_amount
+            starkPriceData?.total_amount,
           )}
           percentageNo={calculatePercentage(
             starkPriceData?.total_amount_no,
-            starkPriceData?.total_amount
+            starkPriceData?.total_amount,
           )}
         />
       ),
       className: "md:col-span-1",
       modelTitle: `Stark above  ${parseStarkPriceToNumber(
-        starkPriceData?.reference_token_price
+        starkPriceData?.reference_token_price,
       ).toFixed(2)} before ${formatDate(starkPriceData?.end_date)}?`,
       modalContent: (
         <StarkPriceBet
@@ -236,7 +236,7 @@ export function BetsOverview() {
           🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
           <span
             className={cn(
-              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`
+              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`,
             )}
           >
             {`Prize Pool 999999 ETH`}
@@ -258,7 +258,7 @@ export function BetsOverview() {
           🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
           <span
             className={cn(
-              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`
+              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`,
             )}
           >
             {`Prize Pool 13490 ETH`}
@@ -280,7 +280,7 @@ export function BetsOverview() {
           🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
           <span
             className={cn(
-              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`
+              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`,
             )}
           >
             {`Prize Pool 190 ETH`}

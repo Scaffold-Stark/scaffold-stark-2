@@ -91,7 +91,7 @@ function StarkPriceBet({ starkPriceData, isLoading }: StarkPriceBetProps) {
               <h2 className="text-white text-sm">Total Yes</h2>
               <p className="text-primary text-2xl font-bold">
                 {parseFloat(
-                  formatUnits(starkPriceData?.total_amount_yes)
+                  formatUnits(starkPriceData?.total_amount_yes),
                 ).toFixed(4)}
                 &nbsp;ETH
               </p>
@@ -103,7 +103,7 @@ function StarkPriceBet({ starkPriceData, isLoading }: StarkPriceBetProps) {
               <h2 className="text-white text-sm">Total No</h2>
               <p className="text-destructive text-2xl font-bold">
                 {parseFloat(
-                  formatUnits(starkPriceData?.total_amount_no)
+                  formatUnits(starkPriceData?.total_amount_no),
                 ).toFixed(4)}
                 &nbsp;ETH
               </p>
