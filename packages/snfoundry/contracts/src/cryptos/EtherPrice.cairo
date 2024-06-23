@@ -21,8 +21,12 @@ pub trait IEtherPrice<TContractState> {
     fn vote_yes(ref self: TContractState, amount_eth: u256);
     fn vote_no(ref self: TContractState, amount_eth: u256);
     fn get_current_bet(self: @TContractState) -> BetInfos;
-    fn get_own_yes_amount(self: @TContractState, contract_address: ContractAddress, bet_id: u64) -> u256;
-    fn get_own_no_amount(self: @TContractState, contract_address: ContractAddress, bet_id: u64) -> u256;
+    fn get_own_yes_amount(
+        self: @TContractState, contract_address: ContractAddress, bet_id: u64
+    ) -> u256;
+    fn get_own_no_amount(
+        self: @TContractState, contract_address: ContractAddress, bet_id: u64
+    ) -> u256;
     fn claimRewards(ref self: TContractState, bet_id: u64) -> u256;
     fn set_pragma_checkpoint(self: @TContractState);
     fn set_bet_result_price(ref self: TContractState);
@@ -58,7 +62,7 @@ pub mod EtherPrice {
     const ETH_CONTRACT_ADDRESS: felt252 =
         0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7;
 
-        const KEY: felt252 = 19514442401534788;// felt252 conversion of "ETH/USD"
+    const KEY: felt252 = 19514442401534788; // felt252 conversion of "ETH/USD"
 
     #[event]
     #[derive(Drop, starknet::Event)]
@@ -150,17 +154,12 @@ pub mod EtherPrice {
 
         if amount_user_in_yes_pool + amount_earned > 0 {
             // call approve on UI
-            self
-                .eth_token
-                .read()
-                .transfer(
-                 caller_address, amount_user_in_yes_pool + amount_earned
-                );
+            self.eth_token.read().transfer(caller_address, amount_user_in_yes_pool + amount_earned);
 
             self.user_bet_yes_amount.write((caller_address, bet.id), 0);
             return amount_user_in_yes_pool + amount_earned;
         }
-       
+
         0_u256
     }
 
@@ -175,12 +174,7 @@ pub mod EtherPrice {
 
         if amount_user_in_no_pool + amount_earned > 0 {
             // call approve on UI
-            self
-                .eth_token
-                .read()
-                .transfer(
-                 caller_address, amount_user_in_no_pool + amount_earned
-                );
+            self.eth_token.read().transfer(caller_address, amount_user_in_no_pool + amount_earned);
 
             self.user_bet_no_amount.write((caller_address, bet.id), 0);
             return amount_user_in_no_pool + amount_earned;
@@ -290,10 +284,14 @@ pub mod EtherPrice {
         fn get_current_bet(self: @ContractState) -> BetInfos {
             self.current_bet.read()
         }
-        fn get_own_yes_amount(self: @ContractState, contract_address: ContractAddress, bet_id: u64) -> u256 {
+        fn get_own_yes_amount(
+            self: @ContractState, contract_address: ContractAddress, bet_id: u64
+        ) -> u256 {
             self.user_bet_yes_amount.read((contract_address, bet_id))
         }
-        fn get_own_no_amount(self: @ContractState, contract_address: ContractAddress, bet_id: u64) -> u256 {
+        fn get_own_no_amount(
+            self: @ContractState, contract_address: ContractAddress, bet_id: u64
+        ) -> u256 {
             self.user_bet_no_amount.read((contract_address, bet_id))
         }
         fn get_contract_current_timestamp(self: @ContractState) -> u64 {

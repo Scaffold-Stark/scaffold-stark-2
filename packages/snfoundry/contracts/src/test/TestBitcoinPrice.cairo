@@ -46,26 +46,24 @@ fn setup() -> IERC20CamelDispatcher {
 #[test]
 #[fork("TEST")]
 fn test_vote_yes() {
-    let user_address : ContractAddress = 0x0213c67ed78bc280887234fe5ed5e77272465317978ae86c25a71531d9332a2d.try_into().unwrap();
+    let user_address: ContractAddress =
+        0x0213c67ed78bc280887234fe5ed5e77272465317978ae86c25a71531d9332a2d
+        .try_into()
+        .unwrap();
     let contract_address = deploy_contract("BitcoinPrice");
     let eth_token = setup();
-    prank(
-        CheatTarget::One(contract_address),
-        user_address,
-        CheatSpan::TargetCalls(3)
-    );
+    prank(CheatTarget::One(contract_address), user_address, CheatSpan::TargetCalls(3));
     let dispatcher = IBitcoinPriceDispatcher { contract_address };
     let current_bet_id = dispatcher.get_current_bet().id;
-    assert!(dispatcher.get_own_yes_amount(user_address, current_bet_id) == 0, "User balance is suposed to be 0");
+    assert!(
+        dispatcher.get_own_yes_amount(user_address, current_bet_id) == 0,
+        "User balance is suposed to be 0"
+    );
 
     assert!(
         eth_token.balanceOf(dispatcher.contract_address) == 0, "Contract balance is suposed to be 0"
     );
-    prank(
-        CheatTarget::One(eth_token.contract_address),
-        user_address,
-        CheatSpan::TargetCalls(1)
-    );
+    prank(CheatTarget::One(eth_token.contract_address), user_address, CheatSpan::TargetCalls(1));
     eth_token.approve(contract_address, 1);
     dispatcher.vote_yes(1);
 
@@ -78,19 +76,21 @@ fn test_vote_yes() {
     assert!(new_state.total_amount_yes == 1, "State is suposed to be 1");
     assert!(new_state.total_amount_no == 0, "State is suposed to be 0");
 
-    prank(
-        CheatTarget::One(contract_address),
-        user_address,
-        CheatSpan::TargetCalls(1)
+    prank(CheatTarget::One(contract_address), user_address, CheatSpan::TargetCalls(1));
+    assert!(
+        dispatcher.get_own_yes_amount(user_address, current_bet_id) == 1,
+        "User balance is suposed to be 1"
     );
-    assert!(dispatcher.get_own_yes_amount(user_address, current_bet_id) == 1, "User balance is suposed to be 1");
 }
 
 
 #[test]
 #[fork("TEST")]
 fn test_vote_no() {
-    let user_address : ContractAddress = 0x0213c67ed78bc280887234fe5ed5e77272465317978ae86c25a71531d9332a2d.try_into().unwrap();
+    let user_address: ContractAddress =
+        0x0213c67ed78bc280887234fe5ed5e77272465317978ae86c25a71531d9332a2d
+        .try_into()
+        .unwrap();
     let contract_address = deploy_contract("BitcoinPrice");
     let eth_token = setup();
     prank(
@@ -100,7 +100,10 @@ fn test_vote_no() {
     );
     let dispatcher = IBitcoinPriceDispatcher { contract_address };
     let current_bet_id = dispatcher.get_current_bet().id;
-    assert!(dispatcher.get_own_no_amount(user_address, current_bet_id) == 0, "User balance is suposed to be 0");
+    assert!(
+        dispatcher.get_own_no_amount(user_address, current_bet_id) == 0,
+        "User balance is suposed to be 0"
+    );
 
     assert!(
         eth_token.balanceOf(dispatcher.contract_address) == 0, "Contract balance is suposed to be 0"
@@ -127,7 +130,10 @@ fn test_vote_no() {
         0x0213c67ed78bc280887234fe5ed5e77272465317978ae86c25a71531d9332a2d.try_into().unwrap(),
         CheatSpan::TargetCalls(1)
     );
-    assert!(dispatcher.get_own_no_amount(user_address, current_bet_id) == 1, "User balance is suposed to be 1");
+    assert!(
+        dispatcher.get_own_no_amount(user_address, current_bet_id) == 1,
+        "User balance is suposed to be 1"
+    );
 }
 
 #[test]
@@ -237,7 +243,6 @@ fn test_claim_rewards() {
 
     start_warp(CheatTarget::All, 4102444801_u64); // Change blocktimestamp
 
-  
     prank(
         CheatTarget::One(contract_address),
         0x0213c67ed78bc280887234fe5ed5e77272465317978ae86c25a71531d9332a2d.try_into().unwrap(),
