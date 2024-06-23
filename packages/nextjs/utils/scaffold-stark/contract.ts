@@ -137,7 +137,8 @@ export type AbiFunction = {
   state_mutability: AbiStateMutability;
 };
 
-export const contracts = contractsData as GenericContractsDeclaration | null;
+export const contracts =
+  contractsData as unknown as GenericContractsDeclaration | null;
 
 export type UseScaffoldWriteConfig<
   TContractName extends ContractName,

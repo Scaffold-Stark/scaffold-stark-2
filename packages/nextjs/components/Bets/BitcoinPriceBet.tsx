@@ -1,6 +1,7 @@
 import { useAccount, useNetwork } from "@starknet-react/core";
 import { Address as AddressType } from "@starknet-react/chains";
 import React from "react";
+import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -17,6 +18,8 @@ import { formatUnits } from "ethers";
 import { Button } from "~~/app/Uikit/components/ui/button";
 import { Input } from "~~/app/Uikit/components/ui/input";
 import { Label } from "~~/app/Uikit/components/ui/label";
+import { Swords } from "lucide-react";
+import ShineBorder from "~~/app/Uikit/components/ui/shine-border";
 
 const SkeletonShort = () => {
   return (
@@ -86,39 +89,45 @@ function BitcoinPriceBet({
             </CardContent>
           </Card>
         ) : (
-          <Card>
-            <CardHeader>
-              <CardTitle>Statistics</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-2">
-              <div className="flex items-center justify-between">
-                <span>Total Yes Bet</span>
-                <span className="font-medium">
-                  {parseFloat(
-                    formatUnits(bitcoinPriceData?.total_amount_yes),
-                  ).toFixed(4)}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Total No Bet</span>
-                <span className="font-medium">
-                  {parseFloat(
-                    formatUnits(bitcoinPriceData?.total_amount_no),
-                  ).toFixed(4)}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Prize Pool</span>
-                <span className="font-medium text-green-500">
-                  {parseFloat(
-                    formatUnits(bitcoinPriceData?.total_amount),
-                  ).toFixed(4)}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="flex items-center justify-center space-x-4  p-4 rounded-lg border">
+            <div className="flex flex-col items-center justify-center w-1/2 p-4 rounded-lg">
+              <h2 className="text-white text-sm">Total Yes</h2>
+              <p className="text-primary text-2xl font-bold">
+                {parseFloat(
+                  formatUnits(bitcoinPriceData?.total_amount_yes),
+                ).toFixed(4)}
+                &nbsp;ETH
+              </p>
+            </div>
+            <div className="flex items-center justify-center w-9 h-8 ">
+              <Swords className="text-primary" />
+            </div>
+            <div className="flex flex-col items-center justify-center p-4 rounded-lg">
+              <h2 className="text-white text-sm">Total No</h2>
+              <p className="text-destructive text-2xl font-bold">
+                {parseFloat(
+                  formatUnits(bitcoinPriceData?.total_amount_no),
+                ).toFixed(4)}
+                &nbsp;ETH
+              </p>
+            </div>
+          </div>
         )}
       </div>
+
+      <ShineBorder
+        className="text-center text-2xl font-bold capitalize w-full !bg-transparent mt-3"
+        color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+      >
+        <div className="flex flex-col items-center justify-center p-4 rounded-lg">
+          <h2 className="text-white text-sm">Prize Pool</h2>
+          <p className="text-primary text-2xl font-bold">
+            {parseFloat(formatUnits(bitcoinPriceData?.total_amount)).toFixed(4)}
+            &nbsp;ETH
+          </p>
+        </div>
+      </ShineBorder>
+
       <div className="mt-6 space-y-4">
         <div className="grid gap-2">
           <div className="flex justify-between">

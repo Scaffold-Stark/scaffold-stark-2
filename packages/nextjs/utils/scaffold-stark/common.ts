@@ -15,13 +15,17 @@ export function feltToHex(feltBigInt: bigint) {
   return `0x${feltBigInt.toString(16)}`;
 }
 
-export function parseBitcoinPriceToNumber(price: string) {
+export function parseTokenPriceToNumber(price: string) {
   return Math.floor(Number(price) / 100000000);
+}
+
+export function parseStarkPriceToNumber(price: string) {
+  return Number(price) / 100000000;
 }
 
 // Convert u64 timestamp to a human readable date
 export function formatDate(timestamp: string): string {
-  const timestampNumber = Number(timestamp) * 1000;
+  const timestampNumber = Number(timestamp);
 
   const date = new Date(timestampNumber);
 
@@ -47,7 +51,7 @@ export function formatDate(timestamp: string): string {
 }
 
 export function isDatePassed(dateU64: bigint): boolean {
-  const dateInMillis = Number(dateU64) * 1000;
+  const dateInMillis = Number(dateU64);
   const date = new Date(dateInMillis);
   const now = new Date();
 
