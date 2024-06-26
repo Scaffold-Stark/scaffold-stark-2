@@ -62,6 +62,14 @@ const copyBaseFiles = async (
     },
   });
 
+  ["snfoundry", "nextjs"].forEach(packageName => {
+    const envExamplePath = path.join(basePath, "packages", packageName, ".env.example");
+    const envPath = path.join(targetDir, "packages", packageName, ".env");
+    if (fs.existsSync(envExamplePath)) {
+      copy(envExamplePath, envPath);
+    }
+  });
+
   const basePackageJsonPaths = findFilesRecursiveSync(basePath, path => isPackageJsonRegex.test(path))
 
   basePackageJsonPaths.forEach(packageJsonPath => {
@@ -113,13 +121,15 @@ const copyExtensionsFiles = async (
         const isTemplate = isTemplateRegex.test(path);
         // PR NOTE: this wasn't needed before because ncp had the clobber: false
         const isPackageJson = isPackageJsonRegex.test(path);
+        const isGitKeep = isGitKeepRegex.test(path);
+
         const shouldSkip =
           isConfig ||
           isArgs ||
           isTemplate ||
           isPackageJson ||
           isExtensionFolder ||
-          isPackagesFolder;
+          isPackagesFolder || isGitKeep;
         return !shouldSkip;
       },
     });

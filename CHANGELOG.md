@@ -1,5 +1,10 @@
 # create-stark
 
+## 0.0.12
+
+- Add .env by default for nextjs and snfoundry
+- Filter .gitkeep for packages
+
 ## 0.0.11
 
 - Add .gitignore.template.mjs for nextjs, snfoundry and base
