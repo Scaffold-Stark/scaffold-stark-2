@@ -38,6 +38,7 @@ const isConfigRegex = /([^\/\\]*?)\\config\.json/;
 const isArgsRegex = /([^\/\\]*?)\.args\./;
 const isExtensionFolderRegex = /extensions$/;
 const isPackagesFolderRegex = /packages$/;
+const isGitKeepRegex = /\.gitkeep/;
 
 const copyBaseFiles = async (
     { dev: isDev }: Options,
@@ -51,8 +52,9 @@ const copyBaseFiles = async (
       const isPackageJson = isPackageJsonRegex.test(fileName)
       const isYarnLock = isYarnLockRegex.test(fileName)
       const isNextGenerated = isNextGeneratedRegex.test(fileName)
+      const isGitKeep = isGitKeepRegex.test(fileName);
 
-      const skipAlways = isTemplate || isPackageJson
+      const skipAlways = isTemplate || isPackageJson || isGitKeep
       const skipDevOnly = isYarnLock || isNextGenerated
       const shouldSkip = skipAlways || (isDev && skipDevOnly)
 

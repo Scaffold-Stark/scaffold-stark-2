@@ -1,5 +1,9 @@
 # create-stark
 
+## 0.0.11
+
+- Add .gitignore.template.mjs for nextjs, snfoundry and base
+
 ## 0.0.10
 
 - Fix init local-devnet as a submodule

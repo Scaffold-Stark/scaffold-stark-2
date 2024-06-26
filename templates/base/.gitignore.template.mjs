@@ -1,3 +1,6 @@
+const contents = () => 
+`# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
 .vscode/**
 node_modules
 local-devnet
@@ -12,4 +15,6 @@ package-lock.json
 !.yarn/sdks
 !.yarn/versions
 .eslintcache
-.DS_Store
+.DS_Store`
+
+export default contents;
