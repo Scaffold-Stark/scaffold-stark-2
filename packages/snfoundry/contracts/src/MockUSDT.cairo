@@ -42,10 +42,7 @@ mod MockUsdt {
     }
 
     #[constructor]
-    fn constructor(
-        ref self: ContractState,
-        recipient: ContractAddress,
-    ) {
+    fn constructor(ref self: ContractState, recipient: ContractAddress,) {
         // supply 10000 * 10^18
         let initial_supply: u256 = 10000_000_000_000_000_000_000;
         self.erc20.initializer("USD Tether", "USDT");

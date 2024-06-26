@@ -4,7 +4,6 @@ use starknet::{ContractAddress, get_block_timestamp, EthAddress};
 // @author : Carlos Ramos
 // @notice :  contract handles all interactions related to l1 campaigns
 
-
 #[derive(Drop, Serde)]
 struct Message {
     campaign_id: felt252,
@@ -21,20 +20,24 @@ pub trait ICrossFund<TContractState> {
 
 #[starknet::contract]
 mod CrossFund {
-    use contracts::CrossFundNative::ICrossFundNative;
     use contracts::CrossFundAlt::CrossFundAltComponent;
     use contracts::CrossFundNative::CrossFundNativeComponent;
+    use contracts::CrossFundNative::ICrossFundNative;
+    use core::num::traits::Zero;
     use core::traits::TryInto;
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
-    use starknet::{get_caller_address, get_contract_address, EthAddress, SyscallResultTrait};
     use starknet::syscalls::send_message_to_l1_syscall;
+    use starknet::{get_caller_address, get_contract_address, EthAddress, SyscallResultTrait};
     use super::{ContractAddress, Message, get_block_timestamp, ICrossFund};
-    use core::num::traits::Zero;
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
-    component!(path: CrossFundAltComponent, storage: cross_fund_alt, event: CrossFundMessengerEvent);
-    component!(path: CrossFundNativeComponent, storage: cross_fund_native, event: CrossFundNativeEvent);
+    component!(
+        path: CrossFundAltComponent, storage: cross_fund_alt, event: CrossFundMessengerEvent
+    );
+    component!(
+        path: CrossFundNativeComponent, storage: cross_fund_native, event: CrossFundNativeEvent
+    );
 
     #[abi(embed_v0)]
     impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
@@ -72,10 +75,8 @@ mod CrossFund {
 
     #[storage]
     struct Storage {
-        
         base_token: ContractAddress,
         target_contract: EthAddress,
-
         // starknet campaigns
         strk_campaign_counter: u256,
         strk_campaign_target_amount: LegacyMap<u256, u256>,
@@ -85,10 +86,8 @@ mod CrossFund {
         strk_campaign_data_cid: LegacyMap<u256, ByteArray>,
         strk_campaign_owner: LegacyMap<u256, ContractAddress>,
         strk_campaign_is_active: LegacyMap<u256, bool>,
-
         // ethereum campaigns
         eth_campaign_amount_raised: LegacyMap<u256, u256>,
-
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
         #[substorage(v0)]
@@ -119,7 +118,7 @@ mod CrossFund {
         }
         fn deposit_to_eth_campaign(ref self: ContractState, campaign_id: u256, amount: u256) {
             self.cross_fund_alt.deposit(campaign_id, amount);
-        }   
+        }
     }
 
     #[constructor]

@@ -5,19 +5,27 @@
 use starknet::ContractAddress;
 #[starknet::interface]
 pub trait ICrossFundNative<TContractState> {
-    fn create_campaign(ref self: TContractState, target_amount: u256, duration : u256, data_cid: ByteArray);
+    fn create_campaign(
+        ref self: TContractState, target_amount: u256, duration: u256, data_cid: ByteArray
+    );
     fn deposit(ref self: TContractState, campaign_id: u256, amount: u256);
-    fn get_campaign (self: @TContractState, campaign_id: u256) -> ((u256, u256, u256, u256), (ByteArray, ContractAddress, bool));
-    fn get_all_campaigns (self: @TContractState) -> Array<( (u256, u256, u256, u256), (ByteArray, ContractAddress, bool))>;
+    fn get_campaign(
+        self: @TContractState, campaign_id: u256
+    ) -> ((u256, u256, u256, u256), (ByteArray, ContractAddress, bool));
+    fn get_all_campaigns(
+        self: @TContractState
+    ) -> Array<((u256, u256, u256, u256), (ByteArray, ContractAddress, bool))>;
 }
 
 #[starknet::component]
 pub mod CrossFundNativeComponent {
     use core::array::ArrayTrait;
-    use starknet::{EthAddress, ContractAddress, get_caller_address, get_contract_address, get_block_timestamp};
     use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
+    use starknet::{
+        EthAddress, ContractAddress, get_caller_address, get_contract_address, get_block_timestamp
+    };
     use super::{ICrossFundNative};
-    
+
 
     #[event]
     #[derive(Drop, starknet::Event)]
@@ -52,14 +60,21 @@ pub mod CrossFundNativeComponent {
 
 
     #[embeddable_as(CrossFundNativeImpl)]
-    impl CrossFundNative<TContractState, +HasComponent<TContractState>> of ICrossFundNative<ComponentState<TContractState>>{
-        fn create_campaign(ref self: ComponentState<TContractState>, target_amount: u256, duration : u256, data_cid: ByteArray) {
+    impl CrossFundNative<
+        TContractState, +HasComponent<TContractState>
+    > of ICrossFundNative<ComponentState<TContractState>> {
+        fn create_campaign(
+            ref self: ComponentState<TContractState>,
+            target_amount: u256,
+            duration: u256,
+            data_cid: ByteArray
+        ) {
             self._create_campaign(target_amount, duration, data_cid);
         }
         fn deposit(ref self: ComponentState<TContractState>, campaign_id: u256, amount: u256) {
-
             let token = self.base_token.read();
-            let is_success = IERC20CamelDispatcher { contract_address: token }.transferFrom(get_caller_address(), get_contract_address(), amount);
+            let is_success = IERC20CamelDispatcher { contract_address: token }
+                .transferFrom(get_caller_address(), get_contract_address(), amount);
             assert(is_success, 'transfer failed');
 
             let raised_amount = self.campaign_raised_amount.read(campaign_id);
@@ -67,16 +82,20 @@ pub mod CrossFundNativeComponent {
             self.campaign_raised_amount.write(campaign_id, new_raised_amount);
         }
 
-        fn get_campaign (self: @ComponentState<TContractState>, campaign_id: u256) -> ((u256, u256, u256, u256), (ByteArray, ContractAddress, bool)) {
+        fn get_campaign(
+            self: @ComponentState<TContractState>, campaign_id: u256
+        ) -> ((u256, u256, u256, u256), (ByteArray, ContractAddress, bool)) {
             self._get_campaign(campaign_id)
         }
 
-        fn get_all_campaigns (self: @ComponentState<TContractState>) -> Array<( (u256, u256, u256, u256), (ByteArray, ContractAddress, bool))> {
+        fn get_all_campaigns(
+            self: @ComponentState<TContractState>
+        ) -> Array<((u256, u256, u256, u256), (ByteArray, ContractAddress, bool))> {
             let mut counter = self.campaign_counter.read();
             let mut campaigns = array![];
 
             loop {
-                if(counter == 1) {
+                if (counter == 1) {
                     break;
                 }
                 let campaign = self._get_campaign(counter - 1);
@@ -89,16 +108,22 @@ pub mod CrossFundNativeComponent {
     }
 
     #[generate_trait]
-    pub impl InternalImpl<TContractState, +HasComponent<TContractState>> of InternalTrait<TContractState> {
-
+    pub impl InternalImpl<
+        TContractState, +HasComponent<TContractState>
+    > of InternalTrait<TContractState> {
         fn initialize(ref self: ComponentState<TContractState>, base_token: ContractAddress) {
             self.base_token.write(base_token);
             self.campaign_counter.write(1);
         }
 
-        fn _create_campaign(ref self: ComponentState<TContractState>, target_amount: u256, duration : u256, data_cid: ByteArray) {
+        fn _create_campaign(
+            ref self: ComponentState<TContractState>,
+            target_amount: u256,
+            duration: u256,
+            data_cid: ByteArray
+        ) {
             // creates a campaign on this contract
-            let block_timestamp:u256 = get_block_timestamp().try_into().unwrap();
+            let block_timestamp: u256 = get_block_timestamp().try_into().unwrap();
             let campaign_id = self.campaign_counter.read();
             self.campaign_counter.write(campaign_id + 1);
             self.campaign_target_amount.write(campaign_id, target_amount);
@@ -108,10 +133,21 @@ pub mod CrossFundNativeComponent {
             self.campaign_data_cid.write(campaign_id, data_cid.clone());
             self.campaign_owner.write(campaign_id, get_caller_address());
             self.campaign_is_active.write(campaign_id, true);
-            self.emit(CampaignCreated { campaign_id: campaign_id, owner: get_caller_address(), target_amount, deadline: block_timestamp + duration, data_cid });
+            self
+                .emit(
+                    CampaignCreated {
+                        campaign_id: campaign_id,
+                        owner: get_caller_address(),
+                        target_amount,
+                        deadline: block_timestamp + duration,
+                        data_cid
+                    }
+                );
         }
 
-        fn _get_campaign(self: @ComponentState<TContractState>, campaign_id: u256) -> ( (u256, u256, u256, u256), (ByteArray, ContractAddress, bool)) {
+        fn _get_campaign(
+            self: @ComponentState<TContractState>, campaign_id: u256
+        ) -> ((u256, u256, u256, u256), (ByteArray, ContractAddress, bool)) {
             let target_amount = self.campaign_target_amount.read(campaign_id);
             let raised_amount = self.campaign_raised_amount.read(campaign_id);
             let duration = self.campaign_duration.read(campaign_id);
@@ -122,26 +158,17 @@ pub mod CrossFundNativeComponent {
             ((target_amount, raised_amount, duration, start_time), (data_cid, owner, is_active))
         }
 
-        fn _deactivate_campaign(
-            ref self: ComponentState<TContractState>,
-            campaign_id: u256,
-        ) {
+        fn _deactivate_campaign(ref self: ComponentState<TContractState>, campaign_id: u256,) {
             self._assert_campaign_active(campaign_id);
             self.campaign_is_active.write(campaign_id, false);
         }
 
-        fn _assert_campaign_active(
-            self: @ComponentState<TContractState>,
-            campaign_id: u256,
-        ) {
+        fn _assert_campaign_active(self: @ComponentState<TContractState>, campaign_id: u256,) {
             let status = self.campaign_is_active.read(campaign_id);
             assert(status, 'campaign is not active');
         }
 
-        fn _withdraw(
-            ref self: ComponentState<TContractState>,
-            campaign_id: u256,
-        ) -> u8 {
+        fn _withdraw(ref self: ComponentState<TContractState>, campaign_id: u256,) -> u8 {
             self._assert_campaign_active(campaign_id);
             self._deactivate_campaign(campaign_id);
             let raised_amount = self.campaign_raised_amount.read(campaign_id);
