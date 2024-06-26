@@ -192,13 +192,13 @@ export const AddressInfoDropdown = ({
             <>
               <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
                 <div className="relative w-auto my-6 mx-auto max-w-5xl">
-                  <div className="border-2 rounded-lg shadow-lg relative w-[90vw] mx-auto md:max-h-[30rem] md:max-w-[30rem] bg-base-content outline-none focus:outline-none">
+                  <div className="border-2 rounded-lg shadow-lg relative w-[90vw] mx-auto md:max-h-[30rem] md:max-w-[30rem] bg-base-100 outline-none focus:outline-none">
                     <div className="flex items-start justify-between p-4 border-b border-solid border-blueGray-200 rounded-t">
-                      <h3 className="text-3xl font-semibold text-base-100 text-center ">
+                      <h3 className="text-3xl font-semibold  text-center ">
                         Choose Account
                       </h3>
                       <button
-                        className="w-8 h-8 grid place-content-end rounded-full text-base-100"
+                        className="w-8 h-8 grid place-content-end rounded-full"
                         onClick={() => setShowBurnerAccounts(false)}
                       >
                         <svg
@@ -222,7 +222,7 @@ export const AddressInfoDropdown = ({
                           <div className="w-full flex flex-col">
                             <button
                               key={burnerAcc.publicKey}
-                              className=" border-2 border-primary-content rounded-md text-base-100 hover:bg-primary-content py-[3px] pl-[10px] flex"
+                              className=" border-2 border-primary-content rounded-md hover:bg-primary py-[3px] pl-[10px] flex"
                               onClick={(e) => handleConnectBurner(e, ix)}>
                               {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}
                             </button>
