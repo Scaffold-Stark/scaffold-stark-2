@@ -23,6 +23,7 @@ export const CustomConnectButton = () => {
   const { address, status, chainId, ...props } = useAccount();
   const { chain } = useNetwork();
   const [modalOpen, setModalOpen] = useState(false);
+  const [showBurnerAccounts, setShowBurnerAccounts] = useState(false);
 
   const blockExplorerAddressLink = address
     ? getBlockExplorerAddressLink(targetNetwork, address)
