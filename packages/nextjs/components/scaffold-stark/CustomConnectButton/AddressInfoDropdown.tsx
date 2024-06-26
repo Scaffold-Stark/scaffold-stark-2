@@ -192,11 +192,29 @@ export const AddressInfoDropdown = ({
             <>
               <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
                 <div className="relative w-auto my-6 mx-auto max-w-5xl">
-                  <div className="border-2 rounded-lg shadow-lg relative w-[90vw] mx-auto md:max-h-[30rem] md:max-w-[35rem] bg-base-content outline-none focus:outline-none">
-                    <h3 className="text-3xl font-semibold text-base-100 text-center p-5">
-                      Choose Account
-                    </h3>
-                    <div className="flex flex-col pb-[25px] items-center justify-center gap-3 mx-8">
+                  <div className="border-2 rounded-lg shadow-lg relative w-[90vw] mx-auto md:max-h-[30rem] md:max-w-[30rem] bg-base-content outline-none focus:outline-none">
+                    <div className="flex items-start justify-between p-4 border-b border-solid border-blueGray-200 rounded-t">
+                      <h3 className="text-3xl font-semibold text-base-100 text-center ">
+                        Choose Account
+                      </h3>
+                      <button
+                        className="w-8 h-8 grid place-content-end rounded-full text-base-100"
+                        onClick={() => setShowBurnerAccounts(false)}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            fill="currentColor"
+                            d="m6.4 18.308l-.708-.708l5.6-5.6l-5.6-5.6l.708-.708l5.6 5.6l5.6-5.6l.708.708l-5.6 5.6l5.6 5.6l-.708.708l-5.6-5.6z"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    <div className="flex flex-col pb-[25px] items-center justify-center gap-3 mx-8 mt-4">
 
                       <div className="h-[300px] overflow-y-auto flex w-full flex-col gap-2">
                         {burnerAccounts.map((burnerAcc, ix) => (
@@ -211,15 +229,6 @@ export const AddressInfoDropdown = ({
                           </div>
                         ))}
                       </div>
-                    </div>
-                    {/*footer*/}
-                    <div className="flex justify-center p-2 border-t border-solid border-base-700 rounded-b">
-                      <button
-                        className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                        type="button"
-                        onClick={() => setShowBurnerAccounts(false)}>
-                        Close
-                      </button>
                     </div>
                   </div>
                 </div>
