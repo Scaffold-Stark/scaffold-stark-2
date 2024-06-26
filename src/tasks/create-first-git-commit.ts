@@ -1,4 +1,5 @@
 import { execa } from "execa";
+import path from "path";
 
 // Checkout the latest release tag in a git submodule
 async function checkoutLatestTag(submodulePath: string): Promise<void> {
@@ -26,6 +27,9 @@ export async function createFirstGitCommit(
     await execa("git", ["submodule", "add", "-f", "https://github.com/0xSpaceShard/starknet-devnet-rs", "packages/snfoundry/local-devnet"], {
       cwd: targetDir,
     });
+
+    const localDevnetPath = path.resolve(targetDir, "packages", "snfoundry", "local-devnet");
+    await execa("git", ["checkout", "46e0ec032956f0e7cbe0330f32b6b31eff824087"], { cwd: localDevnetPath });
 
     await execa("git", ["add", "-A"], { cwd: targetDir });
     await execa(

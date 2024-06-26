@@ -1,5 +1,9 @@
 # create-stark
 
+## 0.0.10
+
+- Fix init local-devnet as a submodule
+
 ## 0.0.6
 
 - Sync feats with scaffold-stark-2
