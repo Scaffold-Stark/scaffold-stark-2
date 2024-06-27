@@ -1,4 +1,5 @@
-mod CrossFund;
-mod CrossFundAlt;
-mod CrossFundNative;
-mod MockUsdt;
+mod YourContract;
+#[cfg(test)]
+mod test {
+    mod TestContract;
+}
