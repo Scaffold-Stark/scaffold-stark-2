@@ -77,13 +77,13 @@ curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh
 
 ### Starknet Foundry version
 
-To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.23.0. To accomplish this, first check your Starknet Foundry version:
+To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.25.0. To accomplish this, first check your Starknet Foundry version:
 
 ```sh
 snforge --version
 ```
 
-If your Starknet Foundry version is not `0.23.0`, you need to install it.
+If your Starknet Foundry version is not `0.25.0`, you need to install it.
 
 - [Starknet Foundry](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html)
 
