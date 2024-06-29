@@ -15,7 +15,12 @@
 //     console.log("All Setup Done");
 //   })
 //   .catch(console.error);
-import { deployContract, deployer, provider, exportDeployments } from "./deploy-contract";
+import {
+  deployContract,
+  deployer,
+  provider,
+  exportDeployments,
+} from "./deploy-contract";
 import { CallData, hash } from "starknet-dev";
 
 const checkWalletDeployed = async (walletAddress: string): Promise<boolean> => {
@@ -33,7 +38,9 @@ const deployScript = async (): Promise<void> => {
   const isWalletDeployed = await checkWalletDeployed(walletAddress);
 
   if (!isWalletDeployed) {
-    console.error("StarkNet wallet is not deployed. Please initialize and deploy your wallet before proceeding.");
+    console.error(
+      "StarkNet wallet is not deployed. Please initialize and deploy your wallet before proceeding."
+    );
     console.log("To deploy your wallet, follow these steps:");
     console.log("1. Initialize your StarkNet wallet.");
     console.log("2. Deploy the initialized wallet.");
@@ -56,5 +63,3 @@ const deployScript = async (): Promise<void> => {
 };
 
 deployScript().catch(console.error);
-
-
