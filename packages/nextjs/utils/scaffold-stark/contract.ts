@@ -375,8 +375,7 @@ function tryParsingParamReturnObject(fn: (x: any) => {}, param: any) {
 export function parseParamWithType(
   paramType: string,
   param: any,
-  isRead: boolean,
-  parseReturnObj: boolean = true,
+  isRead: boolean
 ) {
   if (isRead) {
     if (isCairoTuple(paramType)) {
@@ -447,20 +446,16 @@ export function parseParamWithType(
             .split(",")
             //@ts-ignore
             .map((item) =>
-              parseParamWithType(genericType, item, isRead, false),
+              parseParamWithType(genericType, item, isRead),
             ),
         ];
       } else {
         return param;
       }
     } else if (isCairoU256(paramType)) {
-      return parseReturnObj
-        ? tryParsingParamReturnObject(uint256.bnToUint256, param)
-        : uint256.bnToUint256(param);
+      return tryParsingParamReturnValues(uint256.bnToUint256, param);
     } else if (isCairoByteArray(paramType)) {
-      return parseReturnObj
-        ? tryParsingParamReturnObject(byteArray.byteArrayFromString, param)
-        : byteArray.byteArrayFromString(param);
+      return tryParsingParamReturnValues(byteArray.byteArrayFromString, param);
     } else if (isCairoContractAddress(paramType)) {
       return tryParsingParamReturnValues(validateAndParseAddress, param);
     } else if (isCairoBool(paramType)) {
@@ -493,10 +488,10 @@ export function parseParamWithType(
         content,
         isRead,
       );
-      return new CairoResult(
+      return [[new CairoResult(
         isOk ? CairoResultVariant.Ok : CairoResultVariant.Err,
         parsedValue,
-      );
+      )]];
     } else {
       return tryParsingParamReturnValues((x) => x, param);
     }
