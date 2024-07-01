@@ -375,7 +375,7 @@ function tryParsingParamReturnObject(fn: (x: any) => {}, param: any) {
 export function parseParamWithType(
   paramType: string,
   param: any,
-  isRead: boolean
+  isRead: boolean,
 ) {
   if (isRead) {
     if (isCairoTuple(paramType)) {
@@ -445,9 +445,7 @@ export function parseParamWithType(
           param
             .split(",")
             //@ts-ignore
-            .map((item) =>
-              parseParamWithType(genericType, item, isRead),
-            ),
+            .map((item) => parseParamWithType(genericType, item, isRead)),
         ];
       } else {
         return param;
@@ -488,10 +486,14 @@ export function parseParamWithType(
         content,
         isRead,
       );
-      return [[new CairoResult(
-        isOk ? CairoResultVariant.Ok : CairoResultVariant.Err,
-        parsedValue,
-      )]];
+      return [
+        [
+          new CairoResult(
+            isOk ? CairoResultVariant.Ok : CairoResultVariant.Err,
+            parsedValue,
+          ),
+        ],
+      ];
     } else {
       return tryParsingParamReturnValues((x) => x, param);
     }
