@@ -27,13 +27,13 @@ Before you begin, you need to install the following tools:
 
 ### Scarb version
 
-To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.5.4`. To accomplish this, first check your local Scarb version:
+To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.6.4`. To accomplish this, first check your local Scarb version:
 
 ```sh
 scarb --version
 ```
 
-If your local Scarb version is not `2.5.4`, you need to install it.
+If your local Scarb version is not `2.6.4`, you need to install it.
 
 <details>
 <summary><b>Scarb Installation Process</b></summary>
@@ -54,23 +54,23 @@ Once you have `asdf` installed locally, you can download Scarb plugin with the f
 asdf plugin add scarb
 ```
 
-This will allow you to download specific versions. You can choose the same version as the Dojo's Cairo version, for example, 2.5.4, with the following command:
+This will allow you to download specific versions. You can choose the same version as the Dojo's Cairo version, for example, 2.6.4, with the following command:
 
 ```bash
-asdf install scarb 2.5.4
+asdf install scarb 2.6.4
 ```
 
 and set a global version:
 
 ```bash
-asdf global scarb 2.5.4
+asdf global scarb 2.6.4
 ```
 
 Otherwise, you can simply run the following command in your terminal, and follow the onscreen instructions. This
-will install the version `2.5.4` of Scarb.
+will install the version `2.6.4` of Scarb.
 
 ```bash
-curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh -s -- -v 2.5.4
+curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh -s -- -v 2.6.4
 ```
 
 </details>
@@ -89,9 +89,9 @@ If your Starknet Foundry version is not `0.23.0`, you need to install it.
 
 ## Compatible versions
 
-- Scarb - v2.5.4
+- Scarb - v2.6.4
 - Snforge - v0.23
-- Cairo - v2.5.4
+- Cairo - v2.6.4
 - Rpc - v0.5.1
 
 ## Quickstart

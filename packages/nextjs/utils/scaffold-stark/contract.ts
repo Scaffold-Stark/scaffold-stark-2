@@ -482,14 +482,6 @@ export function parseParamWithType(
       } else {
         return param;
       }
-    } else if (isCairoU256(paramType)) {
-      return tryParsingParamReturnObject(uint256.bnToUint256, param);
-    } else if (isCairoByteArray(paramType)) {
-      return tryParsingParamReturnObject(byteArray.byteArrayFromString, param);
-    } else if (isCairoContractAddress(paramType)) {
-      return tryParsingParamReturnValues(validateAndParseAddress, param);
-    } else if (isCairoBool(paramType)) {
-      return param == "false" ? "0x0" : "0x1";
     } else if (isCairoOption(paramType)) {
       if (param === "None") {
         return new CairoOption(CairoOptionVariant.None);
@@ -503,25 +495,34 @@ export function parseParamWithType(
         isRead,
       );
       return new CairoOption(CairoOptionVariant.Some, parsedValue);
+    } else if (isCairoU256(paramType)) {
+      return tryParsingParamReturnObject(uint256.bnToUint256, param);
+    } else if (isCairoByteArray(paramType)) {
+      return tryParsingParamReturnObject(byteArray.byteArrayFromString, param);
+    } else if (isCairoContractAddress(paramType)) {
+      return tryParsingParamReturnValues(validateAndParseAddress, param);
+    } else if (isCairoBool(paramType)) {
+      return param == "false" ? "0x0" : "0x1";
     } else if (isCairoResult(paramType)) {
-      const isOk = (param as string).toLowerCase().includes("ok");
-      const [ok, error] = parseGenericType(paramType);
-      const contentStartIndex = isOk ? 3 : 4;
-      const contentEndIndex = (param as string).length - 1;
-      const content = (param as string).slice(
-        contentStartIndex,
-        contentEndIndex,
-      );
-      //@ts-ignore
-      const parsedValue = parseParamWithType(
-        isOk ? ok : error,
-        content,
-        isRead,
-      );
-      return new CairoResult(
-        isOk ? CairoResultVariant.Ok : CairoResultVariant.Err,
-        parsedValue,
-      );
+      if (param) {
+        const variantType =
+          param.variant.Ok && param.variant.Ok.value
+            ? param.variant.Ok
+            : param.variant.Err;
+        const variantValue = variantType.value;
+
+        const resultVariant =
+          variantType === param.variant.Ok && param.variant.Ok.value
+            ? CairoResultVariant.Ok
+            : CairoResultVariant.Err;
+        const valueType: any = isCairoU256(variantType.type)
+          ? uint256.bnToUint256(variantValue)
+          : isCairoByteArray(variantType.type)
+            ? byteArray.byteArrayFromString(variantValue)
+            : parseParamWithType(variantType.type, variantValue, false);
+
+        return new CairoResult(resultVariant, valueType);
+      }
     } else {
       try {
         if (typeof param.variant == "object" && param.variant != null) {
@@ -570,7 +571,7 @@ export function parseParamWithType(
           }, [] as any[]);
         }
       } catch (err) {
-        console.log(err);
+        //console.log(err);
         return param;
       }
     }

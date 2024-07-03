@@ -24,7 +24,22 @@ struct SampleNestedStruct {
 #[starknet::interface]
 pub trait IYourContract<TContractState> {
     fn gretting(self: @TContractState) -> ByteArray;
+    fn total_counter(self: @TContractState) -> u256;
+    fn counter(self: @TContractState) -> u64;
+    fn var(self: @TContractState) -> felt252;
+    fn t1(self: @TContractState) -> (u64, ByteArray);
+    fn var2(self: @TContractState) -> ContractAddress;
+    fn set_total_counter(ref self: TContractState, new_total_counter: u256);
+    fn set_counter(ref self: TContractState, new_counter: u64);
     fn set_gretting(ref self: TContractState, new_greeting: ByteArray, amount_eth: u256);
+    fn set_premium(ref self: TContractState, new_premium: bool);
+    fn set_var(ref self: TContractState, new_var: felt252);
+    fn set_t1(ref self: TContractState, new_t1: (u64, ByteArray));
+    fn set_var2(ref self: TContractState, new_var2: ContractAddress);
+    fn var3(self: @TContractState) -> Result<u64, u64>;
+    fn set_var3(ref self: TContractState, new_var3: Result<u64, u64>);
+    fn var4(self: @TContractState) -> Option<ByteArray>;
+    fn set_var4(ref self: TContractState, new_var4: Option<ByteArray>);
     fn withdraw(ref self: TContractState);
     fn premium(self: @TContractState) -> bool;
     fn test_simple_enum_read(self: @TContractState) -> SampleEnum;
@@ -35,7 +50,7 @@ pub trait IYourContract<TContractState> {
     fn test_nested_struct_write(ref self: TContractState, sample_nested_struct: SampleNestedStruct);
 
     fn test_write_span_felt(ref self: TContractState, span: Span<felt252>);
-    fn test_write_span_u256(ref self: TContractState, span: Span<u256>);
+    fn test_write_span_u256(ref self: TContractState, span: Array<u256>);
     fn test_write_span_bool(ref self: TContractState, span: Span<bool>);
     fn test_write_span_address(ref self: TContractState, span: Span<ContractAddress>);
     fn test_write_span_byte_array(ref self: TContractState, span: Span<ByteArray>);
@@ -92,7 +107,13 @@ mod YourContract {
         eth_token: IERC20CamelDispatcher,
         greeting: ByteArray,
         premium: bool,
+        counter: u64,
         total_counter: u256,
+        var: felt252,
+        var3: Result<u64, u64>,
+        var4: Option<ByteArray>,
+        t1: (u64, ByteArray),
+        var2: ContractAddress,
         user_gretting_counter: LegacyMap<ContractAddress, u256>,
         sample_enum: SampleEnum,
         sample_struct: SampleStruct,
@@ -123,6 +144,66 @@ mod YourContract {
     impl YourContractImpl of IYourContract<ContractState> {
         fn gretting(self: @ContractState) -> ByteArray {
             self.greeting.read()
+        }
+
+        fn total_counter(self: @ContractState) -> u256 {
+            self.total_counter.read()
+        }
+
+        fn counter(self: @ContractState) -> u64 {
+            self.counter.read()
+        }
+
+        fn var(self: @ContractState) -> felt252 {
+            self.var.read()
+        }
+
+        fn t1(self: @ContractState) -> (u64, ByteArray) {
+            self.t1.read()
+        }
+
+        fn set_t1(ref self: ContractState, new_t1: (u64, ByteArray)) {
+            self.t1.write(new_t1);
+        }
+
+        fn var2(self: @ContractState) -> ContractAddress {
+            self.var2.read()
+        }
+
+        fn set_total_counter(ref self: ContractState, new_total_counter: u256) {
+            self.total_counter.write(new_total_counter);
+        }
+
+        fn set_counter(ref self: ContractState, new_counter: u64) {
+            self.counter.write(new_counter);
+        }
+
+        fn set_premium(ref self: ContractState, new_premium: bool) {
+            self.premium.write(new_premium);
+        }
+
+        fn set_var(ref self: ContractState, new_var: felt252) {
+            self.var.write(new_var);
+        }
+
+        fn set_var2(ref self: ContractState, new_var2: ContractAddress) {
+            self.var2.write(new_var2);
+        }
+
+        fn var3(self: @ContractState) -> Result<u64, u64> {
+            self.var3.read()
+        }
+
+        fn var4(self: @ContractState) -> Option<ByteArray> {
+            self.var4.read()
+        }
+
+        fn set_var3(ref self: ContractState, new_var3: Result<u64, u64>) {
+            self.var3.write(new_var3);
+        }
+
+        fn set_var4(ref self: ContractState, new_var4: Option<ByteArray>) {
+            self.var4.write(new_var4);
         }
 
         fn set_gretting(ref self: ContractState, new_greeting: ByteArray, amount_eth: u256) {
@@ -196,18 +277,13 @@ mod YourContract {
             };
         }
 
-        fn test_write_span_u256(ref self: ContractState, mut span: Span<u256>) {
+        fn test_write_span_u256(ref self: ContractState, mut span: Array<u256>) {
             self.test_last_write_span_length.write(span.len().into());
 
-            // get second item with loop like in previous function and pop;
-            loop {
-                if span.len() == 2 {
-                    let second_item = *span.pop_front().unwrap();
-                    self.test_2nd_last_item_span_u256.write(second_item);
-                    break;
-                }
-                let useless_item = *span.pop_front().unwrap();
-            };
+            if (span.len() >= 2) {
+                let second_item = span[1];
+                self.test_2nd_last_item_span_u256.write(*second_item);
+            }
         }
 
         fn test_write_span_bool(ref self: ContractState, mut span: Span<bool>) {
