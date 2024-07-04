@@ -3,5 +3,3 @@ mod YourContract;
 mod test {
     mod TestContract;
 }
-
-
