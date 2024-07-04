@@ -214,7 +214,7 @@ fn test_settle_bet() {
 
     store(NIMBORA_ADDRESS, selector!("handled_epoch_withdrawal_len"), handled_epoch_withdrawal_len_array_value.span());
 
-    let underlying = dispatcher.getBet(bet_id).nimbora.underlying();
+    // let underlying = dispatcher.getBet(bet_id).nimbora.underlying();
 
     let amount = dispatcher.getBet(bet_id).nimbora.convert_to_assets(dispatcher.getBet(bet_id).total_shares_amount);
     let map_value_balance: Array<felt252> = array![

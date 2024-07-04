@@ -278,9 +278,18 @@ pub mod BetCryptoMaker {
         }
 
         fn getAllBets(self: @ContractState) -> Array<BetInfos> {
-            // TODO
-            let res = array![];
-            res
+            let mut bets: Array<BetInfos> = ArrayTrait::new();
+            let mut i: u256 = 1;
+            loop {
+                if i > self.total_bets.read() {
+                    break;
+                }
+                if self.bets.read(i).is_bet_ended == false {
+                    bets.append(self.bets.read(i));
+                }
+                i += 1;
+            };
+            bets
         }
 
         fn vote_yes(ref self: ContractState, amount_eth: u256, bet_id: u256) {
