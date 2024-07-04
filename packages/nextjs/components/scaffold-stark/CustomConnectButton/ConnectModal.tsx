@@ -31,7 +31,8 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
 
   useEffect(() => setAnimate(isOpen), [isOpen]);
 
-  const { connectors, connect } = useConnect();
+  const { connectors, connect, error, status} = useConnect();
+
 
   const [_, setLastConnector] = useLocalStorage<{ id: string; ix?: number }>(
     "lastUsedConnector",
@@ -49,7 +50,6 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
       setIsBurnerWallet(true);
       return;
     }
-
     connect({ connector });
     setLastConnector({ id: connector.id });
     closeModal(e);

@@ -30,14 +30,14 @@ const Wallet = ({
           <div
             className="h-full w-full object-cover rounded-[5px]"
             dangerouslySetInnerHTML={{
-              __html: connector.icon.light ?? "",
+              __html: connector.icon ?? "",
             }}
           />
         ) : (
           <Image
             alt={connector.name}
             loader={loader}
-            src={connector.icon.light!}
+            src={connector.icon as string}
             width={70}
             height={70}
             className="h-full w-full object-cover rounded-[5px]"

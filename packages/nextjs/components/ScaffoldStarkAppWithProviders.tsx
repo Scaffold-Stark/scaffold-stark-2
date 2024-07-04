@@ -10,6 +10,7 @@ import {
   braavos,
   useInjectedConnectors,
   starkscan,
+  MockConnector,
 } from "@starknet-react/core";
 import { Header } from "~~/components/Header";
 import { Footer } from "~~/components/Footer";

@@ -18,7 +18,6 @@ export const fetchPriceFromCoingecko = async (
 
   // Check cache first
   if (priceCache[symbol] !== undefined) {
-    console.log(`Returning cached price for ${symbol}`);
     return priceCache[symbol];
   }
 
@@ -38,7 +37,6 @@ const updatePriceCache = async (
       const data = await response.json();
       const price = data.ethereum.usd;
       priceCache[symbol] = price;
-      console.log(`Price updated for ${symbol}: ${price}`);
       return price;
     } catch (error) {
       console.error(

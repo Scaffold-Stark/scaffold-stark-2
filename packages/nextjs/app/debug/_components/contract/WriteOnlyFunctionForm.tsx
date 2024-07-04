@@ -49,6 +49,7 @@ WriteOnlyFunctionFormProps) => {
     data: result,
     isPending: isLoading,
     sendAsync,
+    send,
   } = useSendTransaction({
     calls: [
       {

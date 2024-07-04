@@ -1,5 +1,5 @@
-import { InjectedConnector, starknetChainId } from "@starknet-react/core";
-import { Account, AccountInterface, RpcProvider } from "starknet";
+import { InjectedConnector, UserRejectedRequestError, starknetChainId } from "@starknet-react/core";
+import { Account, AccountInterface, Call, RpcProvider } from "starknet";
 import {
   ConnectorData,
   ConnectorIcons,
@@ -7,6 +7,7 @@ import {
 import { Chain, devnet } from "@starknet-react/chains";
 import scaffoldConfig from "~~/scaffold.config";
 import { BurnerAccount, burnerAccounts } from "~~/utils/devnetAccounts";
+import { RequestFnCall, RpcMessage, RpcTypeToMessageMap } from "starknet-types";
 
 export const burnerWalletId = "burner-wallet";
 export const burnerWalletName = "Burner Wallet";
@@ -68,6 +69,18 @@ export class BurnerConnector extends InjectedConnector {
   async ready(): Promise<boolean> {
     return Promise.resolve((await this.account()).address !== "");
   }
+
+  async request<T extends RpcMessage["type"]>(
+    call: RequestFnCall<T>,
+  ): Promise<RpcTypeToMessageMap[T]["result"]> {
+
+    try {
+      return await (await this.account()).execute(call);
+    } catch (e){
+      throw new UserRejectedRequestError();
+    }
+  }
+
 
   async connect(): Promise<ConnectorData> {
     return Promise.resolve({

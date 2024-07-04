@@ -1625,6 +1625,7 @@ __metadata:
     react-dom: ^18
     react-hot-toast: ^2.4.1
     starknet: 6.9.0
+    starknet-types: ^0.7.2
     tailwindcss: ^3.3.0
     type-fest: ^4.6.0
     typescript: ^5

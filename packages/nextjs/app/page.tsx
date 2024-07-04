@@ -6,9 +6,16 @@ import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-stark";
 import { useAccount } from "@starknet-react/core";
 import { Address as AddressType } from "@starknet-react/chains";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
 
 const Home: NextPage = () => {
   const connectedAddress = useAccount();
+
+  const {sendAsync : writeAsync} = useScaffoldWriteContract({
+    contractName: "YourContract",
+    functionName : "set_gretting",
+    args: ["helllo", 0]
+  })
   return (
     <>
       <div className="flex items-center flex-col flex-grow pt-10">
@@ -63,13 +70,13 @@ const Home: NextPage = () => {
             </div>
           </div>
         </div>
-        {/* <div
+        <div
           onClick={() => {
             writeAsync();
           }}
         >
           TEST TX
-        </div> */}
+        </div>
       </div>
     </>
   );
