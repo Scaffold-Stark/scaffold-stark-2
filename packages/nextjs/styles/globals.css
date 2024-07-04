@@ -30,3 +30,17 @@ p {
 .btn.btn-ghost {
   @apply shadow-none;
 }
+
+.border-gradient{
+  border: 1px solid var(--graident-2, #3457D1);
+}
+
+.bg-dark{
+  background: rgb(81,133,213);
+background: radial-gradient(circle, rgba(81,133,213,1) 0%, rgba(20,26,49,1) 66%);
+}
+
+.bg-ligth{
+  background: rgb(189,147,241);
+background: linear-gradient(90deg, rgba(189,147,241,1) 0%, rgba(255,255,255,1) 50%, rgba(166,232,254,1) 100%);
+}

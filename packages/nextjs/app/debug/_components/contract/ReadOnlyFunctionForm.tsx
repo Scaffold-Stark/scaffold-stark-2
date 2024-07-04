@@ -14,6 +14,7 @@ import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { BlockNumber } from "starknet";
 import { useContractRead } from "@starknet-react/core";
 import { ContractInput } from "./ContractInput";
+import { useTheme } from "next-themes";
 
 type ReadOnlyFunctionFormProps = {
   contractAddress: Address;
@@ -31,6 +32,8 @@ export const ReadOnlyFunctionForm = ({
   );
   const [inputValue, setInputValue] = useState<any | undefined>(undefined);
   const lastForm = useRef(form);
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === "dark";
 
   const { isFetching, data, refetch } = useContractRead({
     address: contractAddress,
@@ -67,7 +70,9 @@ export const ReadOnlyFunctionForm = ({
 
   return (
     <div className="flex flex-col gap-3 py-5 first:pt-0 last:pb-1">
-      <p className="font-medium my-0 break-words">{abiFunction.name}</p>
+      <p className={`font-medium my-0 break-words ${isDarkMode? "text-[#1DD6FF]" : "text-[#3C1DFF]"}`}>
+        {abiFunction.name}
+        </p>
       {inputElements}
       <div className="flex justify-between gap-2 flex-wrap">
         <div className="flex-grow w-4/5">
@@ -81,7 +86,7 @@ export const ReadOnlyFunctionForm = ({
           )}
         </div>
         <button
-          className="btn btn-secondary btn-sm"
+           className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
           onClick={handleRead}
           disabled={inputValue && isFetching}
         >

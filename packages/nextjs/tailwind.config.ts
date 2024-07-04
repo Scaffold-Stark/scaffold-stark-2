@@ -59,7 +59,7 @@ module.exports = {
         light: {
           primary: "#93BBFB",
           "primary-content": "#2A3655",
-          secondary: "#DAE8FF",
+          secondary: "#8B45FD",
           "secondary-content": "#212638",
           accent: "#93BBFB",
           "accent-content": "#212638",
@@ -67,7 +67,7 @@ module.exports = {
           "neutral-content": "#ffffff",
           "base-100": "#ffffff",
           "base-200": "#f4f8ff",
-          "base-300": "#DAE8FF",
+          "base-300": "#ffffff",
           "base-content": "#212638",
           info: "#93BBFB",
           success: "#34EEB6",
@@ -91,15 +91,15 @@ module.exports = {
         dark: {
           primary: "#212638",
           "primary-content": "#DAE8FF",
-          secondary: "#323f61",
+          secondary: "#8b45fd",
           "secondary-content": "#F9FBFF",
           accent: "#4969A6",
           "accent-content": "#F9FBFF",
           neutral: "#F9FBFF",
           "neutral-content": "#385183",
-          "base-100": "#385183",
+          "base-100": "#1C223B",
           "base-200": "#2A3655",
-          "base-300": "#212638",
+          "base-300": "#141a30",
           "base-content": "#F9FBFF",
           info: "#385183",
           success: "#34EEB6",
@@ -130,6 +130,12 @@ module.exports = {
       animation: {
         "pulse-fast": "pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
+      backgroundImage: {
+        "gradient-light": "linear-gradient(270deg, #A7ECFF -17.42%, #E8B6FF 109.05%)",
+        "gradient-dark": "var(--gradient, linear-gradient(90deg, #42D2F1 0%, #B248DD 100%))",
+        "gradient-vertical": "linear-gradient(180deg, #3457D1 0%, #8A45FC 100%)",
+        "gradient-icon": "var(--gradient, linear-gradient(90deg, #42D2F1 0%, #B248DD 100%))"
+      }
     },
   },
 };

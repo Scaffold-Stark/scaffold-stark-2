@@ -21,10 +21,12 @@ import { useNativeCurrencyPrice } from "~~/hooks/scaffold-stark/useNativeCurrenc
 
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
   useNativeCurrencyPrice();
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === "dark";
 
   return (
     <>
-      <div className="flex flex-col min-h-screen">
+       <div className={`flex flex-col min-h-screen ${isDarkMode ? 'bg-dark' : 'bg-ligth'}`}>
         <Header />
         <main className="relative flex flex-col flex-1">{children}</main>
         <Footer />
