@@ -125,6 +125,8 @@ pub trait IBetCryptoMaker<TContractState> {
 
     fn getBet(self: @TContractState, bet_id: u256) -> BetInfos;
 
+    fn getAllBets(self: @TContractState) -> Array<BetInfos>;
+
     fn vote_yes(ref self: TContractState, amount_eth: u256, bet_id: u256);
 
     fn vote_no(ref self: TContractState, amount_eth: u256, bet_id: u256);
@@ -132,6 +134,12 @@ pub trait IBetCryptoMaker<TContractState> {
     fn get_yes_position(self: @TContractState, caller_address: ContractAddress, bet_id: u256) -> UserBetPosition;
 
     fn get_no_position(self: @TContractState, caller_address: ContractAddress, bet_id: u256) -> UserBetPosition;
+
+    fn settleBet(ref self: TContractState, bet_id: u256);
+
+    fn checkHasClaimed(self: @TContractState, bet_id: u256) -> bool;
+
+    fn claimRewards(ref self: TContractState, bet_id: u256);
 }
 
 #[starknet::contract]
@@ -160,10 +168,6 @@ pub mod BetCryptoMaker {
     #[abi(embed_v0)]
     impl PragmaPriceImpl = PragmaPriceComponent::PragmaPriceImpl<ContractState>;
 
-
-    // const ETH_CONTRACT_ADDRESS: felt252 =
-    //     0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7;
-
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
@@ -176,7 +180,6 @@ pub mod BetCryptoMaker {
 
     #[storage]
     struct Storage {
-        //eth_token: IERC20CamelDispatcher,
         bets: LegacyMap::<u256, BetInfos>,
         user_bet_yes_amount: LegacyMap::<(ContractAddress, u256), UserBetPosition>,
         user_bet_no_amount: LegacyMap::<(ContractAddress, u256), UserBetPosition>,
@@ -257,8 +260,14 @@ pub mod BetCryptoMaker {
             self.bets.read(bet_id)
         }
 
+        fn getAllBets(self: @ContractState) -> Array<BetInfos> {
+            // TODO
+            let res = array![];
+            res
+        }
+
         fn vote_yes(ref self: ContractState, amount_eth: u256, bet_id: u256) {
-            assert!(self.bets.read(bet_id).is_bet_ended == false, 'Bet is ended.');
+            assert!(self.bets.read(bet_id).is_bet_ended == false, "Bet is ended.");
 
             let caller_address = get_caller_address();
             // TODO: Assert period is correct
@@ -300,6 +309,19 @@ pub mod BetCryptoMaker {
 
         fn get_no_position(self: @ContractState, caller_address: ContractAddress, bet_id: u256) -> UserBetPosition {
             self.user_bet_no_amount.read((caller_address, bet_id))
+        }
+
+        fn settleBet(ref self: ContractState, bet_id: u256) {
+            // TODO
+        }
+
+        fn checkHasClaimed(self: @ContractState, bet_id: u256) -> bool {
+            // TODO
+            true
+        }
+
+        fn claimRewards(ref self: ContractState, bet_id: u256) {
+            // TODO
         }
     }
 }
