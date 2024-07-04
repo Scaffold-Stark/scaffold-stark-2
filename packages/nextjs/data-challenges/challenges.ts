@@ -20,7 +20,7 @@ const allChallenges = [
     challenge: "Challenge #2",
     title: "🏵 Token Vendor",
     description:
-      "🤖 Smart contracts are kind of like always on vending machines that anyone can access. Let's make a decentralized, digital currency (an ERC20 token in Cairo for Starknet). Then, let's build an unstoppable vending machine that will buy and sell the currency. We'll learn about the approve pattern for ERC20s and how contract to contract interactions work.",
+      "🤖 Smart contracts are kind of like \"always on\" vending machines that anyone can access. Let's make a decentralized, digital currency (an ERC20 token in Cairo for Starknet). Then, let's build an unstoppable vending machine that will buy and sell the currency. We'll learn about the approve pattern for ERC20s and how contract to contract interactions work.",
     imageUrl: "/tokenVendor.png",
     border: true,
     id: "token-vendor",

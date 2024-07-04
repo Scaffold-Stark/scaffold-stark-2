@@ -26,31 +26,14 @@ const Home: NextPage = () => {
               className="sm:w-[30px] sm:h-[30px]"
             />
             <span className="text-center">
-              Learn how to build on Starknet; the superpowers and the gotchas.
+              Learn how to build on <strong>Starknet</strong>; the superpowers
+              and the gotchas.
             </span>
             <h1
               className={`text-8xl font-black text-center sm:text-6xl ${codec.className}`}
             >
               SPEEDRUN STARKNET
             </h1>
-          </div>
-          <div className="flex flex-col gap-5 bg-base-100 sm:px-[20px] ">
-            <StepInstruction
-              number={1}
-              text="Watch this quick video as an Intro to Starknet Development."
-            />
-            <StepInstruction
-              number={2}
-              text="Then use Scaffold-Stark to copy/paste each Cairo concept and tinker: Contract's State, storage variables, custom types, interface, mappings, events, traits, constructors, and public/private functions."
-            />
-            <StepInstruction
-              number={3}
-              text="Watch this getting started playlist to become a power user and cairo scripter."
-            />
-            <StepInstruction
-              number={4}
-              text="When you are ready to test your knowledge, Speed Run Starknet"
-            />
           </div>
         </div>
         <div className="footer-header-landing"></div>
