@@ -549,8 +549,14 @@ export function parseParamWithType(
             },
             {} as Record<string, any>,
           );
+
+          const isDevnet =
+            scaffoldConfig.targetNetworks[0].network.toString() === "devnet";
+
           return Object.values(parsedVariant).length > 0
-            ? new CairoCustomEnum(parsedVariant)
+            ? isDevnet
+              ? new CairoCustomEnum(parsedVariant)
+              : [[new CairoCustomEnum(parsedVariant)]]
             : undefined;
         } else {
           return Object.keys(param).reduce((acc, key) => {
