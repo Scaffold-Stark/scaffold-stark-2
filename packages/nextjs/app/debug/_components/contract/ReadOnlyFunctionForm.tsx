@@ -12,7 +12,7 @@ import {
 } from "~~/app/debug/_components/contract";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { BlockNumber } from "starknet";
-import { useContractRead } from "@starknet-react/core";
+import { useReadContract } from "@starknet-react/core";
 import { ContractInput } from "./ContractInput";
 
 type ReadOnlyFunctionFormProps = {
@@ -32,7 +32,7 @@ export const ReadOnlyFunctionForm = ({
   const [inputValue, setInputValue] = useState<any | undefined>(undefined);
   const lastForm = useRef(form);
 
-  const { isFetching, data, refetch } = useContractRead({
+  const { isFetching, data, refetch } = useReadContract({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],

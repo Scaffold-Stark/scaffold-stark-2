@@ -10,7 +10,7 @@ import {
   UseScaffoldArgsParam,
   UseScaffoldWriteConfig,
 } from "~~/utils/scaffold-stark/contract";
-import { useContractWrite, useNetwork } from "@starknet-react/core";
+import { useSendTransaction, useNetwork } from "@starknet-react/core";
 import { InvocationsDetails } from "starknet";
 import { notification } from "~~/utils/scaffold-stark";
 import { useMemo } from "react";
@@ -63,9 +63,8 @@ export const useScaffoldMultiWriteContract = <
   }, [calls]);
 
   // TODO add custom options
-  const wagmiContractWrite = useContractWrite({
+  const wagmiContractWrite = useSendTransaction({
     calls: parsedCalls,
-    options,
   });
 
   const sendContractWriteTx = async () => {
@@ -78,10 +77,10 @@ export const useScaffoldMultiWriteContract = <
       return;
     }
 
-    if (wagmiContractWrite.writeAsync) {
+    if (wagmiContractWrite.sendAsync) {
       try {
         // setIsMining(true);
-        return await writeTx(() => wagmiContractWrite.writeAsync());
+        return await writeTx(() => wagmiContractWrite.sendAsync());
       } catch (e: any) {
         throw e;
       } finally {

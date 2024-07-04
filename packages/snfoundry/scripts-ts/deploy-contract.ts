@@ -56,41 +56,7 @@ const deployContract = async (
     : [];
   console.log("Deploying Contract ", contractName);
 
-  let totalFee: bigint = 0n;
-
-  let existingClassHash:
-    | LegacyContractClass
-    | Omit<CompiledSierra, "sierra_program_debug_info">;
-
-  try {
-    existingClassHash = await provider.getClassByHash(precomputedClassHash);
-  } catch (e) {}
-
-  try {
-    if (!existingClassHash) {
-      const { suggestedMaxFee: estimatedFeeDeclare } =
-        await deployer.estimateDeclareFee(
-          {
-            contract: compiledContractSierra,
-            casm: compiledContractCasm,
-          },
-          {}
-        );
-      totalFee += estimatedFeeDeclare * 2n;
-    } else {
-      const { suggestedMaxFee: estimatedFeeDeploy } =
-        await deployer.estimateDeployFee({
-          classHash: precomputedClassHash,
-          constructorCalldata,
-        });
-      totalFee += estimatedFeeDeploy * 2n;
-    }
-  } catch (e) {
-    console.error("Failed to estimate fee, setting up fee to 0.001 eth");
-    totalFee = 500000000000000n;
-  }
-
-  totalFee = options?.maxFee || totalFee * 20n; // this optional max fee serves when error AccountValidation Failed or small fee on public networks , try 5n , 10n, 20n, 50n, 100n
+  // TODO use maxfee
 
   try {
     const tryDeclareAndDeploy = await deployer.declareAndDeploy(
@@ -99,9 +65,6 @@ const deployContract = async (
         casm: compiledContractCasm,
         constructorCalldata,
       },
-      {
-        maxFee: totalFee,
-      }
     );
     if (!tryDeclareAndDeploy.deploy.contract_address) {
       throw new Error(

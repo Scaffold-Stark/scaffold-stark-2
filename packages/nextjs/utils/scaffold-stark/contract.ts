@@ -8,8 +8,8 @@ import type {
   ExtractArgs,
 } from "abi-wan-kanabi/dist/kanabi";
 import {
-  UseContractReadProps,
-  UseContractWriteProps,
+  UseReadContractProps,
+  UseSendTransactionProps,
 } from "@starknet-react/core";
 import { Address } from "@starknet-react/chains";
 import { uint256, validateAndParseAddress } from "starknet";
@@ -148,14 +148,14 @@ export type UseScaffoldWriteConfig<
 > = {
   contractName: TContractName;
 } & IsContractDeclarationMissing<
-  Partial<UseContractWriteProps> & {
+  Partial<UseSendTransactionProps> & {
     functionName: string;
     args: any[];
   },
   {
     functionName: TFunctionName;
   } & Omit<
-    UseContractWriteProps,
+    UseSendTransactionProps,
     "chainId" | "abi" | "address" | "functionName" | "mode"
   > &
     UseScaffoldArgsParam<TContractName, TFunctionName>
@@ -273,17 +273,17 @@ export type UseScaffoldArgsParam<
 
 export type UseScaffoldReadConfig<
   TContractName extends ContractName,
-  TFunctionName extends ExtractAbiFunctionNamesScaffold<
+  TFunctionName extends ExtractAbiFunctionsScaffold<
     ContractAbi<TContractName>
   >,
 > = {
   contractName: TContractName;
 } & IsContractDeclarationMissing<
-  Partial<UseContractReadProps>,
+  Partial<UseReadContractProps<ContractAbi<TContractName>,TFunctionName>>,
   {
     functionName: TFunctionName;
   } & UseScaffoldArgsParam<TContractName, TFunctionName> &
-    Omit<UseContractReadProps, "chainId" | "abi" | "address" | "functionName">
+    Omit<UseReadContractProps, "chainId" | "abi" | "address" | "functionName">
 >;
 
 export type AbiFunctionOutputs<

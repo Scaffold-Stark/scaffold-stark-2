@@ -12,11 +12,11 @@ import {
   parseFunctionParams,
   UseScaffoldWriteConfig,
 } from "~~/utils/scaffold-stark/contract";
-import { useContractWrite, useNetwork } from "@starknet-react/core";
+import { useSendTransaction, useNetwork } from "@starknet-react/core";
 import { notification } from "~~/utils/scaffold-stark";
 
 type UpdatedArgs = Parameters<
-  ReturnType<typeof useContractWrite>["writeAsync"]
+  ReturnType<typeof useSendTransaction>["sendAsync"]
 >[0];
 
 export const useScaffoldWriteContract = <
@@ -29,7 +29,6 @@ export const useScaffoldWriteContract = <
   contractName,
   functionName,
   args,
-  options,
 }: UseScaffoldWriteConfig<TContractName, TFunctionName>) => {
   const { data: deployedContractData } = useDeployedContractInfo(contractName);
   const { chain } = useNetwork();
@@ -52,7 +51,7 @@ export const useScaffoldWriteContract = <
     return [];
   }, [args, abiFunction]);
 
-  const wagmiContractWrite = useContractWrite({
+  const wagmiContractWrite = useSendTransaction({
     calls: deployedContractData
       ? [
           {
@@ -62,15 +61,12 @@ export const useScaffoldWriteContract = <
           },
         ]
       : [],
-    options,
   });
 
   const sendContractWriteTx = async ({
     args: newArgs,
-    options: newOptions,
   }: {
     args?: UseScaffoldWriteConfig<TContractName, TFunctionName>["args"];
-    options?: UseScaffoldWriteConfig<TContractName, TFunctionName>["options"];
   } & UpdatedArgs = {}) => {
     if (!deployedContractData) {
       console.error(
@@ -99,13 +95,12 @@ export const useScaffoldWriteContract = <
       },
     ];
 
-    if (wagmiContractWrite.writeAsync) {
+    if (wagmiContractWrite.sendAsync) {
       try {
         // setIsMining(true);
         return await writeTx(() =>
-          wagmiContractWrite.writeAsync({
+          wagmiContractWrite.sendAsync({
             calls: newCalls as any[],
-            options: newOptions ?? options,
           }),
         );
       } catch (e: any) {
