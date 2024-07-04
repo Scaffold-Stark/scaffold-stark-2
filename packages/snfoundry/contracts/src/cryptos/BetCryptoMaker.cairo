@@ -161,9 +161,9 @@ pub trait IBetCryptoMaker<TContractState> {
 
     fn claimNimboraShares(ref self: TContractState, bet_id: u256);
 
-    fn checkHasClaimed(self: @TContractState, bet_id: u256) -> bool;
+    fn checkHasClaimed(self: @TContractState, caller_address : ContractAddress, bet_id: u256) -> bool ;
 
-    fn claimRewards(ref self: TContractState, bet_id: u256);
+    fn claimRewards(ref self: TContractState, bet_id: u256, claim_yes : bool);
 }
 
 #[starknet::contract]
@@ -443,12 +443,77 @@ use contracts::cryptos::PragmaPrice::IPragmaPrice;
             }
         }
 
-        fn checkHasClaimed(self: @ContractState, bet_id: u256) -> bool {
-            // TODO
-            true
+        fn checkHasClaimed(self: @ContractState, caller_address : ContractAddress, bet_id: u256) -> bool {
+            assert(self.bets.read(bet_id).winner_result.is_settled, 'There is no winner bet');
+            assert(self.bets.read(bet_id).is_bet_ended, 'Bet is not over yet');
+
+            if self.bets.read(bet_id).winner_result.is_yes_outcome{
+                let user = self.user_bet_yes_amount.read((caller_address, bet_id));
+                return user.has_claimed && user.amount>0;
+            }else{
+                let user = self.user_bet_no_amount.read((caller_address, bet_id));
+                return user.has_claimed && user.amount>0;
+            }
         }
 
-        fn claimRewards(ref self: ContractState, bet_id: u256) { // TODO
+
+        fn claimRewards(ref self: ContractState, bet_id: u256, claim_yes : bool) {
+            let caller_address = get_caller_address();
+            //TODO : OPTI DE CODE A FAIRE
+
+            //let test = self.user_bet_no_amount.read((caller_address, bet_id));
+            //println!("test for LegacyMap: {} (=amount), {} (=has_claimed) ", test.amount, test.has_claimed);
+
+            let yes_win = self.bets.read(bet_id).winner_result.is_yes_outcome;
+
+            if yes_win {
+                
+                let mut user = self.user_bet_yes_amount.read((caller_address, bet_id));
+                if user.amount > 0 && user.has_claimed == false && claim_yes {
+
+                    //
+
+                    let mut transfer_amount = user.amount;
+                    transfer_amount = transfer_amount + (user.amount
+                    /self.bets.read(bet_id).total_bet_yes_amount); //à multiplier par le Yield
+                    let mut current_bet = self.bets.read(bet_id);
+                        current_bet.bet_token.
+                        transfer(caller_address,transfer_amount);
+
+                }else{
+                    user = self.user_bet_no_amount.read((caller_address, bet_id));
+                    if user.amount > 0
+                    && user.has_claimed == false && !claim_yes{
+                        let mut current_bet = self.bets.read(bet_id);
+                        current_bet.bet_token.
+                        transfer(caller_address,user.amount);
+                    }
+                }
+
+            }else{
+                let mut user = self.user_bet_no_amount.read((caller_address, bet_id));
+
+                if user.amount > 0 
+                && user.has_claimed == false && !claim_yes{
+
+                    let mut transfer_amount = user.amount;
+                    transfer_amount = transfer_amount + (user.amount
+                    /self.bets.read(bet_id).total_bet_no_amount); //à multiplier par le Yield
+                    let mut current_bet = self.bets.read(bet_id);
+                        current_bet.bet_token.
+                        transfer(caller_address,transfer_amount);
+
+                }else{
+                    user = self.user_bet_yes_amount.read((caller_address, bet_id));
+                    if user.amount > 0
+                    && user.has_claimed == false && claim_yes{
+                        let mut current_bet = self.bets.read(bet_id);
+                        current_bet.bet_token.
+                        transfer(caller_address,user.amount);
+                    }
+                }
+            }
+
         }
     }
 }

@@ -70,6 +70,8 @@ fn test_create_bet() {
         );
 
     assert!(dispatcher.getTotalBets() == 1, "Total bets should be 1.");
+
+    dispatcher.claimRewards(78);
 }
 
 
