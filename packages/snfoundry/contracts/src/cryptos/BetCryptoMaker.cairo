@@ -89,6 +89,17 @@ pub struct UserBetPosition {
     pub has_claimed: bool,
 }
 
+#[derive(Drop, Serde)]
+pub struct UserBetPositionOverview {
+    bet_id: u256,
+    name: ByteArray,
+    category: felt252,
+    is_yes: bool,
+    pub amount: u256,
+    pub has_claimed: bool,
+    is_bet_ended: bool
+}
+
 #[derive(Drop, Serde, starknet::Store)]
 pub struct BetInfos {
     id: u256,
@@ -143,6 +154,8 @@ pub trait IBetCryptoMaker<TContractState> {
         self: @TContractState, caller_address: ContractAddress, bet_id: u256
     ) -> UserBetPosition;
 
+    fn getAllUserPositions(self: @TContractState, user: ContractAddress) -> Array<UserBetPositionOverview>;
+
     fn settleBet(ref self: TContractState, bet_id: u256);
 
     fn claimNimboraShares(ref self: TContractState, bet_id: u256);
@@ -154,7 +167,8 @@ pub trait IBetCryptoMaker<TContractState> {
 
 #[starknet::contract]
 pub mod BetCryptoMaker {
-    use contracts::cryptos::PragmaPrice::IPragmaPrice;
+    use core::array::ArrayTrait;
+use contracts::cryptos::PragmaPrice::IPragmaPrice;
     use contracts::cryptos::PragmaPrice::PragmaPrice as PragmaPriceComponent;
     use core::traits::TryInto;
     use openzeppelin::access::ownable::OwnableComponent;
@@ -166,6 +180,7 @@ pub mod BetCryptoMaker {
     use super::IBetCryptoMaker;
     use super::Outcome;
     use super::UserBetPosition;
+    use super::UserBetPositionOverview;
     use super::{ITokenManagerDispatcher, ITokenManagerDispatcherTrait};
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
@@ -317,8 +332,27 @@ pub mod BetCryptoMaker {
 
         fn vote_no(
             ref self: ContractState, amount_eth: u256, bet_id: u256
-        ) { //let caller_address = get_caller_address();
-        // TODO
+        ) {
+            assert!(self.bets.read(bet_id).is_bet_ended == false, "Bet is ended.");
+
+            let caller_address = get_caller_address();
+            // TODO: Assert period is correct
+            assert!(amount_eth > 0, "Can't bet without funds");
+
+            // call approve on UI
+            let mut current_bet = self.bets.read(bet_id);
+            current_bet.bet_token.transferFrom(caller_address, get_contract_address(), amount_eth);
+
+            current_bet.total_bet_amount += amount_eth;
+            current_bet.total_bet_no_amount += amount_eth;
+            self.bets.write(bet_id, current_bet);
+
+            let mut user_bet_position = self.user_bet_no_amount.read((caller_address, bet_id));
+            user_bet_position.amount += amount_eth;
+
+            self.user_bet_no_amount.write((caller_address, bet_id), user_bet_position);
+
+            depositToNimbora(ref self, amount_eth, bet_id);
         }
 
         fn get_yes_position(
@@ -331,6 +365,31 @@ pub mod BetCryptoMaker {
             self: @ContractState, caller_address: ContractAddress, bet_id: u256
         ) -> UserBetPosition {
             self.user_bet_no_amount.read((caller_address, bet_id))
+        }
+
+        fn getAllUserPositions(self: @ContractState, user: ContractAddress) -> Array<UserBetPositionOverview> {
+            let mut user_positions: Array<UserBetPositionOverview> = ArrayTrait::new();
+            let mut i: u256 = 1;
+            loop {
+                if i > self.total_bets.read() {
+                    break;
+                }
+                let user_position_yes = self.user_bet_yes_amount.read((user, i));
+                let user_position_no = self.user_bet_no_amount.read((user, i));
+                if user_position_yes.amount > 0 {
+                    let bet = self.bets.read(i);
+                    let overview_position: UserBetPositionOverview = UserBetPositionOverview { bet_id: bet.id, name: bet.name, category: bet.category, is_yes: true, amount: user_position_yes.amount, has_claimed: user_position_yes.has_claimed, is_bet_ended: bet.is_bet_ended};
+                    user_positions.append(overview_position);
+                }
+                if user_position_no.amount > 0 {
+                    let bet = self.bets.read(i);
+                    let overview_position: UserBetPositionOverview = UserBetPositionOverview { bet_id: bet.id, name: bet.name, category: bet.category, is_yes: false, amount: user_position_no.amount, has_claimed: user_position_no.has_claimed, is_bet_ended: bet.is_bet_ended};
+                    user_positions.append(overview_position);
+                }
+
+                i += 1;
+            };
+            user_positions
         }
 
         fn settleBet(ref self: ContractState, bet_id: u256) {

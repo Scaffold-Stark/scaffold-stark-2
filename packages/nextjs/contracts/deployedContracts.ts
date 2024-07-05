@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     BetCryptoMaker: {
       address:
-        "0x066d492fca4d89439455ad3822395ed2f22c924b4a7f10dec8b2c929802e87fb",
+        "0x0310202084ca5ba78c1bc6543a1a297caa432c69522bb37552eda806cdaaf38b",
       abi: [
         {
           type: "impl",
@@ -191,6 +191,40 @@ const deployedContracts = {
           ],
         },
         {
+          type: "struct",
+          name: "contracts::cryptos::BetCryptoMaker::UserBetPositionOverview",
+          members: [
+            {
+              name: "bet_id",
+              type: "core::integer::u256",
+            },
+            {
+              name: "name",
+              type: "core::byte_array::ByteArray",
+            },
+            {
+              name: "category",
+              type: "core::felt252",
+            },
+            {
+              name: "is_yes",
+              type: "core::bool",
+            },
+            {
+              name: "amount",
+              type: "core::integer::u256",
+            },
+            {
+              name: "has_claimed",
+              type: "core::bool",
+            },
+            {
+              name: "is_bet_ended",
+              type: "core::bool",
+            },
+          ],
+        },
+        {
           type: "interface",
           name: "contracts::cryptos::BetCryptoMaker::IBetCryptoMaker",
           items: [
@@ -344,6 +378,22 @@ const deployedContracts = {
               outputs: [
                 {
                   type: "contracts::cryptos::BetCryptoMaker::UserBetPosition",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "getAllUserPositions",
+              inputs: [
+                {
+                  name: "user",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::array::Array::<contracts::cryptos::BetCryptoMaker::UserBetPositionOverview>",
                 },
               ],
               state_mutability: "view",
