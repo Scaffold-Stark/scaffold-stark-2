@@ -11,7 +11,7 @@ import {
   transformAbiFunction,
 } from "~~/app/debug/_components/contract";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
-import { BlockNumber } from "starknet";
+import { BlockNumber, CallData } from "starknet";
 import { useContractRead } from "@starknet-react/core";
 import { ContractInput } from "./ContractInput";
 
@@ -27,7 +27,7 @@ export const ReadOnlyFunctionForm = ({
   abi,
 }: ReadOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
-    getInitialFormState(abiFunction),
+    getInitialFormState(abiFunction)
   );
   const [inputValue, setInputValue] = useState<any | undefined>(undefined);
   const lastForm = useRef(form);
@@ -36,7 +36,7 @@ export const ReadOnlyFunctionForm = ({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
-    args: inputValue ? inputValue.flat() : [],
+    args: CallData.compile(inputValue ? inputValue : []).flat(),
     enabled: false,
     blockIdentifier: "pending" as BlockNumber,
   });

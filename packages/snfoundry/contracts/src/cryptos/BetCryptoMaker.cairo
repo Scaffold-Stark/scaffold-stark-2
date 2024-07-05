@@ -369,7 +369,7 @@ pub mod BetCryptoMaker {
 
         fn claimNimboraShares(ref self: ContractState, bet_id: u256) {
             self.ownable.assert_only_owner();
-
+            // TODO : set the amount of ETH that we will get from Nimbora with convertAssets
             if self.bets.read(bet_id).is_nimbora_claimed == false {
                 let mut bet = self.bets.read(bet_id);
                 bet.nimbora.request_withdrawal(bet.total_shares_amount);
