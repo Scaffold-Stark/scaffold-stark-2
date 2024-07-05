@@ -402,19 +402,22 @@ pub mod BetCryptoMaker {
             let yes_win = self.bets.read(bet_id).winner_result.is_yes_outcome;
 
             if yes_win {
-                
                 let mut user = self.user_bet_yes_amount.read((caller_address, bet_id));
+                assert!(user.amount > 0, "Wrong use amount (1)");
+                assert!(user.has_claimed == false, "Wrong use amount (2)");
+                assert!(claim_yes, "Wrong use amount (3)");
                 if user.amount > 0 && user.has_claimed == false && claim_yes {
-
-                    //
-
+                    //assert!(!yes_win, "Passed (0)");
                     let mut transfer_amount = user.amount;
                     transfer_amount = transfer_amount + (user.amount
                     /self.bets.read(bet_id).total_bet_yes_amount); //à multiplier par le Yield
+
                     let mut current_bet = self.bets.read(bet_id);
                         current_bet.bet_token.
-                        transfer(caller_address,transfer_amount);
-
+                        transfer(caller_address,transfer_amount-2); //Delete the -2 when we it is ok about nimbora lost
+                    let mut user_bet_position = self.user_bet_yes_amount.read((caller_address, bet_id));
+                    user_bet_position.has_claimed = true;
+                    self.user_bet_yes_amount.write((caller_address, bet_id), user_bet_position);
                 }else{
                     user = self.user_bet_no_amount.read((caller_address, bet_id));
                     if user.amount > 0
@@ -422,6 +425,9 @@ pub mod BetCryptoMaker {
                         let mut current_bet = self.bets.read(bet_id);
                         current_bet.bet_token.
                         transfer(caller_address,user.amount);
+                        let mut user_bet_position = self.user_bet_no_amount.read((caller_address, bet_id));
+                    user_bet_position.has_claimed = true;
+                    self.user_bet_no_amount.write((caller_address, bet_id), user_bet_position);
                     }
                 }
 
@@ -430,14 +436,15 @@ pub mod BetCryptoMaker {
 
                 if user.amount > 0 
                 && user.has_claimed == false && !claim_yes{
-
                     let mut transfer_amount = user.amount;
                     transfer_amount = transfer_amount + (user.amount
                     /self.bets.read(bet_id).total_bet_no_amount); //à multiplier par le Yield
                     let mut current_bet = self.bets.read(bet_id);
                         current_bet.bet_token.
-                        transfer(caller_address,transfer_amount);
-
+                        transfer(caller_address,transfer_amount - 2); //Delete the -2 when we it is ok about nimbora lost
+                        let mut user_bet_position = self.user_bet_no_amount.read((caller_address, bet_id));
+                        user_bet_position.has_claimed = true;
+                        self.user_bet_no_amount.write((caller_address, bet_id), user_bet_position);
                 }else{
                     user = self.user_bet_yes_amount.read((caller_address, bet_id));
                     if user.amount > 0
@@ -445,6 +452,9 @@ pub mod BetCryptoMaker {
                         let mut current_bet = self.bets.read(bet_id);
                         current_bet.bet_token.
                         transfer(caller_address,user.amount);
+                        let mut user_bet_position = self.user_bet_yes_amount.read((caller_address, bet_id));
+                        user_bet_position.has_claimed = true;
+                        self.user_bet_yes_amount.write((caller_address, bet_id), user_bet_position);
                     }
                 }
             }
