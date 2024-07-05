@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { Uint256, validateChecksumAddress } from "starknet";
+import { Uint256, num, validateChecksumAddress } from "starknet";
 import { Address } from "~~/components/scaffold-stark";
 import { replacer } from "~~/utils/scaffold-stark/common";
 import {
@@ -24,7 +24,7 @@ type DisplayContent =
 export const displayTxResult = (
   displayContent: DisplayContent | DisplayContent[],
   asText: boolean,
-  functionOutputs: readonly AbiOutput[] = [],
+  functionOutputs: readonly AbiOutput[] = []
 ): string | ReactElement | number => {
   if (displayContent == null) {
     return "";
@@ -42,7 +42,7 @@ export const displayTxResult = (
       ) {
         return asNumber;
       } else {
-        return "Ξ " + formatEther(parsedParam);
+        return num.toHex(parsedParam);
       }
     }
 
@@ -51,7 +51,7 @@ export const displayTxResult = (
         ["number", "boolean"].includes(typeof v) ? v : displayTxResultAsText(v);
       const displayable = JSON.stringify(
         parsedParam.map(mostReadable),
-        replacer,
+        replacer
       );
 
       return asText ? (

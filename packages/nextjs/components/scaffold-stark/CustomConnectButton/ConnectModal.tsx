@@ -38,12 +38,12 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
     { id: "" },
     {
       initializeWithValue: false,
-    },
+    }
   );
 
   function handleConnectWallet(
     e: React.MouseEvent<HTMLButtonElement>,
-    connector: Connector,
+    connector: Connector
   ): void {
     if (connector.id === "burner-wallet") {
       setIsBurnerWallet(true);
@@ -57,10 +57,10 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
 
   function handleConnectBurner(
     e: React.MouseEvent<HTMLButtonElement>,
-    ix: number,
+    ix: number
   ) {
     const connector = connectors.find(
-      (it) => it.id == "burner-wallet",
+      (it) => it.id == "burner-wallet"
     ) as BurnerConnector;
     if (connector) {
       connector.burnerAccount = burnerAccounts[ix];
@@ -109,19 +109,17 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
         <div className="px-8 lg:h-full lg:col-span-2  ">
           {/*  <h4 className="mb-[1rem] text-base-100 font-semibold">Popular</h4> */}
           <div className="flex flex-col gap-4 ">
-            {connectors
-              .filter((connector) => connector.name !== "Burner Wallet")
-              .map((connector, index) => (
-                <Wallet
-                  key={connector.id || index}
-                  connector={connector}
-                  loader={loader}
-                  handleConnectWallet={handleConnectWallet}
-                />
-              ))}
+            {connectors.map((connector, index) => (
+              <Wallet
+                key={connector.id || index}
+                connector={connector}
+                loader={loader}
+                handleConnectWallet={handleConnectWallet}
+              />
+            ))}
           </div>
         </div>
-        {/*  <div className=" h-fit lg:h-full lg:border-none lg:col-span-3 lg:px-8 lg:py-0 lg:flex lg:flex-col pb-[20px]">
+        <div className=" h-fit lg:h-full lg:border-none lg:col-span-3 lg:px-8 lg:py-0 lg:flex lg:flex-col pb-[20px]">
           {isBurnerWallet ? (
             <>
               <div className="text-base-100 font-medium">
@@ -145,61 +143,9 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
               </div>
             </>
           ) : (
-            <>
-              <h2 className="lg:text-center lg:mb-[3rem] lg:text-[1.125em] text-base-100 font-bold">
-                What is a wallet?
-              </h2>
-              <article className="hidden lg:flex  flex-col gap-8 place-content-center text-[0.875em] justify-self-center self-center ">
-                <div className="grid grid-cols-10 items-center  gap-4">
-                  <div className="col-span-2 border-solid border-[2px] border-base-100 rounded-[10px] h-[3rem] w-[3rem]">
-                    <Image
-                      alt="text"
-                      loader={loader}
-                      src={
-                        "https://media.istockphoto.com/id/1084096262/vector/concept-of-mobile-payments-wallet-connected-with-mobile-phone.jpg?s=612x612&w=0&k=20&c=noILf6rTUyxN41JnmeFhUmqQWiCWoXlg0zCLtcrabD4="
-                      }
-                      width={100}
-                      height={100}
-                      className="h-full w-full object-cover rounded-[10px]"
-                    />
-                  </div>
-                  <div className="col-span-8 flex flex-col gap-2 ">
-                    <h4 className="text-[1.14em] font-bold text-base-100">
-                      A home for your digital assets
-                    </h4>
-                    <p className="text-base-100">
-                      Wallets are used to send, receive, store, and display
-                      digital assets like Ethereum and NFTs.
-                    </p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-10 items-center  gap-4">
-                  <div className="col-span-2 border-solid border-[2px] border-base-100 rounded-[10px] h-[3rem] w-[3rem]">
-                    <Image
-                      alt="text"
-                      loader={loader}
-                      src={
-                        "https://media.licdn.com/dms/image/D4E12AQFyWdLwXcJu3Q/article-cover_image-shrink_720_1280/0/1687854784940?e=2147483647&v=beta&t=nNDH-9XEcVYcb1PAc3S78ndQze0126KPOSZmnmMERNg"
-                      }
-                      width={100}
-                      height={100}
-                      className="h-full w-full object-cover rounded-[10px]"
-                    />
-                  </div>
-                  <div className="col-span-8 flex flex-col gap-2 ">
-                    <h4 className="text-[1.14em] font-bold text-base-100">
-                      A new way to sign-in
-                    </h4>
-                    <p className="text-base-100 pb-2">
-                      Instead of creating new accounts and passwords on every
-                      website, just connect your wallet.
-                    </p>
-                  </div>
-                </div>
-              </article>
-            </>
+            <></>
           )}
-        </div> */}
+        </div>
       </div>
     </GenericModal>
   );

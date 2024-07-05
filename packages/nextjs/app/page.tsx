@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import { InfiniteMovingCards } from "./Uikit/components/ui/infinite-moving-card";
 import { BetsOverview } from "./BetsOverview";
+import { CryptoBetsOverview } from "./CryptoBetsOverview";
 
 function Home() {
   const items: {
@@ -114,8 +115,8 @@ function Home() {
         speed="slow"
         className="!mb-20"
       />
-
-      <BetsOverview />
+      <CryptoBetsOverview />
+      {/* <BetsOverview /> */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 max-w-7xl mx-auto w-full my-20"></div>
     </>
   );
