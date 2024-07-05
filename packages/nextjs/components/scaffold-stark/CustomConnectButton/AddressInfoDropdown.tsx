@@ -83,7 +83,7 @@ export const AddressInfoDropdown = ({
       <details ref={dropdownRef} className="dropdown dropdown-end leading-3">
         <summary
           tabIndex={0}
-          className="btn btn-secondary btn-sm pl-0 pr-2 shadow-md dropdown-toggle gap-0 !h-auto"
+          className="btn bg-transparent btn-sm pl-0 pr-2 dropdown-toggle gap-0 !h-auto border border-[#5c4fe5] "
         >
           {getStarknetPFPIfExists(profile?.profilePicture) ? (
             //eslint-disable-next-line @next/next/no-img-element
@@ -107,7 +107,7 @@ export const AddressInfoDropdown = ({
         </summary>
         <ul
           tabIndex={0}
-          className="dropdown-content menu z-[2] p-2 mt-2 shadow-center shadow-accent bg-base-200 rounded-box gap-1"
+          className="dropdown-content menu z-[2] p-2 mt-2 bg-base-200 rounded-box gap-1 border border-[#5c4fe5]"
         >
           <NetworkOptions hidden={!selectingNetwork} />
           <li className={selectingNetwork ? "hidden" : ""}>
@@ -255,7 +255,7 @@ export const AddressInfoDropdown = ({
           ) : null}
           <li className={selectingNetwork ? "hidden" : ""}>
             <button
-              className="menu-item text-error btn-sm !rounded-xl flex gap-3 py-3"
+              className="menu-item text-neutral btn-sm !rounded-xl flex gap-3 py-3"
               type="button"
               onClick={() => disconnect()}
             >
