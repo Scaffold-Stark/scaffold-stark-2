@@ -63,10 +63,17 @@ const Home: NextPage = () => {
           </p>
         </div>
 
-        <div className={`${isDark ? "bg-[#141a30]" : "bg-transparent"} flex-grow w-full mt-16 px-8 py-12`}>
+        <div
+          className={`${isDark ? "bg-[#141a30]" : "bg-transparent"} flex-grow w-full mt-16 px-8 py-12`}
+        >
           <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
             <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl border border-gradient">
-            <Image src="/debug-icon.svg" alt="icon" width={25} height={25}></Image>
+              <Image
+                src="/debug-icon.svg"
+                alt="icon"
+                width={25}
+                height={25}
+              ></Image>
               <p>
                 Tinker with your smart contract using the{" "}
                 <Link href="/debug" passHref className="link">
@@ -76,7 +83,12 @@ const Home: NextPage = () => {
               </p>
             </div>
             <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl border border-gradient">
-              <Image src="/explorer-icon.svg" alt="icon" width={20} height={20}></Image>
+              <Image
+                src="/explorer-icon.svg"
+                alt="icon"
+                width={20}
+                height={20}
+              ></Image>
               <p>
                 Explore your local transactions with the{" "}
                 <Link href="/blockexplorer" passHref className="link">

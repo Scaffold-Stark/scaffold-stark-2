@@ -64,7 +64,7 @@ export const InputBase = <
 
   return (
     <div
-      className={`flex ${isDarkMode?"bg-input-dark":"bg-input"} bg-input text-accent ${modifier}`}
+      className={`flex ${isDarkMode ? "bg-input-dark" : "bg-input"} bg-input text-accent ${modifier}`}
     >
       {prefix}
       <input

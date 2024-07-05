@@ -70,14 +70,18 @@ export const ReadOnlyFunctionForm = ({
 
   return (
     <div className="flex flex-col gap-3 py-5 first:pt-0 last:pb-1">
-      <p className={`font-medium my-0 break-words ${isDarkMode? "text-[#1DD6FF]" : "text-[#3C1DFF]"}`}>
+      <p
+        className={`font-medium my-0 break-words ${isDarkMode ? "text-[#1DD6FF]" : "text-[#3C1DFF]"}`}
+      >
         {abiFunction.name}
-        </p>
+      </p>
       {inputElements}
       <div className="flex justify-between gap-2 flex-wrap">
         <div className="flex-grow w-4/5">
           {data !== null && data !== undefined && (
-            <div className={`${isDarkMode?"bg-input-dark":"bg-input"} text-sm px-4 py-1.5 break-words`}>
+            <div
+              className={`${isDarkMode ? "bg-input-dark" : "bg-input"} text-sm px-4 py-1.5 break-words`}
+            >
               <p className="font-bold m-0 mb-1">Result:</p>
               <pre className="whitespace-pre-wrap break-words">
                 {displayTxResult(data, false, abiFunction?.outputs)}
@@ -86,7 +90,7 @@ export const ReadOnlyFunctionForm = ({
           )}
         </div>
         <button
-           className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
+          className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
           onClick={handleRead}
           disabled={inputValue && isFetching}
         >

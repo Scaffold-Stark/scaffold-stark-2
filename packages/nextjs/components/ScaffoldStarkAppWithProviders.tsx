@@ -26,13 +26,17 @@ const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-       <div className={`flex relative flex-col min-h-screen ${isDarkMode ? 'bg-dark' : 'bg-white'}`}>
-        {isDarkMode? "" : 
-        <>
-        <div className="circle-gradient w-[330px] h-[330px]"></div>
-        <div className="circle-gradient-blue w-[330px] h-[630px]"></div>
-        </>
-        }
+      <div
+        className={`flex relative flex-col min-h-screen ${isDarkMode ? "bg-dark" : "bg-white"}`}
+      >
+        {isDarkMode ? (
+          ""
+        ) : (
+          <>
+            <div className="circle-gradient w-[330px] h-[330px]"></div>
+            <div className="circle-gradient-blue w-[330px] h-[630px]"></div>
+          </>
+        )}
         <Header />
         <main className="relative flex flex-col flex-1">{children}</main>
         <Footer />

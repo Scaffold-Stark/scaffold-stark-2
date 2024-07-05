@@ -23,5 +23,5 @@ execSync(
     process.env.NETWORK +
     " && ts-node ../scripts-ts/helpers/parse-deployments.ts" +
     " && cd ../..",
-  { stdio: "inherit" }
+  { stdio: "inherit" },
 );

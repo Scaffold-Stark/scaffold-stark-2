@@ -79,7 +79,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
       isOpen={isOpen}
       onClose={closeModal}
       animate={animate}
-      className={`w-[60vw] mx-auto md:max-h-[30rem] md:max-w-[25rem]`}
+      className={`w-[60vw] mx-auto md:max-h-[30rem] md:max-w-[25rem] backdrop-blur`}
     >
       <div className="flex p-4 w-full lg:p-0 lg:grid lg:grid-cols-5">
         <div className="basis-5/6 lg:col-span-2 lg:py-4 lg:pl-8">
@@ -109,39 +109,42 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
           </button>
         </div>
       </div>
-      <div className="flex flex-col flex-1 justify-between lg:grid lg:grid-cols-5">
-        <div className="px-8 lg:h-full lg:col-span-2">
+      <div className="flex flex-col flex-1 justify-center items-center lg:grid">
+        <div className="px-8 lg:h-full lg:col-span-2 flex justify-center items-center pb-8">
           <div className="flex flex-col gap-4">
-            {!isBurnerWallet && connectors.map((connector, index) => (
-              <Wallet
-                key={connector.id || index}
-                connector={connector}
-                loader={loader}
-                handleConnectWallet={handleConnectWallet}
-              />
-            ))}
+            {!isBurnerWallet &&
+              connectors.map((connector, index) => (
+                <Wallet
+                  key={connector.id || index}
+                  connector={connector}
+                  loader={loader}
+                  handleConnectWallet={handleConnectWallet}
+                />
+              ))}
           </div>
         </div>
-        <div className="h-fit lg:h-full lg:border-none lg:col-span-3 lg:px-8 lg:py-0 lg:flex lg:flex-col pb-[20px]">
-          {isBurnerWallet && (
-            <>
-              <div className="flex flex-col pb-[20px] items-center justify-end gap-3 px-5">
-                <div className="h-[300px] overflow-y-auto flex w-full flex-col gap-2">
-                  {burnerAccounts.map((burnerAcc, ix) => (
-                    <div key={burnerAcc.publicKey} className="w-full flex flex-col">
-                      <button
-                        className={`${isDarkMode ? "hover:bg-[#385183]" : "hover:bg-gradient-light"} border border-[#385183] rounded-md text-neutral py-[4px] pl-[10px] flex`}
-                        onClick={(e) => handleConnectBurner(e, ix)}
-                      >
-                        {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}
-                      </button>
-                    </div>
-                  ))}
-                </div>
+
+        {isBurnerWallet && (
+          <>
+            <div className="flex flex-col pb-[20px] items-center justify-end gap-3 px-5">
+              <div className="h-[300px] overflow-y-auto flex w-full flex-col gap-2">
+                {burnerAccounts.map((burnerAcc, ix) => (
+                  <div
+                    key={burnerAcc.publicKey}
+                    className="w-full flex flex-col"
+                  >
+                    <button
+                      className={`${isDarkMode ? "hover:bg-[#385183]" : "hover:bg-gradient-light"} border border-[#385183] rounded-md text-neutral py-[4px] pl-[10px] flex`}
+                      onClick={(e) => handleConnectBurner(e, ix)}
+                    >
+                      {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}
+                    </button>
+                  </div>
+                ))}
               </div>
-            </>
-          )}
-        </div>
+            </div>
+          </>
+        )}
       </div>
     </GenericModal>
   );

@@ -41,7 +41,9 @@ export const CustomConnectButton = () => {
     <>
       <button
         className={`rounded-[18px] btn-sm font-bold ${
-          theme === "dark" ? "bg-gradient-vertical text-neutral" : "bg-gradient-light text-neutral"
+          theme === "dark"
+            ? "bg-gradient-vertical text-neutral"
+            : "bg-gradient-light text-neutral"
         }`}
         onClick={handleWalletConnect}
         type="button"

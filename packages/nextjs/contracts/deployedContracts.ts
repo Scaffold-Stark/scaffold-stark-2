@@ -3,8 +3,6 @@
  * You should not edit it manually or your changes might be overwritten.
  */
 
-const deployedContracts = {
-  devnet: {},
-} as const;
+const deployedContracts = {} as const;
 
 export default deployedContracts;

@@ -3,7 +3,6 @@ import { Connector } from "@starknet-react/core";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 
-
 const Wallet = ({
   handleConnectWallet,
   connector,
@@ -23,7 +22,7 @@ const Wallet = ({
 
   return (
     <button
-      className={`flex gap-4 items-center text-neutral p-[.2rem] rounded-[10px] transition-all cursor-pointer ${isDarkMode?"hover:bg-[#385183]":"hover:bg-gradient-light hover:border-none"} border border-[#4f4ab7] pl-3 ${clicked ? "bg-ligth" : ""}`}
+      className={`flex gap-4 items-center text-neutral p-[.2rem] rounded-[10px] transition-all cursor-pointer ${isDarkMode ? "hover:bg-[#385183]" : "hover:bg-gradient-light hover:border-none"} border border-[#4f4ab7] pl-3 ${clicked ? "bg-ligth" : ""}`}
       onClick={(e) => {
         setClicked(true);
         handleConnectWallet(e, connector);

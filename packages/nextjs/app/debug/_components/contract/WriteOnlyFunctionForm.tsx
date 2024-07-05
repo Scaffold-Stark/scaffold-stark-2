@@ -26,7 +26,6 @@ import { TxReceipt } from "./TxReceipt";
 import { useTransactor } from "~~/hooks/scaffold-stark";
 import { useTheme } from "next-themes";
 
-
 type WriteOnlyFunctionFormProps = {
   abi: Abi;
   abiFunction: AbiFunction;
@@ -51,7 +50,6 @@ WriteOnlyFunctionFormProps) => {
   const writeDisabled = !chain || chain?.network !== targetNetwork.network;
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
-  
 
   const {
     data: result,
@@ -121,7 +119,9 @@ WriteOnlyFunctionFormProps) => {
           zeroInputs ? "flex-row justify-between items-center" : "flex-col"
         }`}
       >
-        <p className={`font-medium my-0 break-words ${isDarkMode? "text-[#1DD6FF]" : "text-[#3C1DFF]"}`}>
+        <p
+          className={`font-medium my-0 break-words ${isDarkMode ? "text-[#1DD6FF]" : "text-[#3C1DFF]"}`}
+        >
           {abiFunction.name}
           {/* <InheritanceTooltip inheritedFrom={undefined} /> */}
         </p>

@@ -46,10 +46,11 @@ export const HeaderMenuLinks = () => {
               href={href}
               passHref
               className={`${
-                isActive ? isDark
-                ? "bg-gradient-dark text-white"
-                : "bg-black text-white"
-              : ""
+                isActive
+                  ? isDark
+                    ? "bg-gradient-dark text-white"
+                    : "bg-black text-white"
+                  : ""
               } hover:bg-secondary focus:!bg-secondary active:!text-neutral py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col`}
             >
               {icon}
@@ -74,7 +75,7 @@ export const Header = () => {
   );
 
   return (
-    <div className="sticky lg:static top-0 navbar backdrop-blur-sm min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
+    <div className="sticky lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
       <div className="navbar-start w-auto lg:w-1/2">
         <div className="lg:hidden dropdown" ref={burgerMenuRef}>
           <label
@@ -122,8 +123,10 @@ export const Header = () => {
           <HeaderMenuLinks />
         </ul>
       </div>
-      <div className="navbar-end flex-grow mr-4">
-        <div className="bg-[#8a45fc] text-[9px] p-1 text-white">Not deployed</div>
+      <div className="navbar-end flex-grow mr-4 gap-4">
+        <div className="bg-[#8a45fc] text-[9px] p-1 text-white">
+          Not deployed
+        </div>
         <CustomConnectButton />
         {/* <FaucetButton /> */}
       </div>

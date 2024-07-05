@@ -31,57 +31,70 @@ p {
   @apply shadow-none;
 }
 
-.bg-dark{
-  background: rgb(81,133,213);
-background: radial-gradient(circle, rgba(81,133,213,1) 0%, rgba(20,26,49,1) 66%);
+.bg-dark {
+  background: rgb(81, 133, 213);
+  background: radial-gradient(
+    circle,
+    rgba(81, 133, 213, 1) 0%,
+    rgba(20, 26, 49, 1) 66%
+  );
 }
 
-.bg-ligth{
-  background: rgb(189,147,241);
-  background: linear-gradient(90deg, rgba(189,147,241,1) 0%, rgba(255,255,255,1) 50%, rgba(166,232,254,1) 100%);
+.bg-ligth {
+  background: rgb(189, 147, 241);
+  background: linear-gradient(
+    90deg,
+    rgba(189, 147, 241, 1) 0%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(166, 232, 254, 1) 100%
+  );
 }
 
-.circle-gradient{
+.circle-gradient {
   border-radius: 630px;
-  background: #BD93F1;
+  background: #bd93f1;
   filter: blur(229px);
   position: absolute;
-  top:0;
+  top: 0;
 }
 
-.circle-gradient-blue{
+.circle-gradient-blue {
   border-radius: 630px;
-  background: #A6E8FE;
+  background: #a6e8fe;
   filter: blur(250px);
   position: absolute;
-  top:0;
+  top: 0;
   right: 0;
 }
 
-.border-gradient{
+.border-gradient {
   border: 1px solid #5c4fe5;
 }
 
-.bg-input{
+.bg-input {
   background: rgba(0, 0, 0, 0.07);
 }
 
-.bg-input-dark{
+.bg-input-dark {
   background: rgba(255, 255, 255, 0.07);
 }
 
-.bg-component-dark{
-  background: linear-gradient(113deg, rgba(43, 34, 67, 0.60) 20.48%, rgba(37, 55, 81, 0.60) 99.67%);
+.bg-component-dark {
+  background: linear-gradient(
+    113deg,
+    rgba(43, 34, 67, 0.6) 20.48%,
+    rgba(37, 55, 81, 0.6) 99.67%
+  );
 }
 
-.bg-component-ligth{
-  background:rgba(255, 255, 255, 0.60);
+.bg-component-ligth {
+  background: rgba(255, 255, 255, 0.6);
 }
 
-.bg-transparent-purple{
+.bg-transparent-purple {
   background: rgba(139, 69, 253, 0.37);
 }
 
-.bg-modal{
- backdrop-filter: blur(7.449999809265137px);;
+.bg-modal {
+  backdrop-filter: blur(7.449999809265137px);
 }
