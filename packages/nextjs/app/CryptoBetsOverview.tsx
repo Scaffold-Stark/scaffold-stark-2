@@ -92,6 +92,7 @@ export function CryptoBetsOverview() {
 
   return (
     <BentoGrid className="mx-auto md:auto-rows-[24rem]" isLoading={isLoading}>
+      {!isLoading && items.length === 0 ? "No bets ongoing." : null}
       {items.map((item, i) => (
         <BentoGridItem
           key={i}

@@ -1,6 +1,7 @@
 "use client";
 import MyBets from "./MyBets";
 import { useAccount } from "@starknet-react/core";
+import MyCryptoBets from "./MyCryptoBets";
 
 function Page() {
   const { address, status, chainId, ...props } = useAccount();
@@ -9,7 +10,10 @@ function Page() {
       {status === "disconnected" ? (
         <div>You need to be logged.</div>
       ) : (
-        <MyBets />
+        <>
+          <MyCryptoBets />
+          {/* <MyBets /> */}
+        </>
       )}
     </div>
   );
