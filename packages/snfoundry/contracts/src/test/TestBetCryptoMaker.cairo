@@ -169,10 +169,10 @@ fn test_settle_bet() {
     let bet_id = dispatcher.getTotalBets();
 
     prank(CheatTarget::One(eth_token.contract_address), user_address, CheatSpan::TargetCalls(1));
-    eth_token.approve(contract_address, 7);
+    eth_token.approve(contract_address, 7000000000000000000);
 
     prank(CheatTarget::One(contract_address), user_address, CheatSpan::TargetCalls(1));
-    dispatcher.vote_yes(7, bet_id);
+    dispatcher.vote_yes(7000000000000000000, bet_id);
 
 
     assert!(dispatcher.getBet(bet_id).is_bet_ended == false, "Bet should be open");
@@ -182,8 +182,8 @@ fn test_settle_bet() {
     assert!(dispatcher.getBet(bet_id).is_nimbora_claimed == false, "Nimbora should not be claimed");
 
     assert!(
-        nimbora_token.balanceOf(contract_address) == 6,
-        "Contract Nimbora balance is suposed to be 6"
+        nimbora_token.balanceOf(contract_address) == 6941957145251430232,
+        "Contract Nimbora balance is suposed to be 6941957145251430232"
     );
     assert!(eth_token.balanceOf(contract_address) == 0, "Contract balance is suposed to be 0");
 
@@ -229,8 +229,7 @@ fn test_settle_bet() {
         map_value_balance.span()
     ); 
     dispatcher.getBet(bet_id).nimbora.claim_withdrawal(contract_address, 0);
-    
-    assert!(eth_token.balanceOf(contract_address) == 6, "Contract balance is suposed to be 6");
+    assert!(eth_token.balanceOf(contract_address) == 6999999999999999999, "Contract balance is suposed to be 6999999999999999999");
     
 }
 //652086109850

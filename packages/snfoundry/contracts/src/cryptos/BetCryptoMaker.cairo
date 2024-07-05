@@ -80,6 +80,7 @@ pub struct Outcome {
     result_name: felt252,
     pub is_yes_outcome: bool,
     pub result_token_price: u256,
+    pub nimbora_total_amount_with_yield: u256,
     pub is_settled: bool
 }
 
@@ -259,6 +260,7 @@ use contracts::cryptos::PragmaPrice::IPragmaPrice;
                 result_name: '-',
                 is_yes_outcome: false,
                 result_token_price: 0,
+                nimbora_total_amount_with_yield: 0,
                 is_settled: false
             };
 
@@ -405,19 +407,22 @@ use contracts::cryptos::PragmaPrice::IPragmaPrice;
                 );
 
             let mut bet = self.bets.read(bet_id);
+            let total_amount_from_nimbora_shares = bet.nimbora.convert_to_assets(bet.total_shares_amount);
             let winner_result = if (result_price.into() > bet.reference_token_price) {
                 Outcome {
                     result_name: 'Yes won',
                     is_yes_outcome: true,
                     result_token_price: result_price.into(),
-                    is_settled: true
+                    is_settled: true,
+                    nimbora_total_amount_with_yield: total_amount_from_nimbora_shares
                 }
             } else {
                 Outcome {
                     result_name: 'No won',
                     is_yes_outcome: false,
                     result_token_price: result_price.into(),
-                    is_settled: true
+                    is_settled: true,
+                    nimbora_total_amount_with_yield: total_amount_from_nimbora_shares
                 }
             };
             bet.is_bet_ended = true;
@@ -432,6 +437,7 @@ use contracts::cryptos::PragmaPrice::IPragmaPrice;
             if self.bets.read(bet_id).is_nimbora_claimed == false {
                 let mut bet = self.bets.read(bet_id);
                 bet.nimbora.request_withdrawal(bet.total_shares_amount);
+
                 bet.is_nimbora_claimed = true;
                 self.bets.write(bet_id, bet);
             }
