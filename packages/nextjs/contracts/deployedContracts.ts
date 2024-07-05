@@ -5,431 +5,32 @@
 
 const deployedContracts = {
   devnet: {
-    BitcoinPrice: {
-      abi: [
-        {
-          type: "impl",
-          name: "BitcoinImpl",
-          interface_name: "contracts::cryptos::BitcoinPrice::IBitcoinPrice",
-        },
-        {
-          type: "struct",
-          name: "core::integer::u256",
-          members: [
-            {
-              name: "low",
-              type: "core::integer::u128",
-            },
-            {
-              name: "high",
-              type: "core::integer::u128",
-            },
-          ],
-        },
-        {
-          type: "enum",
-          name: "core::bool",
-          variants: [
-            {
-              name: "False",
-              type: "()",
-            },
-            {
-              name: "True",
-              type: "()",
-            },
-          ],
-        },
-        {
-          type: "struct",
-          name: "contracts::cryptos::BitcoinPrice::BetInfos",
-          members: [
-            {
-              name: "id",
-              type: "core::integer::u64",
-            },
-            {
-              name: "total_amount",
-              type: "core::integer::u256",
-            },
-            {
-              name: "total_amount_yes",
-              type: "core::integer::u256",
-            },
-            {
-              name: "total_amount_no",
-              type: "core::integer::u256",
-            },
-            {
-              name: "begin_date",
-              type: "core::integer::u64",
-            },
-            {
-              name: "end_date",
-              type: "core::integer::u64",
-            },
-            {
-              name: "token_price_start",
-              type: "core::integer::u256",
-            },
-            {
-              name: "token_price_end",
-              type: "core::integer::u256",
-            },
-            {
-              name: "is_token_price_end_set",
-              type: "core::bool",
-            },
-            {
-              name: "reference_token_price",
-              type: "core::integer::u256",
-            },
-            {
-              name: "vote_date_limit",
-              type: "core::integer::u64",
-            },
-          ],
-        },
-        {
-          type: "interface",
-          name: "contracts::cryptos::BitcoinPrice::IBitcoinPrice",
-          items: [
-            {
-              type: "function",
-              name: "vote_yes",
-              inputs: [
-                {
-                  name: "amount_eth",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "vote_no",
-              inputs: [
-                {
-                  name: "amount_eth",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "get_current_bet",
-              inputs: [],
-              outputs: [
-                {
-                  type: "contracts::cryptos::BitcoinPrice::BetInfos",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "get_own_yes_amount",
-              inputs: [
-                {
-                  name: "contract_address",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "bet_id",
-                  type: "core::integer::u64",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::integer::u256",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "get_own_no_amount",
-              inputs: [
-                {
-                  name: "contract_address",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "bet_id",
-                  type: "core::integer::u64",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::integer::u256",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "claimRewards",
-              inputs: [
-                {
-                  name: "bet_id",
-                  type: "core::integer::u64",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::integer::u256",
-                },
-              ],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "set_pragma_checkpoint",
-              inputs: [],
-              outputs: [],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "set_bet_result_price",
-              inputs: [],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "get_contract_current_timestamp",
-              inputs: [],
-              outputs: [
-                {
-                  type: "core::integer::u64",
-                },
-              ],
-              state_mutability: "view",
-            },
-          ],
-        },
-        {
-          type: "impl",
-          name: "OwnableImpl",
-          interface_name: "openzeppelin::access::ownable::interface::IOwnable",
-        },
-        {
-          type: "interface",
-          name: "openzeppelin::access::ownable::interface::IOwnable",
-          items: [
-            {
-              type: "function",
-              name: "owner",
-              inputs: [],
-              outputs: [
-                {
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "transfer_ownership",
-              inputs: [
-                {
-                  name: "new_owner",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "renounce_ownership",
-              inputs: [],
-              outputs: [],
-              state_mutability: "external",
-            },
-          ],
-        },
-        {
-          type: "impl",
-          name: "PragmaPriceImpl",
-          interface_name: "contracts::cryptos::PragmaPrice::IPragmaPrice",
-        },
-        {
-          type: "enum",
-          name: "pragma_lib::types::DataType",
-          variants: [
-            {
-              name: "SpotEntry",
-              type: "core::felt252",
-            },
-            {
-              name: "FutureEntry",
-              type: "(core::felt252, core::integer::u64)",
-            },
-            {
-              name: "GenericEntry",
-              type: "core::felt252",
-            },
-          ],
-        },
-        {
-          type: "interface",
-          name: "contracts::cryptos::PragmaPrice::IPragmaPrice",
-          items: [
-            {
-              type: "function",
-              name: "get_asset_price_median",
-              inputs: [
-                {
-                  name: "oracle_address",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "asset",
-                  type: "pragma_lib::types::DataType",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::integer::u128",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "set_asset_price_median_checkoint",
-              inputs: [
-                {
-                  name: "oracle_address",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "asset",
-                  type: "pragma_lib::types::DataType",
-                },
-              ],
-              outputs: [],
-              state_mutability: "view",
-            },
-          ],
-        },
-        {
-          type: "constructor",
-          name: "constructor",
-          inputs: [
-            {
-              name: "end_date",
-              type: "core::integer::u64",
-            },
-            {
-              name: "vote_date_limit",
-              type: "core::integer::u64",
-            },
-            {
-              name: "reference_token_price",
-              type: "core::integer::u256",
-            },
-            {
-              name: "owner",
-              type: "core::starknet::contract_address::ContractAddress",
-            },
-            {
-              name: "pragmaAddress",
-              type: "core::starknet::contract_address::ContractAddress",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferred",
-          kind: "struct",
-          members: [
-            {
-              name: "previous_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "new_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
-          kind: "struct",
-          members: [
-            {
-              name: "previous_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "new_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin::access::ownable::ownable::OwnableComponent::Event",
-          kind: "enum",
-          variants: [
-            {
-              name: "OwnershipTransferred",
-              type: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferred",
-              kind: "nested",
-            },
-            {
-              name: "OwnershipTransferStarted",
-              type: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
-              kind: "nested",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "contracts::cryptos::PragmaPrice::PragmaPrice::Event",
-          kind: "enum",
-          variants: [],
-        },
-        {
-          type: "event",
-          name: "contracts::cryptos::BitcoinPrice::BitcoinPrice::Event",
-          kind: "enum",
-          variants: [
-            {
-              name: "OwnableEvent",
-              type: "openzeppelin::access::ownable::ownable::OwnableComponent::Event",
-              kind: "flat",
-            },
-            {
-              name: "PragmaPriceEvent",
-              type: "contracts::cryptos::PragmaPrice::PragmaPrice::Event",
-              kind: "flat",
-            },
-          ],
-        },
-      ],
-    },
-  },
-  sepolia: {
-    BitcoinPrice: {
+    BetCryptoMaker: {
       address:
-        "0x0537116611546af881b8bfc93f29910d2a7cf6929be4cf754c8bc29fe2f313a6",
+        "0x0310202084ca5ba78c1bc6543a1a297caa432c69522bb37552eda806cdaaf38b",
       abi: [
         {
           type: "impl",
-          name: "BitcoinImpl",
-          interface_name: "contracts::cryptos::BitcoinPrice::IBitcoinPrice",
+          name: "BetCryptoMakerImpl",
+          interface_name: "contracts::cryptos::BetCryptoMaker::IBetCryptoMaker",
+        },
+        {
+          type: "struct",
+          name: "core::byte_array::ByteArray",
+          members: [
+            {
+              name: "data",
+              type: "core::array::Array::<core::bytes_31::bytes31>",
+            },
+            {
+              name: "pending_word",
+              type: "core::felt252",
+            },
+            {
+              name: "pending_word_len",
+              type: "core::integer::u32",
+            },
+          ],
         },
         {
           type: "struct",
@@ -461,64 +62,264 @@ const deployedContracts = {
         },
         {
           type: "struct",
-          name: "contracts::cryptos::BitcoinPrice::BetInfos",
+          name: "contracts::cryptos::BetCryptoMaker::Outcome",
+          members: [
+            {
+              name: "result_name",
+              type: "core::felt252",
+            },
+            {
+              name: "is_yes_outcome",
+              type: "core::bool",
+            },
+            {
+              name: "result_token_price",
+              type: "core::integer::u256",
+            },
+            {
+              name: "is_settled",
+              type: "core::bool",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "openzeppelin::token::erc20::interface::IERC20CamelDispatcher",
+          members: [
+            {
+              name: "contract_address",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::cryptos::BetCryptoMaker::ITokenManagerDispatcher",
+          members: [
+            {
+              name: "contract_address",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::cryptos::BetCryptoMaker::BetInfos",
           members: [
             {
               name: "id",
-              type: "core::integer::u64",
-            },
-            {
-              name: "total_amount",
               type: "core::integer::u256",
             },
             {
-              name: "total_amount_yes",
-              type: "core::integer::u256",
+              name: "name",
+              type: "core::byte_array::ByteArray",
             },
             {
-              name: "total_amount_no",
-              type: "core::integer::u256",
+              name: "description",
+              type: "core::byte_array::ByteArray",
             },
             {
-              name: "begin_date",
-              type: "core::integer::u64",
-            },
-            {
-              name: "end_date",
-              type: "core::integer::u64",
-            },
-            {
-              name: "token_price_start",
-              type: "core::integer::u256",
-            },
-            {
-              name: "token_price_end",
-              type: "core::integer::u256",
-            },
-            {
-              name: "is_token_price_end_set",
-              type: "core::bool",
+              name: "category",
+              type: "core::felt252",
             },
             {
               name: "reference_token_price",
               type: "core::integer::u256",
             },
             {
-              name: "vote_date_limit",
+              name: "end_vote_bet_timestamp",
               type: "core::integer::u64",
+            },
+            {
+              name: "end_bet_timestamp",
+              type: "core::integer::u64",
+            },
+            {
+              name: "is_bet_ended",
+              type: "core::bool",
+            },
+            {
+              name: "is_nimbora_claimed",
+              type: "core::bool",
+            },
+            {
+              name: "total_bet_amount",
+              type: "core::integer::u256",
+            },
+            {
+              name: "total_bet_yes_amount",
+              type: "core::integer::u256",
+            },
+            {
+              name: "total_bet_no_amount",
+              type: "core::integer::u256",
+            },
+            {
+              name: "total_shares_amount",
+              type: "core::integer::u256",
+            },
+            {
+              name: "winner_result",
+              type: "contracts::cryptos::BetCryptoMaker::Outcome",
+            },
+            {
+              name: "bet_token",
+              type: "openzeppelin::token::erc20::interface::IERC20CamelDispatcher",
+            },
+            {
+              name: "nimbora",
+              type: "contracts::cryptos::BetCryptoMaker::ITokenManagerDispatcher",
+            },
+            {
+              name: "token_to_fetch_from_pragma",
+              type: "core::felt252",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::cryptos::BetCryptoMaker::UserBetPosition",
+          members: [
+            {
+              name: "amount",
+              type: "core::integer::u256",
+            },
+            {
+              name: "has_claimed",
+              type: "core::bool",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::cryptos::BetCryptoMaker::UserBetPositionOverview",
+          members: [
+            {
+              name: "bet_id",
+              type: "core::integer::u256",
+            },
+            {
+              name: "name",
+              type: "core::byte_array::ByteArray",
+            },
+            {
+              name: "category",
+              type: "core::felt252",
+            },
+            {
+              name: "is_yes",
+              type: "core::bool",
+            },
+            {
+              name: "amount",
+              type: "core::integer::u256",
+            },
+            {
+              name: "has_claimed",
+              type: "core::bool",
+            },
+            {
+              name: "is_bet_ended",
+              type: "core::bool",
             },
           ],
         },
         {
           type: "interface",
-          name: "contracts::cryptos::BitcoinPrice::IBitcoinPrice",
+          name: "contracts::cryptos::BetCryptoMaker::IBetCryptoMaker",
           items: [
+            {
+              type: "function",
+              name: "createBet",
+              inputs: [
+                {
+                  name: "name",
+                  type: "core::byte_array::ByteArray",
+                },
+                {
+                  name: "description",
+                  type: "core::byte_array::ByteArray",
+                },
+                {
+                  name: "category",
+                  type: "core::felt252",
+                },
+                {
+                  name: "reference_token_price",
+                  type: "core::integer::u256",
+                },
+                {
+                  name: "end_vote_bet_timestamp",
+                  type: "core::integer::u64",
+                },
+                {
+                  name: "end_bet_timestamp",
+                  type: "core::integer::u64",
+                },
+                {
+                  name: "bet_token_address",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+                {
+                  name: "nimbora_address",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+                {
+                  name: "token_to_fetch_from_pragma",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "getTotalBets",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::integer::u256",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "getBet",
+              inputs: [
+                {
+                  name: "bet_id",
+                  type: "core::integer::u256",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::cryptos::BetCryptoMaker::BetInfos",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "getAllBets",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::array::Array::<contracts::cryptos::BetCryptoMaker::BetInfos>",
+                },
+              ],
+              state_mutability: "view",
+            },
             {
               type: "function",
               name: "vote_yes",
               inputs: [
                 {
                   name: "amount_eth",
+                  type: "core::integer::u256",
+                },
+                {
+                  name: "bet_id",
                   type: "core::integer::u256",
                 },
               ],
@@ -533,57 +334,106 @@ const deployedContracts = {
                   name: "amount_eth",
                   type: "core::integer::u256",
                 },
+                {
+                  name: "bet_id",
+                  type: "core::integer::u256",
+                },
               ],
               outputs: [],
               state_mutability: "external",
             },
             {
               type: "function",
-              name: "get_current_bet",
-              inputs: [],
+              name: "get_yes_position",
+              inputs: [
+                {
+                  name: "caller_address",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+                {
+                  name: "bet_id",
+                  type: "core::integer::u256",
+                },
+              ],
               outputs: [
                 {
-                  type: "contracts::cryptos::BitcoinPrice::BetInfos",
+                  type: "contracts::cryptos::BetCryptoMaker::UserBetPosition",
                 },
               ],
               state_mutability: "view",
             },
             {
               type: "function",
-              name: "get_own_yes_amount",
+              name: "get_no_position",
               inputs: [
                 {
-                  name: "contract_address",
+                  name: "caller_address",
                   type: "core::starknet::contract_address::ContractAddress",
                 },
                 {
                   name: "bet_id",
-                  type: "core::integer::u64",
+                  type: "core::integer::u256",
                 },
               ],
               outputs: [
                 {
-                  type: "core::integer::u256",
+                  type: "contracts::cryptos::BetCryptoMaker::UserBetPosition",
                 },
               ],
               state_mutability: "view",
             },
             {
               type: "function",
-              name: "get_own_no_amount",
+              name: "getAllUserPositions",
               inputs: [
                 {
-                  name: "contract_address",
+                  name: "user",
                   type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "bet_id",
-                  type: "core::integer::u64",
                 },
               ],
               outputs: [
                 {
+                  type: "core::array::Array::<contracts::cryptos::BetCryptoMaker::UserBetPositionOverview>",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "settleBet",
+              inputs: [
+                {
+                  name: "bet_id",
                   type: "core::integer::u256",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "claimNimboraShares",
+              inputs: [
+                {
+                  name: "bet_id",
+                  type: "core::integer::u256",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "checkHasClaimed",
+              inputs: [
+                {
+                  name: "bet_id",
+                  type: "core::integer::u256",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::bool",
                 },
               ],
               state_mutability: "view",
@@ -594,40 +444,11 @@ const deployedContracts = {
               inputs: [
                 {
                   name: "bet_id",
-                  type: "core::integer::u64",
-                },
-              ],
-              outputs: [
-                {
                   type: "core::integer::u256",
                 },
               ],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "set_pragma_checkpoint",
-              inputs: [],
-              outputs: [],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "set_bet_result_price",
-              inputs: [],
               outputs: [],
               state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "get_contract_current_timestamp",
-              inputs: [],
-              outputs: [
-                {
-                  type: "core::integer::u64",
-                },
-              ],
-              state_mutability: "view",
             },
           ],
         },
@@ -742,23 +563,11 @@ const deployedContracts = {
           name: "constructor",
           inputs: [
             {
-              name: "end_date",
-              type: "core::integer::u64",
-            },
-            {
-              name: "vote_date_limit",
-              type: "core::integer::u64",
-            },
-            {
-              name: "reference_token_price",
-              type: "core::integer::u256",
-            },
-            {
               name: "owner",
               type: "core::starknet::contract_address::ContractAddress",
             },
             {
-              name: "pragmaAddress",
+              name: "pragma_address",
               type: "core::starknet::contract_address::ContractAddress",
             },
           ],
@@ -822,841 +631,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::cryptos::BitcoinPrice::BitcoinPrice::Event",
-          kind: "enum",
-          variants: [
-            {
-              name: "OwnableEvent",
-              type: "openzeppelin::access::ownable::ownable::OwnableComponent::Event",
-              kind: "flat",
-            },
-            {
-              name: "PragmaPriceEvent",
-              type: "contracts::cryptos::PragmaPrice::PragmaPrice::Event",
-              kind: "flat",
-            },
-          ],
-        },
-      ],
-    },
-    EtherPrice: {
-      address:
-        "0x058bf0081cfd817a3071fbf7467a8be14ecf6c776b039a22a4a5b84ebbad26bd",
-      abi: [
-        {
-          type: "impl",
-          name: "EtherImpl",
-          interface_name: "contracts::cryptos::EtherPrice::IEtherPrice",
-        },
-        {
-          type: "struct",
-          name: "core::integer::u256",
-          members: [
-            {
-              name: "low",
-              type: "core::integer::u128",
-            },
-            {
-              name: "high",
-              type: "core::integer::u128",
-            },
-          ],
-        },
-        {
-          type: "enum",
-          name: "core::bool",
-          variants: [
-            {
-              name: "False",
-              type: "()",
-            },
-            {
-              name: "True",
-              type: "()",
-            },
-          ],
-        },
-        {
-          type: "struct",
-          name: "contracts::cryptos::EtherPrice::BetInfos",
-          members: [
-            {
-              name: "id",
-              type: "core::integer::u64",
-            },
-            {
-              name: "total_amount",
-              type: "core::integer::u256",
-            },
-            {
-              name: "total_amount_yes",
-              type: "core::integer::u256",
-            },
-            {
-              name: "total_amount_no",
-              type: "core::integer::u256",
-            },
-            {
-              name: "begin_date",
-              type: "core::integer::u64",
-            },
-            {
-              name: "end_date",
-              type: "core::integer::u64",
-            },
-            {
-              name: "token_price_start",
-              type: "core::integer::u256",
-            },
-            {
-              name: "token_price_end",
-              type: "core::integer::u256",
-            },
-            {
-              name: "is_token_price_end_set",
-              type: "core::bool",
-            },
-            {
-              name: "reference_token_price",
-              type: "core::integer::u256",
-            },
-            {
-              name: "vote_date_limit",
-              type: "core::integer::u64",
-            },
-          ],
-        },
-        {
-          type: "interface",
-          name: "contracts::cryptos::EtherPrice::IEtherPrice",
-          items: [
-            {
-              type: "function",
-              name: "vote_yes",
-              inputs: [
-                {
-                  name: "amount_eth",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "vote_no",
-              inputs: [
-                {
-                  name: "amount_eth",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "get_current_bet",
-              inputs: [],
-              outputs: [
-                {
-                  type: "contracts::cryptos::EtherPrice::BetInfos",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "get_own_yes_amount",
-              inputs: [
-                {
-                  name: "contract_address",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "bet_id",
-                  type: "core::integer::u64",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::integer::u256",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "get_own_no_amount",
-              inputs: [
-                {
-                  name: "contract_address",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "bet_id",
-                  type: "core::integer::u64",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::integer::u256",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "claimRewards",
-              inputs: [
-                {
-                  name: "bet_id",
-                  type: "core::integer::u64",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::integer::u256",
-                },
-              ],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "set_pragma_checkpoint",
-              inputs: [],
-              outputs: [],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "set_bet_result_price",
-              inputs: [],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "get_contract_current_timestamp",
-              inputs: [],
-              outputs: [
-                {
-                  type: "core::integer::u64",
-                },
-              ],
-              state_mutability: "view",
-            },
-          ],
-        },
-        {
-          type: "impl",
-          name: "OwnableImpl",
-          interface_name: "openzeppelin::access::ownable::interface::IOwnable",
-        },
-        {
-          type: "interface",
-          name: "openzeppelin::access::ownable::interface::IOwnable",
-          items: [
-            {
-              type: "function",
-              name: "owner",
-              inputs: [],
-              outputs: [
-                {
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "transfer_ownership",
-              inputs: [
-                {
-                  name: "new_owner",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "renounce_ownership",
-              inputs: [],
-              outputs: [],
-              state_mutability: "external",
-            },
-          ],
-        },
-        {
-          type: "impl",
-          name: "PragmaPriceImpl",
-          interface_name: "contracts::cryptos::PragmaPrice::IPragmaPrice",
-        },
-        {
-          type: "enum",
-          name: "pragma_lib::types::DataType",
-          variants: [
-            {
-              name: "SpotEntry",
-              type: "core::felt252",
-            },
-            {
-              name: "FutureEntry",
-              type: "(core::felt252, core::integer::u64)",
-            },
-            {
-              name: "GenericEntry",
-              type: "core::felt252",
-            },
-          ],
-        },
-        {
-          type: "interface",
-          name: "contracts::cryptos::PragmaPrice::IPragmaPrice",
-          items: [
-            {
-              type: "function",
-              name: "get_asset_price_median",
-              inputs: [
-                {
-                  name: "oracle_address",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "asset",
-                  type: "pragma_lib::types::DataType",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::integer::u128",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "set_asset_price_median_checkoint",
-              inputs: [
-                {
-                  name: "oracle_address",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "asset",
-                  type: "pragma_lib::types::DataType",
-                },
-              ],
-              outputs: [],
-              state_mutability: "view",
-            },
-          ],
-        },
-        {
-          type: "constructor",
-          name: "constructor",
-          inputs: [
-            {
-              name: "end_date",
-              type: "core::integer::u64",
-            },
-            {
-              name: "vote_date_limit",
-              type: "core::integer::u64",
-            },
-            {
-              name: "reference_token_price",
-              type: "core::integer::u256",
-            },
-            {
-              name: "owner",
-              type: "core::starknet::contract_address::ContractAddress",
-            },
-            {
-              name: "pragmaAddress",
-              type: "core::starknet::contract_address::ContractAddress",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferred",
-          kind: "struct",
-          members: [
-            {
-              name: "previous_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "new_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
-          kind: "struct",
-          members: [
-            {
-              name: "previous_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "new_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin::access::ownable::ownable::OwnableComponent::Event",
-          kind: "enum",
-          variants: [
-            {
-              name: "OwnershipTransferred",
-              type: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferred",
-              kind: "nested",
-            },
-            {
-              name: "OwnershipTransferStarted",
-              type: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
-              kind: "nested",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "contracts::cryptos::PragmaPrice::PragmaPrice::Event",
-          kind: "enum",
-          variants: [],
-        },
-        {
-          type: "event",
-          name: "contracts::cryptos::EtherPrice::EtherPrice::Event",
-          kind: "enum",
-          variants: [
-            {
-              name: "OwnableEvent",
-              type: "openzeppelin::access::ownable::ownable::OwnableComponent::Event",
-              kind: "flat",
-            },
-            {
-              name: "PragmaPriceEvent",
-              type: "contracts::cryptos::PragmaPrice::PragmaPrice::Event",
-              kind: "flat",
-            },
-          ],
-        },
-      ],
-    },
-    StarkPrice: {
-      address:
-        "0x075a836e6b1123de7500d804719f62711439b09ab285eef6de9aee4213a24315",
-      abi: [
-        {
-          type: "impl",
-          name: "StarkImpl",
-          interface_name: "contracts::cryptos::StarkPrice::IStarkPrice",
-        },
-        {
-          type: "struct",
-          name: "core::integer::u256",
-          members: [
-            {
-              name: "low",
-              type: "core::integer::u128",
-            },
-            {
-              name: "high",
-              type: "core::integer::u128",
-            },
-          ],
-        },
-        {
-          type: "enum",
-          name: "core::bool",
-          variants: [
-            {
-              name: "False",
-              type: "()",
-            },
-            {
-              name: "True",
-              type: "()",
-            },
-          ],
-        },
-        {
-          type: "struct",
-          name: "contracts::cryptos::StarkPrice::BetInfos",
-          members: [
-            {
-              name: "id",
-              type: "core::integer::u64",
-            },
-            {
-              name: "total_amount",
-              type: "core::integer::u256",
-            },
-            {
-              name: "total_amount_yes",
-              type: "core::integer::u256",
-            },
-            {
-              name: "total_amount_no",
-              type: "core::integer::u256",
-            },
-            {
-              name: "begin_date",
-              type: "core::integer::u64",
-            },
-            {
-              name: "end_date",
-              type: "core::integer::u64",
-            },
-            {
-              name: "token_price_start",
-              type: "core::integer::u256",
-            },
-            {
-              name: "token_price_end",
-              type: "core::integer::u256",
-            },
-            {
-              name: "is_token_price_end_set",
-              type: "core::bool",
-            },
-            {
-              name: "reference_token_price",
-              type: "core::integer::u256",
-            },
-            {
-              name: "vote_date_limit",
-              type: "core::integer::u64",
-            },
-          ],
-        },
-        {
-          type: "interface",
-          name: "contracts::cryptos::StarkPrice::IStarkPrice",
-          items: [
-            {
-              type: "function",
-              name: "vote_yes",
-              inputs: [
-                {
-                  name: "amount_eth",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "vote_no",
-              inputs: [
-                {
-                  name: "amount_eth",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "get_current_bet",
-              inputs: [],
-              outputs: [
-                {
-                  type: "contracts::cryptos::StarkPrice::BetInfos",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "get_own_yes_amount",
-              inputs: [
-                {
-                  name: "contract_address",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "bet_id",
-                  type: "core::integer::u64",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::integer::u256",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "get_own_no_amount",
-              inputs: [
-                {
-                  name: "contract_address",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "bet_id",
-                  type: "core::integer::u64",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::integer::u256",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "claimRewards",
-              inputs: [
-                {
-                  name: "bet_id",
-                  type: "core::integer::u64",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::integer::u256",
-                },
-              ],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "set_pragma_checkpoint",
-              inputs: [],
-              outputs: [],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "set_bet_result_price",
-              inputs: [],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "get_contract_current_timestamp",
-              inputs: [],
-              outputs: [
-                {
-                  type: "core::integer::u64",
-                },
-              ],
-              state_mutability: "view",
-            },
-          ],
-        },
-        {
-          type: "impl",
-          name: "OwnableImpl",
-          interface_name: "openzeppelin::access::ownable::interface::IOwnable",
-        },
-        {
-          type: "interface",
-          name: "openzeppelin::access::ownable::interface::IOwnable",
-          items: [
-            {
-              type: "function",
-              name: "owner",
-              inputs: [],
-              outputs: [
-                {
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "transfer_ownership",
-              inputs: [
-                {
-                  name: "new_owner",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "renounce_ownership",
-              inputs: [],
-              outputs: [],
-              state_mutability: "external",
-            },
-          ],
-        },
-        {
-          type: "impl",
-          name: "PragmaPriceImpl",
-          interface_name: "contracts::cryptos::PragmaPrice::IPragmaPrice",
-        },
-        {
-          type: "enum",
-          name: "pragma_lib::types::DataType",
-          variants: [
-            {
-              name: "SpotEntry",
-              type: "core::felt252",
-            },
-            {
-              name: "FutureEntry",
-              type: "(core::felt252, core::integer::u64)",
-            },
-            {
-              name: "GenericEntry",
-              type: "core::felt252",
-            },
-          ],
-        },
-        {
-          type: "interface",
-          name: "contracts::cryptos::PragmaPrice::IPragmaPrice",
-          items: [
-            {
-              type: "function",
-              name: "get_asset_price_median",
-              inputs: [
-                {
-                  name: "oracle_address",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "asset",
-                  type: "pragma_lib::types::DataType",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::integer::u128",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "set_asset_price_median_checkoint",
-              inputs: [
-                {
-                  name: "oracle_address",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "asset",
-                  type: "pragma_lib::types::DataType",
-                },
-              ],
-              outputs: [],
-              state_mutability: "view",
-            },
-          ],
-        },
-        {
-          type: "constructor",
-          name: "constructor",
-          inputs: [
-            {
-              name: "end_date",
-              type: "core::integer::u64",
-            },
-            {
-              name: "vote_date_limit",
-              type: "core::integer::u64",
-            },
-            {
-              name: "reference_token_price",
-              type: "core::integer::u256",
-            },
-            {
-              name: "owner",
-              type: "core::starknet::contract_address::ContractAddress",
-            },
-            {
-              name: "pragmaAddress",
-              type: "core::starknet::contract_address::ContractAddress",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferred",
-          kind: "struct",
-          members: [
-            {
-              name: "previous_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "new_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
-          kind: "struct",
-          members: [
-            {
-              name: "previous_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "new_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin::access::ownable::ownable::OwnableComponent::Event",
-          kind: "enum",
-          variants: [
-            {
-              name: "OwnershipTransferred",
-              type: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferred",
-              kind: "nested",
-            },
-            {
-              name: "OwnershipTransferStarted",
-              type: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
-              kind: "nested",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "contracts::cryptos::PragmaPrice::PragmaPrice::Event",
-          kind: "enum",
-          variants: [],
-        },
-        {
-          type: "event",
-          name: "contracts::cryptos::StarkPrice::StarkPrice::Event",
+          name: "contracts::cryptos::BetCryptoMaker::BetCryptoMaker::Event",
           kind: "enum",
           variants: [
             {
