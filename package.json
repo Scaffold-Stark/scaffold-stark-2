@@ -6,19 +6,16 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "packages/snfoundry",
       "packages/nextjs"
     ]
   },
   "scripts": {
-    "chain": "yarn workspace @ss-2/snfoundry chain",
-    "deploy": "yarn workspace @ss-2/snfoundry deploy",
     "start": "yarn workspace @ss-2/nextjs dev",
     "next:lint": "yarn workspace @ss-2/nextjs lint",
     "next:check-types": "yarn workspace @ss-2/nextjs check-types",
     "vercel": "yarn workspace @ss-2/nextjs vercel",
     "vercel:yolo": "yarn workspace @ss-2/nextjs vercel:yolo",
-    "format": "yarn workspace @ss-2/nextjs format && yarn workspace @ss-2/snfoundry format",
+    "format": "yarn workspace @ss-2/nextjs format",
     "format:check": "yarn workspace @ss-2/nextjs format:check"
   },
   "packageManager": "yarn@3.2.3",

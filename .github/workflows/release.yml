@@ -1,0 +1,270 @@
+name: Build and deploy
+run-name: Build and deploy number ${{github.run_number}} started by @${{ github.actor }}
+
+on:
+  pull_request:
+    types: [ closed ]
+    branches: [ main ]
+
+env:
+  REGION: us-east-1
+
+jobs:
+
+  build:
+    runs-on: ubuntu-22.04
+    outputs:
+      REGISTRY: ${{ steps.build-deploy.outputs.REGISTRY }}
+      REPOSITORY: ${{ steps.build-deploy.outputs.REPOSITORY }}
+      TAG: ${{ steps.bump-version.outputs.NEW_VERSION }}
+
+    steps:
+
+      - name: Checkout Files
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{env.REGION}}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Determine version bump type
+        id: version
+        run: |
+          commit_message=$(git log -1 --pretty=%B)
+          if [[ "$commit_message" == *"[major]"* ]]; then
+            echo "type=major" >> "$GITHUB_OUTPUT"
+          elif [[ "$commit_message" == *"[minor]"* ]]; then
+            echo "type=minor" >> "$GITHUB_OUTPUT"
+          else
+            echo "type=patch" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump version and push
+        id: bump-version
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          new_version=$(npm version ${{ steps.version.outputs.type }} -m "chore(release): %s [skip ci]")
+          echo "NEW_VERSION=${new_version}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push docker image to Amazon ECR
+        id: build-deploy
+        run: |
+          REGISTRY=${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY=$(echo ${GITHUB_REPOSITORY} | cut -d'/' -f2)
+          IMAGE_TAG=${{ steps.bump-version.outputs.NEW_VERSION }}
+
+          if aws ecr describe-repositories --repository-names $REPOSITORY 2>/dev/null; then
+            echo "ECR Repository $REPOSITORY already exists"
+          else
+            echo "Creating ECR repository $REPOSITORY"
+            aws ecr create-repository --repository-name $REPOSITORY
+            cat <<EOF > policy.json
+            {
+              "rules": [
+                  {
+                      "rulePriority": 1,
+                      "description": "Expire images older than 5 days",
+                      "selection": {
+                          "tagStatus": "any",
+                          "countType": "imageCountMoreThan",
+                          "countNumber": 5
+                      },
+                      "action": {
+                          "type": "expire"
+                      }
+                  }
+              ]
+            }
+          EOF
+            aws ecr put-lifecycle-policy --repository-name $REPOSITORY --lifecycle-policy-text file://policy.json
+          fi
+
+          echo "${{ secrets.ENV_GLOBAL }}" > .env
+          echo "PORT=${{ vars.PORT }}" >> .env
+
+          docker build --build-arg="PORT=${{ vars.PORT }}" --no-cache -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          echo "REGISTRY=$REGISTRY" >> "$GITHUB_OUTPUT"
+          echo "TAG=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
+          echo "REPOSITORY=$REPOSITORY" >> "$GITHUB_OUTPUT"
+          git push origin HEAD:$GITHUB_REF_NAME --follow-tags
+
+
+
+  deploy:
+
+    runs-on: ubuntu-22.04
+    needs: build
+    if: ${{ success() }}
+    env:
+      REGISTRY: ${{ needs.build.outputs.REGISTRY }}
+      REPOSITORY: ${{ needs.build.outputs.REPOSITORY }}
+      TAG: ${{ needs.build.outputs.TAG }}
+
+    steps:
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.PRIVATE_KEY }}
+          
+      - name: Add server to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.REMOTE_SERVER_ADDRESS }} >> ~/.ssh/known_hosts
+      
+
+      - name: Create container from ECR
+        if: success()
+        run: |
+          ssh ${{ secrets.REMOTE_SERVER_USERNAME }}@${{ secrets.REMOTE_SERVER_ADDRESS }} << 'EOF'
+
+            export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+            export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            export AWS_DEFAULT_REGION=${{ env.REGION }}
+            aws ecr get-login-password --region ${{ env.REGION }} | docker login --username AWS --password-stdin ${{ env.REGISTRY }}
+
+            IMAGE_NAME=${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.TAG }}
+            CONTAINER_NAME=${{ env.REPOSITORY }}
+            OLD_CONTAINER_NAME="${{ env.REPOSITORY }}_old"
+            OLD_IMAGE_NAME=$(docker ps -a --filter "name=$CONTAINER_NAME" --format "{{.Image}}" | tail -n 1)
+            
+            PORT=${{ vars.PORT }}
+
+            if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
+                echo "Stopping the existing container..."
+                docker stop $CONTAINER_NAME && echo "Container stopped"
+                echo "Renaming the existing container..."
+                docker rename $CONTAINER_NAME $OLD_CONTAINER_NAME
+            else echo "Any container with name: $CONTAINER_NAME"
+            fi
+
+            if netstat -tuln | grep :$PORT; then
+              echo "Port $PORT is being used by another process"
+              exit 1
+            else
+              echo "Port $PORT is available"
+            fi
+
+            echo "Starting the new container..."
+            docker run --restart unless-stopped --name $CONTAINER_NAME -d -p $PORT:$PORT $IMAGE_NAME
+            sleep 10  # Wait for the container to start
+
+            echo "Testing the new container..."
+            if [ "$(docker ps -q -f name=${CONTAINER_NAME})" ]; then
+                echo "El contenedor ${CONTAINER_NAME} está en ejecución successfully."
+                if [ "$(docker ps -a -q -f name=$OLD_CONTAINER_NAME)" ]; then
+                    echo "Removing the old container..."
+                    docker rm -f $OLD_CONTAINER_NAME
+                fi
+
+                if [ ! -z "$OLD_IMAGE_NAME" ] && [ "$OLD_IMAGE_NAME" != "$IMAGE_NAME" ]; then
+                    echo "Removing the old image..."
+                    docker image prune -a -f
+                fi
+            else
+                echo "New container failed to start correctly. Reverting to the old container..."
+                docker stop $CONTAINER_NAME
+                docker rm -f $CONTAINER_NAME
+                docker rename $OLD_CONTAINER_NAME $CONTAINER_NAME
+                docker start $CONTAINER_NAME
+                docker image prune -a -f
+                echo "Reversion complete. Please check the logs and fix any issues."
+                exit 1
+            fi
+            echo "Deployment successful!"
+          EOF
+
+  nginx:
+    runs-on: ubuntu-22.04
+    needs: [build,deploy]
+    if: ${{ success() }}
+
+    steps:
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.PRIVATE_KEY }}
+          
+      - name: Add server to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.REMOTE_SERVER_ADDRESS }} >> ~/.ssh/known_hosts
+      
+      - name: Setup nginx
+        if: success()
+        run: |
+          ssh ${{ secrets.REMOTE_SERVER_USERNAME }}@${{ secrets.REMOTE_SERVER_ADDRESS }} << 'OUTER'
+            DOMAIN=${{ vars.NGINX_DOMAIN }}
+            PORT=${{ vars.PORT }}
+            NGINX_SITES_ENABLED="/etc/nginx/sites-enabled"
+            NGINX_SITES_AVAILABLE="/etc/nginx/sites-available"
+            CONFIG_FILE="$NGINX_SITES_AVAILABLE/$DOMAIN"
+
+            if [ -f "$CONFIG_FILE" ] && grep -q "proxy_pass .*:$PORT;" "$CONFIG_FILE"; then
+              echo "The file $CONFIG_FILE already exist and forward to port. Without nginx changes!"
+            else
+              if [ -f "$CONFIG_FILE" ] && ! grep -q "proxy_pass .*:$PORT;" "$CONFIG_FILE"; then
+                echo "La configuración de proxy_pass no reenvía al puerto $PORT."
+                echo "Eliminando configuracion nginx para el dominio $DOMAIN"
+                sudo rm /etc/nginx/sites-enabled/$DOMAIN
+                sudo rm /etc/nginx/sites-available/$DOMAIN
+                sudo certbot delete --cert-name "$DOMAIN" --non-interactive --quiet
+              fi
+
+              echo "El archivo $CONFIG_FILE no existe."
+
+              sudo bash -c "cat > $CONFIG_FILE <<'INNER'
+                  server {
+                      server_name $DOMAIN;
+
+                      location / {
+                          proxy_pass http://localhost:$PORT;
+                          proxy_http_version 1.1;
+                          proxy_set_header Host \$host;
+                          proxy_cache_bypass \$http_upgrade;
+                      }
+                  }
+
+                  server {
+                      server_name www.$DOMAIN;
+                      return 301 https://$DOMAIN$request_uri;
+                  }
+          INNER"
+            
+                  sudo ln -s /etc/nginx/sites-available/$DOMAIN /etc/nginx/sites-enabled/
+                  sudo nginx -t
+                  sudo service nginx restart
+                  sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos --redirect --email ${{vars.NGINX_EMAIL}}
+                  sudo service nginx restart
+            fi
+          OUTER
+
+      - name: Notify Success to Slack channel
+        id: slack-success
+        if: success()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: "GitHub build result: ${{ job.status }}\nRepository Name: ${{ github.repository }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Notify error to Slack channel
+        id: slack-error
+        if: failure()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: "GitHub build result: ${{ job.status }}\nRepository Name: ${{ github.repository }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
