@@ -95,9 +95,6 @@ jobs:
           echo "REGISTRY=$REGISTRY" >> "$GITHUB_OUTPUT"
           echo "TAG=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
           echo "REPOSITORY=$REPOSITORY" >> "$GITHUB_OUTPUT"
-          git push origin HEAD:$GITHUB_REF_NAME --follow-tags
-
-
 
   deploy:
 
