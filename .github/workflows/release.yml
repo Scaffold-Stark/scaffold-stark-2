@@ -5,6 +5,8 @@ on:
   pull_request:
     types: [ closed ]
     branches: [ main ]
+    paths:
+      - "packages/nextjs/**"
 
 env:
   REGION: us-east-1
