@@ -22,6 +22,8 @@ jobs:
 
       - name: Checkout Files
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -96,8 +98,6 @@ jobs:
           echo "TAG=$IMAGE_TAG" >> "$GITHUB_OUTPUT"
           echo "REPOSITORY=$REPOSITORY" >> "$GITHUB_OUTPUT"
           git push origin HEAD:$GITHUB_REF_NAME --follow-tags
-
-
 
   deploy:
 
