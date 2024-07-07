@@ -23,7 +23,7 @@ jobs:
       - name: Checkout Files
         uses: actions/checkout@v4
         with:
-          persist-credentials: false
+          token: ${{ secrets.ORG_GITHUB_TOKEN }}
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
