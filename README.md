@@ -111,5 +111,3 @@ yarn start
 ```
 
 Visit your app on: `http://localhost:3000`.
-
-video demo [here](https://www.loom.com/share/0a0b23aa9eb34c32ad9be5b68f82817e)
