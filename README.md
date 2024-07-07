@@ -100,7 +100,7 @@ This command starts a local Starknet network using Devnet. The network runs on y
 yarn deploy --network {NETWORK_NAME} // when NETWORK_NAME is not specified, it defaults to "devnet"
 ```
 
-**Note:** To use sepolia tesnet, you have to set {NETWORK_NAME} to `sepolia`.
+**Note:** To use sepolia tesnet, you have to set {NETWORK_NAME} to `sepolia`, likewise for `mainnet`.
 
 This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts_js/deploy` to deploy the contract to the network. You can also customize the deploy script.
 
