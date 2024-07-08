@@ -22,6 +22,8 @@ import { Address } from "@starknet-react/chains";
 import { useDisconnect, useNetwork, useConnect } from "@starknet-react/core";
 import { getStarknetPFPIfExists } from "~~/utils/profile";
 import useConditionalStarkProfile from "~~/hooks/useConditionalStarkProfile";
+import { useTheme } from "next-themes";
+import { useEffect } from "react";
 
 const allowedNetworks = getTargetNetworks();
 
@@ -48,6 +50,12 @@ export const AddressInfoDropdown = ({
 
   const [selectingNetwork, setSelectingNetwork] = useState(false);
   const { connectors, connect } = useConnect();
+  const { theme } = useTheme();
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    setIsDark(theme === "dark");
+  }, [theme]);
   const dropdownRef = useRef<HTMLDetailsElement>(null);
   const closeDropdown = () => {
     setSelectingNetwork(false);
@@ -85,7 +93,7 @@ export const AddressInfoDropdown = ({
           tabIndex={0}
           className="btn bg-transparent btn-sm pl-0 pr-2 dropdown-toggle gap-0 !h-auto border border-[#5c4fe5] "
         >
-          {getStarknetPFPIfExists(profile?.profilePicture) ? (
+          {/* {getStarknetPFPIfExists(profile?.profilePicture) ? (
             //eslint-disable-next-line @next/next/no-img-element
             <img
               src={profile?.profilePicture}
@@ -95,9 +103,9 @@ export const AddressInfoDropdown = ({
               height={30}
             />
           ) : (
-            <BlockieAvatar address={address} size={30} ensImage={ensAvatar} />
-          )}
-          <span className="ml-2 mr-1">
+            // <BlockieAvatar address={address} size={30} ensImage={ensAvatar} />
+          )} */}
+          <span className="ml-4 mr-1">
             {isENS(displayName)
               ? displayName
               : profile?.name ||
@@ -107,7 +115,7 @@ export const AddressInfoDropdown = ({
         </summary>
         <ul
           tabIndex={0}
-          className="dropdown-content menu z-[2] p-2 mt-2 bg-base-200 rounded-box gap-1 border border-[#5c4fe5]"
+          className={`dropdown-content menu z-[2] p-2 mt-2 rounded-[5px] gap-1 border border-[#5c4fe5] ${isDark ? "bg-component-dark" : "bg-component-ligth"}`}
         >
           <NetworkOptions hidden={!selectingNetwork} />
           <li className={selectingNetwork ? "hidden" : ""}>
@@ -255,7 +263,7 @@ export const AddressInfoDropdown = ({
           ) : null}
           <li className={selectingNetwork ? "hidden" : ""}>
             <button
-              className="menu-item text-neutral btn-sm !rounded-xl flex gap-3 py-3"
+              className="menu-item text-secondary-content btn-sm !rounded-xl flex gap-3 py-3"
               type="button"
               onClick={() => disconnect()}
             >

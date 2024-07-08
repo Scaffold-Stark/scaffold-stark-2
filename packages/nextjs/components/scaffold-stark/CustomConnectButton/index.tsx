@@ -40,7 +40,7 @@ export const CustomConnectButton = () => {
   return status == "disconnected" ? (
     <>
       <button
-        className={`rounded-[18px] btn-sm font-bold ${
+        className={`rounded-[18px] btn-sm font-bold px-8 ${
           theme === "dark"
             ? "bg-gradient-vertical text-neutral"
             : "bg-gradient-light text-neutral"
@@ -48,7 +48,7 @@ export const CustomConnectButton = () => {
         onClick={handleWalletConnect}
         type="button"
       >
-        Connect Wallet
+        Connect
       </button>
       <ConnectModal isOpen={modalOpen} onClose={handleModalClose} />
     </>

@@ -7,6 +7,7 @@ import { useLocalStorage } from "usehooks-ts";
 import { burnerAccounts } from "~~/utils/devnetAccounts";
 import { BurnerConnector } from "~~/services/web3/stark-burner/BurnerConnector";
 import { useTheme } from "next-themes";
+import { BlockieAvatar } from "../BlockieAvatar";
 
 type Props = {
   isOpen: boolean;
@@ -81,13 +82,13 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
       animate={animate}
       className={`w-[60vw] mx-auto md:max-h-[30rem] md:max-w-[25rem] backdrop-blur`}
     >
-      <div className="flex p-4 w-full lg:p-0 lg:grid lg:grid-cols-5">
-        <div className="basis-5/6 lg:col-span-2 lg:py-4 lg:pl-8">
+      <div className="flex p-4 w-full lg:p-0 lg:grid-cols-5">
+        <div className="basis-5/6 lg:col-span-2 lg:py-4 lg:pl-8 flex justify-center items-center">
           <h2 className="text-center my-4 lg:text-start text-neutral text-[1.125em]">
             {isBurnerWallet ? "Choose account" : "Connect a Wallet"}
           </h2>
         </div>
-        <div className="ml-auto lg:col-span-3 lg:py-4 lg:pr-8 text-base-100">
+        <div className="ml-auto lg:col-span-3 lg:py-4 lg:pr-8 text-base-100 flex justify-center items-center">
           <button
             onClick={(e) => {
               closeModal(e);
@@ -109,24 +110,22 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
           </button>
         </div>
       </div>
-      <div className="flex flex-col flex-1 justify-center items-center lg:grid">
-        <div className="px-8 lg:h-full lg:col-span-2 flex justify-center items-center pb-8">
-          <div className="flex flex-col gap-4">
-            {!isBurnerWallet &&
-              connectors.map((connector, index) => (
-                <Wallet
-                  key={connector.id || index}
-                  connector={connector}
-                  loader={loader}
-                  handleConnectWallet={handleConnectWallet}
-                />
-              ))}
-          </div>
+      <div className="flex flex-col flex-1 lg:grid">
+        <div className="flex flex-col gap-4 w-full px-8 pb-10">
+          {!isBurnerWallet &&
+            connectors.map((connector, index) => (
+              <Wallet
+                key={connector.id || index}
+                connector={connector}
+                loader={loader}
+                handleConnectWallet={handleConnectWallet}
+              />
+            ))}
         </div>
 
         {isBurnerWallet && (
           <>
-            <div className="flex flex-col pb-[20px] items-center justify-end gap-3 px-5">
+            <div className="flex flex-col pb-[20px] justify-end gap-3 px-8">
               <div className="h-[300px] overflow-y-auto flex w-full flex-col gap-2">
                 {burnerAccounts.map((burnerAcc, ix) => (
                   <div
@@ -134,9 +133,13 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                     className="w-full flex flex-col"
                   >
                     <button
-                      className={`${isDarkMode ? "hover:bg-[#385183]" : "hover:bg-gradient-light"} border border-[#385183] rounded-md text-neutral py-[4px] pl-[10px] flex`}
+                      className={`${isDarkMode ? "hover:bg-[#385183] border-[#385183]" : "hover:bg-gradient-light "} border rounded-md text-neutral py-[8px] pl-[10px] flex items-center gap-4`}
                       onClick={(e) => handleConnectBurner(e, ix)}
                     >
+                      <BlockieAvatar
+                        address={burnerAcc.accountAddress}
+                        size={35}
+                      ></BlockieAvatar>
                       {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}
                     </button>
                   </div>

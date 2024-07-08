@@ -9,6 +9,9 @@ import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
 import { FaucetButton } from "~~/components/scaffold-stark/FaucetButton";
 import { useTheme } from "next-themes";
+import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
+import { devnet } from "@starknet-react/chains";
+import { SwitchTheme } from "./SwitchTheme";
 
 type HeaderMenuLink = {
   label: string;
@@ -73,6 +76,8 @@ export const Header = () => {
     burgerMenuRef,
     useCallback(() => setIsDrawerOpen(false), []),
   );
+  const { targetNetwork } = useTargetNetwork();
+  const isLocalNetwork = targetNetwork.id === devnet.id;
 
   return (
     <div className="sticky lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
@@ -129,6 +134,11 @@ export const Header = () => {
         </div>
         <CustomConnectButton />
         {/* <FaucetButton /> */}
+        <SwitchTheme
+          className={`pointer-events-auto ${
+            isLocalNetwork ? "self-end md:self-auto" : ""
+          }`}
+        />
       </div>
     </div>
   );
