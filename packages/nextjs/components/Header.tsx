@@ -5,11 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-	ArrowDownTrayIcon,
-	Bars3Icon,
-	BugAntIcon,
-	PhotoIcon,
-  } from "@heroicons/react/24/outline";
+  ArrowDownTrayIcon,
+  Bars3Icon,
+  BugAntIcon,
+  PhotoIcon,
+} from "@heroicons/react/24/outline";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
 import { FaucetButton } from "~~/components/scaffold-stark/FaucetButton";
