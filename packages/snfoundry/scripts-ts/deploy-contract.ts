@@ -18,7 +18,7 @@ const deployContract = async (
   exportContractName?: string,
   options?: {
     maxFee: bigint;
-  }
+  },
 ): Promise<{
   classHash: string;
   address: string;
@@ -28,10 +28,10 @@ const deployContract = async (
       .readFileSync(
         path.resolve(
           __dirname,
-          `../contracts/target/dev/contracts_${contractName}.compiled_contract_class.json`
-        )
+          `../contracts/target/dev/contracts_${contractName}.compiled_contract_class.json`,
+        ),
       )
-      .toString("ascii")
+      .toString("ascii"),
   );
 
   const compiledContractSierra = JSON.parse(
@@ -39,16 +39,16 @@ const deployContract = async (
       .readFileSync(
         path.resolve(
           __dirname,
-          `../contracts/target/dev/contracts_${contractName}.contract_class.json`
-        )
+          `../contracts/target/dev/contracts_${contractName}.contract_class.json`,
+        ),
       )
-      .toString("ascii")
+      .toString("ascii"),
   );
 
   let contractAddress: string;
 
   const precomputedClassHash = hash.computeSierraContractClassHash(
-    compiledContractSierra
+    compiledContractSierra,
   );
   const contractCalldata = new CallData(compiledContractSierra.abi);
   const constructorCalldata = constructorArgs
@@ -74,7 +74,7 @@ const deployContract = async (
             contract: compiledContractSierra,
             casm: compiledContractCasm,
           },
-          {}
+          {},
         );
       totalFee += estimatedFeeDeclare * 2n;
     } else {
@@ -101,11 +101,11 @@ const deployContract = async (
       },
       {
         maxFee: totalFee,
-      }
+      },
     );
     if (!tryDeclareAndDeploy.deploy.contract_address) {
       throw new Error(
-        "Failed to deploy contract, try setting up a manual fee on deployContract, set maxFee to 0.001 ETH in WEI and increase it if needed."
+        "Failed to deploy contract, try setting up a manual fee on deployContract, set maxFee to 0.001 ETH in WEI and increase it if needed.",
       );
     }
     contractAddress =
@@ -132,14 +132,14 @@ const deployContract = async (
 const exportDeployments = () => {
   const networkPath = path.resolve(
     __dirname,
-    `../deployments/${networkName}_latest.json`
+    `../deployments/${networkName}_latest.json`,
   );
 
   if (fs.existsSync(networkPath)) {
     const currentTimestamp = new Date().getTime();
     fs.renameSync(
       networkPath,
-      networkPath.replace("_latest.json", `_${currentTimestamp}.json`)
+      networkPath.replace("_latest.json", `_${currentTimestamp}.json`),
     );
   }
 

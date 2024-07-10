@@ -38,10 +38,10 @@ const getContractDataFromDeployments = (): Record<
         try {
           const abiFilePath = path.join(
             __dirname,
-            `../../contracts/target/dev/contracts_${contractData.contract}.contract_class.json`
+            `../../contracts/target/dev/contracts_${contractData.contract}.contract_class.json`,
           );
           const abiContent: CompiledSierra = JSON.parse(
-            fs.readFileSync(abiFilePath, "utf8")
+            fs.readFileSync(abiFilePath, "utf8"),
           );
 
           allContractsData[chainId] = {
@@ -67,7 +67,7 @@ const generateTsAbis = () => {
       // Use chainId directly as it is already a hex string
       return `${content}${chainId}:${JSON.stringify(chainConfig, null, 2)},`;
     },
-    ""
+    "",
   );
 
   if (!fs.existsSync(TARGET_DIR)) {
@@ -80,12 +80,12 @@ const generateTsAbis = () => {
       `${generatedContractComment}\n\nconst deployedContracts = {${fileContent}} as const;\n\nexport default deployedContracts;`,
       {
         parser: "typescript",
-      }
-    )
+      },
+    ),
   );
 
   console.log(
-    `📝 Updated TypeScript contract definition file on ${TARGET_DIR}/deployedContracts.ts`
+    `📝 Updated TypeScript contract definition file on ${TARGET_DIR}/deployedContracts.ts`,
   );
 };
 
