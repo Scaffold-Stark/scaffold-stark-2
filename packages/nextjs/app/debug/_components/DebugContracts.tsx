@@ -6,7 +6,7 @@ import { ContractUI } from "~~/app/debug/_components/contract";
 import { ContractName } from "~~/utils/scaffold-stark/contract";
 import { getAllContracts } from "~~/utils/scaffold-stark/contractsData";
 
-const selectedContractStorageKey = "scaffoldEth2.selectedContract";
+const selectedContractStorageKey = "scaffoldStark2.selectedContract";
 const contractsData = getAllContracts();
 const contractNames = Object.keys(contractsData) as ContractName[];
 
@@ -42,14 +42,6 @@ export function DebugContracts() {
                   onClick={() => setSelectedContract(contractName)}
                 >
                   {contractName}
-                  {/* {contractsData[contractName].external && (
-                    <span
-                      className="tooltip tooltip-top tooltip-accent"
-                      data-tip="External contract"
-                    >
-                      <BarsArrowUpIcon className="h-4 w-4 cursor-pointer" />
-                    </span>
-                  )} */}
                 </button>
               ))}
             </div>

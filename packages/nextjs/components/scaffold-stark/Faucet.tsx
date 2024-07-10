@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Address as AddressType, devnet } from "@starknet-react/chains";
 import { BanknotesIcon } from "@heroicons/react/24/outline";
 import {
@@ -11,6 +11,9 @@ import {
 } from "~~/components/scaffold-stark";
 import { useNetwork } from "@starknet-react/core";
 import { mintEth } from "~~/services/web3/faucet";
+import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
+import { RpcProvider } from "starknet";
+import { notification } from "~~/utils/scaffold-stark";
 
 /**
  * Faucet modal which lets you send ETH to any address.
@@ -24,6 +27,56 @@ export const Faucet = () => {
   const [sendValue, setSendValue] = useState("");
 
   const { chain: ConnectedChain } = useNetwork();
+  const { targetNetwork } = useTargetNetwork();
+
+  const publicNodeUrl = targetNetwork.rpcUrls.public.http[0];
+
+  // Use useMemo to memoize the publicClient object
+  const publicClient = useMemo(() => {
+    return new RpcProvider({
+      nodeUrl: publicNodeUrl,
+    });
+  }, [publicNodeUrl]);
+
+  useEffect(() => {
+    const checkChain = async () => {
+      try {
+        const providerInfo = await publicClient.getBlock();
+        console.log(providerInfo);
+      } catch (error) {
+        console.error("⚡️ ~ file: Faucet.tsx:checkChain ~ error", error);
+        notification.error(
+          <>
+            <p className="font-bold mt-0 mb-1">
+              Cannot connect to local provider
+            </p>
+            <p className="m-0">
+              - Did you forget to run{" "}
+              <code className="italic bg-base-300 text-base font-bold">
+                yarn chain
+              </code>{" "}
+              ?
+            </p>
+            <p className="mt-1 break-normal">
+              - Or you can change{" "}
+              <code className="italic bg-base-300 text-base font-bold">
+                targetNetwork
+              </code>{" "}
+              in{" "}
+              <code className="italic bg-base-300 text-base font-bold">
+                scaffold.config.ts
+              </code>
+            </p>
+          </>,
+          {
+            duration: 5000,
+          },
+        );
+      }
+    };
+    checkChain().then();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const sendETH = async () => {
     if (!faucetAddress || !inputAddress) {

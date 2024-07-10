@@ -11,7 +11,6 @@ pub trait IYourContract<TContractState> {
 #[starknet::contract]
 mod YourContract {
     use openzeppelin::access::ownable::OwnableComponent;
-    use openzeppelin::access::ownable::ownable::OwnableComponent::InternalTrait;
     use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
     use starknet::{get_caller_address, get_contract_address};
     use super::{ContractAddress, IYourContract};
@@ -75,7 +74,7 @@ mod YourContract {
             self.user_gretting_counter.write(get_caller_address(), user_counter + 1);
 
             if amount_eth > 0 {
-                // call approve on UI
+                // call `approve` on ETH contract before transfer amount_eth
                 self
                     .eth_token
                     .read()

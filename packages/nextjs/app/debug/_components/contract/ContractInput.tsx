@@ -1,20 +1,11 @@
 "use client";
 
 import { Dispatch, SetStateAction } from "react";
-// import { Tuple } from "./Tuple";
-// import { TupleArray } from "./TupleArray";
-import {
-  InputBase,
-  //   AddressInput,
-  //   Bytes32Input,
-  //   BytesInput,
-  //   InputBase,
-  IntegerInput,
-} from "~~/components/scaffold-stark";
-// import { AbiParameterTuple } from "~~/utils/scaffold-eth/contract";
+import { InputBase, IntegerInput } from "~~/components/scaffold-stark";
 import { AbiParameter } from "~~/utils/scaffold-stark/contract";
 import { displayType } from "./utilsDisplay";
 import {
+  isCairoArray,
   isCairoBigInt,
   isCairoInt,
   isCairoU256,
@@ -27,9 +18,6 @@ type ContractInputProps = {
   paramType: AbiParameter;
 };
 
-/**
- * Generic Input component to handle input's based on their function param type
- */
 export const ContractInput = ({
   setForm,
   form,
@@ -52,29 +40,12 @@ export const ContractInput = ({
 
   const renderInput = () => {
     switch (paramType.type) {
-      //   case "address":
-      //     return <AddressInput {...inputProps} />;
-      //   case "bytes32":
-      //     return <Bytes32Input {...inputProps} />;
-      //   case "bytes":
-      //     return <BytesInput {...inputProps} />;
-      //   case "string":
-      //     return <InputBase {...inputProps} />;
-      //   case "tuple":
-      //     return (
-      //       <Tuple
-      //         setParentForm={setForm}
-      //         parentForm={form}
-      //         abiTupleParameter={paramType as AbiParameterTuple}
-      //         parentStateObjectKey={stateObjectKey}
-      //       />
-      //     );
       default:
-        // Handling 'int' types and 'tuple[]' types
         if (
-          isCairoInt(paramType.type) ||
-          isCairoBigInt(paramType.type) ||
-          isCairoU256(paramType.type)
+          !isCairoArray(paramType.type) &&
+          (isCairoInt(paramType.type) ||
+            isCairoBigInt(paramType.type) ||
+            isCairoU256(paramType.type))
         ) {
           return <IntegerInput {...inputProps} variant={paramType.type} />;
         } else {
