@@ -18,7 +18,7 @@ import {
 import { Abi } from "abi-wan-kanabi";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { Address } from "@starknet-react/chains";
-import { InvokeTransactionReceiptResponse } from "starknet";
+import { InvokeTransactionReceiptResponse, byteArray, uint256 } from "starknet";
 import { TxReceipt } from "./TxReceipt";
 import { useTransactor } from "~~/hooks/scaffold-stark";
 
@@ -38,7 +38,7 @@ export const WriteOnlyFunctionForm = ({
 }: //   inheritedFrom,
 WriteOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
-    getInitialFormState(abiFunction),
+    getInitialFormState(abiFunction)
   );
   const { chain } = useNetwork();
   const writeTxn = useTransactor();
@@ -55,7 +55,10 @@ WriteOnlyFunctionFormProps) => {
       {
         contractAddress,
         entrypoint: abiFunction.name,
-        calldata: getParsedContractFunctionArgs(form, false).flat(),
+        calldata: {
+          new_greeting: byteArray.byteArrayFromString("test"),
+          amount_eth: uint256.bnToUint256(0),
+        },
       },
     ],
   });
@@ -73,7 +76,7 @@ WriteOnlyFunctionFormProps) => {
 
         console.error(
           "⚡️ ~ file: WriteOnlyFunctionForm.tsx:handleWrite ~ error",
-          message,
+          message
         );
       }
     }

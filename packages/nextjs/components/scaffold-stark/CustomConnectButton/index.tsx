@@ -10,9 +10,9 @@ import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
 import { useAccount, useNetwork } from "@starknet-react/core";
 import { Address } from "@starknet-react/chains";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ConnectModal from "./ConnectModal";
-
+import { Account } from "starknet";
 /**
  * Custom Connect Button (watch balance + custom design)
  */
@@ -20,12 +20,14 @@ export const CustomConnectButton = () => {
   useAutoConnect();
   const networkColor = useNetworkColor();
   const { targetNetwork } = useTargetNetwork();
-  const { address, status, chainId, ...props } = useAccount();
+  const { account, status } = useAccount();
+  const [accountChainId, setAccountChainId] = useState<bigint>(0n);
+  const [accountAddress, setAccountAddress] = useState<Address>();
   const { chain } = useNetwork();
   const [modalOpen, setModalOpen] = useState(false);
 
-  const blockExplorerAddressLink = address
-    ? getBlockExplorerAddressLink(targetNetwork, address)
+  const blockExplorerAddressLink = accountAddress
+    ? getBlockExplorerAddressLink(targetNetwork, accountAddress)
     : undefined;
 
   const handleWalletConnect = () => {
@@ -35,6 +37,19 @@ export const CustomConnectButton = () => {
   const handleModalClose = () => {
     setModalOpen(false);
   };
+
+  useEffect(() => {
+    if (account) {
+      const getChainId = async () => {
+        const chainId = await account.channel.getChainId();
+        setAccountChainId(BigInt(chainId as string));
+        const address = account.address;
+        setAccountAddress(address as Address);
+      };
+
+      getChainId();
+    }
+  }, [account]);
 
   return status == "disconnected" ? (
     <>
@@ -47,23 +62,29 @@ export const CustomConnectButton = () => {
       </button>
       <ConnectModal isOpen={modalOpen} onClose={handleModalClose} />
     </>
-  ) : chainId !== targetNetwork.id ? (
+  ) : accountChainId != targetNetwork.id ? (
     <WrongNetworkDropdown />
   ) : (
     <>
       <div className="flex flex-col items-center mr-1">
-        <Balance address={address as Address} className="min-h-0 h-auto" />
+        <Balance
+          address={accountAddress as Address}
+          className="min-h-0 h-auto"
+        />
         <span className="text-xs" style={{ color: networkColor }}>
           {chain.name}
         </span>
       </div>
       <AddressInfoDropdown
-        address={address as Address}
+        address={accountAddress as Address}
         displayName={""}
         ensAvatar={""}
         blockExplorerAddressLink={blockExplorerAddressLink}
       />
-      <AddressQRCodeModal address={address as Address} modalId="qrcode-modal" />
+      <AddressQRCodeModal
+        address={accountAddress as Address}
+        modalId="qrcode-modal"
+      />
     </>
   );
 };

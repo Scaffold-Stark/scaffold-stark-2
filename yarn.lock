@@ -1601,8 +1601,9 @@ __metadata:
     "@heroicons/react": ^2.1.3
     "@radix-ui/react-icons": 1.3.0
     "@radix-ui/themes": 2.0.3
-    "@starknet-react/chains": 3.0.0-beta.1
-    "@starknet-react/core": 3.0.0-beta.1
+    "@starknet-react/chains": next
+    "@starknet-react/core": next
+    "@starknet-react/typescript-config": 0.0.0
     "@types/node": ^20
     "@types/nprogress": ^0
     "@types/react": ^18
@@ -1661,14 +1662,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@starknet-react/chains@npm:3.0.0-beta.1, @starknet-react/chains@npm:^3.0.0-beta.1":
+"@starknet-react/chains@npm:^3.0.0-beta.1, @starknet-react/chains@npm:next":
   version: 3.0.0-beta.1
   resolution: "@starknet-react/chains@npm:3.0.0-beta.1"
   checksum: 8a98ad7acf48844f547d3ae44ee481ce88e17b295f8b028e3812d891c6ec24ae479fbf7ae069cdf258a66ed694989dea7945327b0ff510b0ca1841c18a676048
   languageName: node
   linkType: hard
 
-"@starknet-react/core@npm:3.0.0-beta.1":
+"@starknet-react/core@npm:next":
   version: 3.0.0-beta.1
   resolution: "@starknet-react/core@npm:3.0.0-beta.1"
   dependencies:
@@ -1682,6 +1683,13 @@ __metadata:
     react: ^18.0
     starknet: ^6.9.0
   checksum: 7bf069dc640f4b8fe5f508ab16b6153d0dd12b701a246b22ec0c3e7438249a4f0818d14a4560e4348a945625cb11e1f9879612167379085e03bcb6d7c9103fe1
+  languageName: node
+  linkType: hard
+
+"@starknet-react/typescript-config@npm:0.0.0":
+  version: 0.0.0
+  resolution: "@starknet-react/typescript-config@npm:0.0.0"
+  checksum: d56a63d1c5529fda9fa4f892b160a49ebc6c7616a1f719e9992638c98af959c2c30f58912c01f311eba28f5bac36f7aa19bb6c6e11ac1e645ba4e9ec66a801ab
   languageName: node
   linkType: hard
 

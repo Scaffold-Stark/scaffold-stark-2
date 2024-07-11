@@ -31,20 +31,19 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
 
   useEffect(() => setAnimate(isOpen), [isOpen]);
 
-  const { connectors, connect, error, status} = useConnect();
-
+  const { connectors, connect, error, status, ...props } = useConnect();
 
   const [_, setLastConnector] = useLocalStorage<{ id: string; ix?: number }>(
     "lastUsedConnector",
     { id: "" },
     {
       initializeWithValue: false,
-    },
+    }
   );
 
   function handleConnectWallet(
     e: React.MouseEvent<HTMLButtonElement>,
-    connector: Connector,
+    connector: Connector
   ): void {
     if (connector.id === "burner-wallet") {
       setIsBurnerWallet(true);
@@ -57,10 +56,10 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
 
   function handleConnectBurner(
     e: React.MouseEvent<HTMLButtonElement>,
-    ix: number,
+    ix: number
   ) {
     const connector = connectors.find(
-      (it) => it.id == "burner-wallet",
+      (it) => it.id == "burner-wallet"
     ) as BurnerConnector;
     if (connector) {
       connector.burnerAccount = burnerAccounts[ix];

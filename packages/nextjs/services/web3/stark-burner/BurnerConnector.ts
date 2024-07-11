@@ -1,5 +1,16 @@
-import { InjectedConnector, UserRejectedRequestError, starknetChainId } from "@starknet-react/core";
-import { Account, AccountInterface, Call, RpcProvider } from "starknet";
+import {
+  InjectedConnector,
+  UserRejectedRequestError,
+  starknetChainId,
+} from "@starknet-react/core";
+import {
+  Account,
+  AccountInterface,
+  Call,
+  RpcProvider,
+  byteArray,
+  uint256,
+} from "starknet";
 import {
   ConnectorData,
   ConnectorIcons,
@@ -46,8 +57,8 @@ export class BurnerConnector extends InjectedConnector {
           chainId: starknetChainId(this.chain.id),
         }),
         this.burnerAccount.accountAddress,
-        this.burnerAccount.privateKey,
-      ),
+        this.burnerAccount.privateKey
+      )
     );
   }
 
@@ -71,16 +82,14 @@ export class BurnerConnector extends InjectedConnector {
   }
 
   async request<T extends RpcMessage["type"]>(
-    call: RequestFnCall<T>,
+    call: RequestFnCall<T>
   ): Promise<RpcTypeToMessageMap[T]["result"]> {
-
     try {
       return await (await this.account()).execute(call);
-    } catch (e){
+    } catch (e) {
       throw new UserRejectedRequestError();
     }
   }
-
 
   async connect(): Promise<ConnectorData> {
     return Promise.resolve({
