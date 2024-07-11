@@ -2,7 +2,6 @@
   "name": "@ss-2/snfoundry",
   "version": "0.0.1",
   "scripts": {
-    "chain": "cd local-devnet && cargo run -- --seed 0 --account-class cairo1",
     "deploy": "ts-node scripts-ts/helpers/deploy-wrapper.ts",
     "test": "cd contracts && snforge test",
     "compile": "cd contracts && scarb build",

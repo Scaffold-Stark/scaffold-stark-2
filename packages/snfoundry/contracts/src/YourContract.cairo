@@ -1,19 +1,30 @@
 use starknet::ContractAddress;
+use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
 
+#[derive(Clone, Drop, Serde, starknet::Store)]
+struct InputStruct {
+    greeting: ByteArray,
+    amount_eth: u256
+}
 #[starknet::interface]
 pub trait IYourContract<TContractState> {
     fn gretting(self: @TContractState) -> ByteArray;
     fn set_gretting(ref self: TContractState, new_greeting: ByteArray, amount_eth: u256);
     fn withdraw(ref self: TContractState);
     fn premium(self: @TContractState) -> bool;
+    fn eth_token_distaptcher_struct(self: @TContractState) -> IERC20CamelDispatcher;
+    fn set_gretting_input_struct(ref self: TContractState, input: InputStruct);
+    fn input_struct(self: @TContractState) -> InputStruct;
 }
 
 #[starknet::contract]
 mod YourContract {
     use openzeppelin::access::ownable::OwnableComponent;
-    use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
     use starknet::{get_caller_address, get_contract_address};
-    use super::{ContractAddress, IYourContract};
+    use super::{
+        ContractAddress, IYourContract, IERC20CamelDispatcher, IERC20CamelDispatcherTrait,
+        InputStruct
+    };
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
 
@@ -42,7 +53,6 @@ mod YourContract {
         value: u256,
     }
 
-
     #[storage]
     struct Storage {
         eth_token: IERC20CamelDispatcher,
@@ -50,6 +60,7 @@ mod YourContract {
         premium: bool,
         total_counter: u256,
         user_gretting_counter: LegacyMap<ContractAddress, u256>,
+        input_struct: InputStruct,
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
     }
@@ -100,6 +111,42 @@ mod YourContract {
         }
         fn premium(self: @ContractState) -> bool {
             self.premium.read()
+        }
+        fn eth_token_distaptcher_struct(self: @ContractState) -> IERC20CamelDispatcher {
+            self.eth_token.read()
+        }
+        fn set_gretting_input_struct(ref self: ContractState, input: InputStruct) {
+            let input_clone = input.clone();
+            self.input_struct.write(input_clone);
+
+            self.greeting.write(input.greeting);
+            self.total_counter.write(self.total_counter.read() + 1);
+            let user_counter = self.user_gretting_counter.read(get_caller_address());
+            self.user_gretting_counter.write(get_caller_address(), user_counter + 1);
+
+            if input.amount_eth > 0 {
+                // call approve on UI
+                self
+                    .eth_token
+                    .read()
+                    .transferFrom(get_caller_address(), get_contract_address(), input.amount_eth);
+                self.premium.write(true);
+            } else {
+                self.premium.write(false);
+            }
+
+            self
+                .emit(
+                    GreetingChanged {
+                        greeting_setter: get_caller_address(),
+                        new_greeting: self.greeting.read(),
+                        premium: true,
+                        value: 100,
+                    }
+                );
+        }
+        fn input_struct(self: @ContractState) -> InputStruct {
+            self.input_struct.read()
         }
     }
 }
