@@ -13,7 +13,6 @@ import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { ContractName } from "~~/utils/scaffold-stark/contract";
 import { ContractVariables } from "./ContractVariables";
 import { ContractWriteMethods } from "./ContractWriteMethods";
-import { useTheme } from "next-themes";
 
 type ContractUIProps = {
   contractName: ContractName;
@@ -34,10 +33,6 @@ export const ContractUI = ({
   const { targetNetwork } = useTargetNetwork();
   const { data: deployedContractData, isLoading: deployedContractLoading } =
     useDeployedContractInfo(contractName);
-  const networkColor = useNetworkColor();
-
-  const { resolvedTheme } = useTheme();
-  const isDarkMode = resolvedTheme === "dark";
 
   if (deployedContractLoading) {
     return (
@@ -70,7 +65,7 @@ export const ContractUI = ({
                   <span className="font-bold text-sm">Balance:</span>
                   <Balance
                     address={deployedContractData.address}
-                    className={`px-0 h-1.5 min-h-[0.375rem] ${isDarkMode ? "text-[#D0A6FF]" : "text-[#7800FF]"}`}
+                    className="px-0 h-1.5 min-h-[0.375rem] text-network"
                   />
                 </div>
               </div>
@@ -78,11 +73,7 @@ export const ContractUI = ({
             {targetNetwork && (
               <p className="my-0 text-sm">
                 <span className="font-bold">Network</span>:{" "}
-                <span
-                  className={` ${isDarkMode ? "text-[#D0A6FF]" : "text-[#7800FF]"}`}
-                >
-                  {targetNetwork.name}
-                </span>
+                <span className="text-network">{targetNetwork.name}</span>
               </p>
             )}
           </div>
@@ -95,13 +86,8 @@ export const ContractUI = ({
         </div>
         <div className="col-span-1 lg:col-span-2 flex flex-col gap-6">
           <div className="z-10">
-            <div
-              className={`rounded-[5px] border border-[#8A45FC] flex flex-col mt-10 relative ${isDarkMode ? "bg-component-dark" : "bg-component-light"}`}
-            >
-              <div
-                className={`w-[5.5rem] absolute self-start -top-[43px] -left-[1px] -z-10 py-[0.55rem] border border-[#8A45FC]
-              ${isDarkMode ? "bg-transparent-purple text-neutral" : "bg-gradient-light"}`}
-              >
+            <div className="rounded-[5px] border border-[#8A45FC] flex flex-col mt-10 relative bg-component">
+              <div className="bg-function w-[5.5rem] absolute self-start -top-[43px] -left-[1px] -z-10 py-[0.55rem] border border-[#8A45FC]">
                 <div className="flex items-center justify-center space-x-2">
                   <p className="my-0 text-sm">Read</p>
                 </div>
@@ -114,13 +100,8 @@ export const ContractUI = ({
             </div>
           </div>
           <div className="z-10">
-            <div
-              className={`rounded-[5px] border border-[#8A45FC] flex flex-col mt-10 relative ${isDarkMode ? "bg-component-dark" : "bg-component-light"}`}
-            >
-              <div
-                className={`w-[5.5rem] absolute self-start -top-[43px] -left-[1px] -z-10 py-[0.55rem] border border-[#8A45FC]
-              ${isDarkMode ? "bg-transparent-purple text-neutral" : "bg-gradient-light"}`}
-              >
+            <div className="rounded-[5px] border border-[#8A45FC] flex flex-col mt-10 relative bg-component">
+              <div className="w-[5.5rem] absolute self-start -top-[43px] -left-[1px] -z-10 py-[0.55rem] border border-[#8A45FC] bg-function">
                 <div className="flex items-center justify-center space-x-2">
                   <p className="my-0 text-sm">Write</p>
                 </div>

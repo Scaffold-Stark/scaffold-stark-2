@@ -18,6 +18,7 @@ import { useTheme } from "next-themes";
  * Custom Connect Button (watch balance + custom design)
  */
 export const CustomConnectButton = () => {
+  useAutoConnect();
   const { theme } = useTheme();
   const networkColor = useNetworkColor();
   const { targetNetwork } = useTargetNetwork();

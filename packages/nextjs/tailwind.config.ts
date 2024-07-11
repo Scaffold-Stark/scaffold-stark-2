@@ -94,6 +94,22 @@ module.exports = {
             "background-image":
               "linear-gradient(270deg, #A7ECFF -17.42%, #E8B6FF 109.05%)",
           },
+          ".bg-input": {
+            background: "rgba(0, 0, 0, 0.07)",
+          },
+          ".bg-component": {
+            background: "rgba(255, 255, 255, 0.6)",
+          },
+          ".bg-function": {
+            background:
+              "linear-gradient(270deg, #A7ECFF -17.42%, #E8B6FF 109.05%)",
+          },
+          ".text-function": {
+            color: "#3C1DFF",
+          },
+          ".text-network": {
+            color: "#7800FF",
+          },
 
           "--rounded-btn": "9999rem",
 
@@ -147,6 +163,22 @@ module.exports = {
           ".bg-btn-wallet": {
             "background-image":
               "linear-gradient(180deg, #3457D1 0%, #8A45FC 100%)",
+          },
+          ".bg-input": {
+            background: "rgba(255, 255, 255, 0.07)",
+          },
+          ".bg-component": {
+            background:
+              "linear-gradient(113deg,rgba(43, 34, 67, 0.6) 20.48%,rgba(37, 55, 81, 0.6) 99.67%)",
+          },
+          ".bg-function": {
+            background: "rgba(139, 69, 253, 0.37)",
+          },
+          ".text-function": {
+            color: "#1DD6FF",
+          },
+          ".text-network": {
+            color: "#D0A6FF",
           },
 
           "--rounded-btn": "9999rem",

@@ -7,7 +7,6 @@ import {
   useRef,
 } from "react";
 import { CommonInputProps } from "./utils";
-import { useTheme } from "next-themes";
 
 type InputBaseProps<T> = CommonInputProps<T> & {
   error?: boolean;
@@ -30,9 +29,6 @@ export const InputBase = <
   reFocus,
 }: InputBaseProps<T>) => {
   const inputReft = useRef<HTMLInputElement>(null);
-
-  const { resolvedTheme } = useTheme();
-  const isDarkMode = resolvedTheme === "dark";
 
   let modifier = "";
   if (error) {
@@ -63,9 +59,7 @@ export const InputBase = <
   }, [reFocus]);
 
   return (
-    <div
-      className={`flex ${isDarkMode ? "bg-input-dark" : "bg-input"} bg-input text-accent ${modifier}`}
-    >
+    <div className={`flex bg-input text-accent ${modifier}`}>
       {prefix}
       <input
         className="input input-ghost focus-within:border-transparent focus:outline-none focus:bg-transparent focus:text-gray-400 h-[2.2rem] min-h-[2.2rem] px-4 border w-full text-xs placeholder:text-[#9596BF] text-[gray-400]"
