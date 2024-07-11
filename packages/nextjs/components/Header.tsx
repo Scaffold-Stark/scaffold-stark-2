@@ -49,11 +49,7 @@ export const HeaderMenuLinks = () => {
               href={href}
               passHref
               className={`${
-                isActive
-                  ? isDark
-                    ? "bg-gradient-dark text-white"
-                    : "bg-black text-white"
-                  : ""
+                isActive ? "bg-gradient-nav text-white" : ""
               } hover:bg-secondary focus:!bg-secondary active:!text-neutral py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col`}
             >
               {icon}
@@ -129,9 +125,9 @@ export const Header = () => {
         </ul>
       </div>
       <div className="navbar-end flex-grow mr-4 gap-4">
-        <div className="bg-[#8a45fc] text-[9px] p-1 text-white">
+        <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
           Not deployed
-        </div>
+        </span>
         <CustomConnectButton />
         {/* <FaucetButton /> */}
         <SwitchTheme

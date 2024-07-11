@@ -73,6 +73,27 @@ module.exports = {
           success: "#34EEB6",
           warning: "#FFCF72",
           error: "#FF8863",
+          ".bg-gradient-modal": {
+            "background-image":
+              "linear-gradient(270deg, #A7ECFF -17.42%, #E8B6FF 109.05%)",
+          },
+          ".bg-gradient-nav": {
+            background: "#000000",
+          },
+          ".bg-main": {
+            background: "#FFFFFF",
+          },
+          ".bg-underline": {
+            background:
+              "linear-gradient(270deg, #A7ECFF -17.42%, #E8B6FF 109.05%)",
+          },
+          ".bg-container": {
+            background: "transparent",
+          },
+          ".bg-btn-wallet": {
+            "background-image":
+              "linear-gradient(270deg, #A7ECFF -17.42%, #E8B6FF 109.05%)",
+          },
 
           "--rounded-btn": "9999rem",
 
@@ -105,6 +126,28 @@ module.exports = {
           success: "#34EEB6",
           warning: "#FFCF72",
           error: "#FF8863",
+          ".bg-gradient-modal": {
+            background: "#385183",
+          },
+          ".bg-gradient-nav": {
+            "background-image":
+              "var(--gradient, linear-gradient(90deg, #42D2F1 0%, #B248DD 100%))",
+          },
+          ".bg-main": {
+            background: "rgb(81, 133, 213)",
+            "background-image":
+              "radial-gradient(circle,rgba(81, 133, 213, 1) 0%,rgba(20, 26, 49, 1) 66%)",
+          },
+          ".bg-underline": {
+            background: "#5368B4",
+          },
+          ".bg-container": {
+            background: "#141a30",
+          },
+          ".bg-btn-wallet": {
+            "background-image":
+              "linear-gradient(180deg, #3457D1 0%, #8A45FC 100%)",
+          },
 
           "--rounded-btn": "9999rem",
 

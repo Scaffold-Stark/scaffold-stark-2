@@ -40,11 +40,7 @@ export const CustomConnectButton = () => {
   return status == "disconnected" ? (
     <>
       <button
-        className={`rounded-[18px] btn-sm font-bold px-8 ${
-          theme === "dark"
-            ? "bg-gradient-vertical text-neutral"
-            : "bg-gradient-light text-neutral"
-        }`}
+        className={`rounded-[18px] btn-sm font-bold px-8 bg-btn-wallet`}
         onClick={handleWalletConnect}
         type="button"
       >

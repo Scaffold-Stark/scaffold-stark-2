@@ -6,18 +6,10 @@ import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-stark";
 import { useAccount } from "@starknet-react/core";
 import { Address as AddressType } from "@starknet-react/chains";
-import { useEffect, useState } from "react";
-import { useTheme } from "next-themes";
 import Image from "next/image";
 
 const Home: NextPage = () => {
   const connectedAddress = useAccount();
-  const { theme } = useTheme();
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    setIsDark(theme === "dark");
-  }, [theme]);
 
   return (
     <>
@@ -35,37 +27,23 @@ const Home: NextPage = () => {
           </div>
           <p className="text-center text-lg">
             Get started by editing{" "}
-            <code
-              className={`${
-                isDark ? "bg-[#5368B4]" : "bg-gradient-light"
-              } italic text-base font-bold max-w-full break-words break-all inline-block`}
-            >
+            <code className="bg-underline italic text-base font-bold max-w-full break-words break-all inline-block">
               packages/nextjs/app/page.tsx
             </code>
           </p>
           <p className="text-center text-lg">
             Edit your smart contract{" "}
-            <code
-              className={`${
-                isDark ? "bg-[#5368B4]" : "bg-gradient-light"
-              } italic text-base font-bold max-w-full break-words break-all inline-block`}
-            >
+            <code className="bg-underline italic text-base font-bold max-w-full break-words break-all inline-block">
               YourContract.cairo
             </code>{" "}
             in{" "}
-            <code
-              className={`${
-                isDark ? "bg-[#5368B4]" : "bg-gradient-light"
-              } italic text-base font-bold max-w-full break-words break-all inline-block`}
-            >
+            <code className="bg-underline italic text-base font-bold max-w-full break-words break-all inline-block">
               packages/snfoundry/contracts/src
             </code>
           </p>
         </div>
 
-        <div
-          className={`${isDark ? "bg-[#141a30]" : "bg-transparent"} flex-grow w-full mt-16 px-8 py-12`}
-        >
+        <div className="bg-container flex-grow w-full mt-16 px-8 py-12">
           <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
             <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl border border-gradient">
               <Image

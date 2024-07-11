@@ -22,16 +22,13 @@ import { useNativeCurrencyPrice } from "~~/hooks/scaffold-stark/useNativeCurrenc
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
   useNativeCurrencyPrice();
   const { resolvedTheme } = useTheme();
+  console.log(resolvedTheme);
   const isDarkMode = resolvedTheme === "dark";
 
   return (
     <>
-      <div
-        className={`flex relative flex-col min-h-screen ${isDarkMode ? "bg-dark" : "bg-white"}`}
-      >
-        {isDarkMode ? (
-          ""
-        ) : (
+      <div className="flex relative flex-col min-h-screen bg-main">
+        {!isDarkMode && (
           <>
             <div className="circle-gradient w-[330px] h-[330px]"></div>
             <div className="circle-gradient-blue w-[330px] h-[630px]"></div>
