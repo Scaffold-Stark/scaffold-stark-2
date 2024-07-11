@@ -7,6 +7,7 @@ import {
   Account,
   AccountInterface,
   Call,
+  CallData,
   RpcProvider,
   byteArray,
   uint256,
@@ -57,7 +58,8 @@ export class BurnerConnector extends InjectedConnector {
           chainId: starknetChainId(this.chain.id),
         }),
         this.burnerAccount.accountAddress,
-        this.burnerAccount.privateKey
+        this.burnerAccount.privateKey,
+        "1"
       )
     );
   }
@@ -84,8 +86,21 @@ export class BurnerConnector extends InjectedConnector {
   async request<T extends RpcMessage["type"]>(
     call: RequestFnCall<T>
   ): Promise<RpcTypeToMessageMap[T]["result"]> {
+    let compiledCalls = call.params.calls;
     try {
-      return await (await this.account()).execute(call);
+      // TODO : starknet connector uses "emtrypoint" instead of "entry_point"
+      // TODO : starknet connector uses "contract_address" instead of "contractAddress"
+      compiledCalls.forEach((element) => {
+        element.calldata = CallData.compile(element.calldata);
+        element.contractAddress = element.contract_address;
+        element.entrypoint = element.entry_point;
+        // element.calldata.__compiled__ = true;
+      });
+      return await (
+        await this.account()
+      ).execute(compiledCalls, {
+        version: "0x3",
+      });
     } catch (e) {
       throw new UserRejectedRequestError();
     }

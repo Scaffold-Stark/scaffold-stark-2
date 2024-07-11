@@ -18,7 +18,12 @@ import {
 import { Abi } from "abi-wan-kanabi";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { Address } from "@starknet-react/chains";
-import { InvokeTransactionReceiptResponse, byteArray, uint256 } from "starknet";
+import {
+  CallData,
+  InvokeTransactionReceiptResponse,
+  byteArray,
+  uint256,
+} from "starknet";
 import { TxReceipt } from "./TxReceipt";
 import { useTransactor } from "~~/hooks/scaffold-stark";
 
@@ -44,7 +49,6 @@ WriteOnlyFunctionFormProps) => {
   const writeTxn = useTransactor();
   const { targetNetwork } = useTargetNetwork();
   const writeDisabled = !chain || chain?.network !== targetNetwork.network;
-
   const {
     data: result,
     isPending: isLoading,
@@ -55,10 +59,7 @@ WriteOnlyFunctionFormProps) => {
       {
         contractAddress,
         entrypoint: abiFunction.name,
-        calldata: {
-          new_greeting: byteArray.byteArrayFromString("test"),
-          amount_eth: uint256.bnToUint256(0),
-        },
+        calldata: getParsedContractFunctionArgs(form, false).flat(),
       },
     ],
   });

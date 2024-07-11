@@ -64,11 +64,11 @@ const deepMergeContracts = <
   E extends Record<PropertyKey, any>,
 >(
   local: L,
-  external: E,
+  external: E
 ) => {
   const result: Record<PropertyKey, any> = {};
   const allKeys = Array.from(
-    new Set([...Object.keys(local), ...Object.keys(external)]),
+    new Set([...Object.keys(local), ...Object.keys(external)])
   );
   for (const key of allKeys) {
     if (!external[key]) {
@@ -76,7 +76,7 @@ const deepMergeContracts = <
       continue;
     }
     const amendedExternal = Object.fromEntries(
-      Object.entries(external[key] as Record<string, Record<string, unknown>>),
+      Object.entries(external[key] as Record<string, Record<string, unknown>>)
     );
     result[key] = { ...local[key], ...amendedExternal };
   }
@@ -89,7 +89,7 @@ const deepMergeContracts = <
 
 const contractsData = deepMergeContracts(
   deployedContractsData,
-  predeployedContracts,
+  predeployedContracts
 );
 
 type IsContractDeclarationMissing<TYes, TNo> = typeof contractsData extends {
@@ -273,13 +273,11 @@ export type UseScaffoldArgsParam<
 
 export type UseScaffoldReadConfig<
   TContractName extends ContractName,
-  TFunctionName extends ExtractAbiFunctionsScaffold<
-    ContractAbi<TContractName>
-  >,
+  TFunctionName extends ExtractAbiFunctionsScaffold<ContractAbi<TContractName>>,
 > = {
   contractName: TContractName;
 } & IsContractDeclarationMissing<
-  Partial<UseReadContractProps<ContractAbi<TContractName>,TFunctionName>>,
+  Partial<UseReadContractProps<ContractAbi<TContractName>, TFunctionName>>,
   {
     functionName: TFunctionName;
   } & UseScaffoldArgsParam<TContractName, TFunctionName> &
@@ -338,7 +336,7 @@ export type UseScaffoldEventHistoryConfig<
 
 export function getFunctionsByStateMutability(
   abi: Abi,
-  stateMutability: AbiStateMutability,
+  stateMutability: AbiStateMutability
 ): AbiFunction[] {
   return abi
     .reduce((acc, part) => {
@@ -384,7 +382,7 @@ function tryParsingParamReturnObject(fn: (x: any) => {}, param: any) {
 export function parseParamWithType(
   paramType: string,
   param: any,
-  isRead: boolean,
+  isRead: boolean
 ) {
   if (isRead) {
     if (isCairoTuple(paramType)) {
@@ -406,12 +404,12 @@ export function parseParamWithType(
     } else if (isCairoBytes31(paramType)) {
       return tryParsingParamReturnObject(
         (x: bigint) => `0x${x.toString(16)}`,
-        param,
+        param
       );
     } else if (isCairoInt(paramType)) {
       return tryParsingParamReturnObject(
         (x) => (typeof x === "bigint" ? Number(x) : parseInt(x, 16)),
-        param,
+        param
       );
     } else if (isCairoBigInt(paramType)) {
       return tryParsingParamReturnObject((x) => BigInt(x), param);
@@ -422,15 +420,15 @@ export function parseParamWithType(
     if (isCairoTuple(paramType)) {
       return stringToObjectTuple(param, paramType);
     } else if (isCairoU256(paramType)) {
-      return tryParsingParamReturnValues(uint256.bnToUint256, param);
+      return tryParsingParamReturnObject(uint256.bnToUint256, param);
     } else if (isCairoByteArray(paramType)) {
-      return tryParsingParamReturnValues(byteArray.byteArrayFromString, param);
+      return tryParsingParamReturnObject(byteArray.byteArrayFromString, param);
     } else if (isCairoContractAddress(paramType)) {
-      return tryParsingParamReturnValues(validateAndParseAddress, param);
+      return tryParsingParamReturnObject(validateAndParseAddress, param);
     } else if (isCairoBool(paramType)) {
       return param == "false" ? "0x0" : "0x1";
     } else {
-      return tryParsingParamReturnValues((x) => x, param);
+      return tryParsingParamReturnObject((x) => x, param);
     }
   }
 }
@@ -438,7 +436,7 @@ export function parseParamWithType(
 export function parseFunctionParams(
   abiFunction: AbiFunction,
   inputs: any[],
-  isRead: boolean,
+  isRead: boolean
 ) {
   let parsedInputs: any[] = [];
 
@@ -502,7 +500,7 @@ function objectToCairoTuple(obj: { [key: number]: any }, type: string): string {
 
 function stringToObjectTuple(
   tupleString: string,
-  paramType: string,
+  paramType: string
 ): { [key: number]: any } {
   const values = parseTuple(tupleString);
   const types = parseTuple(paramType);
