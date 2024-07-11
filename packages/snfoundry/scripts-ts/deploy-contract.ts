@@ -4,7 +4,7 @@ import { networks } from "./helpers/networks";
 import yargs from "yargs";
 import { CallData, hash } from "starknet-dev";
 import { Network } from "./types";
-import { LegacyContractClass, CompiledSierra, RawArgs } from "starknet";
+import { LegacyContractClass, CompiledSierra, RawArgs, getChecksumAddress } from "starknet";
 
 const argv = yargs(process.argv.slice(2)).argv;
 const networkName: string = argv["network"];
@@ -12,6 +12,17 @@ const networkName: string = argv["network"];
 let deployments = {};
 
 const { provider, deployer }: Network = networks[networkName];
+
+const checkWalletDeployed = async (walletAddress: string): Promise<boolean> => {
+  try {
+    const accountInfo = getChecksumAddress(walletAddress);
+    return accountInfo !== null;
+  } catch (error) {
+    console.error("Error checking wallet status:", error);
+    return false;
+  }
+};
+
 const deployContract = async (
   constructorArgs: RawArgs,
   contractName: string,
@@ -146,4 +157,39 @@ const exportDeployments = () => {
   fs.writeFileSync(networkPath, JSON.stringify(deployments, null, 2));
 };
 
+const deployScript = async (): Promise<void> => {
+  const walletAddress = deployer.address;
+  const isWalletDeployed = await checkWalletDeployed(walletAddress);
+
+  if (!isWalletDeployed) {
+    console.error(
+      "StarkNet wallet is not deployed. Please initialize and deploy your wallet before proceeding."
+    );
+    console.log("To deploy your wallet, follow these steps:");
+    console.log("1. Initialize your StarkNet wallet.");
+    console.log("2. Deploy the initialized wallet.");
+    console.log("3. Retry the contract deployment.");
+    return;
+  }
+
+  try {
+    await deployContract(
+      {
+        owner: walletAddress, // the deployer address is the owner of the contract
+      },
+      "YourContract"
+    );
+    exportDeployments();
+    console.log("Contract deployment successful. All setup done.");
+  } catch (error) {
+    console.error("Contract deployment failed:", error);
+  }
+};
+
+deployScript().catch(console.error);
+
 export { deployContract, provider, deployer, exportDeployments };
+  function contractAddress(walletAddress: string) {
+    throw new Error("Function not implemented.");
+  }
+
