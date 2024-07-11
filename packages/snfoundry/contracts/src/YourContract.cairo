@@ -1,4 +1,5 @@
 use starknet::ContractAddress;
+use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
 
 #[starknet::interface]
 pub trait IYourContract<TContractState> {
@@ -6,14 +7,14 @@ pub trait IYourContract<TContractState> {
     fn set_gretting(ref self: TContractState, new_greeting: ByteArray, amount_eth: u256);
     fn withdraw(ref self: TContractState);
     fn premium(self: @TContractState) -> bool;
+    fn eth_token_distaptcher_struct(self: @TContractState) -> IERC20CamelDispatcher;
 }
 
 #[starknet::contract]
 mod YourContract {
     use openzeppelin::access::ownable::OwnableComponent;
-    use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
     use starknet::{get_caller_address, get_contract_address};
-    use super::{ContractAddress, IYourContract};
+    use super::{ContractAddress, IYourContract, IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
 
@@ -100,6 +101,9 @@ mod YourContract {
         }
         fn premium(self: @ContractState) -> bool {
             self.premium.read()
+        }
+        fn eth_token_distaptcher_struct(self: @ContractState) -> IERC20CamelDispatcher {
+            self.eth_token.read()
         }
     }
 }
