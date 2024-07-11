@@ -9,6 +9,7 @@ import {
 import {
   isCairoContractAddress,
   isCairoTuple,
+  parseGenericType,
 } from "~~/utils/scaffold-stark/types";
 import { formatEther } from "ethers";
 
@@ -79,7 +80,24 @@ export const displayTxResult = (
   return JSON.stringify(displayContent, replacer, 2);
 };
 
-export const displayType = (type: string) =>
-  type.includes("::") ? type.split("::").pop() : type;
+export const displayType = (type: string) => {
+  if (type.includes("core::array") || type.includes("core::option")) {
+    const kindOfArray = type.split("::").at(2);
+    const parsed = parseGenericType(type);
+    const arrayType = Array.isArray(parsed)
+      ? parsed[0].split("::").pop()
+      : `(${parsed
+          .split(",")
+          .map((t) => t.split("::").pop())
+          .join(",")}`;
+    return `${kindOfArray}<${arrayType}>`;
+  } else if (type.includes("core::result")) {
+    const types = type.split("::");
+    return `${types.at(-4)}<${types.at(-2)?.split(",").at(0)},${types.at(-1)}`;
+  } else if (type.includes("::")) {
+    return type.split("::").pop();
+  }
+  return type;
+};
 const displayTxResultAsText = (displayContent: DisplayContent) =>
   displayTxResult(displayContent, true);
