@@ -178,13 +178,7 @@ export const AddressInfoDropdown = ({
                 }}
               >
                 <UserCircleIcon className="h-6 w-4 ml-2 sm:ml-0" />
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="whitespace-nowrap"
-                >
-                  Switch Account
-                </a>
+                <span className="whitespace-nowrap">Switch Account</span>
               </button>
             </li>
           ) : null}
