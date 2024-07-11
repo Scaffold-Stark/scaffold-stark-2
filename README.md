@@ -25,6 +25,20 @@ Before you begin, you need to install the following tools:
 - Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
 - [Git](https://git-scm.com/downloads)
 
+### Starknet-devnet version
+
+To ensure the proper functioning of scaffold-stark, your local `starknet-devnet` version must be `0.0.5`. To accomplish this, first check your local starknet-devnet version:
+
+```sh
+starknet-devnet --version
+```
+
+If your local starknet-devnet version is not `2.6.4`, you need to install it.
+
+```bash
+cargo install starknet-devnet --version 0.0.5
+```
+
 ### Scarb version
 
 To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.5.4`. To accomplish this, first check your local Scarb version:
@@ -33,7 +47,7 @@ To ensure the proper functioning of scaffold-stark, your local `Scarb` version m
 scarb --version
 ```
 
-If your local Scarb version is not `2.5.4`, you need to install it.
+If your local Scarb version is not `2.6.4`, you need to install it.
 
 <details>
 <summary><b>Scarb Installation Process</b></summary>
@@ -128,7 +142,6 @@ This command starts a local Starknet network using Devnet. The network runs on y
 
 **Note:** If you are on sepolia or mainnet, for a better user experience on your app, you can get a dedicated RPC from [Infura dashboard](https://www.infura.io/). A default is provided [here](https://github.com/Quantum3-Labs/scaffold-stark-2/tree/main/packages/nextjs/.env.example), in order to use this, you have to run `cp packages/nextjs/.env.example packages/nextjs/.env.local`
 
-
 4. On a second terminal, deploy the sample contract:
 
 ```
@@ -136,7 +149,6 @@ yarn deploy --network {NETWORK_NAME} // when NETWORK_NAME is not specified, it d
 ```
 
 **Note:** To use sepolia tesnet, you have to set {NETWORK_NAME} to `sepolia`.
-
 
 This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/contracts/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts-ts/deploy.ts` to deploy the contract to the network. You can also customize the deploy script.
 

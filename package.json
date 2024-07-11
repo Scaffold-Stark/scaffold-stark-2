@@ -11,7 +11,7 @@
     ]
   },
   "scripts": {
-    "chain": "yarn workspace @ss-2/snfoundry chain",
+    "chain": "starknet-devnet --seed 0 --account-class cairo1",
     "deploy": "yarn workspace @ss-2/snfoundry deploy",
     "test": "yarn workspace @ss-2/snfoundry test",
     "compile": "yarn workspace @ss-2/snfoundry compile",
