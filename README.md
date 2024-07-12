@@ -6,7 +6,7 @@
 
 ## 🚩 Challenge 0: 🎟 Simple NFT Example
 
-🎫 Create a simple NFT to learn the basics of 🏗 scaffold-stark. You'll use Scarb to compile and deploy smart contracts. Then, you'll use a template React app full of important Starknet components and hooks. Finally, you'll deploy an NFT to a public network to share with friends! 🚀
+🎫 Create a simple NFT to learn the basics of 🏗 scaffold-stark. You'll use [Scarb](https://docs.swmansion.com/scarb/) to compile and [Starknet.js](https://www.starknetjs.com/) to deploy smart contracts. Then, you'll use a template React app full of important Starknet components and hooks. Finally, you'll deploy an NFT to a public network to share with friends! 🚀
 
 https://github.com/Quantum3-Labs/speedrunstark/tree/simple-nft-example
 
