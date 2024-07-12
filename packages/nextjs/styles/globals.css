@@ -30,3 +30,42 @@ p {
 .btn.btn-ghost {
   @apply shadow-none;
 }
+
+.circle-gradient {
+  border-radius: 630px;
+  background: #bd93f1;
+  filter: blur(229px);
+  position: absolute;
+  top: 0;
+}
+
+.circle-gradient-blue {
+  border-radius: 630px;
+  background: #a6e8fe;
+  filter: blur(250px);
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.border-gradient {
+  border: 1px solid #5c4fe5;
+}
+
+.bg-modal {
+  backdrop-filter: blur(7.449999809265137px);
+}
+
+.custom::after {
+  position: absolute !important;
+  display: block !important;
+  height: 0.5rem !important;
+  width: 0.5rem !important;
+  top: 1rem !important;
+  right: 1.4rem !important;
+  transform: translateY(-100%) rotate(45deg) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  content: "" !important;
+  box-shadow: 2px 2px !important;
+  pointer-events: none !important;
+}

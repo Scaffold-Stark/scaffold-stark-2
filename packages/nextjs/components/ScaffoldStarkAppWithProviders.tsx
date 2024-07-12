@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Toaster } from "react-hot-toast";
 import {
@@ -21,10 +20,17 @@ import { useNativeCurrencyPrice } from "~~/hooks/scaffold-stark/useNativeCurrenc
 
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
   useNativeCurrencyPrice();
-
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === "dark";
   return (
     <>
-      <div className="flex flex-col min-h-screen">
+      <div className="flex relative flex-col min-h-screen bg-main">
+        {!isDarkMode && (
+          <>
+            <div className="circle-gradient w-[330px] h-[330px]"></div>
+            <div className="circle-gradient-blue w-[330px] h-[630px]"></div>
+          </>
+        )}
         <Header />
         <main className="relative flex flex-col flex-1">{children}</main>
         <Footer />
@@ -33,13 +39,12 @@ const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
     </>
   );
 };
+
 export const ScaffoldStarkAppWithProviders = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const { resolvedTheme } = useTheme();
-  const isDarkMode = resolvedTheme === "dark";
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -51,6 +56,8 @@ export const ScaffoldStarkAppWithProviders = ({
     recommended: [argent(), braavos(), new BurnerConnector()],
     order: "random",
   });
+
+  if (!mounted) return null;
 
   return (
     <StarknetConfig

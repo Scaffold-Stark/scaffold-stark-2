@@ -14,10 +14,10 @@
     "@types/node": "^20",
     "@types/prettier": "^2",
     "@types/yargs": "^17.0.32",
+    "shx": "^0.3.4",
     "ts-node": "^10.9.2",
     "typescript": "^5",
-    "yargs": "^17.7.2",
-    "shx": "^0.3.4"
+    "yargs": "^17.7.2"
   },
   "dependencies": {
     "dotenv": "^16.3.1",
