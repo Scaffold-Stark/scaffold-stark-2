@@ -77,6 +77,9 @@ module.exports = {
             "background-image":
               "linear-gradient(270deg, #A7ECFF -17.42%, #E8B6FF 109.05%)",
           },
+          ".bg-modal": {
+            background: "rgba(255, 255, 255, 0.78)",
+          },
           ".bg-gradient-nav": {
             background: "#000000",
           },
@@ -98,7 +101,7 @@ module.exports = {
             background: "rgba(0, 0, 0, 0.07)",
           },
           ".bg-component": {
-            background: "rgba(255, 255, 255, 0.6)",
+            background: "rgba(255, 255, 255, 0.55)",
           },
           ".bg-function": {
             background:
@@ -144,6 +147,9 @@ module.exports = {
           error: "#FF8863",
           ".bg-gradient-modal": {
             background: "#385183",
+          },
+          ".bg-modal": {
+            background: "linear-gradient(90deg, #2B2243 0%, #253751 100%)",
           },
           ".bg-gradient-nav": {
             "background-image":
