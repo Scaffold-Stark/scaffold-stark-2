@@ -80,7 +80,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
       isOpen={isOpen}
       onClose={closeModal}
       animate={animate}
-      className={`w-[60vw] mx-auto md:max-h-[30rem] md:max-w-[25rem] backdrop-blur`}
+      className={`${isBurnerWallet ? "w-[60vw]" : "w-[25vw]"} mx-auto md:max-h-[30rem] md:max-w-[25rem] backdrop-blur`}
     >
       <div className="flex p-4 w-full lg:p-0 lg:grid-cols-5">
         <div className="basis-5/6 lg:col-span-2 lg:py-4 lg:pl-8 flex justify-center items-center">
