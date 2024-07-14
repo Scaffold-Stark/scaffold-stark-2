@@ -12,8 +12,8 @@ export function getConnectors() {
   
     const connectors = [argent(), braavos()];
   
-    if (targetNetworks.some(network => network.network === 'devnet')) {
-      connectors.push(new BurnerConnector());
+    if (targetNetworks.some(network => (network.network as string) === 'devnet')) {
+        connectors.push(new BurnerConnector());
     }
 
     return shuffleArray(connectors);
