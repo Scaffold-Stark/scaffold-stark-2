@@ -7,7 +7,7 @@ const targetNetworks = getTargetNetworks();
 
 export const connectors = getConnectors();
 
-export function getConnectors() {
+function getConnectors() {
   const { targetNetworks } = scaffoldConfig;
 
   const connectors = [argent(), braavos()];
