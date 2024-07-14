@@ -3,10 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Toaster } from "react-hot-toast";
-import {
-  StarknetConfig,
-  starkscan,
-} from "@starknet-react/core";
+import { StarknetConfig, starkscan } from "@starknet-react/core";
 import { Header } from "~~/components/Header";
 import { Footer } from "~~/components/Footer";
 import { ProgressBar } from "~~/components/scaffold-stark/ProgressBar";
