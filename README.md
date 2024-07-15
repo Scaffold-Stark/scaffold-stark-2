@@ -106,7 +106,6 @@ This command starts a local Starknet network using Devnet. The network runs on y
 
 **Note:** If you are on sepolia or mainnet, for a better user experience on your app, you can get a dedicated RPC from [Infura dashboard](https://www.infura.io/). A default is provided [here](https://github.com/Quantum3-Labs/scaffold-stark-2/tree/main/packages/nextjs/.env.example), in order to use this, you have to run `cp packages/nextjs/.env.example packages/nextjs/.env.local`
 
-
 4. On a second terminal, deploy the sample contract:
 
 ```
@@ -114,7 +113,6 @@ yarn deploy --network {NETWORK_NAME} // when NETWORK_NAME is not specified, it d
 ```
 
 **Note:** To use sepolia tesnet, you have to set {NETWORK_NAME} to `sepolia`.
-
 
 This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/contracts/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts-ts/deploy.ts` to deploy the contract to the network. You can also customize the deploy script.
 
