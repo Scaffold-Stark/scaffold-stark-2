@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { Uint256, validateChecksumAddress } from "starknet";
+import { CairoCustomEnum, Uint256, validateChecksumAddress } from "starknet";
 import { Address } from "~~/components/scaffold-stark";
 import { replacer } from "~~/utils/scaffold-stark/common";
 import {
@@ -9,6 +9,7 @@ import {
 import {
   isCairoContractAddress,
   isCairoTuple,
+  parseGenericType,
 } from "~~/utils/scaffold-stark/types";
 import { formatEther } from "ethers";
 
@@ -30,8 +31,18 @@ export const displayTxResult = (
     return "";
   }
   if (functionOutputs != null && functionOutputs.length != 0) {
+    if (displayContent instanceof CairoCustomEnum) {
+      return JSON.stringify(
+        { [displayContent.activeVariant()]: displayContent.unwrap() },
+        replacer,
+      );
+    }
+
     const type = functionOutputs[0].type;
     const parsedParam = parseParamWithType(type, displayContent, true);
+
+    if (typeof parsedParam === "object")
+      return JSON.stringify(parsedParam, replacer);
 
     if (typeof parsedParam === "bigint") {
       const asNumber = Number(parsedParam);
@@ -79,7 +90,25 @@ export const displayTxResult = (
   return JSON.stringify(displayContent, replacer, 2);
 };
 
-export const displayType = (type: string) =>
-  type.includes("::") ? type.split("::").pop() : type;
+export const displayType = (type: string) => {
+  if (type.includes("core::array") || type.includes("core::option")) {
+    const kindOfArray = type.split("::").at(2);
+    const parsed = parseGenericType(type);
+    const arrayType = Array.isArray(parsed)
+      ? parsed[0].split("::").pop()
+      : `(${parsed
+          .split(",")
+          .map((t) => t.split("::").pop())
+          .join(",")}`;
+    return `${kindOfArray}<${arrayType}>`;
+  } else if (type.includes("core::result")) {
+    const types = type.split("::");
+    return `${types.at(-4)}<${types.at(-2)?.split(",").at(0)},${types.at(-1)}`;
+  } else if (type.includes("::")) {
+    return type.split("::").pop();
+  }
+  return type;
+};
+
 const displayTxResultAsText = (displayContent: DisplayContent) =>
   displayTxResult(displayContent, true);

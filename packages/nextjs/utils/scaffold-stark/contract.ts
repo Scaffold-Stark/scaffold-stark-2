@@ -12,11 +12,20 @@ import {
   UseContractWriteProps,
 } from "@starknet-react/core";
 import { Address } from "@starknet-react/chains";
-import { uint256, validateAndParseAddress } from "starknet";
+import {
+  CairoCustomEnum,
+  CairoOption,
+  CairoOptionVariant,
+  CairoResult,
+  CairoResultVariant,
+  uint256,
+  validateAndParseAddress,
+} from "starknet";
 import { byteArray } from "starknet";
 import type { MergeDeepRecord } from "type-fest/source/merge-deep";
-import { feltToHex } from "~~/utils/scaffold-stark/common";
+import { feltToHex, replacer } from "~~/utils/scaffold-stark/common";
 import {
+  isCairoArray,
   isCairoBigInt,
   isCairoBool,
   isCairoByteArray,
@@ -24,8 +33,11 @@ import {
   isCairoContractAddress,
   isCairoFelt,
   isCairoInt,
+  isCairoOption,
+  isCairoResult,
   isCairoTuple,
   isCairoU256,
+  parseGenericType,
 } from "~~/utils/scaffold-stark/types";
 
 type AddExternalFlag<T> = {
@@ -135,6 +147,16 @@ export type AbiFunction = {
   inputs: readonly AbiParameter[];
   outputs: readonly AbiOutput[];
   state_mutability: AbiStateMutability;
+};
+export type AbiStruct = {
+  type: "struct";
+  name: string;
+  members: readonly AbiParameter[];
+};
+export type AbiEnum = {
+  type: "enum";
+  name: string;
+  variants: readonly AbiParameter[];
 };
 
 export const contracts = contractsData as GenericContractsDeclaration | null;
@@ -381,6 +403,7 @@ function tryParsingParamReturnObject(fn: (x: any) => {}, param: any) {
   }
 }
 
+//@ts-ignore
 export function parseParamWithType(
   paramType: string,
   param: any,
@@ -389,6 +412,31 @@ export function parseParamWithType(
   if (isRead) {
     if (isCairoTuple(paramType)) {
       return objectToCairoTuple(param, paramType);
+    } else if (isCairoArray(paramType)) {
+      return tryParsingParamReturnObject((param) => {
+        const genericType = parseGenericType(paramType)[0];
+        return genericType
+          ? //@ts-ignore
+            param.map((item) => parseParamWithType(genericType, item, isRead))
+          : param;
+      }, param);
+    } else if (isCairoOption(paramType)) {
+      //@ts-ignore
+      return tryParsingParamReturnObject((x) => {
+        const option = x as CairoOption<any>;
+        return option.isNone()
+          ? "None"
+          : `Some(${parseParamWithType(paramType.split("<").pop()!, option.unwrap(), isRead)})`;
+      }, param);
+    } else if (isCairoResult(paramType)) {
+      //@ts-ignore
+      return tryParsingParamReturnObject((x) => {
+        const result = x as CairoResult<any, any>;
+        const [ok, error] = parseGenericType(paramType);
+        return result.isOk()
+          ? `Ok(${parseParamWithType(ok, result.unwrap(), isRead)})`
+          : `Err(${parseParamWithType(error, result.unwrap(), isRead)})`;
+      }, param);
     } else if (isCairoU256(paramType)) {
       return tryParsingParamReturnObject(uint256.uint256ToBN, param);
     } else if (isCairoByteArray(paramType)) {
@@ -421,16 +469,117 @@ export function parseParamWithType(
   } else {
     if (isCairoTuple(paramType)) {
       return stringToObjectTuple(param, paramType);
+    } else if (isCairoArray(paramType)) {
+      const genericType = parseGenericType(paramType)[0];
+      if (genericType) {
+        //@ts-ignore
+        return [
+          param
+            .split(",")
+            //@ts-ignore
+            .map((item) => parseParamWithType(genericType, item, isRead)),
+        ];
+      } else {
+        return param;
+      }
+    } else if (isCairoOption(paramType)) {
+      if (param === "None") {
+        return new CairoOption(CairoOptionVariant.None);
+      }
+      const type = parseGenericType(paramType);
+      const parsedParam = param.slice(5, param.length - 1);
+      //@ts-ignore
+      const parsedValue = parseParamWithType(
+        type as string,
+        parsedParam,
+        isRead,
+      );
+      return new CairoOption(CairoOptionVariant.Some, parsedValue);
     } else if (isCairoU256(paramType)) {
-      return tryParsingParamReturnValues(uint256.bnToUint256, param);
+      return tryParsingParamReturnObject(uint256.bnToUint256, param);
     } else if (isCairoByteArray(paramType)) {
-      return tryParsingParamReturnValues(byteArray.byteArrayFromString, param);
+      return tryParsingParamReturnObject(byteArray.byteArrayFromString, param);
     } else if (isCairoContractAddress(paramType)) {
       return tryParsingParamReturnValues(validateAndParseAddress, param);
     } else if (isCairoBool(paramType)) {
       return param == "false" ? "0x0" : "0x1";
+    } else if (isCairoResult(paramType)) {
+      if (param) {
+        const variantType =
+          param.variant.Ok && param.variant.Ok.value
+            ? param.variant.Ok
+            : param.variant.Err;
+        const variantValue = variantType.value;
+
+        const resultVariant =
+          variantType === param.variant.Ok && param.variant.Ok.value
+            ? CairoResultVariant.Ok
+            : CairoResultVariant.Err;
+        const valueType: any = isCairoU256(variantType.type)
+          ? uint256.bnToUint256(variantValue)
+          : isCairoByteArray(variantType.type)
+            ? byteArray.byteArrayFromString(variantValue)
+            : parseParamWithType(variantType.type, variantValue, false);
+
+        return new CairoResult(resultVariant, valueType);
+      }
     } else {
-      return tryParsingParamReturnValues((x) => x, param);
+      try {
+        if (typeof param.variant == "object" && param.variant != null) {
+          const parsedVariant = Object.keys(param.variant).reduce(
+            (acc, key) => {
+              if (
+                param.variant[key].value == "" ||
+                param.variant[key].value == undefined
+              ) {
+                acc[key] = undefined;
+                return acc;
+              }
+
+              acc[key] = isCairoU256(param.variant[key].type)
+                ? uint256.bnToUint256(param.variant[key].value)
+                : isCairoByteArray(param.variant[key].type)
+                  ? byteArray.byteArrayFromString(param.variant[key].value)
+                  : parseParamWithType(
+                      param.variant[key].type,
+                      param.variant[key].value,
+                      false,
+                    );
+              return acc;
+            },
+            {} as Record<string, any>,
+          );
+
+          const isDevnet =
+            scaffoldConfig.targetNetworks[0].network.toString() === "devnet";
+
+          return Object.values(parsedVariant).length > 0
+            ? isDevnet
+              ? new CairoCustomEnum(parsedVariant)
+              : [[new CairoCustomEnum(parsedVariant)]]
+            : undefined;
+        } else {
+          return Object.keys(param).reduce((acc, key) => {
+            const parsed = parseParamWithType(
+              param[key].type,
+              param[key].value,
+              false,
+            );
+
+            if (parsed !== undefined && parsed !== "") {
+              if (Array.isArray(parsed)) {
+                acc.push(...parsed);
+              } else {
+                acc.push(parsed);
+              }
+            }
+            return acc;
+          }, [] as any[]);
+        }
+      } catch (err) {
+        //console.log(err);
+        return param;
+      }
     }
   }
 }
