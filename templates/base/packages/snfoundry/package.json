@@ -7,12 +7,14 @@
     "test": "cd contracts && snforge test",
     "compile": "cd contracts && scarb build",
     "format": "prettier --write 'scripts-ts/**/*.{ts,tsx}' && cd contracts && scarb fmt",
-    "format:check": "prettier --check 'scripts-ts/**/*.{ts,tsx}' && cd contracts && scarb fmt --check"
+    "format:check": "prettier --check 'scripts-ts/**/*.{ts,tsx}' && cd contracts && scarb fmt --check",
+    "postinstall": "shx cp -n .env.example .env"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/prettier": "^2",
     "@types/yargs": "^17.0.32",
+    "shx": "^0.3.4",
     "ts-node": "^10.9.2",
     "typescript": "^5",
     "yargs": "^17.7.2"
