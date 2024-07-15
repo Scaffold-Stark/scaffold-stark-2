@@ -33,7 +33,6 @@ export const ContractUI = ({
   const { targetNetwork } = useTargetNetwork();
   const { data: deployedContractData, isLoading: deployedContractLoading } =
     useDeployedContractInfo(contractName);
-  const networkColor = useNetworkColor();
 
   if (deployedContractLoading) {
     return (
@@ -57,7 +56,7 @@ export const ContractUI = ({
     >
       <div className="col-span-5 grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
         <div className="col-span-1 flex flex-col">
-          <div className="bg-base-100 border-base-300 border shadow-md shadow-secondary rounded-3xl px-6 lg:px-8 mb-6 space-y-1 py-4">
+          <div className="bg-transparent border-gradient rounded-[5px] px-6 lg:px-8 mb-6 space-y-1 py-4">
             <div className="flex">
               <div className="flex flex-col gap-1">
                 <span className="font-bold">{contractName}</span>
@@ -66,7 +65,7 @@ export const ContractUI = ({
                   <span className="font-bold text-sm">Balance:</span>
                   <Balance
                     address={deployedContractData.address}
-                    className="px-0 h-1.5 min-h-[0.375rem]"
+                    className="px-0 h-1.5 min-h-[0.375rem] text-network"
                   />
                 </div>
               </div>
@@ -74,13 +73,11 @@ export const ContractUI = ({
             {targetNetwork && (
               <p className="my-0 text-sm">
                 <span className="font-bold">Network</span>:{" "}
-                <span style={{ color: networkColor }}>
-                  {targetNetwork.name}
-                </span>
+                <span className="text-network">{targetNetwork.name}</span>
               </p>
             )}
           </div>
-          <div className="bg-base-300 rounded-3xl px-6 lg:px-8 py-4 shadow-lg shadow-base-300">
+          <div className="bg-transparent border-gradient rounded-[5px] px-6 lg:px-8 py-4">
             <ContractVariables // TODO : there is no contract variables on starknet
               refreshDisplayVariables={refreshDisplayVariables}
               deployedContractData={deployedContractData}
@@ -89,13 +86,13 @@ export const ContractUI = ({
         </div>
         <div className="col-span-1 lg:col-span-2 flex flex-col gap-6">
           <div className="z-10">
-            <div className="bg-base-100 rounded-3xl shadow-md shadow-secondary border border-base-300 flex flex-col mt-10 relative">
-              <div className="h-[5rem] w-[5.5rem] bg-base-300 absolute self-start rounded-[22px] -top-[38px] -left-[1px] -z-10 py-[0.65rem] shadow-lg shadow-base-300">
+            <div className="rounded-[5px] border border-[#8A45FC] flex flex-col mt-10 relative bg-component">
+              <div className="bg-function w-[5.5rem] absolute self-start -top-[43px] -left-[1px] -z-10 py-[0.55rem] border border-[#8A45FC]">
                 <div className="flex items-center justify-center space-x-2">
                   <p className="my-0 text-sm">Read</p>
                 </div>
               </div>
-              <div className="p-5 divide-y divide-base-300">
+              <div className="p-5 divide-y divide-secondary">
                 <ContractReadMethods
                   deployedContractData={deployedContractData}
                 />
@@ -103,13 +100,13 @@ export const ContractUI = ({
             </div>
           </div>
           <div className="z-10">
-            <div className="bg-base-100 rounded-3xl shadow-md shadow-secondary border border-base-300 flex flex-col mt-10 relative">
-              <div className="h-[5rem] w-[5.5rem] bg-base-300 absolute self-start rounded-[22px] -top-[38px] -left-[1px] -z-10 py-[0.65rem] shadow-lg shadow-base-300">
+            <div className="rounded-[5px] border border-[#8A45FC] flex flex-col mt-10 relative bg-component">
+              <div className="w-[5.5rem] absolute self-start -top-[43px] -left-[1px] -z-10 py-[0.55rem] border border-[#8A45FC] bg-function">
                 <div className="flex items-center justify-center space-x-2">
                   <p className="my-0 text-sm">Write</p>
                 </div>
               </div>
-              <div className="p-5 divide-y divide-base-300">
+              <div className="p-5 divide-y divide-secondary">
                 <ContractWriteMethods
                   deployedContractData={deployedContractData}
                   onChange={triggerRefreshDisplayVariables}

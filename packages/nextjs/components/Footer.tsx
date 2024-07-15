@@ -25,14 +25,14 @@ export const Footer = () => {
   const isLocalNetwork = targetNetwork.id === devnet.id;
 
   return (
-    <div className="min-h-0 py-5 px-1 mb-11 lg:mb-0">
+    <div className="min-h-0 py-5 px-1 mb-11 lg:mb-0 bg-base-100">
       <div>
         <div className="fixed flex justify-between items-center w-full z-10 p-4 bottom-0 left-0 pointer-events-none">
           <div className="flex flex-col md:flex-row gap-2 pointer-events-auto">
             {nativeCurrencyPrice > 0 && (
               <div>
-                <div className="btn btn-primary btn-sm font-normal gap-1 cursor-auto">
-                  <CurrencyDollarIcon className="h-4 w-4" />
+                <div className="btn btn-sm font-normal gap-1 cursor-auto border border-[#32BAC4] shadow-none">
+                  <CurrencyDollarIcon className="h-4 w-4 text-[#32BAC4]" />
                   <span>{nativeCurrencyPrice}</span>
                 </div>
               </div>
@@ -45,19 +45,14 @@ export const Footer = () => {
                   target={"_blank"}
                   rel={"noopener noreferrer"}
                   passHref
-                  className="btn btn-primary btn-sm font-normal gap-1"
+                  className="btn btn-sm font-normal gap-1 border border-[#32BAC4] shadow-none"
                 >
-                  <MagnifyingGlassIcon className="h-4 w-4" />
+                  <MagnifyingGlassIcon className="h-4 w-4 text-[#32BAC4]" />
                   <span>Block Explorer</span>
                 </Link>
               </>
             )}
           </div>
-          <SwitchTheme
-            className={`pointer-events-auto ${
-              isLocalNetwork ? "self-end md:self-auto" : ""
-            }`}
-          />
         </div>
       </div>
       <div className="w-full">
@@ -74,7 +69,7 @@ export const Footer = () => {
               </a>
             </div>
             <span>·</span>
-            <div className="flex justify-center items-center gap-2">
+            {/* <div className="flex justify-center items-center gap-2">
               <p className="m-0 text-center">
                 Built with <HeartIcon className="inline-block h-4 w-4" /> by
               </p>
@@ -98,7 +93,7 @@ export const Footer = () => {
                 <span className="link">BuidlGuidl</span>
               </a>
             </div>
-            <span>·</span>
+            <span>·</span> */}
             <div className="text-center">
               <a
                 href="https://t.me/+wO3PtlRAreo4MDI9"
