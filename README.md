@@ -15,7 +15,7 @@
 - 🔥 **Burner Wallet & Prefunded Account**: Quickly test your application with a burner wallet and prefunded accounts.
 - 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with Starknet network.
 
-![Debug Contracts tab](./assests/debug-contracts.png)
+![Debug Contracts tab](https://raw.githubusercontent.com/Quantum3-Labs/scaffold-stark-2/feature/update-ui/packages/nextjs/public/debug-image.png)
 
 ## Requirements
 
