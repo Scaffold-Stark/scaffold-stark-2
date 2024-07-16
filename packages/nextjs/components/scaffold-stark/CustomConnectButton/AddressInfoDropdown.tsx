@@ -96,8 +96,8 @@ export const AddressInfoDropdown = ({
               height={30}
             />
           ) : (
-             <BlockieAvatar address={address} size={30} ensImage={ensAvatar} />
-          )} 
+            <BlockieAvatar address={address} size={30} ensImage={ensAvatar} />
+          )}
           <span className="ml-4 mr-1">
             {isENS(displayName)
               ? displayName

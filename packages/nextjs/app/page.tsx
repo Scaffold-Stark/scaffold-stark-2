@@ -70,8 +70,8 @@ const Home: NextPage = () => {
                 height={20}
               ></Image>
               <p>
-                Play around with Multiwrite transactions 
-                using useScaffoldMultiWrite() hook
+                Play around with Multiwrite transactions using
+                useScaffoldMultiWrite() hook
               </p>
             </div>
           </div>
