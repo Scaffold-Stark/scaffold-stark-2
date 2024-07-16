@@ -1,7 +1,7 @@
 import { Account, RpcProvider } from "starknet";
 
 export type Networks = Record<
-  "devnet" | "goerli" | "sepolia" | "mainnet",
+  "devnet" | "sepolia" | "mainnet",
   Network
 >;
 
