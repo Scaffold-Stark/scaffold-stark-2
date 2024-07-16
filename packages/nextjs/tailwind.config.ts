@@ -113,7 +113,6 @@ module.exports = {
           ".text-network": {
             color: "#7800FF",
           },
-
           "--rounded-btn": "9999rem",
 
           ".tooltip": {
@@ -218,7 +217,7 @@ module.exports = {
           "linear-gradient(180deg, #3457D1 0%, #8A45FC 100%)",
         "gradient-icon":
           "var(--gradient, linear-gradient(90deg, #42D2F1 0%, #B248DD 100%))",
-      },
+      }
     },
   },
 };

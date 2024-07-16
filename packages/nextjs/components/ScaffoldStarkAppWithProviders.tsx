@@ -32,7 +32,7 @@ const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
           </>
         ) : (
           <>
-            <div className="circle-gradient w-[230px] h-[230px]"></div>
+            <div className="circle-gradient w-[330px] h-[330px]"></div>
             <div className="circle-gradient-blue w-[330px] h-[630px]"></div>
           </>
         )}
