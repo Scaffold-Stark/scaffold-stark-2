@@ -80,7 +80,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
       isOpen={isOpen}
       onClose={closeModal}
       animate={animate}
-      className={`w-[60vw] mx-auto md:max-h-[30rem] md:max-w-[25rem] backdrop-blur`}
+      className={`${isBurnerWallet ? "w-full" : "w-[300px] h-[430px]"} mx-auto md:max-h-[30rem] md:max-w-[25rem] backdrop-blur`}
     >
       <div className="flex p-4 w-full lg:p-0 lg:grid-cols-5">
         <div className="basis-5/6 lg:col-span-2 lg:py-4 lg:pl-8 flex justify-center items-center">
@@ -111,8 +111,8 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
         </div>
       </div>
       <div className="flex flex-col flex-1 lg:grid">
-        <div className="flex flex-col gap-4 w-full px-8 pb-10">
-          {!isBurnerWallet &&
+        <div className="flex flex-col gap-4 w-full px-8 py-10">
+          {!isBurnerWallet ? (
             connectors.map((connector, index) => (
               <Wallet
                 key={connector.id || index}
@@ -120,12 +120,9 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                 loader={loader}
                 handleConnectWallet={handleConnectWallet}
               />
-            ))}
-        </div>
-
-        {isBurnerWallet && (
-          <>
-            <div className="flex flex-col pb-[20px] justify-end gap-3 px-8">
+            ))
+          ) : (
+            <div className="flex flex-col pb-[20px] justify-end gap-3">
               <div className="h-[300px] overflow-y-auto flex w-full flex-col gap-2">
                 {burnerAccounts.map((burnerAcc, ix) => (
                   <div
@@ -133,21 +130,21 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                     className="w-full flex flex-col"
                   >
                     <button
-                      className={`${isDarkMode ? "border-[#385183]" : ""} hover:bg-gradient-modal border rounded-md text-neutral py-[8px] pl-[10px] flex items-center gap-4`}
+                      className={`hover:bg-gradient-modal border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4 ${isDarkMode ? "border-[#385183]" : ""}`}
                       onClick={(e) => handleConnectBurner(e, ix)}
                     >
                       <BlockieAvatar
                         address={burnerAcc.accountAddress}
                         size={35}
-                      ></BlockieAvatar>
+                      />
                       {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}
                     </button>
                   </div>
                 ))}
               </div>
             </div>
-          </>
-        )}
+          )}
+        </div>
       </div>
     </GenericModal>
   );

@@ -113,7 +113,6 @@ module.exports = {
           ".text-network": {
             color: "#7800FF",
           },
-
           "--rounded-btn": "9999rem",
 
           ".tooltip": {
@@ -156,9 +155,7 @@ module.exports = {
               "var(--gradient, linear-gradient(90deg, #42D2F1 0%, #B248DD 100%))",
           },
           ".bg-main": {
-            background: "rgb(81, 133, 213)",
-            "background-image":
-              "radial-gradient(circle,rgba(81, 133, 213, 1) 0%,rgba(20, 26, 49, 1) 66%)",
+            background: "#141A31",
           },
           ".bg-underline": {
             background: "#5368B4",
