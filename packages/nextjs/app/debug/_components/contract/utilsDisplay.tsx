@@ -72,7 +72,7 @@ export const displayTxResult = (
       !asText ? (
       <Address address={parsedParam as `0x${string}`} />
     ) : (
-      parsedParam.toString()
+      typeof parsedParam === "object" ? JSON.stringify(parsedParam, replacer, 2) : parsedParam.toString()
     );
   }
 
