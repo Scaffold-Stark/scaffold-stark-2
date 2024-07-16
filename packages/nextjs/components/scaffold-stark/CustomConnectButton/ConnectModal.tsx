@@ -80,7 +80,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
       isOpen={isOpen}
       onClose={closeModal}
       animate={animate}
-      className={`${isBurnerWallet ? "w-[60vw]" : "w-[300px] h-[430px]"} mx-auto md:max-h-[30rem] md:max-w-[25rem] backdrop-blur`}
+      className={`${isBurnerWallet ? "w-full" : "w-[300px] h-[430px]"} mx-auto md:max-h-[30rem] md:max-w-[25rem] backdrop-blur`}
     >
       <div className="flex p-4 w-full lg:p-0 lg:grid-cols-5">
         <div className="basis-5/6 lg:col-span-2 lg:py-4 lg:pl-8 flex justify-center items-center">
@@ -130,7 +130,7 @@ const ConnectModal = ({ isOpen, onClose }: Props) => {
                     className="w-full flex flex-col"
                   >
                     <button
-                      className={`hover:bg-gradient-modal border rounded-md text-neutral py-[8px] pl-[10px] flex items-center gap-4 ${isDarkMode ? "border-[#385183]" : ""}`}
+                      className={`hover:bg-gradient-modal border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4 ${isDarkMode ? "border-[#385183]" : ""}`}
                       onClick={(e) => handleConnectBurner(e, ix)}
                     >
                       <BlockieAvatar
