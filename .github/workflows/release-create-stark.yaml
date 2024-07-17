@@ -80,6 +80,21 @@ jobs:
           new_version=$(npm version ${{ env.type }} -m "chore(release): %s [skip ci]")
           git push origin main --follow-tags
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Publish release
+        if: success()
+        id: publish-release
+        run: |
+          cd destination_repo
+          npm install && npm run build && npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}  
+
       - name: Notify Slack on Success
         if: success()
         uses: slackapi/slack-github-action@v1.26.0
