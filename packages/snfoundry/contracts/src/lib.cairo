@@ -1,5 +1,5 @@
-mod YourContract;
-#[cfg(test)]
-mod test {
-    mod TestContract;
-}
+mod vars;
+mod tuples;
+mod structs;
+mod complex;
+mod arrays_spans;
