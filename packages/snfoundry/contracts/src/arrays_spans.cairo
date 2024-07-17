@@ -68,42 +68,73 @@ pub trait IArraysSpans<TContractState> {
     fn get_array_u256(self: @TContractState, array: Array<u256>) -> Array<u256>;
     fn get_array_felt252(self: @TContractState, array: Array<felt252>) -> Array<felt252>;
     fn get_array_bool(self: @TContractState, array: Array<bool>) -> Array<bool>;
-    fn get_array_contract_address(self: @TContractState, array: Array<ContractAddress>) -> Array<ContractAddress>;
-    fn get_array_sample_struct(self: @TContractState, array: Array<SampleStruct>) -> Array<SampleStruct>;
-    fn get_array_sample_nested_struct(self: @TContractState, array: Array<SampleNestedStruct>) -> Array<SampleNestedStruct>;
-    fn get_array_struct_with_five_elements(self: @TContractState, array: Array<StructWithFiveElements>) -> Array<StructWithFiveElements>;
-    fn get_array_struct_with_eight_elements(self: @TContractState, array: Array<StructWithEightElements>) -> Array<StructWithEightElements>;
-    fn get_array_struct_with_4_layers(self: @TContractState, array: Array<StructWith4Layers>) -> Array<StructWith4Layers>;
+    fn get_array_contract_address(
+        self: @TContractState, array: Array<ContractAddress>
+    ) -> Array<ContractAddress>;
+    fn get_array_sample_struct(
+        self: @TContractState, array: Array<SampleStruct>
+    ) -> Array<SampleStruct>;
+    fn get_array_sample_nested_struct(
+        self: @TContractState, array: Array<SampleNestedStruct>
+    ) -> Array<SampleNestedStruct>;
+    fn get_array_struct_with_five_elements(
+        self: @TContractState, array: Array<StructWithFiveElements>
+    ) -> Array<StructWithFiveElements>;
+    fn get_array_struct_with_eight_elements(
+        self: @TContractState, array: Array<StructWithEightElements>
+    ) -> Array<StructWithEightElements>;
+    fn get_array_struct_with_4_layers(
+        self: @TContractState, array: Array<StructWith4Layers>
+    ) -> Array<StructWith4Layers>;
 
     // Getters for Span
     fn get_span_u256(self: @TContractState, span: Span<u256>) -> Span<u256>;
     fn get_span_felt252(self: @TContractState, span: Span<felt252>) -> Span<felt252>;
     fn get_span_bool(self: @TContractState, span: Span<bool>) -> Span<bool>;
-    fn get_span_contract_address(self: @TContractState, span: Span<ContractAddress>) -> Span<ContractAddress>;
+    fn get_span_contract_address(
+        self: @TContractState, span: Span<ContractAddress>
+    ) -> Span<ContractAddress>;
 
     // Get value at index for Array
     fn get_array_value_u256(self: @TContractState, array: Array<u256>, index: u32) -> u256;
     fn get_array_value_felt252(self: @TContractState, array: Array<felt252>, index: u32) -> felt252;
     fn get_array_value_bool(self: @TContractState, array: Array<bool>, index: u32) -> bool;
-    fn get_array_value_contract_address(self: @TContractState, array: Array<ContractAddress>, index: u32) -> ContractAddress;
-    fn get_array_value_sample_struct(self: @TContractState, array: Array<SampleStruct>, index: u32) -> SampleStruct;
-    fn get_array_value_sample_nested_struct(self: @TContractState, array: Array<SampleNestedStruct>, index: u32) -> SampleNestedStruct;
-    fn get_array_value_struct_with_five_elements(self: @TContractState, array: Array<StructWithFiveElements>, index: u32) -> StructWithFiveElements;
-    fn get_array_value_struct_with_eight_elements(self: @TContractState, array: Array<StructWithEightElements>, index: u32) -> StructWithEightElements;
-    fn get_array_value_struct_with_4_layers(self: @TContractState, array: Array<StructWith4Layers>, index: u32) -> StructWith4Layers;
+    fn get_array_value_contract_address(
+        self: @TContractState, array: Array<ContractAddress>, index: u32
+    ) -> ContractAddress;
+    fn get_array_value_sample_struct(
+        self: @TContractState, array: Array<SampleStruct>, index: u32
+    ) -> SampleStruct;
+    fn get_array_value_sample_nested_struct(
+        self: @TContractState, array: Array<SampleNestedStruct>, index: u32
+    ) -> SampleNestedStruct;
+    fn get_array_value_struct_with_five_elements(
+        self: @TContractState, array: Array<StructWithFiveElements>, index: u32
+    ) -> StructWithFiveElements;
+    fn get_array_value_struct_with_eight_elements(
+        self: @TContractState, array: Array<StructWithEightElements>, index: u32
+    ) -> StructWithEightElements;
+    fn get_array_value_struct_with_4_layers(
+        self: @TContractState, array: Array<StructWith4Layers>, index: u32
+    ) -> StructWith4Layers;
 
     // Get value at index for Span
     fn get_span_value_u256(self: @TContractState, span: Span<u256>, index: u32) -> u256;
     fn get_span_value_felt252(self: @TContractState, span: Span<felt252>, index: u32) -> felt252;
     fn get_span_value_bool(self: @TContractState, span: Span<bool>, index: u32) -> bool;
-    fn get_span_value_contract_address(self: @TContractState, span: Span<ContractAddress>, index: u32) -> ContractAddress;
+    fn get_span_value_contract_address(
+        self: @TContractState, span: Span<ContractAddress>, index: u32
+    ) -> ContractAddress;
 }
 
 #[starknet::contract]
 mod ArraysSpans {
-    use core::traits::Into;
-use super::{IArraysSpans, SampleEnum, ContractAddress, SampleStruct, SampleNestedStruct, StructWithFiveElements, StructWithEightElements, StructWith4Layers, Layer3, Layer2, Layer1};
     use core::num::traits::Zero;
+    use core::traits::Into;
+    use super::{
+        IArraysSpans, SampleEnum, ContractAddress, SampleStruct, SampleNestedStruct,
+        StructWithFiveElements, StructWithEightElements, StructWith4Layers, Layer3, Layer2, Layer1
+    };
 
     #[storage]
     struct Storage {}
@@ -126,27 +157,39 @@ use super::{IArraysSpans, SampleEnum, ContractAddress, SampleStruct, SampleNeste
             array
         }
 
-        fn get_array_contract_address(self: @ContractState, array: Array<ContractAddress>) -> Array<ContractAddress> {
+        fn get_array_contract_address(
+            self: @ContractState, array: Array<ContractAddress>
+        ) -> Array<ContractAddress> {
             array
         }
 
-        fn get_array_sample_struct(self: @ContractState, array: Array<SampleStruct>) -> Array<SampleStruct> {
+        fn get_array_sample_struct(
+            self: @ContractState, array: Array<SampleStruct>
+        ) -> Array<SampleStruct> {
             array
         }
 
-        fn get_array_sample_nested_struct(self: @ContractState, array: Array<SampleNestedStruct>) -> Array<SampleNestedStruct> {
+        fn get_array_sample_nested_struct(
+            self: @ContractState, array: Array<SampleNestedStruct>
+        ) -> Array<SampleNestedStruct> {
             array
         }
 
-        fn get_array_struct_with_five_elements(self: @ContractState, array: Array<StructWithFiveElements>) -> Array<StructWithFiveElements> {
+        fn get_array_struct_with_five_elements(
+            self: @ContractState, array: Array<StructWithFiveElements>
+        ) -> Array<StructWithFiveElements> {
             array
         }
 
-        fn get_array_struct_with_eight_elements(self: @ContractState, array: Array<StructWithEightElements>) -> Array<StructWithEightElements> {
+        fn get_array_struct_with_eight_elements(
+            self: @ContractState, array: Array<StructWithEightElements>
+        ) -> Array<StructWithEightElements> {
             array
         }
 
-        fn get_array_struct_with_4_layers(self: @ContractState, array: Array<StructWith4Layers>) -> Array<StructWith4Layers> {
+        fn get_array_struct_with_4_layers(
+            self: @ContractState, array: Array<StructWith4Layers>
+        ) -> Array<StructWith4Layers> {
             array
         }
 
@@ -163,7 +206,9 @@ use super::{IArraysSpans, SampleEnum, ContractAddress, SampleStruct, SampleNeste
             span
         }
 
-        fn get_span_contract_address(self: @ContractState, span: Span<ContractAddress>) -> Span<ContractAddress> {
+        fn get_span_contract_address(
+            self: @ContractState, span: Span<ContractAddress>
+        ) -> Span<ContractAddress> {
             span
         }
 
@@ -180,7 +225,9 @@ use super::{IArraysSpans, SampleEnum, ContractAddress, SampleStruct, SampleNeste
             result
         }
 
-        fn get_array_value_felt252(self: @ContractState, mut array: Array<felt252>, index: u32) -> felt252 {
+        fn get_array_value_felt252(
+            self: @ContractState, mut array: Array<felt252>, index: u32
+        ) -> felt252 {
             let mut result: felt252 = 0.into();
             loop {
                 if array.len() == index {
@@ -204,7 +251,9 @@ use super::{IArraysSpans, SampleEnum, ContractAddress, SampleStruct, SampleNeste
             result
         }
 
-        fn get_array_value_contract_address(self: @ContractState, mut array: Array<ContractAddress>, index: u32) -> ContractAddress {
+        fn get_array_value_contract_address(
+            self: @ContractState, mut array: Array<ContractAddress>, index: u32
+        ) -> ContractAddress {
             let mut result: ContractAddress = Zero::zero();
             loop {
                 if array.len() == index {
@@ -216,11 +265,11 @@ use super::{IArraysSpans, SampleEnum, ContractAddress, SampleStruct, SampleNeste
             result
         }
 
-        fn get_array_value_sample_struct(self: @ContractState, mut array: Array<SampleStruct>, index: u32) -> SampleStruct {
+        fn get_array_value_sample_struct(
+            self: @ContractState, mut array: Array<SampleStruct>, index: u32
+        ) -> SampleStruct {
             let mut result: SampleStruct = SampleStruct {
-                id: 0,
-                name: "",
-                status: SampleEnum::enum1(0),
+                id: 0, name: "", status: SampleEnum::enum1(0),
             };
             loop {
                 if array.len() == index {
@@ -232,14 +281,12 @@ use super::{IArraysSpans, SampleEnum, ContractAddress, SampleStruct, SampleNeste
             result
         }
 
-        fn get_array_value_sample_nested_struct(self: @ContractState, mut array: Array<SampleNestedStruct>, index: u32) -> SampleNestedStruct {
+        fn get_array_value_sample_nested_struct(
+            self: @ContractState, mut array: Array<SampleNestedStruct>, index: u32
+        ) -> SampleNestedStruct {
             let mut result: SampleNestedStruct = SampleNestedStruct {
                 user: Zero::zero(),
-                data: SampleStruct {
-                    id: 0,
-                    name: "",
-                    status: SampleEnum::enum1(0),
-                },
+                data: SampleStruct { id: 0, name: "", status: SampleEnum::enum1(0), },
                 status: SampleEnum::enum1(0),
             };
             loop {
@@ -252,7 +299,9 @@ use super::{IArraysSpans, SampleEnum, ContractAddress, SampleStruct, SampleNeste
             result
         }
 
-        fn get_array_value_struct_with_five_elements(self: @ContractState, mut array: Array<StructWithFiveElements>, index: u32) -> StructWithFiveElements {
+        fn get_array_value_struct_with_five_elements(
+            self: @ContractState, mut array: Array<StructWithFiveElements>, index: u32
+        ) -> StructWithFiveElements {
             let mut result: StructWithFiveElements = StructWithFiveElements {
                 element1: 0,
                 element2: 0.into(),
@@ -270,7 +319,9 @@ use super::{IArraysSpans, SampleEnum, ContractAddress, SampleStruct, SampleNeste
             result
         }
 
-        fn get_array_value_struct_with_eight_elements(self: @ContractState, mut array: Array<StructWithEightElements>, index: u32) -> StructWithEightElements {
+        fn get_array_value_struct_with_eight_elements(
+            self: @ContractState, mut array: Array<StructWithEightElements>, index: u32
+        ) -> StructWithEightElements {
             let mut result: StructWithEightElements = StructWithEightElements {
                 element1: 0,
                 element2: 0.into(),
@@ -291,12 +342,12 @@ use super::{IArraysSpans, SampleEnum, ContractAddress, SampleStruct, SampleNeste
             result
         }
 
-        fn get_array_value_struct_with_4_layers(self: @ContractState, mut array: Array<StructWith4Layers>, index: u32) -> StructWith4Layers {
+        fn get_array_value_struct_with_4_layers(
+            self: @ContractState, mut array: Array<StructWith4Layers>, index: u32
+        ) -> StructWith4Layers {
             let mut result: StructWith4Layers = StructWith4Layers {
                 layer4_element: Layer3 {
-                    layer3_element: Layer2 {
-                        layer2_element: Layer1 { layer1_element: 0 },
-                    },
+                    layer3_element: Layer2 { layer2_element: Layer1 { layer1_element: 0 }, },
                 },
             };
             loop {
@@ -322,7 +373,9 @@ use super::{IArraysSpans, SampleEnum, ContractAddress, SampleStruct, SampleNeste
             result
         }
 
-        fn get_span_value_felt252(self: @ContractState, mut span: Span<felt252>, index: u32) -> felt252 {
+        fn get_span_value_felt252(
+            self: @ContractState, mut span: Span<felt252>, index: u32
+        ) -> felt252 {
             let mut result: felt252 = 0.into();
             loop {
                 if span.len() == index {
@@ -346,7 +399,9 @@ use super::{IArraysSpans, SampleEnum, ContractAddress, SampleStruct, SampleNeste
             result
         }
 
-        fn get_span_value_contract_address(self: @ContractState, mut span: Span<ContractAddress>, index: u32) -> ContractAddress {
+        fn get_span_value_contract_address(
+            self: @ContractState, mut span: Span<ContractAddress>, index: u32
+        ) -> ContractAddress {
             let mut result: ContractAddress = Zero::zero();
             loop {
                 if span.len() == index {

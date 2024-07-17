@@ -1,4 +1,4 @@
-use starknet::{ContractAddress };
+use starknet::{ContractAddress};
 
 #[starknet::interface]
 pub trait IVars<TContractState> {
@@ -26,7 +26,9 @@ pub trait IVars<TContractState> {
     fn get_u256_with_value(self: @TContractState, value: u256) -> u256;
     fn get_felt_with_value(self: @TContractState, value: felt252) -> felt252;
     fn get_byte_array_with_value(self: @TContractState, value: ByteArray) -> ByteArray;
-    fn get_contract_address_with_value(self: @TContractState, value: ContractAddress) -> ContractAddress;
+    fn get_contract_address_with_value(
+        self: @TContractState, value: ContractAddress
+    ) -> ContractAddress;
     fn get_bool_with_value(self: @TContractState, value: bool) -> bool;
     fn get_u8_with_value(self: @TContractState, value: u8) -> u8;
     fn get_u16_with_value(self: @TContractState, value: u16) -> u16;
@@ -65,7 +67,9 @@ pub trait IVars<TContractState> {
     fn set_u256_with_key(ref self: TContractState, key: felt252, value: u256);
     fn set_felt_with_key(ref self: TContractState, key: felt252, value: felt252);
     fn set_byte_array_with_key(ref self: TContractState, key: felt252, value: ByteArray);
-    fn set_contract_address_with_key(ref self: TContractState, key: felt252, value: ContractAddress);
+    fn set_contract_address_with_key(
+        ref self: TContractState, key: felt252, value: ContractAddress
+    );
     fn set_bool_with_key(ref self: TContractState, key: felt252, value: bool);
     fn set_u8_with_key(ref self: TContractState, key: felt252, value: u8);
     fn set_u16_with_key(ref self: TContractState, key: felt252, value: u16);
@@ -79,7 +83,6 @@ pub trait IVars<TContractState> {
     fn set_i128_with_key(ref self: TContractState, key: felt252, value: i128);
     fn set_bytes31_with_key(ref self: TContractState, key: felt252, value: bytes31);
     fn set_non_zero_u256_with_key(ref self: TContractState, key: felt252, value: NonZero<u256>);
-
 }
 
 #[starknet::contract]
@@ -108,8 +111,7 @@ mod Vars {
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState) {
-    }
+    fn constructor(ref self: ContractState) {}
 
     #[abi(embed_v0)]
     impl VarsImpl of IVars<ContractState> {
@@ -181,7 +183,6 @@ mod Vars {
         fn get_non_zero_u256(self: @ContractState) -> NonZero<u256> {
             self.mapping_non_zero_u256.read(0)
         }
-
 
 
         // get with key
@@ -272,7 +273,9 @@ mod Vars {
             value
         }
 
-        fn get_contract_address_with_value(self: @ContractState, value: ContractAddress) -> ContractAddress {
+        fn get_contract_address_with_value(
+            self: @ContractState, value: ContractAddress
+        ) -> ContractAddress {
             value
         }
 
@@ -320,7 +323,9 @@ mod Vars {
             value
         }
 
-        fn get_non_zero_u256_with_value(self: @ContractState, value: NonZero<u256>) -> NonZero<u256> {
+        fn get_non_zero_u256_with_value(
+            self: @ContractState, value: NonZero<u256>
+        ) -> NonZero<u256> {
             value
         }
 
@@ -342,7 +347,9 @@ mod Vars {
             self.mapping_byte_array.write(key, value);
         }
 
-        fn set_contract_address_with_key(ref self: ContractState, key: felt252, value: ContractAddress) {
+        fn set_contract_address_with_key(
+            ref self: ContractState, key: felt252, value: ContractAddress
+        ) {
             self.mapping_contract_address.write(key, value);
         }
 
