@@ -20,7 +20,6 @@ const deployerDevnet =
   PRIVATE_KEY_DEVNET &&
   new Account(providerDevnet, ACCOUNT_ADDRESS_DEVNET, PRIVATE_KEY_DEVNET, "1");
 
-
 // sepolia
 const providerSepolia =
   process.env.RPC_URL_SEPOLIA &&
