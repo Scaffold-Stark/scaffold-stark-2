@@ -87,9 +87,9 @@ export const ContractUI = ({
         <div className="col-span-1 lg:col-span-2 flex flex-col gap-6">
           <div className="z-10">
             <div className="rounded-[5px] border border-[#8A45FC] flex flex-col mt-10 relative bg-component">
-              <div className="bg-function w-[5.5rem] absolute self-start -top-[43px] -left-[1px] -z-10 py-[0.55rem] border border-[#8A45FC]">
+              <div className="bg-function w-[140px] h-[32.5px] absolute self-start -top-[43px] -left-[1px] -z-10 py-[0.55rem] clip-corner">
                 <div className="flex items-center justify-center space-x-2">
-                  <p className="my-0 text-sm">Read</p>
+                  <p className="my-0 text-sm text-center">Read</p>
                 </div>
               </div>
               <div className="p-5 divide-y divide-secondary">
@@ -101,7 +101,7 @@ export const ContractUI = ({
           </div>
           <div className="z-10">
             <div className="rounded-[5px] border border-[#8A45FC] flex flex-col mt-10 relative bg-component">
-              <div className="w-[5.5rem] absolute self-start -top-[43px] -left-[1px] -z-10 py-[0.55rem] border border-[#8A45FC] bg-function">
+              <div className="w-[140px] h-[32.5px] absolute self-start -top-[43px] -left-[1px] -z-10 py-[0.55rem]  bg-function clip-corner">
                 <div className="flex items-center justify-center space-x-2">
                   <p className="my-0 text-sm">Write</p>
                 </div>
