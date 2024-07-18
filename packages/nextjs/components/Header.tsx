@@ -49,10 +49,11 @@ export const HeaderMenuLinks = () => {
             <Link
               href={href}
               passHref
-              className={`${isActive
+              className={`${
+                isActive
                   ? "!bg-gradient-nav !text-white active:bg-gradient-nav shadow-md "
                   : ""
-                } py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col hover:bg-gradient-nav hover:text-white`}
+              } py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col hover:bg-gradient-nav hover:text-white`}
             >
               {icon}
               <span>{label}</span>
@@ -83,13 +84,17 @@ export const Header = () => {
 
   useEffect(() => {
     if (status === "connected" && address) {
-      provider.getContractVersion(address).then((v) => {
-        if (v) setIsDeployed(true);
-      }).catch(e => {
-        console.log(e);
-        setIsDeployed(false);
-      });
+      provider
+        .getContractVersion(address)
+        .then((v) => {
+          if (v) setIsDeployed(true);
+        })
+        .catch((e) => {
+          console.log(e);
+          setIsDeployed(false);
+        });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, address]);
 
   return (
@@ -98,8 +103,9 @@ export const Header = () => {
         <div className="lg:hidden dropdown" ref={burgerMenuRef}>
           <label
             tabIndex={0}
-            className={`ml-1 btn btn-ghost ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"
-              }`}
+            className={`ml-1 btn btn-ghost ${
+              isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"
+            }`}
             onClick={() => {
               setIsDrawerOpen((prevIsOpenState) => !prevIsOpenState);
             }}
@@ -141,17 +147,17 @@ export const Header = () => {
         </ul>
       </div>
       <div className="navbar-end flex-grow mr-4 gap-4">
-        {
-          !isDeployed ?
-            <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
-              Wallet Not Deployed
-            </span> : null
-        }
+        {!isDeployed ? (
+          <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
+            Wallet Not Deployed
+          </span>
+        ) : null}
         <CustomConnectButton />
         {/* <FaucetButton /> */}
         <SwitchTheme
-          className={`pointer-events-auto ${isLocalNetwork ? "self-end md:self-auto" : ""
-            }`}
+          className={`pointer-events-auto ${
+            isLocalNetwork ? "self-end md:self-auto" : ""
+          }`}
         />
       </div>
     </div>
