@@ -23,6 +23,16 @@ const deployContract = async (
   classHash: string;
   address: string;
 }> => {
+  try {
+    await deployer.getContractVersion(deployer.address);
+  } catch (e) {
+    if (e.toString().includes("Contract not found")) {
+      throw new Error(
+        `The wallet you're using to deploy the contract is not deployed in ${networkName} network`
+      );
+    }
+  }
+
   const compiledContractCasm = JSON.parse(
     fs
       .readFileSync(

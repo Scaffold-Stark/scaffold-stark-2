@@ -12,6 +12,7 @@ import { useTheme } from "next-themes";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { devnet } from "@starknet-react/chains";
 import { SwitchTheme } from "./SwitchTheme";
+import { useAccount, useProvider } from "@starknet-react/core";
 
 type HeaderMenuLink = {
   label: string;
@@ -48,11 +49,10 @@ export const HeaderMenuLinks = () => {
             <Link
               href={href}
               passHref
-              className={`${
-                isActive
+              className={`${isActive
                   ? "!bg-gradient-nav !text-white active:bg-gradient-nav shadow-md "
                   : ""
-              } py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col hover:bg-gradient-nav hover:text-white`}
+                } py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col hover:bg-gradient-nav hover:text-white`}
             >
               {icon}
               <span>{label}</span>
@@ -77,15 +77,29 @@ export const Header = () => {
   const { targetNetwork } = useTargetNetwork();
   const isLocalNetwork = targetNetwork.id === devnet.id;
 
+  const { provider } = useProvider();
+  const { address, status } = useAccount();
+  const [isDeployed, setIsDeployed] = useState(false);
+
+  useEffect(() => {
+    if (status === "connected" && address) {
+      provider.getContractVersion(address).then((v) => {
+        if (v) setIsDeployed(true);
+      }).catch(e => {
+        console.log(e);
+        setIsDeployed(false);
+      });
+    }
+  }, [status, address]);
+
   return (
     <div className="sticky lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
       <div className="navbar-start w-auto lg:w-1/2">
         <div className="lg:hidden dropdown" ref={burgerMenuRef}>
           <label
             tabIndex={0}
-            className={`ml-1 btn btn-ghost ${
-              isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"
-            }`}
+            className={`ml-1 btn btn-ghost ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"
+              }`}
             onClick={() => {
               setIsDrawerOpen((prevIsOpenState) => !prevIsOpenState);
             }}
@@ -127,15 +141,17 @@ export const Header = () => {
         </ul>
       </div>
       <div className="navbar-end flex-grow mr-4 gap-4">
-        {/* <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
-          Not deployed
-        </span> */}
+        {
+          !isDeployed ?
+            <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
+              Wallet Not Deployed
+            </span> : null
+        }
         <CustomConnectButton />
         {/* <FaucetButton /> */}
         <SwitchTheme
-          className={`pointer-events-auto ${
-            isLocalNetwork ? "self-end md:self-auto" : ""
-          }`}
+          className={`pointer-events-auto ${isLocalNetwork ? "self-end md:self-auto" : ""
+            }`}
         />
       </div>
     </div>
