@@ -94,8 +94,7 @@ export const Header = () => {
           setIsDeployed(false);
         });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status, address]);
+  }, [status, address, provider]);
 
   return (
     <div className="sticky lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
