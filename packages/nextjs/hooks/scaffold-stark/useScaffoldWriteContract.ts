@@ -12,7 +12,7 @@ import {
   parseFunctionParams,
   UseScaffoldWriteConfig,
 } from "~~/utils/scaffold-stark/contract";
-import { useSendTransaction, useNetwork } from "@starknet-react/core";
+import { useSendTransaction, useNetwork, Abi } from "@starknet-react/core";
 import { notification } from "~~/utils/scaffold-stark";
 
 type UpdatedArgs = Parameters<
@@ -20,6 +20,7 @@ type UpdatedArgs = Parameters<
 >[0];
 
 export const useScaffoldWriteContract = <
+  TAbi extends Abi,
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>,
@@ -29,7 +30,7 @@ export const useScaffoldWriteContract = <
   contractName,
   functionName,
   args,
-}: UseScaffoldWriteConfig<TContractName, TFunctionName>) => {
+}: UseScaffoldWriteConfig<TAbi, TContractName, TFunctionName>) => {
   const { data: deployedContractData } = useDeployedContractInfo(contractName);
   const { chain } = useNetwork();
   const writeTx = useTransactor();
@@ -66,8 +67,8 @@ export const useScaffoldWriteContract = <
   const sendContractWriteTx = async ({
     args: newArgs,
   }: {
-    args?: UseScaffoldWriteConfig<TContractName, TFunctionName>["args"];
-  } & UpdatedArgs = {}) => {
+    args?: UseScaffoldWriteConfig<TAbi, TContractName, TFunctionName>["args"];
+  } & UpdatedArgs) => {
     if (!deployedContractData) {
       console.error(
         "Target Contract is not deployed, did you forget to run `yarn deploy`?",
@@ -99,9 +100,7 @@ export const useScaffoldWriteContract = <
       try {
         // setIsMining(true);
         return await writeTx(() =>
-          wagmiContractWrite.sendAsync({
-            calls: newCalls as any[],
-          }),
+          wagmiContractWrite.sendAsync(newCalls as any[]),
         );
       } catch (e: any) {
         throw e;
