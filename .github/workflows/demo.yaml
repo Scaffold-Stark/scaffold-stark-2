@@ -15,7 +15,8 @@ jobs:
       - name: Checkout Source Repository
         uses: actions/checkout@v4
         with:
-          repository: oceanlvr/scaffold-stark-2
+          repository: Quantum3-Labs/scaffold-stark-2
+          token: ${{ secrets.ORG_GITHUB_TOKEN }}
           path: source_repo
 
       - name: Modify scaffoldConfig in Source Repository
