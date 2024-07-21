@@ -17,6 +17,7 @@ const Wallet = ({
 }) => {
   const [clicked, setClicked] = useState(false);
   const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === "dark";
 
   // connector has two : dark and light icon
   const icon =
@@ -27,7 +28,7 @@ const Wallet = ({
       : (connector.icon as string);
   return (
     <button
-      className={`flex gap-4 items-center text-base-100 p-[.2rem] hover:bg-outline-grey rounded-[10px] transition-all cursor-pointer hover:bg-primary-content border-2 border-primary-content pl-3 ${clicked ? "bg-primary-content" : ""}`}
+      className={`flex gap-4 items-center text-neutral p-[.2rem] rounded-[4px] transition-all cursor-pointer ${isDarkMode ? "hover:bg-[#385183] border-[#4f4ab7]" : "hover:bg-gradient-light hover:border-none"} border pl-3 ${clicked ? "bg-ligth" : ""}`}
       onClick={(e) => {
         setClicked(true);
         handleConnectWallet(e, connector);
@@ -43,7 +44,7 @@ const Wallet = ({
           className="h-full w-full object-cover rounded-[5px]"
         />
       </div>
-      <p className="flex-1">{connector.name}</p>
+      <p className="flex-1 text-start">{connector.name}</p>
     </button>
   );
 };

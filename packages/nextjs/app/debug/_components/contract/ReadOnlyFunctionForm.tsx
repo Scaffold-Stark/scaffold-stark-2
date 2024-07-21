@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Abi } from "abi-wan-kanabi";
 import { Address } from "@starknet-react/chains";
 import {
@@ -27,7 +27,7 @@ export const ReadOnlyFunctionForm = ({
   abi,
 }: ReadOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
-    getInitialFormState(abiFunction),
+    getInitialFormState(abiFunction)
   );
   const [inputValue, setInputValue] = useState<any | undefined>(undefined);
   const lastForm = useRef(form);
@@ -36,7 +36,9 @@ export const ReadOnlyFunctionForm = ({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
-    args: inputValue ? inputValue.flat() : [],
+    args: inputValue
+      ? inputValue.flat().map((item: any) => item.toString())
+      : [],
     enabled: false,
     blockIdentifier: "pending" as BlockNumber,
   });
@@ -67,12 +69,14 @@ export const ReadOnlyFunctionForm = ({
 
   return (
     <div className="flex flex-col gap-3 py-5 first:pt-0 last:pb-1">
-      <p className="font-medium my-0 break-words">{abiFunction.name}</p>
+      <p className="font-medium my-0 break-words text-function">
+        {abiFunction.name}
+      </p>
       {inputElements}
       <div className="flex justify-between gap-2 flex-wrap">
         <div className="flex-grow w-4/5">
           {data !== null && data !== undefined && (
-            <div className="bg-secondary rounded-3xl text-sm px-4 py-1.5 break-words">
+            <div className="bg-input text-sm px-4 py-1.5 break-words">
               <p className="font-bold m-0 mb-1">Result:</p>
               <pre className="whitespace-pre-wrap break-words">
                 {displayTxResult(data, false, abiFunction?.outputs)}
@@ -81,7 +85,7 @@ export const ReadOnlyFunctionForm = ({
           )}
         </div>
         <button
-          className="btn btn-secondary btn-sm"
+          className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
           onClick={handleRead}
           disabled={inputValue && isFetching}
         >
