@@ -49,10 +49,11 @@ export const HeaderMenuLinks = () => {
             <Link
               href={href}
               passHref
-              className={`${isActive
+              className={`${
+                isActive
                   ? "!bg-gradient-nav !text-white active:bg-gradient-nav shadow-md "
                   : ""
-                } py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col hover:bg-gradient-nav hover:text-white`}
+              } py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col hover:bg-gradient-nav hover:text-white`}
             >
               {icon}
               <span>{label}</span>
@@ -101,8 +102,9 @@ export const Header = () => {
         <div className="lg:hidden dropdown" ref={burgerMenuRef}>
           <label
             tabIndex={0}
-            className={`ml-1 btn btn-ghost ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"
-              }`}
+            className={`ml-1 btn btn-ghost ${
+              isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"
+            }`}
             onClick={() => {
               setIsDrawerOpen((prevIsOpenState) => !prevIsOpenState);
             }}
@@ -152,8 +154,9 @@ export const Header = () => {
         <CustomConnectButton />
         {/* <FaucetButton /> */}
         <SwitchTheme
-          className={`pointer-events-auto ${isLocalNetwork ? "self-end md:self-auto" : ""
-            }`}
+          className={`pointer-events-auto ${
+            isLocalNetwork ? "self-end md:self-auto" : ""
+          }`}
         />
       </div>
     </div>
