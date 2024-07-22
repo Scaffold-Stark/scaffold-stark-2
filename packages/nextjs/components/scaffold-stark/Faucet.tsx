@@ -41,7 +41,7 @@ export const Faucet = () => {
   useEffect(() => {
     const checkChain = async () => {
       try {
-        const providerInfo = await publicClient.getBlock();
+        const providerInfo = await publicClient.getBlockWithTxHashes();
         console.log(providerInfo);
       } catch (error) {
         console.error("⚡️ ~ file: Faucet.tsx:checkChain ~ error", error);
@@ -104,9 +104,9 @@ export const Faucet = () => {
     <div>
       <label
         htmlFor="faucet-modal"
-        className="btn btn-primary btn-sm font-normal gap-1 text-base-100"
+        className="btn btn-sm font-normal gap-1 border border-[#32BAC4] shadow-none"
       >
-        <BanknotesIcon className="h-4 w-4" />
+        <BanknotesIcon className="h-4 w-4 text-[#32BAC4]" />
         <span>Faucet</span>
       </label>
       <input type="checkbox" id="faucet-modal" className="modal-toggle" />

@@ -10,6 +10,7 @@ import { Address } from "@starknet-react/chains";
 import { useContractRead } from "@starknet-react/core";
 import { BlockNumber } from "starknet";
 import { displayTxResult } from "./utilsDisplay";
+import { useTheme } from "next-themes";
 
 type DisplayVariableProps = {
   contractAddress: Address;
@@ -38,6 +39,8 @@ export const DisplayVariable = ({
   });
 
   const { showAnimation } = useAnimationConfig(result);
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === "dark";
 
   useEffect(() => {
     refetch();
@@ -46,7 +49,9 @@ export const DisplayVariable = ({
   return (
     <div className="space-y-1 pb-2">
       <div className="flex items-center">
-        <h3 className="font-medium text-[15px] mb-0 break-all text-neutral-content ">
+        <h3
+          className={`font-medium text-lg mb-0 break-all ${isDarkMode ? "text-[#4DB4FF]" : "text-[#7800FF]"}`}
+        >
           {abiFunction.name}
         </h3>
         <button
@@ -64,7 +69,7 @@ export const DisplayVariable = ({
         </button>
         {/* <InheritanceTooltip inheritedFrom={inheritedFrom} /> */}
       </div>
-      <div className="text-gray-500 font-medium flex flex-col items-start">
+      <div className="text-neutral font-medium flex flex-col items-start">
         <div>
           <div
             className={`break-all block transition bg-transparent ${

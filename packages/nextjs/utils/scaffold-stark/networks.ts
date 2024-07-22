@@ -19,9 +19,6 @@ export const NETWORKS_EXTRA_DATA: Record<string, ChainAttributes> = {
   [chains.sepolia.network]: {
     color: ["#5f4bb6", "#87ff65"],
   },
-  [chains.goerli.network]: {
-    color: "#48a9a6",
-  },
 };
 /**
  * Gives the block explorer transaction URL, returns empty string if the network is a local chain

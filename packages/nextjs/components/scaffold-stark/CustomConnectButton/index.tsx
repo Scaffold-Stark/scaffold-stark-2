@@ -12,7 +12,6 @@ import { useAccount, useNetwork } from "@starknet-react/core";
 import { Address } from "@starknet-react/chains";
 import { useState } from "react";
 import ConnectModal from "./ConnectModal";
-import Button from "~~/components/Button/Button";
 
 /**
  * Custom Connect Button (watch balance + custom design)
@@ -39,7 +38,13 @@ export const CustomConnectButton = () => {
 
   return status == "disconnected" ? (
     <>
-      <Button onClick={handleWalletConnect}>Connect Wallet</Button>
+      <button
+        className={`rounded-[18px] btn-sm font-bold px-8 bg-btn-wallet`}
+        onClick={handleWalletConnect}
+        type="button"
+      >
+        Connect
+      </button>
       <ConnectModal isOpen={modalOpen} onClose={handleModalClose} />
     </>
   ) : chainId !== targetNetwork.id ? (
