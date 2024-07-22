@@ -2,14 +2,26 @@
 
 import Link from "next/link";
 import type { NextPage } from "next";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-stark";
 import { useAccount } from "@starknet-react/core";
 import { Address as AddressType } from "@starknet-react/chains";
 import Image from "next/image";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
 
 const Home: NextPage = () => {
   const connectedAddress = useAccount();
+  const { writeAsync } = useScaffoldWriteContract({
+    contractName: "Vars",
+    functionName: "set_u64_with_key",
+    args: ["1", 432],
+  });
+
+  const { data, isLoading, isSuccess } = useScaffoldReadContract({
+    contractName: "Vars",
+    functionName: "get_u64_with_key",
+    args: ["1"],
+  });
 
   return (
     <>
@@ -26,10 +38,10 @@ const Home: NextPage = () => {
             <Address address={connectedAddress.address as AddressType} />
           </div>
           <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="bg-underline italic text-base font-bold max-w-full break-words break-all inline-block">
-              packages/nextjs/app/page.tsx
-            </code>
+            <div>
+              <p>Data: {data?.toString()}</p>
+              <button onClick={() => writeAsync({})}>Write</button>
+            </div>
           </p>
           <p className="text-center text-lg">
             Edit your smart contract{" "}
@@ -76,13 +88,6 @@ const Home: NextPage = () => {
               </p>
             </div>
           </div>
-        </div>
-        <div
-          onClick={() => {
-            // writeAsync();
-          }}
-        >
-          TEST TX
         </div>
       </div>
     </>

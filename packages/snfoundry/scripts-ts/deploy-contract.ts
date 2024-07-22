@@ -59,13 +59,11 @@ const deployContract = async (
   // TODO use maxfee
 
   try {
-    const tryDeclareAndDeploy = await deployer.declareAndDeploy(
-      {
-        contract: compiledContractSierra,
-        casm: compiledContractCasm,
-        constructorCalldata,
-      },
-    );
+    const tryDeclareAndDeploy = await deployer.declareAndDeploy({
+      contract: compiledContractSierra,
+      casm: compiledContractCasm,
+      constructorCalldata,
+    });
     if (!tryDeclareAndDeploy.deploy.contract_address) {
       throw new Error(
         "Failed to deploy contract, try setting up a manual fee on deployContract, set maxFee to 0.001 ETH in WEI and increase it if needed."

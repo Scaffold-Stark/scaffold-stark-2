@@ -10,13 +10,14 @@ import {
   UseScaffoldArgsParam,
   UseScaffoldWriteConfig,
 } from "~~/utils/scaffold-stark/contract";
-import { useSendTransaction, useNetwork } from "@starknet-react/core";
+import { useSendTransaction, useNetwork, Abi } from "@starknet-react/core";
 import { InvocationsDetails } from "starknet";
 import { notification } from "~~/utils/scaffold-stark";
 import { useMemo } from "react";
 import { useTransactor } from "./useTransactor";
 
 export const useScaffoldMultiWriteContract = <
+  TAbi extends Abi,
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>,
@@ -26,7 +27,7 @@ export const useScaffoldMultiWriteContract = <
   calls,
   options,
 }: {
-  calls: Array<UseScaffoldWriteConfig<TContractName, TFunctionName>>;
+  calls: Array<UseScaffoldWriteConfig<TAbi, TContractName, TFunctionName>>;
   options?: InvocationsDetails;
 }) => {
   const { targetNetwork } = useTargetNetwork();
@@ -99,6 +100,7 @@ export const useScaffoldMultiWriteContract = <
 };
 
 export function createContractCall<
+  TAbi extends Abi,
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>,
@@ -107,7 +109,7 @@ export function createContractCall<
 >(
   contractName: TContractName,
   functionName: TFunctionName,
-  args: UseScaffoldArgsParam<TContractName, TFunctionName>["args"],
+  args: UseScaffoldArgsParam<TAbi, TContractName, TFunctionName>["args"],
 ) {
   return { contractName, functionName, args };
 }

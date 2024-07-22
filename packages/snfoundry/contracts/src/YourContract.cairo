@@ -1,5 +1,5 @@
-use starknet::ContractAddress;
 use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
+use starknet::ContractAddress;
 
 #[derive(Drop, Serde, starknet::Store)]
 enum SampleEnum {

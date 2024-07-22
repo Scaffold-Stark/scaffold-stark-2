@@ -77,11 +77,11 @@ const deepMergeContracts = <
   E extends Record<PropertyKey, any>,
 >(
   local: L,
-  external: E
+  external: E,
 ) => {
   const result: Record<PropertyKey, any> = {};
   const allKeys = Array.from(
-    new Set([...Object.keys(local), ...Object.keys(external)])
+    new Set([...Object.keys(local), ...Object.keys(external)]),
   );
   for (const key of allKeys) {
     if (!external[key]) {
@@ -89,7 +89,7 @@ const deepMergeContracts = <
       continue;
     }
     const amendedExternal = Object.fromEntries(
-      Object.entries(external[key] as Record<string, Record<string, unknown>>)
+      Object.entries(external[key] as Record<string, Record<string, unknown>>),
     );
     result[key] = { ...local[key], ...amendedExternal };
   }
@@ -102,7 +102,7 @@ const deepMergeContracts = <
 
 const contractsData = deepMergeContracts(
   deployedContractsData,
-  predeployedContracts
+  predeployedContracts,
 );
 
 type IsContractDeclarationMissing<TYes, TNo> = typeof contractsData extends {
@@ -290,25 +290,26 @@ export type UseScaffoldArgsParam<
           >
         >;
       }
-    : {
-        args?: never;
-      };
+    : { args?: any[] };
 
 export type UseScaffoldReadConfig<
   TAbi extends Abi,
   TContractName extends ContractName,
-  TFunctionName extends ExtractAbiFunctionNames<TAbi>,
+  TFunctionName extends ExtractAbiFunctionNamesScaffold<
+    ContractAbi<TContractName>,
+    "view"
+  >,
 > = {
   contractName: TContractName;
 } & IsContractDeclarationMissing<
   Partial<UseReadContractProps<TAbi, TFunctionName>>,
   {
     functionName: TFunctionName;
-  } & Partial<UseScaffoldArgsParam<TAbi, TContractName, TFunctionName>> &
-    Omit<
-      UseReadContractProps<TAbi, TFunctionName>,
-      "chainId" | "abi" | "address" | "functionName"
-    >
+  } & Omit<
+    UseReadContractProps<TAbi, TFunctionName>,
+    "chainId" | "abi" | "address" | "functionName" | "args"
+  > &
+    UseScaffoldArgsParam<TAbi, TContractName, TFunctionName>
 >;
 
 export type AbiFunctionOutputs<
@@ -363,7 +364,7 @@ export type UseScaffoldEventHistoryConfig<
 
 export function getFunctionsByStateMutability(
   abi: Abi,
-  stateMutability: AbiStateMutability
+  stateMutability: AbiStateMutability,
 ): AbiFunction[] {
   return abi
     .reduce((acc, part) => {
@@ -410,7 +411,7 @@ function tryParsingParamReturnObject(fn: (x: any) => {}, param: any) {
 export function parseParamWithType(
   paramType: string,
   param: any,
-  isRead: boolean
+  isRead: boolean,
 ) {
   if (isRead) {
     if (isCairoTuple(paramType)) {
@@ -457,12 +458,12 @@ export function parseParamWithType(
     } else if (isCairoBytes31(paramType)) {
       return tryParsingParamReturnObject(
         (x: bigint) => `0x${x.toString(16)}`,
-        param
+        param,
       );
     } else if (isCairoInt(paramType)) {
       return tryParsingParamReturnObject(
         (x) => (typeof x === "bigint" ? Number(x) : parseInt(x, 16)),
-        param
+        param,
       );
     } else if (isCairoBigInt(paramType)) {
       return tryParsingParamReturnObject((x) => BigInt(x), param);
@@ -495,7 +496,7 @@ export function parseParamWithType(
       const parsedValue = parseParamWithType(
         type as string,
         parsedParam,
-        isRead
+        isRead,
       );
       return new CairoOption(CairoOptionVariant.Some, parsedValue);
     } else if (isCairoU256(paramType)) {
@@ -506,6 +507,8 @@ export function parseParamWithType(
       return tryParsingParamReturnObject(validateAndParseAddress, param);
     } else if (isCairoBool(paramType)) {
       return param == "false" ? "0x0" : "0x1";
+    } else if (isCairoInt(paramType) || isCairoBigInt(paramType)) {
+      return tryParsingParamReturnObject((x) => x.toString(), param);
     } else if (isCairoResult(paramType)) {
       if (param) {
         const variantType =
@@ -546,11 +549,11 @@ export function parseParamWithType(
                   : parseParamWithType(
                       param.variant[key].type,
                       param.variant[key].value,
-                      false
+                      false,
                     );
               return acc;
             },
-            {} as Record<string, any>
+            {} as Record<string, any>,
           );
 
           const isDevnet =
@@ -566,7 +569,7 @@ export function parseParamWithType(
             const parsed = parseParamWithType(
               param[key].type,
               param[key].value,
-              false
+              false,
             );
 
             if (parsed !== undefined && parsed !== "") {
@@ -590,7 +593,7 @@ export function parseParamWithType(
 export function parseFunctionParams(
   abiFunction: AbiFunction,
   inputs: any[],
-  isRead: boolean
+  isRead: boolean,
 ) {
   let parsedInputs: any[] = [];
 
@@ -601,6 +604,7 @@ export function parseFunctionParams(
 
   inputs.forEach((input, idx) => {
     const paramType = abiFunction.inputs[idx].type;
+    console.log(paramType, input, parseParamWithType(paramType, input, isRead));
     parsedInputs.push(parseParamWithType(paramType, input, isRead));
   });
   return parsedInputs;
@@ -654,7 +658,7 @@ function objectToCairoTuple(obj: { [key: number]: any }, type: string): string {
 
 function stringToObjectTuple(
   tupleString: string,
-  paramType: string
+  paramType: string,
 ): { [key: number]: any } {
   const values = parseTuple(tupleString);
   const types = parseTuple(paramType);

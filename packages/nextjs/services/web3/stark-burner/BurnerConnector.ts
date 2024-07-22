@@ -59,8 +59,8 @@ export class BurnerConnector extends InjectedConnector {
         }),
         this.burnerAccount.accountAddress,
         this.burnerAccount.privateKey,
-        "1"
-      )
+        "1",
+      ),
     );
   }
 
@@ -84,10 +84,9 @@ export class BurnerConnector extends InjectedConnector {
   }
 
   async request<T extends RpcMessage["type"]>(
-    call: RequestFnCall<T>
+    call: RequestFnCall<T>,
   ): Promise<RpcTypeToMessageMap[T]["result"]> {
-
-    if (call.params && 'calls' in call.params) {
+    if (call.params && "calls" in call.params) {
       let compiledCalls = call.params.calls;
       try {
         // TODO : starknet connector uses "emtrypoint" instead of "entry_point"
@@ -104,10 +103,11 @@ export class BurnerConnector extends InjectedConnector {
 
         return await (
           await this.account()
+        )
           //@ts-ignore
-        ).execute(compiledCalls, {
-          version: "0x3",
-        });
+          .execute(compiledCalls, {
+            version: "0x3",
+          });
       } catch (e) {
         throw new UserRejectedRequestError();
       }

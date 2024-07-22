@@ -68,7 +68,7 @@ export const useScaffoldWriteContract = <
     args: newArgs,
   }: {
     args?: UseScaffoldWriteConfig<TAbi, TContractName, TFunctionName>["args"];
-  } & UpdatedArgs) => {
+  }) => {
     if (!deployedContractData) {
       console.error(
         "Target Contract is not deployed, did you forget to run `yarn deploy`?",
