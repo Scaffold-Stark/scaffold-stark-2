@@ -25,7 +25,7 @@ type DisplayContent =
 export const displayTxResult = (
   displayContent: DisplayContent | DisplayContent[],
   asText: boolean,
-  functionOutputs: readonly AbiOutput[] = []
+  functionOutputs: readonly AbiOutput[] = [],
 ): string | ReactElement | number => {
   if (displayContent == null) {
     return "";
@@ -34,7 +34,7 @@ export const displayTxResult = (
     if (displayContent instanceof CairoCustomEnum) {
       return JSON.stringify(
         { [displayContent.activeVariant()]: displayContent.unwrap() },
-        replacer
+        replacer,
       );
     }
 
@@ -60,7 +60,7 @@ export const displayTxResult = (
         ["number", "boolean"].includes(typeof v) ? v : displayTxResultAsText(v);
       const displayable = JSON.stringify(
         parsedParam.map(mostReadable),
-        replacer
+        replacer,
       );
 
       return asText ? (
