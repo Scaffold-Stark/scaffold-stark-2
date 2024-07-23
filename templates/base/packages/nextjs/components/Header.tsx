@@ -80,7 +80,7 @@ export const Header = () => {
 
   const { provider } = useProvider();
   const { address, status } = useAccount();
-  const [isDeployed, setIsDeployed] = useState(false);
+  const [isDeployed, setIsDeployed] = useState(true);
 
   useEffect(() => {
     if (status === "connected" && address) {
@@ -146,7 +146,7 @@ export const Header = () => {
         </ul>
       </div>
       <div className="navbar-end flex-grow mr-4 gap-4">
-        {!isDeployed ? (
+        {status === "connected" && !isDeployed ? (
           <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
             Wallet Not Deployed
           </span>
