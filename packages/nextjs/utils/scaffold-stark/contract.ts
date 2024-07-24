@@ -468,7 +468,10 @@ export function parseParamWithType(
     }
   } else {
     if (isCairoTuple(paramType)) {
-      return stringToObjectTuple(param, paramType);
+      return tryParsingParamReturnValues(
+        (x) => stringToObjectTuple(x, paramType),
+        param,
+      );
     } else if (isCairoArray(paramType)) {
       const genericType = parseGenericType(paramType)[0];
       if (genericType) {

@@ -57,7 +57,9 @@ WriteOnlyFunctionFormProps) => {
       {
         contractAddress,
         entrypoint: abiFunction.name,
-        calldata: getParsedContractFunctionArgs(form, false).flat(),
+
+        // use infinity to completely flatten array from n dimensions to 1 dimension
+        calldata: getParsedContractFunctionArgs(form, false).flat(Infinity),
       },
     ],
   });
