@@ -501,7 +501,7 @@ export function parseParamWithType(
     } else if (isCairoU256(paramType)) {
       return tryParsingParamReturnValues(uint256.bnToUint256, param);
     } else if (isCairoByteArray(paramType)) {
-      return tryParsingParamReturnObject(byteArray.byteArrayFromString, param);
+      return tryParsingParamReturnValues(byteArray.byteArrayFromString, param);
     } else if (isCairoContractAddress(paramType)) {
       return tryParsingParamReturnValues(validateAndParseAddress, param);
     } else if (isCairoBool(paramType)) {
