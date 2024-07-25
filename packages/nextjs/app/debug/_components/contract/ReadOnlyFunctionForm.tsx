@@ -37,9 +37,10 @@ export const ReadOnlyFunctionForm = ({
     functionName: abiFunction.name,
     abi: [...abi],
     args: inputValue
-      ? inputValue.flat().map((item: any) => item.toString())
+      ? inputValue.flat(Infinity).map((item: any) => item.toString())
       : [],
     enabled: false,
+    parseArgs: false,
     blockIdentifier: "pending" as BlockNumber,
   });
 
@@ -57,14 +58,13 @@ export const ReadOnlyFunctionForm = ({
     );
   });
 
-  const handleRead = async () => {
-    const newInputValue = getParsedContractFunctionArgs(form, true);
-    if (JSON.stringify(form) === JSON.stringify(lastForm.current)) {
-      await refetch();
-    } else {
+  const handleRead = () => {
+    const newInputValue = getParsedContractFunctionArgs(form, false);
+    if (JSON.stringify(form) !== JSON.stringify(lastForm.current)) {
       setInputValue(newInputValue);
       lastForm.current = form;
     }
+    refetch();
   };
 
   return (
