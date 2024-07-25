@@ -36,9 +36,7 @@ export const ReadOnlyFunctionForm = ({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
-    args: inputValue
-      ? inputValue.flat(Infinity).map((item: any) => item.toString())
-      : [],
+    args: inputValue ? inputValue.flat(Infinity) : [],
     enabled: false,
     parseArgs: false,
     blockIdentifier: "pending" as BlockNumber,

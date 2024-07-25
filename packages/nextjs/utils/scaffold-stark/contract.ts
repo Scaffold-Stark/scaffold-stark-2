@@ -477,13 +477,16 @@ export function parseParamWithType(
       );
     } else if (isCairoArray(paramType)) {
       const genericType = parseGenericType(paramType)[0];
+      const tokens = param.split(",");
       if (genericType) {
         //@ts-ignore
         return [
-          param
-            .split(",")
+          tokens.length,
+          ...tokens
             //@ts-ignore
-            .map((item) => parseParamWithType(genericType, item, isRead)),
+            .map((item) =>
+              parseParamWithType(genericType, item.trim(), isRead),
+            ),
         ];
       } else {
         return param;
