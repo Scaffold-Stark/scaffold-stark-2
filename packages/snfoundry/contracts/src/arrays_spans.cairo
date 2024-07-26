@@ -125,6 +125,12 @@ pub trait IArraysSpans<TContractState> {
     fn get_span_value_contract_address(
         self: @TContractState, span: Span<ContractAddress>, index: u32
     ) -> ContractAddress;
+
+
+    // setters with array
+    fn calc_sum_of_struct_id(self: @TContractState, array: Array<SampleStruct>);
+
+    fn calc_sum_of_simple_u256(self: @TContractState, array: Array<u256>);
 }
 
 #[starknet::contract]
@@ -411,6 +417,29 @@ mod ArraysSpans {
                 let _ = span.pop_front().unwrap();
             };
             result
+        }
+
+        // setters with array
+        fn calc_sum_of_struct_id(self: @ContractState, mut array: Array<SampleStruct>) {
+            let mut sum: u256 = 0;
+            loop {
+                if array.len() == 0 {
+                    break;
+                }
+                let element = array.pop_front().unwrap();
+                sum += element.id;
+            }
+        }
+
+        fn calc_sum_of_simple_u256(self: @ContractState, mut array: Array<u256>) {
+            let mut sum: u256 = 0;
+            loop {
+                if array.len() == 0 {
+                    break;
+                }
+                let element = array.pop_front().unwrap();
+                sum += element;
+            }
         }
     }
 }
