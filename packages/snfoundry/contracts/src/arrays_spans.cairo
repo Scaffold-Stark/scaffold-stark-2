@@ -130,6 +130,8 @@ pub trait IArraysSpans<TContractState> {
     // setters with array
     fn calc_sum_of_struct_id(ref self: TContractState, array: Array<SampleStruct>);
 
+    fn calc_sum_of_tuple(ref self: TContractState, tuple: (u256, u256));
+
     fn calc_sum_of_simple_u256(ref self: TContractState, array: Array<u256>);
 
     fn read_sum_u256(self: @TContractState) -> u256;
@@ -450,6 +452,11 @@ mod ArraysSpans {
 
         fn read_sum_u256(self: @ContractState) -> u256 {
             self.sum_u256.read()
+        }
+
+        fn calc_sum_of_tuple(ref self: ContractState, tuple: (u256, u256)) {
+            let (_one, _two) = tuple;
+            self.sum_u256.write(_one + _two);
         }
     }
 }
