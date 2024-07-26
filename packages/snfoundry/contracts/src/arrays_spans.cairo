@@ -128,9 +128,9 @@ pub trait IArraysSpans<TContractState> {
 
 
     // setters with array
-    fn calc_sum_of_struct_id(self: @TContractState, array: Array<SampleStruct>);
+    fn calc_sum_of_struct_id(ref self: TContractState, array: Array<SampleStruct>);
 
-    fn calc_sum_of_simple_u256(self: @TContractState, array: Array<u256>);
+    fn calc_sum_of_simple_u256(ref self: TContractState, array: Array<u256>);
 }
 
 #[starknet::contract]
@@ -420,7 +420,7 @@ mod ArraysSpans {
         }
 
         // setters with array
-        fn calc_sum_of_struct_id(self: @ContractState, mut array: Array<SampleStruct>) {
+        fn calc_sum_of_struct_id(ref self: ContractState, mut array: Array<SampleStruct>) {
             let mut sum: u256 = 0;
             loop {
                 if array.len() == 0 {
@@ -431,7 +431,7 @@ mod ArraysSpans {
             }
         }
 
-        fn calc_sum_of_simple_u256(self: @ContractState, mut array: Array<u256>) {
+        fn calc_sum_of_simple_u256(ref self: ContractState, mut array: Array<u256>) {
             let mut sum: u256 = 0;
             loop {
                 if array.len() == 0 {
