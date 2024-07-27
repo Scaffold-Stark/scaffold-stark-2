@@ -116,7 +116,7 @@ WriteOnlyFunctionFormProps) => {
           zeroInputs ? "flex-row justify-between items-center" : "flex-col"
         }`}
       >
-        <p className="font-medium my-0 break-words">
+        <p className="font-medium my-0 break-words text-function">
           {abiFunction.name}
           {/* <InheritanceTooltip inheritedFrom={undefined} /> */}
         </p>
@@ -139,7 +139,7 @@ WriteOnlyFunctionFormProps) => {
             }`}
           >
             <button
-              className="btn btn-secondary btn-sm"
+              className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
               disabled={writeDisabled || isLoading}
               onClick={handleWrite}
             >

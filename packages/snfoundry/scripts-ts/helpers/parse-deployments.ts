@@ -48,7 +48,7 @@ const getContractDataFromDeployments = (): Record<
             ...allContractsData[chainId],
             [contractName]: {
               address: contractData.address,
-              abi: abiContent.abi,
+              abi: abiContent.abi.filter((item) => item.type !== "l1_handler"),
             },
           };
         } catch (e) {}
