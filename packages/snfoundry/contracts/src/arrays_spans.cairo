@@ -125,6 +125,16 @@ pub trait IArraysSpans<TContractState> {
     fn get_span_value_contract_address(
         self: @TContractState, span: Span<ContractAddress>, index: u32
     ) -> ContractAddress;
+
+
+    // setters with array
+    fn calc_sum_of_struct_id(ref self: TContractState, array: Array<SampleStruct>);
+
+    fn calc_sum_of_tuple(ref self: TContractState, tuple: (u256, u256));
+
+    fn calc_sum_of_simple_u256(ref self: TContractState, array: Array<u256>);
+
+    fn read_sum_u256(self: @TContractState) -> u256;
 }
 
 #[starknet::contract]
@@ -137,7 +147,9 @@ mod ArraysSpans {
     };
 
     #[storage]
-    struct Storage {}
+    struct Storage {
+        sum_u256: u256,
+    }
 
     #[constructor]
     fn constructor(ref self: ContractState) {}
@@ -411,6 +423,40 @@ mod ArraysSpans {
                 let _ = span.pop_front().unwrap();
             };
             result
+        }
+
+        // setters with array
+        fn calc_sum_of_struct_id(ref self: ContractState, mut array: Array<SampleStruct>) {
+            let mut sum: u256 = 0;
+            loop {
+                if array.len() == 0 {
+                    break;
+                }
+                let element = array.pop_front().unwrap();
+                sum += element.id;
+            };
+            self.sum_u256.write(sum);
+        }
+
+        fn calc_sum_of_simple_u256(ref self: ContractState, mut array: Array<u256>) {
+            let mut sum: u256 = 0;
+            loop {
+                if array.len() == 0 {
+                    break;
+                }
+                let element = array.pop_front().unwrap();
+                sum += element;
+            };
+            self.sum_u256.write(sum);
+        }
+
+        fn read_sum_u256(self: @ContractState) -> u256 {
+            self.sum_u256.read()
+        }
+
+        fn calc_sum_of_tuple(ref self: ContractState, tuple: (u256, u256)) {
+            let (_one, _two) = tuple;
+            self.sum_u256.write(_one + _two);
         }
     }
 }

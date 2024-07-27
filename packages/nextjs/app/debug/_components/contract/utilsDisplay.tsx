@@ -25,7 +25,7 @@ type DisplayContent =
 export const displayTxResult = (
   displayContent: DisplayContent | DisplayContent[],
   asText: boolean,
-  functionOutputs: readonly AbiOutput[] = []
+  functionOutputs: readonly AbiOutput[] = [],
 ): string | ReactElement | number => {
   if (displayContent == null) {
     return "";
@@ -34,7 +34,7 @@ export const displayTxResult = (
     if (displayContent instanceof CairoCustomEnum) {
       return JSON.stringify(
         { [displayContent.activeVariant()]: displayContent.unwrap() },
-        replacer
+        replacer,
       );
     }
 
@@ -60,7 +60,7 @@ export const displayTxResult = (
         ["number", "boolean"].includes(typeof v) ? v : displayTxResultAsText(v);
       const displayable = JSON.stringify(
         parsedParam.map(mostReadable),
-        replacer
+        replacer,
       );
 
       return asText ? (
@@ -89,7 +89,16 @@ export const displayTxResult = (
 };
 
 export const displayType = (type: string) => {
-  if (type.includes("core::array") || type.includes("core::option")) {
+  // render tuples
+  if (type.at(0) === "(") {
+    const parenthesesRemoved = type.replace("(", "").replace(")", "");
+    const tokens = parenthesesRemoved.split(",");
+    const cleanedTokens = tokens.map((token) => token.split("::").pop());
+    return `(${cleanedTokens.join(", ")})`;
+  }
+
+  // arrays and options
+  else if (type.includes("core::array") || type.includes("core::option")) {
     const kindOfArray = type.split("::").at(2);
     const parsed = parseGenericType(type);
     const arrayType = Array.isArray(parsed)
@@ -99,7 +108,10 @@ export const displayType = (type: string) => {
           .map((t) => t.split("::").pop())
           .join(",")}`;
     return `${kindOfArray}<${arrayType}>`;
-  } else if (type.includes("core::result")) {
+  }
+
+  // result enum
+  else if (type.includes("core::result")) {
     const types = type.split("::");
     return `${types.at(-4)}<${types.at(-2)?.split(",").at(0)},${types.at(-1)}`;
   } else if (type.includes("::")) {

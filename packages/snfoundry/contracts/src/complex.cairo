@@ -54,22 +54,34 @@ pub trait IComplex<TContractState> {
     // Struct getters
     fn get_struct_with_tuple(self: @TContractState) -> StructWithTuple;
     fn get_complex_struct(self: @TContractState) -> ComplexStruct;
+    fn get_tuple_of_complex_struct_which_contains_tuple(
+        self: @TContractState
+    ) -> (ComplexStruct, StructWithTuple);
 
     // Struct getters with keys
     fn get_struct_with_tuple_with_key(self: @TContractState, key: felt252) -> StructWithTuple;
     fn get_complex_struct_with_key(self: @TContractState, key: felt252) -> ComplexStruct;
+    fn get_tuple_of_complex_struct_which_contains_tuple_with_key(
+        self: @TContractState, key: felt252
+    ) -> (ComplexStruct, StructWithTuple);
 
     // Struct getters with values
     fn get_struct_with_tuple_with_value(
         self: @TContractState, value: StructWithTuple
     ) -> StructWithTuple;
     fn get_complex_struct_with_value(self: @TContractState, value: ComplexStruct) -> ComplexStruct;
+    fn get_tuple_of_complex_struct_which_contains_tuple_with_value(
+        self: @TContractState, value: (ComplexStruct, StructWithTuple)
+    ) -> (ComplexStruct, StructWithTuple);
 
     // Struct setters with keys
     fn set_struct_with_tuple_with_key(
         ref self: TContractState, key: felt252, value: StructWithTuple
     );
     fn set_complex_struct_with_key(ref self: TContractState, key: felt252, value: ComplexStruct);
+    fn set_tuple_of_complex_struct_which_contains_tuple_with_key(
+        ref self: TContractState, key: felt252, value: (ComplexStruct, StructWithTuple)
+    );
 
     // Function to read multiple values from complex types
     fn read_two_complex_values(
@@ -87,6 +99,9 @@ mod Complex {
     struct Storage {
         mapping_struct_with_tuple: LegacyMap<felt252, StructWithTuple>,
         mapping_complex_struct: LegacyMap<felt252, ComplexStruct>,
+        mapping_tuple_of_complex_struct_which_contains_tuple: LegacyMap<
+            felt252, (ComplexStruct, StructWithTuple)
+        >,
     }
 
     #[constructor]
@@ -103,6 +118,12 @@ mod Complex {
             self.mapping_complex_struct.read(0)
         }
 
+        fn get_tuple_of_complex_struct_which_contains_tuple(
+            self: @ContractState
+        ) -> (ComplexStruct, StructWithTuple) {
+            self.mapping_tuple_of_complex_struct_which_contains_tuple.read(0)
+        }
+
         // Struct getters with keys
         fn get_struct_with_tuple_with_key(self: @ContractState, key: felt252) -> StructWithTuple {
             self.mapping_struct_with_tuple.read(key)
@@ -110,6 +131,12 @@ mod Complex {
 
         fn get_complex_struct_with_key(self: @ContractState, key: felt252) -> ComplexStruct {
             self.mapping_complex_struct.read(key)
+        }
+
+        fn get_tuple_of_complex_struct_which_contains_tuple_with_key(
+            self: @ContractState, key: felt252
+        ) -> (ComplexStruct, StructWithTuple) {
+            self.mapping_tuple_of_complex_struct_which_contains_tuple.read(key)
         }
 
         // Struct getters with values
@@ -125,6 +152,12 @@ mod Complex {
             value
         }
 
+        fn get_tuple_of_complex_struct_which_contains_tuple_with_value(
+            self: @ContractState, value: (ComplexStruct, StructWithTuple)
+        ) -> (ComplexStruct, StructWithTuple) {
+            value
+        }
+
         // Struct setters with keys
         fn set_struct_with_tuple_with_key(
             ref self: ContractState, key: felt252, value: StructWithTuple
@@ -136,6 +169,12 @@ mod Complex {
             ref self: ContractState, key: felt252, value: ComplexStruct
         ) {
             self.mapping_complex_struct.write(key, value);
+        }
+
+        fn set_tuple_of_complex_struct_which_contains_tuple_with_key(
+            ref self: ContractState, key: felt252, value: (ComplexStruct, StructWithTuple)
+        ) {
+            self.mapping_tuple_of_complex_struct_which_contains_tuple.write(key, value);
         }
 
         // Function to read multiple values from complex types
