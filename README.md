@@ -30,15 +30,15 @@ Before you begin, you need to install the following tools:
 
 ### Scarb version
 
-To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.5.4`. To accomplish this, first check your local Scarb version:
+To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.6.3`. To accomplish this, first check your local Scarb version:
 
 ```sh
 scarb --version
 ```
 
-If your local Scarb version is not `2.5.4`, you need to install it.
+If your local Scarb version is not `2.6.3`, you need to install it.
 
-- Install Scarb `2.5.4` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
+- Install Scarb `2.6.3` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
 
 ### Starknet Foundry version
 
@@ -54,7 +54,7 @@ If your Starknet Foundry version is not `0.25.0`, you need to install it.
 
 ### RPC specific version
 
-To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, your RPC version must be `0.5.0` or `0.5.1`. This repository contains a .env.example file, where we provided the default RPC URL for the Starknet Testnet: `RPC_URL_SEPOLIA=https://starknet-sepolia.infura.io/v3/c45bd0ce3e584ba4a5e6a5928c9c0b0f`. Let's verify this RPC version is `0.5.1` by running the following command:
+To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, your RPC version must be `0.7.0`. This repository contains a .env.example file, where we provided the default RPC URL for the Starknet Testnet: `RPC_URL_SEPOLIA=https://starknet-sepolia.infura.io/v3/c45bd0ce3e584ba4a5e6a5928c9c0b0f`. Let's verify this RPC version is `0.7.0` by running the following command:
 
 ```sh
 curl --location 'https://starknet-sepolia.infura.io/v3/c45bd0ce3e584ba4a5e6a5928c9c0b0f' \
@@ -67,10 +67,10 @@ curl --location 'https://starknet-sepolia.infura.io/v3/c45bd0ce3e584ba4a5e6a5928
 
 ## Compatible versions
 
-- Scarb - v2.5.4
+- Scarb - v2.6.3
 - Snforge - v0.25.0
-- Cairo - v2.5.4
-- Rpc - v0.5.1
+- Cairo - v2.6.3
+- Rpc - v0.7.0
 
 ## Quickstart
 

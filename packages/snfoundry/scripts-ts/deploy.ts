@@ -7,11 +7,11 @@ import {
 
 const deployScript = async (): Promise<void> => {
   try {
-    await deployContract({}, "Vars");
-    await deployContract({}, "Structs");
-    await deployContract({}, "Tuples");
-    await deployContract({}, "Complex");
-    await deployContract({}, "ArraysSpans");
+  await deployContract({}, "Vars");
+  await deployContract({}, "Structs");
+  await deployContract({}, "Tuples");
+  await deployContract({}, "Complex");
+  await deployContract({}, "ArraysSpans");
   } catch (error) {
     console.log(error.message);
     if (error.message.includes("fetch failed")) {
