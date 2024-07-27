@@ -18,7 +18,12 @@ const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <div className="flex relative flex-col min-h-screen bg-main">
-        {!isDarkMode && (
+        {isDarkMode ? (
+          <>
+            <div className="circle-gradient-dark w-[330px] h-[330px]"></div>
+            <div className="circle-gradient-blue-dark w-[330px] h-[330px]"></div>
+          </>
+        ) : (
           <>
             <div className="circle-gradient w-[330px] h-[330px]"></div>
             <div className="circle-gradient-blue w-[330px] h-[630px]"></div>

@@ -23,16 +23,50 @@ const deployContract = async (
   classHash: string;
   address: string;
 }> => {
-  const compiledContractCasm = JSON.parse(
-    fs
-      .readFileSync(
-        path.resolve(
-          __dirname,
-          `../contracts/target/dev/contracts_${contractName}.compiled_contract_class.json`
+  try {
+    await deployer.getContractVersion(deployer.address);
+  } catch (e) {
+    if (e.toString().includes("Contract not found")) {
+      throw new Error(
+        `The wallet you're using to deploy the contract is not deployed in ${networkName} network`
+      );
+    }
+  }
+
+  let compiledContractCasm;
+
+  try {
+    compiledContractCasm = JSON.parse(
+      fs
+        .readFileSync(
+          path.resolve(
+            __dirname,
+            `../contracts/target/dev/contracts_${contractName}.compiled_contract_class.json`
+          )
         )
-      )
-      .toString("ascii")
-  );
+        .toString("ascii")
+    );
+  } catch (error) {
+    if (
+      typeof error.message === "string" &&
+      error.message.includes("no such file") &&
+      error.message.includes("compiled_contract_class")
+    ) {
+      const match = error.message.match(
+        /\/dev\/(.+?)\.compiled_contract_class/
+      );
+      const contractName = match ? match[1].split("_").pop() : "Unknown";
+      console.error(
+        `The contract "${contractName}" doesn't exist or is not compiled`
+      );
+    } else {
+      console.error(error);
+    }
+    return {
+      classHash: "",
+      address: "",
+    };
+  }
 
   const compiledContractSierra = JSON.parse(
     fs

@@ -7,11 +7,11 @@ import { usePathname } from "next/navigation";
 import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
-import { FaucetButton } from "~~/components/scaffold-stark/FaucetButton";
 import { useTheme } from "next-themes";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { devnet } from "@starknet-react/chains";
 import { SwitchTheme } from "./SwitchTheme";
+import { useAccount, useProvider } from "@starknet-react/core";
 
 type HeaderMenuLink = {
   label: string;
@@ -77,6 +77,20 @@ export const Header = () => {
   const { targetNetwork } = useTargetNetwork();
   const isLocalNetwork = targetNetwork.id === devnet.id;
 
+  const { provider } = useProvider();
+  const { address, status } = useAccount();
+  const [isDeployed, setIsDeployed] = useState(true);
+
+  useEffect(() => {
+    if (status === "connected" && address) {
+      provider.getContractVersion(address).catch((e) => {
+        if (e.toString().includes("Contract not found")) {
+          setIsDeployed(false);
+        }
+      });
+    }
+  }, [status, address, provider]);
+
   return (
     <div className="sticky lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
       <div className="navbar-start w-auto lg:w-1/2">
@@ -127,9 +141,11 @@ export const Header = () => {
         </ul>
       </div>
       <div className="navbar-end flex-grow mr-4 gap-4">
-        {/* <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
-          Not deployed
-        </span> */}
+        {status === "connected" && !isDeployed ? (
+          <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
+            Wallet Not Deployed
+          </span>
+        ) : null}
         <CustomConnectButton />
         {/* <FaucetButton /> */}
         <SwitchTheme

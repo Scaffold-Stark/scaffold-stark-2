@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     Vars: {
       address:
-        "0x0457a9535f5614fcbb1aa2bc08ef7dcd2a37970d1533160c34b8d9cf99c9c11f",
+        "0x07bfdb54c9a4f2f1a59db22ec89bdea73d1637a15f5fc6a78fbbcb3e2b12176d",
       abi: [
         {
           type: "impl",
@@ -1084,7 +1084,7 @@ const deployedContracts = {
     },
     Structs: {
       address:
-        "0x0146610f38a762f5bc8a81707b31a1460a2e98e28cbb06db3364bb6e9ee9d9bf",
+        "0x0475ded69153d5452825de686ca936ea4baa416931748a91686b748cc50d0e38",
       abi: [
         {
           type: "impl",
@@ -1670,7 +1670,7 @@ const deployedContracts = {
     },
     Tuples: {
       address:
-        "0x025ccbb6b06a6683884b6934d34bcbae29b15a4b9e89229a6ad7571fa1e19914",
+        "0x00572eb5900f0d3bfc0a88415a56dc7a7436d321dd315bbaa6dbc04ae3449e8c",
       abi: [
         {
           type: "impl",
@@ -1980,7 +1980,7 @@ const deployedContracts = {
     },
     Complex: {
       address:
-        "0x078bae35199c2388d2cdce36d09f118c93633e442105ef40efdae5725afcbbf4",
+        "0x04b243fff53e4f4f3eb47f64e4c9fdc4d09ead7f6ad0915cf77d180e2dbebeea",
       abi: [
         {
           type: "impl",
@@ -2336,7 +2336,7 @@ const deployedContracts = {
     },
     ArraysSpans: {
       address:
-        "0x07bde6fadadb29c46ae8d561b7bb018f963fa734ac52cb825f539b6bee7fdb7c",
+        "0x020fc13a0f88470ac8117970ec6222784a937e826c4a9aa23e0db41e616506a1",
       abi: [
         {
           type: "impl",
@@ -3076,14 +3076,28 @@ const deployedContracts = {
     },
   },
   sepolia: {
-    YourContract: {
+    Vars: {
       address:
-        "0x0215af21b100eb7b1d65e9115ccb89e0f63fab6ce06e66da3aacbaf397a0df19",
+        "0x488beb5de3e2d9e87877ab68e5518bfb50abe266aa5b1d91df3bd7e1144d587",
       abi: [
         {
           type: "impl",
-          name: "YourContractImpl",
-          interface_name: "contracts::YourContract::IYourContract",
+          name: "VarsImpl",
+          interface_name: "contracts::vars::IVars",
+        },
+        {
+          type: "struct",
+          name: "core::integer::u256",
+          members: [
+            {
+              name: "low",
+              type: "core::integer::u128",
+            },
+            {
+              name: "high",
+              type: "core::integer::u128",
+            },
+          ],
         },
         {
           type: "struct",
@@ -3102,6 +3116,1637 @@ const deployedContracts = {
               type: "core::integer::u32",
             },
           ],
+        },
+        {
+          type: "enum",
+          name: "core::bool",
+          variants: [
+            {
+              name: "False",
+              type: "()",
+            },
+            {
+              name: "True",
+              type: "()",
+            },
+          ],
+        },
+        {
+          type: "interface",
+          name: "contracts::vars::IVars",
+          items: [
+            {
+              type: "function",
+              name: "get_u256",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::integer::u256",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_felt",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::felt252",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_byte_array",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::byte_array::ByteArray",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_contract_address",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_bool",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::bool",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_u8",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::integer::u8",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_u16",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::integer::u16",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_u32",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::integer::u32",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_u64",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::integer::u64",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_u128",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::integer::u128",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_i8",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::integer::i8",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_i16",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::integer::i16",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_i32",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::integer::i32",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_i64",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::integer::i64",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_i128",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::integer::i128",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_bytes31",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::bytes_31::bytes31",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_non_zero_u256",
+              inputs: [],
+              outputs: [
+                {
+                  type: "core::zeroable::NonZero::<core::integer::u256>",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_u256_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::integer::u256",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::u256",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_felt_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::felt252",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_byte_array_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::byte_array::ByteArray",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::byte_array::ByteArray",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_contract_address_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_bool_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::bool",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::bool",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_u8_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::integer::u8",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::u8",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_u16_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::integer::u16",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::u16",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_u32_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::integer::u32",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::u32",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_u64_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::integer::u64",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::u64",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_u128_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::integer::u128",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::u128",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_i8_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::integer::i8",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::i8",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_i16_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::integer::i16",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::i16",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_i32_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::integer::i32",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::i32",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_i64_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::integer::i64",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::i64",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_i128_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::integer::i128",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::i128",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_bytes31_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::bytes_31::bytes31",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::bytes_31::bytes31",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_non_zero_u256_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "core::zeroable::NonZero::<core::integer::u256>",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::zeroable::NonZero::<core::integer::u256>",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_u256_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::u256",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_felt_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::felt252",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_byte_array_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::byte_array::ByteArray",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_contract_address_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_bool_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::bool",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_u8_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::u8",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_u16_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::u16",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_u32_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::u32",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_u64_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::u64",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_u128_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::u128",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_i8_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::i8",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_i16_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::i16",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_i32_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::i32",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_i64_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::i64",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_i128_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::i128",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_bytes31_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::bytes_31::bytes31",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_non_zero_u256_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::zeroable::NonZero::<core::integer::u256>",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "set_u256_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "core::integer::u256",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_felt_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_byte_array_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "core::byte_array::ByteArray",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_contract_address_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_bool_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "core::bool",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_u8_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "core::integer::u8",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_u16_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "core::integer::u16",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_u32_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "core::integer::u32",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_u64_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "core::integer::u64",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_u128_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "core::integer::u128",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_i8_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "core::integer::i8",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_i16_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "core::integer::i16",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_i32_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "core::integer::i32",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_i64_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "core::integer::i64",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_i128_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "core::integer::i128",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_bytes31_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "core::bytes_31::bytes31",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_non_zero_u256_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "core::zeroable::NonZero::<core::integer::u256>",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+          ],
+        },
+        {
+          type: "constructor",
+          name: "constructor",
+          inputs: [],
+        },
+        {
+          type: "event",
+          name: "contracts::vars::Vars::Event",
+          kind: "enum",
+          variants: [],
+        },
+      ],
+    },
+    Structs: {
+      address:
+        "0x3eff86f3e7acf83a483462858433fe918301f8fdb79e53ee53e5838d93f3c21",
+      abi: [
+        {
+          type: "impl",
+          name: "StructsImpl",
+          interface_name: "contracts::structs::IStructs",
+        },
+        {
+          type: "struct",
+          name: "core::integer::u256",
+          members: [
+            {
+              name: "low",
+              type: "core::integer::u128",
+            },
+            {
+              name: "high",
+              type: "core::integer::u128",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "core::byte_array::ByteArray",
+          members: [
+            {
+              name: "data",
+              type: "core::array::Array::<core::bytes_31::bytes31>",
+            },
+            {
+              name: "pending_word",
+              type: "core::felt252",
+            },
+            {
+              name: "pending_word_len",
+              type: "core::integer::u32",
+            },
+          ],
+        },
+        {
+          type: "enum",
+          name: "contracts::structs::SampleEnum",
+          variants: [
+            {
+              name: "enum1",
+              type: "core::integer::u256",
+            },
+            {
+              name: "enum2",
+              type: "core::integer::u256",
+            },
+            {
+              name: "enum3",
+              type: "core::byte_array::ByteArray",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::structs::SampleStruct",
+          members: [
+            {
+              name: "id",
+              type: "core::integer::u256",
+            },
+            {
+              name: "name",
+              type: "core::byte_array::ByteArray",
+            },
+            {
+              name: "status",
+              type: "contracts::structs::SampleEnum",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::structs::SampleNestedStruct",
+          members: [
+            {
+              name: "user",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "data",
+              type: "contracts::structs::SampleStruct",
+            },
+            {
+              name: "status",
+              type: "contracts::structs::SampleEnum",
+            },
+          ],
+        },
+        {
+          type: "enum",
+          name: "core::bool",
+          variants: [
+            {
+              name: "False",
+              type: "()",
+            },
+            {
+              name: "True",
+              type: "()",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::structs::StructWithFiveElements",
+          members: [
+            {
+              name: "element1",
+              type: "core::integer::u256",
+            },
+            {
+              name: "element2",
+              type: "core::felt252",
+            },
+            {
+              name: "element3",
+              type: "core::byte_array::ByteArray",
+            },
+            {
+              name: "element4",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "element5",
+              type: "core::bool",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::structs::StructWithEightElements",
+          members: [
+            {
+              name: "element1",
+              type: "core::integer::u256",
+            },
+            {
+              name: "element2",
+              type: "core::felt252",
+            },
+            {
+              name: "element3",
+              type: "core::byte_array::ByteArray",
+            },
+            {
+              name: "element4",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "element5",
+              type: "core::bool",
+            },
+            {
+              name: "element6",
+              type: "core::integer::u64",
+            },
+            {
+              name: "element7",
+              type: "core::integer::i128",
+            },
+            {
+              name: "element8",
+              type: "core::bytes_31::bytes31",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::structs::Layer1",
+          members: [
+            {
+              name: "layer1_element",
+              type: "core::integer::u256",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::structs::Layer2",
+          members: [
+            {
+              name: "layer2_element",
+              type: "contracts::structs::Layer1",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::structs::Layer3",
+          members: [
+            {
+              name: "layer3_element",
+              type: "contracts::structs::Layer2",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::structs::StructWith4Layers",
+          members: [
+            {
+              name: "layer4_element",
+              type: "contracts::structs::Layer3",
+            },
+          ],
+        },
+        {
+          type: "interface",
+          name: "contracts::structs::IStructs",
+          items: [
+            {
+              type: "function",
+              name: "get_sample_struct",
+              inputs: [],
+              outputs: [
+                {
+                  type: "contracts::structs::SampleStruct",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_sample_nested_struct",
+              inputs: [],
+              outputs: [
+                {
+                  type: "contracts::structs::SampleNestedStruct",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_sample_enum",
+              inputs: [],
+              outputs: [
+                {
+                  type: "contracts::structs::SampleEnum",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_struct_with_five_elements",
+              inputs: [],
+              outputs: [
+                {
+                  type: "contracts::structs::StructWithFiveElements",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_struct_with_eight_elements",
+              inputs: [],
+              outputs: [
+                {
+                  type: "contracts::structs::StructWithEightElements",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_struct_with_4_layers",
+              inputs: [],
+              outputs: [
+                {
+                  type: "contracts::structs::StructWith4Layers",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_sample_struct_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::structs::SampleStruct",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_sample_nested_struct_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::structs::SampleNestedStruct",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_sample_enum_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::structs::SampleEnum",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_struct_with_five_elements_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::structs::StructWithFiveElements",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_struct_with_eight_elements_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::structs::StructWithEightElements",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_struct_with_4_layers_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::structs::StructWith4Layers",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_sample_struct_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "contracts::structs::SampleStruct",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::structs::SampleStruct",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_sample_nested_struct_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "contracts::structs::SampleNestedStruct",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::structs::SampleNestedStruct",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_sample_enum_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "contracts::structs::SampleEnum",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::structs::SampleEnum",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_struct_with_five_elements_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "contracts::structs::StructWithFiveElements",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::structs::StructWithFiveElements",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_struct_with_eight_elements_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "contracts::structs::StructWithEightElements",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::structs::StructWithEightElements",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_struct_with_4_layers_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "contracts::structs::StructWith4Layers",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::structs::StructWith4Layers",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "set_sample_struct_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "contracts::structs::SampleStruct",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_sample_nested_struct_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "contracts::structs::SampleNestedStruct",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_sample_enum_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "contracts::structs::SampleEnum",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_struct_with_five_elements_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "contracts::structs::StructWithFiveElements",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_struct_with_eight_elements_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "contracts::structs::StructWithEightElements",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_struct_with_4_layers_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "contracts::structs::StructWith4Layers",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+          ],
+        },
+        {
+          type: "constructor",
+          name: "constructor",
+          inputs: [],
+        },
+        {
+          type: "event",
+          name: "contracts::structs::Structs::Event",
+          kind: "enum",
+          variants: [],
+        },
+      ],
+    },
+    Tuples: {
+      address:
+        "0x11ef4116360176ca73f8b2f6f4c07748f6f2e6b7a5e160e0d0509f92e598467",
+      abi: [
+        {
+          type: "impl",
+          name: "TuplesImpl",
+          interface_name: "contracts::tuples::ITuples",
         },
         {
           type: "struct",
@@ -3132,36 +4777,350 @@ const deployedContracts = {
           ],
         },
         {
-          type: "enum",
-          name: "core::result::Result::<core::integer::u64, core::integer::u64>",
-          variants: [
+          type: "struct",
+          name: "core::byte_array::ByteArray",
+          members: [
             {
-              name: "Ok",
-              type: "core::integer::u64",
+              name: "data",
+              type: "core::array::Array::<core::bytes_31::bytes31>",
             },
             {
-              name: "Err",
-              type: "core::integer::u64",
+              name: "pending_word",
+              type: "core::felt252",
+            },
+            {
+              name: "pending_word_len",
+              type: "core::integer::u32",
+            },
+          ],
+        },
+        {
+          type: "interface",
+          name: "contracts::tuples::ITuples",
+          items: [
+            {
+              type: "function",
+              name: "get_tuple_2_u256",
+              inputs: [],
+              outputs: [
+                {
+                  type: "(core::integer::u256, core::integer::u256)",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_tuple_3_mixed",
+              inputs: [],
+              outputs: [
+                {
+                  type: "(core::felt252, core::integer::u256, core::bool)",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_tuple_4_mixed",
+              inputs: [],
+              outputs: [
+                {
+                  type: "(core::starknet::contract_address::ContractAddress, core::felt252, core::integer::u128, core::integer::u8)",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_tuple_with_byte_array",
+              inputs: [],
+              outputs: [
+                {
+                  type: "(core::byte_array::ByteArray, core::felt252, core::integer::u256)",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_tuple_2_u256_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "(core::integer::u256, core::integer::u256)",
+                },
+              ],
+              outputs: [
+                {
+                  type: "(core::integer::u256, core::integer::u256)",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_tuple_3_mixed_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "(core::felt252, core::integer::u256, core::bool)",
+                },
+              ],
+              outputs: [
+                {
+                  type: "(core::felt252, core::integer::u256, core::bool)",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_tuple_4_mixed_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "(core::starknet::contract_address::ContractAddress, core::felt252, core::integer::u128, core::integer::u8)",
+                },
+              ],
+              outputs: [
+                {
+                  type: "(core::starknet::contract_address::ContractAddress, core::felt252, core::integer::u128, core::integer::u8)",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_tuple_with_byte_array_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "(core::byte_array::ByteArray, core::felt252, core::integer::u256)",
+                },
+              ],
+              outputs: [
+                {
+                  type: "(core::byte_array::ByteArray, core::felt252, core::integer::u256)",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_tuple_2_u256_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "(core::integer::u256, core::integer::u256)",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_tuple_3_mixed_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "(core::felt252, core::integer::u256, core::bool)",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_tuple_4_mixed_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "(core::starknet::contract_address::ContractAddress, core::felt252, core::integer::u128, core::integer::u8)",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_tuple_with_byte_array_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "(core::byte_array::ByteArray, core::felt252, core::integer::u256)",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "set_tuple_2_u256_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "(core::integer::u256, core::integer::u256)",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_tuple_3_mixed_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "(core::felt252, core::integer::u256, core::bool)",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_tuple_4_mixed_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "(core::starknet::contract_address::ContractAddress, core::felt252, core::integer::u128, core::integer::u8)",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_tuple_with_byte_array_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "(core::byte_array::ByteArray, core::felt252, core::integer::u256)",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+          ],
+        },
+        {
+          type: "constructor",
+          name: "constructor",
+          inputs: [],
+        },
+        {
+          type: "event",
+          name: "contracts::tuples::Tuples::Event",
+          kind: "enum",
+          variants: [],
+        },
+      ],
+    },
+    Complex: {
+      address:
+        "0x714cd61a161484df1dde846d21f14deedeaa97c39c1e3400c3f4d3a4d9ef09f",
+      abi: [
+        {
+          type: "impl",
+          name: "ComplexImpl",
+          interface_name: "contracts::complex::IComplex",
+        },
+        {
+          type: "struct",
+          name: "core::integer::u256",
+          members: [
+            {
+              name: "low",
+              type: "core::integer::u128",
+            },
+            {
+              name: "high",
+              type: "core::integer::u128",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "core::byte_array::ByteArray",
+          members: [
+            {
+              name: "data",
+              type: "core::array::Array::<core::bytes_31::bytes31>",
+            },
+            {
+              name: "pending_word",
+              type: "core::felt252",
+            },
+            {
+              name: "pending_word_len",
+              type: "core::integer::u32",
             },
           ],
         },
         {
           type: "enum",
-          name: "core::option::Option::<core::byte_array::ByteArray>",
+          name: "core::bool",
           variants: [
             {
-              name: "Some",
-              type: "core::byte_array::ByteArray",
+              name: "False",
+              type: "()",
             },
             {
-              name: "None",
+              name: "True",
               type: "()",
             },
           ],
         },
         {
+          type: "struct",
+          name: "contracts::complex::StructWithTuple",
+          members: [
+            {
+              name: "tuple_element",
+              type: "(core::integer::u256, core::byte_array::ByteArray, core::bool)",
+            },
+            {
+              name: "element2",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+          ],
+        },
+        {
           type: "enum",
-          name: "contracts::YourContract::SampleEnum",
+          name: "contracts::complex::SampleEnum",
           variants: [
             {
               name: "enum1",
@@ -3179,7 +5138,7 @@ const deployedContracts = {
         },
         {
           type: "struct",
-          name: "contracts::YourContract::SampleStruct",
+          name: "contracts::complex::SampleStruct",
           members: [
             {
               name: "id",
@@ -3191,13 +5150,355 @@ const deployedContracts = {
             },
             {
               name: "status",
-              type: "contracts::YourContract::SampleEnum",
+              type: "contracts::complex::SampleEnum",
+            },
+          ],
+        },
+        {
+          type: "enum",
+          name: "core::option::Option::<contracts::complex::SampleStruct>",
+          variants: [
+            {
+              name: "Some",
+              type: "contracts::complex::SampleStruct",
+            },
+            {
+              name: "None",
+              type: "()",
+            },
+          ],
+        },
+        {
+          type: "enum",
+          name: "core::result::Result::<core::bool, core::integer::u64>",
+          variants: [
+            {
+              name: "Ok",
+              type: "core::bool",
+            },
+            {
+              name: "Err",
+              type: "core::integer::u64",
             },
           ],
         },
         {
           type: "struct",
-          name: "contracts::YourContract::SampleNestedStruct",
+          name: "contracts::complex::Layer1",
+          members: [
+            {
+              name: "layer1_element",
+              type: "core::integer::u256",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::complex::Layer2",
+          members: [
+            {
+              name: "layer2_element",
+              type: "contracts::complex::Layer1",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::complex::Layer3",
+          members: [
+            {
+              name: "layer3_element",
+              type: "contracts::complex::Layer2",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::complex::StructWith4Layers",
+          members: [
+            {
+              name: "layer4_element",
+              type: "contracts::complex::Layer3",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::complex::ComplexStruct",
+          members: [
+            {
+              name: "u256_id",
+              type: "core::integer::u256",
+            },
+            {
+              name: "optional_data",
+              type: "core::option::Option::<contracts::complex::SampleStruct>",
+            },
+            {
+              name: "result_status",
+              type: "core::result::Result::<core::bool, core::integer::u64>",
+            },
+            {
+              name: "nested_struct",
+              type: "contracts::complex::StructWith4Layers",
+            },
+            {
+              name: "tuple_data",
+              type: "(core::integer::u256, core::byte_array::ByteArray)",
+            },
+          ],
+        },
+        {
+          type: "interface",
+          name: "contracts::complex::IComplex",
+          items: [
+            {
+              type: "function",
+              name: "get_struct_with_tuple",
+              inputs: [],
+              outputs: [
+                {
+                  type: "contracts::complex::StructWithTuple",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_complex_struct",
+              inputs: [],
+              outputs: [
+                {
+                  type: "contracts::complex::ComplexStruct",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_struct_with_tuple_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::complex::StructWithTuple",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_complex_struct_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::complex::ComplexStruct",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_struct_with_tuple_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "contracts::complex::StructWithTuple",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::complex::StructWithTuple",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_complex_struct_with_value",
+              inputs: [
+                {
+                  name: "value",
+                  type: "contracts::complex::ComplexStruct",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::complex::ComplexStruct",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "set_struct_with_tuple_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "contracts::complex::StructWithTuple",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "set_complex_struct_with_key",
+              inputs: [
+                {
+                  name: "key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "value",
+                  type: "contracts::complex::ComplexStruct",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "read_two_complex_values",
+              inputs: [
+                {
+                  name: "key1",
+                  type: "core::felt252",
+                },
+                {
+                  name: "key2",
+                  type: "core::felt252",
+                },
+              ],
+              outputs: [
+                {
+                  type: "(contracts::complex::StructWithTuple, contracts::complex::ComplexStruct)",
+                },
+              ],
+              state_mutability: "view",
+            },
+          ],
+        },
+        {
+          type: "constructor",
+          name: "constructor",
+          inputs: [],
+        },
+        {
+          type: "event",
+          name: "contracts::complex::Complex::Event",
+          kind: "enum",
+          variants: [],
+        },
+      ],
+    },
+    ArraysSpans: {
+      address:
+        "0x2522e8180dc63e4a69fe2a62610bad9861d4ca0dd41938ce7e6449708011094",
+      abi: [
+        {
+          type: "impl",
+          name: "ArraysSpansImpl",
+          interface_name: "contracts::arrays_spans::IArraysSpans",
+        },
+        {
+          type: "struct",
+          name: "core::integer::u256",
+          members: [
+            {
+              name: "low",
+              type: "core::integer::u128",
+            },
+            {
+              name: "high",
+              type: "core::integer::u128",
+            },
+          ],
+        },
+        {
+          type: "enum",
+          name: "core::bool",
+          variants: [
+            {
+              name: "False",
+              type: "()",
+            },
+            {
+              name: "True",
+              type: "()",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "core::byte_array::ByteArray",
+          members: [
+            {
+              name: "data",
+              type: "core::array::Array::<core::bytes_31::bytes31>",
+            },
+            {
+              name: "pending_word",
+              type: "core::felt252",
+            },
+            {
+              name: "pending_word_len",
+              type: "core::integer::u32",
+            },
+          ],
+        },
+        {
+          type: "enum",
+          name: "contracts::arrays_spans::SampleEnum",
+          variants: [
+            {
+              name: "enum1",
+              type: "core::integer::u256",
+            },
+            {
+              name: "enum2",
+              type: "core::integer::u256",
+            },
+            {
+              name: "enum3",
+              type: "core::byte_array::ByteArray",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::arrays_spans::SampleStruct",
+          members: [
+            {
+              name: "id",
+              type: "core::integer::u256",
+            },
+            {
+              name: "name",
+              type: "core::byte_array::ByteArray",
+            },
+            {
+              name: "status",
+              type: "contracts::arrays_spans::SampleEnum",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::arrays_spans::SampleNestedStruct",
           members: [
             {
               name: "user",
@@ -3205,11 +5506,125 @@ const deployedContracts = {
             },
             {
               name: "data",
-              type: "contracts::YourContract::SampleStruct",
+              type: "contracts::arrays_spans::SampleStruct",
             },
             {
               name: "status",
-              type: "contracts::YourContract::SampleEnum",
+              type: "contracts::arrays_spans::SampleEnum",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::arrays_spans::StructWithFiveElements",
+          members: [
+            {
+              name: "element1",
+              type: "core::integer::u256",
+            },
+            {
+              name: "element2",
+              type: "core::felt252",
+            },
+            {
+              name: "element3",
+              type: "core::byte_array::ByteArray",
+            },
+            {
+              name: "element4",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "element5",
+              type: "core::bool",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::arrays_spans::StructWithEightElements",
+          members: [
+            {
+              name: "element1",
+              type: "core::integer::u256",
+            },
+            {
+              name: "element2",
+              type: "core::felt252",
+            },
+            {
+              name: "element3",
+              type: "core::byte_array::ByteArray",
+            },
+            {
+              name: "element4",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "element5",
+              type: "core::bool",
+            },
+            {
+              name: "element6",
+              type: "core::integer::u64",
+            },
+            {
+              name: "element7",
+              type: "core::integer::i128",
+            },
+            {
+              name: "element8",
+              type: "core::bytes_31::bytes31",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::arrays_spans::Layer1",
+          members: [
+            {
+              name: "layer1_element",
+              type: "core::integer::u256",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::arrays_spans::Layer2",
+          members: [
+            {
+              name: "layer2_element",
+              type: "contracts::arrays_spans::Layer1",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::arrays_spans::Layer3",
+          members: [
+            {
+              name: "layer3_element",
+              type: "contracts::arrays_spans::Layer2",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::arrays_spans::StructWith4Layers",
+          members: [
+            {
+              name: "layer4_element",
+              type: "contracts::arrays_spans::Layer3",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "core::array::Span::<core::integer::u256>",
+          members: [
+            {
+              name: "snapshot",
+              type: "@core::array::Array::<core::integer::u256>",
             },
           ],
         },
@@ -3244,605 +5659,489 @@ const deployedContracts = {
           ],
         },
         {
-          type: "struct",
-          name: "core::array::Span::<core::byte_array::ByteArray>",
-          members: [
-            {
-              name: "snapshot",
-              type: "@core::array::Array::<core::byte_array::ByteArray>",
-            },
-          ],
-        },
-        {
-          type: "struct",
-          name: "core::array::Span::<core::integer::u256>",
-          members: [
-            {
-              name: "snapshot",
-              type: "@core::array::Array::<core::integer::u256>",
-            },
-          ],
-        },
-        {
           type: "interface",
-          name: "contracts::YourContract::IYourContract",
+          name: "contracts::arrays_spans::IArraysSpans",
           items: [
             {
               type: "function",
-              name: "gretting",
-              inputs: [],
+              name: "get_array_u256",
+              inputs: [
+                {
+                  name: "array",
+                  type: "core::array::Array::<core::integer::u256>",
+                },
+              ],
               outputs: [
                 {
-                  type: "core::byte_array::ByteArray",
+                  type: "core::array::Array::<core::integer::u256>",
                 },
               ],
               state_mutability: "view",
             },
             {
               type: "function",
-              name: "total_counter",
-              inputs: [],
+              name: "get_array_felt252",
+              inputs: [
+                {
+                  name: "array",
+                  type: "core::array::Array::<core::felt252>",
+                },
+              ],
               outputs: [
                 {
-                  type: "core::integer::u256",
+                  type: "core::array::Array::<core::felt252>",
                 },
               ],
               state_mutability: "view",
             },
             {
               type: "function",
-              name: "counter",
-              inputs: [],
+              name: "get_array_bool",
+              inputs: [
+                {
+                  name: "array",
+                  type: "core::array::Array::<core::bool>",
+                },
+              ],
               outputs: [
                 {
-                  type: "core::integer::u64",
+                  type: "core::array::Array::<core::bool>",
                 },
               ],
               state_mutability: "view",
             },
             {
               type: "function",
-              name: "var",
-              inputs: [],
+              name: "get_array_contract_address",
+              inputs: [
+                {
+                  name: "array",
+                  type: "core::array::Array::<core::starknet::contract_address::ContractAddress>",
+                },
+              ],
               outputs: [
                 {
-                  type: "core::felt252",
+                  type: "core::array::Array::<core::starknet::contract_address::ContractAddress>",
                 },
               ],
               state_mutability: "view",
             },
             {
               type: "function",
-              name: "t1",
-              inputs: [],
+              name: "get_array_sample_struct",
+              inputs: [
+                {
+                  name: "array",
+                  type: "core::array::Array::<contracts::arrays_spans::SampleStruct>",
+                },
+              ],
               outputs: [
                 {
-                  type: "(core::integer::u64, core::byte_array::ByteArray)",
+                  type: "core::array::Array::<contracts::arrays_spans::SampleStruct>",
                 },
               ],
               state_mutability: "view",
             },
             {
               type: "function",
-              name: "var2",
-              inputs: [],
+              name: "get_array_sample_nested_struct",
+              inputs: [
+                {
+                  name: "array",
+                  type: "core::array::Array::<contracts::arrays_spans::SampleNestedStruct>",
+                },
+              ],
               outputs: [
                 {
-                  type: "core::starknet::contract_address::ContractAddress",
+                  type: "core::array::Array::<contracts::arrays_spans::SampleNestedStruct>",
                 },
               ],
               state_mutability: "view",
             },
             {
               type: "function",
-              name: "set_total_counter",
+              name: "get_array_struct_with_five_elements",
               inputs: [
                 {
-                  name: "new_total_counter",
-                  type: "core::integer::u256",
+                  name: "array",
+                  type: "core::array::Array::<contracts::arrays_spans::StructWithFiveElements>",
                 },
               ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "set_counter",
-              inputs: [
-                {
-                  name: "new_counter",
-                  type: "core::integer::u64",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "set_gretting",
-              inputs: [
-                {
-                  name: "new_greeting",
-                  type: "core::byte_array::ByteArray",
-                },
-                {
-                  name: "amount_eth",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "set_premium",
-              inputs: [
-                {
-                  name: "new_premium",
-                  type: "core::bool",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "set_var",
-              inputs: [
-                {
-                  name: "new_var",
-                  type: "core::felt252",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "set_t1",
-              inputs: [
-                {
-                  name: "new_t1",
-                  type: "(core::integer::u64, core::byte_array::ByteArray)",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "set_var2",
-              inputs: [
-                {
-                  name: "new_var2",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "var3",
-              inputs: [],
               outputs: [
                 {
-                  type: "core::result::Result::<core::integer::u64, core::integer::u64>",
+                  type: "core::array::Array::<contracts::arrays_spans::StructWithFiveElements>",
                 },
               ],
               state_mutability: "view",
             },
             {
               type: "function",
-              name: "set_var3",
+              name: "get_array_struct_with_eight_elements",
               inputs: [
                 {
-                  name: "new_var3",
-                  type: "core::result::Result::<core::integer::u64, core::integer::u64>",
+                  name: "array",
+                  type: "core::array::Array::<contracts::arrays_spans::StructWithEightElements>",
                 },
               ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "var4",
-              inputs: [],
               outputs: [
                 {
-                  type: "core::option::Option::<core::byte_array::ByteArray>",
+                  type: "core::array::Array::<contracts::arrays_spans::StructWithEightElements>",
                 },
               ],
               state_mutability: "view",
             },
             {
               type: "function",
-              name: "set_var4",
+              name: "get_array_struct_with_4_layers",
               inputs: [
                 {
-                  name: "new_var4",
-                  type: "core::option::Option::<core::byte_array::ByteArray>",
+                  name: "array",
+                  type: "core::array::Array::<contracts::arrays_spans::StructWith4Layers>",
                 },
               ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "withdraw",
-              inputs: [],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "premium",
-              inputs: [],
               outputs: [
                 {
-                  type: "core::bool",
+                  type: "core::array::Array::<contracts::arrays_spans::StructWith4Layers>",
                 },
               ],
               state_mutability: "view",
             },
             {
               type: "function",
-              name: "test_simple_enum_read",
-              inputs: [],
+              name: "get_span_u256",
+              inputs: [
+                {
+                  name: "span",
+                  type: "core::array::Span::<core::integer::u256>",
+                },
+              ],
               outputs: [
                 {
-                  type: "contracts::YourContract::SampleEnum",
+                  type: "core::array::Span::<core::integer::u256>",
                 },
               ],
               state_mutability: "view",
             },
             {
               type: "function",
-              name: "test_simple_enum_write",
-              inputs: [
-                {
-                  name: "sample_enum",
-                  type: "contracts::YourContract::SampleEnum",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "test_struct_read",
-              inputs: [],
-              outputs: [
-                {
-                  type: "contracts::YourContract::SampleStruct",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "test_struct_write",
-              inputs: [
-                {
-                  name: "sample_struct",
-                  type: "contracts::YourContract::SampleStruct",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "test_nested_struct_read",
-              inputs: [],
-              outputs: [
-                {
-                  type: "contracts::YourContract::SampleNestedStruct",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "test_nested_struct_write",
-              inputs: [
-                {
-                  name: "sample_nested_struct",
-                  type: "contracts::YourContract::SampleNestedStruct",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "test_write_span_felt",
+              name: "get_span_felt252",
               inputs: [
                 {
                   name: "span",
                   type: "core::array::Span::<core::felt252>",
                 },
               ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "test_write_span_u256",
-              inputs: [
+              outputs: [
                 {
-                  name: "span",
-                  type: "core::array::Array::<core::integer::u256>",
+                  type: "core::array::Span::<core::felt252>",
                 },
               ],
-              outputs: [],
-              state_mutability: "external",
+              state_mutability: "view",
             },
             {
               type: "function",
-              name: "test_write_span_bool",
+              name: "get_span_bool",
               inputs: [
                 {
                   name: "span",
                   type: "core::array::Span::<core::bool>",
                 },
               ],
-              outputs: [],
-              state_mutability: "external",
+              outputs: [
+                {
+                  type: "core::array::Span::<core::bool>",
+                },
+              ],
+              state_mutability: "view",
             },
             {
               type: "function",
-              name: "test_write_span_address",
+              name: "get_span_contract_address",
               inputs: [
                 {
                   name: "span",
                   type: "core::array::Span::<core::starknet::contract_address::ContractAddress>",
                 },
               ],
-              outputs: [],
-              state_mutability: "external",
+              outputs: [
+                {
+                  type: "core::array::Span::<core::starknet::contract_address::ContractAddress>",
+                },
+              ],
+              state_mutability: "view",
             },
             {
               type: "function",
-              name: "test_write_span_byte_array",
+              name: "get_array_value_u256",
+              inputs: [
+                {
+                  name: "array",
+                  type: "core::array::Array::<core::integer::u256>",
+                },
+                {
+                  name: "index",
+                  type: "core::integer::u32",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::integer::u256",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_array_value_felt252",
+              inputs: [
+                {
+                  name: "array",
+                  type: "core::array::Array::<core::felt252>",
+                },
+                {
+                  name: "index",
+                  type: "core::integer::u32",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::felt252",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_array_value_bool",
+              inputs: [
+                {
+                  name: "array",
+                  type: "core::array::Array::<core::bool>",
+                },
+                {
+                  name: "index",
+                  type: "core::integer::u32",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::bool",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_array_value_contract_address",
+              inputs: [
+                {
+                  name: "array",
+                  type: "core::array::Array::<core::starknet::contract_address::ContractAddress>",
+                },
+                {
+                  name: "index",
+                  type: "core::integer::u32",
+                },
+              ],
+              outputs: [
+                {
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_array_value_sample_struct",
+              inputs: [
+                {
+                  name: "array",
+                  type: "core::array::Array::<contracts::arrays_spans::SampleStruct>",
+                },
+                {
+                  name: "index",
+                  type: "core::integer::u32",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::arrays_spans::SampleStruct",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_array_value_sample_nested_struct",
+              inputs: [
+                {
+                  name: "array",
+                  type: "core::array::Array::<contracts::arrays_spans::SampleNestedStruct>",
+                },
+                {
+                  name: "index",
+                  type: "core::integer::u32",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::arrays_spans::SampleNestedStruct",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_array_value_struct_with_five_elements",
+              inputs: [
+                {
+                  name: "array",
+                  type: "core::array::Array::<contracts::arrays_spans::StructWithFiveElements>",
+                },
+                {
+                  name: "index",
+                  type: "core::integer::u32",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::arrays_spans::StructWithFiveElements",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_array_value_struct_with_eight_elements",
+              inputs: [
+                {
+                  name: "array",
+                  type: "core::array::Array::<contracts::arrays_spans::StructWithEightElements>",
+                },
+                {
+                  name: "index",
+                  type: "core::integer::u32",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::arrays_spans::StructWithEightElements",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_array_value_struct_with_4_layers",
+              inputs: [
+                {
+                  name: "array",
+                  type: "core::array::Array::<contracts::arrays_spans::StructWith4Layers>",
+                },
+                {
+                  name: "index",
+                  type: "core::integer::u32",
+                },
+              ],
+              outputs: [
+                {
+                  type: "contracts::arrays_spans::StructWith4Layers",
+                },
+              ],
+              state_mutability: "view",
+            },
+            {
+              type: "function",
+              name: "get_span_value_u256",
               inputs: [
                 {
                   name: "span",
-                  type: "core::array::Span::<core::byte_array::ByteArray>",
+                  type: "core::array::Span::<core::integer::u256>",
+                },
+                {
+                  name: "index",
+                  type: "core::integer::u32",
                 },
               ],
-              outputs: [],
-              state_mutability: "external",
+              outputs: [
+                {
+                  type: "core::integer::u256",
+                },
+              ],
+              state_mutability: "view",
             },
             {
               type: "function",
-              name: "test_double_input_span",
+              name: "get_span_value_felt252",
               inputs: [
                 {
-                  name: "span1",
-                  type: "core::array::Span::<core::integer::u256>",
+                  name: "span",
+                  type: "core::array::Span::<core::felt252>",
                 },
                 {
-                  name: "span2",
-                  type: "core::array::Span::<core::integer::u256>",
+                  name: "index",
+                  type: "core::integer::u32",
                 },
               ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "get_last_span_data_felt",
-              inputs: [],
               outputs: [
                 {
-                  type: "(core::felt252, core::felt252)",
+                  type: "core::felt252",
                 },
               ],
               state_mutability: "view",
             },
             {
               type: "function",
-              name: "get_last_span_data_u256",
-              inputs: [],
+              name: "get_span_value_bool",
+              inputs: [
+                {
+                  name: "span",
+                  type: "core::array::Span::<core::bool>",
+                },
+                {
+                  name: "index",
+                  type: "core::integer::u32",
+                },
+              ],
               outputs: [
                 {
-                  type: "(core::felt252, core::integer::u256)",
+                  type: "core::bool",
                 },
               ],
               state_mutability: "view",
             },
             {
               type: "function",
-              name: "get_last_span_data_bool",
-              inputs: [],
-              outputs: [
+              name: "get_span_value_contract_address",
+              inputs: [
                 {
-                  type: "(core::felt252, core::bool)",
+                  name: "span",
+                  type: "core::array::Span::<core::starknet::contract_address::ContractAddress>",
+                },
+                {
+                  name: "index",
+                  type: "core::integer::u32",
                 },
               ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "get_last_span_data_address",
-              inputs: [],
-              outputs: [
-                {
-                  type: "(core::felt252, core::starknet::contract_address::ContractAddress)",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "get_last_span_data_byte_array",
-              inputs: [],
-              outputs: [
-                {
-                  type: "(core::felt252, core::byte_array::ByteArray)",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "test_read_double_input_span",
-              inputs: [],
-              outputs: [
-                {
-                  type: "(core::integer::u256, core::integer::u256)",
-                },
-              ],
-              state_mutability: "external",
-            },
-          ],
-        },
-        {
-          type: "impl",
-          name: "OwnableImpl",
-          interface_name: "openzeppelin::access::ownable::interface::IOwnable",
-        },
-        {
-          type: "interface",
-          name: "openzeppelin::access::ownable::interface::IOwnable",
-          items: [
-            {
-              type: "function",
-              name: "owner",
-              inputs: [],
               outputs: [
                 {
                   type: "core::starknet::contract_address::ContractAddress",
                 },
               ],
               state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "transfer_ownership",
-              inputs: [
-                {
-                  name: "new_owner",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "renounce_ownership",
-              inputs: [],
-              outputs: [],
-              state_mutability: "external",
             },
           ],
         },
         {
           type: "constructor",
           name: "constructor",
-          inputs: [
-            {
-              name: "owner",
-              type: "core::starknet::contract_address::ContractAddress",
-            },
-          ],
+          inputs: [],
         },
         {
           type: "event",
-          name: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferred",
-          kind: "struct",
-          members: [
-            {
-              name: "previous_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "new_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
-          kind: "struct",
-          members: [
-            {
-              name: "previous_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "new_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin::access::ownable::ownable::OwnableComponent::Event",
+          name: "contracts::arrays_spans::ArraysSpans::Event",
           kind: "enum",
-          variants: [
-            {
-              name: "OwnershipTransferred",
-              type: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferred",
-              kind: "nested",
-            },
-            {
-              name: "OwnershipTransferStarted",
-              type: "openzeppelin::access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
-              kind: "nested",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "contracts::YourContract::YourContract::GreetingChanged",
-          kind: "struct",
-          members: [
-            {
-              name: "greeting_setter",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "new_greeting",
-              type: "core::byte_array::ByteArray",
-              kind: "key",
-            },
-            {
-              name: "premium",
-              type: "core::bool",
-              kind: "data",
-            },
-            {
-              name: "value",
-              type: "core::integer::u256",
-              kind: "data",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "contracts::YourContract::YourContract::Event",
-          kind: "enum",
-          variants: [
-            {
-              name: "OwnableEvent",
-              type: "openzeppelin::access::ownable::ownable::OwnableComponent::Event",
-              kind: "flat",
-            },
-            {
-              name: "GreetingChanged",
-              type: "contracts::YourContract::YourContract::GreetingChanged",
-              kind: "nested",
-            },
-          ],
+          variants: [],
         },
       ],
     },

@@ -12,9 +12,6 @@ export default function FaucetMenu() {
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         <DropdownMenu.Item>
-          <a href="https://faucet.goerli.starknet.io/">Goerli</a>
-        </DropdownMenu.Item>
-        <DropdownMenu.Item>
           <a href="https://starknet-faucet.vercel.app/">Sepolia</a>
         </DropdownMenu.Item>
       </DropdownMenu.Content>
