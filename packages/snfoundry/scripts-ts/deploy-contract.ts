@@ -130,6 +130,9 @@ const deployContract = async (
 const executeDeployCalls = async () => {
   let { transaction_hash } = await deployer.execute(deployCalls);
   console.log("Deploy Calls Executed at ", transaction_hash);
+  if (networkName == "sepolia" || networkName == "mainnet") {
+    await provider.waitForTransaction(transaction_hash);
+  }
 };
 
 const exportDeployments = () => {
