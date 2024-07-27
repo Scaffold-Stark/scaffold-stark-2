@@ -1,7 +1,447 @@
-import { deployContract, deployer, exportDeployments } from "./deploy-contract";
+import {
+  deployContract,
+  deployer,
+  executeDeployCalls,
+  exportDeployments,
+} from "./deploy-contract";
 
 const deployScript = async (): Promise<void> => {
   try {
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    //// 200
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
+
+    await deployContract({}, "Vars");
+    await deployContract({}, "Structs");
+    await deployContract({}, "Tuples");
+    await deployContract({}, "Complex");
+    await deployContract({}, "ArraysSpans");
     await deployContract({}, "Vars");
     await deployContract({}, "Structs");
     await deployContract({}, "Tuples");
@@ -22,6 +462,7 @@ const deployScript = async (): Promise<void> => {
 deployScript()
   .then(() => {
     exportDeployments();
+    executeDeployCalls().then(() => {});
     console.log("All Setup Done");
   })
   .catch(console.error);

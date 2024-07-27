@@ -11,6 +11,7 @@ import {
   constants,
   ec,
   validateAndParseAddress,
+  transaction,
 } from "starknet";
 import { Network } from "./types";
 import {
@@ -24,6 +25,8 @@ const networkName: string = argv["network"];
 
 let deployments = {};
 
+let deployCalls = [];
+
 const { provider, deployer }: Network = networks[networkName];
 
 const declareIfNot_NotWait = async (payload: any) => {
@@ -31,9 +34,7 @@ const declareIfNot_NotWait = async (payload: any) => {
   try {
     await provider.getClassByHash(declareContractPayload.classHash);
   } catch (error) {
-    let { transaction_hash } = await deployer.declare(payload, {
-      blockIdentifier: "pending" as BlockIdentifier,
-    });
+    let { transaction_hash } = await deployer.declare(payload);
     if (networkName == "sepolia" || networkName == "mainnet") {
       await provider.waitForTransaction(transaction_hash);
     }
@@ -48,24 +49,13 @@ const deployContract_NotWait = async (payload: {
   classHash: string;
   constructorCalldata: RawArgs;
 }) => {
-  let { transaction_hash } = await deployer.deploy(payload, {
-    blockIdentifier: "pending" as BlockIdentifier,
-  });
-
-  let contractAddress = hash.calculateContractAddressFromHash(
-    ec.starkCurve.pedersen(deployer.address, payload.salt),
-    payload.classHash,
-    payload.constructorCalldata,
-    constants.UDC.ADDRESS
+  let { calls, addresses } = transaction.buildUDCCall(
+    payload,
+    deployer.address
   );
-  contractAddress = validateAndParseAddress(contractAddress);
-
-  if (networkName == "sepolia" || networkName == "mainnet") {
-    await provider.waitForTransaction(transaction_hash);
-  }
-
+  deployCalls.push(...calls);
   return {
-    contractAddress,
+    contractAddress: addresses[0],
   };
 };
 
@@ -137,6 +127,11 @@ const deployContract = async (
   };
 };
 
+const executeDeployCalls = async () => {
+  let { transaction_hash } = await deployer.execute(deployCalls);
+  console.log("Deploy Calls Executed at ", transaction_hash);
+};
+
 const exportDeployments = () => {
   const networkPath = path.resolve(
     __dirname,
@@ -154,4 +149,10 @@ const exportDeployments = () => {
   fs.writeFileSync(networkPath, JSON.stringify(deployments, null, 2));
 };
 
-export { deployContract, provider, deployer, exportDeployments };
+export {
+  deployContract,
+  provider,
+  deployer,
+  exportDeployments,
+  executeDeployCalls,
+};
