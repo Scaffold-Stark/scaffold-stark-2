@@ -1,4 +1,9 @@
-import { deployContract, deployer, exportDeployments } from "./deploy-contract";
+import {
+  deployContract,
+  deployer,
+  executeDeployCalls,
+  exportDeployments,
+} from "./deploy-contract";
 
 const deployScript = async (): Promise<void> => {
   try {
@@ -22,6 +27,7 @@ const deployScript = async (): Promise<void> => {
 deployScript()
   .then(() => {
     exportDeployments();
+    executeDeployCalls().then(() => {});
     console.log("All Setup Done");
   })
   .catch(console.error);
