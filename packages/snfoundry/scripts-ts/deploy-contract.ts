@@ -128,10 +128,23 @@ const deployContract = async (
 };
 
 const executeDeployCalls = async () => {
-  let { transaction_hash } = await deployer.execute(deployCalls);
-  console.log("Deploy Calls Executed at ", transaction_hash);
-  if (networkName == "sepolia" || networkName == "mainnet") {
-    await provider.waitForTransaction(transaction_hash);
+  try {
+    let { transaction_hash } = await deployer.execute(deployCalls);
+    console.log("Deploy Calls Executed at ", transaction_hash);
+    if (networkName == "sepolia" || networkName == "mainnet") {
+      await provider.waitForTransaction(transaction_hash);
+    }
+  } catch (error) {
+    // split the calls in half and try again recursively
+    if (deployCalls.length > 1) {
+      let half = deployCalls.length / 2;
+      let firstHalf = deployCalls.slice(0, half);
+      let secondHalf = deployCalls.slice(half, deployCalls.length);
+      deployCalls = firstHalf;
+      await executeDeployCalls();
+      deployCalls = secondHalf;
+      await executeDeployCalls();
+    }
   }
 };
 
