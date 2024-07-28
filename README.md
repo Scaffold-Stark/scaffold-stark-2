@@ -57,7 +57,7 @@ If your Starknet Foundry version is not `0.27.0`, you need to install it.
 To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, your RPC version must be `0.7.0`. This repository contains a .env.example file, where we provided the default RPC URL for the Starknet Testnet: `RPC_URL_SEPOLIA=https://starknet-sepolia.infura.io/v3/c45bd0ce3e584ba4a5e6a5928c9c0b0f`. Let's verify this RPC version is `0.7.0` by running the following command:
 
 ```sh
-curl --location 'https://starknet-sepolia.infura.io/v3/c45bd0ce3e584ba4a5e6a5928c9c0b0f' \
+curl --location 'https://starknet-sepolia.public.blastapi.io/rpc/v0_7' \
 --data '{
     "jsonrpc":"2.0",
     "method":"starknet_specVersion",
