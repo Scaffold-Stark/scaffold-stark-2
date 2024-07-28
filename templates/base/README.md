@@ -28,6 +28,21 @@ Before you begin, you need to install the following tools:
 - [asdf](https://asdf-vm.com/guide/getting-started.html)
 - [Cairo 1.0 extension for VSCode](https://marketplace.visualstudio.com/items?itemName=starkware.cairo1)
 
+### Starknet-devnet version
+
+To ensure the proper functioning of scaffold-stark, your local `starknet-devnet` version must be `0.0.4`. To accomplish this, first check your local starknet-devnet version:
+
+```sh
+starknet-devnet --version
+```
+
+If your local starknet-devnet version is not `0.0.4`, you need to install it.
+
+```bash
+cargo install starknet-devnet --version 0.0.4
+```
+
+
 ### Scarb version
 
 To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.6.5`. To accomplish this, first check your local Scarb version:
