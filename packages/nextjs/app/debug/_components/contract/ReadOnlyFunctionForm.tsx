@@ -30,6 +30,7 @@ export const ReadOnlyFunctionForm = ({
     getInitialFormState(abiFunction),
   );
   const [inputValue, setInputValue] = useState<any | undefined>(undefined);
+  const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null);
   const lastForm = useRef(form);
 
   const { isFetching, data, refetch } = useContractRead({
@@ -83,16 +84,25 @@ export const ReadOnlyFunctionForm = ({
             </div>
           )}
         </div>
-        <button
-          className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
-          onClick={handleRead}
-          disabled={inputValue && isFetching}
+
+        <div
+          className={`flex ${
+            formErrorMessage &&
+            "tooltip before:content-[attr(data-tip)] before:right-[-10px] before:left-auto before:transform-none"
+          }`}
+          data-tip={`${formErrorMessage}`}
         >
-          {inputValue && isFetching && (
-            <span className="loading loading-spinner loading-xs"></span>
-          )}
-          Read 📡
-        </button>
+          <button
+            className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
+            onClick={handleRead}
+            disabled={(inputValue && isFetching) || !!formErrorMessage}
+          >
+            {inputValue && isFetching && (
+              <span className="loading loading-spinner loading-xs"></span>
+            )}
+            Read 📡
+          </button>
+        </div>
       </div>
     </div>
   );
