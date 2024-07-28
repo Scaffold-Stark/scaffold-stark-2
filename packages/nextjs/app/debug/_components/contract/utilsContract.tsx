@@ -1,6 +1,8 @@
 import {
+  AbiEnum,
   AbiFunction,
   AbiParameter,
+  AbiStruct,
   parseParamWithType,
 } from "~~/utils/scaffold-stark/contract";
 /**
@@ -22,6 +24,23 @@ const isJsonString = (str: string) => {
   } catch (e) {
     return false;
   }
+};
+
+const getInitialTupleFormState = (abiParameter: AbiStruct | AbiEnum) => {
+  const initialForm: Record<string, any> = {};
+
+  if (abiParameter.type === "struct") {
+    abiParameter.members.forEach((member, memberIndex) => {
+      const key = getFunctionInputKey(abiParameter.name, member, memberIndex);
+      initialForm[key] = "";
+    });
+  } else {
+    abiParameter.variants.forEach((variant, variantIndex) => {
+      const key = getFunctionInputKey(abiParameter.name, variant, variantIndex);
+      initialForm[key] = "";
+    });
+  }
+  return initialForm;
 };
 
 const getInitialFormState = (abiFunction: AbiFunction) => {
@@ -114,6 +133,7 @@ export {
   getFunctionInputKey,
   isJsonString,
   getInitialFormState,
+  getInitialTupleFormState,
   getParsedContractFunctionArgs,
   transformAbiFunction,
 };

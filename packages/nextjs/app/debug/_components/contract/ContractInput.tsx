@@ -8,21 +8,29 @@ import {
   isCairoArray,
   isCairoBigInt,
   isCairoInt,
+  isCairoType,
   isCairoU256,
 } from "~~/utils/scaffold-stark";
+import { Struct } from "./Struct";
+import { Abi } from "abi-wan-kanabi";
+import { ArrayInput } from "./Array";
 
 type ContractInputProps = {
+  abi?: Abi;
   setForm: Dispatch<SetStateAction<Record<string, any>>>;
   form: Record<string, any> | undefined;
   stateObjectKey: string;
   paramType: AbiParameter;
+  setFormErrorMessage: Dispatch<SetStateAction<string | null>>;
 };
 
 export const ContractInput = ({
+  abi,
   setForm,
   form,
   stateObjectKey,
   paramType,
+  setFormErrorMessage,
 }: ContractInputProps) => {
   const inputProps = {
     name: stateObjectKey,
@@ -39,18 +47,40 @@ export const ContractInput = ({
   };
 
   const renderInput = () => {
-    switch (paramType.type) {
-      default:
-        if (
-          !isCairoArray(paramType.type) &&
-          (isCairoInt(paramType.type) ||
-            isCairoBigInt(paramType.type) ||
-            isCairoU256(paramType.type))
-        ) {
-          return <IntegerInput {...inputProps} variant={paramType.type} />;
-        } else {
-          return <InputBase {...inputProps} />;
-        }
+    if (isCairoArray(paramType.type)) {
+      return (
+        <ArrayInput
+          abi={abi!}
+          parentStateObjectKey={stateObjectKey}
+          abiParameter={paramType}
+          parentForm={form}
+          setParentForm={setForm}
+          setFormErrorMessage={setFormErrorMessage}
+        />
+      );
+    } else if (
+      isCairoInt(paramType.type) ||
+      isCairoBigInt(paramType.type) ||
+      isCairoU256(paramType.type)
+    ) {
+      return <IntegerInput {...inputProps} variant={paramType.type} />;
+    } else if (isCairoType(paramType.type)) {
+      return <InputBase {...inputProps} />;
+    } else {
+      return (
+        <Struct
+          setFormErrorMessage={setFormErrorMessage}
+          abi={abi}
+          parentForm={form}
+          setParentForm={setForm}
+          parentStateObjectKey={stateObjectKey}
+          // @ts-ignore
+          abiMember={abi?.find(
+            // @ts-ignore
+            (member) => member.name === paramType.type,
+          )}
+        />
+      );
     }
   };
 
