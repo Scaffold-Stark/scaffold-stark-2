@@ -2,14 +2,16 @@ import {
   deployContract,
   executeDeployCalls,
   exportDeployments,
+  deployer,
 } from "./deploy-contract";
 
 const deployScript = async (): Promise<void> => {
-  await deployContract({}, "Vars");
-  await deployContract({}, "Structs");
-  await deployContract({}, "Tuples");
-  await deployContract({}, "Complex");
-  await deployContract({}, "ArraysSpans");
+  await deployContract(
+    {
+      owner: deployer.address, // the deployer address is the owner of the contract
+    },
+    "YourContract"
+  );
 };
 
 deployScript()
