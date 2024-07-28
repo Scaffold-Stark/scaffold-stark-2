@@ -13,6 +13,7 @@ import {
 } from "~~/utils/scaffold-stark";
 import { Struct } from "./Struct";
 import { Abi } from "abi-wan-kanabi";
+import { ArrayInput } from "./Array";
 
 type ContractInputProps = {
   abi?: Abi;
@@ -46,11 +47,20 @@ export const ContractInput = ({
   };
 
   const renderInput = () => {
-    if (
-      !isCairoArray(paramType.type) &&
-      (isCairoInt(paramType.type) ||
-        isCairoBigInt(paramType.type) ||
-        isCairoU256(paramType.type))
+    if (isCairoArray(paramType.type)) {
+      return (
+        <ArrayInput
+          parentStateObjectKey={stateObjectKey}
+          abiParameter={paramType}
+          parentForm={form}
+          setParentForm={setForm}
+          setFormErrorMessage={setFormErrorMessage}
+        />
+      );
+    } else if (
+      isCairoInt(paramType.type) ||
+      isCairoBigInt(paramType.type) ||
+      isCairoU256(paramType.type)
     ) {
       return <IntegerInput {...inputProps} variant={paramType.type} />;
     } else if (isCairoType(paramType.type)) {
