@@ -477,18 +477,42 @@ export function parseParamWithType(
       );
     } else if (isCairoArray(paramType)) {
       const genericType = parseGenericType(paramType)[0];
-      const tokens = param.split(",");
-      if (genericType) {
-        //@ts-ignore
-        return [
-          tokens.length,
-          ...tokens
-            //@ts-ignore
-            .map((item) =>
-              parseParamWithType(genericType, item.trim(), isRead),
-            ),
-        ];
-      } else {
+
+      // if we have to process string
+      if (typeof param === "string") {
+        const tokens = param.split(",");
+        if (genericType) {
+          //@ts-ignore
+          return [
+            tokens.length,
+            ...tokens
+              //@ts-ignore
+              .map((item) =>
+                parseParamWithType(genericType, item.trim(), isRead),
+              ),
+          ];
+        } else {
+          return param;
+        }
+      }
+
+      // if we have to process array
+      else if (Array.isArray(param)) {
+        if (genericType) {
+          //@ts-ignore
+          return [
+            param.length,
+            ...param
+              //@ts-ignore
+              .map((item) => parseParamWithType(genericType, item, isRead)),
+          ];
+        } else {
+          return param;
+        }
+      }
+
+      // fallback
+      else {
         return param;
       }
     } else if (isCairoOption(paramType)) {

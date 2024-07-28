@@ -50,6 +50,7 @@ export const ContractInput = ({
     if (isCairoArray(paramType.type)) {
       return (
         <ArrayInput
+          abi={abi!}
           parentStateObjectKey={stateObjectKey}
           abiParameter={paramType}
           parentForm={form}

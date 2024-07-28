@@ -11,6 +11,7 @@ import { Abi } from "abi-wan-kanabi";
 import { parseGenericType } from "~~/utils/scaffold-stark";
 
 type ArrayProps = {
+  abi: Abi;
   abiParameter: AbiParameter;
   parentForm: Record<string, any> | undefined;
   setParentForm: (form: Record<string, any>) => void;
@@ -19,6 +20,7 @@ type ArrayProps = {
 };
 
 export const ArrayInput = ({
+  abi,
   parentForm,
   setParentForm,
   parentStateObjectKey,
@@ -36,9 +38,12 @@ export const ArrayInput = ({
 
   // side effect to transform data before setState
   useEffect(() => {
+    // non empty objects only
     setParentForm({
       ...parentForm,
-      [parentStateObjectKey]: JSON.stringify(Object.values(inputArr)),
+      [parentStateObjectKey]: Object.values(inputArr).filter(
+        (item) => item !== null,
+      ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(inputArr, replacer)]);
@@ -55,6 +60,7 @@ export const ArrayInput = ({
           {Object.keys(inputArr).map((index) => {
             return (
               <ContractInput
+                abi={abi}
                 key={index}
                 setForm={(
                   nextInputRecipe:
