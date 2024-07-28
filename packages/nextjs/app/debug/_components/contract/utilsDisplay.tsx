@@ -88,13 +88,14 @@ export const displayTxResult = (
   return JSON.stringify(displayContent, replacer, 2);
 };
 
+export const displayTuple = (tupleString: string): string => {
+  return tupleString.replace(/\w+::/g, "");
+};
+
 export const displayType = (type: string) => {
   // render tuples
   if (type.at(0) === "(") {
-    const parenthesesRemoved = type.replace("(", "").replace(")", "");
-    const tokens = parenthesesRemoved.split(",");
-    const cleanedTokens = tokens.map((token) => token.split("::").pop());
-    return `(${cleanedTokens.join(", ")})`;
+    return displayTuple(type);
   }
 
   // arrays and options

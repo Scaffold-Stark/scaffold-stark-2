@@ -674,11 +674,9 @@ function objectToCairoTuple(obj: { [key: number]: any }, type: string): string {
       const index = parseInt(key, 10);
       const value = obj[index];
       const valueType = types[index];
-      return isCairoTuple(valueType)
-        ? objectToCairoTuple(value, type)
-        : parseParamWithType(valueType, value, true);
+      return parseParamWithType(valueType, value, true);
     })
-    .join(", ");
+    .join(",");
 
   return `(${values})`;
 }
