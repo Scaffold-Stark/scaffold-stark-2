@@ -1694,7 +1694,6 @@ __metadata:
     react-dom: ^18
     react-hot-toast: ^2.4.1
     starknet: 6.7.0
-    starknet-dev: "npm:starknet@6.7.0"
     tailwindcss: ^3.3.0
     type-fest: ^4.6.0
     typescript: ^5
@@ -7198,7 +7197,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"starknet-dev@npm:starknet@6.7.0, starknet@npm:6.7.0":
+"starknet-types@npm:^0.0.4":
+  version: 0.0.4
+  resolution: "starknet-types@npm:0.0.4"
+  checksum: a83d306830696ea875b8b07541db47e515a4ddb7bfce0cf5555cce12c8ce0e697b984762720c7f27761dc4114b4e5d3f81006e82fc45e52b052afe8fc86240fa
+  languageName: node
+  linkType: hard
+
+"starknet@npm:6.7.0":
   version: 6.7.0
   resolution: "starknet@npm:6.7.0"
   dependencies:
@@ -7214,13 +7220,6 @@ __metadata:
     ts-mixer: ^6.0.3
     url-join: ^4.0.1
   checksum: 3c4abda7bab3008c8f98728c4b23a47a2dc97b876c6a33a824da77907b63611fde2df22298aa4c512e3c81e3fe005dd7e288969f18b00299e6eae450a147769d
-  languageName: node
-  linkType: hard
-
-"starknet-types@npm:^0.0.4":
-  version: 0.0.4
-  resolution: "starknet-types@npm:0.0.4"
-  checksum: a83d306830696ea875b8b07541db47e515a4ddb7bfce0cf5555cce12c8ce0e697b984762720c7f27761dc4114b4e5d3f81006e82fc45e52b052afe8fc86240fa
   languageName: node
   linkType: hard
 
