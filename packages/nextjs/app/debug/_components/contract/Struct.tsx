@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { getFunctionInputKey, getInitialTupleFormState } from "./utilsContract";
 import { AbiEnum, AbiStruct } from "~~/utils/scaffold-stark/contract";
 import { replacer } from "~~/utils/scaffold-stark/common";
@@ -11,6 +11,7 @@ type StructProps = {
   setParentForm: (form: Record<string, any>) => void;
   parentStateObjectKey: string;
   abiMember?: AbiStruct | AbiEnum;
+  setFormErrorMessage: Dispatch<SetStateAction<string | null>>;
 };
 
 export const Struct = ({
@@ -19,6 +20,7 @@ export const Struct = ({
   parentStateObjectKey,
   abiMember,
   abi,
+  setFormErrorMessage,
 }: StructProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialTupleFormState(
@@ -74,6 +76,7 @@ export const Struct = ({
                 );
                 return (
                   <ContractInput
+                    setFormErrorMessage={setFormErrorMessage}
                     abi={abi}
                     setForm={setForm}
                     form={form}
@@ -91,6 +94,7 @@ export const Struct = ({
                 );
                 return (
                   <ContractInput
+                    setFormErrorMessage={setFormErrorMessage}
                     abi={abi}
                     setForm={setForm}
                     form={form}

@@ -120,6 +120,7 @@ WriteOnlyFunctionFormProps) => {
         form={form}
         stateObjectKey={key}
         paramType={input}
+        setFormErrorMessage={setFormErrorMessage}
       />
     );
   });

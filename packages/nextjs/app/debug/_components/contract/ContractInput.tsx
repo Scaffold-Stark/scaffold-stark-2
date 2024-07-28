@@ -20,6 +20,7 @@ type ContractInputProps = {
   form: Record<string, any> | undefined;
   stateObjectKey: string;
   paramType: AbiParameter;
+  setFormErrorMessage: Dispatch<SetStateAction<string | null>>;
 };
 
 export const ContractInput = ({
@@ -28,6 +29,7 @@ export const ContractInput = ({
   form,
   stateObjectKey,
   paramType,
+  setFormErrorMessage,
 }: ContractInputProps) => {
   const inputProps = {
     name: stateObjectKey,
@@ -56,6 +58,7 @@ export const ContractInput = ({
     } else {
       return (
         <Struct
+          setFormErrorMessage={setFormErrorMessage}
           abi={abi}
           parentForm={form}
           setParentForm={setForm}

@@ -54,6 +54,7 @@ export const ReadOnlyFunctionForm = ({
         form={form}
         stateObjectKey={key}
         paramType={input}
+        setFormErrorMessage={setFormErrorMessage}
       />
     );
   });
