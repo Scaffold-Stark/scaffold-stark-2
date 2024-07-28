@@ -1,4 +1,0 @@
-[submodule "packages/snfoundry/local-devnet"]
-	path = packages/snfoundry/local-devnet
-	url = https://github.com/0xSpaceShard/starknet-devnet-rs
-	tag = v0.0.4
