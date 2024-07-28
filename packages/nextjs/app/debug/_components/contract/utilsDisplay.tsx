@@ -88,8 +88,18 @@ export const displayTxResult = (
   return JSON.stringify(displayContent, replacer, 2);
 };
 
+export const displayTuple = (tupleString: string): string => {
+  return tupleString.replace(/\w+::/g, "");
+};
+
 export const displayType = (type: string) => {
-  if (type.includes("core::array") || type.includes("core::option")) {
+  // render tuples
+  if (type.at(0) === "(") {
+    return displayTuple(type);
+  }
+
+  // arrays and options
+  else if (type.includes("core::array") || type.includes("core::option")) {
     const kindOfArray = type.split("::").at(2);
     const parsed = parseGenericType(type);
     const arrayType = Array.isArray(parsed)
@@ -99,7 +109,10 @@ export const displayType = (type: string) => {
           .map((t) => t.split("::").pop())
           .join(",")}`;
     return `${kindOfArray}<${arrayType}>`;
-  } else if (type.includes("core::result")) {
+  }
+
+  // result enum
+  else if (type.includes("core::result")) {
     const types = type.split("::");
     return `${types.at(-4)}<${types.at(-2)?.split(",").at(0)},${types.at(-1)}`;
   } else if (type.includes("::")) {
