@@ -506,6 +506,8 @@ export function parseParamWithType(
       return new CairoOption(CairoOptionVariant.Some, parsedValue);
     } else if (isCairoU256(paramType)) {
       return tryParsingParamReturnValues(uint256.bnToUint256, param);
+    } else if (isCairoFelt(paramType)) {
+      return param;
     } else if (isCairoByteArray(paramType)) {
       return tryParsingParamReturnValues(byteArray.byteArrayFromString, param);
     } else if (isCairoContractAddress(paramType)) {
