@@ -20,20 +20,6 @@ const deployerDevnet =
   PRIVATE_KEY_DEVNET &&
   new Account(providerDevnet, ACCOUNT_ADDRESS_DEVNET, PRIVATE_KEY_DEVNET, "1");
 
-// goerli
-const providerGoerli =
-  process.env.RPC_URL_GOERLI &&
-  new RpcProvider({ nodeUrl: process.env.RPC_URL_GOERLI });
-const deployerGoerli =
-  process.env.ACCOUNT_ADDRESS_GOERLI &&
-  process.env.PRIVATE_KEY_GOERLI &&
-  new Account(
-    providerGoerli,
-    process.env.ACCOUNT_ADDRESS_GOERLI,
-    process.env.PRIVATE_KEY_GOERLI,
-    "1"
-  );
-
 // sepolia
 const providerSepolia =
   process.env.RPC_URL_SEPOLIA &&
@@ -64,7 +50,6 @@ const deployerMainnet =
 
 export const networks: Networks = {
   devnet: { provider: providerDevnet, deployer: deployerDevnet },
-  goerli: { provider: providerGoerli, deployer: deployerGoerli },
   sepolia: { provider: providerSepolia, deployer: deployerSepolia },
   mainnet: { provider: providerMainnet, deployer: deployerMainnet },
 };

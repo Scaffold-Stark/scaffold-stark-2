@@ -37,4 +37,4 @@ If your changes involve updates to how users interact with Scaffold-Stark or Spe
 
 ## Need Help?
 
-Reach out via our community channels if you encounter issues or need clarification on contributing.
+Reach out via our community channels if you encounter issues or need clarification on contributing [here](https://t.me/+wO3PtlRAreo4MDI9).

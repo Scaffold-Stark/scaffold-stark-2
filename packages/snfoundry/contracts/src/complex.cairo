@@ -54,7 +54,9 @@ pub trait IComplex<TContractState> {
     // Struct getters
     fn get_struct_with_tuple(self: @TContractState) -> StructWithTuple;
     fn get_complex_struct(self: @TContractState) -> ComplexStruct;
-    fn get_tuple_of_complex_struct_which_contains_tuple(self: @TContractState) -> (ComplexStruct, StructWithTuple);
+    fn get_tuple_of_complex_struct_which_contains_tuple(
+        self: @TContractState
+    ) -> (ComplexStruct, StructWithTuple);
 
     // Struct getters with keys
     fn get_struct_with_tuple_with_key(self: @TContractState, key: felt252) -> StructWithTuple;
@@ -97,7 +99,9 @@ mod Complex {
     struct Storage {
         mapping_struct_with_tuple: LegacyMap<felt252, StructWithTuple>,
         mapping_complex_struct: LegacyMap<felt252, ComplexStruct>,
-        mapping_tuple_of_complex_struct_which_contains_tuple: LegacyMap<felt252, (ComplexStruct, StructWithTuple)>,
+        mapping_tuple_of_complex_struct_which_contains_tuple: LegacyMap<
+            felt252, (ComplexStruct, StructWithTuple)
+        >,
     }
 
     #[constructor]

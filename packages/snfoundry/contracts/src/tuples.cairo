@@ -62,7 +62,6 @@ pub trait ITuples<TContractState> {
     ) -> ((u256, u256), (felt252, u256, bool));
 
 
-
     // Setters
     fn set_tuple_2_u256_with_key(ref self: TContractState, key: felt252, value: (u256, u256));
     fn set_tuple_3_mixed_with_key(
@@ -231,7 +230,5 @@ mod Tuples {
         ) {
             self.mapping_nested_tuple.write(key, value);
         }
-
-
     }
 }
