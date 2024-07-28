@@ -28,6 +28,7 @@ export const Struct = ({
     ),
   );
 
+  // side effect to transform data before setState
   useEffect(() => {
     const values = Object.values(form);
     const argsStruct: Record<string, any> = {};
@@ -47,6 +48,13 @@ export const Struct = ({
           value: values[index],
         };
       });
+
+      // check for enum validity
+      if (values.filter((item) => (item || "").length > 0).length > 1) {
+        setFormErrorMessage("Enums can only have one defined value");
+      } else {
+        setFormErrorMessage(null);
+      }
     }
 
     setParentForm({
