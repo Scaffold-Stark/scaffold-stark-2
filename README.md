@@ -2,7 +2,8 @@
 
 <h4 align="center">
   <a href="https://www.docs.scaffoldstark.com/">Documentation</a> |
-  <a href="https://www.scaffoldstark.com/">Website</a>
+  <a href="https://www.scaffoldstark.com/">Website</a> |
+  <a href="https://scaffold-stark-demo.vercel.app/debug">Demo</a>
 </h4>
 
 🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on Starknet blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
@@ -94,7 +95,7 @@ To get started with Scaffold-Stark 2, follow the steps below:
 1. Clone this repo and install dependencies
 
 ```bash
-git clone https://github.com/Quantum3-Labs/scaffold-stark-2 --recurse-submodules
+git clone https://github.com/Quantum3-Labs/scaffold-stark-2.git
 cd scaffold-stark-2
 yarn install
 ```
