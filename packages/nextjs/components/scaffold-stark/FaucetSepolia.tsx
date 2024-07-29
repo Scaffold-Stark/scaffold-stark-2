@@ -1,33 +1,38 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Address as AddressType, devnet } from "@starknet-react/chains";
+import { Address as AddressType, sepolia } from "@starknet-react/chains";
 import { BanknotesIcon } from "@heroicons/react/24/outline";
-import {
-  Address,
-  AddressInput,
-  Balance,
-  EtherInput,
-} from "~~/components/scaffold-stark";
 import { useNetwork } from "@starknet-react/core";
-import { mintEth } from "~~/services/web3/faucet";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { RpcProvider } from "starknet";
 import { notification } from "~~/utils/scaffold-stark";
+import Image from "next/image";
 
 /**
  * Faucet modal which lets you send ETH to any address.
  */
-export const Faucet = () => {
-  const [loading, setLoading] = useState(false);
-  const [inputAddress, setInputAddress] = useState<AddressType>();
-  const [faucetAddress] = useState<AddressType>(
-    "0x78662e7352d062084b0010068b99288486c2d8b914f6e2a55ce945f8792c8b1",
-  );
-  const [sendValue, setSendValue] = useState("");
-
+export const FaucetSepolia = () => {
   const { chain: ConnectedChain } = useNetwork();
   const { targetNetwork } = useTargetNetwork();
+
+  const sepoliaFaucets = [
+    {
+      name: "Starknet Foundation",
+      img: "/sn-symbol-gradient.png",
+      link: "https://starknet-faucet.vercel.app/",
+    },
+    {
+      name: "Alchemy",
+      img: "/logo_alchemy.png",
+      link: "https://www.alchemy.com/faucets/starknet-sepolia",
+    },
+    {
+      name: "Blast",
+      img: "/blast-icon-color.svg",
+      link: "https://blastapi.io/faucets/starknet-sepolia-eth",
+    },
+  ];
 
   const publicNodeUrl = targetNetwork.rpcUrls.public.http[0];
 
@@ -70,7 +75,7 @@ export const Faucet = () => {
           </>,
           {
             duration: 5000,
-          },
+          }
         );
       }
     };
@@ -78,27 +83,8 @@ export const Faucet = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const sendETH = async () => {
-    if (!faucetAddress || !inputAddress) {
-      return;
-    }
-
-    try {
-      setLoading(true);
-      await mintEth(inputAddress, sendValue);
-      setLoading(false);
-      setInputAddress(undefined);
-      setSendValue("");
-      notification.success("ETH sent successfully!");
-    } catch (error) {
-      console.error("⚡️ ~ file: Faucet.tsx:sendETH ~ error", error);
-      setLoading(false);
-      notification.error(`⚡️ ~ file: Faucet.tsx:sendETH ~ error ${error}`);
-    }
-  };
-
-  // Render only on local chain
-  if (ConnectedChain?.id !== devnet.id) {
+  // Render only on sepolia chain
+  if (ConnectedChain?.id !== sepolia.id) {
     return null;
   }
 
@@ -116,37 +102,34 @@ export const Faucet = () => {
         <label className="modal-box relative">
           {/* dummy input to capture event onclick on modal box */}
           <input className="h-0 w-0 absolute top-0 left-0" />
-          <h3 className="text-xl font-bold mb-3">Local Faucet</h3>
+          <h3 className="text-xl font-bold mb-6">Sepolia Faucets</h3>
           <label
             htmlFor="faucet-modal"
             className="btn btn-ghost btn-sm btn-circle absolute right-3 top-3"
           >
             ✕
           </label>
-          <div className="space-y-3 mt-6">
+          <div className="mb-4">
             <div className="flex flex-col space-y-3">
-              <AddressInput
-                placeholder="Destination Address"
-                value={inputAddress ?? ""}
-                onChange={(value) => setInputAddress(value as AddressType)}
-              />
-              <EtherInput
-                placeholder="Amount to send"
-                value={sendValue}
-                onChange={(value) => setSendValue(value)}
-              />
-              <button
-                className="h-10 btn btn-primary btn-sm px-2 rounded-full"
-                onClick={sendETH}
-                disabled={loading}
+              {sepoliaFaucets.length && sepoliaFaucets.map((faucet, id) => (
+              <a
+                href={faucet.link}
+                target="_blank"
+                className="h-20 btn btn-primary flex justify-start btn-sm px-6 gap-4 rounded-full"
+                key={id}
               >
-                {!loading ? (
-                  <BanknotesIcon className="h-6 w-6" />
-                ) : (
-                  <span className="loading loading-spinner loading-sm"></span>
-                )}
-                <span>Send</span>
-              </button>
+                <div className="flex relative w-10 h-10">
+                  <Image
+                    alt="Starknet Developers Hub"
+                    className="cursor-pointer"
+                    fill
+                    src={faucet.img}
+                  />
+                </div>
+                <p className="text-lg">{faucet.name}</p>
+              </a>
+
+              ))}
             </div>
           </div>
         </label>
