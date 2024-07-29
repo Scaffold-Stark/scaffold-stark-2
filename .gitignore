@@ -13,3 +13,6 @@ package-lock.json
 !.yarn/versions
 .eslintcache
 .DS_Store
+
+# bun
+bun.lockb

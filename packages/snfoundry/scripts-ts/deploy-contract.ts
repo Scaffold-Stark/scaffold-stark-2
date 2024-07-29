@@ -3,40 +3,37 @@ import path from "path";
 import { networks } from "./helpers/networks";
 import yargs from "yargs";
 import {
-  BlockIdentifier,
   CallData,
-  hash,
   stark,
   RawArgs,
-  constants,
-  ec,
-  validateAndParseAddress,
   transaction,
+  extractContractHashes,
+  DeclareContractPayload
 } from "starknet";
 import { Network } from "./types";
-import {
-  LegacyContractClass,
-  CompiledSierra,
-  extractContractHashes,
-} from "starknet";
 
 const argv = yargs(process.argv.slice(2)).argv;
 const networkName: string = argv["network"];
 
 let deployments = {};
-
 let deployCalls = [];
 
 const { provider, deployer }: Network = networks[networkName];
 
-const declareIfNot_NotWait = async (payload: any) => {
+const declareIfNot_NotWait = async (payload: DeclareContractPayload, options?: { maxFee?: bigint}) => {
   const declareContractPayload = extractContractHashes(payload);
   try {
     await provider.getClassByHash(declareContractPayload.classHash);
   } catch (error) {
-    let { transaction_hash } = await deployer.declare(payload);
-    if (networkName == "sepolia" || networkName == "mainnet") {
-      await provider.waitForTransaction(transaction_hash);
+    try {
+      const declareOptions = options?.maxFee ? { maxFee: options.maxFee } : {};
+      const { transaction_hash } = await deployer.declare(payload, declareOptions);
+      if (networkName === "sepolia" || networkName === "mainnet") {
+        await provider.waitForTransaction(transaction_hash);
+      }
+    } catch (e) {
+      console.error("Error declaring contract:", e);
+      throw e;
     }
   }
   return {
@@ -49,22 +46,27 @@ const deployContract_NotWait = async (payload: {
   classHash: string;
   constructorCalldata: RawArgs;
 }) => {
-  let { calls, addresses } = transaction.buildUDCCall(
-    payload,
-    deployer.address
-  );
-  deployCalls.push(...calls);
-  return {
-    contractAddress: addresses[0],
-  };
+  try {
+    const { calls, addresses } = transaction.buildUDCCall(
+      payload,
+      deployer.address
+    );
+    deployCalls.push(...calls);
+    return {
+      contractAddress: addresses[0],
+    };
+  } catch (error) {
+    console.error("Error building UDC call:", error);
+    throw error;
+  }
 };
 
 const deployContract = async (
-  constructorArgs: RawArgs,
   contractName: string,
   exportContractName?: string,
+  constructorArgs?: RawArgs,
   options?: {
-    maxFee: bigint;
+    maxFee?: bigint;
   }
 ): Promise<{
   classHash: string;
@@ -74,13 +76,17 @@ const deployContract = async (
     await deployer.getContractVersion(deployer.address);
   } catch (e) {
     if (e.toString().includes("Contract not found")) {
-      throw new Error(
-        `The wallet you're using to deploy the contract is not deployed in ${networkName} network`
-      );
+      const errorMessage = `The wallet you're using to deploy the contract is not deployed in the ${networkName} network.`;
+      console.error(errorMessage);
+      throw new Error(errorMessage);
+    } else {
+      console.error("Error getting contract version:", e);
+      throw e;
     }
   }
 
   let compiledContractCasm;
+  let compiledContractSierra;
 
   try {
     compiledContractCasm = JSON.parse(
@@ -102,12 +108,12 @@ const deployContract = async (
       const match = error.message.match(
         /\/dev\/(.+?)\.compiled_contract_class/
       );
-      const contractName = match ? match[1].split("_").pop() : "Unknown";
+      const missingContractName = match ? match[1].split("_").pop() : "Unknown";
       console.error(
-        `The contract "${contractName}" doesn't exist or is not compiled`
+        `The contract "${missingContractName}" doesn't exist or is not compiled`
       );
     } else {
-      console.error(error);
+      console.error("Error reading compiled contract class file:", error);
     }
     return {
       classHash: "",
@@ -115,16 +121,24 @@ const deployContract = async (
     };
   }
 
-  const compiledContractSierra = JSON.parse(
-    fs
-      .readFileSync(
-        path.resolve(
-          __dirname,
-          `../contracts/target/dev/contracts_${contractName}.contract_class.json`
+  try {
+    compiledContractSierra = JSON.parse(
+      fs
+        .readFileSync(
+          path.resolve(
+            __dirname,
+            `../contracts/target/dev/contracts_${contractName}.contract_class.json`
+          )
         )
-      )
-      .toString("ascii")
-  );
+        .toString("ascii")
+    );
+  } catch (error) {
+    console.error("Error reading contract class file:", error);
+    return {
+      classHash: "",
+      address: "",
+    };
+  }
 
   const contractCalldata = new CallData(compiledContractSierra.abi);
   const constructorCalldata = constructorArgs
@@ -135,7 +149,7 @@ const deployContract = async (
   let { classHash } = await declareIfNot_NotWait({
     contract: compiledContractSierra,
     casm: compiledContractCasm,
-  });
+  }, options);
 
   let randomSalt = stark.randomAddress();
 
@@ -165,15 +179,16 @@ const executeDeployCalls = async () => {
   try {
     let { transaction_hash } = await deployer.execute(deployCalls);
     console.log("Deploy Calls Executed at ", transaction_hash);
-    if (networkName == "sepolia" || networkName == "mainnet") {
+    if (networkName === "sepolia" || networkName === "mainnet") {
       await provider.waitForTransaction(transaction_hash);
     }
   } catch (error) {
+    console.error("Error executing deploy calls:", error);
     // split the calls in half and try again recursively
     if (deployCalls.length > 1) {
-      let half = deployCalls.length / 2;
+      let half = Math.ceil(deployCalls.length / 2);
       let firstHalf = deployCalls.slice(0, half);
-      let secondHalf = deployCalls.slice(half, deployCalls.length);
+      let secondHalf = deployCalls.slice(half);
       deployCalls = firstHalf;
       await executeDeployCalls();
       deployCalls = secondHalf;
