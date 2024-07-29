@@ -10,8 +10,9 @@ import { SwitchTheme } from "~~/components/SwitchTheme";
 import { BuidlGuidlLogo } from "~~/components/assets/BuidlGuidlLogo";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { useGlobalState } from "~~/services/store/store";
-import { devnet } from "@starknet-react/chains";
+import { devnet, sepolia } from "@starknet-react/chains";
 import { Faucet } from "~~/components/scaffold-stark/Faucet";
+import { FaucetSepolia } from "~~/components/scaffold-stark/FaucetSepolia";
 import { getBlockExplorerLink } from "~~/utils/scaffold-stark";
 
 /**
@@ -23,6 +24,7 @@ export const Footer = () => {
   );
   const { targetNetwork } = useTargetNetwork();
   const isLocalNetwork = targetNetwork.id === devnet.id;
+  const isSepoliaNetwork = targetNetwork.id === sepolia.id;
 
   return (
     <div className="min-h-0 py-5 px-1 mb-11 lg:mb-0 bg-base-100">
@@ -36,6 +38,11 @@ export const Footer = () => {
                   <span>{nativeCurrencyPrice}</span>
                 </div>
               </div>
+            )}
+            {isSepoliaNetwork && (
+              <>
+                <FaucetSepolia />
+              </>
             )}
             {isLocalNetwork && (
               <>
