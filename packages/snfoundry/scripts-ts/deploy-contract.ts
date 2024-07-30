@@ -8,9 +8,10 @@ import {
   RawArgs,
   transaction,
   extractContractHashes,
-  DeclareContractPayload
+  DeclareContractPayload,
+  UniversalDetails
 } from "starknet";
-import { Network } from "./types";
+import { DeployContractParams, Network } from "./types";
 
 const argv = yargs(process.argv.slice(2)).argv;
 const networkName: string = argv["network"];
@@ -20,14 +21,13 @@ let deployCalls = [];
 
 const { provider, deployer }: Network = networks[networkName];
 
-const declareIfNot_NotWait = async (payload: DeclareContractPayload, options?: { maxFee?: bigint}) => {
+const declareIfNot_NotWait = async (payload: DeclareContractPayload, options?: UniversalDetails) => {
   const declareContractPayload = extractContractHashes(payload);
   try {
     await provider.getClassByHash(declareContractPayload.classHash);
   } catch (error) {
     try {
-      const declareOptions = options?.maxFee ? { maxFee: options.maxFee } : {};
-      const { transaction_hash } = await deployer.declare(payload, declareOptions);
+      const { transaction_hash } = await deployer.declare(payload, options);
       if (networkName === "sepolia" || networkName === "mainnet") {
         await provider.waitForTransaction(transaction_hash);
       }
@@ -61,17 +61,32 @@ const deployContract_NotWait = async (payload: {
   }
 };
 
-const deployContract = async (
-  contractName: string,
-  exportContractName?: string,
-  constructorArgs?: RawArgs,
-  options?: {
-    maxFee?: bigint;
-  }
-): Promise<{
+
+/**
+ * Deploy a contract using the specified parameters.
+ *
+ * @param {DeployContractParams} params - The parameters for deploying the contract.
+ * @param {string} params.contractName - The name of the contract to deploy.
+ * @param {string} [params.exportContractName] - The name to export the contract as (optional).
+ * @param {RawArgs} [params.constructorArgs] - The constructor arguments for the contract (optional).
+ * @param {UniversalDetails} [params.options] - Additional deployment options (optional).
+ *
+ * @returns {Promise<{ classHash: string; address: string }>} The deployed contract's class hash and address.
+ *
+ * @example
+ * ///Example usage of deployContract function
+ * await deployContract({
+ *   contractName: "YourContract",
+ *   exportContractName: "YourContractExportName",
+ *   constructorArgs: { owner: deployer.address },
+ *   options: { maxFee: BigInt(1000000000000) }
+ * });
+ */
+const deployContract = async (params: DeployContractParams): Promise<{
   classHash: string;
   address: string;
 }> => {
+  const { contractName, constructorArgs, exportContractName, options } = params;
   try {
     await deployer.getContractVersion(deployer.address);
   } catch (e) {
@@ -175,9 +190,10 @@ const deployContract = async (
   };
 };
 
-const executeDeployCalls = async () => {
+
+const executeDeployCalls = async (options?: UniversalDetails) => {
   try {
-    let { transaction_hash } = await deployer.execute(deployCalls);
+    let { transaction_hash } = await deployer.execute(deployCalls, options);
     console.log("Deploy Calls Executed at ", transaction_hash);
     if (networkName === "sepolia" || networkName === "mainnet") {
       await provider.waitForTransaction(transaction_hash);
@@ -190,9 +206,9 @@ const executeDeployCalls = async () => {
       let firstHalf = deployCalls.slice(0, half);
       let secondHalf = deployCalls.slice(half);
       deployCalls = firstHalf;
-      await executeDeployCalls();
+      await executeDeployCalls(options);
       deployCalls = secondHalf;
-      await executeDeployCalls();
+      await executeDeployCalls(options);
     }
   }
 };

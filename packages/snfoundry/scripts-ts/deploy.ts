@@ -5,13 +5,54 @@ import {
   deployer,
 } from "./deploy-contract";
 
+
+/**
+ * Deploy a contract using the specified parameters.
+ *
+ * @example (deploy contract with contructorArgs)
+ * const deployScript = async (): Promise<void> => {
+ *   await deployContract(
+ *     {
+ *       contractName: "YourContract",
+ *       exportContractName: "YourContractExportName",
+ *       constructorArgs: {
+ *         owner: deployer.address,
+ *       },
+ *       options: {
+ *         maxFee: BigInt(1000000000000)
+ *       }
+ *     }
+ *   );
+ * };
+ * 
+ * @example (deploy contract without)
+ * const deployScript = async (): Promise<void> => {
+ *   await deployContract(
+ *     {
+ *       contractName: "YourContract",
+ *       exportContractName: "YourContractExportName",
+ *       options: {
+ *         maxFee: BigInt(1000000000000)
+ *       }
+ *     }
+ *   );
+ * };
+ * 
+ *
+ * @returns {Promise<void>}
+ */
 const deployScript = async (): Promise<void> => {
   await deployContract(
-    "YourContract",
-    "YourContract",
     {
-      owner: deployer.address, // the deployer address is the owner of the contract
-    },
+      contractName: "YourContract",
+      exportContractName: "YourContractExportName",
+      constructorArgs: {
+        owner: deployer.address,
+      },
+      options:{
+        maxFee: BigInt(1000000000000)
+      }
+    }
   );
 };
 
