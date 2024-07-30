@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
-import { FaucetButton } from "~~/components/scaffold-stark/FaucetButton";
 import { useTheme } from "next-themes";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { devnet } from "@starknet-react/chains";
@@ -80,19 +79,15 @@ export const Header = () => {
 
   const { provider } = useProvider();
   const { address, status } = useAccount();
-  const [isDeployed, setIsDeployed] = useState(false);
+  const [isDeployed, setIsDeployed] = useState(true);
 
   useEffect(() => {
     if (status === "connected" && address) {
-      provider
-        .getContractVersion(address)
-        .then((v) => {
-          if (v) setIsDeployed(true);
-        })
-        .catch((e) => {
-          console.log(e);
+      provider.getContractVersion(address).catch((e) => {
+        if (e.toString().includes("Contract not found")) {
           setIsDeployed(false);
-        });
+        }
+      });
     }
   }, [status, address, provider]);
 
@@ -146,7 +141,7 @@ export const Header = () => {
         </ul>
       </div>
       <div className="navbar-end flex-grow mr-4 gap-4">
-        {!isDeployed ? (
+        {status === "connected" && !isDeployed ? (
           <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
             Wallet Not Deployed
           </span>

@@ -2,7 +2,8 @@
 
 <h4 align="center">
   <a href="https://www.docs.scaffoldstark.com/">Documentation</a> |
-  <a href="https://www.scaffoldstark.com/">Website</a>
+  <a href="https://www.scaffoldstark.com/">Website</a> |
+  <a href="https://scaffold-stark-demo.vercel.app/debug">Demo</a>
 </h4>
 
 🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on Starknet blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
@@ -28,36 +29,51 @@ Before you begin, you need to install the following tools:
 - [asdf](https://asdf-vm.com/guide/getting-started.html)
 - [Cairo 1.0 extension for VSCode](https://marketplace.visualstudio.com/items?itemName=starkware.cairo1)
 
+### Starknet-devnet version
+
+To ensure the proper functioning of scaffold-stark, your local `starknet-devnet` version must be `0.0.4`. To accomplish this, first check your local starknet-devnet version:
+
+```sh
+starknet-devnet --version
+```
+
+If your local starknet-devnet version is not `0.0.4`, you need to install it.
+
+```bash
+cargo install starknet-devnet --version 0.0.4
+```
+
+
 ### Scarb version
 
-To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.5.4`. To accomplish this, first check your local Scarb version:
+To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.6.5`. To accomplish this, first check your local Scarb version:
 
 ```sh
 scarb --version
 ```
 
-If your local Scarb version is not `2.5.4`, you need to install it.
+If your local Scarb version is not `2.6.5`, you need to install it.
 
-- Install Scarb `2.5.4` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
+- Install Scarb `2.6.5` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
 
 ### Starknet Foundry version
 
-To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.25.0. To accomplish this, first check your Starknet Foundry version:
+To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.27.0. To accomplish this, first check your Starknet Foundry version:
 
 ```sh
 snforge --version
 ```
 
-If your Starknet Foundry version is not `0.25.0`, you need to install it.
+If your Starknet Foundry version is not `0.27.0`, you need to install it.
 
-- Install Starknet Foundry `0.25.0` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
+- Install Starknet Foundry `0.27.0` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
 
 ### RPC specific version
 
-To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, your RPC version must be `0.5.0` or `0.5.1`. This repository contains a .env.example file, where we provided the default RPC URL for the Starknet Testnet: `RPC_URL_SEPOLIA=https://starknet-sepolia.infura.io/v3/c45bd0ce3e584ba4a5e6a5928c9c0b0f`. Let's verify this RPC version is `0.5.1` by running the following command:
+To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, your RPC version must be `0.7.0`. This repository contains a .env.example file, where we provided the default RPC URL for the Starknet Testnet: `RPC_URL_SEPOLIA=https://starknet-sepolia.public.blastapi.io/rpc/v0_7`. Let's verify this RPC version is `0.7.0` by running the following command:
 
 ```sh
-curl --location 'https://starknet-sepolia.infura.io/v3/c45bd0ce3e584ba4a5e6a5928c9c0b0f' \
+curl --location 'https://starknet-sepolia.public.blastapi.io/rpc/v0_7' \
 --data '{
     "jsonrpc":"2.0",
     "method":"starknet_specVersion",
@@ -67,10 +83,10 @@ curl --location 'https://starknet-sepolia.infura.io/v3/c45bd0ce3e584ba4a5e6a5928
 
 ## Compatible versions
 
-- Scarb - v2.5.4
-- Snforge - v0.25.0
-- Cairo - v2.5.4
-- Rpc - v0.5.1
+- Scarb - v2.6.5
+- Snforge - v0.27.0
+- Cairo - v2.6.4
+- Rpc - v0.7.0
 
 ## Quickstart
 
@@ -79,7 +95,7 @@ To get started with Scaffold-Stark 2, follow the steps below:
 1. Clone this repo and install dependencies
 
 ```bash
-git clone https://github.com/Quantum3-Labs/scaffold-stark-2 --recurse-submodules
+git clone https://github.com/Quantum3-Labs/scaffold-stark-2.git
 cd scaffold-stark-2
 yarn install
 ```
