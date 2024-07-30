@@ -25,7 +25,7 @@ import {
  *   );
  * };
  * 
- * @example (deploy contract without)
+ * @example (deploy contract without contructorArgs)
  * const deployScript = async (): Promise<void> => {
  *   await deployContract(
  *     {
