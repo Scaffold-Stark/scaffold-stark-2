@@ -22,7 +22,8 @@
     "vercel:yolo": "yarn workspace @ss-2/nextjs vercel:yolo",
     "format": "yarn workspace @ss-2/nextjs format && yarn workspace @ss-2/snfoundry format",
     "format:check": "yarn workspace @ss-2/nextjs format:check && yarn workspace @ss-2/snfoundry format:check",
-    "prepare": "husky"
+    "prepare": "husky",
+    "starkdeployer": "yarn workspace @ss-2/snfoundry starkdeploy"
   },
   "packageManager": "yarn@3.2.3",
   "devDependencies": {
