@@ -102,7 +102,12 @@ export const FaucetSepolia = () => {
         <label className="modal-box relative">
           {/* dummy input to capture event onclick on modal box */}
           <input className="h-0 w-0 absolute top-0 left-0" />
-          <h3 className="text-xl font-bold mb-6">Sepolia Faucets</h3>
+          <h3 className="text-xl font-bold mb-3">Sepolia Faucets</h3>
+          <p className="text-xs mb-6">
+            <span className="font-medium underline">Disclaimer:</span><br /> Please note that these external websites are provided
+            for your convenience. We do not have control over the content and
+            availability of these sites. Use at your own risk.
+          </p>
           <label
             htmlFor="faucet-modal"
             className="btn btn-ghost btn-sm btn-circle absolute right-3 top-3"
@@ -111,25 +116,25 @@ export const FaucetSepolia = () => {
           </label>
           <div className="mb-4">
             <div className="flex flex-col space-y-3">
-              {sepoliaFaucets.length && sepoliaFaucets.map((faucet, id) => (
-              <a
-                href={faucet.link}
-                target="_blank"
-                className="h-20 btn btn-primary flex justify-start btn-sm px-6 gap-4 rounded-full"
-                key={id}
-              >
-                <div className="flex relative w-10 h-10">
-                  <Image
-                    alt="Starknet Developers Hub"
-                    className="cursor-pointer"
-                    fill
-                    src={faucet.img}
-                  />
-                </div>
-                <p className="text-lg">{faucet.name}</p>
-              </a>
-
-              ))}
+              {sepoliaFaucets.length &&
+                sepoliaFaucets.map((faucet, id) => (
+                  <a
+                    href={faucet.link}
+                    target="_blank"
+                    className="h-12 btn btn-primary flex justify-start btn-sm px-6 gap-4 rounded-full"
+                    key={id}
+                  >
+                    <div className="flex relative w-6 h-6">
+                      <Image
+                        alt="Starknet Developers Hub"
+                        className="cursor-pointer"
+                        fill
+                        src={faucet.img}
+                      />
+                    </div>
+                    <p className="text-sm m-0">{faucet.name}</p>
+                  </a>
+                ))}
             </div>
           </div>
         </label>

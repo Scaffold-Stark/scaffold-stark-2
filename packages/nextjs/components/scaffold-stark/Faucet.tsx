@@ -85,15 +85,19 @@ export const Faucet = () => {
 
     try {
       setLoading(true);
-      await mintEth(inputAddress, sendValue);
+      const res = await mintEth(inputAddress, sendValue);
+      console.log(res);
+      if (!res.new_balance) {
+        throw new Error(res);
+      }
       setLoading(false);
       setInputAddress(undefined);
       setSendValue("");
       notification.success("ETH sent successfully!");
     } catch (error) {
-      console.error("⚡️ ~ file: Faucet.tsx:sendETH ~ error", error);
+      console.error("There was a problem with the operation", error);
       setLoading(false);
-      notification.error(`⚡️ ~ file: Faucet.tsx:sendETH ~ error ${error}`);
+      notification.error(`${error}`);
     }
   };
 
