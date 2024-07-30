@@ -28,7 +28,7 @@ const getContractDataFromDeployments = (): Record<
       const content: Record<
         string,
         {
-          network : string;
+          network: string;
           classHash: string;
           address: string;
           deployment_transaction_hash: string;
