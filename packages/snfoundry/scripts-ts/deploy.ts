@@ -13,8 +13,8 @@ import {
  * const deployScript = async (): Promise<void> => {
  *   await deployContract(
  *     {
- *       contractName: "YourContract",
- *       exportContractName: "YourContractExportName",
+ *       contract: "YourContract",
+ *       contractName: "YourContractExportName",
  *       constructorArgs: {
  *         owner: deployer.address,
  *       },
@@ -29,8 +29,8 @@ import {
  * const deployScript = async (): Promise<void> => {
  *   await deployContract(
  *     {
- *       contractName: "YourContract",
- *       exportContractName: "YourContractExportName",
+ *       contract: "YourContract",
+ *       contractName: "YourContractExportName",
  *       options: {
  *         maxFee: BigInt(1000000000000)
  *       }
@@ -44,12 +44,12 @@ import {
 const deployScript = async (): Promise<void> => {
   await deployContract(
     {
-      contractName: "YourContract",
-      exportContractName: "YourContractExportName",
+      contract: "YourContract",
+      contractName: "YourContractExportName",
       constructorArgs: {
         owner: deployer.address,
       },
-      options:{
+      options: {
         maxFee: BigInt(1000000000000)
       }
     }

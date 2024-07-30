@@ -66,8 +66,8 @@ const deployContract_NotWait = async (payload: {
  * Deploy a contract using the specified parameters.
  *
  * @param {DeployContractParams} params - The parameters for deploying the contract.
- * @param {string} params.contractName - The name of the contract to deploy.
- * @param {string} [params.exportContractName] - The name to export the contract as (optional).
+ * @param {string} params.contract - The name of the contract to deploy.
+ * @param {string} [params.contractName] - The name to export the contract as (optional).
  * @param {RawArgs} [params.constructorArgs] - The constructor arguments for the contract (optional).
  * @param {UniversalDetails} [params.options] - Additional deployment options (optional).
  *
@@ -76,8 +76,8 @@ const deployContract_NotWait = async (payload: {
  * @example
  * ///Example usage of deployContract function
  * await deployContract({
- *   contractName: "YourContract",
- *   exportContractName: "YourContractExportName",
+ *   contract: "YourContract",
+ *   contractName: "YourContractExportName",
  *   constructorArgs: { owner: deployer.address },
  *   options: { maxFee: BigInt(1000000000000) }
  * });
@@ -86,7 +86,7 @@ const deployContract = async (params: DeployContractParams): Promise<{
   classHash: string;
   address: string;
 }> => {
-  const { contractName, constructorArgs, exportContractName, options } = params;
+  const { contract, constructorArgs, contractName, options } = params;
   try {
     await deployer.getContractVersion(deployer.address);
   } catch (e) {
@@ -109,7 +109,7 @@ const deployContract = async (params: DeployContractParams): Promise<{
         .readFileSync(
           path.resolve(
             __dirname,
-            `../contracts/target/dev/contracts_${contractName}.compiled_contract_class.json`
+            `../contracts/target/dev/contracts_${contract}.compiled_contract_class.json`
           )
         )
         .toString("ascii")
@@ -123,9 +123,9 @@ const deployContract = async (params: DeployContractParams): Promise<{
       const match = error.message.match(
         /\/dev\/(.+?)\.compiled_contract_class/
       );
-      const missingContractName = match ? match[1].split("_").pop() : "Unknown";
+      const missingContract = match ? match[1].split("_").pop() : "Unknown";
       console.error(
-        `The contract "${missingContractName}" doesn't exist or is not compiled`
+        `The contract "${missingContract}" doesn't exist or is not compiled`
       );
     } else {
       console.error("Error reading compiled contract class file:", error);
@@ -142,7 +142,7 @@ const deployContract = async (params: DeployContractParams): Promise<{
         .readFileSync(
           path.resolve(
             __dirname,
-            `../contracts/target/dev/contracts_${contractName}.contract_class.json`
+            `../contracts/target/dev/contracts_${contract}.contract_class.json`
           )
         )
         .toString("ascii")
@@ -159,7 +159,7 @@ const deployContract = async (params: DeployContractParams): Promise<{
   const constructorCalldata = constructorArgs
     ? contractCalldata.compile("constructor", constructorArgs)
     : [];
-  console.log("Deploying Contract ", contractName);
+  console.log("Deploying Contract ", contract);
 
   let { classHash } = await declareIfNot_NotWait({
     contract: compiledContractSierra,
@@ -176,12 +176,12 @@ const deployContract = async (params: DeployContractParams): Promise<{
 
   console.log("Contract Deployed at ", contractAddress);
 
-  let finalContractName = exportContractName || contractName;
+  let finalContractName = contract || contractName;
 
   deployments[finalContractName] = {
     classHash: classHash,
     address: contractAddress,
-    contract: contractName,
+    contract: contract,
   };
 
   return {

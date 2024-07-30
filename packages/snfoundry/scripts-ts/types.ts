@@ -8,8 +8,8 @@ export type Network = {
 };
 
 export type DeployContractParams = {
-  contractName: string,
-  exportContractName?: string,
+  contract: string,
+  contractName?: string,
   constructorArgs?: RawArgs,
   options?: UniversalDetails
 }
