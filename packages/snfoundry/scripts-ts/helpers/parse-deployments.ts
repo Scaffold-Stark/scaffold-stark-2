@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import prettier from "prettier";
 import { Abi, CompiledSierra } from "starknet";
+import { string } from "yargs";
 
 const TARGET_DIR = path.join(__dirname, "../../../nextjs/contracts");
 const deploymentsDir = path.join(__dirname, "../../deployments");
@@ -27,9 +28,11 @@ const getContractDataFromDeployments = (): Record<
       const content: Record<
         string,
         {
-          contract: string;
-          address: string;
+          network : string;
           classHash: string;
+          address: string;
+          deployment_transaction_hash: string;
+          contract: string;
         }
       > = JSON.parse(fs.readFileSync(filePath, "utf8"));
       const chainId = path.basename(file, "_latest.json");
@@ -38,7 +41,7 @@ const getContractDataFromDeployments = (): Record<
         try {
           const abiFilePath = path.join(
             __dirname,
-            `../../contracts/target/dev/contracts_${contractData.contract}.contract_class.json`
+            `../../contracts/target/dev/cairoscripts_${contractData.contract}.contract_class.json`
           );
           const abiContent: CompiledSierra = JSON.parse(
             fs.readFileSync(abiFilePath, "utf8")
