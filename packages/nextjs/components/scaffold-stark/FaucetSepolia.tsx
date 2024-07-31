@@ -47,7 +47,6 @@ export const FaucetSepolia = () => {
     const checkChain = async () => {
       try {
         const providerInfo = await publicClient.getBlock();
-        console.log(providerInfo);
       } catch (error) {
         console.error("⚡️ ~ file: Faucet.tsx:checkChain ~ error", error);
         notification.error(
@@ -75,7 +74,7 @@ export const FaucetSepolia = () => {
           </>,
           {
             duration: 5000,
-          }
+          },
         );
       }
     };
