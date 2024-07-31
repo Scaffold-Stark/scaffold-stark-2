@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Address as AddressType, sepolia } from "@starknet-react/chains";
+import { Address as AddressType, mainnet } from "@starknet-react/chains";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useNetwork } from "@starknet-react/core";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
@@ -12,25 +12,25 @@ import Image from "next/image";
 /**
  * Faucet modal which lets you send ETH to any address.
  */
-export const BlockExplorerSepolia = () => {
+export const BlockExplorer = () => {
   const { chain: ConnectedChain } = useNetwork();
   const { targetNetwork } = useTargetNetwork();
 
-  const sepoliaBlockExplorers = [
+  const blockExplorers = [
     {
       name: "Starkscan",
       img: "/sn-symbol-gradient.png",
-      link: "https://sepolia.starkscan.co/",
+      link: "https://starkscan.co/",
     },
     {
       name: "Voyager",
       img: "/voyager-icon.svg",
-      link: "https://sepolia.voyager.online/",
+      link: "https://voyager.online/",
     },
     {
       name: "Stark Compass",
       img: "/starkcompass-icon.svg",
-      link: "https://starkcompass.com/sepolia/",
+      link: "https://starkcompass.com/",
     },
   ];
 
@@ -83,15 +83,15 @@ export const BlockExplorerSepolia = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Render only on sepolia chain
-  if (ConnectedChain?.id !== sepolia.id) {
+  // Render only on mainnet chain
+  if (ConnectedChain?.id !== mainnet.id) {
     return null;
   }
 
   return (
     <div>
       <label
-        htmlFor="sepolia-blockexplorer-modal"
+        htmlFor="mainnet-blockexplorer-modal"
         className="btn btn-sm font-normal gap-1 border border-[#32BAC4] shadow-none"
       >
         <MagnifyingGlassIcon className="h-4 w-4 text-[#32BAC4]" />
@@ -99,17 +99,17 @@ export const BlockExplorerSepolia = () => {
       </label>
       <input
         type="checkbox"
-        id="sepolia-blockexplorer-modal"
+        id="mainnet-blockexplorer-modal"
         className="modal-toggle"
       />
       <label
-        htmlFor="sepolia-blockexplorer-modal"
+        htmlFor="mainnet-blockexplorer-modal"
         className="modal cursor-pointer"
       >
         <label className="modal-box relative">
           {/* dummy input to capture event onclick on modal box */}
           <input className="h-0 w-0 absolute top-0 left-0" />
-          <h3 className="text-xl font-bold mb-3">Sepolia Block Explorers</h3>
+          <h3 className="text-xl font-bold mb-3">Mainnet Block Explorers</h3>
           <label
             htmlFor="sepolia-blockexplorer-modal"
             className="btn btn-ghost btn-sm btn-circle absolute right-3 top-3"
@@ -118,8 +118,8 @@ export const BlockExplorerSepolia = () => {
           </label>
           <div className="mb-4 mt-6">
             <div className="flex flex-col space-y-3">
-              {sepoliaBlockExplorers.length &&
-                sepoliaBlockExplorers.map((blockexplorer, id) => (
+              {blockExplorers.length &&
+                blockExplorers.map((blockexplorer, id) => (
                   <a
                     href={blockexplorer.link}
                     target="_blank"
