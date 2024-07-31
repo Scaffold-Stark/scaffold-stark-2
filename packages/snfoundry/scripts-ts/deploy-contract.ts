@@ -9,7 +9,7 @@ import {
   transaction,
   extractContractHashes,
   DeclareContractPayload,
-  UniversalDetails
+  UniversalDetails,
 } from "starknet";
 import { DeployContractParams, Network } from "./types";
 
@@ -21,7 +21,10 @@ let deployCalls = [];
 
 const { provider, deployer }: Network = networks[networkName];
 
-const declareIfNot_NotWait = async (payload: DeclareContractPayload, options?: UniversalDetails) => {
+const declareIfNot_NotWait = async (
+  payload: DeclareContractPayload,
+  options?: UniversalDetails,
+) => {
   const declareContractPayload = extractContractHashes(payload);
   try {
     await provider.getClassByHash(declareContractPayload.classHash);
@@ -49,7 +52,7 @@ const deployContract_NotWait = async (payload: {
   try {
     const { calls, addresses } = transaction.buildUDCCall(
       payload,
-      deployer.address
+      deployer.address,
     );
     deployCalls.push(...calls);
     return {
@@ -60,7 +63,6 @@ const deployContract_NotWait = async (payload: {
     throw error;
   }
 };
-
 
 /**
  * Deploy a contract using the specified parameters.
@@ -82,7 +84,9 @@ const deployContract_NotWait = async (payload: {
  *   options: { maxFee: BigInt(1000000000000) }
  * });
  */
-const deployContract = async (params: DeployContractParams): Promise<{
+const deployContract = async (
+  params: DeployContractParams,
+): Promise<{
   classHash: string;
   address: string;
 }> => {
@@ -109,10 +113,10 @@ const deployContract = async (params: DeployContractParams): Promise<{
         .readFileSync(
           path.resolve(
             __dirname,
-            `../contracts/target/dev/contracts_${contract}.compiled_contract_class.json`
-          )
+            `../contracts/target/dev/contracts_${contract}.compiled_contract_class.json`,
+          ),
         )
-        .toString("ascii")
+        .toString("ascii"),
     );
   } catch (error) {
     if (
@@ -121,11 +125,11 @@ const deployContract = async (params: DeployContractParams): Promise<{
       error.message.includes("compiled_contract_class")
     ) {
       const match = error.message.match(
-        /\/dev\/(.+?)\.compiled_contract_class/
+        /\/dev\/(.+?)\.compiled_contract_class/,
       );
       const missingContract = match ? match[1].split("_").pop() : "Unknown";
       console.error(
-        `The contract "${missingContract}" doesn't exist or is not compiled`
+        `The contract "${missingContract}" doesn't exist or is not compiled`,
       );
     } else {
       console.error("Error reading compiled contract class file:", error);
@@ -142,10 +146,10 @@ const deployContract = async (params: DeployContractParams): Promise<{
         .readFileSync(
           path.resolve(
             __dirname,
-            `../contracts/target/dev/contracts_${contract}.contract_class.json`
-          )
+            `../contracts/target/dev/contracts_${contract}.contract_class.json`,
+          ),
         )
-        .toString("ascii")
+        .toString("ascii"),
     );
   } catch (error) {
     console.error("Error reading contract class file:", error);
@@ -161,10 +165,13 @@ const deployContract = async (params: DeployContractParams): Promise<{
     : [];
   console.log("Deploying Contract ", contract);
 
-  let { classHash } = await declareIfNot_NotWait({
-    contract: compiledContractSierra,
-    casm: compiledContractCasm,
-  }, options);
+  let { classHash } = await declareIfNot_NotWait(
+    {
+      contract: compiledContractSierra,
+      casm: compiledContractCasm,
+    },
+    options,
+  );
 
   let randomSalt = stark.randomAddress();
 
@@ -189,7 +196,6 @@ const deployContract = async (params: DeployContractParams): Promise<{
     address: contractAddress,
   };
 };
-
 
 const executeDeployCalls = async (options?: UniversalDetails) => {
   try {
@@ -216,14 +222,14 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
 const exportDeployments = () => {
   const networkPath = path.resolve(
     __dirname,
-    `../deployments/${networkName}_latest.json`
+    `../deployments/${networkName}_latest.json`,
   );
 
   if (fs.existsSync(networkPath)) {
     const currentTimestamp = new Date().getTime();
     fs.renameSync(
       networkPath,
-      networkPath.replace("_latest.json", `_${currentTimestamp}.json`)
+      networkPath.replace("_latest.json", `_${currentTimestamp}.json`),
     );
   }
 

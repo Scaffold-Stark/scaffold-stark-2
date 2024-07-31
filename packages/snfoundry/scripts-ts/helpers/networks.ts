@@ -31,7 +31,7 @@ const deployerSepolia =
     providerSepolia,
     process.env.ACCOUNT_ADDRESS_SEPOLIA,
     process.env.PRIVATE_KEY_SEPOLIA,
-    "1"
+    "1",
   );
 
 // mainnet
@@ -45,7 +45,7 @@ const deployerMainnet =
     providerMainnet,
     process.env.ACCOUNT_ADDRESS_MAINNET,
     process.env.PRIVATE_KEY_MAINNET,
-    "1"
+    "1",
   );
 
 export const networks: Networks = {
