@@ -104,8 +104,9 @@ export const FaucetSepolia = () => {
           <input className="h-0 w-0 absolute top-0 left-0" />
           <h3 className="text-xl font-bold mb-3">Sepolia Faucets</h3>
           <p className="text-xs mb-6">
-            <span className="font-medium underline">Disclaimer:</span><br /> Please note that these external websites are provided
-            for your convenience. We do not have control over the content and
+            <span className="font-medium underline">Disclaimer:</span>
+            <br /> Please note that these external websites are provided for
+            your convenience. We do not have control over the content and
             availability of these sites. Use at your own risk.
           </p>
           <label
