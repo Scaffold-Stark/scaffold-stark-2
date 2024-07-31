@@ -10,6 +10,7 @@ import {
 } from "~~/app/debug/_components/contract";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import {
+  useAccount,
   useContractWrite,
   useNetwork,
   useWaitForTransaction,
@@ -37,10 +38,22 @@ export const WriteOnlyFunctionForm = ({
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialFormState(abiFunction),
   );
+  const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null);
+  const { status: walletStatus } = useAccount();
   const { chain } = useNetwork();
   const writeTxn = useTransactor();
   const { targetNetwork } = useTargetNetwork();
-  const writeDisabled = !chain || chain?.network !== targetNetwork.network;
+  const writeDisabled =
+    !chain ||
+    chain?.network !== targetNetwork.network ||
+    walletStatus === "disconnected";
+
+  // side effect to update error state when not connected
+  useEffect(() => {
+    setFormErrorMessage(
+      writeDisabled ? "Wallet not connected or in the wrong network" : null,
+    );
+  }, [writeDisabled]);
 
   const {
     data: result,
@@ -51,7 +64,9 @@ export const WriteOnlyFunctionForm = ({
       {
         contractAddress,
         entrypoint: abiFunction.name,
-        calldata: getParsedContractFunctionArgs(form, false).flat(),
+
+        // use infinity to completely flatten array from n dimensions to 1 dimension
+        calldata: getParsedContractFunctionArgs(form, false).flat(Infinity),
       },
     ],
   });
@@ -90,6 +105,7 @@ export const WriteOnlyFunctionForm = ({
     const key = getFunctionInputKey(abiFunction.name, input, inputIndex);
     return (
       <ContractInput
+        abi={abi}
         key={key}
         setForm={(updatedFormValue) => {
           setDisplayedTxResult(undefined);
@@ -98,6 +114,7 @@ export const WriteOnlyFunctionForm = ({
         form={form}
         stateObjectKey={key}
         paramType={input}
+        setFormErrorMessage={setFormErrorMessage}
       />
     );
   });
@@ -124,16 +141,14 @@ export const WriteOnlyFunctionForm = ({
           )}
           <div
             className={`flex ${
-              writeDisabled &&
+              formErrorMessage &&
               "tooltip before:content-[attr(data-tip)] before:right-[-10px] before:left-auto before:transform-none"
             }`}
-            data-tip={`${
-              writeDisabled && "Wallet not connected or in the wrong network"
-            }`}
+            data-tip={`${formErrorMessage}`}
           >
             <button
               className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
-              disabled={writeDisabled || isLoading}
+              disabled={!!formErrorMessage || isLoading}
               onClick={handleWrite}
             >
               {isLoading && (

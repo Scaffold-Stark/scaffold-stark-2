@@ -30,7 +30,7 @@ Make sure you have the compatible versions otherwise refer to [Scaffold-Stark Re
 Then download the challenge to your computer and install dependencies by running:
 
 ```sh
-git clone https://github.com/Quantum3-Labs/speedrunstark.git --recurse-submodules {challengeName}
+git clone https://github.com/Quantum3-Labs/speedrunstark.git {challengeName}
 cd {challengeName}
 git checkout {challengeName}
 yarn install

@@ -1,6 +1,6 @@
 {
   "name": "@ss-2/nextjs",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -33,10 +33,7 @@
     "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
-    "react-json-view": "^1.21.3",
-    "react-markdown": "^9.0.1",
-    "starknet": "5.25.0",
-    "starknet-dev": "npm:starknet@6.7.0",
+    "starknet": "6.7.0",
     "type-fest": "^4.6.0",
     "usehooks-ts": "^2.13.0",
     "zustand": "^4.1.2"
