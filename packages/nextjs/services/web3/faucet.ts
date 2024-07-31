@@ -13,12 +13,10 @@ export async function mintEth(inputAddress: Address, eth: string) {
         unit: "WEI",
       }),
     });
-    console.log(response);
     if (!response.ok) {
       throw new Error(`${response.statusText}`);
     }
     const data = await response.json();
-    console.log(data);
     return data;
   } catch (error) {
     console.error("There was a problem with the operation", error);

@@ -42,7 +42,6 @@ export const Faucet = () => {
     const checkChain = async () => {
       try {
         const providerInfo = await publicClient.getBlock();
-        console.log(providerInfo);
       } catch (error) {
         console.error("⚡️ ~ file: Faucet.tsx:checkChain ~ error", error);
         notification.error(
@@ -86,7 +85,6 @@ export const Faucet = () => {
     try {
       setLoading(true);
       const res = await mintEth(inputAddress, sendValue);
-      console.log(res);
       if (!res.new_balance) {
         throw new Error(res);
       }
