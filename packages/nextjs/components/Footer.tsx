@@ -14,6 +14,7 @@ import { devnet, sepolia } from "@starknet-react/chains";
 import { Faucet } from "~~/components/scaffold-stark/Faucet";
 import { FaucetSepolia } from "~~/components/scaffold-stark/FaucetSepolia";
 import { getBlockExplorerLink } from "~~/utils/scaffold-stark";
+import { BlockExplorerSepolia } from "./scaffold-stark/BlockExplorerSepolia";
 
 /**
  * Site footer
@@ -42,6 +43,7 @@ export const Footer = () => {
             {isSepoliaNetwork && (
               <>
                 <FaucetSepolia />
+                <BlockExplorerSepolia />
               </>
             )}
             {isLocalNetwork && (
