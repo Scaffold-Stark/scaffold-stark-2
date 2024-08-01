@@ -10,7 +10,7 @@ import { notification } from "~~/utils/scaffold-stark";
 import Image from "next/image";
 
 /**
- * Faucet modal which lets you send ETH to any address.
+ * Faucet modal which displays external websites that lets you send small amounts of L2 Sepolia ETH/STRK to an account address on Starknet Sepolia..
  */
 export const FaucetSepolia = () => {
   const { chain: ConnectedChain } = useNetwork();
