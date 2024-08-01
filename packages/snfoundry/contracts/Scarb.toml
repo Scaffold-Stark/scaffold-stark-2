@@ -15,9 +15,3 @@ casm = true
 
 [tool.fmt]
 sort-module-level-items = true
-
-[lib]
-casm = true
-
-[workspace]
-members = ["cairoscripts"]
