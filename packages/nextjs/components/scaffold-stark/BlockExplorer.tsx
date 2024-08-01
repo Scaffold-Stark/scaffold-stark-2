@@ -45,10 +45,7 @@ export const BlockExplorer = () => {
         id="blockexplorer-modal"
         className="modal-toggle"
       />
-      <label
-        htmlFor="blockexplorer-modal"
-        className="modal cursor-pointer"
-      >
+      <label htmlFor="blockexplorer-modal" className="modal cursor-pointer">
         <label className="modal-box relative">
           {/* dummy input to capture event onclick on modal box */}
           <input className="h-0 w-0 absolute top-0 left-0" />
