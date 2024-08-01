@@ -5,6 +5,7 @@ import { Address } from "@starknet-react/chains";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import useScaffoldEthBalance from "~~/hooks/scaffold-stark/useScaffoldEthBalance";
 import { useGlobalState } from "~~/services/store/store";
+import useScaffoldStrkBalance from "~~/hooks/scaffold-stark/useScaffoldStrkBalance";
 
 type BalanceProps = {
   address?: Address;
@@ -21,6 +22,9 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
   const { formatted, isLoading, isError } = useScaffoldEthBalance({
     address,
   });
+  const strkBalance = useScaffoldStrkBalance({
+    address,
+  });
   const [displayUsdMode, setDisplayUsdMode] = useState(
     price > 0 ? Boolean(usdMode) : false,
   );
@@ -31,7 +35,13 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
     }
   };
 
-  if (!address || isLoading || formatted === null) {
+  if (
+    !address ||
+    isLoading ||
+    formatted === null ||
+    strkBalance.isLoading ||
+    strkBalance.formatted === null
+  ) {
     return (
       <div className="animate-pulse flex space-x-4">
         <div className="rounded-md bg-slate-300 h-6 w-6"></div>
@@ -55,30 +65,57 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
   //const formattedBalance = balance ? Number(balance.formatted) : 0;
 
   return (
-    <button
-      className={`btn btn-sm btn-ghost flex flex-col font-normal items-center hover:bg-transparent ${className}`}
-      onClick={toggleBalanceMode}
-    >
-      <div className="w-full flex items-center justify-center">
-        {displayUsdMode ? (
-          <>
-            <span className="text-[0.8em] font-bold mr-1">$</span>
-            <span>
-              {(parseFloat(formatted) * price).toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </span>
-          </>
-        ) : (
-          <>
-            <span>{parseFloat(formatted).toFixed(4)}</span>
-            <span className="text-[0.8em] font-bold ml-1">
-              {targetNetwork.nativeCurrency.symbol}
-            </span>
-          </>
-        )}
-      </div>
-    </button>
+    <>
+      <button
+        className={`btn btn-sm btn-ghost flex flex-col font-normal items-center hover:bg-transparent ${className}`}
+        onClick={toggleBalanceMode}
+      >
+        <div className="w-full flex items-center justify-center">
+          {displayUsdMode ? (
+            <>
+              <div className="flex">
+                <span className="text-[0.8em] font-bold mr-1">$</span>
+                <span>
+                  {(parseFloat(formatted) * price).toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </span>
+              </div>
+              <div className="flex">
+                <span className="text-[0.8em] font-bold mr-1">$</span>
+                <span>
+                  {(parseFloat(strkBalance.formatted) * price).toLocaleString(
+                    "en-US",
+                    {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    },
+                  )}
+                </span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex gap-4">
+                <div className="flex">
+                  <span>{parseFloat(formatted).toFixed(4)}</span>
+                  <span className="text-[0.8em] font-bold ml-1">
+                    {targetNetwork.nativeCurrency.symbol}
+                  </span>
+                </div>
+
+                <div className="flex">
+                  <span>{parseFloat(strkBalance.formatted).toFixed(4)}</span>
+                  <span className="text-[0.8em] font-bold ml-1">
+                    {strkBalance.symbol}
+                  </span>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </button>
+    </>
   );
 };
