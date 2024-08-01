@@ -6,24 +6,28 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "packages/snfoundry",
+      "packages/snfoundry_dev",
       "packages/nextjs"
     ]
   },
   "scripts": {
-    "chain": "yarn workspace @ss-2/snfoundry chain",
-    "deploy": "yarn workspace @ss-2/snfoundry deploy",
-    "test": "yarn workspace @ss-2/snfoundry test",
-    "compile": "yarn workspace @ss-2/snfoundry compile",
+    "chain": "yarn workspace @ss-2/snfoundry_dev chain",
+    "deploy:devnet": "cd packages/snfoundry_dev && dotenv -e .env -- yarn workspace @ss-2/snfoundry_dev deploy:devnet $*",
+    "deploy:sepolia": "cd packages/snfoundry_dev && dotenv -e .env -- yarn workspace @ss-2/snfoundry_dev deploy:sepolia $*",
+    "deploy": "yarn deploy:devnet",
+    "account:devnet": "cd packages && cd snfoundry_dev && dotenv -e .env -- yarn workspace @ss-2/snfoundry_dev add-account:devnet $*",
+    "account:sepolia": "cd packages && cd snfoundry_dev && dotenv -e .env -- yarn workspace @ss-2/snfoundry_dev add-account:sepolia $*",
+    "account": "yarn account:devnet",
+    "test": "yarn workspace @ss-2/snfoundry_dev test",
+    "compile": "yarn workspace @ss-2/snfoundry_dev compile",
     "start": "yarn workspace @ss-2/nextjs dev",
     "next:lint": "yarn workspace @ss-2/nextjs lint",
     "next:check-types": "yarn workspace @ss-2/nextjs check-types",
     "vercel": "yarn workspace @ss-2/nextjs vercel",
     "vercel:yolo": "yarn workspace @ss-2/nextjs vercel:yolo",
-    "format": "yarn workspace @ss-2/nextjs format && yarn workspace @ss-2/snfoundry format",
-    "format:check": "yarn workspace @ss-2/nextjs format:check && yarn workspace @ss-2/snfoundry format:check",
-    "prepare": "husky",
-    "starkdeployer": "yarn workspace @ss-2/snfoundry starkdeploy"
+    "format": "yarn workspace @ss-2/nextjs format && yarn workspace @ss-2/snfoundry_dev format",
+    "format:check": "yarn workspace @ss-2/nextjs format:check && yarn workspace @ss-2/snfoundry_dev format:check",
+    "prepare": "husky"
   },
   "packageManager": "yarn@3.2.3",
   "devDependencies": {
@@ -33,6 +37,7 @@
     "prettier": "^3.2.5"
   },
   "dependencies": {
+    "dotenv-cli": "^7.4.2",
     "postcss": "^8.4.38"
   }
 }
