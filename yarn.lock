@@ -1703,14 +1703,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@ss-2/snfoundry@workspace:packages/snfoundry":
+"@ss-2/snfoundry_dev@workspace:packages/snfoundry_dev":
   version: 0.0.0-use.local
-  resolution: "@ss-2/snfoundry@workspace:packages/snfoundry"
+  resolution: "@ss-2/snfoundry_dev@workspace:packages/snfoundry_dev"
   dependencies:
     "@types/node": ^20
     "@types/prettier": ^2
     "@types/yargs": ^17.0.32
     dotenv: ^16.3.1
+    dotenv-cli: ^7.4.2
     envfile: ^6.18.0
     globals: ^15.8.0
     prettier: ^2.8.8
@@ -3103,7 +3104,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.2":
+"cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3":
   version: 7.0.3
   resolution: "cross-spawn@npm:7.0.3"
   dependencies:
@@ -3360,7 +3361,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.3.1":
+"dotenv-cli@npm:^7.4.2":
+  version: 7.4.2
+  resolution: "dotenv-cli@npm:7.4.2"
+  dependencies:
+    cross-spawn: ^7.0.3
+    dotenv: ^16.3.0
+    dotenv-expand: ^10.0.0
+    minimist: ^1.2.6
+  bin:
+    dotenv: cli.js
+  checksum: 48d887ea9be08f7453dc87d6c938311989e951d0b43028eadcbaff3be1ca56180f8c38b8f932fc2e59f0210e59f4b5c59cf8a34da3e6c92f63fe6d7ce4f09f65
+  languageName: node
+  linkType: hard
+
+"dotenv-expand@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "dotenv-expand@npm:10.0.0"
+  checksum: 2a38b470efe0abcb1ac8490421a55e1d764dc9440fd220942bce40965074f3fb00b585f4346020cb0f0f219966ee6b4ee5023458b3e2953fe5b3214de1b314ee
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.3.0, dotenv@npm:^16.3.1":
   version: 16.4.5
   resolution: "dotenv@npm:16.4.5"
   checksum: 301a12c3d44fd49888b74eb9ccf9f07a1f5df43f489e7fcb89647a2edcd84c42d6bc349dc8df099cd18f07c35c7b04685c1a4f3e6a6a9e6b30f8d48c15b7f49c
@@ -7181,6 +7203,7 @@ __metadata:
   resolution: "ss-2@workspace:."
   dependencies:
     daisyui: ^4.7.3
+    dotenv-cli: ^7.4.2
     husky: ^9.0.11
     pinst: ^3.0.0
     postcss: ^8.4.38
