@@ -34,7 +34,7 @@ export const BlockExplorer = () => {
   return (
     <div>
       <label
-        htmlFor="mainnet-blockexplorer-modal"
+        htmlFor="blockexplorer-modal"
         className="btn btn-sm font-normal gap-1 border border-[#32BAC4] shadow-none"
       >
         <MagnifyingGlassIcon className="h-4 w-4 text-[#32BAC4]" />
@@ -42,11 +42,11 @@ export const BlockExplorer = () => {
       </label>
       <input
         type="checkbox"
-        id="mainnet-blockexplorer-modal"
+        id="blockexplorer-modal"
         className="modal-toggle"
       />
       <label
-        htmlFor="mainnet-blockexplorer-modal"
+        htmlFor="blockexplorer-modal"
         className="modal cursor-pointer"
       >
         <label className="modal-box relative">
@@ -54,7 +54,7 @@ export const BlockExplorer = () => {
           <input className="h-0 w-0 absolute top-0 left-0" />
           <h3 className="text-xl font-bold mb-3">Mainnet Block Explorers</h3>
           <label
-            htmlFor="sepolia-blockexplorer-modal"
+            htmlFor="blockexplorer-modal"
             className="btn btn-ghost btn-sm btn-circle absolute right-3 top-3"
           >
             ✕
