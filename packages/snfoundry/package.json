@@ -9,8 +9,7 @@
     "compile": "cd contracts && scarb build",
     "format": "prettier --write 'scripts-ts/**/*.{ts,tsx}' && cd contracts && scarb fmt",
     "format:check": "prettier --check 'scripts-ts/**/*.{ts,tsx}' && cd contracts && scarb fmt --check",
-    "postinstall": "shx cp -n .env.example .env",
-    "starkdeploy": "./deployment.sh starkdeploy"
+    "postinstall": "shx cp -n .env.example .env"
   },
   "devDependencies": {
     "@types/node": "^20",
