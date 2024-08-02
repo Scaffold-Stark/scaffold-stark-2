@@ -55,7 +55,7 @@ jobs:
           git commit -m "chore: sync files from scaffold-stark-2 [skip ci]"
 
       - name: Format .gitignore files
-        run: | 
+        run: |
           find destination_repo/templates/base -type f -name ".gitignore" | while read -r gitignore_file; do
             mjs_file="${gitignore_file%/*}/.gitignore.template.mjs"
             gitignore_content=$(cat "$gitignore_file")
@@ -83,8 +83,8 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
-          registry-url: 'https://registry.npmjs.org/'
+          node-version: "16"
+          registry-url: "https://registry.npmjs.org/"
 
       - name: Publish release
         if: success()
@@ -93,7 +93,7 @@ jobs:
           cd destination_repo
           npm install && npm run build && npm publish
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}  
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Notify Slack on Success
         if: success()

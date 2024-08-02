@@ -42,7 +42,6 @@ If your local starknet-devnet version is not `0.0.4`, you need to install it.
 cargo install starknet-devnet --version 0.0.4
 ```
 
-
 ### Scarb version
 
 To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.6.5`. To accomplish this, first check your local Scarb version:
