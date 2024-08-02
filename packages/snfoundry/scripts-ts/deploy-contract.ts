@@ -23,11 +23,7 @@ const { provider, deployer }: Network = networks[networkName];
 
 const declareIfNot_NotWait = async (
   payload: DeclareContractPayload,
-<<<<<<< HEAD
   options?: UniversalDetails
-=======
-  options?: UniversalDetails,
->>>>>>> 399bbe0a8c26bb33b83c6b034a475618f2afed24
 ) => {
   const declareContractPayload = extractContractHashes(payload);
   try {
@@ -56,7 +52,7 @@ const deployContract_NotWait = async (payload: {
   try {
     const { calls, addresses } = transaction.buildUDCCall(
       payload,
-      deployer.address,
+      deployer.address
     );
     deployCalls.push(...calls);
     return {
@@ -89,11 +85,7 @@ const deployContract_NotWait = async (payload: {
  * });
  */
 const deployContract = async (
-<<<<<<< HEAD
   params: DeployContractParams
-=======
-  params: DeployContractParams,
->>>>>>> 399bbe0a8c26bb33b83c6b034a475618f2afed24
 ): Promise<{
   classHash: string;
   address: string;
@@ -121,10 +113,10 @@ const deployContract = async (
         .readFileSync(
           path.resolve(
             __dirname,
-            `../contracts/target/dev/contracts_${contract}.compiled_contract_class.json`,
-          ),
+            `../contracts/target/dev/contracts_${contract}.compiled_contract_class.json`
+          )
         )
-        .toString("ascii"),
+        .toString("ascii")
     );
   } catch (error) {
     if (
@@ -133,11 +125,11 @@ const deployContract = async (
       error.message.includes("compiled_contract_class")
     ) {
       const match = error.message.match(
-        /\/dev\/(.+?)\.compiled_contract_class/,
+        /\/dev\/(.+?)\.compiled_contract_class/
       );
       const missingContract = match ? match[1].split("_").pop() : "Unknown";
       console.error(
-        `The contract "${missingContract}" doesn't exist or is not compiled`,
+        `The contract "${missingContract}" doesn't exist or is not compiled`
       );
     } else {
       console.error("Error reading compiled contract class file:", error);
@@ -154,10 +146,10 @@ const deployContract = async (
         .readFileSync(
           path.resolve(
             __dirname,
-            `../contracts/target/dev/contracts_${contract}.contract_class.json`,
-          ),
+            `../contracts/target/dev/contracts_${contract}.contract_class.json`
+          )
         )
-        .toString("ascii"),
+        .toString("ascii")
     );
   } catch (error) {
     console.error("Error reading contract class file:", error);
@@ -178,11 +170,7 @@ const deployContract = async (
       contract: compiledContractSierra,
       casm: compiledContractCasm,
     },
-<<<<<<< HEAD
     options
-=======
-    options,
->>>>>>> 399bbe0a8c26bb33b83c6b034a475618f2afed24
   );
 
   let randomSalt = stark.randomAddress();
@@ -234,14 +222,14 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
 const exportDeployments = () => {
   const networkPath = path.resolve(
     __dirname,
-    `../deployments/${networkName}_latest.json`,
+    `../deployments/${networkName}_latest.json`
   );
 
   if (fs.existsSync(networkPath)) {
     const currentTimestamp = new Date().getTime();
     fs.renameSync(
       networkPath,
-      networkPath.replace("_latest.json", `_${currentTimestamp}.json`),
+      networkPath.replace("_latest.json", `_${currentTimestamp}.json`)
     );
   }
 
