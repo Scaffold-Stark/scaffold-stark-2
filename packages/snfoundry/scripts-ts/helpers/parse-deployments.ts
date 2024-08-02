@@ -12,51 +12,52 @@ const generatedContractComment = `/**
  * You should not edit it manually or your changes might be overwritten.
  */`;
 
-const getContractDataFromDeployments = (): Record<
-  string,
-  Record<string, { address: string; abi: Abi }>
+ const getContractDataFromDeployments = (): Record<
+ string,
+ Record<string, { address: string; abi: Abi; classHash: string }>
 > => {
-  const allContractsData: Record<
-    string,
-    Record<string, { address: string; abi: Abi }>
-  > = {};
+ const allContractsData: Record<
+   string,
+   Record<string, { address: string; abi: Abi; classHash: string }>
+ > = {};
 
-  files.forEach((file) => {
-    if (path.extname(file) === ".json" && file.endsWith("_latest.json")) {
-      const filePath = path.join(deploymentsDir, file);
-      const content: Record<
-        string,
-        {
-          contract: string;
-          address: string;
-          classHash: string;
-        }
-      > = JSON.parse(fs.readFileSync(filePath, "utf8"));
-      const chainId = path.basename(file, "_latest.json");
+ files.forEach((file) => {
+   if (path.extname(file) === ".json" && file.endsWith("_latest.json")) {
+     const filePath = path.join(deploymentsDir, file);
+     const content: Record<
+       string,
+       {
+         contract: string;
+         address: string;
+         classHash: string;
+       }
+     > = JSON.parse(fs.readFileSync(filePath, "utf8"));
+     const chainId = path.basename(file, "_latest.json");
 
-      Object.entries(content).forEach(([contractName, contractData]) => {
-        try {
-          const abiFilePath = path.join(
-            __dirname,
-            `../../contracts/target/dev/contracts_${contractData.contract}.contract_class.json`
-          );
-          const abiContent: CompiledSierra = JSON.parse(
-            fs.readFileSync(abiFilePath, "utf8")
-          );
+     Object.entries(content).forEach(([contractName, contractData]) => {
+       try {
+         const abiFilePath = path.join(
+           __dirname,
+           ../../contracts/target/dev/contracts_${contractData.contract}.contract_class.json
+         );
+         const abiContent: CompiledSierra = JSON.parse(
+           fs.readFileSync(abiFilePath, "utf8")
+         );
 
-          allContractsData[chainId] = {
-            ...allContractsData[chainId],
-            [contractName]: {
-              address: contractData.address,
-              abi: abiContent.abi.filter((item) => item.type !== "l1_handler"),
-            },
-          };
-        } catch (e) {}
-      });
-    }
-  });
+         allContractsData[chainId] = {
+           ...allContractsData[chainId],
+           [contractName]: {
+             address: contractData.address,
+             abi: abiContent.abi.filter((item) => item.type !== "l1_handler"),
+             classHash: contractData.classHash,
+           },
+         };
+       } catch (e) {}
+     });
+   }
+ });
 
-  return allContractsData;
+ return allContractsData;
 };
 
 const generateTsAbis = () => {
