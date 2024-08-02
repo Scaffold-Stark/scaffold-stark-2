@@ -62,7 +62,10 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
     );
   }
 
-  //const formattedBalance = balance ? Number(balance.formatted) : 0;
+  // Calculate the total balance in USD
+  const ethBalanceInUsd = parseFloat(formatted) * price;
+  const strkBalanceInUsd = parseFloat(strkBalance.formatted) * price;
+  const totalBalanceInUsd = ethBalanceInUsd + strkBalanceInUsd;
 
   return (
     <>
@@ -72,29 +75,15 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
       >
         <div className="w-full flex items-center justify-center">
           {displayUsdMode ? (
-            <>
-              <div className="flex">
-                <span className="text-[0.8em] font-bold mr-1">$</span>
-                <span>
-                  {(parseFloat(formatted) * price).toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </span>
-              </div>
-              <div className="flex">
-                <span className="text-[0.8em] font-bold mr-1">$</span>
-                <span>
-                  {(parseFloat(strkBalance.formatted) * price).toLocaleString(
-                    "en-US",
-                    {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    },
-                  )}
-                </span>
-              </div>
-            </>
+            <div className="flex">
+              <span className="text-[0.8em] font-bold mr-1">$</span>
+              <span>
+                {totalBalanceInUsd.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </span>
+            </div>
           ) : (
             <>
               <div className="flex gap-4">
