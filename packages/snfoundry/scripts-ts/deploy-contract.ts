@@ -9,7 +9,7 @@ import {
   transaction,
   extractContractHashes,
   DeclareContractPayload,
-  UniversalDetails
+  UniversalDetails,
 } from "starknet";
 import { DeployContractParams, Network } from "./types";
 
@@ -21,7 +21,10 @@ let deployCalls = [];
 
 const { provider, deployer }: Network = networks[networkName];
 
-const declareIfNot_NotWait = async (payload: DeclareContractPayload, options?: UniversalDetails) => {
+const declareIfNot_NotWait = async (
+  payload: DeclareContractPayload,
+  options?: UniversalDetails
+) => {
   const declareContractPayload = extractContractHashes(payload);
   try {
     await provider.getClassByHash(declareContractPayload.classHash);
@@ -61,7 +64,6 @@ const deployContract_NotWait = async (payload: {
   }
 };
 
-
 /**
  * Deploy a contract using the specified parameters.
  *
@@ -82,7 +84,9 @@ const deployContract_NotWait = async (payload: {
  *   options: { maxFee: BigInt(1000000000000) }
  * });
  */
-const deployContract = async (params: DeployContractParams): Promise<{
+const deployContract = async (
+  params: DeployContractParams
+): Promise<{
   classHash: string;
   address: string;
 }> => {
@@ -161,10 +165,13 @@ const deployContract = async (params: DeployContractParams): Promise<{
     : [];
   console.log("Deploying Contract ", contract);
 
-  let { classHash } = await declareIfNot_NotWait({
-    contract: compiledContractSierra,
-    casm: compiledContractCasm,
-  }, options);
+  let { classHash } = await declareIfNot_NotWait(
+    {
+      contract: compiledContractSierra,
+      casm: compiledContractCasm,
+    },
+    options
+  );
 
   let randomSalt = stark.randomAddress();
 
@@ -189,7 +196,6 @@ const deployContract = async (params: DeployContractParams): Promise<{
     address: contractAddress,
   };
 };
-
 
 const executeDeployCalls = async (options?: UniversalDetails) => {
   try {

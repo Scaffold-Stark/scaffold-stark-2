@@ -5,7 +5,6 @@ import {
   deployer,
 } from "./deploy-contract";
 
-
 /**
  * Deploy a contract using the specified parameters.
  *
@@ -24,7 +23,7 @@ import {
  *     }
  *   );
  * };
- * 
+ *
  * @example (deploy contract without contructorArgs)
  * const deployScript = async (): Promise<void> => {
  *   await deployContract(
@@ -37,23 +36,21 @@ import {
  *     }
  *   );
  * };
- * 
+ *
  *
  * @returns {Promise<void>}
  */
 const deployScript = async (): Promise<void> => {
-  await deployContract(
-    {
-      contract: "YourContract",
-      contractName: "YourContractExportName",
-      constructorArgs: {
-        owner: deployer.address,
-      },
-      options: {
-        maxFee: BigInt(1000000000000)
-      }
-    }
-  );
+  await deployContract({
+    contract: "YourContract",
+    contractName: "YourContractExportName",
+    constructorArgs: {
+      owner: deployer.address,
+    },
+    options: {
+      maxFee: BigInt(1000000000000),
+    },
+  });
 };
 
 deployScript()
