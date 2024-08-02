@@ -1,4 +1,3 @@
-> Seun Jeremiah:
 "use client";
 
 // @refresh reset
@@ -62,7 +61,12 @@ export const ContractUI = ({
               <div className="flex flex-col gap-1">
                 <span className="font-bold">{contractName}</span>
                 <Address address={deployedContractData.address} />
-                {deployedContractData?.classHash&&<Address address={deployedContractData?.classHash} size="xs"/>}
+                {deployedContractData?.classHash && (
+                  <Address
+                    address={deployedContractData?.classHash}
+                    size="xs"
+                  />
+                )}
                 <div className="flex gap-1 items-center">
                   <span className="font-bold text-sm">Balance:</span>
                   <Balance
@@ -102,9 +106,7 @@ export const ContractUI = ({
             </div>
           </div>
           <div className="z-10">
-
-> Seun Jeremiah:
-<div className="rounded-[5px] border border-[#8A45FC] flex flex-col mt-10 relative bg-component">
+            <div className="rounded-[5px] border border-[#8A45FC] flex flex-col mt-10 relative bg-component">
               <div className="w-[140px] h-[32.5px] absolute self-start -top-[43px] -left-[1px] -z-10 py-[0.55rem]  bg-function clip-corner">
                 <div className="flex items-center justify-center space-x-2">
                   <p className="my-0 text-sm">Write</p>
