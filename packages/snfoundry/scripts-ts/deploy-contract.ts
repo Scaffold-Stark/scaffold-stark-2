@@ -186,7 +186,7 @@ const deployContract = async (
 
   console.log(green("Contract Deployed at "), contractAddress);
 
-  let finalContractName = contract || contractName;
+  let finalContractName = contractName || contract;
 
   deployments[finalContractName] = {
     classHash: classHash,
