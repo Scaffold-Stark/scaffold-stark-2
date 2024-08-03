@@ -37,7 +37,7 @@ To ensure the proper functioning of scaffold-stark, your local `starknet-devnet`
 starknet-devnet --version
 ```
 
-If your local starknet-devnet version is not `2.6.4`, you need to install it.
+If your local starknet-devnet version is not `0.0.5`, you need to install it.
 
 ```bash
 cargo install starknet-devnet --version 0.0.5
