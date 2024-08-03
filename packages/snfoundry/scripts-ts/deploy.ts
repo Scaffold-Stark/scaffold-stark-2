@@ -4,6 +4,7 @@ import {
   exportDeployments,
   deployer,
 } from "./deploy-contract";
+import { green } from "./helpers/colorize-log";
 
 /**
  * Deploy a contract using the specified parameters.
@@ -55,9 +56,12 @@ const deployScript = async (): Promise<void> => {
 
 deployScript()
   .then(() => {
-    executeDeployCalls().then(() => {
-      exportDeployments();
-    });
-    console.log("All Setup Done");
+    executeDeployCalls()
+      .then(() => {
+        exportDeployments();
+      })
+      .finally(() => {
+        console.log(green("All Setup Done"));
+      });
   })
   .catch(console.error);
