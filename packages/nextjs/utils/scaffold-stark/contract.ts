@@ -63,7 +63,9 @@ export enum ContractCodeStatus {
 export type GenericContract = {
   address: Address;
   abi: Abi;
+  classHash: String;
 };
+
 export type GenericContractsDeclaration = {
   [network: string]: {
     [contractName: string]: GenericContract;

@@ -212,6 +212,7 @@ const preDeployedContracts = {
           ],
         },
       ],
+      classHash: universalEthAddress, //used to for demostration and to remove ts-error
     },
   },
   sepolia: {
@@ -471,6 +472,7 @@ const preDeployedContracts = {
           ],
         },
       ],
+      classHash: universalEthAddress, //used to for demostration and to remove ts-error
     },
   },
 } as const;
