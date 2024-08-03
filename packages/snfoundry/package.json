@@ -3,7 +3,10 @@
   "version": "0.0.1",
   "scripts": {
     "chain": "starknet-devnet --seed 0 --account-class cairo1",
-    "deploy": "ts-node scripts-ts/helpers/deploy-wrapper.ts",
+    "deploy:devnet": "cd contracts && scarb build && sncast --url $RPC_URL_DEVNET --account \"$1\" script run cairoscripts --package cairoscripts && ts-node ../scripts-ts/helpers/parse-deployments.ts",
+    "deploy:sepolia": "cd contracts && scarb build && sncast --url $RPC_URL_SEPOLIA --account \"1\" script run cairoscripts --package cairoscripts && ts-node ../scripts-ts/helpers/parse-deployments.ts --network sepolia",
+    "add-account:devnet": "cd contracts && sncast --url $RPC_URL_DEVNET account add --name \"$1\" --address $ACCOUNT_ADDRESS_DEVNET --private-key $PRIVATE_KEY_DEVNET --type oz --add-profile \"$1\"",
+    "add-account:sepolia": "cd contracts && sncast --url $RPC_URL_SEPOLIA account add --name \"$1\" --address $ACCOUNT_ADDRESS_SEPOLIA --private-key $PRIVATE_KEY_SEPOLIA --type oz --add-profile \"$1\"",
     "test": "cd contracts && snforge test",
     "test-eslint": "node eslint-contract-name/eslint-plugin-contract-names.test.js",
     "compile": "cd contracts && scarb build",
@@ -24,6 +27,7 @@
   },
   "dependencies": {
     "dotenv": "^16.3.1",
+    "dotenv-cli": "^7.4.2",
     "envfile": "^6.18.0",
     "prettier": "^2.8.8",
     "starknet": "6.7.0",

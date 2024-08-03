@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "transactions": {
+    "transactions": {
+      "119e38dd22c854b2f699a67297477f5c7bdfdd19bb26baa3be2666de1b6d92cc": {
+        "name": "declare",
+        "output": {
+          "type": "DeclareResponse",
+          "class_hash": "0x6c30282256a3c11fe213315de0a02272977d547aec8d2dda7fc139219127396",
+          "transaction_hash": "0x760c85ad8f53d0124b8a1df0623c9ff6095d4179d242a5713a04eb99567d4dc"
+        },
+        "status": "Success",
+        "timestamp": 1722685124,
+        "misc": null
+      },
+      "dc26c023199014870f9d989ff29b71794f4931a110839a5be58360b5cfa9906b": {
+        "name": "deploy",
+        "output": {
+          "type": "DeployResponse",
+          "contract_address": "0x36ee020cac2542603c4c546f9e271d25292110375debb1d2cd05a26d709601a",
+          "transaction_hash": "0x502eaec94d5d1a377f6230c15712f35afbaaa5d629deb43c4979f82d6181fed"
+        },
+        "status": "Success",
+        "timestamp": 1722685124,
+        "misc": null
+      }
+    }
+  }
+}

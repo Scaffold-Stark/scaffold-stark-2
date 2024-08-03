@@ -1703,9 +1703,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@ss-2/snfoundry_dev@workspace:packages/snfoundry_dev":
+"@ss-2/snfoundry@workspace:packages/snfoundry":
   version: 0.0.0-use.local
-  resolution: "@ss-2/snfoundry_dev@workspace:packages/snfoundry_dev"
+  resolution: "@ss-2/snfoundry@workspace:packages/snfoundry"
   dependencies:
     "@types/node": ^20
     "@types/prettier": ^2
