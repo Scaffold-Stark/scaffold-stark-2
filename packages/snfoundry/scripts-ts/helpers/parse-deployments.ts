@@ -139,7 +139,9 @@ const getContractDataFromDeployments = (): Record<
             contractData.contract_name = item.contract_name;
           }
           if (item.contract_address) {
-            contractData.contract_address = validateAndParseAddress(item.contract_address);
+            contractData.contract_address = validateAndParseAddress(
+              item.contract_address
+            );
           }
           if (item.class_hash) {
             contractData.class_hash = item.class_hash;
