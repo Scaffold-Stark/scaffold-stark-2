@@ -35,6 +35,3 @@ fn main() {
     println!("Deployed the contract to address: {}", deploy_result);
 }
 
-
-//bug 
-//declaring and deploring at different times require that the cairoscripts_alpha-sepolia_state.json & target be deleted

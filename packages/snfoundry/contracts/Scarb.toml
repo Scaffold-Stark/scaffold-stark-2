@@ -20,4 +20,4 @@ sort-module-level-items = true
 casm = true
 
 [workspace]
-members = ["cairoscripts"]
+members = ["scripts"]

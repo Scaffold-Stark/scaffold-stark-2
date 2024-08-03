@@ -1,39 +1,10 @@
-[sncast.deployer_1]
-account = "deployer_1"
-accounts-file = "/Users/kenzman/.starknet_accounts/starknet_open_zeppelin_accounts.json"
-url = "http://127.0.0.1:5050"
 
-[sncast.deployer_2]
-account = "deployer_2"
-accounts-file = "/Users/kenzman/.starknet_accounts/starknet_open_zeppelin_accounts.json"
-url = "http://127.0.0.1:5050"
-
-[sncast.deployer_3]
-account = "deployer_3"
-accounts-file = "/Users/kenzman/.starknet_accounts/starknet_open_zeppelin_accounts.json"
-url = "http://127.0.0.1:5050"
-
-[sncast.deployer_6]
-account = "deployer_6"
-accounts-file = "/Users/kenzman/.starknet_accounts/starknet_open_zeppelin_accounts.json"
-url = "http://127.0.0.1:5050"
-
-[sncast.dev_1]
-account = "dev_1"
+[sncast.bb43c6a4]
+account = "bb43c6a4"
 accounts-file = "/Users/kenzman/.starknet_accounts/starknet_open_zeppelin_accounts.json"
 url = "http://127.0.0.1:5050/rpc"
 
-[sncast.deployer_19]
-account = "deployer_19"
-accounts-file = "/Users/kenzman/.starknet_accounts/starknet_open_zeppelin_accounts.json"
-url = "http://127.0.0.1:5050"
-
-[sncast.deployer_20]
-account = "deployer_20"
-accounts-file = "/Users/kenzman/.starknet_accounts/starknet_open_zeppelin_accounts.json"
-url = "http://127.0.0.1:5050/rpc"
-
-[sncast.deployer_21]
-account = "deployer_21"
+[sncast.50031e80]
+account = "50031e80"
 accounts-file = "/Users/kenzman/.starknet_accounts/starknet_open_zeppelin_accounts.json"
 url = "http://127.0.0.1:5050/rpc"

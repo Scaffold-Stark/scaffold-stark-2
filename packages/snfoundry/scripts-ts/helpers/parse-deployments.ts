@@ -1,11 +1,11 @@
 import fs from "fs";
 import path from "path";
 import prettier from "prettier";
-import { Abi, CompiledSierra } from "starknet";
+import { Abi, CompiledSierra, validateAndParseAddress } from "starknet";
 import yargs, { string } from "yargs";
 
 const TARGET_DIR = path.join(__dirname, "../../../nextjs/contracts");
-const deploymentsDir = path.join(__dirname, "../../contracts/cairoscripts");
+const deploymentsDir = path.join(__dirname, "../../contracts/scripts");
 const deployments_Contract = path.join(__dirname, "../../contracts/target/dev");
 
 const filesFromDeploymentsDir = fs.readdirSync(deploymentsDir);
@@ -88,14 +88,14 @@ const getContractDataFromDeployments = (): Record<
   let combinedJsonArray = [];
 
   combinedFiles.forEach((file) => {
-    const dir = file.startsWith("cairoscripts_")
+    const dir = file.startsWith("scripts_")
       ? deploymentsDir
       : deployments_Contract;
     const filePath = path.join(dir, file);
     if (
       path.extname(file) === ".json" &&
       (file.endsWith("_state.json") ||
-        file.endsWith("cairoscripts.starknet_artifacts.json"))
+        file.endsWith("scripts.starknet_artifacts.json"))
     ) {
       try {
         const fileContent = fs.readFileSync(filePath, "utf8");
@@ -139,7 +139,7 @@ const getContractDataFromDeployments = (): Record<
             contractData.contract_name = item.contract_name;
           }
           if (item.contract_address) {
-            contractData.contract_address = item.contract_address;
+            contractData.contract_address = validateAndParseAddress(item.contract_address);
           }
           if (item.class_hash) {
             contractData.class_hash = item.class_hash;
@@ -188,7 +188,7 @@ const generateTsAbis = () => {
 
   const fileContent = Object.entries(allContractsData).reduce(
     (content, [chainId, chainConfig]) => {
-      return `${content}${chainId}: ${JSON.stringify(chainConfig, null, 2)},\n`;
+      return `${content}${chainId}: ${JSON.stringify(chainConfig, null, 2)},`;
     },
     ""
   );
@@ -197,16 +197,14 @@ const generateTsAbis = () => {
     fs.mkdirSync(TARGET_DIR);
   }
 
-  const formattedContent = prettier.format(
-    `${generatedContractComment}\n\nconst deployedContracts = {\n${fileContent}} as const;\n\nexport default deployedContracts;`,
-    {
-      parser: "typescript",
-    }
-  );
-
   fs.writeFileSync(
     path.join(TARGET_DIR, "deployedContracts.ts"),
-    formattedContent
+    prettier.format(
+      `${generatedContractComment}\n\nconst deployedContracts = {${fileContent}} as const;\n\nexport default deployedContracts;`,
+      {
+        parser: "typescript",
+      }
+    )
   );
 
   console.log(
