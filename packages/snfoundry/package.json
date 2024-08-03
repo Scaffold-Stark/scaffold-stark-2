@@ -2,8 +2,10 @@
   "name": "@ss-2/snfoundry",
   "version": "0.0.1",
   "scripts": {
+    "chain": "starknet-devnet --seed 0 --account-class cairo1",
     "deploy": "ts-node scripts-ts/helpers/deploy-wrapper.ts",
     "test": "cd contracts && snforge test",
+    "test-eslint": "node eslint-contract-name/eslint-plugin-contract-names.test.js",
     "compile": "cd contracts && scarb build",
     "format": "prettier --write 'scripts-ts/**/*.{ts,tsx}' && cd contracts && scarb fmt",
     "format:check": "prettier --check 'scripts-ts/**/*.{ts,tsx}' && cd contracts && scarb fmt --check",
@@ -13,9 +15,11 @@
     "@types/node": "^20",
     "@types/prettier": "^2",
     "@types/yargs": "^17.0.32",
+    "globals": "^15.8.0",
     "shx": "^0.3.4",
     "ts-node": "^10.9.2",
     "typescript": "^5",
+    "typescript-eslint": "^7.16.1",
     "yargs": "^17.7.2"
   },
   "dependencies": {
