@@ -51,7 +51,7 @@ const deployContract_NotWait = async (payload: {
 }) => {
   let { calls, addresses } = transaction.buildUDCCall(
     payload,
-    deployer.address,
+    deployer.address
   );
   deployCalls.push(...calls);
   return {
@@ -65,7 +65,7 @@ const deployContract = async (
   exportContractName?: string,
   options?: {
     maxFee: bigint;
-  },
+  }
 ): Promise<{
   classHash: string;
   address: string;
@@ -75,7 +75,7 @@ const deployContract = async (
   } catch (e) {
     if (e.toString().includes("Contract not found")) {
       throw new Error(
-        `The wallet you're using to deploy the contract is not deployed in ${networkName} network`,
+        `The wallet you're using to deploy the contract is not deployed in ${networkName} network`
       );
     }
   }
@@ -88,10 +88,10 @@ const deployContract = async (
         .readFileSync(
           path.resolve(
             __dirname,
-            `../contracts/target/dev/contracts_${contractName}.compiled_contract_class.json`,
-          ),
+            `../contracts/target/dev/contracts_${contractName}.compiled_contract_class.json`
+          )
         )
-        .toString("ascii"),
+        .toString("ascii")
     );
   } catch (error) {
     if (
@@ -100,11 +100,11 @@ const deployContract = async (
       error.message.includes("compiled_contract_class")
     ) {
       const match = error.message.match(
-        /\/dev\/(.+?)\.compiled_contract_class/,
+        /\/dev\/(.+?)\.compiled_contract_class/
       );
       const contractName = match ? match[1].split("_").pop() : "Unknown";
       console.error(
-        `The contract "${contractName}" doesn't exist or is not compiled`,
+        `The contract "${contractName}" doesn't exist or is not compiled`
       );
     } else {
       console.error(error);
@@ -120,10 +120,10 @@ const deployContract = async (
       .readFileSync(
         path.resolve(
           __dirname,
-          `../contracts/target/dev/contracts_${contractName}.contract_class.json`,
-        ),
+          `../contracts/target/dev/contracts_${contractName}.contract_class.json`
+        )
       )
-      .toString("ascii"),
+      .toString("ascii")
   );
 
   const contractCalldata = new CallData(compiledContractSierra.abi);
@@ -185,14 +185,14 @@ const executeDeployCalls = async () => {
 const exportDeployments = () => {
   const networkPath = path.resolve(
     __dirname,
-    `../deployments/${networkName}_latest.json`,
+    `../deployments/${networkName}_latest.json`
   );
 
   if (fs.existsSync(networkPath)) {
     const currentTimestamp = new Date().getTime();
     fs.renameSync(
       networkPath,
-      networkPath.replace("_latest.json", `_${currentTimestamp}.json`),
+      networkPath.replace("_latest.json", `_${currentTimestamp}.json`)
     );
   }
 
