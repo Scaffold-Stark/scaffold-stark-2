@@ -12,12 +12,7 @@
   },
   "scripts": {
     "chain": "yarn workspace @ss-2/snfoundry chain",
-    "deploy:devnet": "cd packages/snfoundry && dotenv -e .env -- yarn workspace @ss-2/snfoundry deploy:devnet $*",
-    "deploy:sepolia": "cd packages/snfoundry && dotenv -e .env -- yarn workspace @ss-2/snfoundry deploy:sepolia $*",
-    "deploy": "yarn deploy:devnet",
-    "account:devnet": "cd packages && cd snfoundry && dotenv -e .env -- yarn workspace @ss-2/snfoundry add-account:devnet $*",
-    "account:sepolia": "cd packages && cd snfoundry && dotenv -e .env -- yarn workspace @ss-2/snfoundry add-account:sepolia $*",
-    "account": "yarn account:devnet",
+    "deploy": "cd packages/snfoundry && yarn workspace @ss-2/snfoundry deploy",
     "test": "yarn workspace @ss-2/snfoundry test",
     "compile": "yarn workspace @ss-2/snfoundry compile",
     "start": "yarn workspace @ss-2/nextjs dev",
