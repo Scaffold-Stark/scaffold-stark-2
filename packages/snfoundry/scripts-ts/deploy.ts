@@ -1,4 +1,3 @@
-import chalk from "chalk";
 import {
   deployContract,
   executeDeployCalls,
@@ -59,6 +58,6 @@ deployScript()
     executeDeployCalls().then(() => {
       exportDeployments();
     });
-    console.log(chalk.bgGreen("All Setup Done"));
+    console.log("All Setup Done");
   })
   .catch(console.error);
