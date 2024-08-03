@@ -11,6 +11,7 @@ import {
   DeclareContractPayload,
   UniversalDetails,
 } from "starknet";
+import chalk from "chalk";
 import { DeployContractParams, Network } from "./types";
 
 const argv = yargs(process.argv.slice(2)).argv;
@@ -22,20 +23,21 @@ let deploymentOptions: UniversalDetails;
 
 const { provider, deployer }: Network = networks[networkName];
 
-const declareIfNot_NotWait = async (
-  payload: DeclareContractPayload,
-) => {
+const declareIfNot_NotWait = async (payload: DeclareContractPayload) => {
   const declareContractPayload = extractContractHashes(payload);
   try {
     await provider.getClassByHash(declareContractPayload.classHash);
   } catch (error) {
     try {
-      const { transaction_hash } = await deployer.declare(payload, deploymentOptions);
+      const { transaction_hash } = await deployer.declare(
+        payload,
+        deploymentOptions
+      );
       if (networkName === "sepolia" || networkName === "mainnet") {
         await provider.waitForTransaction(transaction_hash);
       }
     } catch (e) {
-      console.error("Error declaring contract:", e);
+      console.error(chalk.red("Error declaring contract:"), e);
       throw e;
     }
   }
@@ -59,7 +61,7 @@ const deployContract_NotWait = async (payload: {
       contractAddress: addresses[0],
     };
   } catch (error) {
-    console.error("Error building UDC call:", error);
+    console.error(chalk.red("Error building UDC call:"), error);
     throw error;
   }
 };
@@ -98,10 +100,10 @@ const deployContract = async (
   } catch (e) {
     if (e.toString().includes("Contract not found")) {
       const errorMessage = `The wallet you're using to deploy the contract is not deployed in the ${networkName} network.`;
-      console.error(errorMessage);
+      console.error(chalk.red(errorMessage));
       throw new Error(errorMessage);
     } else {
-      console.error("Error getting contract version:", e);
+      console.error(chalk.red("Error getting contract version:"), e);
       throw e;
     }
   }
@@ -131,10 +133,15 @@ const deployContract = async (
       );
       const missingContract = match ? match[1].split("_").pop() : "Unknown";
       console.error(
-        `The contract "${missingContract}" doesn't exist or is not compiled`
+        chalk.red(
+          `The contract "${missingContract}" doesn't exist or is not compiled`
+        )
       );
     } else {
-      console.error("Error reading compiled contract class file:", error);
+      console.error(
+        chalk.red("Error reading compiled contract class file:"),
+        error
+      );
     }
     return {
       classHash: "",
@@ -154,7 +161,7 @@ const deployContract = async (
         .toString("ascii")
     );
   } catch (error) {
-    console.error("Error reading contract class file:", error);
+    console.error(chalk.red("Error reading contract class file:"), error);
     return {
       classHash: "",
       address: "",
@@ -165,14 +172,12 @@ const deployContract = async (
   const constructorCalldata = constructorArgs
     ? contractCalldata.compile("constructor", constructorArgs)
     : [];
-  console.log("Deploying Contract ", contract);
+  console.log(chalk.yellow("Deploying Contract "), contract);
 
-  let { classHash } = await declareIfNot_NotWait(
-    {
-      contract: compiledContractSierra,
-      casm: compiledContractCasm,
-    }
-  );
+  let { classHash } = await declareIfNot_NotWait({
+    contract: compiledContractSierra,
+    casm: compiledContractCasm,
+  });
 
   let randomSalt = stark.randomAddress();
 
@@ -182,7 +187,7 @@ const deployContract = async (
     constructorCalldata,
   });
 
-  console.log("Contract Deployed at ", contractAddress);
+  console.log(chalk.green("Contract Deployed at "), contractAddress);
 
   let finalContractName = contract || contractName;
 
@@ -200,13 +205,16 @@ const deployContract = async (
 
 const executeDeployCalls = async () => {
   try {
-    let { transaction_hash } = await deployer.execute(deployCalls, deploymentOptions);
-    console.log("Deploy Calls Executed at ", transaction_hash);
+    let { transaction_hash } = await deployer.execute(
+      deployCalls,
+      deploymentOptions
+    );
+    console.log(chalk.green("Deploy Calls Executed at "), transaction_hash);
     if (networkName === "sepolia" || networkName === "mainnet") {
       await provider.waitForTransaction(transaction_hash);
     }
   } catch (error) {
-    console.error("Error executing deploy calls:", error);
+    console.error(chalk.red("Error executing deploy calls:"), error);
     // split the calls in half and try again recursively
     if (deployCalls.length > 1) {
       let half = Math.ceil(deployCalls.length / 2);
