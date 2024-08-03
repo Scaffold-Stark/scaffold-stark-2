@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { getFunctionInputKey, getInitialTupleFormState } from "./utilsContract";
 import { AbiEnum, AbiStruct } from "~~/utils/scaffold-stark/contract";
 import { replacer } from "~~/utils/scaffold-stark/common";
@@ -11,6 +11,7 @@ type StructProps = {
   setParentForm: (form: Record<string, any>) => void;
   parentStateObjectKey: string;
   abiMember?: AbiStruct | AbiEnum;
+  setFormErrorMessage: Dispatch<SetStateAction<string | null>>;
 };
 
 export const Struct = ({
@@ -19,6 +20,7 @@ export const Struct = ({
   parentStateObjectKey,
   abiMember,
   abi,
+  setFormErrorMessage,
 }: StructProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialTupleFormState(
@@ -26,6 +28,7 @@ export const Struct = ({
     ),
   );
 
+  // side effect to transform data before setState
   useEffect(() => {
     const values = Object.values(form);
     const argsStruct: Record<string, any> = {};
@@ -45,6 +48,13 @@ export const Struct = ({
           value: values[index],
         };
       });
+
+      // check for enum validity
+      if (values.filter((item) => (item || "").length > 0).length > 1) {
+        setFormErrorMessage("Enums can only have one defined value");
+      } else {
+        setFormErrorMessage(null);
+      }
     }
 
     setParentForm({
@@ -74,6 +84,7 @@ export const Struct = ({
                 );
                 return (
                   <ContractInput
+                    setFormErrorMessage={setFormErrorMessage}
                     abi={abi}
                     setForm={setForm}
                     form={form}
@@ -91,6 +102,7 @@ export const Struct = ({
                 );
                 return (
                   <ContractInput
+                    setFormErrorMessage={setFormErrorMessage}
                     abi={abi}
                     setForm={setForm}
                     form={form}
