@@ -19,20 +19,19 @@ const networkName: string = argv["network"];
 
 let deployments = {};
 let deployCalls = [];
-let deploymentOptions: UniversalDetails;
 
 const { provider, deployer }: Network = networks[networkName];
 
-const declareIfNot_NotWait = async (payload: DeclareContractPayload) => {
+const declareIfNot_NotWait = async (
+  payload: DeclareContractPayload,
+  options?: UniversalDetails
+) => {
   const declareContractPayload = extractContractHashes(payload);
   try {
     await provider.getClassByHash(declareContractPayload.classHash);
   } catch (error) {
     try {
-      const { transaction_hash } = await deployer.declare(
-        payload,
-        deploymentOptions
-      );
+      const { transaction_hash } = await deployer.declare(payload, options);
       if (networkName === "sepolia" || networkName === "mainnet") {
         await provider.waitForTransaction(transaction_hash);
       }
@@ -93,7 +92,6 @@ const deployContract = async (
   address: string;
 }> => {
   const { contract, constructorArgs, contractName, options } = params;
-  deploymentOptions = options;
 
   try {
     await deployer.getContractVersion(deployer.address);
@@ -171,10 +169,13 @@ const deployContract = async (
     : [];
   console.log(yellow("Deploying Contract "), contract);
 
-  let { classHash } = await declareIfNot_NotWait({
-    contract: compiledContractSierra,
-    casm: compiledContractCasm,
-  });
+  let { classHash } = await declareIfNot_NotWait(
+    {
+      contract: compiledContractSierra,
+      casm: compiledContractCasm,
+    },
+    options
+  );
 
   let randomSalt = stark.randomAddress();
 
@@ -200,12 +201,15 @@ const deployContract = async (
   };
 };
 
-const executeDeployCalls = async () => {
-  try {
-    let { transaction_hash } = await deployer.execute(
-      deployCalls,
-      deploymentOptions
+const executeDeployCalls = async (options?: UniversalDetails) => {
+  if (deployCalls.length < 1) {
+    throw new Error(
+      red("Aborted: No contract to deploy. Please prepare the contracts with `deployContract`")
     );
+  }
+
+  try {
+    let { transaction_hash } = await deployer.execute(deployCalls, options);
     console.log(green("Deploy Calls Executed at "), transaction_hash);
     if (networkName === "sepolia" || networkName === "mainnet") {
       await provider.waitForTransaction(transaction_hash);
@@ -218,9 +222,9 @@ const executeDeployCalls = async () => {
       let firstHalf = deployCalls.slice(0, half);
       let secondHalf = deployCalls.slice(half);
       deployCalls = firstHalf;
-      await executeDeployCalls();
+      await executeDeployCalls(options);
       deployCalls = secondHalf;
-      await executeDeployCalls();
+      await executeDeployCalls(options);
     }
   }
 };

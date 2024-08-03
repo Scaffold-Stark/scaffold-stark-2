@@ -51,13 +51,10 @@ const deployScript = async (): Promise<void> => {
 };
 
 deployScript()
-  .then(() => {
-    executeDeployCalls()
-      .then(() => {
-        exportDeployments();
-      })
-      .finally(() => {
-        console.log(green("All Setup Done"));
-      });
+  .then(async () => {
+    await executeDeployCalls();
+    exportDeployments();
+
+    console.log(green("All Setup Done"));
   })
   .catch(console.error);
