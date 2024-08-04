@@ -31,20 +31,20 @@ function deploy(network: string = "devnet"): void {
   if (network === "sepolia") {
     console.log("sepolia network specified. Running...");
     command = `
-      cd contracts && cd scripts && rm -rf scripts_alpha-sepolia_state.json && cd .. && rm -rf target && scarb build && 
+      cd scripts && rm -rf scripts_alpha-sepolia_state.json && cd .. && rm -rf target && scarb build && 
       sncast --url ${process.env.RPC_URL_SEPOLIA} account add --name "${deployerName}" --address ${process.env.ACCOUNT_ADDRESS_SEPOLIA} --private-key ${process.env.PRIVATE_KEY_SEPOLIA} --type oz && 
       sncast --url ${process.env.RPC_URL_SEPOLIA} --account "${deployerName}" script run scripts --package scripts && 
-      ts-node '../scripts-ts/helpers/parse-deployments.ts --network sepolia'
+      ts-node './scripts-ts/helpers/parse-deployments.ts --network sepolia'
     `;
   } else if (network === "devnet") {
     console.log(
       "No network specified. Running deployment on Devnet by default..."
     );
     command = `
-      cd contracts && cd scripts && rm -rf  scripts_SN_GOERLI_state.json && cd .. && rm -rf target && scarb build && 
+      cd scripts && rm -rf  scripts_SN_GOERLI_state.json && cd .. && rm -rf target && scarb build && 
       sncast --url ${process.env.RPC_URL_DEVNET} account add --name "${deployerName}" --address ${process.env.ACCOUNT_ADDRESS_DEVNET} --private-key ${process.env.PRIVATE_KEY_DEVNET} --type oz --add-profile "${deployerName}" && 
       sncast --url ${process.env.RPC_URL_DEVNET} --account "${deployerName}" script run scripts --package scripts && 
-      ts-node '../scripts-ts/helpers/parse-deployments.ts'
+      ts-node './scripts-ts/helpers/parse-deployments.ts'
     `;
   } else {
     console.error(

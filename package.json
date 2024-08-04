@@ -6,13 +6,13 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "packages/snfoundry",
+      "packages/snfoundry/contracts",
       "packages/nextjs"
     ]
   },
   "scripts": {
     "chain": "yarn workspace @ss-2/snfoundry chain",
-    "deploy": "cd packages/snfoundry && yarn workspace @ss-2/snfoundry deploy",
+    "deploy": "cd packages/snfoundry/contracts && yarn workspace @ss-2/snfoundry deploy",
     "test": "yarn workspace @ss-2/snfoundry test",
     "compile": "yarn workspace @ss-2/snfoundry compile",
     "start": "yarn workspace @ss-2/nextjs dev",

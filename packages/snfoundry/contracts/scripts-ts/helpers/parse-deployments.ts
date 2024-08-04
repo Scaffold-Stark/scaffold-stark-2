@@ -4,9 +4,9 @@ import prettier from "prettier";
 import { Abi, CompiledSierra, validateAndParseAddress } from "starknet";
 import yargs, { string } from "yargs";
 
-const TARGET_DIR = path.join(__dirname, "../../../nextjs/contracts");
-const deploymentsDir = path.join(__dirname, "../../contracts/scripts");
-const deployments_Contract = path.join(__dirname, "../../contracts/target/dev");
+const TARGET_DIR = path.join(__dirname, "../../../../nextjs/contracts");
+const deploymentsDir = path.join(__dirname, "../../scripts");
+const deployments_Contract = path.join(__dirname, "../../target/dev");
 
 const filesFromDeploymentsDir = fs.readdirSync(deploymentsDir);
 const filesFromDeploymentsContract = fs.readdirSync(deployments_Contract);
@@ -157,7 +157,7 @@ const getContractDataFromDeployments = (): Record<
             try {
               const abiFilePath = path.join(
                 __dirname,
-                `../../contracts/target/dev/contracts_${data.contract_name}.contract_class.json`
+                `../../target/dev/contracts_${data.contract_name}.contract_class.json`
               );
               const abiContent: CompiledSierra = JSON.parse(
                 fs.readFileSync(abiFilePath, "utf8")

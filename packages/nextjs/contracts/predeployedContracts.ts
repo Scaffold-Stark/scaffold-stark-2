@@ -3,7 +3,7 @@
  * You should not edit it manually or your changes might be overwritten.
  */
 const universalEthAddress =
-  "0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7";
+  "0x049D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7";
 
 const preDeployedContracts = {
   devnet: {
