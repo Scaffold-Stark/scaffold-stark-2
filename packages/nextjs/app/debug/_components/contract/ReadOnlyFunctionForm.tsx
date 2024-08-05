@@ -59,7 +59,8 @@ export const ReadOnlyFunctionForm = ({
   });
 
   const handleRead = () => {
-    const newInputValue = getParsedContractFunctionArgs(form, false);
+    const newInputValue = getParsedContractFunctionArgs(form, false, true);
+
     if (JSON.stringify(form) !== JSON.stringify(lastForm.current)) {
       setInputValue(newInputValue);
       lastForm.current = form;

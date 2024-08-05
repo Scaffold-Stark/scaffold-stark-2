@@ -57,9 +57,10 @@ const deepParseValues = (
   value: any,
   isRead: boolean,
   keyAndType?: any,
+  isEncodeToObject?: boolean,
 ): any => {
   if (keyAndType) {
-    return parseParamWithType(keyAndType, value, isRead);
+    return parseParamWithType(keyAndType, value, isRead, isEncodeToObject);
   }
   if (typeof value === "string") {
     if (isJsonString(value)) {
@@ -107,10 +108,11 @@ const deepParseValues = (
 const getParsedContractFunctionArgs = (
   form: Record<string, any>,
   isRead: boolean,
+  isEncodeToObject?: boolean,
 ) => {
   return Object.keys(form).map((key) => {
     const valueOfArg = form[key];
-    return deepParseValues(valueOfArg, isRead, key);
+    return deepParseValues(valueOfArg, isRead, key, isEncodeToObject);
   });
 };
 
