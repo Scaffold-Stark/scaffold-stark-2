@@ -1,3 +1,4 @@
+import yargs from "yargs";
 import {
   deployContract,
   executeDeployCalls,
@@ -7,10 +8,21 @@ import {
 } from "./deploy-contract";
 import { green, yellow } from "./helpers/colorize-log";
 
+const argv = yargs(process.argv.slice(2))
+  .options({
+    network: { type: "string", demandOption: true },
+    reset: { type: "boolean", default: false },
+  })
+  .parseSync();
+
 const deployScript = async (): Promise<void> => {
-  const existingDeployments = loadExistingDeployments();
-  if (Object.keys(existingDeployments).length > 0) {
-    console.log(yellow("Appending to existing deployments..."));
+  if (argv.reset) {
+    console.log(yellow("Resetting deployments..."));
+  } else {
+    const existingDeployments = loadExistingDeployments();
+    if (Object.keys(existingDeployments).length > 0) {
+      console.log(yellow("Appending to existing deployments..."));
+    }
   }
 
   await deployContract({
@@ -24,8 +36,7 @@ const deployScript = async (): Promise<void> => {
 deployScript()
   .then(async () => {
     await executeDeployCalls();
-    exportDeployments();
-
-    console.log(green("All Setup Done"));
+    exportDeployments(argv.reset);
+    console.log(green(`All Setup Done (${argv.reset ? "Reset" : "Append"})`));
   })
   .catch(console.error);

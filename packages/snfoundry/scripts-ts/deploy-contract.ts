@@ -14,8 +14,32 @@ import {
 import { DeployContractParams, Network } from "./types";
 import { green, red, yellow } from "./helpers/colorize-log";
 
-const argv = yargs(process.argv.slice(2)).argv;
-const networkName: string = argv["network"];
+// const argv = yargs(process.argv.slice(2)).argv;
+// const networkName: string = argv["network"];
+
+interface Arguments {
+  network: string;
+  reset: boolean;
+  [x: string]: unknown;
+  _: (string | number)[];
+  $0: string;
+}
+
+const argv = yargs(process.argv.slice(2))
+  .option("network", {
+    type: "string",
+    description: "Specify the network",
+    demandOption: true,
+  })
+  .option("reset", {
+    alias: "r",
+    type: "boolean",
+    description: "Reset deployments",
+    default: false,
+  }).parseSync() as Arguments;;
+
+const networkName: string = argv.network;
+const resetDeployments: boolean = argv.reset;
 
 let deployments = {};
 let deployCalls = [];
@@ -255,7 +279,6 @@ const loadExistingDeployments = () => {
 //   fs.writeFileSync(networkPath, JSON.stringify(deployments, null, 2));
 // };
 
- 
 
 const exportDeployments = (reset: boolean = false) => {
   const networkPath = path.resolve(
@@ -278,7 +301,6 @@ const exportDeployments = (reset: boolean = false) => {
   fs.writeFileSync(networkPath, JSON.stringify(finalDeployments, null, 2));
 };
 
-
 export {
   deployContract,
   provider,
@@ -286,4 +308,5 @@ export {
   loadExistingDeployments,
   exportDeployments,
   executeDeployCalls,
+  resetDeployments,
 };
