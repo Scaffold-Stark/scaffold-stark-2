@@ -33,7 +33,7 @@ export const ReadOnlyFunctionForm = ({
   const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null);
   const lastForm = useRef(form);
 
-  const { isFetching, data, refetch } = useReadContract({
+  const { isFetching, data, refetch, error } = useReadContract({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
@@ -41,6 +41,13 @@ export const ReadOnlyFunctionForm = ({
     enabled: false,
     blockIdentifier: "pending" as BlockNumber,
   });
+
+  useEffect(() => {
+    if (error) {
+      console.error(error?.message);
+      console.error(error.stack);
+    }
+  }, [error]);
 
   const transformedFunction = transformAbiFunction(abiFunction);
   const inputElements = transformedFunction.inputs.map((input, inputIndex) => {
