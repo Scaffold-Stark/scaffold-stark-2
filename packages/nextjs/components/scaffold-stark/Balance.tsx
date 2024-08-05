@@ -22,7 +22,12 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
   const { formatted, isLoading, isError } = useScaffoldEthBalance({
     address,
   });
-  const strkBalance = useScaffoldStrkBalance({
+  const {
+    formatted: strkFormatted,
+    isLoading: strkIsLoading,
+    isError: strkIsError,
+    symbol: strkSymbol,
+  } = useScaffoldStrkBalance({
     address,
   });
   const [displayUsdMode, setDisplayUsdMode] = useState(
@@ -39,8 +44,8 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
     !address ||
     isLoading ||
     formatted === null ||
-    strkBalance.isLoading ||
-    strkBalance.formatted === null
+    strkIsLoading ||
+    strkFormatted === null
   ) {
     return (
       <div className="animate-pulse flex space-x-4">
@@ -64,7 +69,7 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
 
   // Calculate the total balance in USD
   const ethBalanceInUsd = parseFloat(formatted) * price;
-  const strkBalanceInUsd = parseFloat(strkBalance.formatted) * price;
+  const strkBalanceInUsd = parseFloat(strkFormatted) * price;
   const totalBalanceInUsd = ethBalanceInUsd + strkBalanceInUsd;
 
   return (
@@ -95,9 +100,9 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
                 </div>
 
                 <div className="flex">
-                  <span>{parseFloat(strkBalance.formatted).toFixed(4)}</span>
+                  <span>{parseFloat(strkFormatted).toFixed(4)}</span>
                   <span className="text-[0.8em] font-bold ml-1">
-                    {strkBalance.symbol}
+                    {strkSymbol}
                   </span>
                 </div>
               </div>
