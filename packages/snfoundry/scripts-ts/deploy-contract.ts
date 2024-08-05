@@ -228,14 +228,46 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
     }
   }
 };
+const loadExistingDeployments = () => {
+  const networkPath = path.resolve(
+    __dirname,
+    `../deployments/${networkName}_latest.json`
+  );
+  if (fs.existsSync(networkPath)) {
+    return JSON.parse(fs.readFileSync(networkPath, "utf8"));
+  }
+  return {};
+};
+// const exportDeployments = () => {
+//   const networkPath = path.resolve(
+//     __dirname,
+//     `../deployments/${networkName}_latest.json`
+//   );
 
-const exportDeployments = () => {
+//   if (fs.existsSync(networkPath)) {
+//     const currentTimestamp = new Date().getTime();
+//     fs.renameSync(
+//       networkPath,
+//       networkPath.replace("_latest.json", `_${currentTimestamp}.json`)
+//     );
+//   }
+
+//   fs.writeFileSync(networkPath, JSON.stringify(deployments, null, 2));
+// };
+
+ 
+
+const exportDeployments = (reset: boolean = false) => {
   const networkPath = path.resolve(
     __dirname,
     `../deployments/${networkName}_latest.json`
   );
 
-  if (fs.existsSync(networkPath)) {
+  let finalDeployments = reset
+    ? deployments
+    : { ...loadExistingDeployments(), ...deployments };
+
+  if (fs.existsSync(networkPath) && !reset) {
     const currentTimestamp = new Date().getTime();
     fs.renameSync(
       networkPath,
@@ -243,13 +275,15 @@ const exportDeployments = () => {
     );
   }
 
-  fs.writeFileSync(networkPath, JSON.stringify(deployments, null, 2));
+  fs.writeFileSync(networkPath, JSON.stringify(finalDeployments, null, 2));
 };
+
 
 export {
   deployContract,
   provider,
   deployer,
+  loadExistingDeployments,
   exportDeployments,
   executeDeployCalls,
 };
