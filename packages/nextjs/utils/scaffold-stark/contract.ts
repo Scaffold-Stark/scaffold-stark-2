@@ -411,216 +411,219 @@ function tryParsingParamReturnObject(fn: (x: any) => {}, param: any) {
   }
 }
 
+const decodeParamsWithType = (paramType: string, param: any): unknown => {
+  const isRead = true;
+  if (isCairoTuple(paramType)) {
+    return objectToCairoTuple(param, paramType);
+  } else if (isCairoArray(paramType)) {
+    return tryParsingParamReturnObject((param) => {
+      const genericType = parseGenericType(paramType)[0];
+      return genericType
+        ? //@ts-ignore
+          param.map((item) => parseParamWithType(genericType, item, isRead))
+        : param;
+    }, param);
+  } else if (isCairoOption(paramType)) {
+    //@ts-ignore
+    return tryParsingParamReturnObject((x) => {
+      const option = x as CairoOption<any>;
+      return option.isNone()
+        ? "None"
+        : `Some(${parseParamWithType(paramType.split("<").pop()!, option.unwrap(), isRead)})`;
+    }, param);
+  } else if (isCairoResult(paramType)) {
+    //@ts-ignore
+    return tryParsingParamReturnObject((x) => {
+      const result = x as CairoResult<any, any>;
+      const [ok, error] = parseGenericType(paramType);
+      return result.isOk()
+        ? `Ok(${parseParamWithType(ok, result.unwrap(), isRead)})`
+        : `Err(${parseParamWithType(error, result.unwrap(), isRead)})`;
+    }, param);
+  } else if (isCairoU256(paramType)) {
+    return tryParsingParamReturnObject(uint256.uint256ToBN, param);
+  } else if (isCairoByteArray(paramType)) {
+    return tryParsingParamReturnObject(byteArray.stringFromByteArray, param);
+  } else if (isCairoContractAddress(paramType)) {
+    return tryParsingParamReturnObject(validateAndParseAddress, param);
+  } else if (isCairoFelt(paramType)) {
+    return feltToHex(param);
+  } else if (isCairoBool(paramType)) {
+    return typeof param === "boolean"
+      ? param
+      : (param as string).startsWith("0x0")
+        ? "false"
+        : "true";
+  } else if (isCairoBytes31(paramType)) {
+    return tryParsingParamReturnObject(
+      (x: bigint) => `0x${x.toString(16)}`,
+      param,
+    );
+  } else if (isCairoInt(paramType)) {
+    return tryParsingParamReturnObject(
+      (x) => (typeof x === "bigint" ? Number(x) : parseInt(x, 16)),
+      param,
+    );
+  } else if (isCairoBigInt(paramType)) {
+    return tryParsingParamReturnObject((x) => BigInt(x), param);
+  } else {
+    return tryParsingParamReturnObject((x) => x, param);
+  }
+};
+
+const encodeParamsWithType = (paramType: string, param: any): unknown => {
+  const isRead = false;
+  if (isCairoTuple(paramType)) {
+    return tryParsingParamReturnValues(
+      (x) => stringToObjectTuple(x, paramType),
+      param,
+    );
+  } else if (isCairoArray(paramType)) {
+    const genericType = parseGenericType(paramType)[0];
+
+    // if we have to process string
+    if (typeof param === "string") {
+      const tokens = param.split(",");
+      if (genericType) {
+        //@ts-ignore
+        return [
+          tokens.length,
+          ...tokens
+            //@ts-ignore
+            .map((item) =>
+              parseParamWithType(genericType, item.trim(), isRead),
+            ),
+        ];
+      } else {
+        return param;
+      }
+    }
+
+    // if we have to process array
+    else if (Array.isArray(param)) {
+      if (genericType) {
+        //@ts-ignore
+        return [
+          param.length,
+          ...param
+            //@ts-ignore
+            .map((item) => parseParamWithType(genericType, item, isRead)),
+        ];
+      } else {
+        return param;
+      }
+    }
+
+    // fallback
+    else {
+      return param;
+    }
+  } else if (isCairoOption(paramType)) {
+    if (param === "None") {
+      return new CairoOption(CairoOptionVariant.None);
+    }
+    const type = parseGenericType(paramType);
+    const parsedParam = param.slice(5, param.length - 1);
+    //@ts-ignore
+    const parsedValue = parseParamWithType(type as string, parsedParam, isRead);
+    return new CairoOption(CairoOptionVariant.Some, parsedValue);
+  } else if (isCairoU256(paramType)) {
+    return tryParsingParamReturnValues(uint256.bnToUint256, param);
+  } else if (isCairoFelt(paramType)) {
+    return param;
+  } else if (isCairoByteArray(paramType)) {
+    return tryParsingParamReturnValues(byteArray.byteArrayFromString, param);
+  } else if (isCairoContractAddress(paramType)) {
+    return tryParsingParamReturnValues(validateAndParseAddress, param);
+  } else if (isCairoBool(paramType)) {
+    return param == "false" ? "0x0" : "0x1";
+  } else if (isCairoResult(paramType)) {
+    if (param) {
+      const variantType =
+        param.variant.Ok && param.variant.Ok.value
+          ? param.variant.Ok
+          : param.variant.Err;
+      const variantValue = variantType.value;
+
+      const resultVariant =
+        variantType === param.variant.Ok && param.variant.Ok.value
+          ? CairoResultVariant.Ok
+          : CairoResultVariant.Err;
+      const valueType: any = isCairoU256(variantType.type)
+        ? uint256.bnToUint256(variantValue)
+        : isCairoByteArray(variantType.type)
+          ? byteArray.byteArrayFromString(variantValue)
+          : parseParamWithType(variantType.type, variantValue, false);
+
+      return new CairoResult(resultVariant, valueType);
+    }
+  } else {
+    try {
+      if (typeof param.variant == "object" && param.variant !== null) {
+        const parsedVariant = Object.keys(param.variant).reduce(
+          (acc, key) => {
+            if (
+              param.variant[key].value === "" ||
+              param.variant[key].value === undefined
+            ) {
+              acc[key] = undefined;
+              return acc;
+            }
+
+            acc[key] = parseParamWithType(
+              param.variant[key].type,
+              param.variant[key].value,
+              false,
+            );
+            return acc;
+          },
+          {} as Record<string, any>,
+        );
+
+        const isDevnet =
+          scaffoldConfig.targetNetworks[0].network.toString() === "devnet";
+
+        const encodedCustomEnum =
+          encodeCustomEnumWithParsedVariants(parsedVariant);
+
+        return Object.values(parsedVariant).length > 0
+          ? isDevnet
+            ? encodedCustomEnum
+            : [[encodedCustomEnum]]
+          : undefined;
+      } else {
+        return Object.keys(param).reduce((acc, key) => {
+          const parsed = parseParamWithType(
+            param[key].type,
+            param[key].value,
+            false,
+          );
+
+          if (parsed !== undefined && parsed !== "") {
+            if (Array.isArray(parsed)) {
+              acc.push(...parsed);
+            } else {
+              acc.push(parsed);
+            }
+          }
+          return acc;
+        }, [] as any[]);
+      }
+    } catch (err) {
+      //console.log(err);
+      return param;
+    }
+  }
+};
+
 //@ts-ignore
 export function parseParamWithType(
   paramType: string,
   param: any,
   isRead: boolean,
 ) {
-  if (isRead) {
-    if (isCairoTuple(paramType)) {
-      return objectToCairoTuple(param, paramType);
-    } else if (isCairoArray(paramType)) {
-      return tryParsingParamReturnObject((param) => {
-        const genericType = parseGenericType(paramType)[0];
-        return genericType
-          ? //@ts-ignore
-            param.map((item) => parseParamWithType(genericType, item, isRead))
-          : param;
-      }, param);
-    } else if (isCairoOption(paramType)) {
-      //@ts-ignore
-      return tryParsingParamReturnObject((x) => {
-        const option = x as CairoOption<any>;
-        return option.isNone()
-          ? "None"
-          : `Some(${parseParamWithType(paramType.split("<").pop()!, option.unwrap(), isRead)})`;
-      }, param);
-    } else if (isCairoResult(paramType)) {
-      //@ts-ignore
-      return tryParsingParamReturnObject((x) => {
-        const result = x as CairoResult<any, any>;
-        const [ok, error] = parseGenericType(paramType);
-        return result.isOk()
-          ? `Ok(${parseParamWithType(ok, result.unwrap(), isRead)})`
-          : `Err(${parseParamWithType(error, result.unwrap(), isRead)})`;
-      }, param);
-    } else if (isCairoU256(paramType)) {
-      return tryParsingParamReturnObject(uint256.uint256ToBN, param);
-    } else if (isCairoByteArray(paramType)) {
-      return tryParsingParamReturnObject(byteArray.stringFromByteArray, param);
-    } else if (isCairoContractAddress(paramType)) {
-      return tryParsingParamReturnObject(validateAndParseAddress, param);
-    } else if (isCairoFelt(paramType)) {
-      return feltToHex(param);
-    } else if (isCairoBool(paramType)) {
-      return typeof param === "boolean"
-        ? param
-        : (param as string).startsWith("0x0")
-          ? "false"
-          : "true";
-    } else if (isCairoBytes31(paramType)) {
-      return tryParsingParamReturnObject(
-        (x: bigint) => `0x${x.toString(16)}`,
-        param,
-      );
-    } else if (isCairoInt(paramType)) {
-      return tryParsingParamReturnObject(
-        (x) => (typeof x === "bigint" ? Number(x) : parseInt(x, 16)),
-        param,
-      );
-    } else if (isCairoBigInt(paramType)) {
-      return tryParsingParamReturnObject((x) => BigInt(x), param);
-    } else {
-      return tryParsingParamReturnObject((x) => x, param);
-    }
-  } else {
-    if (isCairoTuple(paramType)) {
-      return tryParsingParamReturnValues(
-        (x) => stringToObjectTuple(x, paramType),
-        param,
-      );
-    } else if (isCairoArray(paramType)) {
-      const genericType = parseGenericType(paramType)[0];
-
-      // if we have to process string
-      if (typeof param === "string") {
-        const tokens = param.split(",");
-        if (genericType) {
-          //@ts-ignore
-          return [
-            tokens.length,
-            ...tokens
-              //@ts-ignore
-              .map((item) =>
-                parseParamWithType(genericType, item.trim(), isRead),
-              ),
-          ];
-        } else {
-          return param;
-        }
-      }
-
-      // if we have to process array
-      else if (Array.isArray(param)) {
-        if (genericType) {
-          //@ts-ignore
-          return [
-            param.length,
-            ...param
-              //@ts-ignore
-              .map((item) => parseParamWithType(genericType, item, isRead)),
-          ];
-        } else {
-          return param;
-        }
-      }
-
-      // fallback
-      else {
-        return param;
-      }
-    } else if (isCairoOption(paramType)) {
-      if (param === "None") {
-        return new CairoOption(CairoOptionVariant.None);
-      }
-      const type = parseGenericType(paramType);
-      const parsedParam = param.slice(5, param.length - 1);
-      //@ts-ignore
-      const parsedValue = parseParamWithType(
-        type as string,
-        parsedParam,
-        isRead,
-      );
-      return new CairoOption(CairoOptionVariant.Some, parsedValue);
-    } else if (isCairoU256(paramType)) {
-      return tryParsingParamReturnValues(uint256.bnToUint256, param);
-    } else if (isCairoFelt(paramType)) {
-      return param;
-    } else if (isCairoByteArray(paramType)) {
-      return tryParsingParamReturnValues(byteArray.byteArrayFromString, param);
-    } else if (isCairoContractAddress(paramType)) {
-      return tryParsingParamReturnValues(validateAndParseAddress, param);
-    } else if (isCairoBool(paramType)) {
-      return param == "false" ? "0x0" : "0x1";
-    } else if (isCairoResult(paramType)) {
-      if (param) {
-        const variantType =
-          param.variant.Ok && param.variant.Ok.value
-            ? param.variant.Ok
-            : param.variant.Err;
-        const variantValue = variantType.value;
-
-        const resultVariant =
-          variantType === param.variant.Ok && param.variant.Ok.value
-            ? CairoResultVariant.Ok
-            : CairoResultVariant.Err;
-        const valueType: any = isCairoU256(variantType.type)
-          ? uint256.bnToUint256(variantValue)
-          : isCairoByteArray(variantType.type)
-            ? byteArray.byteArrayFromString(variantValue)
-            : parseParamWithType(variantType.type, variantValue, false);
-
-        return new CairoResult(resultVariant, valueType);
-      }
-    } else {
-      try {
-        if (typeof param.variant == "object" && param.variant !== null) {
-          const parsedVariant = Object.keys(param.variant).reduce(
-            (acc, key) => {
-              if (
-                param.variant[key].value === "" ||
-                param.variant[key].value === undefined
-              ) {
-                acc[key] = undefined;
-                return acc;
-              }
-
-              acc[key] = parseParamWithType(
-                param.variant[key].type,
-                param.variant[key].value,
-                false,
-              );
-              return acc;
-            },
-            {} as Record<string, any>,
-          );
-
-          const isDevnet =
-            scaffoldConfig.targetNetworks[0].network.toString() === "devnet";
-
-          const encodedCustomEnum =
-            encodeCustomEnumWithParsedVariants(parsedVariant);
-
-          return Object.values(parsedVariant).length > 0
-            ? isDevnet
-              ? encodedCustomEnum
-              : [[encodedCustomEnum]]
-            : undefined;
-        } else {
-          return Object.keys(param).reduce((acc, key) => {
-            const parsed = parseParamWithType(
-              param[key].type,
-              param[key].value,
-              false,
-            );
-
-            if (parsed !== undefined && parsed !== "") {
-              if (Array.isArray(parsed)) {
-                acc.push(...parsed);
-              } else {
-                acc.push(parsed);
-              }
-            }
-            return acc;
-          }, [] as any[]);
-        }
-      } catch (err) {
-        //console.log(err);
-        return param;
-      }
-    }
-  }
+  if (isRead) return decodeParamsWithType(paramType, param);
+  return encodeParamsWithType(paramType, param);
 }
 
 export function parseFunctionParams(
