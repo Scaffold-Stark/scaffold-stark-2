@@ -73,7 +73,9 @@ const Home: NextPage = () => {
                 Play around with Multiwrite transactions using
                 useScaffoldMultiWrite() hook
               </p>
-              <Link href="/hooks" passHref className="link">All hooks</Link>
+              <Link href="/hooks" passHref className="link">
+                All hooks
+              </Link>
             </div>
           </div>
         </div>
