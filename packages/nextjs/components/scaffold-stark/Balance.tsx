@@ -18,6 +18,7 @@ type BalanceProps = {
  */
 export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
   const price = useGlobalState((state) => state.nativeCurrencyPrice);
+  const strkPrice = useGlobalState((state) => state.strkCurrencyPrice);
   const { targetNetwork } = useTargetNetwork();
   const { formatted, isLoading, isError } = useScaffoldEthBalance({
     address,
@@ -35,7 +36,7 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
   );
 
   const toggleBalanceMode = () => {
-    if (price > 0) {
+    if (price > 0 || strkPrice > 0) {
       setDisplayUsdMode((prevMode) => !prevMode);
     }
   };
@@ -69,7 +70,7 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
 
   // Calculate the total balance in USD
   const ethBalanceInUsd = parseFloat(formatted) * price;
-  const strkBalanceInUsd = parseFloat(strkFormatted) * price;
+  const strkBalanceInUsd = parseFloat(strkFormatted) * strkPrice;
   const totalBalanceInUsd = ethBalanceInUsd + strkBalanceInUsd;
 
   return (
