@@ -4,7 +4,7 @@ import prettier from "prettier";
 import { Abi, CompiledSierra, validateAndParseAddress } from "starknet";
 import yargs, { string } from "yargs";
 
-const TARGET_DIR = path.join(__dirname, "../../../../nextjs/contracts");
+const TARGET_DIR = path.join(__dirname, "../../../nextjs/contracts");
 const deploymentsDir = path.join(__dirname, "../../scripts");
 const deployments_Contract = path.join(__dirname, "../../target/dev");
 

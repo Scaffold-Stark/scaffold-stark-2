@@ -7,8 +7,8 @@
     "test": "snforge test",
     "test-eslint": "node eslint-contract-name/eslint-plugin-contract-names.test.js",
     "compile": "scarb build",
-    "format": "prettier --write 'scripts-ts/**/*.{ts,tsx}' && cd contracts && scarb fmt",
-    "format:check": "prettier --check 'scripts-ts/**/*.{ts,tsx}' && cd contracts && scarb fmt --check",
+    "format": "prettier --write 'scripts-ts/**/*.{ts,tsx}' && scarb fmt",
+    "format:check": "prettier --check 'scripts-ts/**/*.{ts,tsx}' && scarb fmt --check",
     "postinstall": "shx cp -n .env.example .env"
   },
   "devDependencies": {
