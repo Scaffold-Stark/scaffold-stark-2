@@ -5,15 +5,9 @@ import {
   exportDeployments,
   deployer,
   loadExistingDeployments,
+  resetDeployments,
 } from "./deploy-contract";
 import { green, yellow } from "./helpers/colorize-log";
-
-const argv = yargs(process.argv.slice(2))
-  .options({
-    network: { type: "string", demandOption: true },
-    reset: { type: "boolean", default: false },
-  })
-  .parseSync();
 
 const deployScript = async (): Promise<void> => {
  const existingDeployments = loadExistingDeployments();
@@ -31,7 +25,9 @@ const deployScript = async (): Promise<void> => {
 deployScript()
   .then(async () => {
     await executeDeployCalls();
-    exportDeployments(argv.reset);
-    console.log(green(`All Setup Done (${argv.reset ? "Reset" : "Append"})`));
+    exportDeployments();
+    console.log(
+      green(`All Setup Done (${resetDeployments ? "Reset" : "Append"})`)
+    );
   })
   .catch(console.error);

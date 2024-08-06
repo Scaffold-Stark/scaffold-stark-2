@@ -280,17 +280,17 @@ const loadExistingDeployments = () => {
 // };
 
 
-const exportDeployments = (reset: boolean = false) => {
+const exportDeployments = () => {
   const networkPath = path.resolve(
     __dirname,
     `../deployments/${networkName}_latest.json`
   );
 
-  let finalDeployments = reset
+  let finalDeployments = resetDeployments
     ? deployments
     : { ...loadExistingDeployments(), ...deployments };
 
-  if (fs.existsSync(networkPath) && !reset) {
+  if (fs.existsSync(networkPath) && !resetDeployments) {
     const currentTimestamp = new Date().getTime();
     fs.renameSync(
       networkPath,
