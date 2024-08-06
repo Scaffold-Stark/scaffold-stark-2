@@ -390,14 +390,14 @@ export function getFunctionsByStateMutability(
 function tryParsingParamReturnValues(
   fn: (x: any) => {},
   param: any,
-  isEncodeToObject: boolean,
+  isV3Parsing: boolean,
 ) {
   try {
     const objectValue = fn(param);
     if (
       typeof objectValue === "object" &&
       objectValue !== null &&
-      !isEncodeToObject
+      !isV3Parsing
     ) {
       // handle empty array
       return Object.values(objectValue).map((value) => {
@@ -483,13 +483,13 @@ const decodeParamsWithType = (paramType: string, param: any): unknown => {
 const encodeParamsWithType = (
   paramType: string,
   param: any,
-  isEncodeToObject: boolean,
+  isV3Parsing: boolean,
 ): unknown => {
   if (isCairoTuple(paramType)) {
     return tryParsingParamReturnValues(
-      (x) => stringToObjectTuple(x, paramType, isEncodeToObject),
+      (x) => stringToObjectTuple(x, paramType, isV3Parsing),
       param,
-      isEncodeToObject,
+      isV3Parsing,
     );
   } else if (isCairoArray(paramType)) {
     const genericType = parseGenericType(paramType)[0];
@@ -499,13 +499,17 @@ const encodeParamsWithType = (
       const tokens = param.split(",");
       const encodedArray = [];
       if (genericType) {
-        if (!isEncodeToObject) encodedArray.push(tokens.length);
+        if (!isV3Parsing) encodedArray.push(tokens.length);
 
         encodedArray.push(
           ...tokens
             //@ts-ignore
             .map((item) =>
-              encodeParamsWithType(genericType, item.trim(), isEncodeToObject),
+              encodeParamsWithType(
+                genericType,
+                typeof item === "string" ? item.trim() : item,
+                isV3Parsing,
+              ),
             ),
         );
 
@@ -520,14 +524,23 @@ const encodeParamsWithType = (
     else if (Array.isArray(param)) {
       if (genericType) {
         //@ts-ignore
-        return [
-          param.length,
+        const encodedArray = [];
+        if (!isV3Parsing) encodedArray.push(param.length);
+
+        encodedArray.push(
           ...param
             //@ts-ignore
             .map((item) =>
-              encodeParamsWithType(genericType, item, isEncodeToObject),
+              encodeParamsWithType(
+                genericType,
+                typeof item === "string" ? item.trim() : item,
+                isV3Parsing,
+              ),
             ),
-        ];
+        );
+
+        //@ts-ignore
+        return encodedArray;
       } else {
         return param;
       }
@@ -547,28 +560,27 @@ const encodeParamsWithType = (
     const parsedValue = encodeParamsWithType(
       type as string,
       parsedParam,
-      isEncodeToObject,
+      isV3Parsing,
     );
     return new CairoOption(CairoOptionVariant.Some, parsedValue);
   } else if (isCairoU256(paramType)) {
-    return tryParsingParamReturnValues(
-      uint256.bnToUint256,
-      param,
-      isEncodeToObject,
-    );
+    return tryParsingParamReturnValues(uint256.bnToUint256, param, isV3Parsing);
   } else if (isCairoFelt(paramType)) {
     return param;
   } else if (isCairoByteArray(paramType)) {
+    // starknet react next version only needs raw strings
+    if (isV3Parsing) return param;
+
     return tryParsingParamReturnValues(
       byteArray.byteArrayFromString,
       param,
-      isEncodeToObject,
+      isV3Parsing,
     );
   } else if (isCairoContractAddress(paramType)) {
     return tryParsingParamReturnValues(
       validateAndParseAddress,
       param,
-      isEncodeToObject,
+      isV3Parsing,
     );
   } else if (isCairoBool(paramType)) {
     return param == "false" ? "0x0" : "0x1";
@@ -587,13 +599,14 @@ const encodeParamsWithType = (
       const valueType: any = encodeParamsWithType(
         variantType.type,
         variantValue,
-        isEncodeToObject,
+        isV3Parsing,
       );
 
       return new CairoResult(resultVariant, valueType);
     }
   } else {
     try {
+      // custom enum encoding
       if (typeof param.variant == "object" && param.variant !== null) {
         const parsedVariant = Object.keys(param.variant).reduce(
           (acc, key) => {
@@ -608,7 +621,7 @@ const encodeParamsWithType = (
             acc[key] = encodeParamsWithType(
               param.variant[key].type,
               param.variant[key].value,
-              isEncodeToObject,
+              isV3Parsing,
             );
             return acc;
           },
@@ -626,12 +639,34 @@ const encodeParamsWithType = (
             ? encodedCustomEnum
             : [[encodedCustomEnum]]
           : undefined;
-      } else {
+      }
+
+      // encode to object (v3)
+      else if (isV3Parsing) {
+        return Object.keys(param).reduce(
+          (acc, key) => {
+            const parsed = encodeParamsWithType(
+              param[key].type,
+              param[key].value,
+              isV3Parsing,
+            );
+
+            if (parsed !== undefined && parsed !== "") {
+              acc[key] = parsed;
+            }
+            return acc;
+          },
+          {} as Record<string, any>,
+        );
+      }
+
+      // encode to rawargs
+      else {
         return Object.keys(param).reduce((acc, key) => {
           const parsed = encodeParamsWithType(
             param[key].type,
             param[key].value,
-            isEncodeToObject,
+            isV3Parsing,
           );
 
           if (parsed !== undefined && parsed !== "") {
@@ -656,10 +691,10 @@ export function parseParamWithType(
   paramType: string,
   param: any,
   isRead: boolean,
-  isEncodeToObject?: boolean,
+  isV3Parsing?: boolean,
 ) {
   if (isRead) return decodeParamsWithType(paramType, param);
-  return encodeParamsWithType(paramType, param, !!isEncodeToObject);
+  return encodeParamsWithType(paramType, param, !!isV3Parsing);
 }
 
 export function parseFunctionParams(
@@ -729,14 +764,14 @@ function objectToCairoTuple(obj: { [key: number]: any }, type: string): string {
 function stringToObjectTuple(
   tupleString: string,
   paramType: string,
-  isEncodeToObject?: boolean,
+  isV3Parsing?: boolean,
 ): { [key: number]: any } {
   const values = parseTuple(tupleString);
   const types = parseTuple(paramType);
 
   const obj: { [key: number]: any } = {};
   values.forEach((value, index) => {
-    obj[index] = encodeParamsWithType(types[index], value, !!isEncodeToObject);
+    obj[index] = encodeParamsWithType(types[index], value, !!isV3Parsing);
   });
 
   return obj;

@@ -57,26 +57,28 @@ const deepParseValues = (
   value: any,
   isRead: boolean,
   keyAndType?: any,
-  isEncodeToObject?: boolean,
+  isV3Parsing?: boolean,
 ): any => {
   if (keyAndType) {
-    return parseParamWithType(keyAndType, value, isRead, isEncodeToObject);
+    return parseParamWithType(keyAndType, value, isRead, isV3Parsing);
   }
   if (typeof value === "string") {
     if (isJsonString(value)) {
       const parsed = JSON.parse(value);
-      return deepParseValues(parsed, isRead);
+      return deepParseValues(parsed, isRead, isV3Parsing);
     } else {
       // It's a string but not a JSON string, return as is
       return value;
     }
   } else if (Array.isArray(value)) {
     // If it's an array, recursively parse each element
-    return value.map((element) => deepParseValues(element, isRead));
+    return value.map((element) =>
+      deepParseValues(element, isRead, isV3Parsing),
+    );
   } else if (typeof value === "object" && value !== null) {
     // If it's an object, recursively parse each value
     return Object.entries(value).reduce((acc: any, [key, val]) => {
-      acc[key] = deepParseValues(val, isRead);
+      acc[key] = deepParseValues(val, isRead, isV3Parsing);
       return acc;
     }, {});
   }
@@ -108,11 +110,11 @@ const deepParseValues = (
 const getParsedContractFunctionArgs = (
   form: Record<string, any>,
   isRead: boolean,
-  isEncodeToObject?: boolean,
+  isV3Parsing?: boolean,
 ) => {
   return Object.keys(form).map((key) => {
     const valueOfArg = form[key];
-    return deepParseValues(valueOfArg, isRead, key, isEncodeToObject);
+    return deepParseValues(valueOfArg, isRead, key, isV3Parsing);
   });
 };
 
