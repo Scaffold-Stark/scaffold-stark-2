@@ -16,15 +16,10 @@ const argv = yargs(process.argv.slice(2))
   .parseSync();
 
 const deployScript = async (): Promise<void> => {
-  if (argv.reset) {
-    console.log(yellow("Resetting deployments..."));
-  } else {
-    const existingDeployments = loadExistingDeployments();
-    if (Object.keys(existingDeployments).length > 0) {
-      console.log(yellow("Appending to existing deployments..."));
-    }
-  }
-
+ const existingDeployments = loadExistingDeployments();
+ if (Object.keys(existingDeployments).length > 0) {
+   console.log(yellow("Appending to existing deployments..."));
+ }
   await deployContract({
     contract: "YourContract",
     constructorArgs: {
