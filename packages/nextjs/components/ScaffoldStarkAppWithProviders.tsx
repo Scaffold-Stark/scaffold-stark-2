@@ -10,11 +10,9 @@ import { ProgressBar } from "~~/components/scaffold-stark/ProgressBar";
 import { appChains, connectors } from "~~/services/web3/connectors";
 import provider from "~~/services/web3/provider";
 import { useNativeCurrencyPrice } from "~~/hooks/scaffold-stark/useNativeCurrencyPrice";
-import { useStrkCurrencyPrice } from "~~/hooks/scaffold-stark/useStrkCurrencyPrice";
 
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
   useNativeCurrencyPrice();
-  useStrkCurrencyPrice();
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
   return (
