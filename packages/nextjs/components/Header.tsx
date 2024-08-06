@@ -64,7 +64,13 @@ export const HeaderMenuLinks = () => {
   );
 };
 
-const DeployInstructionsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+const DeployInstructionsModal = ({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) => {
   if (!isOpen) return null;
 
   return (
@@ -78,10 +84,16 @@ const DeployInstructionsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose
           <li>Open your wallet and click on settings</li>
           <li>Click on the account</li>
           <li>Select the deploy wallet button and confirm the transaction.</li>
-          <li>After the transaction is confirmed, you can now interact with the dapp</li>
+          <li>
+            After the transaction is confirmed, you can now interact with the
+            dapp
+          </li>
         </ol>
 
-        <h2 className="text-lg font-bold mt-4">PS: YOUR ACCOUNT NEEDS TO BE FUNDED WITH SOME <br /> TEST TOKENS BEFORE THEY CAN GET DEPLOYED ON THE STARKNET NETWORK. </h2>
+        <h2 className="text-lg font-bold mt-4">
+          PS: YOUR ACCOUNT NEEDS TO BE FUNDED WITH SOME <br /> TEST TOKENS
+          BEFORE THEY CAN GET DEPLOYED ON THE STARKNET NETWORK.{" "}
+        </h2>
         <button
           onClick={onClose}
           className="mt-4 bg-blue-500 text-white py-2 px-4 rounded"
@@ -89,7 +101,10 @@ const DeployInstructionsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose
           Close
         </button>
       </div>
-      <div className="fixed inset-0 bg-black opacity-50" onClick={onClose}></div>
+      <div
+        className="fixed inset-0 bg-black opacity-50"
+        onClick={onClose}
+      ></div>
     </div>
   );
 };
@@ -103,7 +118,7 @@ export const Header = () => {
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   useOutsideClick(
     burgerMenuRef,
-    useCallback(() => setIsDrawerOpen(false), []),
+    useCallback(() => setIsDrawerOpen(false), [])
   );
   const { targetNetwork } = useTargetNetwork();
   const isLocalNetwork = targetNetwork.id === devnet.id;
@@ -190,7 +205,10 @@ export const Header = () => {
           />
         </div>
       </div>
-      <DeployInstructionsModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <DeployInstructionsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </>
   );
 };
