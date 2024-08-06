@@ -631,6 +631,8 @@ const encodeParamsWithType = (
         const isDevnet =
           scaffoldConfig.targetNetworks[0].network.toString() === "devnet";
 
+        if (isV3Parsing) return new CairoCustomEnum(parsedVariant);
+
         const encodedCustomEnum =
           encodeCustomEnumWithParsedVariants(parsedVariant);
 
