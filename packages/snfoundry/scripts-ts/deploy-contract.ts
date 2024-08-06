@@ -228,7 +228,9 @@ const deployContract = async (
 const executeDeployCalls = async (options?: UniversalDetails) => {
   if (deployCalls.length < 1) {
     throw new Error(
-      red("Aborted: No contract to deploy. Please prepare the contracts with `deployContract`")
+      red(
+        "Aborted: No contract to deploy. Please prepare the contracts with `deployContract`"
+      )
     );
   }
 
