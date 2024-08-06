@@ -64,11 +64,42 @@ export const HeaderMenuLinks = () => {
   );
 };
 
+const DeployInstructionsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center z-30">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded shadow-lg z-40">
+        <h2 className="text-lg font-bold">How to Deploy Your Wallet</h2>
+        <p className="mt-2">
+          To deploy your Argent wallet account, follow these instructions:
+        </p>
+        <ol className="list-decimal pl-4 mt-2">
+          <li>Open your wallet and click on settings</li>
+          <li>Click on the account</li>
+          <li>Select the deploy wallet button and confirm the transaction.</li>
+          <li>After the transaction is confirmed, you can now interact with the dapp</li>
+        </ol>
+
+        <h2 className="text-lg font-bold mt-4">PS: YOUR ACCOUNT NEEDS TO BE FUNDED WITH SOME <br /> TEST TOKENS BEFORE THEY CAN GET DEPLOYED ON THE STARKNET NETWORK. </h2>
+        <button
+          onClick={onClose}
+          className="mt-4 bg-blue-500 text-white py-2 px-4 rounded"
+        >
+          Close
+        </button>
+      </div>
+      <div className="fixed inset-0 bg-black opacity-50" onClick={onClose}></div>
+    </div>
+  );
+};
+
 /**
  * Site header
  */
 export const Header = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   useOutsideClick(
     burgerMenuRef,
@@ -92,68 +123,74 @@ export const Header = () => {
   }, [status, address, provider]);
 
   return (
-    <div className="sticky lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
-      <div className="navbar-start w-auto lg:w-1/2">
-        <div className="lg:hidden dropdown" ref={burgerMenuRef}>
-          <label
-            tabIndex={0}
-            className={`ml-1 btn btn-ghost ${
-              isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"
-            }`}
-            onClick={() => {
-              setIsDrawerOpen((prevIsOpenState) => !prevIsOpenState);
-            }}
-          >
-            <Bars3Icon className="h-1/2" />
-          </label>
-          {isDrawerOpen && (
-            <ul
+    <>
+      <div className="sticky lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
+        <div className="navbar-start w-auto lg:w-1/2">
+          <div className="lg:hidden dropdown" ref={burgerMenuRef}>
+            <label
               tabIndex={0}
-              className="menu menu-compact dropdown-content mt-3 p-2 shadow rounded-box w-52"
+              className={`ml-1 btn btn-ghost ${
+                isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"
+              }`}
               onClick={() => {
-                setIsDrawerOpen(false);
+                setIsDrawerOpen((prevIsOpenState) => !prevIsOpenState);
               }}
             >
-              <HeaderMenuLinks />
-            </ul>
-          )}
+              <Bars3Icon className="h-1/2" />
+            </label>
+            {isDrawerOpen && (
+              <ul
+                tabIndex={0}
+                className="menu menu-compact dropdown-content mt-3 p-2 shadow rounded-box w-52"
+                onClick={() => {
+                  setIsDrawerOpen(false);
+                }}
+              >
+                <HeaderMenuLinks />
+              </ul>
+            )}
+          </div>
+          <Link
+            href="/"
+            passHref
+            className="hidden lg:flex items-center gap-2 ml-4 mr-6 shrink-0"
+          >
+            <div className="flex relative w-10 h-10">
+              <Image
+                alt="SE2 logo"
+                className="cursor-pointer"
+                fill
+                src="/logo.svg"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-bold leading-tight">Scaffold-Stark</span>
+              <span className="text-xs">Starknet dev stack</span>
+            </div>
+          </Link>
+          <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">
+            <HeaderMenuLinks />
+          </ul>
         </div>
-        <Link
-          href="/"
-          passHref
-          className="hidden lg:flex items-center gap-2 ml-4 mr-6 shrink-0"
-        >
-          <div className="flex relative w-10 h-10">
-            <Image
-              alt="SE2 logo"
-              className="cursor-pointer"
-              fill
-              src="/logo.svg"
-            />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold leading-tight">Scaffold-Stark</span>
-            <span className="text-xs">Starknet dev stack</span>
-          </div>
-        </Link>
-        <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">
-          <HeaderMenuLinks />
-        </ul>
+        <div className="navbar-end flex-grow mr-4 gap-4">
+          {status === "connected" && !isDeployed ? (
+            <span
+              className="bg-[#8a45fc] text-[9px] p-1 text-white cursor-pointer"
+              onClick={() => setIsModalOpen(true)}
+            >
+              Wallet Not Deployed, Click To Deploy
+            </span>
+          ) : null}
+          <CustomConnectButton />
+          {/* <FaucetButton /> */}
+          <SwitchTheme
+            className={`pointer-events-auto ${
+              isLocalNetwork ? "self-end md:self-auto" : ""
+            }`}
+          />
+        </div>
       </div>
-      <div className="navbar-end flex-grow mr-4 gap-4">
-        {status === "connected" && !isDeployed ? (
-          <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
-            Wallet Not Deployed
-          </span>
-        ) : null}
-        <CustomConnectButton />
-        {/* <FaucetButton /> */}
-        <SwitchTheme
-          className={`pointer-events-auto ${
-            isLocalNetwork ? "self-end md:self-auto" : ""
-          }`}
-        />
-      </div>
-    </div>
+      <DeployInstructionsModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+    </>
   );
 };
