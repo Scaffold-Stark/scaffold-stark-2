@@ -688,13 +688,12 @@ const encodeParamsWithType = (
   }
 };
 
-//@ts-ignore
 export function parseParamWithType(
   paramType: string,
   param: any,
   isRead: boolean,
   isV3Parsing?: boolean,
-) {
+): any {
   if (isRead) return decodeParamsWithType(paramType, param);
   return encodeParamsWithType(paramType, param, !!isV3Parsing);
 }
