@@ -41,8 +41,7 @@ export const WriteOnlyFunctionForm = ({
   abiFunction,
   onChange,
   contractAddress,
-}: //   inheritedFrom,
-WriteOnlyFunctionFormProps) => {
+}: WriteOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialFormState(abiFunction),
   );
@@ -67,7 +66,7 @@ WriteOnlyFunctionFormProps) => {
     data: result,
     isPending: isLoading,
     sendAsync,
-    send,
+    error,
   } = useSendTransaction({
     calls: [
       {
@@ -75,10 +74,19 @@ WriteOnlyFunctionFormProps) => {
         entrypoint: abiFunction.name,
 
         // use infinity to completely flatten array from n dimensions to 1 dimension
+        // writing in starknet next still needs rawArgs parsing, use v2 parsing
         calldata: getParsedContractFunctionArgs(form, false).flat(Infinity),
       },
     ],
   });
+
+  // side effect for error logging
+  useEffect(() => {
+    if (error) {
+      console.error(error?.message);
+      console.error(error.stack);
+    }
+  }, [error]);
 
   const handleWrite = async () => {
     if (sendAsync) {
