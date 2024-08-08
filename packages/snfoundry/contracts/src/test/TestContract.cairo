@@ -1,12 +1,16 @@
 use contracts::YourContract::{IYourContractDispatcher, IYourContractDispatcherTrait};
 use openzeppelin::utils::serde::SerializedAppend;
 use snforge_std::{declare, ContractClassTrait};
-use starknet::ContractAddress;
+use starknet::{ContractAddress, contract_address_const};
+
+fn OWNER() -> ContractAddress {
+    contract_address_const::<'OWNER'>()
+}
 
 fn deploy_contract(name: ByteArray) -> ContractAddress {
     let contract = declare(name).unwrap();
     let mut calldata = array![];
-    calldata.append_serde(0xb3ff441a68610b30fd5e2abbf3a1548eb6ba6f3559f2862bf2dc757e5828ca);
+    calldata.append_serde(OWNER());
     let (contract_address, _) = contract.deploy(@calldata).unwrap();
     contract_address
 }

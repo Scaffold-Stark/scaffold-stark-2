@@ -1,5 +1,3 @@
-use starknet::ContractAddress;
-
 #[starknet::interface]
 pub trait IYourContract<TContractState> {
     fn gretting(self: @TContractState) -> ByteArray;
@@ -13,7 +11,8 @@ mod YourContract {
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
     use starknet::{get_caller_address, get_contract_address};
-    use super::{ContractAddress, IYourContract};
+    use super::{IYourContract};
+    use starknet::{ContractAddress, contract_address_const};
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
 
@@ -22,7 +21,7 @@ mod YourContract {
     impl OwnableInternalImpl = OwnableComponent::InternalImpl<ContractState>;
 
     const ETH_CONTRACT_ADDRESS: felt252 =
-        0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7;
+        0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7;
 
     #[event]
     #[derive(Drop, starknet::Event)]
@@ -42,7 +41,6 @@ mod YourContract {
         value: u256,
     }
 
-
     #[storage]
     struct Storage {
         eth_token: IERC20CamelDispatcher,
@@ -56,7 +54,7 @@ mod YourContract {
 
     #[constructor]
     fn constructor(ref self: ContractState, owner: ContractAddress) {
-        let eth_contract_address = ETH_CONTRACT_ADDRESS.try_into().unwrap();
+        let eth_contract_address = contract_address_const::<ETH_CONTRACT_ADDRESS>();
         self.eth_token.write(IERC20CamelDispatcher { contract_address: eth_contract_address });
         self.greeting.write("Building Unstoppable Apps!!!");
         self.ownable.initializer(owner);
@@ -74,7 +72,7 @@ mod YourContract {
             self.user_gretting_counter.write(get_caller_address(), user_counter + 1);
 
             if amount_eth > 0 {
-                // call `approve` on ETH contract before transfer amount_eth
+                // In `Debug Contract` or UI implementation call `approve` on ETH contract before invoke fn set_gretting()
                 self
                     .eth_token
                     .read()
