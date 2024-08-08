@@ -34,7 +34,7 @@ function deploy(network: string = "devnet"): void {
       cd scripts && rm -rf scripts_alpha-sepolia_state.json && cd .. && rm -rf target && scarb build && 
       sncast --url ${process.env.RPC_URL_SEPOLIA} account add --name "${deployerName}" --address ${process.env.ACCOUNT_ADDRESS_SEPOLIA} --private-key ${process.env.PRIVATE_KEY_SEPOLIA} --type oz && 
       sncast --url ${process.env.RPC_URL_SEPOLIA} --account "${deployerName}" script run scripts --package scripts && 
-      ts-node './scripts-ts/helpers/parse-deployments.ts --network sepolia'
+      ts-node ./scripts-ts/helpers/parse-deployments.ts --network sepolia
     `;
   } else if (network === "devnet") {
     console.log(
@@ -46,7 +46,16 @@ function deploy(network: string = "devnet"): void {
       sncast --url ${process.env.RPC_URL_DEVNET} --account "${deployerName}" script run scripts --package scripts && 
       ts-node './scripts-ts/helpers/parse-deployments.ts'
     `;
-  } else {
+  } else if (network === "mainnet"){
+    console.log("mainnet specified. Running...");
+    command = `
+      cd scripts && rm -rf scripts_alpha-mainnet_state.json && cd .. && rm -rf target && scarb build && 
+      sncast --url ${process.env.RPC_URL_MAINNET} account add --name "${deployerName}" --address ${process.env.ACCOUNT_ADDRESS_MAINNET} --private-key ${process.env.PRIVATE_KEY_MAINNET} --type oz && 
+      sncast --url ${process.env.RPC_URL_MAINNET} --account "${deployerName}" script run scripts --package scripts && 
+      ts-node ./scripts-ts/helpers/parse-deployments.ts --network mainnet
+    `;
+  }
+  else {
     console.error(
       "Invalid command for deployer. Use: yarn deploy or yarn deploy --network <sepolia>"
     );
