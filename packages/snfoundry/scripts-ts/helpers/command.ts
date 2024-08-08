@@ -32,7 +32,7 @@ function deploy(network: string = "devnet"): void {
     console.log("sepolia network specified. Running...");
     command = `
       cd scripts && rm -rf scripts_alpha-sepolia_state.json && cd .. && rm -rf target && scarb build && 
-      sncast --url ${process.env.RPC_URL_SEPOLIA} account add --name "${deployerName}" --address ${process.env.ACCOUNT_ADDRESS_SEPOLIA} --private-key ${process.env.PRIVATE_KEY_SEPOLIA} --type oz && 
+      sncast --url ${process.env.RPC_URL_SEPOLIA} account add --name "${deployerName}" --address ${process.env.ACCOUNT_ADDRESS_SEPOLIA} --private-key ${process.env.PRIVATE_KEY_SEPOLIA} --type oz --add-profile "${deployerName}" && 
       sncast --url ${process.env.RPC_URL_SEPOLIA} --account "${deployerName}" script run scripts --package scripts && 
       ts-node ./scripts-ts/helpers/parse-deployments.ts --network sepolia
     `;
@@ -50,7 +50,7 @@ function deploy(network: string = "devnet"): void {
     console.log("mainnet specified. Running...");
     command = `
       cd scripts && rm -rf scripts_alpha-mainnet_state.json && cd .. && rm -rf target && scarb build && 
-      sncast --url ${process.env.RPC_URL_MAINNET} account add --name "${deployerName}" --address ${process.env.ACCOUNT_ADDRESS_MAINNET} --private-key ${process.env.PRIVATE_KEY_MAINNET} --type oz && 
+      sncast --url ${process.env.RPC_URL_MAINNET} account add --name "${deployerName}" --address ${process.env.ACCOUNT_ADDRESS_MAINNET} --private-key ${process.env.PRIVATE_KEY_MAINNET} --type oz --add-profile "${deployerName}" && 
       sncast --url ${process.env.RPC_URL_MAINNET} --account "${deployerName}" script run scripts --package scripts && 
       ts-node ./scripts-ts/helpers/parse-deployments.ts --network mainnet
     `;
