@@ -4,6 +4,7 @@
   "scripts": {
     "chain": "starknet-devnet --seed 0 --account-class cairo1",
     "deploy": "ts-node scripts-ts/helpers/deploy-wrapper.ts",
+    "deploy:reset": "ts-node scripts-ts/helpers/deploy-wrapper.ts --reset",
     "test": "cd contracts && snforge test",
     "test-eslint": "node eslint-contract-name/eslint-plugin-contract-names.test.js",
     "compile": "cd contracts && scarb build",
