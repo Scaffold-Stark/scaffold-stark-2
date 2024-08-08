@@ -46,7 +46,7 @@ function deploy(network: string = "devnet"): void {
       sncast --url ${process.env.RPC_URL_DEVNET} --account "${deployerName}" script run scripts --package scripts && 
       ts-node './scripts-ts/helpers/parse-deployments.ts'
     `;
-  } else if (network === "mainnet"){
+  } else if (network === "mainnet") {
     console.log("mainnet specified. Running...");
     command = `
       cd scripts && rm -rf scripts_alpha-mainnet_state.json && cd .. && rm -rf target && scarb build && 
@@ -54,8 +54,7 @@ function deploy(network: string = "devnet"): void {
       sncast --url ${process.env.RPC_URL_MAINNET} --account "${deployerName}" script run scripts --package scripts && 
       ts-node ./scripts-ts/helpers/parse-deployments.ts --network mainnet
     `;
-  }
-  else {
+  } else {
     console.error(
       "Invalid command for deployer. Use: yarn deploy or yarn deploy --network <sepolia>"
     );
