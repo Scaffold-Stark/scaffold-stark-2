@@ -14,8 +14,6 @@ import {
 import { DeployContractParams, Network } from "./types";
 import { green, red, yellow } from "./helpers/colorize-log";
 
-// const argv = yargs(process.argv.slice(2)).argv;
-// const networkName: string = argv["network"];
 
 interface Arguments {
   network: string;
@@ -89,26 +87,7 @@ const deployContract_NotWait = async (payload: {
   }
 };
 
-/**
- * Deploy a contract using the specified parameters.
- *
- * @param {DeployContractParams} params - The parameters for deploying the contract.
- * @param {string} params.contract - The name of the contract to deploy.
- * @param {string} [params.contractName] - The name to export the contract as (optional).
- * @param {RawArgs} [params.constructorArgs] - The constructor arguments for the contract (optional).
- * @param {UniversalDetails} [params.options] - Additional deployment options (optional).
- *
- * @returns {Promise<{ classHash: string; address: string }>} The deployed contract's class hash and address.
- *
- * @example
- * ///Example usage of deployContract function
- * await deployContract({
- *   contract: "YourContract",
- *   contractName: "YourContractExportName",
- *   constructorArgs: { owner: deployer.address },
- *   options: { maxFee: BigInt(1000000000000) }
- * });
- */
+
 const deployContract = async (
   params: DeployContractParams
 ): Promise<{
@@ -264,22 +243,7 @@ const loadExistingDeployments = () => {
   }
   return {};
 };
-// const exportDeployments = () => {
-//   const networkPath = path.resolve(
-//     __dirname,
-//     `../deployments/${networkName}_latest.json`
-//   );
 
-//   if (fs.existsSync(networkPath)) {
-//     const currentTimestamp = new Date().getTime();
-//     fs.renameSync(
-//       networkPath,
-//       networkPath.replace("_latest.json", `_${currentTimestamp}.json`)
-//     );
-//   }
-
-//   fs.writeFileSync(networkPath, JSON.stringify(deployments, null, 2));
-// };
 
 
 const exportDeployments = () => {
