@@ -12,7 +12,7 @@
   },
   "scripts": {
     "chain": "yarn workspace @ss-2/snfoundry chain",
-    "deploy": "yarn workspace @ss-2/snfoundry deploy",
+    "deploy": "cd packages/snfoundry && yarn workspace @ss-2/snfoundry deploy",
     "test": "yarn workspace @ss-2/snfoundry test",
     "compile": "yarn workspace @ss-2/snfoundry compile",
     "start": "yarn workspace @ss-2/nextjs dev",
@@ -32,6 +32,7 @@
     "prettier": "^3.2.5"
   },
   "dependencies": {
+    "dotenv-cli": "^7.4.2",
     "postcss": "^8.4.38"
   }
 }
