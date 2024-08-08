@@ -266,8 +266,6 @@ export type ExtractAbiFunctionScaffold<
   }
 >;
 
-// let emerson = singleFunction extends listOfFunctions ? true : false;
-
 export type UseScaffoldArgsParam<
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<

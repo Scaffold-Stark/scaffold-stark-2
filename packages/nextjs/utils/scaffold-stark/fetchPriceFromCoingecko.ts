@@ -4,15 +4,10 @@ import { ChainWithAttributes } from "~~/utils/scaffold-stark";
 const priceCache: Record<string, number> = {};
 
 export const fetchPriceFromCoingecko = async (
-  targetNetwork: ChainWithAttributes,
+  symbol: string,
   retryCount = 3,
 ): Promise<number> => {
-  const { symbol } = targetNetwork.nativeCurrency;
-  if (
-    symbol !== "ETH" &&
-    symbol !== "SEP" &&
-    !targetNetwork.nativeCurrencyTokenAddress
-  ) {
+  if (symbol !== "ETH" && symbol !== "SEP" && symbol !== "STRK") {
     return 0;
   }
 
@@ -32,11 +27,15 @@ const updatePriceCache = async (
   let attempt = 0;
   while (attempt < retries) {
     try {
-      const response = await fetch(
-        `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`,
-      );
+      let apiUrl = "";
+      if (symbol === "ETH") {
+        apiUrl = `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`;
+      } else if (symbol === "STRK") {
+        apiUrl = `https://api.coingecko.com/api/v3/simple/price?ids=starknet&vs_currencies=usd`;
+      }
+      const response = await fetch(apiUrl);
       const data = await response.json();
-      const price = data.ethereum.usd;
+      const price = symbol === "ETH" ? data.ethereum.usd : data.starknet.usd;
       priceCache[symbol] = price;
       console.log(`Price updated for ${symbol}: ${price}`);
       return price;
