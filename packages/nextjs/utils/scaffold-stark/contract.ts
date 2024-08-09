@@ -807,54 +807,50 @@ function formatInputForParsing({
     const { type: inputType } = inputsOrMembers[index];
 
     // terminate at Cairo primitives
-    if (isCairoType(inputType)) {
+    if (
+      isCairoType(inputType) ||
+      isCairoArray(inputType) ||
+      isCairoTuple(inputType)
+    ) {
       return { type: inputType, value: arg };
     }
 
     // object parsing
-    if (typeof arg === "object") {
-      // find struct definition in abi
-      const structDef = abi.find((item) => item.name === inputType);
-      const { type: structType, name: structName } = structDef as
-        | AbiStruct
-        | AbiEnum;
+    // find struct definition in abi
+    const structDef = abi.find((item) => item.name === inputType);
+    const { type: structType, name: structName } = structDef as
+      | AbiStruct
+      | AbiEnum;
 
-      // enums
-      if (structType === "enum") {
-        const { variants } = structDef as AbiEnum;
-        const argKeys = Object.keys(arg);
-        const formattedEntries = argKeys.map((argKey, argIndex): any => {
-          // get the value
-          const structValue = arg[argKey];
-          return [
-            argKey,
-            _formatInput(structValue, argIndex, variants as AbiParameter[]),
-          ];
-        });
-        return {
-          type: structName,
-          value: { variant: Object.fromEntries(formattedEntries) },
-        };
-      }
-
-      const { members } = structDef as AbiStruct;
+    // enums
+    if (structType === "enum") {
+      const { variants } = structDef as AbiEnum;
       const argKeys = Object.keys(arg);
       const formattedEntries = argKeys.map((argKey, argIndex): any => {
         // get the value
         const structValue = arg[argKey];
         return [
           argKey,
-          _formatInput(structValue, argIndex, members as AbiParameter[]),
+          _formatInput(structValue, argIndex, variants as AbiParameter[]),
         ];
       });
-      return {
-        type: structName,
-        value: Object.fromEntries(formattedEntries),
-      };
+      return { type: structName, value: { variant: Object.fromEntries } };
     }
 
-    // TODO: array parsing
-    return { type: "", value: "" };
+    const { members } = structDef as AbiStruct;
+    const argKeys = Object.keys(arg);
+    const formattedEntries = argKeys.map((argKey, argIndex): any => {
+      // get the value
+      const structValue = arg[argKey];
+      return [
+        argKey,
+        _formatInput(structValue, argIndex, members as AbiParameter[]),
+      ];
+    });
+    return {
+      type: structName,
+      value: Object.fromEntries(formattedEntries),
+    };
   };
 
   return args.map((arg, index) =>
