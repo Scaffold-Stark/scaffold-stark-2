@@ -14,7 +14,6 @@ import {
 import { DeployContractParams, Network } from "./types";
 import { green, red, yellow } from "./helpers/colorize-log";
 
-
 interface Arguments {
   network: string;
   reset: boolean;
@@ -34,7 +33,8 @@ const argv = yargs(process.argv.slice(2))
     type: "boolean",
     description: "Reset deployments",
     default: false,
-  }).parseSync() as Arguments;;
+  })
+  .parseSync() as Arguments;
 
 const networkName: string = argv.network;
 const resetDeployments: boolean = argv.reset;
@@ -262,8 +262,6 @@ const loadExistingDeployments = () => {
   }
   return {};
 };
-
-
 
 const exportDeployments = () => {
   const networkPath = path.resolve(
