@@ -7,6 +7,7 @@ import { Address } from "~~/components/scaffold-stark";
 import { useAccount } from "@starknet-react/core";
 import { Address as AddressType } from "@starknet-react/chains";
 import Image from "next/image";
+import HooksExample from "~~/components/HooksExample";
 
 const Home: NextPage = () => {
   const connectedAddress = useAccount();
@@ -42,8 +43,8 @@ const Home: NextPage = () => {
             </code>
           </p>
         </div>
-
-        <div className="bg-container flex-grow w-full mt-16 px-8 py-12">
+        <HooksExample/>
+        {/* <div className="bg-container flex-grow w-full mt-16 px-8 py-12">
           <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
             <div className="flex flex-col bg-base-100 relative text-[12px] px-10 py-10 text-center items-center max-w-xs rounded-3xl border border-gradient">
               <div className="trapeze"></div>
@@ -79,7 +80,7 @@ const Home: NextPage = () => {
             </div>
           </div>
         </div>
-        {/* <div
+        <div
           onClick={() => {
             writeAsync();
           }}
