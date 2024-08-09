@@ -215,7 +215,7 @@ const preDeployedContracts = {
           ],
         },
       ],
-      classHash: 0x046ded64ae2dead6448e247234bab192a9c483644395b66f2155f2614e5804b0,
+      classHash: "0x046ded64ae2dead6448e247234bab192a9c483644395b66f2155f2614e5804b0",
     },
     Strk: {
       address: universalStrkAddress,
@@ -422,6 +422,7 @@ const preDeployedContracts = {
           ],
         },
       ],
+      classHash: "0x046ded64ae2dead6448e247234bab192a9c483644395b66f2155f2614e5804b0",  //should be replaced with Strk devenet classHash. how do i get that?
     },
   },
   sepolia: {
@@ -681,7 +682,7 @@ const preDeployedContracts = {
           ],
         },
       ],
-      classHash: 0x07f3777c99f3700505ea966676aac4a0d692c2a9f5e667f4c606b51ca1dd3420,
+      classHash: "0x07f3777c99f3700505ea966676aac4a0d692c2a9f5e667f4c606b51ca1dd3420",
     },
     Strk: {
       address: universalStrkAddress,
@@ -939,6 +940,7 @@ const preDeployedContracts = {
           ],
         },
       ],
+      classHash: "0x07f3777c99f3700505ea966676aac4a0d692c2a9f5e667f4c606b51ca1dd3420", //should be replaced with Strk Sepolia classHash. how do i get that? 
     },
   },
 } as const;

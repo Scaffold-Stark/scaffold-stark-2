@@ -13,7 +13,7 @@ import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { ContractName } from "~~/utils/scaffold-stark/contract";
 import { ContractVariables } from "./ContractVariables";
 import { ContractWriteMethods } from "./ContractWriteMethods";
-import { ClassHash } from "~~/components/scaffold-stark/ClassHass";
+import { ClassHash } from "~~/components/scaffold-stark/ClassHash";
 
 type ContractUIProps = {
   contractName: ContractName;

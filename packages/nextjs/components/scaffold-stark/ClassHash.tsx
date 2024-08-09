@@ -25,7 +25,7 @@ export const ClassHash = ({
   classHash,
   format,
   size = "xs",
-}: classHashCopied) => {
+}: ClasshashProps) => {
   const [addressCopied, setAddressCopied] = useState(false);
   const { targetNetwork } = useTargetNetwork();
 
@@ -34,10 +34,10 @@ export const ClassHash = ({
     classHash,
   );
 
-  let displayAddress = classHash?.slice(0, 6) + "..." + classHash?.slice(-4);
+  let displayClasshash = classHash?.slice(0, 6) + "..." + classHash?.slice(-4);
 
   if (format === "long") {
-    displayAddress = classHash;
+    displayClasshash = classHash;
   }
 
   return (
@@ -47,7 +47,7 @@ export const ClassHash = ({
       </div>
       {targetNetwork.network === devnet.network ? (
         <span className={`ml-1.5 text-${size} font-normal`}>
-          <Link href={blockExplorerAddressLink}>{displayAddress}</Link>
+          <Link href={blockExplorerAddressLink}>{displayClasshash}</Link>
         </span>
       ) : (
         <a
@@ -56,7 +56,7 @@ export const ClassHash = ({
           href={blockExplorerAddressLink}
           rel="noopener noreferrer"
         >
-          {displayAddress}
+          {displayClasshash}
         </a>
       )}
       {addressCopied ? (
