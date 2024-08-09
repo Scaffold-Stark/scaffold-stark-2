@@ -940,7 +940,7 @@ const preDeployedContracts = {
           ],
         },
       ],
-      classHash: "0x07f3777c99f3700505ea966676aac4a0d692c2a9f5e667f4c606b51ca1dd3420",  
+      classHash: "0x04ad3c1dc8413453db314497945b6903e1c766495a1e60492d44da9c2a986e4b",  
     },
   },
 } as const;
