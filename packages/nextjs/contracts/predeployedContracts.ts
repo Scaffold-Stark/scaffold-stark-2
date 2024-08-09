@@ -422,7 +422,7 @@ const preDeployedContracts = {
           ],
         },
       ],
-      classHash: "0x046ded64ae2dead6448e247234bab192a9c483644395b66f2155f2614e5804b0",  //should be replaced with Strk devenet classHash. how do i get that?
+      classHash: "0x046ded64ae2dead6448e247234bab192a9c483644395b66f2155f2614e5804b0",
     },
   },
   sepolia: {
