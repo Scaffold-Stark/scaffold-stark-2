@@ -25,7 +25,7 @@ export const ClassHash = ({
   classHash,
   format,
   size = "xs",
-}: ClasshashProps) => {
+}: classHashCopied) => {
   const [addressCopied, setAddressCopied] = useState(false);
   const { targetNetwork } = useTargetNetwork();
 
