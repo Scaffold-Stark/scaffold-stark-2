@@ -390,14 +390,14 @@ export function getFunctionsByStateMutability(
 function tryParsingParamReturnValues(
   fn: (x: any) => {},
   param: any,
-  isV3Parsing: boolean,
+  isReadArgsParsing: boolean,
 ) {
   try {
     const objectValue = fn(param);
     if (
       typeof objectValue === "object" &&
       objectValue !== null &&
-      !isV3Parsing
+      !isReadArgsParsing
     ) {
       // handle empty array
       return Object.values(objectValue).map((value) => {
@@ -483,13 +483,13 @@ const decodeParamsWithType = (paramType: string, param: any): unknown => {
 const encodeParamsWithType = (
   paramType: string = "",
   param: any,
-  isV3Parsing: boolean,
+  isReadArgsParsing: boolean,
 ): unknown => {
   if (isCairoTuple(paramType)) {
     return tryParsingParamReturnValues(
-      (x) => stringToObjectTuple(x, paramType, isV3Parsing),
+      (x) => stringToObjectTuple(x, paramType, isReadArgsParsing),
       param,
-      isV3Parsing,
+      isReadArgsParsing,
     );
   } else if (isCairoArray(paramType)) {
     const genericType = parseGenericType(paramType)[0];
@@ -499,7 +499,7 @@ const encodeParamsWithType = (
       const tokens = param.split(",");
       const encodedArray = [];
       if (genericType) {
-        if (!isV3Parsing) encodedArray.push(tokens.length);
+        if (!isReadArgsParsing) encodedArray.push(tokens.length);
 
         encodedArray.push(
           ...tokens
@@ -508,7 +508,7 @@ const encodeParamsWithType = (
               encodeParamsWithType(
                 genericType,
                 typeof item === "string" ? item.trim() : item,
-                isV3Parsing,
+                isReadArgsParsing,
               ),
             ),
         );
@@ -525,7 +525,7 @@ const encodeParamsWithType = (
       if (genericType) {
         //@ts-ignore
         const encodedArray = [];
-        if (!isV3Parsing) encodedArray.push(param.length);
+        if (!isReadArgsParsing) encodedArray.push(param.length);
 
         encodedArray.push(
           ...param
@@ -534,7 +534,7 @@ const encodeParamsWithType = (
               encodeParamsWithType(
                 genericType,
                 typeof item === "string" ? item.trim() : item,
-                isV3Parsing,
+                isReadArgsParsing,
               ),
             ),
         );
@@ -560,27 +560,31 @@ const encodeParamsWithType = (
     const parsedValue = encodeParamsWithType(
       type as string,
       parsedParam,
-      isV3Parsing,
+      isReadArgsParsing,
     );
     return new CairoOption(CairoOptionVariant.Some, parsedValue);
   } else if (isCairoU256(paramType)) {
-    return tryParsingParamReturnValues(uint256.bnToUint256, param, isV3Parsing);
+    return tryParsingParamReturnValues(
+      uint256.bnToUint256,
+      param,
+      isReadArgsParsing,
+    );
   } else if (isCairoFelt(paramType)) {
     return param;
   } else if (isCairoByteArray(paramType)) {
     // starknet react next version only needs raw strings
-    if (isV3Parsing) return param;
+    if (isReadArgsParsing) return param;
 
     return tryParsingParamReturnValues(
       byteArray.byteArrayFromString,
       param,
-      isV3Parsing,
+      isReadArgsParsing,
     );
   } else if (isCairoContractAddress(paramType)) {
     return tryParsingParamReturnValues(
       validateAndParseAddress,
       param,
-      isV3Parsing,
+      isReadArgsParsing,
     );
   } else if (isCairoBool(paramType)) {
     return param == "false" ? "0x0" : "0x1";
@@ -599,7 +603,7 @@ const encodeParamsWithType = (
       const valueType: any = encodeParamsWithType(
         variantType.type,
         variantValue,
-        isV3Parsing,
+        isReadArgsParsing,
       );
 
       return new CairoResult(resultVariant, valueType);
@@ -621,7 +625,7 @@ const encodeParamsWithType = (
             acc[key] = encodeParamsWithType(
               param.variant[key].type,
               param.variant[key].value,
-              isV3Parsing,
+              isReadArgsParsing,
             );
             return acc;
           },
@@ -631,7 +635,7 @@ const encodeParamsWithType = (
         const isDevnet =
           scaffoldConfig.targetNetworks[0].network.toString() === "devnet";
 
-        if (isV3Parsing) return new CairoCustomEnum(parsedVariant);
+        if (isReadArgsParsing) return new CairoCustomEnum(parsedVariant);
 
         const encodedCustomEnum =
           encodeCustomEnumWithParsedVariants(parsedVariant);
@@ -644,13 +648,13 @@ const encodeParamsWithType = (
       }
 
       // encode to object (v3)
-      else if (!!isV3Parsing) {
+      else if (!!isReadArgsParsing) {
         return Object.keys(param).reduce(
           (acc, key) => {
             const parsed = encodeParamsWithType(
               param[key].type,
               param[key].value,
-              isV3Parsing,
+              isReadArgsParsing,
             );
 
             if (parsed !== undefined && parsed !== "") {
@@ -668,7 +672,7 @@ const encodeParamsWithType = (
           const parsed = encodeParamsWithType(
             param[key].type,
             param[key].value,
-            isV3Parsing,
+            isReadArgsParsing,
           );
 
           if (parsed !== undefined && parsed !== "") {
@@ -692,25 +696,25 @@ export function parseParamWithType(
   paramType: string,
   param: any,
   isRead: boolean,
-  isV3Parsing?: boolean,
+  isReadArgsParsing?: boolean,
 ): any {
   if (isRead) return decodeParamsWithType(paramType, param);
-  return encodeParamsWithType(paramType, param, !!isV3Parsing);
+  return encodeParamsWithType(paramType, param, !!isReadArgsParsing);
 }
 
 export function deepParseValues(
   value: any,
   isRead: boolean,
   keyAndType?: any,
-  isV3Parsing?: boolean,
+  isReadArgsParsing?: boolean,
 ): any {
   if (keyAndType) {
-    return parseParamWithType(keyAndType, value, isRead, isV3Parsing);
+    return parseParamWithType(keyAndType, value, isRead, isReadArgsParsing);
   }
   if (typeof value === "string") {
     if (isJsonString(value)) {
       const parsed = JSON.parse(value);
-      return deepParseValues(parsed, isRead, null, isV3Parsing);
+      return deepParseValues(parsed, isRead, null, isReadArgsParsing);
     } else {
       // It's a string but not a JSON string, return as is
       return value;
@@ -718,12 +722,12 @@ export function deepParseValues(
   } else if (Array.isArray(value)) {
     // If it's an array, recursively parse each element
     return value.map((element) =>
-      deepParseValues(element, isRead, null, isV3Parsing),
+      deepParseValues(element, isRead, null, isReadArgsParsing),
     );
   } else if (typeof value === "object" && value !== null) {
     // If it's an object, recursively parse each value
     return Object.entries(value).reduce((acc: any, [key, val]) => {
-      acc[key] = deepParseValues(val, isRead, key, isV3Parsing);
+      acc[key] = deepParseValues(val, isRead, key, isReadArgsParsing);
       return acc;
     }, {});
   }
@@ -755,13 +759,13 @@ export function parseFunctionParams({
   abi,
   inputs,
   isRead,
-  isV3Parsing = false,
+  isReadArgsParsing = false,
 }: {
   abiFunction: AbiFunction;
   abi: Abi;
   inputs: any[];
   isRead: boolean;
-  isV3Parsing?: boolean;
+  isReadArgsParsing?: boolean;
 }) {
   let parsedInputs: any[] = [];
 
@@ -782,7 +786,7 @@ export function parseFunctionParams({
     const { type: inputType, value: inputValue } = inputItem;
 
     parsedInputs.push(
-      parseParamWithType(inputType, inputValue, isRead, !!isV3Parsing),
+      parseParamWithType(inputType, inputValue, isRead, !!isReadArgsParsing),
     );
   });
 
@@ -905,14 +909,14 @@ function objectToCairoTuple(obj: { [key: number]: any }, type: string): string {
 function stringToObjectTuple(
   tupleString: string,
   paramType: string,
-  isV3Parsing?: boolean,
+  isReadArgsParsing?: boolean,
 ): { [key: number]: any } {
   const values = parseTuple(tupleString);
   const types = parseTuple(paramType);
 
   const obj: { [key: number]: any } = {};
   values.forEach((value, index) => {
-    obj[index] = encodeParamsWithType(types[index], value, !!isV3Parsing);
+    obj[index] = encodeParamsWithType(types[index], value, !!isReadArgsParsing);
   });
 
   return obj;

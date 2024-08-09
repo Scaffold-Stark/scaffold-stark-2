@@ -51,11 +51,11 @@ const getInitialFormState = (abiFunction: AbiFunction) => {
 const getParsedContractFunctionArgs = (
   form: Record<string, any>,
   isRead: boolean,
-  isV3Parsing?: boolean,
+  isReadArgsParsing?: boolean,
 ) => {
   return Object.keys(form).map((key) => {
     const valueOfArg = form[key];
-    return deepParseValues(valueOfArg, isRead, key, isV3Parsing);
+    return deepParseValues(valueOfArg, isRead, key, isReadArgsParsing);
   });
 };
 

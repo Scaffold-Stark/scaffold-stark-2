@@ -52,7 +52,7 @@ export const useScaffoldWriteContract = <
         abi: deployedContractData.abi,
         inputs: args as any[],
         isRead: false,
-        isV3Parsing: false,
+        isReadArgsParsing: false,
       }).flat(Infinity);
       return parsed;
     }
@@ -98,7 +98,7 @@ export const useScaffoldWriteContract = <
             abi: deployedContractData.abi,
             inputs: args as any[],
             isRead: false,
-            isV3Parsing: false,
+            isReadArgsParsing: false,
           }).flat(Infinity)
         : parsedParams;
     const newCalls = [

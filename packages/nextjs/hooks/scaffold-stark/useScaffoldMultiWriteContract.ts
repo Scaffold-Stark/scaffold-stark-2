@@ -58,7 +58,7 @@ export const useScaffoldMultiWriteContract = <
                   abiFunction,
                   isRead: false,
                   inputs: unParsedArgs as any[],
-                  isV3Parsing: false,
+                  isReadArgsParsing: false,
                   abi: contract.abi,
                 }).flat()
               : [],
