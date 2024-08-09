@@ -53,8 +53,14 @@ export const useScaffoldMultiWriteContract = <
           contractAddress: contract?.address,
           entrypoint: functionName,
           calldata:
-            abiFunction && unParsedArgs
-              ? parseFunctionParams(abiFunction, unParsedArgs, false).flat()
+            abiFunction && unParsedArgs && contract
+              ? parseFunctionParams({
+                  abiFunction,
+                  isRead: false,
+                  inputs: unParsedArgs as any[],
+                  isReadArgsParsing: false,
+                  abi: contract.abi,
+                }).flat()
               : [],
         };
       });

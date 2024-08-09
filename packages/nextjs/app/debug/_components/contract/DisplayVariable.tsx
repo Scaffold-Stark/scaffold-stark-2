@@ -31,6 +31,7 @@ export const DisplayVariable = ({
     isLoading,
     isFetching,
     refetch,
+    error,
   } = useReadContract({
     address: contractAddress,
     functionName: abiFunction.name,
@@ -41,6 +42,14 @@ export const DisplayVariable = ({
   const { showAnimation } = useAnimationConfig(result);
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
+
+  // error logging
+  useEffect(() => {
+    if (error) {
+      console.error(error?.message);
+      console.error(error.stack);
+    }
+  }, [error]);
 
   useEffect(() => {
     refetch();
