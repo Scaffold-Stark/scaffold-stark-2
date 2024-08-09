@@ -385,7 +385,6 @@ export function getFunctionsByStateMutability(
 }
 
 // TODO: in the future when param decoding is standarized in wallets argent and braavos we can return the object
-// TODO : starknet react makes an input validation so we need to return objects for function reads
 // new starknet react hooks (v3) doesnt use raw parse
 function tryParsingParamReturnValues(
   fn: (x: any) => {},
@@ -428,12 +427,11 @@ const decodeParamsWithType = (paramType: string, param: any): unknown => {
     return tryParsingParamReturnObject((param) => {
       const genericType = parseGenericType(paramType)[0];
       return genericType
-        ? //@ts-ignore
+        ? // @ts-expect-error item type is unknown
           param.map((item) => parseParamWithType(genericType, item, isRead))
         : param;
     }, param);
   } else if (isCairoOption(paramType)) {
-    //@ts-ignore
     return tryParsingParamReturnObject((x) => {
       const option = x as CairoOption<any>;
       return option.isNone()
@@ -441,7 +439,6 @@ const decodeParamsWithType = (paramType: string, param: any): unknown => {
         : `Some(${parseParamWithType(paramType.split("<").pop()!, option.unwrap(), isRead)})`;
     }, param);
   } else if (isCairoResult(paramType)) {
-    //@ts-ignore
     return tryParsingParamReturnObject((x) => {
       const result = x as CairoResult<any, any>;
       const [ok, error] = parseGenericType(paramType);
@@ -502,18 +499,15 @@ const encodeParamsWithType = (
         if (!isReadArgsParsing) encodedArray.push(tokens.length);
 
         encodedArray.push(
-          ...tokens
-            //@ts-ignore
-            .map((item) =>
-              encodeParamsWithType(
-                genericType,
-                typeof item === "string" ? item.trim() : item,
-                isReadArgsParsing,
-              ),
+          ...tokens.map((item) =>
+            encodeParamsWithType(
+              genericType,
+              typeof item === "string" ? item.trim() : item,
+              isReadArgsParsing,
             ),
+          ),
         );
 
-        //@ts-ignore
         return encodedArray;
       } else {
         return param;
@@ -523,23 +517,19 @@ const encodeParamsWithType = (
     // if we have to process array
     else if (Array.isArray(param)) {
       if (genericType) {
-        //@ts-ignore
         const encodedArray = [];
         if (!isReadArgsParsing) encodedArray.push(param.length);
 
         encodedArray.push(
-          ...param
-            //@ts-ignore
-            .map((item) =>
-              encodeParamsWithType(
-                genericType,
-                typeof item === "string" ? item.trim() : item,
-                isReadArgsParsing,
-              ),
+          ...param.map((item) =>
+            encodeParamsWithType(
+              genericType,
+              typeof item === "string" ? item.trim() : item,
+              isReadArgsParsing,
             ),
+          ),
         );
 
-        //@ts-ignore
         return encodedArray;
       } else {
         return param;
@@ -556,7 +546,6 @@ const encodeParamsWithType = (
     }
     const type = parseGenericType(paramType);
     const parsedParam = param.slice(5, param.length - 1);
-    //@ts-ignore
     const parsedValue = encodeParamsWithType(
       type as string,
       parsedParam,
