@@ -27,9 +27,14 @@ const HooksExample: React.FC = () => {
   const { writeAsync: setGreetingMulti } = useScaffoldMultiWriteContract({
     calls: [
       createContractCall(
+        "Eth" as ContractName,
+        "approve",
+        [contract?.address, BigInt(amountEth)]
+      ),
+      createContractCall(
         contractName as ContractName,
         "set_gretting",
-        [newGreeting, BigInt(amountEth)],
+        [newGreeting, BigInt(amountEth)]
       ),
     ],
   });
@@ -41,7 +46,7 @@ const HooksExample: React.FC = () => {
   } = useScaffoldReadContract({
     contractName: contractName as ContractName,
     functionName: "gretting",
-		args: []
+    args: []
   });
 
   const {
@@ -51,6 +56,7 @@ const HooksExample: React.FC = () => {
   } = useScaffoldReadContract({
     contractName: contractName as ContractName,
     functionName: "premium",
+    args: []
   });
 
   const {
@@ -59,18 +65,19 @@ const HooksExample: React.FC = () => {
     error: eventError,
   } = useScaffoldEventHistory({
     contractName: contractName as ContractName,
-    eventName: "GreetingChanged",
+    eventName: "contracts::YourContract::YourContract::GreetingChanged",
     fromBlock,
     watch: true,
   });
 
+  console.log(greetingChangedEvents);
   
   const handleSetGreeting = async () => {
     try {
       await setGreetingMulti();
-      console.log("Greeting set successfully");
+      console.log("ETH approved and greeting set successfully");
     } catch (error) {
-      console.error("Failed to set greeting:", error);
+      console.error("Failed to approve ETH and set greeting:", error);
     }
   };
 
@@ -94,7 +101,7 @@ const HooksExample: React.FC = () => {
       <h1 className="text-2xl font-bold mb-6">YourContract Example</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="rounded-[5px] bg-white border border-[#8A45FC] p-4 relative shadow">
+        <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
 					<div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">Contract Information (useScaffoldContract)</h2>
           <div>
@@ -108,29 +115,29 @@ const HooksExample: React.FC = () => {
           </div>
         </div>
 
-        <div className="rounded-[5px] bg-white border border-[#8A45FC] p-4 relative shadow">
+        <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
 					<div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">Set Greeting (useScaffoldEventHistory)</h2>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium  mb-2">
               New Greeting:
             </label>
             <input
               type="text"
               value={newGreeting}
               onChange={(e) => setNewGreeting(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
+              className="w-full px-3 py-2 border rounded-md bg-base-200"
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium  mb-2">
               Amount ETH:
             </label>
             <input
               type="text"
               value={amountEth}
               onChange={(e) => setAmountEth(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
+              className="w-full px-3 py-2 border rounded-md bg-base-200"
             />
           </div>
           <button
@@ -141,7 +148,7 @@ const HooksExample: React.FC = () => {
           </button>
         </div>
 
-        <div className="rounded-[5px] bg-white border border-[#8A45FC] p-4 relative shadow">
+        <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
 					<div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">Current Greeting (useScaffoldReadContract)</h2>
           <div>
@@ -155,7 +162,7 @@ const HooksExample: React.FC = () => {
           </div>
         </div>
 
-        <div className="rounded-[5px] bg-white border border-[#8A45FC] p-4 relative shadow">
+        <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
 					<div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">Premium Status (useScaffoldReadContract)</h2>
           <div>
@@ -169,7 +176,7 @@ const HooksExample: React.FC = () => {
           </div>
         </div>
 
-        <div className="rounded-[5px] bg-white border border-[#8A45FC] p-4 relative shadow">
+        <div className="rounded-[5px] bg-base-100 border border-gradient p-4 pb-8 md:pb-4 relative shadow">
 					<div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">Withdraw (useScaffoldWriteContract)</h2>
           <button
@@ -180,9 +187,27 @@ const HooksExample: React.FC = () => {
           </button>
         </div>
 
-        <div className="rounded-[5px] bg-white border border-[#8A45FC] p-4 shadow">
+        <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
+          <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">Network Information (useTargetNetwork)</h2>
           <p>Current Network: {targetNetwork.name}</p>
+        </div>
+        <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
+          <div className="trapeze"></div>
+          <h2 className="text-xl font-semibold mb-4">Greeting Changed Events (useScaffoldEventHistory)</h2>
+          <ol type="1">
+            {greetingChangedEvents?.map((item, i) => (
+              <li key={i} className="mt-2">
+                <div>
+                  <span className="font-semibold">New greeting: </span> {item.args.new_greeting}
+                </div>
+                <div className="break-words">
+                <span className="font-semibold">Block hash: </span> {item.block.block_hash}
+                </div>
+              </li>
+            ))}
+          </ol>
+
         </div>
       </div>
     </div>
