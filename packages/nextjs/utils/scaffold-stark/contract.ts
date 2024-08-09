@@ -4,7 +4,6 @@ import predeployedContracts from "~~/contracts/predeployedContracts";
 import type {
   Abi,
   ExtractAbiEventNames,
-  ExtractAbiFunctionNames,
   ExtractAbiInterfaces,
   ExtractArgs,
 } from "abi-wan-kanabi/dist/kanabi";
@@ -24,7 +23,7 @@ import {
 } from "starknet";
 import { byteArray } from "starknet";
 import type { MergeDeepRecord } from "type-fest/source/merge-deep";
-import { feltToHex, replacer } from "~~/utils/scaffold-stark/common";
+import { feltToHex, isJsonString } from "~~/utils/scaffold-stark/common";
 import {
   isCairoArray,
   isCairoBigInt,
@@ -37,6 +36,7 @@ import {
   isCairoOption,
   isCairoResult,
   isCairoTuple,
+  isCairoType,
   isCairoU256,
   parseGenericType,
 } from "~~/utils/scaffold-stark/types";
@@ -481,7 +481,7 @@ const decodeParamsWithType = (paramType: string, param: any): unknown => {
 };
 
 const encodeParamsWithType = (
-  paramType: string,
+  paramType: string = "",
   param: any,
   isV3Parsing: boolean,
 ): unknown => {
@@ -607,7 +607,7 @@ const encodeParamsWithType = (
   } else {
     try {
       // custom enum encoding
-      if (typeof param.variant == "object" && param.variant !== null) {
+      if (param?.variant && typeof param.variant == "object") {
         const parsedVariant = Object.keys(param.variant).reduce(
           (acc, key) => {
             if (
@@ -644,7 +644,7 @@ const encodeParamsWithType = (
       }
 
       // encode to object (v3)
-      else if (isV3Parsing) {
+      else if (!!isV3Parsing) {
         return Object.keys(param).reduce(
           (acc, key) => {
             const parsed = encodeParamsWithType(
@@ -681,8 +681,8 @@ const encodeParamsWithType = (
           return acc;
         }, [] as any[]);
       }
-    } catch (err) {
-      //console.log(err);
+    } catch (err: any) {
+      console.error(err.stack);
       return param;
     }
   }
@@ -698,11 +698,71 @@ export function parseParamWithType(
   return encodeParamsWithType(paramType, param, !!isV3Parsing);
 }
 
-export function parseFunctionParams(
-  abiFunction: AbiFunction,
-  inputs: any[],
+export function deepParseValues(
+  value: any,
   isRead: boolean,
-) {
+  keyAndType?: any,
+  isV3Parsing?: boolean,
+): any {
+  if (keyAndType) {
+    return parseParamWithType(keyAndType, value, isRead, isV3Parsing);
+  }
+  if (typeof value === "string") {
+    if (isJsonString(value)) {
+      const parsed = JSON.parse(value);
+      return deepParseValues(parsed, isRead, null, isV3Parsing);
+    } else {
+      // It's a string but not a JSON string, return as is
+      return value;
+    }
+  } else if (Array.isArray(value)) {
+    // If it's an array, recursively parse each element
+    return value.map((element) =>
+      deepParseValues(element, isRead, null, isV3Parsing),
+    );
+  } else if (typeof value === "object" && value !== null) {
+    // If it's an object, recursively parse each value
+    return Object.entries(value).reduce((acc: any, [key, val]) => {
+      acc[key] = deepParseValues(val, isRead, key, isV3Parsing);
+      return acc;
+    }, {});
+  }
+
+  // Handle boolean values represented as strings
+  if (
+    value === "true" ||
+    value === "1" ||
+    value === "0x1" ||
+    value === "0x01" ||
+    value === "0x0001"
+  ) {
+    return true;
+  } else if (
+    value === "false" ||
+    value === "0" ||
+    value === "0x0" ||
+    value === "0x00" ||
+    value === "0x0000"
+  ) {
+    return false;
+  }
+
+  return value;
+}
+
+export function parseFunctionParams({
+  abiFunction,
+  abi,
+  inputs,
+  isRead,
+  isV3Parsing = false,
+}: {
+  abiFunction: AbiFunction;
+  abi: Abi;
+  inputs: any[];
+  isRead: boolean;
+  isV3Parsing?: boolean;
+}) {
   let parsedInputs: any[] = [];
 
   //check inputs length
@@ -710,12 +770,96 @@ export function parseFunctionParams(
     return inputs;
   }
 
-  inputs.forEach((input, idx) => {
-    const paramType = abiFunction.inputs[idx].type;
-    console.log(paramType, input, parseParamWithType(paramType, input, isRead));
-    parsedInputs.push(parseParamWithType(paramType, input, isRead));
+  const formattedInputs = formatInputForParsing({
+    abi,
+    abiFunction,
+    args: inputs,
   });
+
+  console.debug({ formattedInputs });
+
+  formattedInputs.forEach((inputItem) => {
+    const { type: inputType, value: inputValue } = inputItem;
+
+    parsedInputs.push(
+      parseParamWithType(inputType, inputValue, isRead, !!isV3Parsing),
+    );
+  });
+
   return parsedInputs;
+}
+
+// helper to correctly map out types to values
+function formatInputForParsing({
+  abi,
+  abiFunction,
+  args,
+}: {
+  abi: Abi;
+  abiFunction: AbiFunction;
+  args: any[];
+}) {
+  const _formatInput = (
+    arg: any,
+    index: number,
+    inputsOrMembers: AbiParameter[],
+  ) => {
+    const { type: inputType } = inputsOrMembers[index];
+
+    // terminate at Cairo primitives
+    if (isCairoType(inputType)) {
+      return { type: inputType, value: arg };
+    }
+
+    // object parsing
+    if (typeof arg === "object") {
+      // find struct definition in abi
+      const structDef = abi.find((item) => item.name === inputType);
+      const { type: structType, name: structName } = structDef as
+        | AbiStruct
+        | AbiEnum;
+
+      // enums
+      if (structType === "enum") {
+        const { variants } = structDef as AbiEnum;
+        const argKeys = Object.keys(arg);
+        const formattedEntries = argKeys.map((argKey, argIndex): any => {
+          // get the value
+          const structValue = arg[argKey];
+          return [
+            argKey,
+            _formatInput(structValue, argIndex, variants as AbiParameter[]),
+          ];
+        });
+        return {
+          type: structName,
+          value: { variant: Object.fromEntries(formattedEntries) },
+        };
+      }
+
+      const { members } = structDef as AbiStruct;
+      const argKeys = Object.keys(arg);
+      const formattedEntries = argKeys.map((argKey, argIndex): any => {
+        // get the value
+        const structValue = arg[argKey];
+        return [
+          argKey,
+          _formatInput(structValue, argIndex, members as AbiParameter[]),
+        ];
+      });
+      return {
+        type: structName,
+        value: Object.fromEntries(formattedEntries),
+      };
+    }
+
+    // TODO: array parsing
+    return { type: "", value: "" };
+  };
+
+  return args.map((arg, index) =>
+    _formatInput(arg, index, abiFunction.inputs as AbiParameter[]),
+  );
 }
 
 function parseTuple(value: string): string[] {

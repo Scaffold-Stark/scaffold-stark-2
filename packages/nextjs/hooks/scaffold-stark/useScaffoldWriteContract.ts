@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useTargetNetwork } from "./useTargetNetwork";
 import {
   useDeployedContractInfo,
@@ -46,11 +46,18 @@ export const useScaffoldWriteContract = <
   );
 
   const parsedParams = useMemo(() => {
-    if (args && abiFunction) {
-      return parseFunctionParams(abiFunction, args as any[], false).flat();
+    if (args && abiFunction && deployedContractData) {
+      const parsed = parseFunctionParams({
+        abiFunction,
+        abi: deployedContractData.abi,
+        inputs: args as any[],
+        isRead: false,
+        isV3Parsing: false,
+      }).flat(Infinity);
+      return parsed;
     }
     return [];
-  }, [args, abiFunction]);
+  }, [args, abiFunction, deployedContractData]);
 
   const wagmiContractWrite = useSendTransaction({
     calls: deployedContractData
@@ -85,8 +92,14 @@ export const useScaffoldWriteContract = <
     }
 
     let newParsedParams =
-      newArgs && abiFunction
-        ? parseFunctionParams(abiFunction, newArgs as any[], false).flat()
+      newArgs && abiFunction && deployedContractData
+        ? parseFunctionParams({
+            abiFunction,
+            abi: deployedContractData.abi,
+            inputs: args as any[],
+            isRead: false,
+            isV3Parsing: false,
+          }).flat(Infinity)
         : parsedParams;
     const newCalls = [
       {
