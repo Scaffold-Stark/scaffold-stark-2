@@ -426,7 +426,7 @@ const preDeployedContracts = {
   },
   sepolia: {
     Eth: {
-      address: 0x07f3777c99f3700505ea966676aac4a0d692c2a9f5e667f4c606b51ca1dd3420
+      address: universalEthAddress,
       abi: [
         {
           type: "impl",
@@ -681,7 +681,7 @@ const preDeployedContracts = {
           ],
         },
       ],
-      classHash: universalEthAddress, //used to for demostration and to remove ts-error
+      classHash: 0x07f3777c99f3700505ea966676aac4a0d692c2a9f5e667f4c606b51ca1dd3420
     },
     Strk: {
       address: universalStrkAddress,
