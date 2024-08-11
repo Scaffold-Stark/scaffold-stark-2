@@ -4,7 +4,8 @@ import {
   exportDeployments,
   deployer,
 } from "./deploy-contract";
-import { green } from "./helpers/colorize-log";
+import { green, red } from "./helpers/colorize-log";
+import { verifyContract } from "./verify-contract";
 
 /**
  * Deploy a contract using the specified parameters.
@@ -41,13 +42,16 @@ import { green } from "./helpers/colorize-log";
  *
  * @returns {Promise<void>}
  */
+
 const deployScript = async (): Promise<void> => {
-  await deployContract({
+  const deployment = await deployContract({
     contract: "YourContract",
     constructorArgs: {
       owner: deployer.address,
     },
   });
+
+  await verifyContract(deployment.address, deployment.classHash);
 };
 
 deployScript()
@@ -57,4 +61,6 @@ deployScript()
 
     console.log(green("All Setup Done"));
   })
-  .catch(console.error);
+  .catch((error) => {
+    console.error(red("Deployment failed:"), error);
+  });
