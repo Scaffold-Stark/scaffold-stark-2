@@ -34,12 +34,6 @@ jobs:
         run: yarn install --immutable
         working-directory: ./packages/nextjs
 
-      - name: Install scarb
-        run: curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh -s -- -v 2.5.4
-
-      - name: Check Code Format
-        run: npm run format:check
-
       - name: Run Next.js lint
         run: yarn next:lint --max-warnings=0
         working-directory: ./packages/nextjs

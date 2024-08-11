@@ -3,40 +3,63 @@ import path from "path";
 import { networks } from "./helpers/networks";
 import yargs from "yargs";
 import {
-  BlockIdentifier,
   CallData,
-  hash,
   stark,
   RawArgs,
-  constants,
-  ec,
-  validateAndParseAddress,
   transaction,
-} from "starknet";
-import { Network } from "./types";
-import {
-  LegacyContractClass,
-  CompiledSierra,
   extractContractHashes,
+  DeclareContractPayload,
+  UniversalDetails,
 } from "starknet";
+import { DeployContractParams, Network } from "./types";
+import { green, red, yellow } from "./helpers/colorize-log";
 
-const argv = yargs(process.argv.slice(2)).argv;
-const networkName: string = argv["network"];
+interface Arguments {
+  network: string;
+  reset: boolean;
+  [x: string]: unknown;
+  _: (string | number)[];
+  $0: string;
+}
+
+const argv = yargs(process.argv.slice(2))
+  .option("network", {
+    type: "string",
+    description: "Specify the network",
+    demandOption: true,
+  })
+  .option("reset", {
+    alias: "r",
+    type: "boolean",
+    description: "Reset deployments",
+    default: false,
+  })
+  .parseSync() as Arguments;
+
+const networkName: string = argv.network;
+const resetDeployments: boolean = argv.reset;
 
 let deployments = {};
-
 let deployCalls = [];
 
 const { provider, deployer }: Network = networks[networkName];
 
-const declareIfNot_NotWait = async (payload: any) => {
+const declareIfNot_NotWait = async (
+  payload: DeclareContractPayload,
+  options?: UniversalDetails
+) => {
   const declareContractPayload = extractContractHashes(payload);
   try {
     await provider.getClassByHash(declareContractPayload.classHash);
   } catch (error) {
-    let { transaction_hash } = await deployer.declare(payload);
-    if (networkName == "sepolia" || networkName == "mainnet") {
-      await provider.waitForTransaction(transaction_hash);
+    try {
+      const { transaction_hash } = await deployer.declare(payload, options);
+      if (networkName === "sepolia" || networkName === "mainnet") {
+        await provider.waitForTransaction(transaction_hash);
+      }
+    } catch (e) {
+      console.error(red("Error declaring contract:"), e);
+      throw e;
     }
   }
   return {
@@ -49,38 +72,64 @@ const deployContract_NotWait = async (payload: {
   classHash: string;
   constructorCalldata: RawArgs;
 }) => {
-  let { calls, addresses } = transaction.buildUDCCall(
-    payload,
-    deployer.address
-  );
-  deployCalls.push(...calls);
-  return {
-    contractAddress: addresses[0],
-  };
+  try {
+    const { calls, addresses } = transaction.buildUDCCall(
+      payload,
+      deployer.address
+    );
+    deployCalls.push(...calls);
+    return {
+      contractAddress: addresses[0],
+    };
+  } catch (error) {
+    console.error(red("Error building UDC call:"), error);
+    throw error;
+  }
 };
 
+/**
+ * Deploy a contract using the specified parameters.
+ *
+ * @param {DeployContractParams} params - The parameters for deploying the contract.
+ * @param {string} params.contract - The name of the contract to deploy.
+ * @param {string} [params.contractName] - The name to export the contract as (optional).
+ * @param {RawArgs} [params.constructorArgs] - The constructor arguments for the contract (optional).
+ * @param {UniversalDetails} [params.options] - Additional deployment options (optional).
+ *
+ * @returns {Promise<{ classHash: string; address: string }>} The deployed contract's class hash and address.
+ *
+ * @example
+ * ///Example usage of deployContract function
+ * await deployContract({
+ *   contract: "YourContract",
+ *   contractName: "YourContractExportName",
+ *   constructorArgs: { owner: deployer.address },
+ *   options: { maxFee: BigInt(1000000000000) }
+ * });
+ */
 const deployContract = async (
-  constructorArgs: RawArgs,
-  contractName: string,
-  exportContractName?: string,
-  options?: {
-    maxFee: bigint;
-  }
+  params: DeployContractParams
 ): Promise<{
   classHash: string;
   address: string;
 }> => {
+  const { contract, constructorArgs, contractName, options } = params;
+
   try {
     await deployer.getContractVersion(deployer.address);
   } catch (e) {
     if (e.toString().includes("Contract not found")) {
-      throw new Error(
-        `The wallet you're using to deploy the contract is not deployed in ${networkName} network`
-      );
+      const errorMessage = `The wallet you're using to deploy the contract is not deployed in the ${networkName} network.`;
+      console.error(red(errorMessage));
+      throw new Error(errorMessage);
+    } else {
+      console.error(red("Error getting contract version: "), e);
+      throw e;
     }
   }
 
   let compiledContractCasm;
+  let compiledContractSierra;
 
   try {
     compiledContractCasm = JSON.parse(
@@ -88,7 +137,7 @@ const deployContract = async (
         .readFileSync(
           path.resolve(
             __dirname,
-            `../contracts/target/dev/contracts_${contractName}.compiled_contract_class.json`
+            `../contracts/target/dev/contracts_${contract}.compiled_contract_class.json`
           )
         )
         .toString("ascii")
@@ -102,12 +151,14 @@ const deployContract = async (
       const match = error.message.match(
         /\/dev\/(.+?)\.compiled_contract_class/
       );
-      const contractName = match ? match[1].split("_").pop() : "Unknown";
+      const missingContract = match ? match[1].split("_").pop() : "Unknown";
       console.error(
-        `The contract "${contractName}" doesn't exist or is not compiled`
+        red(
+          `The contract "${missingContract}" doesn't exist or is not compiled`
+        )
       );
     } else {
-      console.error(error);
+      console.error(red("Error reading compiled contract class file: "), error);
     }
     return {
       classHash: "",
@@ -115,27 +166,38 @@ const deployContract = async (
     };
   }
 
-  const compiledContractSierra = JSON.parse(
-    fs
-      .readFileSync(
-        path.resolve(
-          __dirname,
-          `../contracts/target/dev/contracts_${contractName}.contract_class.json`
+  try {
+    compiledContractSierra = JSON.parse(
+      fs
+        .readFileSync(
+          path.resolve(
+            __dirname,
+            `../contracts/target/dev/contracts_${contract}.contract_class.json`
+          )
         )
-      )
-      .toString("ascii")
-  );
+        .toString("ascii")
+    );
+  } catch (error) {
+    console.error(red("Error reading contract class file: "), error);
+    return {
+      classHash: "",
+      address: "",
+    };
+  }
 
   const contractCalldata = new CallData(compiledContractSierra.abi);
   const constructorCalldata = constructorArgs
     ? contractCalldata.compile("constructor", constructorArgs)
     : [];
-  console.log("Deploying Contract ", contractName);
+  console.log(yellow("Deploying Contract "), contract);
 
-  let { classHash } = await declareIfNot_NotWait({
-    contract: compiledContractSierra,
-    casm: compiledContractCasm,
-  });
+  let { classHash } = await declareIfNot_NotWait(
+    {
+      contract: compiledContractSierra,
+      casm: compiledContractCasm,
+    },
+    options
+  );
 
   let randomSalt = stark.randomAddress();
 
@@ -145,14 +207,14 @@ const deployContract = async (
     constructorCalldata,
   });
 
-  console.log("Contract Deployed at ", contractAddress);
+  console.log(green("Contract Deployed at "), contractAddress);
 
-  let finalContractName = exportContractName || contractName;
+  let finalContractName = contractName || contract;
 
   deployments[finalContractName] = {
     classHash: classHash,
     address: contractAddress,
-    contract: contractName,
+    contract: contract,
   };
 
   return {
@@ -161,25 +223,44 @@ const deployContract = async (
   };
 };
 
-const executeDeployCalls = async () => {
+const executeDeployCalls = async (options?: UniversalDetails) => {
+  if (deployCalls.length < 1) {
+    throw new Error(
+      red(
+        "Aborted: No contract to deploy. Please prepare the contracts with `deployContract`"
+      )
+    );
+  }
+
   try {
-    let { transaction_hash } = await deployer.execute(deployCalls);
-    console.log("Deploy Calls Executed at ", transaction_hash);
-    if (networkName == "sepolia" || networkName == "mainnet") {
+    let { transaction_hash } = await deployer.execute(deployCalls, options);
+    console.log(green("Deploy Calls Executed at "), transaction_hash);
+    if (networkName === "sepolia" || networkName === "mainnet") {
       await provider.waitForTransaction(transaction_hash);
     }
   } catch (error) {
+    console.error(red("Error executing deploy calls: "), error);
     // split the calls in half and try again recursively
     if (deployCalls.length > 1) {
-      let half = deployCalls.length / 2;
+      let half = Math.ceil(deployCalls.length / 2);
       let firstHalf = deployCalls.slice(0, half);
-      let secondHalf = deployCalls.slice(half, deployCalls.length);
+      let secondHalf = deployCalls.slice(half);
       deployCalls = firstHalf;
-      await executeDeployCalls();
+      await executeDeployCalls(options);
       deployCalls = secondHalf;
-      await executeDeployCalls();
+      await executeDeployCalls(options);
     }
   }
+};
+const loadExistingDeployments = () => {
+  const networkPath = path.resolve(
+    __dirname,
+    `../deployments/${networkName}_latest.json`
+  );
+  if (fs.existsSync(networkPath)) {
+    return JSON.parse(fs.readFileSync(networkPath, "utf8"));
+  }
+  return {};
 };
 
 const exportDeployments = () => {
@@ -188,7 +269,11 @@ const exportDeployments = () => {
     `../deployments/${networkName}_latest.json`
   );
 
-  if (fs.existsSync(networkPath)) {
+  let finalDeployments = resetDeployments
+    ? deployments
+    : { ...loadExistingDeployments(), ...deployments };
+
+  if (fs.existsSync(networkPath) && !resetDeployments) {
     const currentTimestamp = new Date().getTime();
     fs.renameSync(
       networkPath,
@@ -196,13 +281,15 @@ const exportDeployments = () => {
     );
   }
 
-  fs.writeFileSync(networkPath, JSON.stringify(deployments, null, 2));
+  fs.writeFileSync(networkPath, JSON.stringify(finalDeployments, null, 2));
 };
 
 export {
   deployContract,
   provider,
   deployer,
+  loadExistingDeployments,
   exportDeployments,
   executeDeployCalls,
+  resetDeployments,
 };

@@ -21,9 +21,9 @@ Before you begin, you need to install the following tools:
 
 ### Compatible versions
 
-- Scarb - v2.5.4
-- Snforge - v0.25.0
-- Cairo - v2.5.4
+- Scarb - v2.6.5
+- Snforge - v0.27.0
+- Cairo - v2.6.4
 
 Make sure you have the compatible versions otherwise refer to [Scaffold-Stark Requirements](https://github.com/Quantum3-Labs/scaffold-stark-2?.tab=readme-ov-file#requirements)
 
