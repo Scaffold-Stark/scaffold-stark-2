@@ -46,7 +46,7 @@ export const FaucetSepolia = () => {
   useEffect(() => {
     const checkChain = async () => {
       try {
-        const providerInfo = await publicClient.getBlockWithTxHashes();
+        const providerInfo = await publicClient.getBlock();
       } catch (error) {
         console.error("⚡️ ~ file: Faucet.tsx:checkChain ~ error", error);
         notification.error(
