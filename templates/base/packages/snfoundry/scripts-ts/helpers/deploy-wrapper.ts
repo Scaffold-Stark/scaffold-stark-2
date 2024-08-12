@@ -21,7 +21,6 @@ process.env.NETWORK = argv.network || "devnet";
 
 // Set the RESET environment variable based on the --reset flag
 
-
 // Execute the deploy script
 execSync(
   "cd contracts && scarb build && ts-node ../scripts-ts/deploy.ts" +
