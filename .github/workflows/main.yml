@@ -13,8 +13,14 @@ on:
       - "packages/snfoundry/contracts/**"
 
 jobs:
-  snfoundry:
-    runs-on: ubuntu-latest
+  ci:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [lts/*]
+
     steps:
       - name: Checkout
         uses: actions/checkout@master
@@ -31,17 +37,6 @@ jobs:
       - name: Run snforge tests
         run: snforge test
         working-directory: ./packages/snfoundry/contracts
-  ci:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        node: [lts/*]
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@master
 
       - name: Setup node env
         uses: actions/setup-node@v3
