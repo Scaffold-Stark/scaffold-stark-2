@@ -12,14 +12,12 @@ import { useAccount, useNetwork } from "@starknet-react/core";
 import { Address } from "@starknet-react/chains";
 import { useState } from "react";
 import ConnectModal from "./ConnectModal";
-import { useTheme } from "next-themes";
 
 /**
  * Custom Connect Button (watch balance + custom design)
  */
 export const CustomConnectButton = () => {
   useAutoConnect();
-  const { theme } = useTheme();
   const networkColor = useNetworkColor();
   const { targetNetwork } = useTargetNetwork();
   const { address, status, chainId, ...props } = useAccount();
