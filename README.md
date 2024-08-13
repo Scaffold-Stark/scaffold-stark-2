@@ -56,7 +56,7 @@ cd <challenge_folder_name>
 yarn start
 ```
 
-📱 Open http://localhost:3000 to see the app.
+📱 Open <http://localhost:3000> to see the app.
 
 > 👩‍💻 Rerun `yarn deploy --reset` whenever you want to deploy new contracts to the frontend, update your current contracts with changes, or re-deploy it to get a fresh contract address.
 

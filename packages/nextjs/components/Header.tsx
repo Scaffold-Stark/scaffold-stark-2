@@ -129,7 +129,7 @@ export const Header = () => {
               alt="SE2 logo"
               className="cursor-pointer"
               fill
-              src="/challenge-icon-starknet.svg"
+              src="/logo.svg"
             />
           </div>
           <div className="flex flex-col">
