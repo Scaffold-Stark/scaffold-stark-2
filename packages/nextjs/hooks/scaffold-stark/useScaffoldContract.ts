@@ -31,8 +31,10 @@ export const useScaffoldContract = <TContractName extends ContractName>({
     );
 
     // override call with our options
+    // TODO: remove if starknet has standardized parsers for extension wallets
     const _call = contract.call;
     contract.call = function (method, args, options) {
+      // TODO: incorporate parser id parseResponse is set to true
       return _call.bind(this)(method, args, {
         ...options,
         parseResponse: false,
