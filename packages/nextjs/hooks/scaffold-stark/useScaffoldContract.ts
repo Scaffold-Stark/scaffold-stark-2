@@ -14,6 +14,7 @@ export const useScaffoldContract = <TContractName extends ContractName>({
     useDeployedContractInfo(contractName);
 
   const { targetNetwork } = useTargetNetwork();
+  const { account } = useAccount();
   const publicNodeUrl = targetNetwork.rpcUrls.public.http[0];
 
   const publicClient = useMemo(() => {
@@ -26,8 +27,17 @@ export const useScaffoldContract = <TContractName extends ContractName>({
     contract = new Contract(
       [...deployedContractData.abi],
       deployedContractData.address,
-      publicClient,
+      account || publicClient,
     );
+
+    // override call with our options
+    const _call = contract.call;
+    contract.call = function (method, args, options) {
+      return _call.bind(this)(method, args, {
+        ...options,
+        parseResponse: false,
+      });
+    };
   }
 
   return {
