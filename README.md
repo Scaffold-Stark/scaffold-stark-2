@@ -21,6 +21,7 @@ Before you begin, you need to install the following tools:
 
 ### Compatible versions
 
+- Starknet-devnet - v0.0.4
 - Scarb - v2.6.5
 - Snforge - v0.27.0
 - Cairo - v2.6.4
