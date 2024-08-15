@@ -10,19 +10,20 @@ import {
   getParsedContractFunctionArgs,
   transformAbiFunction,
 } from "~~/app/debug/_components/contract";
-import { AbiFunction } from "~~/utils/scaffold-stark/contract";
+import { AbiFunction, ContractName } from "~~/utils/scaffold-stark/contract";
 import { BlockNumber } from "starknet";
 import { useContractRead } from "@starknet-react/core";
 import { ContractInput } from "./ContractInput";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
 
 type ReadOnlyFunctionFormProps = {
-  contractAddress: Address;
+  contractName: ContractName;
   abiFunction: AbiFunction;
   abi: Abi;
 };
 
 export const ReadOnlyFunctionForm = ({
-  contractAddress,
+  contractName,
   abiFunction,
   abi,
 }: ReadOnlyFunctionFormProps) => {
@@ -33,10 +34,19 @@ export const ReadOnlyFunctionForm = ({
   const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null);
   const lastForm = useRef(form);
 
-  const { isFetching, data, refetch } = useContractRead({
-    address: contractAddress,
-    functionName: abiFunction.name,
-    abi: [...abi],
+  // const { isFetching, data, refetch } = useContractRead({
+  //   address: contractAddress,
+  //   functionName: abiFunction.name,
+  //   abi: [...abi],
+  //   args: inputValue ? inputValue.flat(Infinity) : [],
+  //   enabled: Boolean(inputValue),
+  //   parseArgs: false,
+  //   blockIdentifier: "pending" as BlockNumber,
+  // });
+
+  const { isFetching, data, refetch } = useScaffoldReadContract({
+    contractName,
+    functionName: abiFunction.name as any,
     args: inputValue ? inputValue.flat(Infinity) : [],
     enabled: Boolean(inputValue),
     parseArgs: false,

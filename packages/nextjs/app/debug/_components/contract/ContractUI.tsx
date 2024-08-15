@@ -100,6 +100,7 @@ export const ContractUI = ({
               <div className="p-5 divide-y divide-secondary">
                 <ContractReadMethods
                   deployedContractData={deployedContractData}
+                  contractName={contractName}
                 />
               </div>
             </div>
