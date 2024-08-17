@@ -86,6 +86,7 @@ export const ContractUI = ({
             <ContractVariables // TODO : there is no contract variables on starknet
               refreshDisplayVariables={refreshDisplayVariables}
               deployedContractData={deployedContractData}
+              contractName={contractName}
             />
           </div>
         </div>

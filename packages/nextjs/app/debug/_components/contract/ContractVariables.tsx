@@ -12,9 +12,11 @@ import { DisplayVariable } from "./DisplayVariable";
 export const ContractVariables = ({
   refreshDisplayVariables,
   deployedContractData,
+  contractName,
 }: {
   refreshDisplayVariables: boolean;
   deployedContractData: Contract<ContractName>;
+  contractName: ContractName;
 }) => {
   if (!deployedContractData) {
     return null;
@@ -41,9 +43,9 @@ export const ContractVariables = ({
     <>
       {functionsToDisplay.map(({ fn }) => (
         <DisplayVariable
-          abi={deployedContractData.abi as Abi}
+          // abi={deployedContractData.abi as Abi}
           abiFunction={fn}
-          contractAddress={deployedContractData.address}
+          contractName={contractName}
           key={fn.name}
           refreshDisplayVariables={refreshDisplayVariables}
           //   inheritedFrom={inheritedFrom}

@@ -4,39 +4,47 @@ import { useEffect } from "react";
 // import { InheritanceTooltip } from "./InheritanceTooltip";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useAnimationConfig } from "~~/hooks/scaffold-stark";
-import { AbiFunction } from "~~/utils/scaffold-stark/contract";
+import { AbiFunction, ContractName } from "~~/utils/scaffold-stark/contract";
 import { Abi } from "abi-wan-kanabi";
 import { Address } from "@starknet-react/chains";
 import { useContractRead } from "@starknet-react/core";
 import { BlockNumber } from "starknet";
 import { displayTxResult } from "./utilsDisplay";
 import { useTheme } from "next-themes";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
 
 type DisplayVariableProps = {
-  contractAddress: Address;
   abiFunction: AbiFunction;
   refreshDisplayVariables: boolean;
   //   inheritedFrom?: string;
-  abi: Abi;
+  // abi: Abi;
+  contractName: ContractName;
 };
 
 export const DisplayVariable = ({
-  contractAddress,
+  contractName,
   abiFunction,
   refreshDisplayVariables,
-  abi, //   inheritedFrom,
+  // abi, //   inheritedFrom,
 }: DisplayVariableProps) => {
   const {
     data: result,
     isLoading,
     isFetching,
     refetch,
-  } = useContractRead({
-    address: contractAddress,
+    error,
+  } = useScaffoldReadContract({
+    contractName,
+
+    // @ts-expect-error we do not know the specific function name, this is type-safe
     functionName: abiFunction.name,
-    abi: [...abi],
-    blockIdentifier: "pending" as BlockNumber, // TODO : notify when failed - add error
+    blockIdentifier: "pending" as BlockNumber,
   });
+
+  // TODO : notify when failed - add error (need ui)
+  useEffect(() => {
+    if (error) console.error({ error: error.stack });
+  }, [error]);
 
   const { showAnimation } = useAnimationConfig(result);
   const { resolvedTheme } = useTheme();
