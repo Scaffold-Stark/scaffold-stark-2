@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTargetNetwork } from "./useTargetNetwork";
 import {
   useDeployedContractInfo,
@@ -35,6 +35,8 @@ export const useScaffoldWriteContract = <
   const { chain } = useNetwork();
   const writeTx = useTransactor();
   const { targetNetwork } = useTargetNetwork();
+  // error state
+  const [error, setError] = useState<Error | null>(null);
 
   const abiFunction = useMemo(
     () =>
@@ -52,7 +54,7 @@ export const useScaffoldWriteContract = <
     return [];
   }, [args, abiFunction]);
 
-  const wagmiContractWrite = useContractWrite({
+  const strkReactContractWrite = useContractWrite({
     calls: deployedContractData
       ? [
           {
@@ -65,6 +67,10 @@ export const useScaffoldWriteContract = <
     options,
   });
 
+  useEffect(() => {
+    setError(strkReactContractWrite.error);
+  }, [strkReactContractWrite.error]);
+
   const sendContractWriteTx = async ({
     args: newArgs,
     options: newOptions,
@@ -76,14 +82,21 @@ export const useScaffoldWriteContract = <
       console.error(
         "Target Contract is not deployed, did you forget to run `yarn deploy`?",
       );
+      setError(
+        new Error(
+          "Target Contract is not deployed, did you forget to run `yarn deploy`?",
+        ),
+      );
       return;
     }
     if (!chain?.id) {
       console.error("Please connect your wallet");
+      setError(new Error("Please connect your wallet"));
       return;
     }
     if (chain?.id !== targetNetwork.id) {
       console.error("You are on the wrong network");
+      setError(new Error("You are on the wrong network"));
       return;
     }
 
@@ -99,16 +112,17 @@ export const useScaffoldWriteContract = <
       },
     ];
 
-    if (wagmiContractWrite.writeAsync) {
+    if (strkReactContractWrite.writeAsync) {
       try {
         // setIsMining(true);
         return await writeTx(() =>
-          wagmiContractWrite.writeAsync({
+          strkReactContractWrite.writeAsync({
             calls: newCalls as any[],
             options: newOptions ?? options,
           }),
         );
       } catch (e: any) {
+        setError(e);
         throw e;
       } finally {
         // setIsMining(false);
@@ -120,7 +134,8 @@ export const useScaffoldWriteContract = <
   };
 
   return {
-    ...wagmiContractWrite,
+    ...strkReactContractWrite,
+    error,
     writeAsync: sendContractWriteTx,
   };
 };
