@@ -1,14 +1,16 @@
+import { isCairoTuple } from "~~/utils/scaffold-stark";
 import {
   AbiEnum,
   AbiFunction,
   AbiParameter,
   AbiStruct,
   parseParamWithType,
+  stringToObjectTuple,
 } from "~~/utils/scaffold-stark/contract";
 /**
  * Generates a key based on function metadata
  */
-const getFunctionInputKey = (
+export const getFunctionInputKey = (
   functionName: string,
   input: AbiParameter,
   inputIndex: number,
@@ -17,7 +19,7 @@ const getFunctionInputKey = (
   return functionName + "_" + name + "_" + input.type;
 };
 
-const isJsonString = (str: string) => {
+export const isJsonString = (str: string) => {
   try {
     JSON.parse(str);
     return true;
@@ -26,7 +28,7 @@ const isJsonString = (str: string) => {
   }
 };
 
-const getInitialTupleFormState = (abiParameter: AbiStruct | AbiEnum) => {
+export const getInitialTupleFormState = (abiParameter: AbiStruct | AbiEnum) => {
   const initialForm: Record<string, any> = {};
 
   if (abiParameter.type === "struct") {
@@ -43,7 +45,7 @@ const getInitialTupleFormState = (abiParameter: AbiStruct | AbiEnum) => {
   return initialForm;
 };
 
-const getInitialFormState = (abiFunction: AbiFunction) => {
+export const getInitialFormState = (abiFunction: AbiFunction) => {
   const initialForm: Record<string, any> = {};
   if (!abiFunction.inputs) return initialForm;
   abiFunction.inputs.forEach((input, inputIndex) => {
@@ -53,7 +55,7 @@ const getInitialFormState = (abiFunction: AbiFunction) => {
   return initialForm;
 };
 
-const deepParseValues = (
+export const deepParseValues = (
   value: any,
   isRead: boolean,
   keyAndType?: any,
@@ -104,7 +106,7 @@ const deepParseValues = (
 /**
  * parses form input with array support
  */
-const getParsedContractFunctionArgs = (
+export const getParsedContractFunctionArgs = (
   form: Record<string, any>,
   isRead: boolean,
 ) => {
@@ -114,13 +116,13 @@ const getParsedContractFunctionArgs = (
   });
 };
 
-const adjustInput = (input: AbiParameter): AbiParameter => {
+export const adjustInput = (input: AbiParameter): AbiParameter => {
   return {
     ...input,
   };
 };
 
-const transformAbiFunction = (abiFunction: AbiFunction): AbiFunction => {
+export const transformAbiFunction = (abiFunction: AbiFunction): AbiFunction => {
   return {
     ...abiFunction,
     inputs: abiFunction.inputs.map((value) =>
@@ -129,11 +131,9 @@ const transformAbiFunction = (abiFunction: AbiFunction): AbiFunction => {
   };
 };
 
-export {
-  getFunctionInputKey,
-  isJsonString,
-  getInitialFormState,
-  getInitialTupleFormState,
-  getParsedContractFunctionArgs,
-  transformAbiFunction,
+// convert string input into starknet js objects (to mainly support odd inputs like tuples)
+// adding this 'redundant function' due to the unclarity of the parseParamsWithType function
+export const convertStringToInputInstance = (type: string = "", value: any) => {
+  if (type.includes("(")) return stringToObjectTuple(value, type);
+  return deepParseValues(value, false, type);
 };

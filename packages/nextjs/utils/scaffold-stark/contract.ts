@@ -681,7 +681,7 @@ function objectToCairoTuple(obj: { [key: number]: any }, type: string): string {
   return `(${values})`;
 }
 
-function stringToObjectTuple(
+export function stringToObjectTuple(
   tupleString: string,
   paramType: string,
 ): { [key: number]: any } {

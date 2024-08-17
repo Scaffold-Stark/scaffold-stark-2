@@ -117,6 +117,7 @@ export const ContractUI = ({
                 <ContractWriteMethods
                   deployedContractData={deployedContractData}
                   onChange={triggerRefreshDisplayVariables}
+                  contractName={contractName}
                 />
               </div>
             </div>

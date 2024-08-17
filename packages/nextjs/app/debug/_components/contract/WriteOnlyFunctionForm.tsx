@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 // import { useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
 import {
   ContractInput,
+  convertStringToInputInstance,
   //   TxReceipt,
   getFunctionInputKey,
   getInitialFormState,
@@ -20,17 +21,24 @@ import {
   useWaitForTransaction,
 } from "@starknet-react/core";
 import { Abi } from "abi-wan-kanabi";
-import { AbiFunction } from "~~/utils/scaffold-stark/contract";
+import {
+  AbiFunction,
+  ContractName,
+  parseParamWithType,
+} from "~~/utils/scaffold-stark/contract";
 import { Address } from "@starknet-react/chains";
 import { InvokeTransactionReceiptResponse } from "starknet";
 import { TxReceipt } from "./TxReceipt";
 import { useTransactor } from "~~/hooks/scaffold-stark";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
+import { useScaffoldMultiWriteContract } from "~~/hooks/scaffold-stark/useScaffoldMultiWriteContract";
 
 type WriteOnlyFunctionFormProps = {
   abi: Abi;
   abiFunction: AbiFunction;
   onChange: () => void;
   contractAddress: Address;
+  contractName: ContractName;
   //   inheritedFrom?: string;
 };
 
@@ -39,6 +47,7 @@ export const WriteOnlyFunctionForm = ({
   abiFunction,
   onChange,
   contractAddress,
+  contractName,
 }: //   inheritedFrom,
 WriteOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
@@ -47,7 +56,7 @@ WriteOnlyFunctionFormProps) => {
   const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null);
   const { status: walletStatus } = useAccount();
   const { chain } = useNetwork();
-  const writeTxn = useTransactor();
+
   const { targetNetwork } = useTargetNetwork();
   const writeDisabled =
     !chain ||
@@ -61,38 +70,75 @@ WriteOnlyFunctionFormProps) => {
     );
   }, [writeDisabled]);
 
+  // const writeTxn = useTransactor();
+
+  // const {
+  //   data: result,
+  //   isPending: isLoading,
+  //   writeAsync,
+  // } = useContractWrite({
+  //   calls: [
+  //     {
+  //       contractAddress,
+  //       entrypoint: abiFunction.name,
+
+  //       // use infinity to completely flatten array from n dimensions to 1 dimension
+  //       calldata: getParsedContractFunctionArgs(form, false).flat(Infinity),
+  //     },
+  //   ],
+  // });
+
+  // const {
+  //   data: result,
+  //   isPending: isLoading,
+  //   writeAsync,
+  // } = useScaffoldMultiWriteContract({
+  //   calls: [
+  //     {
+  //       contractName,
+  //       //@ts-expect-error we expect the UI to input the correct corresponding type
+  //       functionName: abiFunction.name,
+  //       calldata: getParsedContractFunctionArgs(form, false).flat(Infinity),
+  //     },
+  //   ],
+  // });
+
   const {
     data: result,
     isPending: isLoading,
     writeAsync,
-  } = useContractWrite({
-    calls: [
-      {
-        contractAddress,
-        entrypoint: abiFunction.name,
-
-        // use infinity to completely flatten array from n dimensions to 1 dimension
-        calldata: getParsedContractFunctionArgs(form, false).flat(Infinity),
-      },
-    ],
+  } = useScaffoldWriteContract({
+    contractName,
+    //@ts-expect-error we expect the UI to input the correct corresponding type
+    functionName: abiFunction.name,
   });
 
   const handleWrite = async () => {
-    if (writeAsync) {
-      try {
-        const makeWriteWithParams = () => writeAsync();
-        await writeTxn(makeWriteWithParams);
-        onChange();
-      } catch (e: any) {
-        const errorPattern = /Contract (.*?)"}/;
-        const match = errorPattern.exec(e.message);
-        const message = match ? match[1] : e.message;
-
-        console.error(
-          "⚡️ ~ file: WriteOnlyFunctionForm.tsx:handleWrite ~ error",
-          message,
+    try {
+      const stringArgs = Object.values(form);
+      const args = stringArgs.map((stringArg: string, index: number) => {
+        return convertStringToInputInstance(
+          abiFunction.inputs[index].type,
+          stringArg,
         );
-      }
+      });
+      console.debug({
+        args,
+      });
+      await writeAsync({
+        //@ts-expect-error args should correspond from how UI is defined
+        args,
+      });
+      onChange();
+    } catch (e: any) {
+      const errorPattern = /Contract (.*?)"}/;
+      const match = errorPattern.exec(e.message);
+      const message = match ? match[1] : e.message;
+
+      console.error(
+        "⚡️ ~ file: WriteOnlyFunctionForm.tsx:handleWrite ~ error",
+        message,
+      );
     }
   };
 

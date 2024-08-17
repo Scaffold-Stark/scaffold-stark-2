@@ -9,9 +9,11 @@ import {
 export const ContractWriteMethods = ({
   onChange,
   deployedContractData,
+  contractName,
 }: {
   onChange: () => void;
   deployedContractData: Contract<ContractName>;
+  contractName: ContractName;
 }) => {
   if (!deployedContractData) {
     return null;
@@ -39,6 +41,7 @@ export const ContractWriteMethods = ({
           abiFunction={fn}
           onChange={onChange}
           contractAddress={deployedContractData.address}
+          contractName={contractName}
           //   inheritedFrom={inheritedFrom}
         />
       ))}
