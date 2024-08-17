@@ -34,21 +34,12 @@ export const ReadOnlyFunctionForm = ({
   const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null);
   const lastForm = useRef(form);
 
-  // const { isFetching, data, refetch } = useContractRead({
-  //   address: contractAddress,
-  //   functionName: abiFunction.name,
-  //   abi: [...abi],
-  //   args: inputValue ? inputValue.flat(Infinity) : [],
-  //   enabled: Boolean(inputValue),
-  //   parseArgs: false,
-  //   blockIdentifier: "pending" as BlockNumber,
-  // });
-
   const { isFetching, data, refetch } = useScaffoldReadContract({
     contractName,
-    functionName: abiFunction.name as any,
+    // @ts-expect-error we do not know the specific function name, this is type-safe
+    functionName: abiFunction.name,
     args: inputValue ? inputValue.flat(Infinity) : [],
-    enabled: Boolean(inputValue),
+    enabled: inputValue !== undefined,
     parseArgs: false,
     blockIdentifier: "pending" as BlockNumber,
   });
