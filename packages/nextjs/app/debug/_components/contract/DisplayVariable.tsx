@@ -25,7 +25,6 @@ export const DisplayVariable = ({
   contractName,
   abiFunction,
   refreshDisplayVariables,
-  // abi, //   inheritedFrom,
 }: DisplayVariableProps) => {
   const {
     data: result,

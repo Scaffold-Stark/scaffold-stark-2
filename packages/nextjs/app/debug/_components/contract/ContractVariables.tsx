@@ -1,10 +1,7 @@
 import { Abi } from "abi-wan-kanabi";
 import {
-  AbiFunction,
   Contract,
   ContractName,
-  GenericContract,
-  InheritedFunctions,
   getFunctionsByStateMutability,
 } from "~~/utils/scaffold-stark/contract";
 import { DisplayVariable } from "./DisplayVariable";
@@ -43,12 +40,10 @@ export const ContractVariables = ({
     <>
       {functionsToDisplay.map(({ fn }) => (
         <DisplayVariable
-          // abi={deployedContractData.abi as Abi}
           abiFunction={fn}
           contractName={contractName}
           key={fn.name}
           refreshDisplayVariables={refreshDisplayVariables}
-          //   inheritedFrom={inheritedFrom}
         />
       ))}
     </>
