@@ -88,7 +88,63 @@ export function CryptoBetsOverview() {
   //const shortStr = shortString.encodeShortString("Cryptos");
   //console.log(shortString.decodeShortString(shortStr));
 
-  const items = allCryptoBets || [];
+  const items = allCryptoBets
+    ? [
+        ...allCryptoBets,
+        {
+          category: "Crypto Price bet",
+          description: "Bitcoin above 65345 on July 7?",
+          id: 3n,
+          is_bet_ended: false,
+          name: "Bitcoin above 65345 on July 7?",
+          reference_token_price: 349956000000n,
+          total_bet_amount: 28365000000000000000000n,
+          total_bet_no_amount: 8650000000000000000000n,
+          total_bet_yes_amount: 19909909999999999999999n,
+          total_shares_amount: 19693613846543474n,
+          isFake: true,
+        },
+        {
+          category: "Degen bet",
+          description: "Eli Ben-Sasson president of the SEC ?",
+          id: 3n,
+          is_bet_ended: false,
+          name: "Eli Ben-Sasson president of the SEC ?",
+          reference_token_price: 349956000000n,
+          total_bet_amount: 28365000000000000000000n,
+          total_bet_no_amount: 8650000000000000000000n,
+          total_bet_yes_amount: 19909909999999999999999n,
+          total_shares_amount: 19693613846543474n,
+          isFake: true,
+        },
+        {
+          category: "Sport bet",
+          description: "France winner of the Europa league ?",
+          id: 3n,
+          is_bet_ended: false,
+          name: "France winner of the Europa league ?",
+          reference_token_price: 349956000000n,
+          total_bet_amount: 98365000000000000000000n,
+          total_bet_no_amount: 0n,
+          total_bet_yes_amount: 98365000000000000000000n,
+          total_shares_amount: 19693613846543474n,
+          isFake: true,
+        },
+        {
+          category: "Politic bet",
+          description: "Donald Trump wins the Presidential Election?",
+          id: 3n,
+          is_bet_ended: false,
+          name: "Donald Trump wins the Presidential Election?",
+          reference_token_price: 349956000000n,
+          total_bet_amount: 28365000000000000000000n,
+          total_bet_no_amount: 19909909999999999999999n,
+          total_bet_yes_amount: 8650000000000000000000n,
+          total_shares_amount: 19693613846543474n,
+          isFake: true,
+        },
+      ]
+    : [];
 
   return (
     <BentoGrid className="mx-auto md:auto-rows-[24rem]" isLoading={isLoading}>
@@ -96,7 +152,11 @@ export function CryptoBetsOverview() {
       {items.map((item, i) => (
         <BentoGridItem
           key={i}
-          title={shortString.decodeShortString(item.category)}
+          title={
+            item.isFake
+              ? item.category
+              : shortString.decodeShortString(item.category)
+          }
           description={item.description}
           header={
             <Skeleton
@@ -125,7 +185,11 @@ export function CryptoBetsOverview() {
           }
           modelTitle={item.description}
           modalContent={
-            <CryptoPriceBet cryptoPriceData={item} isLoading={isLoading} />
+            item.isFake ? (
+              "coming soon"
+            ) : (
+              <CryptoPriceBet cryptoPriceData={item} isLoading={isLoading} />
+            )
           }
         />
       ))}

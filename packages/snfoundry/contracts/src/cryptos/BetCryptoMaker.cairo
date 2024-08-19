@@ -155,22 +155,28 @@ pub trait IBetCryptoMaker<TContractState> {
         self: @TContractState, caller_address: ContractAddress, bet_id: u256
     ) -> UserBetPosition;
 
-    fn getAllUserPositions(self: @TContractState, user: ContractAddress) -> Array<UserBetPositionOverview>;
+    fn getAllUserPositions(
+        self: @TContractState, user: ContractAddress
+    ) -> Array<UserBetPositionOverview>;
 
     fn settleBet(ref self: TContractState, bet_id: u256);
 
     fn claimNimboraShares(ref self: TContractState, bet_id: u256);
 
-    fn checkHasClaimed(self: @TContractState, caller_address : ContractAddress, bet_id: u256) -> bool ;
+    fn checkHasClaimed(
+        self: @TContractState, caller_address: ContractAddress, bet_id: u256
+    ) -> bool;
 
-    fn claimRewards(ref self: TContractState, bet_id: u256, claim_yes : bool);
+    fn claimRewards(ref self: TContractState, bet_id: u256, claim_yes: bool);
+
+    fn fund_contract(ref self: TContractState, amount_eth: u256, bet_id: u256);
 }
 
 #[starknet::contract]
 pub mod BetCryptoMaker {
-    use core::array::ArrayTrait;
-use contracts::cryptos::PragmaPrice::IPragmaPrice;
+    use contracts::cryptos::PragmaPrice::IPragmaPrice;
     use contracts::cryptos::PragmaPrice::PragmaPrice as PragmaPriceComponent;
+    use core::array::ArrayTrait;
     use core::traits::TryInto;
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
@@ -332,9 +338,7 @@ use contracts::cryptos::PragmaPrice::IPragmaPrice;
             depositToNimbora(ref self, amount_eth, bet_id);
         }
 
-        fn vote_no(
-            ref self: ContractState, amount_eth: u256, bet_id: u256
-        ) {
+        fn vote_no(ref self: ContractState, amount_eth: u256, bet_id: u256) {
             assert!(self.bets.read(bet_id).is_bet_ended == false, "Bet is ended.");
 
             let caller_address = get_caller_address();
@@ -369,7 +373,9 @@ use contracts::cryptos::PragmaPrice::IPragmaPrice;
             self.user_bet_no_amount.read((caller_address, bet_id))
         }
 
-        fn getAllUserPositions(self: @ContractState, user: ContractAddress) -> Array<UserBetPositionOverview> {
+        fn getAllUserPositions(
+            self: @ContractState, user: ContractAddress
+        ) -> Array<UserBetPositionOverview> {
             let mut user_positions: Array<UserBetPositionOverview> = ArrayTrait::new();
             let mut i: u256 = 1;
             loop {
@@ -380,12 +386,28 @@ use contracts::cryptos::PragmaPrice::IPragmaPrice;
                 let user_position_no = self.user_bet_no_amount.read((user, i));
                 if user_position_yes.amount > 0 {
                     let bet = self.bets.read(i);
-                    let overview_position: UserBetPositionOverview = UserBetPositionOverview { bet_id: bet.id, name: bet.name, category: bet.category, is_yes: true, amount: user_position_yes.amount, has_claimed: user_position_yes.has_claimed, is_bet_ended: bet.is_bet_ended};
+                    let overview_position: UserBetPositionOverview = UserBetPositionOverview {
+                        bet_id: bet.id,
+                        name: bet.name,
+                        category: bet.category,
+                        is_yes: true,
+                        amount: user_position_yes.amount,
+                        has_claimed: user_position_yes.has_claimed,
+                        is_bet_ended: bet.is_bet_ended
+                    };
                     user_positions.append(overview_position);
                 }
                 if user_position_no.amount > 0 {
                     let bet = self.bets.read(i);
-                    let overview_position: UserBetPositionOverview = UserBetPositionOverview { bet_id: bet.id, name: bet.name, category: bet.category, is_yes: false, amount: user_position_no.amount, has_claimed: user_position_no.has_claimed, is_bet_ended: bet.is_bet_ended};
+                    let overview_position: UserBetPositionOverview = UserBetPositionOverview {
+                        bet_id: bet.id,
+                        name: bet.name,
+                        category: bet.category,
+                        is_yes: false,
+                        amount: user_position_no.amount,
+                        has_claimed: user_position_no.has_claimed,
+                        is_bet_ended: bet.is_bet_ended
+                    };
                     user_positions.append(overview_position);
                 }
 
@@ -407,7 +429,9 @@ use contracts::cryptos::PragmaPrice::IPragmaPrice;
                 );
 
             let mut bet = self.bets.read(bet_id);
-            let total_amount_from_nimbora_shares = bet.nimbora.convert_to_assets(bet.total_shares_amount);
+            let total_amount_from_nimbora_shares = bet
+                .nimbora
+                .convert_to_assets(bet.total_shares_amount);
             let winner_result = if (result_price.into() > bet.reference_token_price) {
                 Outcome {
                     result_name: 'Yes won',
@@ -443,87 +467,91 @@ use contracts::cryptos::PragmaPrice::IPragmaPrice;
             }
         }
 
-        fn checkHasClaimed(self: @ContractState, caller_address : ContractAddress, bet_id: u256) -> bool {
+        fn checkHasClaimed(
+            self: @ContractState, caller_address: ContractAddress, bet_id: u256
+        ) -> bool {
             assert(self.bets.read(bet_id).winner_result.is_settled, 'There is no winner bet');
             assert(self.bets.read(bet_id).is_bet_ended, 'Bet is not over yet');
 
-            if self.bets.read(bet_id).winner_result.is_yes_outcome{
+            if self.bets.read(bet_id).winner_result.is_yes_outcome {
                 let user = self.user_bet_yes_amount.read((caller_address, bet_id));
-                return user.has_claimed && user.amount>0;
-            }else{
+                return user.has_claimed && user.amount > 0;
+            } else {
                 let user = self.user_bet_no_amount.read((caller_address, bet_id));
-                return user.has_claimed && user.amount>0;
+                return user.has_claimed && user.amount > 0;
             }
         }
 
 
-        fn claimRewards(ref self: ContractState, bet_id: u256, claim_yes : bool) {
+        fn claimRewards(ref self: ContractState, bet_id: u256, claim_yes: bool) {
+            let precision = 1000000000000;
             let caller_address = get_caller_address();
-            //TODO : OPTI DE CODE A FAIRE
+            let winner_result = self.bets.read(bet_id).winner_result;
+            let yes_win = winner_result.is_yes_outcome;
+            
+            
+            let mut nimbora_total = winner_result.nimbora_total_amount_with_yield;
+            loop { // TO DELETE FOR REAL USE - to cover nimbora fees
+                if nimbora_total > self.bets.read(bet_id).total_bet_amount {
+                    break;
+                }
+                nimbora_total = nimbora_total + 1;
+            };
+            let mut yield_generated = nimbora_total
+                - self.bets.read(bet_id).total_bet_amount;
 
-            //let test = self.user_bet_no_amount.read((caller_address, bet_id));
-            //println!("test for LegacyMap: {} (=amount), {} (=has_claimed) ", test.amount, test.has_claimed);
-
-            let yes_win = self.bets.read(bet_id).winner_result.is_yes_outcome;
-
-            if yes_win {
-                let mut user = self.user_bet_yes_amount.read((caller_address, bet_id));
-                assert!(user.amount > 0, "Wrong use amount (1)");
-                assert!(user.has_claimed == false, "Wrong use amount (2)");
-                assert!(claim_yes, "Wrong use amount (3)");
-                if user.amount > 0 && user.has_claimed == false && claim_yes {
-                    //assert!(!yes_win, "Passed (0)");
-                    let mut transfer_amount = user.amount;
-                    transfer_amount = transfer_amount + (user.amount
-                    /self.bets.read(bet_id).total_bet_yes_amount); //à multiplier par le Yield
-
-                    let mut current_bet = self.bets.read(bet_id);
-                        current_bet.bet_token.
-                        transfer(caller_address,transfer_amount-2); //Delete the -2 when we it is ok about nimbora lost
-                    let mut user_bet_position = self.user_bet_yes_amount.read((caller_address, bet_id));
+            if claim_yes {
+         
+                let mut user_yes_amount = self.user_bet_yes_amount.read((caller_address, bet_id));
+                if user_yes_amount.amount > 0 && user_yes_amount.has_claimed == false {
+                    if yes_win {
+                      
+                        let transfer_amount = user_yes_amount.amount
+                            + ((user_yes_amount.amount * precision
+                                / self.bets.read(bet_id).total_bet_yes_amount)
+                                * yield_generated) / precision; // amount earned with yield
+                        self.bets.read(bet_id).bet_token.transfer(caller_address, transfer_amount);
+                    // refund + yield
+                    } else {
+                        // refund
+                        let transfer_amount = user_yes_amount.amount;
+                        self.bets.read(bet_id).bet_token.transfer(caller_address, transfer_amount);
+                    }
+                    let mut user_bet_position = self
+                        .user_bet_yes_amount
+                        .read((caller_address, bet_id));
                     user_bet_position.has_claimed = true;
                     self.user_bet_yes_amount.write((caller_address, bet_id), user_bet_position);
-                }else{
-                    user = self.user_bet_no_amount.read((caller_address, bet_id));
-                    if user.amount > 0
-                    && user.has_claimed == false && !claim_yes{
-                        let mut current_bet = self.bets.read(bet_id);
-                        current_bet.bet_token.
-                        transfer(caller_address,user.amount);
-                        let mut user_bet_position = self.user_bet_no_amount.read((caller_address, bet_id));
+                }
+            } else {
+                let mut user_no_amount = self.user_bet_no_amount.read((caller_address, bet_id));
+                if user_no_amount.amount > 0 && user_no_amount.has_claimed == false {
+                    if yes_win == false {
+                        let transfer_amount = user_no_amount.amount
+                            + ((user_no_amount.amount * precision/ self.bets.read(bet_id).total_bet_no_amount)
+                                * yield_generated) / precision; // amount earned with yield
+                        self.bets.read(bet_id).bet_token.transfer(caller_address, transfer_amount);
+                    // refund + yield
+                    } else {
+                        // refund
+                        let transfer_amount = user_no_amount.amount;
+                        self.bets.read(bet_id).bet_token.transfer(caller_address, transfer_amount);
+                    }
+                    let mut user_bet_position = self
+                        .user_bet_no_amount
+                        .read((caller_address, bet_id));
                     user_bet_position.has_claimed = true;
                     self.user_bet_no_amount.write((caller_address, bet_id), user_bet_position);
-                    }
-                }
-
-            }else{
-                let mut user = self.user_bet_no_amount.read((caller_address, bet_id));
-
-                if user.amount > 0 
-                && user.has_claimed == false && !claim_yes{
-                    let mut transfer_amount = user.amount;
-                    transfer_amount = transfer_amount + (user.amount
-                    /self.bets.read(bet_id).total_bet_no_amount); //à multiplier par le Yield
-                    let mut current_bet = self.bets.read(bet_id);
-                        current_bet.bet_token.
-                        transfer(caller_address,transfer_amount - 2); //Delete the -2 when we it is ok about nimbora lost
-                        let mut user_bet_position = self.user_bet_no_amount.read((caller_address, bet_id));
-                        user_bet_position.has_claimed = true;
-                        self.user_bet_no_amount.write((caller_address, bet_id), user_bet_position);
-                }else{
-                    user = self.user_bet_yes_amount.read((caller_address, bet_id));
-                    if user.amount > 0
-                    && user.has_claimed == false && claim_yes{
-                        let mut current_bet = self.bets.read(bet_id);
-                        current_bet.bet_token.
-                        transfer(caller_address,user.amount);
-                        let mut user_bet_position = self.user_bet_yes_amount.read((caller_address, bet_id));
-                        user_bet_position.has_claimed = true;
-                        self.user_bet_yes_amount.write((caller_address, bet_id), user_bet_position);
-                    }
                 }
             }
+        }
 
+        fn fund_contract(ref self: ContractState, amount_eth: u256, bet_id: u256) {
+            self.ownable.assert_only_owner();
+
+            let caller_address = get_caller_address();
+            let mut current_bet = self.bets.read(bet_id);
+            current_bet.bet_token.transferFrom(caller_address, get_contract_address(), amount_eth);
         }
     }
 }

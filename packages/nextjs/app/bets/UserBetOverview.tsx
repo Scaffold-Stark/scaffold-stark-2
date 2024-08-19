@@ -31,16 +31,17 @@ function UserBetOverview({ bet }: { bet: any }) {
     functionName: "getBet",
     args: [Number(bet.bet_id)],
   });
-  /*  const { writeAsync: claimBitcoinRewards } = useScaffoldMultiWriteContract({
+  const { writeAsync: claimRewards } = useScaffoldMultiWriteContract({
     calls: [
-      createContractCall("BitcoinPrice", "claimRewards", [
-        Number(bitcoinPriceData?.id),
+      createContractCall("BetCryptoMaker", "claimRewards", [
+        Number(bet.bet_id),
+        bet.is_yes,
       ]),
     ],
-  }); */
+  });
 
   return (
-    <div>
+    <div className="w-full h-full">
       <Card className="shadow-md rounded-lg p-4 flex flex-col justify-between">
         <div>
           <h3 className="text-lg font-bold mb-2">{bet.name}</h3>
@@ -61,7 +62,7 @@ function UserBetOverview({ bet }: { bet: any }) {
           <Button
             className="mt-4"
             onClick={() => {
-              bet.claimFunction();
+              claimRewards();
             }}
           >
             Claim Rewards
