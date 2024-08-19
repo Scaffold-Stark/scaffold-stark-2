@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     BetCryptoMaker: {
       address:
-        "0x0310202084ca5ba78c1bc6543a1a297caa432c69522bb37552eda806cdaaf38b",
+        "0x029d37224ed13d6f4505cb947915e633b8d3fe86818f240428d572d92e6769ea",
       abi: [
         {
           type: "impl",
@@ -74,6 +74,10 @@ const deployedContracts = {
             },
             {
               name: "result_token_price",
+              type: "core::integer::u256",
+            },
+            {
+              name: "nimbora_total_amount_with_yield",
               type: "core::integer::u256",
             },
             {
@@ -427,6 +431,10 @@ const deployedContracts = {
               name: "checkHasClaimed",
               inputs: [
                 {
+                  name: "caller_address",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+                {
                   name: "bet_id",
                   type: "core::integer::u256",
                 },
@@ -442,6 +450,26 @@ const deployedContracts = {
               type: "function",
               name: "claimRewards",
               inputs: [
+                {
+                  name: "bet_id",
+                  type: "core::integer::u256",
+                },
+                {
+                  name: "claim_yes",
+                  type: "core::bool",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "fund_contract",
+              inputs: [
+                {
+                  name: "amount_eth",
+                  type: "core::integer::u256",
+                },
                 {
                   name: "bet_id",
                   type: "core::integer::u256",
