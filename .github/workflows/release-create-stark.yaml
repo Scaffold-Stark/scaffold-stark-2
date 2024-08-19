@@ -63,7 +63,7 @@ jobs:
         id: bump-version-source
         run: |
           cd source_repo
-          git pull origin main --no-rebase
+          git pull origin main --no-rebase --strategy ort
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           new_version=$(npm version ${{ env.type }} -m "chore(release): %s [skip ci]")
