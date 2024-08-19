@@ -16,7 +16,7 @@
 - 🔥 **Burner Wallet & Prefunded Account**: Quickly test your application with a burner wallet and prefunded accounts.
 - 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with Starknet network.
 
-![Debug Contracts tab](https://raw.githubusercontent.com/Quantum3-Labs/scaffold-stark-2/main/packages/nextjs/public/debug-image.png)
+![Debug Contracts tab](./packages/nextjs/public/debug-image.png)
 
 ## Requirements
 
@@ -69,6 +69,7 @@ If your Starknet Foundry version is not `0.27.0`, you need to install it.
 
 ## Compatible versions
 
+- Starknet-devnet - v0.0.4
 - Scarb - v2.6.5
 - Snforge - v0.27.0
 - Cairo - v2.6.4
@@ -125,7 +126,7 @@ Find the `packages/snfoundry/.env` file and fill the env variables related to Se
 
 Find the `packages/nextjs/scaffold.config.ts` file and change the `targetNetworks` to `[chains.sepolia]`.
 
-![chall-0-scaffold-config](https://raw.githubusercontent.com/Quantum3-Labs/speedrunstark/simple-nft-example/packages/nextjs/public/ch0-scaffold-config.png)
+![chall-0-scaffold-config](./packages/nextjs/public/scaffold-config.png)
 
 4. Get some testnet tokens
 
