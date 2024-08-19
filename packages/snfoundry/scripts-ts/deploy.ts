@@ -1,5 +1,46 @@
-import { deployContract, deployer, exportDeployments } from "./deploy-contract";
+import {
+  deployContract,
+  executeDeployCalls,
+  exportDeployments,
+  deployer,
+} from "./deploy-contract";
+import { green } from "./helpers/colorize-log";
 
+/**
+ * Deploy a contract using the specified parameters.
+ *
+ * @example (deploy contract with contructorArgs)
+ * const deployScript = async (): Promise<void> => {
+ *   await deployContract(
+ *     {
+ *       contract: "YourContract",
+ *       contractName: "YourContractExportName",
+ *       constructorArgs: {
+ *         owner: deployer.address,
+ *       },
+ *       options: {
+ *         maxFee: BigInt(1000000000000)
+ *       }
+ *     }
+ *   );
+ * };
+ *
+ * @example (deploy contract without contructorArgs)
+ * const deployScript = async (): Promise<void> => {
+ *   await deployContract(
+ *     {
+ *       contract: "YourContract",
+ *       contractName: "YourContractExportName",
+ *       options: {
+ *         maxFee: BigInt(1000000000000)
+ *       }
+ *     }
+ *   );
+ * };
+ *
+ *
+ * @returns {Promise<void>}
+ */
 const deployScript = async (): Promise<void> => {
   //  await deployContract(
   //    {
@@ -42,16 +83,27 @@ const deployScript = async (): Promise<void> => {
     },
     "StarkPrice"
   ); */
-  await deployContract({
+  /* await deployContract({
     owner: deployer.address,
       pragma_address:
       "0x2a85bd616f912537c50a49a4076db02c00b29b2cdc8a197ce92ed1837fa875b",
-  }, "BetCryptoMaker");
+  }, "BetCryptoMaker"); */
+
+  await deployContract({
+    contract: "BetCryptoMaker",
+    constructorArgs: {
+      owner: deployer.address,
+      pragma_address:
+        "0x2a85bd616f912537c50a49a4076db02c00b29b2cdc8a197ce92ed1837fa875b",
+    },
+  });
 };
 
 deployScript()
-  .then(() => {
+  .then(async () => {
+    await executeDeployCalls();
     exportDeployments();
-    console.log("All Setup Done");
+
+    console.log(green("All Setup Done"));
   })
   .catch(console.error);

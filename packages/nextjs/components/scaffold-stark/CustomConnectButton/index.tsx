@@ -21,7 +21,7 @@ export const CustomConnectButton = () => {
   useAutoConnect();
   const networkColor = useNetworkColor();
   const { targetNetwork } = useTargetNetwork();
-  const { address, status, chainId, ...props } = useAccount();
+  const { address, status, chainId } = useAccount();
   const { chain } = useNetwork();
   const [modalOpen, setModalOpen] = useState(false);
 

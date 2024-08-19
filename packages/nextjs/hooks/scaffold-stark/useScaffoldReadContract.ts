@@ -29,7 +29,7 @@ export const useScaffoldReadContract = <
     abi: deployedContract?.abi,
     watch: true,
     args: args ?? [],
-    enabled: !Array.isArray(args) || !args.some((arg) => arg === undefined),
+    /* enabled: !Array.isArray(args) || !args.some((arg) => arg === undefined),
     blockIdentifier: "pending" as BlockNumber,
     ...(readConfig as any),
   }) as Omit<ReturnType<typeof useContractRead>, "data" | "refetch"> & {
@@ -37,6 +37,11 @@ export const useScaffoldReadContract = <
     // refetch: (options?: {
     //   throwOnError: boolean;
     //   cancelRefetch: boolean;
-    // }) => Promise<AbiFunctionOutputs<ContractAbi, TFunctionName>>;
+    // }) => Promise<AbiFunctionOutputs<ContractAbi, TFunctionName>>; */
+    enabled: true,
+    blockIdentifier: "pending" as BlockNumber,
+    ...(readConfig as any),
+  }) as Omit<ReturnType<typeof useContractRead>, "data"> & {
+    data: AbiFunctionOutputs<ContractAbi, TFunctionName> | undefined;
   };
 };

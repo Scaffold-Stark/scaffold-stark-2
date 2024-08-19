@@ -42,7 +42,6 @@ export const Faucet = () => {
     const checkChain = async () => {
       try {
         const providerInfo = await publicClient.getBlock();
-        console.log(providerInfo);
       } catch (error) {
         console.error("⚡️ ~ file: Faucet.tsx:checkChain ~ error", error);
         notification.error(
@@ -83,16 +82,16 @@ export const Faucet = () => {
       return;
     }
 
-    try {
-      setLoading(true);
-      await mintEth(inputAddress, sendValue);
+    const res = await mintEth(inputAddress, sendValue);
+    if (!res.new_balance) {
       setLoading(false);
-      setInputAddress(undefined);
-      setSendValue("");
-    } catch (error) {
-      console.error("⚡️ ~ file: Faucet.tsx:sendETH ~ error", error);
-      setLoading(false);
+      notification.error(`${res}`);
+      return;
     }
+    setLoading(false);
+    setInputAddress(undefined);
+    setSendValue("");
+    notification.success("ETH sent successfully!");
   };
 
   // Render only on local chain
@@ -104,9 +103,9 @@ export const Faucet = () => {
     <div>
       <label
         htmlFor="faucet-modal"
-        className="btn btn-primary btn-sm font-normal gap-1"
+        className="btn btn-sm font-normal gap-1 border border-[#32BAC4] shadow-none"
       >
-        <BanknotesIcon className="h-4 w-4" />
+        <BanknotesIcon className="h-4 w-4 text-[#32BAC4]" />
         <span>Faucet</span>
       </label>
       <input type="checkbox" id="faucet-modal" className="modal-toggle" />
@@ -121,17 +120,7 @@ export const Faucet = () => {
           >
             ✕
           </label>
-          <div className="space-y-3">
-            <div className="flex space-x-4">
-              <div>
-                <span className="text-sm font-bold">From:</span>
-                <Address address={faucetAddress} />
-              </div>
-              <div>
-                <span className="text-sm font-bold pl-3">Available:</span>
-                <Balance address={faucetAddress} />
-              </div>
-            </div>
+          <div className="space-y-3 mt-6">
             <div className="flex flex-col space-y-3">
               <AddressInput
                 placeholder="Destination Address"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Abi } from "abi-wan-kanabi";
 import { Address } from "@starknet-react/chains";
 import {
@@ -30,14 +30,18 @@ export const ReadOnlyFunctionForm = ({
     getInitialFormState(abiFunction)
   );
   const [inputValue, setInputValue] = useState<any | undefined>(undefined);
+  const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null);
   const lastForm = useRef(form);
 
   const { isFetching, data, refetch } = useContractRead({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
-    args: CallData.compile(inputValue ? inputValue : []).flat(),
-    enabled: false,
+    /*   args: CallData.compile(inputValue ? inputValue : []).flat(),
+    enabled: false, */
+    args: inputValue ? inputValue.flat(Infinity) : [],
+    enabled: Boolean(inputValue),
+    parseArgs: false,
     blockIdentifier: "pending" as BlockNumber,
   });
 
@@ -46,33 +50,36 @@ export const ReadOnlyFunctionForm = ({
     const key = getFunctionInputKey(abiFunction.name, input, inputIndex);
     return (
       <ContractInput
+        abi={abi}
         key={key}
         setForm={setForm}
         form={form}
         stateObjectKey={key}
         paramType={input}
+        setFormErrorMessage={setFormErrorMessage}
       />
     );
   });
 
-  const handleRead = async () => {
-    const newInputValue = getParsedContractFunctionArgs(form, true);
-    if (JSON.stringify(form) === JSON.stringify(lastForm.current)) {
-      await refetch();
-    } else {
+  const handleRead = useCallback(() => {
+    const newInputValue = getParsedContractFunctionArgs(form, false);
+    if (JSON.stringify(form) !== JSON.stringify(lastForm.current)) {
       setInputValue(newInputValue);
       lastForm.current = form;
     }
-  };
+    refetch();
+  }, [form, refetch]);
 
   return (
     <div className="flex flex-col gap-3 py-5 first:pt-0 last:pb-1">
-      <p className="font-medium my-0 break-words">{abiFunction.name}</p>
+      <p className="font-medium my-0 break-words text-function">
+        {abiFunction.name}
+      </p>
       {inputElements}
       <div className="flex justify-between gap-2 flex-wrap">
         <div className="flex-grow w-4/5">
           {data !== null && data !== undefined && (
-            <div className="bg-secondary rounded-3xl text-sm px-4 py-1.5 break-words">
+            <div className="bg-input text-sm px-4 py-1.5 break-words">
               <p className="font-bold m-0 mb-1">Result:</p>
               <pre className="whitespace-pre-wrap break-words">
                 {displayTxResult(data, false, abiFunction?.outputs)}
@@ -80,16 +87,25 @@ export const ReadOnlyFunctionForm = ({
             </div>
           )}
         </div>
-        <button
-          className="btn btn-secondary btn-sm"
-          onClick={handleRead}
-          disabled={inputValue && isFetching}
+
+        <div
+          className={`flex ${
+            formErrorMessage &&
+            "tooltip before:content-[attr(data-tip)] before:right-[-10px] before:left-auto before:transform-none"
+          }`}
+          data-tip={`${formErrorMessage}`}
         >
-          {inputValue && isFetching && (
-            <span className="loading loading-spinner loading-xs"></span>
-          )}
-          Read 📡
-        </button>
+          <button
+            className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
+            onClick={handleRead}
+            disabled={(inputValue && isFetching) || !!formErrorMessage}
+          >
+            {inputValue && isFetching && (
+              <span className="loading loading-spinner loading-xs"></span>
+            )}
+            Read 📡
+          </button>
+        </div>
       </div>
     </div>
   );

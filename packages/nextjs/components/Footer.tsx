@@ -1,18 +1,13 @@
 import React from "react";
-import Link from "next/link";
 
-import {
-  CurrencyDollarIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/24/outline";
-import { HeartIcon } from "@heroicons/react/24/outline";
-import { SwitchTheme } from "~~/components/SwitchTheme";
-import { BuidlGuidlLogo } from "~~/components/assets/BuidlGuidlLogo";
+import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { useGlobalState } from "~~/services/store/store";
-import { devnet } from "@starknet-react/chains";
+import { devnet, sepolia, mainnet } from "@starknet-react/chains";
 import { Faucet } from "~~/components/scaffold-stark/Faucet";
-import { getBlockExplorerLink } from "~~/utils/scaffold-stark";
+import { FaucetSepolia } from "~~/components/scaffold-stark/FaucetSepolia";
+import { BlockExplorerSepolia } from "./scaffold-stark/BlockExplorerSepolia";
+import { BlockExplorer } from "./scaffold-stark/BlockExplorer";
 
 /**
  * Site footer
@@ -23,41 +18,39 @@ export const Footer = () => {
   );
   const { targetNetwork } = useTargetNetwork();
   const isLocalNetwork = targetNetwork.id === devnet.id;
+  const isSepoliaNetwork = targetNetwork.id === sepolia.id;
+  const isMainnetNetwork = targetNetwork.id === mainnet.id;
 
   return (
-    <div className="min-h-0 py-5 px-1 mb-11 lg:mb-0">
+    <div className="min-h-0 py-5 px-1 mb-11 lg:mb-0 bg-base-100">
       <div>
         <div className="fixed flex justify-between items-center w-full z-10 p-4 bottom-0 left-0 pointer-events-none">
           <div className="flex flex-col md:flex-row gap-2 pointer-events-auto">
             {nativeCurrencyPrice > 0 && (
               <div>
-                <div className="btn btn-primary btn-sm font-normal gap-1 cursor-auto">
-                  <CurrencyDollarIcon className="h-4 w-4" />
+                <div className="btn btn-sm font-normal gap-1 cursor-auto border border-[#32BAC4] shadow-none">
+                  <CurrencyDollarIcon className="h-4 w-4 text-[#32BAC4]" />
                   <span>{nativeCurrencyPrice}</span>
                 </div>
               </div>
             )}
+            {isSepoliaNetwork && (
+              <>
+                <FaucetSepolia />
+                <BlockExplorerSepolia />
+              </>
+            )}
             {isLocalNetwork && (
               <>
                 <Faucet />
-                <Link
-                  href={getBlockExplorerLink(targetNetwork)}
-                  target={"_blank"}
-                  rel={"noopener noreferrer"}
-                  passHref
-                  className="btn btn-primary btn-sm font-normal gap-1"
-                >
-                  <MagnifyingGlassIcon className="h-4 w-4" />
-                  <span>Block Explorer</span>
-                </Link>
+              </>
+            )}
+            {isMainnetNetwork && (
+              <>
+                <BlockExplorer />
               </>
             )}
           </div>
-          <SwitchTheme
-            className={`pointer-events-auto ${
-              isLocalNetwork ? "self-end md:self-auto" : ""
-            }`}
-          />
         </div>
       </div>
       <div className="w-full">
@@ -73,32 +66,7 @@ export const Footer = () => {
                 Fork me
               </a>
             </div>
-            <span>·</span>
-            <div className="flex justify-center items-center gap-2">
-              <p className="m-0 text-center">
-                Built with <HeartIcon className="inline-block h-4 w-4" /> by
-              </p>
-              <a
-                className="flex justify-center items-center gap-1"
-                href="https://quantum3labs.com/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <BuidlGuidlLogo className="w-3 h-5 pb-1" />
-                <span className="link">Q3 Labs</span>
-              </a>
-              <p className="m-0 text-center">at</p>
-              <a
-                className="flex justify-center items-center gap-1"
-                href="https://buidlguidl.com/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <BuidlGuidlLogo className="w-3 h-5 pb-1" />
-                <span className="link">BuidlGuidl</span>
-              </a>
-            </div>
-            <span>·</span>
+
             <div className="text-center">
               <a
                 href="https://t.me/+wO3PtlRAreo4MDI9"

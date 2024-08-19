@@ -14,11 +14,11 @@ const generatedContractComment = `/**
 
 const getContractDataFromDeployments = (): Record<
   string,
-  Record<string, { address: string; abi: Abi }>
+  Record<string, { address: string; abi: Abi; classHash: string }>
 > => {
   const allContractsData: Record<
     string,
-    Record<string, { address: string; abi: Abi }>
+    Record<string, { address: string; abi: Abi; classHash: string }>
   > = {};
 
   files.forEach((file) => {
@@ -48,7 +48,8 @@ const getContractDataFromDeployments = (): Record<
             ...allContractsData[chainId],
             [contractName]: {
               address: contractData.address,
-              abi: abiContent.abi,
+              abi: abiContent.abi.filter((item) => item.type !== "l1_handler"),
+              classHash: contractData.classHash,
             },
           };
         } catch (e) {}

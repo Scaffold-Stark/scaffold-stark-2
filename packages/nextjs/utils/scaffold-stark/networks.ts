@@ -19,9 +19,6 @@ export const NETWORKS_EXTRA_DATA: Record<string, ChainAttributes> = {
   [chains.sepolia.network]: {
     color: ["#5f4bb6", "#87ff65"],
   },
-  [chains.goerli.network]: {
-    color: "#48a9a6",
-  },
 };
 /**
  * Gives the block explorer transaction URL, returns empty string if the network is a local chain
@@ -67,6 +64,26 @@ export function getBlockExplorerAddressLink(
   }
 
   return `${blockExplorerBaseURL}/contract/${address}`;
+}
+
+/**
+ * Gives the block explorer URL for a given classhash.
+ * Defaults to Etherscan if no (wagmi) block explorer is configured for the network.
+ */
+export function getBlockExplorerClasshashLink(
+  network: chains.Chain,
+  address: string,
+) {
+  const blockExplorerBaseURL = network.explorers?.starkscan[0];
+  if (network.network === chains.devnet.network) {
+    return `/blockexplorer/class/${address}`;
+  }
+
+  if (!blockExplorerBaseURL) {
+    return `https://starkscan.co/class/${address}`;
+  }
+
+  return `${blockExplorerBaseURL}/class/${address}`;
 }
 
 export function getBlockExplorerLink(network: chains.Chain) {
