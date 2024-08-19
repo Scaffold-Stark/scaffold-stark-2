@@ -20,7 +20,7 @@ import provider from "~~/services/web3/provider";
 import { useNativeCurrencyPrice } from "~~/hooks/scaffold-stark/useNativeCurrencyPrice";
 
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
-  useNativeCurrencyPrice();
+  /* useNativeCurrencyPrice(); */
 
   return (
     <>

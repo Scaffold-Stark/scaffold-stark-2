@@ -7,10 +7,10 @@ export type BurnerAccount = {
 export const burnerAccounts: BurnerAccount[] = [
   {
     accountAddress:
-      "0x3edbd6435127d47960f07486a43e03fa76479908b8e3511d2eee16c02b29762",
-    privateKey: "0xb5d8228a51e6765be1fb72c827ce1167",
+      "0x1ff44caef48c3454f70f084aa08357812724b384cf0501eead426da3e67e099",
+    privateKey: "0x54ab57b8bd3e6e33de112ed36b9ecc88",
     publicKey:
-      "0x7f957f9f4109b76fbf2288f60c721f3c2c1673f735736ca8bd32f4b14a9de9e",
+      "0x32090ec999e3d30f49bd6d884c630a53e5396a8c9a48eb8bdec4520b8f7ec04",
   },
   /* {
     accountAddress:
