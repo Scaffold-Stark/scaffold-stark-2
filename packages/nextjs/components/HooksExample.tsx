@@ -13,7 +13,8 @@ import { ContractName } from "~~/utils/scaffold-stark/contract";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
 
 const HooksExample: React.FC = () => {
-  const [contractName, setContractName] = useState<ContractName>("YourContract");
+  const [contractName, setContractName] =
+    useState<ContractName>("YourContract");
   const [newGreeting, setNewGreeting] = useState<string>("");
   const [amountEth, setAmountEth] = useState<string>("");
   const [fromBlock, setFromBlock] = useState<bigint>(0n);
@@ -26,16 +27,14 @@ const HooksExample: React.FC = () => {
 
   const { writeAsync: setGreetingMulti } = useScaffoldMultiWriteContract({
     calls: [
-      createContractCall(
-        "Eth" as ContractName,
-        "approve",
-        [contract?.address, BigInt(amountEth)]
-      ),
-      createContractCall(
-        contractName as ContractName,
-        "set_gretting",
-        [newGreeting, BigInt(amountEth)]
-      ),
+      createContractCall("Eth" as ContractName, "approve", [
+        contract?.address,
+        BigInt(amountEth),
+      ]),
+      createContractCall(contractName as ContractName, "set_greeting", [
+        newGreeting,
+        BigInt(amountEth),
+      ]),
     ],
   });
 
@@ -45,8 +44,9 @@ const HooksExample: React.FC = () => {
     error: greetingError,
   } = useScaffoldReadContract({
     contractName: contractName as ContractName,
-    functionName: "gretting",
-    args: []
+    functionName: "greeting",
+    args: [] as any,
+    watch: true,
   });
 
   const {
@@ -56,7 +56,7 @@ const HooksExample: React.FC = () => {
   } = useScaffoldReadContract({
     contractName: contractName as ContractName,
     functionName: "premium",
-    args: []
+    args: [] as any,
   });
 
   const {
@@ -71,7 +71,7 @@ const HooksExample: React.FC = () => {
   });
 
   console.log(greetingChangedEvents);
-  
+
   const handleSetGreeting = async () => {
     try {
       await setGreetingMulti();
@@ -84,7 +84,6 @@ const HooksExample: React.FC = () => {
   const { writeAsync: withdraw } = useScaffoldWriteContract({
     contractName: contractName as ContractName,
     functionName: "withdraw",
-
   });
 
   const handleWithdraw = async () => {
@@ -102,8 +101,10 @@ const HooksExample: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
-					<div className="trapeze"></div>
-          <h2 className="text-xl font-semibold mb-4">Contract Information (useScaffoldContract)</h2>
+          <div className="trapeze"></div>
+          <h2 className="text-xl font-semibold mb-4">
+            Contract Information (useScaffoldContract)
+          </h2>
           <div>
             {isContractLoading ? (
               <p>Loading contract...</p>
@@ -116,8 +117,10 @@ const HooksExample: React.FC = () => {
         </div>
 
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
-					<div className="trapeze"></div>
-          <h2 className="text-xl font-semibold mb-4">Set Greeting (useScaffoldEventHistory)</h2>
+          <div className="trapeze"></div>
+          <h2 className="text-xl font-semibold mb-4">
+            Set Greeting (useScaffoldEventHistory)
+          </h2>
           <div className="mb-4">
             <label className="block text-sm font-medium  mb-2">
               New Greeting:
@@ -149,8 +152,10 @@ const HooksExample: React.FC = () => {
         </div>
 
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
-					<div className="trapeze"></div>
-          <h2 className="text-xl font-semibold mb-4">Current Greeting (useScaffoldReadContract)</h2>
+          <div className="trapeze"></div>
+          <h2 className="text-xl font-semibold mb-4">
+            Current Greeting (useScaffoldReadContract)
+          </h2>
           <div>
             {isGreetingLoading ? (
               <p>Loading greeting...</p>
@@ -163,8 +168,10 @@ const HooksExample: React.FC = () => {
         </div>
 
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
-					<div className="trapeze"></div>
-          <h2 className="text-xl font-semibold mb-4">Premium Status (useScaffoldReadContract)</h2>
+          <div className="trapeze"></div>
+          <h2 className="text-xl font-semibold mb-4">
+            Premium Status (useScaffoldReadContract)
+          </h2>
           <div>
             {isPremiumLoading ? (
               <p>Loading premium status...</p>
@@ -177,8 +184,10 @@ const HooksExample: React.FC = () => {
         </div>
 
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 pb-8 md:pb-4 relative shadow">
-					<div className="trapeze"></div>
-          <h2 className="text-xl font-semibold mb-4">Withdraw (useScaffoldWriteContract)</h2>
+          <div className="trapeze"></div>
+          <h2 className="text-xl font-semibold mb-4">
+            Withdraw (useScaffoldWriteContract)
+          </h2>
           <button
             onClick={handleWithdraw}
             className="btn absolute bottom-4 bg-gradient-dark btn-sm shadow-none border-none text-white"
@@ -189,25 +198,30 @@ const HooksExample: React.FC = () => {
 
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
           <div className="trapeze"></div>
-          <h2 className="text-xl font-semibold mb-4">Network Information (useTargetNetwork)</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            Network Information (useTargetNetwork)
+          </h2>
           <p>Current Network: {targetNetwork.name}</p>
         </div>
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
           <div className="trapeze"></div>
-          <h2 className="text-xl font-semibold mb-4">Greeting Changed Events (useScaffoldEventHistory)</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            Greeting Changed Events (useScaffoldEventHistory)
+          </h2>
           <ol type="1">
             {greetingChangedEvents?.map((item, i) => (
               <li key={i} className="mt-2">
                 <div>
-                  <span className="font-semibold">New greeting: </span> {item.args.new_greeting}
+                  <span className="font-semibold">New greeting: </span>{" "}
+                  {item.args.new_greeting}
                 </div>
                 <div className="break-words">
-                <span className="font-semibold">Block hash: </span> {item.block.block_hash}
+                  <span className="font-semibold">Block hash: </span>{" "}
+                  {item.block.block_hash}
                 </div>
               </li>
             ))}
           </ol>
-
         </div>
       </div>
     </div>
