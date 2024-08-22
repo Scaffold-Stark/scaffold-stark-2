@@ -63,7 +63,9 @@ export enum ContractCodeStatus {
 export type GenericContract = {
   address: Address;
   abi: Abi;
+  classHash: String;
 };
+
 export type GenericContractsDeclaration = {
   [network: string]: {
     [contractName: string]: GenericContract;
@@ -263,8 +265,6 @@ export type ExtractAbiFunctionScaffold<
     name: TFunctionName;
   }
 >;
-
-// let emerson = singleFunction extends listOfFunctions ? true : false;
 
 export type UseScaffoldArgsParam<
   TContractName extends ContractName,

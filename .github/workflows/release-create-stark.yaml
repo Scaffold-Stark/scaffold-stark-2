@@ -6,7 +6,29 @@ on:
     branches: [main]
 
 jobs:
+  check_commit:
+    runs-on: ubuntu-latest
+    outputs:
+      SHOULD_RUN: ${{ steps.check_commit.outputs.SHOULD_RUN }}
+    steps:
+      - name: Checkout Files
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ORG_GITHUB_TOKEN }}
+
+      - name: check if skip ci
+        id: check_commit
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          if [[ "$COMMIT_MESSAGE" == *"[skip ci]"* ]]; then
+            echo "SHOULD_RUN=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Match is false"
+          fi
+
   version-bump:
+    needs: check_commit
+    if: ${{ needs.check_commit.outputs.SHOULD_RUN != 'false' }}
     runs-on: ubuntu-22.04
 
     steps:
@@ -41,6 +63,7 @@ jobs:
         id: bump-version-source
         run: |
           cd source_repo
+          git pull origin main --no-rebase --strategy=ort --no-edit
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           new_version=$(npm version ${{ env.type }} -m "chore(release): %s [skip ci]")
