@@ -52,7 +52,9 @@ const deployScript = async (): Promise<void> => {
 
 deployScript()
   .then(async () => {
-    await executeDeployCalls();
+    await executeDeployCalls({
+      // maxFee: BigInt(1e15),
+    });
     exportDeployments();
 
     console.log(green("All Setup Done"));
