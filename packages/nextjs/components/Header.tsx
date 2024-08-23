@@ -83,11 +83,16 @@ export const Header = () => {
 
   useEffect(() => {
     if (status === "connected" && address && chainId === targetNetwork.id) {
-      provider.getContractVersion(address).catch((e) => {
-        if (e.toString().includes("Contract not found")) {
-          setIsDeployed(false);
-        }
-      });
+      provider
+        .getContractVersion(address)
+        .then(() => {
+          setIsDeployed(true);
+        })
+        .catch((e) => {
+          if (e.toString().includes("Contract not found")) {
+            setIsDeployed(false);
+          }
+        });
     }
   }, [status, address, provider, chainId, targetNetwork.id]);
 
