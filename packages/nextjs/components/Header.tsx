@@ -78,18 +78,18 @@ export const Header = () => {
   const isLocalNetwork = targetNetwork.id === devnet.id;
 
   const { provider } = useProvider();
-  const { address, status } = useAccount();
+  const { address, status, chainId } = useAccount();
   const [isDeployed, setIsDeployed] = useState(true);
 
   useEffect(() => {
-    if (status === "connected" && address) {
+    if (status === "connected" && address && chainId === targetNetwork.id) {
       provider.getContractVersion(address).catch((e) => {
         if (e.toString().includes("Contract not found")) {
           setIsDeployed(false);
         }
       });
     }
-  }, [status, address, provider]);
+  }, [status, address, provider, chainId, targetNetwork.id]);
 
   return (
     <div className="sticky lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
