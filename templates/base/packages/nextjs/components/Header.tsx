@@ -12,6 +12,7 @@ import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { devnet } from "@starknet-react/chains";
 import { SwitchTheme } from "./SwitchTheme";
 import { useAccount, useProvider } from "@starknet-react/core";
+import { BlockIdentifier } from "starknet";
 
 type HeaderMenuLink = {
   label: string;
@@ -78,18 +79,24 @@ export const Header = () => {
   const isLocalNetwork = targetNetwork.id === devnet.id;
 
   const { provider } = useProvider();
-  const { address, status } = useAccount();
+  const { address, status, chainId } = useAccount();
   const [isDeployed, setIsDeployed] = useState(true);
 
   useEffect(() => {
-    if (status === "connected" && address) {
-      provider.getContractVersion(address).catch((e) => {
-        if (e.toString().includes("Contract not found")) {
-          setIsDeployed(false);
-        }
-      });
+    if (status === "connected" && address && chainId === targetNetwork.id) {
+      provider
+        .getClassHashAt(address, "pending" as BlockIdentifier)
+        .then((classHash) => {
+          if (classHash) setIsDeployed(true);
+          else setIsDeployed(false);
+        })
+        .catch((e) => {
+          if (e.toString().includes("Contract not found")) {
+            setIsDeployed(false);
+          }
+        });
     }
-  }, [status, address, provider]);
+  }, [status, address, provider, chainId, targetNetwork.id]);
 
   return (
     <div className="sticky lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
