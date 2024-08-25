@@ -12,6 +12,7 @@ import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { devnet } from "@starknet-react/chains";
 import { SwitchTheme } from "./SwitchTheme";
 import { useAccount, useProvider } from "@starknet-react/core";
+import { BlockIdentifier } from "starknet";
 
 type HeaderMenuLink = {
   label: string;
@@ -84,9 +85,10 @@ export const Header = () => {
   useEffect(() => {
     if (status === "connected" && address && chainId === targetNetwork.id) {
       provider
-        .getContractVersion(address)
-        .then(() => {
-          setIsDeployed(true);
+        .getClassHashAt(address, "pending" as BlockIdentifier)
+        .then((classHash) => {
+          if (classHash) setIsDeployed(true);
+          else setIsDeployed(false);
         })
         .catch((e) => {
           if (e.toString().includes("Contract not found")) {
