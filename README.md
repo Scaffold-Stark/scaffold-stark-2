@@ -160,7 +160,7 @@ To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, 
 
 You have to paste the endpoint and body in the API platform and click on the `Send` button. If the response is `0.7.1`, then you are good to go. Otherwise, you have to get the correct RPC URL endpoint.
 
-![alt text](image.png)
+![rpc-version](./packages/nextjs/public/rpc-version.png)
 </details>
 
 ## **What's next**
