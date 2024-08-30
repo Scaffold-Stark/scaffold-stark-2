@@ -1,14 +1,3 @@
-
-declare global {
-  interface Window {
-    starknet?: {
-      isConnected: boolean;
-      request: (params: { type: string; params: { chainId: string } }) => Promise<void>;
-    };
-  }
-}
-
-
 const getChainId = (network: string): string => {
   switch (network) {
     case "mainnet":
@@ -23,7 +12,9 @@ const getChainId = (network: string): string => {
 export const useSwitchNetwork = () => {
   return {
     switchNetwork: async (network: string) => {
+      // @ts-expect-error: Assert that window.starknet exists and isConnected is a boolean
       if (window.starknet && window.starknet.isConnected) {
+        // @ts-expect-error: Assert that window.starknet.request is a function and the parameters match
         await window.starknet.request({
           type: "wallet_switchStarknetChain",
           params: {
