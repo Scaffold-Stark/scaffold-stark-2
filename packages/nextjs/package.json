@@ -34,7 +34,7 @@
     "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
-    "starknet": "^6.12.1",
+    "starknet": "6.12.1",
     "type-fest": "^4.6.0",
     "usehooks-ts": "^2.13.0",
     "zustand": "^4.1.2"
