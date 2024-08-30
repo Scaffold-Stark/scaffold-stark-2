@@ -19,7 +19,11 @@ import {
 import { Chain, devnet } from "@starknet-react/chains";
 import scaffoldConfig from "~~/scaffold.config";
 import { BurnerAccount, burnerAccounts } from "~~/utils/devnetAccounts";
-import { RequestFnCall, RpcMessage, RpcTypeToMessageMap } from "starknet-types";
+import {
+  RequestFnCall,
+  RpcMessage,
+  RpcTypeToMessageMap,
+} from "@starknet-io/types-js";
 
 export const burnerWalletId = "burner-wallet";
 export const burnerWalletName = "Burner Wallet";
