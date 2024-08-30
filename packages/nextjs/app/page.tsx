@@ -6,22 +6,9 @@ import { Address } from "~~/components/scaffold-stark";
 import { useAccount } from "@starknet-react/core";
 import { Address as AddressType } from "@starknet-react/chains";
 import Image from "next/image";
-import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
-import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
 
 const Home: NextPage = () => {
   const connectedAddress = useAccount();
-  const { writeAsync } = useScaffoldWriteContract({
-    contractName: "Vars",
-    functionName: "set_u64_with_key",
-    args: ["1", 432],
-  });
-
-  const { data, isLoading, isSuccess } = useScaffoldReadContract({
-    contractName: "Vars",
-    functionName: "get_u64_with_key",
-    args: ["1"],
-  });
 
   return (
     <>
@@ -37,12 +24,6 @@ const Home: NextPage = () => {
             </p>
             <Address address={connectedAddress.address as AddressType} />
           </div>
-          <p className="text-center text-lg">
-            <div>
-              <p>Data: {data?.toString()}</p>
-              <button onClick={() => writeAsync({})}>Write</button>
-            </div>
-          </p>
           <p className="text-center text-lg">
             Edit your smart contract{" "}
             <code className="bg-underline italic text-base font-bold max-w-full break-words break-all inline-block">
