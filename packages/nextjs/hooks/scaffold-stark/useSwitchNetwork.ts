@@ -1,4 +1,14 @@
 
+declare global {
+  interface Window {
+    starknet?: {
+      isConnected: boolean;
+      request: (params: { type: string; params: { chainId: string } }) => Promise<void>;
+    };
+  }
+}
+
+
 const getChainId = (network: string): string => {
   switch (network) {
     case "mainnet":
@@ -13,15 +23,11 @@ const getChainId = (network: string): string => {
 export const useSwitchNetwork = () => {
   return {
     switchNetwork: async (network: string) => {
-      // @ts-ignore
       if (window.starknet && window.starknet.isConnected) {
-        const chainId = getChainId(network);
-
-        // @ts-ignore
         await window.starknet.request({
           type: "wallet_switchStarknetChain",
           params: {
-            chainId: chainId,
+            chainId: getChainId(network),
           },
         });
       }
