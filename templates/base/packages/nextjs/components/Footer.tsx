@@ -58,7 +58,7 @@ export const Footer = () => {
           <div className="flex justify-center items-center gap-2 text-sm w-full">
             <div className="text-center">
               <a
-                href="https://github.com/Quantum3-Labs/scaffold-stark-2"
+                href="https://github.com/Scaffold-Stark/scaffold-stark-2"
                 target="_blank"
                 rel="noreferrer"
                 className="link"
