@@ -5,10 +5,10 @@
 
 CLI to create decentralized applications (dapps) using Scaffold-Stark.
 
-This is an alternative method of installing Scaffold-Stark. Instead of directly [cloning SS-2](https://github.com/Quantum3-Labs/scaffold-stark-2?tab=readme-ov-file#quickstart), you can use create-stark to create your own custom instance, where you can choose among several configurations and extensions.
+This is an alternative method of installing Scaffold-Stark. Instead of directly [cloning SS-2](https://github.com/Scaffold-Stark/scaffold-stark-2?tab=readme-ov-file#quickstart), you can use create-stark to create your own custom instance, where you can choose among several configurations and extensions.
 
 <h4 align="center">
-  <a href="https://github.com/Quantum3-Labs/scaffold-stark-2">SS-2 Repo</a> |
+  <a href="https://github.com/Scaffold-Stark/scaffold-stark-2">SS-2 Repo</a> |
   <a href="https://www.docs.scaffoldstark.com/">SS-2 Docs</a> |
   <a href="https://www.scaffoldstark.com/">SS-2 Website</a>
 </h4>
@@ -75,5 +75,5 @@ We welcome contributions to create-stark and Scaffold-Stark 2!
 
 For more information and guidelines for contributing, please see:
 
-- [create-stark CONTRIBUTING.MD](https://github.com/Quantum3-Labs/create-stark/blob/main/CONTRIBUTING.md) if you want to contribute to the CLI.
-- [Scaffold-Stark 2 CONTRIBUTING.MD](https://github.com/Quantum3-Labs/scaffold-stark-2/blob/main/CONTRIBUTING.md) if you want to contribute to SS-2 base code.
+- [create-stark CONTRIBUTING.MD](https://github.com/Scaffold-Stark/create-stark/blob/main/CONTRIBUTING.md) if you want to contribute to the CLI.
+- [Scaffold-Stark 2 CONTRIBUTING.MD](https://github.com/Scaffold-Stark/scaffold-stark-2/blob/main/CONTRIBUTING.md) if you want to contribute to SS-2 base code.
