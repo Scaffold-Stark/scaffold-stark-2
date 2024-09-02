@@ -82,7 +82,7 @@ To get started with Scaffold-Stark, follow the steps below:
 1. Clone this repo and install dependencies
 
 ```bash
-git clone https://github.com/Quantum3-Labs/scaffold-stark-2.git
+git clone https://github.com/Scaffold-Stark/scaffold-stark-2.git
 cd scaffold-stark-2
 yarn install
 ```
@@ -180,4 +180,4 @@ To know more about its features, check out our [website](https://scaffoldstark.c
 
 We welcome contributions to Scaffold-Stark!
 
-Please see [CONTRIBUTING.MD](https://github.com/Quantum3-Labs/scaffold-stark-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-Stark.
+Please see [CONTRIBUTING.MD](https://github.com/Scaffold-Stark/scaffold-stark-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-Stark.
