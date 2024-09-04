@@ -2,23 +2,9 @@ import fs from "fs";
 import path from "path";
 import { networks } from "./helpers/networks";
 import yargs from "yargs";
-import {
-  BlockIdentifier,
-  CallData,
-  hash,
-  stark,
-  RawArgs,
-  constants,
-  ec,
-  validateAndParseAddress,
-  transaction,
-} from "starknet";
+import { CallData, stark, RawArgs, transaction } from "starknet";
 import { Network } from "./types";
-import {
-  LegacyContractClass,
-  CompiledSierra,
-  extractContractHashes,
-} from "starknet";
+import { extractContractHashes } from "starknet";
 
 const argv = yargs(process.argv.slice(2)).argv;
 const networkName: string = argv["network"];
