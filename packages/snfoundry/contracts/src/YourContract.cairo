@@ -82,7 +82,7 @@ mod YourContract {
     impl OwnableInternalImpl = OwnableComponent::InternalImpl<ContractState>;
 
     const ETH_CONTRACT_ADDRESS: felt252 =
-        0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7;
+        0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7;
 
     #[event]
     #[derive(Drop, starknet::Event)]
@@ -133,7 +133,7 @@ mod YourContract {
 
     #[constructor]
     fn constructor(ref self: ContractState, owner: ContractAddress) {
-        let eth_contract_address = ETH_CONTRACT_ADDRESS.try_into().unwrap();
+        let eth_contract_address = contract_address_const::<ETH_CONTRACT_ADDRESS>();
         self.eth_token.write(IERC20CamelDispatcher { contract_address: eth_contract_address });
         self.greeting.write("Building Unstoppable Apps!!!");
         self.ownable.initializer(owner);
@@ -142,7 +142,7 @@ mod YourContract {
 
     #[abi(embed_v0)]
     impl YourContractImpl of IYourContract<ContractState> {
-        fn gretting(self: @ContractState) -> ByteArray {
+        fn greeting(self: @ContractState) -> ByteArray {
             self.greeting.read()
         }
 
@@ -209,8 +209,8 @@ mod YourContract {
         fn set_gretting(ref self: ContractState, new_greeting: ByteArray, amount_eth: u256) {
             self.greeting.write(new_greeting);
             self.total_counter.write(self.total_counter.read() + 1);
-            let user_counter = self.user_gretting_counter.read(get_caller_address());
-            self.user_gretting_counter.write(get_caller_address(), user_counter + 1);
+            let user_counter = self.user_greeting_counter.read(get_caller_address());
+            self.user_greeting_counter.write(get_caller_address(), user_counter + 1);
 
             if amount_eth > 0 {
                 self

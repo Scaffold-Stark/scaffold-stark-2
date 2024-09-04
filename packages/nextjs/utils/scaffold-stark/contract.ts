@@ -65,7 +65,9 @@ export enum ContractCodeStatus {
 export type GenericContract = {
   address: Address;
   abi: Abi;
+  classHash: String;
 };
+
 export type GenericContractsDeclaration = {
   [network: string]: {
     [contractName: string]: GenericContract;
@@ -160,7 +162,9 @@ export type AbiEnum = {
   variants: readonly AbiParameter[];
 };
 
-export const contracts = contractsData as GenericContractsDeclaration | null;
+// TODO: resolve type properly
+export const contracts =
+  contractsData as unknown as GenericContractsDeclaration | null;
 
 export type UseScaffoldWriteConfig<
   TAbi extends Abi,

@@ -1,4 +1,4 @@
-# 🏗 Scaffold-Stark 2
+# 🏗 Scaffold-Stark
 
 <h4 align="center">
   <a href="https://www.docs.scaffoldstark.com/">Documentation</a> |
@@ -16,7 +16,7 @@
 - 🔥 **Burner Wallet & Prefunded Account**: Quickly test your application with a burner wallet and prefunded accounts.
 - 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with Starknet network.
 
-![Debug Contracts tab](https://raw.githubusercontent.com/Quantum3-Labs/scaffold-stark-2/main/packages/nextjs/public/debug-image.png)
+![Debug Contracts tab](./packages/nextjs/public/debug-image.png)
 
 ## Requirements
 
@@ -51,7 +51,7 @@ To ensure the proper functioning of scaffold-stark, your local `Scarb` version m
 scarb --version
 ```
 
-If your local Scarb version is not `2.6.4`, you need to install it.
+If your local Scarb version is not `2.6.5`, you need to install it.
 
 - Install Scarb `2.6.5` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
 
@@ -67,34 +67,22 @@ If your Starknet Foundry version is not `0.27.0`, you need to install it.
 
 - Install Starknet Foundry `0.27.0` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
 
-### RPC specific version
-
-To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, your RPC version must be `0.7.0`. This repository contains a .env.example file, where we provided the default RPC URL for the Starknet Testnet: `RPC_URL_SEPOLIA=https://starknet-sepolia.public.blastapi.io/rpc/v0_7`. Let's verify this RPC version is `0.7.0` by running the following command:
-
-```sh
-curl --location 'https://starknet-sepolia.public.blastapi.io/rpc/v0_7' \
---data '{
-    "jsonrpc":"2.0",
-    "method":"starknet_specVersion",
-    "id":1
-}'
-```
-
 ## Compatible versions
 
+- Starknet-devnet - v0.0.5
 - Scarb - v2.6.5
 - Snforge - v0.27.0
 - Cairo - v2.6.4
 - Rpc - v0.7.0
 
-## Quickstart
+## Quickstart with Starknet-Devnet
 
-To get started with Scaffold-Stark 2, follow the steps below:
+To get started with Scaffold-Stark, follow the steps below:
 
 1. Clone this repo and install dependencies
 
 ```bash
-git clone https://github.com/Quantum3-Labs/scaffold-stark-2.git
+git clone https://github.com/Scaffold-Stark/scaffold-stark-2.git
 cd scaffold-stark-2
 yarn install
 ```
@@ -131,6 +119,8 @@ yarn deploy
 
 This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/contracts/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts-ts/deploy.ts` to deploy the contract to the network. You can also customize the deploy script.
 
+By default `Scaffold-Stark` takes the first prefunded account from `starknet-devnet` as a deployer address,
+
 5. On a third terminal, start your NextJS app:
 
 ```bash
@@ -139,7 +129,57 @@ yarn start
 
 Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
 
-**What's next**:
+## Quickstart with Sepolia Testnet
+
+<details>
+
+1. Make sure you alredy cloned this repo and installed dependencies.
+2. Prepare your environment variables.
+
+Find the `packages/snfoundry/.env` file and fill the env variables related to Sepolia testnet with your own wallet account contract address and private key.
+
+3. Change your default network to Sepolia testnet.
+
+Find the `packages/nextjs/scaffold.config.ts` file and change the `targetNetworks` to `[chains.sepolia]`.
+
+![chall-0-scaffold-config](./packages/nextjs/public/scaffold-config.png)
+
+4. Get some testnet tokens
+
+You will need to get some `ETH` or `STRK` Sepolia tokens to deploy your contract to Sepolia testnet.
+
+> Some popular faucets are [Starknet Faucet](https://starknet-faucet.vercel.app/) and [Blastapi Starknet Sepolia Eth](https://blastapi.io/faucets/starknet-sepolia-eth)
+
+4. Open a terminal, deploy the sample contract to Sepolia testnet:
+
+```bash
+yarn deploy --network sepolia
+```
+
+5. On a second terminal, start your NextJS app:
+
+```bash
+yarn start
+```
+
+Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
+
+### RPC specific version
+
+To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, your RPC version must be `0.7.0`. This repository contains a .env.example file, where we provided the default RPC URL for the Starknet Testnet: `RPC_URL_SEPOLIA=https://starknet-sepolia.public.blastapi.io/rpc/v0_7`. Let's verify this RPC version is `0.7.0` by running the following command:
+
+```sh
+curl --location 'https://starknet-sepolia.public.blastapi.io/rpc/v0_7' \
+--data '{
+    "jsonrpc":"2.0",
+    "method":"starknet_specVersion",
+    "id":1
+}'
+```
+
+</details>
+
+## **What's next**
 
 - Edit your smart contract `YourContract.cairo` in `packages/snfoundry/contracts/src`
 - Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
@@ -148,12 +188,12 @@ Visit your app on: `http://localhost:3000`. You can interact with your smart con
 
 ## Documentation
 
-Visit our [docs](https://www.docs.scaffoldstark.com/) to learn how to start building with Scaffold-Stark 2.
+Visit our [docs](https://www.docs.scaffoldstark.com/) to learn how to start building with Scaffold-Stark.
 
 To know more about its features, check out our [website](https://scaffoldstark.com)
 
-## Contributing to Scaffold-Stark 2
+## Contributing to Scaffold-Stark
 
-We welcome contributions to Scaffold-Stark 2!
+We welcome contributions to Scaffold-Stark!
 
-Please see [CONTRIBUTING.MD](https://github.com/Quantum3-Labs/scaffold-stark-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-Stark 2.
+Please see [CONTRIBUTING.MD](https://github.com/Scaffold-Stark/scaffold-stark-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-Stark.

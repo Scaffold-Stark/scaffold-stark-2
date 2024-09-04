@@ -16,7 +16,7 @@ const deployScript = async (): Promise<void> => {
     console.log(error.message);
     if (error.message.includes("fetch failed")) {
       console.error(
-        "Couldn't deploy. Did you forget to run yarn chain? Or you can change target network in scaffold.config.ts"
+        "Couldn't deploy. Did you forget to run yarn chain? Or you can change target network in scaffold.config.ts",
       );
     }
 

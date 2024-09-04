@@ -3,12 +3,14 @@ name: Next.js CI
 on:
   push:
     paths:
+      - "packages/snfoundry/contracts/**"
       - "packages/nextjs/**"
   pull_request:
     branches:
       - main
     paths:
       - "packages/nextjs/**"
+      - "packages/snfoundry/contracts/**"
 
 jobs:
   ci:
@@ -23,6 +25,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
+      - name: Install scarb
+        run: curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh -s -- -v 2.6.5
+
+      - name: Install snfoundryup
+        run: curl -L https://raw.githubusercontent.com/foundry-rs/starknet-foundry/master/scripts/install.sh | sh
+
+      - name: Install snforge
+        run: snfoundryup -v 0.27.0
+
+      - name: Run snforge tests
+        run: snforge test
+        working-directory: ./packages/snfoundry/contracts
+
       - name: Setup node env
         uses: actions/setup-node@v3
         with:
@@ -34,11 +49,8 @@ jobs:
         run: yarn install --immutable
         working-directory: ./packages/nextjs
 
-      - name: Install scarb
-        run: curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh -s -- -v 2.5.4
-
       - name: Check Code Format
-        run: npm run format:check
+        run: yarn format:check
 
       - name: Run Next.js lint
         run: yarn next:lint --max-warnings=0

@@ -4,7 +4,6 @@ import {
   AbiParameter,
   AbiStruct,
   deepParseValues,
-  parseParamWithType,
 } from "~~/utils/scaffold-stark/contract";
 /**
  * Generates a key based on function metadata

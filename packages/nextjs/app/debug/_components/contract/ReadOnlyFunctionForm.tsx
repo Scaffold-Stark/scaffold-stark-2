@@ -38,7 +38,7 @@ export const ReadOnlyFunctionForm = ({
     functionName: abiFunction.name,
     abi: [...abi],
     args: inputValue || [],
-    enabled: false,
+    enabled: !!inputValue,
     blockIdentifier: "pending" as BlockNumber,
   });
 
