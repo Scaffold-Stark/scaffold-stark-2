@@ -17,6 +17,7 @@ import { green, red, yellow } from "./helpers/colorize-log";
 interface Arguments {
   network: string;
   reset: boolean;
+  fee?: string;
   [x: string]: unknown;
   _: (string | number)[];
   $0: string;
@@ -34,13 +35,29 @@ const argv = yargs(process.argv.slice(2))
     description: "Reset deployments",
     default: false,
   })
+  .option("fee", {
+    type: "string",
+    description: "Specify the fee token",
+    demandOption: false,
+    choices: ["eth", "strk"],
+    default: "eth"
+  })
   .parseSync() as Arguments;
 
 const networkName: string = argv.network;
 const resetDeployments: boolean = argv.reset;
+const feeToken: string = argv.fee;
 
 let deployments = {};
 let deployCalls = [];
+
+/**
+ * @TODO: Implement use of fee token
+ * 1. check user has enough eth balance or has specified strk as fee token
+ * 2. if user has enough eth and did not specify strk as fee token, use eth to pay for the fee
+ * 3. if user has enough strk and specified strk as fee token, use strk to pay for the fee
+ * 4. if user has neither enough eth nor strk, throw an error
+ */
 
 const { provider, deployer }: Network = networks[networkName];
 
