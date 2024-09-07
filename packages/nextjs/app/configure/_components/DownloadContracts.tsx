@@ -54,9 +54,9 @@ export default function DownloadContracts() {
 */`;
 
     const fileContent = JSON.stringify(contractsData, null, 2);
-    const configDeployedContracts = `${generatedContractComment}\n\nconst configExternalContracts = ${fileContent} as const;\n\nexport default configExternalContracts;`;
+    const configExternalContracts = `${generatedContractComment}\n\nconst configExternalContracts = ${fileContent} as const;\n\nexport default configExternalContracts;`;
 
-    const blob = new Blob([configDeployedContracts], {
+    const blob = new Blob([configExternalContracts], {
       type: "text/typescript",
     });
     const url = URL.createObjectURL(blob);
@@ -92,7 +92,7 @@ export default function DownloadContracts() {
               </li>
               <li>
                 Download the file and replace it to your local
-                `configDeployedContracts.ts` file.
+                `configExternalContracts.ts` file.
               </li>
               <li>
                 Use the `/debug` page to interact with and test the contract
