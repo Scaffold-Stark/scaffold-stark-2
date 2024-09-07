@@ -125,7 +125,7 @@ module.exports = {
             opacity: "80%",
           },
           ".contract-content": {
-            background: "transparent",
+            background: "white",
           },
         },
       },
