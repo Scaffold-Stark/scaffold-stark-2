@@ -10,9 +10,9 @@ pub trait IYourContract<TContractState> {
 mod YourContract {
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
+    use starknet::storage::Map;
     use starknet::{ContractAddress, contract_address_const};
     use starknet::{get_caller_address, get_contract_address};
-    use starknet::storage::Map;
     use super::{IYourContract};
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
@@ -73,7 +73,8 @@ mod YourContract {
             self.user_greeting_counter.write(get_caller_address(), user_counter + 1);
 
             if amount_eth > 0 {
-                // In `Debug Contract` or UI implementation call `approve` on ETH contract before invoke fn set_greeting()
+                // In `Debug Contract` or UI implementation call `approve` on ETH contract before
+                // invoke fn set_greeting()
                 self
                     .eth_token
                     .read()

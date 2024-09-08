@@ -12,15 +12,15 @@ const deployScript = async (): Promise<void> => {
       {
         owner: deployer.address,
       },
-      "YourContract",
+      "YourContract"
     );
   } catch (error) {
     console.log(red(error.message));
     if (error.message.includes("fetch failed")) {
       console.error(
         red(
-          "Couldn't deploy. Did you forget to run yarn chain? Or you can change target network in scaffold.config.ts",
-        ),
+          "Couldn't deploy. Did you forget to run yarn chain? Or you can change target network in scaffold.config.ts"
+        )
       );
     }
 
