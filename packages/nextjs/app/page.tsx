@@ -8,6 +8,7 @@ import { Address as AddressType } from "@starknet-react/chains";
 import Image from "next/image";
 
 const Home: NextPage = () => {
+  // for homepage display
   const connectedAddress = useAccount();
 
   return (
