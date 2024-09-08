@@ -12,6 +12,7 @@ mod YourContract {
     use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
     use starknet::{ContractAddress, contract_address_const};
     use starknet::{get_caller_address, get_contract_address};
+    use starknet::storage::Map;
     use super::{IYourContract};
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
@@ -47,7 +48,7 @@ mod YourContract {
         greeting: ByteArray,
         premium: bool,
         total_counter: u256,
-        user_greeting_counter: LegacyMap<ContractAddress, u256>,
+        user_greeting_counter: Map<ContractAddress, u256>,
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
     }
