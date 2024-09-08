@@ -113,7 +113,7 @@ export class BurnerConnector extends InjectedConnector {
             version: "0x3",
           });
       } catch (e) {
-        throw new UserRejectedRequestError();
+        throw e;
       }
     }
 
