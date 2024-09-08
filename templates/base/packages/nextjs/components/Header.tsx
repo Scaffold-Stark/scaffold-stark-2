@@ -4,7 +4,11 @@ import React, { useCallback, useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
+import {
+  Bars3Icon,
+  BugAntIcon,
+  Cog8ToothIcon,
+} from "@heroicons/react/24/outline";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
 import { useTheme } from "next-themes";
@@ -30,6 +34,11 @@ export const menuLinks: HeaderMenuLink[] = [
     href: "/debug",
     icon: <BugAntIcon className="h-4 w-4" />,
   },
+  {
+    label: "Configure Contracts",
+    href: "/configure",
+    icon: <Cog8ToothIcon className="h-4 w-4" />,
+  },
 ];
 
 export const HeaderMenuLinks = () => {
@@ -51,7 +60,7 @@ export const HeaderMenuLinks = () => {
               passHref
               className={`${
                 isActive
-                  ? "!bg-gradient-nav !text-white active:bg-gradient-nav shadow-md "
+                  ? "!bg-gradient-nav !text-white active:bg-gradient-nav shadow-md"
                   : ""
               } py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col hover:bg-gradient-nav hover:text-white`}
             >
