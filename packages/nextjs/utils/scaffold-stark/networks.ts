@@ -66,6 +66,26 @@ export function getBlockExplorerAddressLink(
   return `${blockExplorerBaseURL}/contract/${address}`;
 }
 
+/**
+ * Gives the block explorer URL for a given classhash.
+ * Defaults to Etherscan if no (wagmi) block explorer is configured for the network.
+ */
+export function getBlockExplorerClasshashLink(
+  network: chains.Chain,
+  address: string,
+) {
+  const blockExplorerBaseURL = network.explorers?.starkscan[0];
+  if (network.network === chains.devnet.network) {
+    return `/blockexplorer/class/${address}`;
+  }
+
+  if (!blockExplorerBaseURL) {
+    return `https://starkscan.co/class/${address}`;
+  }
+
+  return `${blockExplorerBaseURL}/class/${address}`;
+}
+
 export function getBlockExplorerLink(network: chains.Chain) {
   switch (network) {
     case chains.mainnet:

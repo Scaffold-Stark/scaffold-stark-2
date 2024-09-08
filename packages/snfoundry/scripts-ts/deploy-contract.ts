@@ -2,23 +2,10 @@ import fs from "fs";
 import path from "path";
 import { networks } from "./helpers/networks";
 import yargs from "yargs";
-import {
-  BlockIdentifier,
-  CallData,
-  hash,
-  stark,
-  RawArgs,
-  constants,
-  ec,
-  validateAndParseAddress,
-  transaction,
-} from "starknet";
+import { CallData, stark, RawArgs, transaction } from "starknet";
 import { Network } from "./types";
-import {
-  LegacyContractClass,
-  CompiledSierra,
-  extractContractHashes,
-} from "starknet";
+import { extractContractHashes } from "starknet";
+import { green, red, yellow } from "./helpers/colorize-log";
 
 const argv = yargs(process.argv.slice(2)).argv;
 const networkName: string = argv["network"];
@@ -104,10 +91,10 @@ const deployContract = async (
       );
       const contractName = match ? match[1].split("_").pop() : "Unknown";
       console.error(
-        `The contract "${contractName}" doesn't exist or is not compiled`
+        red(`The contract "${contractName}" doesn't exist or is not compiled`)
       );
     } else {
-      console.error(error);
+      console.error(red(error));
     }
     return {
       classHash: "",
@@ -130,7 +117,7 @@ const deployContract = async (
   const constructorCalldata = constructorArgs
     ? contractCalldata.compile("constructor", constructorArgs)
     : [];
-  console.log("Deploying Contract ", contractName);
+  console.log(yellow("Deploying Contract "), contractName);
 
   let { classHash } = await declareIfNot_NotWait({
     contract: compiledContractSierra,
@@ -145,7 +132,7 @@ const deployContract = async (
     constructorCalldata,
   });
 
-  console.log("Contract Deployed at ", contractAddress);
+  console.log(green("Contract Deployed at "), contractAddress);
 
   let finalContractName = exportContractName || contractName;
 
@@ -164,7 +151,7 @@ const deployContract = async (
 const executeDeployCalls = async () => {
   try {
     let { transaction_hash } = await deployer.execute(deployCalls);
-    console.log("Deploy Calls Executed at ", transaction_hash);
+    console.log(yellow("Deploy Calls Executed at "), transaction_hash);
     if (networkName == "sepolia" || networkName == "mainnet") {
       await provider.waitForTransaction(transaction_hash);
     }

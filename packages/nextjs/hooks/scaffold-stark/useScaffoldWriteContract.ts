@@ -71,11 +71,15 @@ export const useScaffoldWriteContract = <
       : [],
   });
 
-  const sendContractWriteTx = async ({
-    args: newArgs,
-  }: {
+  const sendContractWriteTx = async (params?: {
     args?: UseScaffoldWriteConfig<TAbi, TContractName, TFunctionName>["args"];
   }) => {
+    // if no args supplied, use the one supplied from hook
+    let newArgs = params?.args;
+    if (!newArgs) {
+      newArgs = args;
+    }
+
     if (!deployedContractData) {
       console.error(
         "Target Contract is not deployed, did you forget to run `yarn deploy`?",
