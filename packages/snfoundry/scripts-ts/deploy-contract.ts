@@ -63,12 +63,7 @@ const declareIfNot_NotWait = async (
     await provider.getClassByHash(declareContractPayload.classHash);
   } catch (error) {
     try {
-      const txVersion = await getTxVersion(
-        deployer,
-        provider,
-        feeToken,
-        networkName
-      );
+      const txVersion = await getTxVersion(networks[networkName], feeToken);
       options.version = txVersion;
       const { transaction_hash } = await deployer.declare(payload, options);
       if (networkName === "sepolia" || networkName === "mainnet") {
@@ -251,12 +246,7 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
   }
 
   try {
-    const txVersion = await getTxVersion(
-      deployer,
-      provider,
-      feeToken,
-      networkName
-    );
+    const txVersion = await getTxVersion(networks[networkName], feeToken);
     let { transaction_hash } = await deployer.execute(deployCalls, {...options, version: txVersion});
     console.log(green("Deploy Calls Executed at "), transaction_hash);
     if (networkName === "sepolia" || networkName === "mainnet") {

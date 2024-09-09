@@ -5,6 +5,7 @@ export type Networks = Record<"devnet" | "sepolia" | "mainnet", Network>;
 export type Network = {
   provider: RpcProvider;
   deployer: Account;
+  feeToken: { name: string; address: string }[];
 };
 
 export type DeployContractParams = {
