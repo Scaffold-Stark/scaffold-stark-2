@@ -29,5 +29,5 @@ execSync(
     (argv.reset ? " --reset" : "") +
     " && ts-node ../scripts-ts/helpers/parse-deployments.ts" +
     " && cd ..",
-  { stdio: "inherit" }
+  { stdio: "inherit" },
 );
