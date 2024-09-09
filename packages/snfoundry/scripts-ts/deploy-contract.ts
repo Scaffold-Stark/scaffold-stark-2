@@ -13,6 +13,7 @@ import {
 } from "starknet";
 import { DeployContractParams, Network } from "./types";
 import { green, red, yellow } from "./helpers/colorize-log";
+import { getTxVersion } from "./helpers/fees";
 
 interface Arguments {
   network: string;
@@ -40,7 +41,7 @@ const argv = yargs(process.argv.slice(2))
     description: "Specify the fee token",
     demandOption: false,
     choices: ["eth", "strk"],
-    default: "eth"
+    default: "eth",
   })
   .parseSync() as Arguments;
 
@@ -50,14 +51,6 @@ const feeToken: string = argv.fee;
 
 let deployments = {};
 let deployCalls = [];
-
-/**
- * @TODO: Implement use of fee token
- * 1. check user has enough eth balance or has specified strk as fee token
- * 2. if user has enough eth and did not specify strk as fee token, use eth to pay for the fee
- * 3. if user has enough strk and specified strk as fee token, use strk to pay for the fee
- * 4. if user has neither enough eth nor strk, throw an error
- */
 
 const { provider, deployer }: Network = networks[networkName];
 
@@ -70,6 +63,13 @@ const declareIfNot_NotWait = async (
     await provider.getClassByHash(declareContractPayload.classHash);
   } catch (error) {
     try {
+      const txVersion = await getTxVersion(
+        deployer,
+        provider,
+        feeToken,
+        networkName
+      );
+      options.version = txVersion;
       const { transaction_hash } = await deployer.declare(payload, options);
       if (networkName === "sepolia" || networkName === "mainnet") {
         await provider.waitForTransaction(transaction_hash);
@@ -241,6 +241,7 @@ const deployContract = async (
 };
 
 const executeDeployCalls = async (options?: UniversalDetails) => {
+  
   if (deployCalls.length < 1) {
     throw new Error(
       red(
@@ -250,7 +251,13 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
   }
 
   try {
-    let { transaction_hash } = await deployer.execute(deployCalls, options);
+    const txVersion = await getTxVersion(
+      deployer,
+      provider,
+      feeToken,
+      networkName
+    );
+    let { transaction_hash } = await deployer.execute(deployCalls, {...options, version: txVersion});
     console.log(green("Deploy Calls Executed at "), transaction_hash);
     if (networkName === "sepolia" || networkName === "mainnet") {
       await provider.waitForTransaction(transaction_hash);
@@ -269,6 +276,7 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
     }
   }
 };
+
 const loadExistingDeployments = () => {
   const networkPath = path.resolve(
     __dirname,

@@ -28,6 +28,8 @@ execSync(
   "cd contracts && scarb build && ts-node ../scripts-ts/deploy.ts" +
     " --network " +
     process.env.NETWORK +
+    " --fee " +
+    process.env.FEE_TOKEN +
     (argv.reset ? " --reset" : "") +
     " && ts-node ../scripts-ts/helpers/parse-deployments.ts" +
     " && cd ..",
