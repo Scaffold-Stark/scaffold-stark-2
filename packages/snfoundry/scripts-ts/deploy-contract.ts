@@ -64,8 +64,7 @@ const declareIfNot_NotWait = async (
   } catch (error) {
     try {
       const txVersion = await getTxVersion(networks[networkName], feeToken);
-      options.version = txVersion;
-      const { transaction_hash } = await deployer.declare(payload, options);
+      const { transaction_hash } = await deployer.declare(payload, {...options, version: txVersion});
       if (networkName === "sepolia" || networkName === "mainnet") {
         await provider.waitForTransaction(transaction_hash);
       }
