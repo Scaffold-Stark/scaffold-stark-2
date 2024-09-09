@@ -78,9 +78,15 @@ export async function getBalance(
     provider: Provider,
     tokenAddress: string
 ): Promise<bigint> {
-    const contract = new Contract(erc20ABI, tokenAddress, provider);
-    const { balance } = await contract.balanceOf(account);
-    return uint256.uint256ToBN(balance);
+    try {
+        const contract = new Contract(erc20ABI, tokenAddress, provider);
+        const { balance } = await contract.balanceOf(account);
+        return uint256.uint256ToBN(balance);
+    } catch (error) {
+        console.error('Error fetching balance:', error);
+        throw error;
+    }
+   
 }
 
 function getTxVersionFromFeeToken(feeToken: string) {

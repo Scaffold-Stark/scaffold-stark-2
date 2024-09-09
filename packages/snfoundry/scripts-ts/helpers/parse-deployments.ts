@@ -60,7 +60,7 @@ const getContractDataFromDeployments = (): Record<
   return allContractsData;
 };
 
-const generateTsAbis = async () => {
+const generateTsAbis = () => {
   const allContractsData = getContractDataFromDeployments();
 
   const fileContent = Object.entries(allContractsData).reduce(
@@ -77,7 +77,7 @@ const generateTsAbis = async () => {
 
   fs.writeFileSync(
     path.join(TARGET_DIR, "deployedContracts.ts"),
-    await prettier.format(
+    prettier.format(
       `${generatedContractComment}\n\nconst deployedContracts = {${fileContent}} as const;\n\nexport default deployedContracts;`,
       {
         parser: "typescript",
