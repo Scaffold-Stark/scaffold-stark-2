@@ -88,26 +88,27 @@ pub trait IVars<TContractState> {
 #[starknet::contract]
 mod Vars {
     use super::{ContractAddress, IVars};
+    use starknet::storage::Map;
 
     #[storage]
     struct Storage {
-        mapping_u256: LegacyMap<felt252, u256>,
-        mapping_felt: LegacyMap<felt252, felt252>,
-        mapping_byte_array: LegacyMap<felt252, ByteArray>,
-        mapping_contract_address: LegacyMap<felt252, ContractAddress>,
-        mapping_bool: LegacyMap<felt252, bool>,
-        mapping_u8: LegacyMap<felt252, u8>,
-        mapping_u16: LegacyMap<felt252, u16>,
-        mapping_u32: LegacyMap<felt252, u32>,
-        mapping_u64: LegacyMap<felt252, u64>,
-        mapping_u128: LegacyMap<felt252, u128>,
-        mapping_i8: LegacyMap<felt252, i8>,
-        mapping_i16: LegacyMap<felt252, i16>,
-        mapping_i32: LegacyMap<felt252, i32>,
-        mapping_i64: LegacyMap<felt252, i64>,
-        mapping_i128: LegacyMap<felt252, i128>,
-        mapping_bytes31: LegacyMap<felt252, bytes31>,
-        mapping_non_zero_u256: LegacyMap<felt252, NonZero<u256>>,
+        mapping_u256: Map<felt252, u256>,
+        mapping_felt: Map<felt252, felt252>,
+        mapping_byte_array: Map<felt252, ByteArray>,
+        mapping_contract_address: Map<felt252, ContractAddress>,
+        mapping_bool: Map<felt252, bool>,
+        mapping_u8: Map<felt252, u8>,
+        mapping_u16: Map<felt252, u16>,
+        mapping_u32: Map<felt252, u32>,
+        mapping_u64: Map<felt252, u64>,
+        mapping_u128: Map<felt252, u128>,
+        mapping_i8: Map<felt252, i8>,
+        mapping_i16: Map<felt252, i16>,
+        mapping_i32: Map<felt252, i32>,
+        mapping_i64: Map<felt252, i64>,
+        mapping_i128: Map<felt252, i128>,
+        mapping_bytes31: Map<felt252, bytes31>,
+        mapping_non_zero_u256: Map<felt252, NonZero<u256>>,
     }
 
     #[constructor]

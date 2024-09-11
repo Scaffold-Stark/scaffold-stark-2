@@ -46,13 +46,14 @@ pub trait ITuples<TContractState> {
 #[starknet::contract]
 mod Tuples {
     use super::{ContractAddress, ITuples};
+    use starknet::storage::Map;
 
     #[storage]
     struct Storage {
-        mapping_tuple_2_u256: LegacyMap<felt252, (u256, u256)>,
-        mapping_tuple_3_mixed: LegacyMap<felt252, (felt252, u256, bool)>,
-        mapping_tuple_4_mixed: LegacyMap<felt252, (ContractAddress, felt252, u128, u8)>,
-        mapping_tuple_with_byte_array: LegacyMap<felt252, (ByteArray, felt252, u256)>,
+        mapping_tuple_2_u256: Map<felt252, (u256, u256)>,
+        mapping_tuple_3_mixed: Map<felt252, (felt252, u256, bool)>,
+        mapping_tuple_4_mixed: Map<felt252, (ContractAddress, felt252, u128, u8)>,
+        mapping_tuple_with_byte_array: Map<felt252, (ByteArray, felt252, u256)>,
     }
 
     #[constructor]

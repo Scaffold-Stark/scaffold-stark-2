@@ -123,15 +123,16 @@ mod Structs {
         ContractAddress, IStructs, SampleEnum, SampleNestedStruct, SampleStruct,
         StructWithFiveElements, StructWithEightElements, StructWith4Layers
     };
+    use starknet::storage::Map;
 
     #[storage]
     struct Storage {
-        mapping_sample_struct: LegacyMap<felt252, SampleStruct>,
-        mapping_sample_nested_struct: LegacyMap<felt252, SampleNestedStruct>,
-        mapping_sample_enum: LegacyMap<felt252, SampleEnum>,
-        mapping_struct_with_five_elements: LegacyMap<felt252, StructWithFiveElements>,
-        mapping_struct_with_eight_elements: LegacyMap<felt252, StructWithEightElements>,
-        mapping_struct_with_4_layers: LegacyMap<felt252, StructWith4Layers>,
+        mapping_sample_struct: Map<felt252, SampleStruct>,
+        mapping_sample_nested_struct: Map<felt252, SampleNestedStruct>,
+        mapping_sample_enum: Map<felt252, SampleEnum>,
+        mapping_struct_with_five_elements: Map<felt252, StructWithFiveElements>,
+        mapping_struct_with_eight_elements: Map<felt252, StructWithEightElements>,
+        mapping_struct_with_4_layers: Map<felt252, StructWith4Layers>,
     }
 
     #[constructor]

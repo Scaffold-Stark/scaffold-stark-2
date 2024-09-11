@@ -82,11 +82,12 @@ mod Complex {
     use super::{
         ContractAddress, IComplex, StructWithTuple, ComplexStruct, SampleStruct, StructWith4Layers
     };
+    use starknet::storage::Map;
 
     #[storage]
     struct Storage {
-        mapping_struct_with_tuple: LegacyMap<felt252, StructWithTuple>,
-        mapping_complex_struct: LegacyMap<felt252, ComplexStruct>,
+        mapping_struct_with_tuple: Map<felt252, StructWithTuple>,
+        mapping_complex_struct: Map<felt252, ComplexStruct>,
     }
 
     #[constructor]
