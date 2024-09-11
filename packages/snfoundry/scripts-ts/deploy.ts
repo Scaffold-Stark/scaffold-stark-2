@@ -48,6 +48,26 @@ const deployScript = async (): Promise<void> => {
       owner: deployer.address,
     },
   });
+  await deployContract({
+    contract: "Vars",
+    constructorArgs: {},
+  });
+  await deployContract({
+    contract: "Structs",
+    constructorArgs: {},
+  });
+  await deployContract({
+    contract: "Complex",
+    constructorArgs: {},
+  });
+  await deployContract({
+    contract: "ArraysSpans",
+    constructorArgs: {},
+  });
+  await deployContract({
+    contract: "Tuples",
+    constructorArgs: {},
+  });
 };
 
 deployScript()
