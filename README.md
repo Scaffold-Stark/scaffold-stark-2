@@ -45,15 +45,15 @@ cargo install starknet-devnet --version 0.2.0-rc.3
 
 ### Scarb version
 
-To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.7.1`. To accomplish this, first check your local Scarb version:
+To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.8.2`. To accomplish this, first check your local Scarb version:
 
 ```sh
 scarb --version
 ```
 
-If your local Scarb version is not `2.7.1`, you need to install it.
+If your local Scarb version is not `2.8.2`, you need to install it.
 
-- Install Scarb `2.7.1` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
+- Install Scarb `2.8.2` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
 
 ### Starknet Foundry version
 
@@ -70,9 +70,9 @@ If your Starknet Foundry version is not `0.27.0`, you need to install it.
 ## Compatible versions
 
 - Starknet-devnet - v0.2.0
-- Scarb - v2.7.1
+- Scarb - v2.8.2
 - Snforge - v0.27.0
-- Cairo - v2.7.1
+- Cairo - v2.8.2
 - Rpc - v0.7.0
 
 ## Quickstart with Starknet-Devnet
