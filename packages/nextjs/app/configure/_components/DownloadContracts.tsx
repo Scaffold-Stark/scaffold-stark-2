@@ -6,6 +6,7 @@ import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import configExternalContracts from "~~/contracts/configExternalContracts";
 import { deepMergeContracts } from "~~/utils/scaffold-stark/contract";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 export default function DownloadContracts() {
   const { provider } = useProvider();
@@ -75,28 +76,45 @@ export default function DownloadContracts() {
         </div>
         <div className="flex flex-col gap-12 sm:gap-24 sm:flex-row">
           <div className="flex-1">
-            <div className="font-bold my-6">Instructions</div>
+            <div className="font-bold my-3 text-lg">Instructions</div>
             <p className="my-2">
               This tool allows you to fetch the ABI of a contract by entering
-              its address and then download a configuration file that can be
-              used to replace or append to your local `predeployedContracts.ts`
-              file, enabling debugging in the `/debug` page.
+              its address. It will download a configuration file that can be
+              used to replace or append to your local{" "}
+              <code className="text-function">predeployedContracts.ts</code>{" "}
+              file, allowing you to debug in the{" "}
+              <code className="text-function">/debug</code> page.
             </p>
-            <ol className="list-decimal list-inside mt-8 space-y-1">
-              <li>Enter the contract address in the input field.</li>
-              <li>Enter the contract name in the input field.</li>
-              <li>Click the Download Contract File button.</li>
-              <li>
+            <ol className="flex flex-col gap-2 list-decimal list-outside my-6 space-y-1 ml-4">
+              <li className="pl-3">
+                Enter the contract address and name within the designated input
+                fields.
+              </li>
+              <li className="pl-3">
+                Click the{" "}
+                <strong className="text-function">
+                  Download Contract File
+                </strong>{" "}
+                button.
+              </li>
+              <li className="pl-3">
                 The tool will fetch the ABI, address, and classHash from the
                 network and generate a configuration file.
               </li>
-              <li>
-                Download the file and replace it to your local
-                `configExternalContracts.ts` file.
+              <li className="pl-3">
+                Download the file and replace it to your local{" "}
+                <code className="text-function">
+                  configExternalContracts.ts
+                </code>{" "}
+                file.
               </li>
-              <li>
-                Use the `/debug` page to interact with and test the contract
-                using the scaffold hooks.
+              <li className="pl-3">
+                Use the{" "}
+                <Link href={"/debug"} className="text-function">
+                  <code>/debug</code>
+                </Link>{" "}
+                page to interact with and test the contract using the scaffold
+                hooks.
               </li>
             </ol>
             <p className="mt-2">
