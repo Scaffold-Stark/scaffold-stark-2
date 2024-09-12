@@ -33,7 +33,7 @@ export const useScaffoldWriteContract = <
 }: UseScaffoldWriteConfig<TAbi, TContractName, TFunctionName>) => {
   const { data: deployedContractData } = useDeployedContractInfo(contractName);
   const { chain } = useNetwork();
-  const writeTx = useTransactor();
+  const sendTxnWrapper = useTransactor();
   const { targetNetwork } = useTargetNetwork();
 
   const abiFunction = useMemo(
@@ -59,7 +59,7 @@ export const useScaffoldWriteContract = <
     return [];
   }, [args, abiFunction, deployedContractData]);
 
-  const wagmiContractWrite = useSendTransaction({
+  const sendTransactionInstance = useSendTransaction({
     calls: deployedContractData
       ? [
           {
@@ -113,11 +113,11 @@ export const useScaffoldWriteContract = <
       },
     ];
 
-    if (wagmiContractWrite.sendAsync) {
+    if (sendTransactionInstance.sendAsync) {
       try {
         // setIsMining(true);
-        return await writeTx(() =>
-          wagmiContractWrite.sendAsync(newCalls as any[]),
+        return await sendTxnWrapper(() =>
+          sendTransactionInstance.sendAsync(newCalls as any[]),
         );
       } catch (e: any) {
         throw e;
@@ -131,7 +131,7 @@ export const useScaffoldWriteContract = <
   };
 
   return {
-    ...wagmiContractWrite,
-    writeAsync: sendContractWriteTx,
+    ...sendTransactionInstance,
+    sendAsync: sendContractWriteTx,
   };
 };

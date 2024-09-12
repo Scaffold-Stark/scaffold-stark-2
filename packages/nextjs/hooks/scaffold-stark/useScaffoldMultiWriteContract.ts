@@ -32,7 +32,7 @@ export const useScaffoldMultiWriteContract = <
 }) => {
   const { targetNetwork } = useTargetNetwork();
   const { chain } = useNetwork();
-  const writeTx = useTransactor();
+  const sendTxnWrapper = useTransactor();
 
   const parsedCalls = useMemo(() => {
     if (calls) {
@@ -70,7 +70,7 @@ export const useScaffoldMultiWriteContract = <
   }, [calls]);
 
   // TODO add custom options
-  const wagmiContractWrite = useSendTransaction({
+  const sendTransactionInstance = useSendTransaction({
     calls: parsedCalls,
   });
 
@@ -84,10 +84,10 @@ export const useScaffoldMultiWriteContract = <
       return;
     }
 
-    if (wagmiContractWrite.sendAsync) {
+    if (sendTransactionInstance.sendAsync) {
       try {
         // setIsMining(true);
-        return await writeTx(() => wagmiContractWrite.sendAsync());
+        return await sendTxnWrapper(() => sendTransactionInstance.sendAsync());
       } catch (e: any) {
         throw e;
       } finally {
@@ -100,8 +100,8 @@ export const useScaffoldMultiWriteContract = <
   };
 
   return {
-    ...wagmiContractWrite,
-    writeAsync: sendContractWriteTx,
+    ...sendTransactionInstance,
+    sendAsync: sendContractWriteTx,
   };
 };
 
