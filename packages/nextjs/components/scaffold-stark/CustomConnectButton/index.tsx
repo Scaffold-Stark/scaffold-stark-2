@@ -20,9 +20,11 @@ export const CustomConnectButton = () => {
   useAutoConnect();
   const networkColor = useNetworkColor();
   const { targetNetwork } = useTargetNetwork();
-  const { account, status } = useAccount();
-  const [accountChainId, setAccountChainId] = useState<bigint>(0n);
-  const [accountAddress, setAccountAddress] = useState<Address>();
+  const {
+    status,
+    chainId: accountChainId,
+    address: accountAddress,
+  } = useAccount();
   const { chain } = useNetwork();
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -38,33 +40,25 @@ export const CustomConnectButton = () => {
     setModalOpen(false);
   };
 
-  useEffect(() => {
-    if (account) {
-      const getChainId = async () => {
-        const chainId = await account.channel.getChainId();
-        setAccountChainId(BigInt(chainId as string));
-        const address = account.address;
-        setAccountAddress(address as Address);
-      };
+  if (status === "disconnected")
+    return (
+      <>
+        <button
+          className={`rounded-[18px] btn-sm font-bold px-8 bg-btn-wallet`}
+          onClick={handleWalletConnect}
+          type="button"
+        >
+          Connect
+        </button>
+        <ConnectModal isOpen={modalOpen} onClose={handleModalClose} />
+      </>
+    );
 
-      getChainId();
-    }
-  }, [account]);
+  if (accountChainId !== targetNetwork.id) {
+    return <WrongNetworkDropdown />;
+  }
 
-  return status == "disconnected" ? (
-    <>
-      <button
-        className={`rounded-[18px] btn-sm font-bold px-8 bg-btn-wallet`}
-        onClick={handleWalletConnect}
-        type="button"
-      >
-        Connect
-      </button>
-      <ConnectModal isOpen={modalOpen} onClose={handleModalClose} />
-    </>
-  ) : accountChainId != targetNetwork.id ? (
-    <WrongNetworkDropdown />
-  ) : (
+  return (
     <>
       <div className="flex flex-col items-center mr-1">
         <Balance
