@@ -25,10 +25,3 @@ const scaffoldConfig = {
 } as const satisfies ScaffoldConfig;
 
 export default scaffoldConfig;
-
-/*
-        calldata: new CallData(abi).compile(abiFunction.name, {
-          new_greeting: "test",
-          amount_eth: 0n,
-        }),
-*/
