@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ContractInput,
   //   TxReceipt,
@@ -19,12 +19,7 @@ import {
 import { Abi } from "abi-wan-kanabi";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { Address } from "@starknet-react/chains";
-import {
-  CallData,
-  InvokeTransactionReceiptResponse,
-  byteArray,
-  uint256,
-} from "starknet";
+import { InvokeTransactionReceiptResponse } from "starknet";
 import { TxReceipt } from "./TxReceipt";
 import { useTransactor } from "~~/hooks/scaffold-stark";
 
@@ -46,21 +41,34 @@ export const WriteOnlyFunctionForm = ({
     getInitialFormState(abiFunction),
   );
   const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null);
-  const { status: walletStatus } = useAccount();
+  const { status: walletStatus, isConnected, account } = useAccount();
   const { chain } = useNetwork();
   const writeTxn = useTransactor();
   const { targetNetwork } = useTargetNetwork();
-  const writeDisabled =
-    !chain ||
-    chain?.network !== targetNetwork.network ||
-    walletStatus === "disconnected";
 
-  // side effect to update error state when not connected
-  useEffect(() => {
-    setFormErrorMessage(
-      writeDisabled ? "Wallet not connected or in the wrong network" : null,
-    );
-  }, [writeDisabled]);
+  // use verbose way for better clarity, avoid using long logic statements or too much ternaries
+  const isWriteDisabled = useMemo(() => {
+    if (!chain) return true;
+
+    // NOTE: workaround - use chain network label to verify since chain id for both sepolia and devnet is the same
+    if (
+      chain?.network !== targetNetwork.network ||
+      chain.id !== targetNetwork.id
+    )
+      return true;
+
+    if (!account) return true;
+
+    if (!!formErrorMessage) return true;
+
+    return false;
+  }, [
+    account,
+    chain,
+    formErrorMessage,
+    targetNetwork.id,
+    targetNetwork.network,
+  ]);
 
   const {
     data: result,
@@ -166,7 +174,7 @@ export const WriteOnlyFunctionForm = ({
           >
             <button
               className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
-              disabled={!!formErrorMessage || isLoading}
+              disabled={isWriteDisabled || isLoading}
               onClick={handleWrite}
             >
               {isLoading && (

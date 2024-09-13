@@ -20,11 +20,13 @@ export const Footer = () => {
 
   // NOTE: workaround - check by name also since in starknet react devnet and sepolia has the same chainId
   const isLocalNetwork =
-    targetNetwork.id === devnet.id && targetNetwork.name === devnet.name;
+    targetNetwork.id === devnet.id && targetNetwork.network === devnet.network;
   const isSepoliaNetwork =
-    targetNetwork.id === sepolia.id && targetNetwork.name === sepolia.name;
+    targetNetwork.id === sepolia.id &&
+    targetNetwork.network === sepolia.network;
   const isMainnetNetwork =
-    targetNetwork.id === mainnet.id && targetNetwork.name === mainnet.name;
+    targetNetwork.id === mainnet.id &&
+    targetNetwork.network === mainnet.network;
 
   return (
     <div className="min-h-0 py-5 px-1 mb-11 lg:mb-0 bg-base-100">
