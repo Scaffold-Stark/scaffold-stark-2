@@ -73,7 +73,8 @@ mod YourContract {
             self.user_greeting_counter.write(get_caller_address(), user_counter + 1);
 
             if amount_eth > 0 {
-                // In `Debug Contract` or UI implementation call `approve` on ETH contract before invoke fn set_greeting()
+                // In `Debug Contract` or UI implementation call `approve` on ETH contract before
+                // invoke fn set_greeting()
                 self
                     .eth_token
                     .read()
