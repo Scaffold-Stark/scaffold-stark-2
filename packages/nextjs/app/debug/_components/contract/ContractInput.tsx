@@ -63,7 +63,15 @@ export const ContractInput = ({
       isCairoBigInt(paramType.type) ||
       isCairoU256(paramType.type)
     ) {
-      return <IntegerInput {...inputProps} variant={paramType.type} />;
+      return (
+        <IntegerInput
+          {...inputProps}
+          variant={paramType.type}
+          onError={(errMessage: string | null) =>
+            setFormErrorMessage(errMessage)
+          }
+        />
+      );
     } else if (isCairoType(paramType.type)) {
       return <InputBase {...inputProps} />;
     } else {

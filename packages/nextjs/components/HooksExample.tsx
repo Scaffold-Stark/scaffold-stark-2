@@ -25,7 +25,7 @@ const HooksExample: React.FC = () => {
 
   const { targetNetwork } = useTargetNetwork();
 
-  const { writeAsync: setGreetingMulti } = useScaffoldMultiWriteContract({
+  const { sendAsync: setGreetingMulti } = useScaffoldMultiWriteContract({
     calls: [
       createContractCall("Eth" as ContractName, "approve", [
         contract?.address,
@@ -81,7 +81,7 @@ const HooksExample: React.FC = () => {
     }
   };
 
-  const { writeAsync: withdraw } = useScaffoldWriteContract({
+  const { sendAsync: withdraw } = useScaffoldWriteContract({
     contractName: contractName as ContractName,
     functionName: "withdraw",
   });

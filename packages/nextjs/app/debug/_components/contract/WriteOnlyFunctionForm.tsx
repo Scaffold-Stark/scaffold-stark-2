@@ -1,9 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-// import { Abi, AbiFunction } from "abitype";
-// import { Address, TransactionReceipt } from "viem";
-// import { useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
 import {
   ContractInput,
   //   TxReceipt,
@@ -14,15 +11,20 @@ import {
 } from "~~/app/debug/_components/contract";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import {
-  useAccount,
-  useContractWrite,
+  useSendTransaction,
   useNetwork,
-  useWaitForTransaction,
+  useTransactionReceipt,
+  useAccount,
 } from "@starknet-react/core";
 import { Abi } from "abi-wan-kanabi";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { Address } from "@starknet-react/chains";
-import { InvokeTransactionReceiptResponse } from "starknet";
+import {
+  CallData,
+  InvokeTransactionReceiptResponse,
+  byteArray,
+  uint256,
+} from "starknet";
 import { TxReceipt } from "./TxReceipt";
 import { useTransactor } from "~~/hooks/scaffold-stark";
 
@@ -39,8 +41,7 @@ export const WriteOnlyFunctionForm = ({
   abiFunction,
   onChange,
   contractAddress,
-}: //   inheritedFrom,
-WriteOnlyFunctionFormProps) => {
+}: WriteOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialFormState(abiFunction),
   );
@@ -64,23 +65,33 @@ WriteOnlyFunctionFormProps) => {
   const {
     data: result,
     isPending: isLoading,
-    writeAsync,
-  } = useContractWrite({
+    sendAsync,
+    error,
+  } = useSendTransaction({
     calls: [
       {
         contractAddress,
         entrypoint: abiFunction.name,
 
         // use infinity to completely flatten array from n dimensions to 1 dimension
+        // writing in starknet next still needs rawArgs parsing, use v2 parsing
         calldata: getParsedContractFunctionArgs(form, false).flat(Infinity),
       },
     ],
   });
 
+  // side effect for error logging
+  useEffect(() => {
+    if (error) {
+      console.error(error?.message);
+      console.error(error.stack);
+    }
+  }, [error]);
+
   const handleWrite = async () => {
-    if (writeAsync) {
+    if (sendAsync) {
       try {
-        const makeWriteWithParams = () => writeAsync();
+        const makeWriteWithParams = () => sendAsync();
         await writeTxn(makeWriteWithParams);
         onChange();
       } catch (e: any) {
@@ -98,7 +109,7 @@ WriteOnlyFunctionFormProps) => {
 
   const [displayedTxResult, setDisplayedTxResult] =
     useState<InvokeTransactionReceiptResponse>();
-  const { data: txResult } = useWaitForTransaction({
+  const { data: txResult } = useTransactionReceipt({
     hash: result?.transaction_hash,
   });
   useEffect(() => {

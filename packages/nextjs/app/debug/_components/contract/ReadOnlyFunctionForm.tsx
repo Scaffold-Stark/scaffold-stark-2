@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Abi } from "abi-wan-kanabi";
 import { Address } from "@starknet-react/chains";
 import {
@@ -12,7 +12,7 @@ import {
 } from "~~/app/debug/_components/contract";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { BlockNumber } from "starknet";
-import { useContractRead } from "@starknet-react/core";
+import { useReadContract } from "@starknet-react/core";
 import { ContractInput } from "./ContractInput";
 
 type ReadOnlyFunctionFormProps = {
@@ -33,15 +33,21 @@ export const ReadOnlyFunctionForm = ({
   const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null);
   const lastForm = useRef(form);
 
-  const { isFetching, data, refetch } = useContractRead({
+  const { isFetching, data, refetch, error } = useReadContract({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
-    args: inputValue ? inputValue.flat(Infinity) : [],
-    enabled: Boolean(inputValue),
-    parseArgs: false,
+    args: inputValue || [],
+    enabled: !!inputValue,
     blockIdentifier: "pending" as BlockNumber,
   });
+
+  useEffect(() => {
+    if (error) {
+      console.error(error?.message);
+      console.error(error.stack);
+    }
+  }, [error]);
 
   const transformedFunction = transformAbiFunction(abiFunction);
   const inputElements = transformedFunction.inputs.map((input, inputIndex) => {
@@ -59,14 +65,15 @@ export const ReadOnlyFunctionForm = ({
     );
   });
 
-  const handleRead = useCallback(() => {
-    const newInputValue = getParsedContractFunctionArgs(form, false);
+  const handleRead = () => {
+    const newInputValue = getParsedContractFunctionArgs(form, false, true);
+
     if (JSON.stringify(form) !== JSON.stringify(lastForm.current)) {
       setInputValue(newInputValue);
       lastForm.current = form;
     }
     refetch();
-  }, [form, refetch]);
+  };
 
   return (
     <div className="flex flex-col gap-3 py-5 first:pt-0 last:pb-1">

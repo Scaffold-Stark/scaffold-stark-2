@@ -31,29 +31,29 @@ Before you begin, you need to install the following tools:
 
 ### Starknet-devnet version
 
-To ensure the proper functioning of scaffold-stark, your local `starknet-devnet` version must be `0.0.4`. To accomplish this, first check your local starknet-devnet version:
+To ensure the proper functioning of scaffold-stark, your local `starknet-devnet` version must be `0.2.0`. To accomplish this, first check your local starknet-devnet version:
 
 ```sh
 starknet-devnet --version
 ```
 
-If your local starknet-devnet version is not `0.0.4`, you need to install it.
+If your local starknet-devnet version is not `0.2.0`, you need to install it.
 
 ```bash
-cargo install starknet-devnet --version 0.0.4
+cargo install starknet-devnet --version 0.2.0-rc.3
 ```
 
 ### Scarb version
 
-To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.6.5`. To accomplish this, first check your local Scarb version:
+To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.8.2`. To accomplish this, first check your local Scarb version:
 
 ```sh
 scarb --version
 ```
 
-If your local Scarb version is not `2.6.5`, you need to install it.
+If your local Scarb version is not `2.8.2`, you need to install it.
 
-- Install Scarb `2.6.5` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
+- Install Scarb `2.8.2` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
 
 ### Starknet Foundry version
 
@@ -69,10 +69,10 @@ If your Starknet Foundry version is not `0.27.0`, you need to install it.
 
 ## Compatible versions
 
-- Starknet-devnet - v0.0.4
-- Scarb - v2.6.5
+- Starknet-devnet - v0.2.0
+- Scarb - v2.8.2
 - Snforge - v0.27.0
-- Cairo - v2.6.4
+- Cairo - v2.8.2
 - Rpc - v0.7.0
 
 ## Quickstart with Starknet-Devnet
@@ -82,12 +82,24 @@ To get started with Scaffold-Stark, follow the steps below:
 1. Clone this repo and install dependencies
 
 ```bash
-git clone https://github.com/Quantum3-Labs/scaffold-stark-2.git
+git clone https://github.com/Scaffold-Stark/scaffold-stark-2.git
 cd scaffold-stark-2
 yarn install
 ```
 
-2. Run a local network in the first terminal.
+2. Prepare your environment variables.
+
+By default Scaffold-Stark 2 takes the first prefunded account from `starknet-devnet` as a deployer address, thus **you can skip this step!**. But if you want use the .env file anyway, you can fill the env variables related to devnet with any other predeployed contract address and private key from starknet-devnet.
+
+> In case you want to deploy on Sepolia, you need to fill the envs related to sepolia testnet with your own contract address and private key.
+
+```bash
+cp packages/snfoundry/.env.example packages/snfoundry/.env
+```
+
+3. Run a local network in the first terminal.
+
+> 💬 Hint: You can skip this step if you plan to use Sepolia Testnet.
 
 ```bash
 yarn chain
@@ -95,17 +107,21 @@ yarn chain
 
 This command starts a local Starknet network using Devnet. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `scaffold.config.ts` for your nextjs app.
 
-3. On a second terminal, deploy the sample contract:
+> If you are on sepolia or mainnet, for a better user experience on your app, you can get a dedicated RPC from [Infura dashboard](https://www.infura.io/). A default is provided [here](https://github.com/Quantum3-Labs/scaffold-stark-2/tree/main/packages/nextjs/.env.example), in order to use this, you have to run `cp packages/nextjs/.env.example packages/nextjs/.env.local`
+
+4. On a second terminal, deploy the sample contract:
 
 ```bash
 yarn deploy
 ```
 
+> To use `Sepolia` testnet, you input `yarn deploy --network sepolia`.
+
 This command deploys a sample smart contract to the local network. The contract is located in `packages/snfoundry/contracts/src` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/snfoundry/scripts-ts/deploy.ts` to deploy the contract to the network. You can also customize the deploy script.
 
 By default `Scaffold-Stark` takes the first prefunded account from `starknet-devnet` as a deployer address,
 
-4. On a third terminal, start your NextJS app:
+5. On a third terminal, start your NextJS app:
 
 ```bash
 yarn start
@@ -180,4 +196,4 @@ To know more about its features, check out our [website](https://scaffoldstark.c
 
 We welcome contributions to Scaffold-Stark!
 
-Please see [CONTRIBUTING.MD](https://github.com/Quantum3-Labs/scaffold-stark-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-Stark.
+Please see [CONTRIBUTING.MD](https://github.com/Scaffold-Stark/scaffold-stark-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-Stark.

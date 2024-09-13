@@ -1,6 +1,6 @@
 {
   "name": "ss-2",
-  "version": "0.2.12",
+  "version": "0.2.16",
   "author": "Q3 Labs",
   "license": "MIT",
   "private": true,
@@ -11,7 +11,7 @@
     ]
   },
   "scripts": {
-    "chain": "yarn workspace @ss-2/snfoundry chain",
+    "chain": "starknet-devnet --seed 0 --account-class cairo1",
     "deploy": "yarn workspace @ss-2/snfoundry deploy",
     "deploy:reset": "yarn workspace @ss-2/snfoundry  deploy:reset",
     "test": "yarn workspace @ss-2/snfoundry test",

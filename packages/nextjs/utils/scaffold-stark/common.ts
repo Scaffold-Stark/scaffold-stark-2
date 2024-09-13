@@ -25,3 +25,12 @@ export function isAddress(address: string): address is Address {
 export function feltToHex(feltBigInt: bigint) {
   return `0x${feltBigInt.toString(16)}`;
 }
+
+export function isJsonString(str: string) {
+  try {
+    JSON.parse(str);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
