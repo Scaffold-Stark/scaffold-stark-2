@@ -20,12 +20,8 @@ export const CustomConnectButton = () => {
   useAutoConnect();
   const networkColor = useNetworkColor();
   const { targetNetwork } = useTargetNetwork();
-  const {
-    status,
-    address: accountAddress,
-    chainId: accountChainId,
-  } = useAccount();
-  // const [accountChainId, setAccountChainId] = useState<bigint>(0n);
+  const { account, status, address: accountAddress } = useAccount();
+  const [accountChainId, setAccountChainId] = useState<bigint>(0n);
   const { chain } = useNetwork();
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -41,7 +37,18 @@ export const CustomConnectButton = () => {
     setModalOpen(false);
   };
 
-  // NOTE: this is refactored into verbose form as well to avoid nesting ternaries
+  // effect to get chain id and address from account
+  useEffect(() => {
+    if (account) {
+      const getChainId = async () => {
+        const chainId = await account.channel.getChainId();
+        setAccountChainId(BigInt(chainId as string));
+      };
+
+      getChainId();
+    }
+  }, [account]);
+
   if (status === "disconnected")
     return (
       <>
@@ -56,11 +63,7 @@ export const CustomConnectButton = () => {
       </>
     );
 
-  // NOTE: workaround - chain verifying workaround due to chain id being the same in devnet and sepolia
-  if (
-    accountChainId !== targetNetwork.id ||
-    chain.name !== targetNetwork.name
-  ) {
+  if (accountChainId !== targetNetwork.id) {
     return <WrongNetworkDropdown />;
   }
 
