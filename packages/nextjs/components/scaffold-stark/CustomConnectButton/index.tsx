@@ -20,11 +20,8 @@ export const CustomConnectButton = () => {
   useAutoConnect();
   const networkColor = useNetworkColor();
   const { targetNetwork } = useTargetNetwork();
-  const {
-    status,
-    chainId: accountChainId,
-    address: accountAddress,
-  } = useAccount();
+  const { account, status, address: accountAddress } = useAccount();
+  const [accountChainId, setAccountChainId] = useState<bigint>(0n);
   const { chain } = useNetwork();
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -39,6 +36,18 @@ export const CustomConnectButton = () => {
   const handleModalClose = () => {
     setModalOpen(false);
   };
+
+  // effect to get chain id and address from account
+  useEffect(() => {
+    if (account) {
+      const getChainId = async () => {
+        const chainId = await account.channel.getChainId();
+        setAccountChainId(BigInt(chainId as string));
+      };
+
+      getChainId();
+    }
+  }, [account]);
 
   if (status === "disconnected")
     return (
