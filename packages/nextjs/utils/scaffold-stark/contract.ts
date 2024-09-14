@@ -19,6 +19,7 @@ import {
   CairoOptionVariant,
   CairoResult,
   CairoResultVariant,
+  getChecksumAddress,
   uint256,
   validateAndParseAddress,
 } from "starknet";
@@ -456,12 +457,15 @@ const decodeParamsWithType = (paramType: string, param: any): unknown => {
         ? `Ok(${parseParamWithType(ok, result.unwrap(), isRead)})`
         : `Err(${parseParamWithType(error, result.unwrap(), isRead)})`;
     }, param);
+  } else if (isCairoContractAddress(paramType)) {
+    return tryParsingParamReturnObject(
+      getChecksumAddress,
+      `0x${param.toString(16)}`,
+    );
   } else if (isCairoU256(paramType)) {
     return tryParsingParamReturnObject(uint256.uint256ToBN, param);
   } else if (isCairoByteArray(paramType)) {
     return tryParsingParamReturnObject(byteArray.stringFromByteArray, param);
-  } else if (isCairoContractAddress(paramType)) {
-    return tryParsingParamReturnObject(validateAndParseAddress, param);
   } else if (isCairoFelt(paramType)) {
     return feltToHex(param);
   } else if (isCairoBool(paramType)) {
