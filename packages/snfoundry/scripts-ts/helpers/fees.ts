@@ -85,9 +85,8 @@ export async function getBalance(
         return uint256.uint256ToBN(balance);
     } catch (error) {
         console.error('Error fetching balance:', error);
-        throw error;
+        return 0n;
     }
-   
 }
 
 function getTxVersionFromFeeToken(feeToken: string, isSierra?: boolean) {
