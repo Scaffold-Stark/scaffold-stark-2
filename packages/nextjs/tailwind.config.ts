@@ -124,6 +124,9 @@ module.exports = {
           ".link:hover": {
             opacity: "80%",
           },
+          ".contract-content": {
+            background: "white",
+          },
         },
       },
       {
@@ -195,6 +198,10 @@ module.exports = {
           },
           ".link:hover": {
             opacity: "80%",
+          },
+          ".contract-content": {
+            background:
+              "linear-gradient(113.34deg, rgba(43, 34, 67, 0.6) 20.48%, rgba(37, 55, 81, 0.6) 99.67%)",
           },
         },
       },

@@ -1,6 +1,7 @@
 import scaffoldConfig from "~~/scaffold.config";
 import deployedContractsData from "~~/contracts/deployedContracts";
 import predeployedContracts from "~~/contracts/predeployedContracts";
+import configExternalContracts from "~~/contracts/configExternalContracts";
 import type {
   Abi,
   ExtractAbiEventNames,
@@ -72,7 +73,7 @@ export type GenericContractsDeclaration = {
   };
 };
 
-const deepMergeContracts = <
+export const deepMergeContracts = <
   L extends Record<PropertyKey, any>,
   E extends Record<PropertyKey, any>,
 >(
@@ -100,9 +101,14 @@ const deepMergeContracts = <
   >;
 };
 
+const mergedPredeployedContracts = deepMergeContracts(
+  predeployedContracts,
+  configExternalContracts,
+);
+
 const contractsData = deepMergeContracts(
   deployedContractsData,
-  predeployedContracts,
+  mergedPredeployedContracts,
 );
 
 type IsContractDeclarationMissing<TYes, TNo> = typeof contractsData extends {
