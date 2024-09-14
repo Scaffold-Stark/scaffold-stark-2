@@ -1,7 +1,7 @@
-import { Contract, Provider, uint256 } from "starknet";
-import { Abi } from "starknet";
+import { CairoContract, CompiledSierra, Contract, Provider, uint256, Abi } from "starknet";
 import { red, yellow } from "./colorize-log";
 import { Network } from "../types";
+import { isString } from "util";
 
 export const erc20ABI = [
     {
@@ -27,6 +27,7 @@ export const erc20ABI = [
 export async function getTxVersion(
     network: Network,
     feeToken: string,
+    isSierra?: boolean
 ) {
     const { feeToken: feeTokenOptions, provider, deployer } = network;
 
@@ -42,7 +43,7 @@ export async function getTxVersion(
         );
         if (balance > 0n) {
             console.log(yellow(`Using ${feeToken.toUpperCase()} as fee token`));
-            return getTxVersionFromFeeToken(feeToken);
+            return getTxVersionFromFeeToken(feeToken, isSierra);
         }
         console.log(
             red(`${feeToken.toUpperCase()} balance is zero, trying other options`)
@@ -59,7 +60,7 @@ export async function getTxVersion(
             );
             if (balance > 0n) {
                 console.log(yellow(`Using ${token.name.toUpperCase()} as fee token`));
-                return getTxVersionFromFeeToken(token.name);
+                return getTxVersionFromFeeToken(token.name, isSierra);
             }
             console.log(
                 red(`${token.name.toUpperCase()} balance is zero, trying next option`)
@@ -83,6 +84,24 @@ export async function getBalance(
     return uint256.uint256ToBN(balance);
 }
 
-function getTxVersionFromFeeToken(feeToken: string) {
-    return feeToken === "strk" ? "0x3" : "0x1";
+function getTxVersionFromFeeToken(feeToken: string, isSierra?: boolean) {
+    return feeToken === "strk" ? ETransactionVersion.V3 :
+        isSierra ? ETransactionVersion.V2 :
+            ETransactionVersion.V1;
+}
+
+
+/**
+ * V_ Transaction versions HexString
+ * F_ Fee Transaction Versions HexString (2 ** 128 + TRANSACTION_VERSION)
+ */
+export enum ETransactionVersion {
+    V0 = '0x0',
+    V1 = '0x1',
+    V2 = '0x2',
+    V3 = '0x3',
+    F0 = '0x100000000000000000000000000000000',
+    F1 = '0x100000000000000000000000000000001',
+    F2 = '0x100000000000000000000000000000002',
+    F3 = '0x100000000000000000000000000000003',
 }

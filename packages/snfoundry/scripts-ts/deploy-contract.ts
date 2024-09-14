@@ -10,6 +10,7 @@ import {
   extractContractHashes,
   DeclareContractPayload,
   UniversalDetails,
+  isSierra,
 } from "starknet";
 import { DeployContractParams, Network } from "./types";
 import { green, red, yellow } from "./helpers/colorize-log";
@@ -63,7 +64,8 @@ const declareIfNot_NotWait = async (
     await provider.getClassByHash(declareContractPayload.classHash);
   } catch (error) {
     try {
-      const txVersion = await getTxVersion(networks[networkName], feeToken);
+      const isSierraContract = isSierra(payload.contract);
+      const txVersion = await getTxVersion(networks[networkName], feeToken, isSierraContract);
       const { transaction_hash } = await deployer.declare(payload, {...options, version: txVersion});
       if (networkName === "sepolia" || networkName === "mainnet") {
         await provider.waitForTransaction(transaction_hash);
