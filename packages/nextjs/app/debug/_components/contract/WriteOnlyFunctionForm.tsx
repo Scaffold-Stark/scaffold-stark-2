@@ -167,8 +167,9 @@ export const WriteOnlyFunctionForm = ({
           )}
           <div
             className={`flex ${
-              formErrorMessage &&
-              "tooltip before:content-[attr(data-tip)] before:right-[-10px] before:left-auto before:transform-none"
+              isWriteDisabled ||
+              (formErrorMessage &&
+                "tooltip before:content-[attr(data-tip)] before:right-[-10px] before:left-auto before:transform-none")
             }`}
             data-tip={`${formErrorMessage}`}
           >
