@@ -1,7 +1,6 @@
 "use client";
-
 import React, { useCallback, useRef, useState, useEffect } from "react";
-import { Account, ec, json, stark, RpcProvider, hash, CallData } from 'starknet';
+import { WalletAccount, Account, ec, json, stark, RpcProvider, hash, CallData, wallet } from 'starknet';
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -16,7 +15,7 @@ import { useTheme } from "next-themes";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { devnet } from "@starknet-react/chains";
 import { SwitchTheme } from "./SwitchTheme";
-import { useAccount, useProvider } from "@starknet-react/core";
+import { useAccount, useProvider, useDeployAccount } from "@starknet-react/core";
 import { BlockIdentifier } from "starknet";
 
 type HeaderMenuLink = {
@@ -89,8 +88,9 @@ export const Header = () => {
   const isLocalNetwork = targetNetwork.id === devnet.id;
 
   const { provider } = useProvider();
-  const { address, status, chainId } = useAccount();
+  const { address, status, chainId, account} = useAccount();
   const [isDeployed, setIsDeployed] = useState(true);
+  const { deployAccount, error, isSuccess } = useDeployAccount({});
 
   useEffect(() => {
     if (status === "connected" && address && chainId === targetNetwork.id) {
@@ -162,42 +162,69 @@ export const Header = () => {
            <button
            className={`rounded-[18px] btn-sm font-bold px-8 bg-btn-wallet`}
            onClick={async () => {
+
             console.log("Deploy wallet button clicked");
             console.log("Provider:", provider.channel.nodeUrl);
             console.log("wallet:", address)
             console.log("account", account)
+            
+            console.log("wallet", wallet)
+            
 
-            // Cal`culate future address of the ArgentX account
-            const AXConstructorCallData = CallData.compile({
-              owner: address || "",
-              guardian: '0',
-            });
-            const AXcontractAddress = hash.calculateContractAddressFromHash(
-              address || "",
-              "0x036078334509b514626504edc9fb252328d1a240e4e948bef8d0c08dff45927f",
-              AXConstructorCallData,
-              0
-            );
-
-            const deployAccountPayload = {
-              classHash: "0x036078334509b514626504edc9fb252328d1a240e4e948bef8d0c08dff45927f",
-              constructorCalldata: AXConstructorCallData,
-              contractAddress: AXcontractAddress,
-              addressSalt: address || "",
+            const handleDeploy = async () => {
+              try {
+                const deployVariables = {
+                  addressSalt: "new-salt",
+                  classHash: "new-class-hash",
+                  contractAddress: "new-contract-address",
+                  constructorCalldata: { key: 'value' } // Example of dynamic constructor calldata
+                };
+          
+                // Call deployAccount with the necessary variables
+                const response = await deployAccount(deployVariables);
+                console.log("Contract deployed:", response);
+              } catch (deployError) {
+                console.error("Deployment failed:", deployError);
+              }
             };
+
+            await handleDeploy()
+
+            // const myWalletAccount = new WalletAccount({ nodeUrl: process.env.RPC_URL_SEPOLIA  }, );
+
+            // const deployData = await wallet
+
+            // Calculate future address of the ArgentX account
+            // const AXConstructorCallData = CallData.compile({
+            //   owner: address || "",
+            //   guardian: '0',
+            // });
+            // const AXcontractAddress = hash.calculateContractAddressFromHash(
+            //   address || "",
+            //   "0x036078334509b514626504edc9fb252328d1a240e4e948bef8d0c08dff45927f",
+            //   AXConstructorCallData,
+            //   0
+            // );
 
             // const deployAccountPayload = {
             //   classHash: "0x036078334509b514626504edc9fb252328d1a240e4e948bef8d0c08dff45927f",
+            //   constructorCalldata: AXConstructorCallData,
+            //   contractAddress: AXcontractAddress,
+            //   addressSalt: address || "",
             // };
 
-            const response = await account?.deployAccount(deployAccountPayload);
+            // // const deployAccountPayload = {
+            // //   classHash: "0x036078334509b514626504edc9fb252328d1a240e4e948bef8d0c08dff45927f",
+            // // };
 
-            if (response && 'contract_address' in response && 'transaction_hash' in response) {
-              const { contract_address: AXdAth, transaction_hash: AXcontractFinalAddress } = response;
-              console.log('✅ ArgentX wallet deployed at:', AXcontractFinalAddress);
-            } else {
-              console.error('Failed to deploy account or response is undefined');
-            }
+            // const response = await account?.deployAccount(deployAccountPayload);
+
+            // if (response && 'contract_address' in response && 'transaction_hash' in response) {
+            //   const { contract_address: AXdAth, transaction_hash: AXcontractFinalAddress } = response;
+            //   console.log('✅ ArgentX wallet deployed at:', AXcontractFinalAddress);
+            // } else {
+            //   console.error('Failed to deploy account or response is undefined');
+            // }
 
 
           }}
