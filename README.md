@@ -113,11 +113,14 @@ yarn start
 
 Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
 
+5. Check your environment variables. We have a yarn postinstall script that helps to fill in your environment variables. If the environment variable does not exist, you can fill them it manually to get the app running!
+
 ## Quickstart with Sepolia Testnet
 
 <details>
 
 1. Make sure you alredy cloned this repo and installed dependencies.
+
 2. Prepare your environment variables.
 
 Find the `packages/snfoundry/.env` file and fill the env variables related to Sepolia testnet with your own wallet account contract address and private key.
