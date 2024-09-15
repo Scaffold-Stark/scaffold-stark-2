@@ -27,7 +27,7 @@ export const useScaffoldContract = <TContractName extends ContractName>({
     contract = new Contract(
       [...deployedContractData.abi],
       deployedContractData.address,
-      account || publicClient,
+      publicClient,
     );
   }
 
