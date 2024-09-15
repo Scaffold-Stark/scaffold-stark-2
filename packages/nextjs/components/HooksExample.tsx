@@ -11,6 +11,8 @@ import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldRead
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
 import { ContractName } from "~~/utils/scaffold-stark/contract";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
+import { InputBase, IntegerInput } from "~~/components/scaffold-stark/";
+import { parseUnits } from "ethers";
 
 const HooksExample: React.FC = () => {
   const [contractName, setContractName] =
@@ -19,58 +21,62 @@ const HooksExample: React.FC = () => {
   const [amountEth, setAmountEth] = useState<string>("");
   const [fromBlock, setFromBlock] = useState<bigint>(0n);
 
+  const convertToWei = (amount: string) => {
+    try {
+      const weiValue = parseUnits(amount, 18);
+      const adjustedWeiValue = weiValue / BigInt(10 ** 18);
+      return adjustedWeiValue.toString();
+    } catch (error) {
+      console.error("Invalid ETH amount:", error);
+      return "0";
+    }
+  };
+
   const { data: contract, isLoading: isContractLoading } = useScaffoldContract({
     contractName: contractName as ContractName,
   });
 
   const { targetNetwork } = useTargetNetwork();
 
+  const weiAmount = convertToWei(amountEth);
+
+  const weiAmountBigInt = BigInt(weiAmount);
+
   const { sendAsync: setGreetingMulti } = useScaffoldMultiWriteContract({
     calls: [
       createContractCall("Eth" as ContractName, "approve", [
         contract?.address,
-        BigInt(amountEth),
+        weiAmountBigInt,
       ]),
       createContractCall(contractName as ContractName, "set_greeting", [
         newGreeting,
-        BigInt(amountEth),
+        weiAmountBigInt,
       ]),
     ],
   });
 
-  const {
-    data: greeting,
-    isLoading: isGreetingLoading,
-    error: greetingError,
-  } = useScaffoldReadContract({
-    contractName: contractName as ContractName,
-    functionName: "greeting",
-    args: [] as any,
-    watch: true,
-  });
+  const { data: greeting, isLoading: isGreetingLoading } =
+    useScaffoldReadContract({
+      contractName: contractName as ContractName,
+      functionName: "greeting",
+      args: [],
+      watch: true,
+    });
 
-  const {
-    data: isPremium,
-    isLoading: isPremiumLoading,
-    error: premiumError,
-  } = useScaffoldReadContract({
-    contractName: contractName as ContractName,
-    functionName: "premium",
-    args: [] as any,
-  });
+  const { data: isPremium, isLoading: isPremiumLoading } =
+    useScaffoldReadContract({
+      contractName: contractName as ContractName,
+      functionName: "premium",
+      args: [],
+    });
 
-  const {
-    data: greetingChangedEvents,
-    isLoading: isEventLoading,
-    error: eventError,
-  } = useScaffoldEventHistory({
-    contractName: contractName as ContractName,
-    eventName: "contracts::YourContract::YourContract::GreetingChanged",
-    fromBlock,
-    watch: true,
-  });
-
-  console.log(greetingChangedEvents);
+  const { data: greetingChangedEvents, isLoading: isEventLoading } =
+    useScaffoldEventHistory({
+      contractName: contractName as ContractName,
+      eventName: "contracts::YourContract::YourContract::GreetingChanged",
+      fromBlock,
+      watch: true,
+    });
 
   const handleSetGreeting = async () => {
     try {
@@ -100,6 +106,7 @@ const HooksExample: React.FC = () => {
       <h1 className="text-2xl font-bold mb-6">YourContract Example</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Contract Info */}
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
           <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">
@@ -116,31 +123,32 @@ const HooksExample: React.FC = () => {
           </div>
         </div>
 
+        {/* Set Greeting */}
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
           <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">
             Set Greeting (useScaffoldEventHistory)
           </h2>
           <div className="mb-4">
-            <label className="block text-sm font-medium  mb-2">
+            <label className="block text-sm font-medium mb-2">
               New Greeting:
             </label>
-            <input
-              type="text"
+            <InputBase
+              name="newGreeting"
               value={newGreeting}
-              onChange={(e) => setNewGreeting(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md bg-base-200"
+              onChange={(newValue) => setNewGreeting(newValue)}
+              placeholder="ByteArray new greeting"
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium  mb-2">
+            <label className="block text-sm font-medium mb-2">
               Amount ETH:
             </label>
-            <input
-              type="text"
+            <IntegerInput
               value={amountEth}
-              onChange={(e) => setAmountEth(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md bg-base-200"
+              onChange={(newValue) => setAmountEth(newValue.toString())}
+              name="amountEth"
+              placeholder="u256 amount_eth"
             />
           </div>
           <button
@@ -151,6 +159,7 @@ const HooksExample: React.FC = () => {
           </button>
         </div>
 
+        {/* Current Greeting */}
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
           <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">
@@ -167,6 +176,7 @@ const HooksExample: React.FC = () => {
           </div>
         </div>
 
+        {/* Premium Status */}
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
           <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">
@@ -183,6 +193,7 @@ const HooksExample: React.FC = () => {
           </div>
         </div>
 
+        {/* Withdraw */}
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 pb-8 md:pb-4 relative shadow">
           <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">
@@ -196,6 +207,7 @@ const HooksExample: React.FC = () => {
           </button>
         </div>
 
+        {/* Network Info */}
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
           <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">
@@ -203,6 +215,8 @@ const HooksExample: React.FC = () => {
           </h2>
           <p>Current Network: {targetNetwork.name}</p>
         </div>
+
+        {/* Greeting Changed Events */}
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
           <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">
