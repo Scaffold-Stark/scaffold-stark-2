@@ -151,20 +151,30 @@ export const Header = () => {
             console.log("wallet:", address)
             console.log("account", account)
 
-            const accountAX = new Account(provider, '0x025231fc64a3440e60cE75b2B16DA0d93C3445cC1BA253eD2aC4e0Cc68537d', '0x00e560bd22ab96d801d62cff2d44ae71bd83b7dd2bca44a1d43f527183825e');
-
+            // Cal`culate future address of the ArgentX account
             const AXConstructorCallData = CallData.compile({
-              owner: '0x025231fc64a3440e60cE75b2B16DA0d93445cC1BA253eD23BaC4e0Cc68537d',
+              owner: address || "",
               guardian: '0',
             });
+            const AXcontractAddress = hash.calculateContractAddressFromHash(
+              address || "",
+              "0x036078334509b514626504edc9fb252328d1a240e4e948bef8d0c08dff45927f",
+              AXConstructorCallData,
+              0
+            );
+
             const deployAccountPayload = {
-              classHash: '0x036078334509b514626504edc9fb252328d240e4e948bef8d0c08dff45927f',
+              classHash: "0x036078334509b514626504edc9fb252328d1a240e4e948bef8d0c08dff45927f",
               constructorCalldata: AXConstructorCallData,
-              contractAddress: address,
-              addressSalt: '0x0377ca3f131349f9a79bfdb3280eaf07c2675bdb31a23c3ba955fa57ecea55',
+              contractAddress: AXcontractAddress,
+              addressSalt: address || "",
             };
-            
-            const response = await accountAX?.deployAccount(deployAccountPayload);
+
+            // const deployAccountPayload = {
+            //   classHash: "0x036078334509b514626504edc9fb252328d1a240e4e948bef8d0c08dff45927f",
+            // };
+
+            const response = await account?.deployAccount(deployAccountPayload);
 
             if (response && 'contract_address' in response && 'transaction_hash' in response) {
               const { contract_address: AXdAth, transaction_hash: AXcontractFinalAddress } = response;
