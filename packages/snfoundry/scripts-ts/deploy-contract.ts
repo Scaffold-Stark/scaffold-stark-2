@@ -65,8 +65,15 @@ const declareIfNot_NotWait = async (
   } catch (error) {
     try {
       const isSierraContract = isSierra(payload.contract);
-      const txVersion = await getTxVersion(networks[networkName], feeToken, isSierraContract);
-      const { transaction_hash } = await deployer.declare(payload, {...options, version: txVersion});
+      const txVersion = await getTxVersion(
+        networks[networkName],
+        feeToken,
+        isSierraContract
+      );
+      const { transaction_hash } = await deployer.declare(payload, {
+        ...options,
+        version: txVersion,
+      });
       if (networkName === "sepolia" || networkName === "mainnet") {
         await provider.waitForTransaction(transaction_hash);
       }
@@ -237,7 +244,6 @@ const deployContract = async (
 };
 
 const executeDeployCalls = async (options?: UniversalDetails) => {
-  
   if (deployCalls.length < 1) {
     throw new Error(
       red(
@@ -248,7 +254,10 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
 
   try {
     const txVersion = await getTxVersion(networks[networkName], feeToken);
-    let { transaction_hash } = await deployer.execute(deployCalls, {...options, version: txVersion});
+    let { transaction_hash } = await deployer.execute(deployCalls, {
+      ...options,
+      version: txVersion,
+    });
     console.log(green("Deploy Calls Executed at "), transaction_hash);
     if (networkName === "sepolia" || networkName === "mainnet") {
       await provider.waitForTransaction(transaction_hash);
