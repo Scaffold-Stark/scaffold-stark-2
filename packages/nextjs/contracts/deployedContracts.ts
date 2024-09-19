@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     BetCryptoMaker: {
       address:
-        "0x06748276ab52ef28f251b4ff74fdcef61a0034ef35c5e3b1a1315767cd61caab",
+        "0x7e587663427b039154c22c771bf4be1a368fc6b905d4d15ca76888f43ec3b98",
       abi: [
         {
           type: "impl",
@@ -675,6 +675,8 @@ const deployedContracts = {
           ],
         },
       ],
+      classHash:
+        "0x5a22646ad7c1bd43ba37c15f3c0eeb24065612fa55d21d955c7183dcccf7ccd",
     },
   },
 } as const;

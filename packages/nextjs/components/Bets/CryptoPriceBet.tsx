@@ -39,14 +39,16 @@ function CryptoPriceBet({ cryptoPriceData, isLoading }: CryptoPriceBetProps) {
   const { data } = useDeployedContractInfo("BetCryptoMaker");
   const { writeAsync: writeAsyncYes } = useScaffoldMultiWriteContract({
     calls: [
-      createContractCall("Eth", "approve", [
-        data?.address,
-        amountEth * 10 ** 18,
-      ]),
-      createContractCall("BetCryptoMaker", "vote_yes", [
-        amountEth * 10 ** 18,
-        cryptoPriceData.id,
-      ]),
+      {
+        contractName: "Eth",
+        functionName: "approve",
+        args: [data?.address, amountEth * 10 ** 18],
+      },
+      {
+        contractName: "BetCryptoMaker",
+        functionName: "vote_yes",
+        args: [amountEth * 10 ** 18, cryptoPriceData.id],
+      },
     ],
   });
   const { writeAsync: writeAsyncNo } = useScaffoldMultiWriteContract({

@@ -45,7 +45,7 @@ export const useScaffoldMultiWriteContract = <
 
         const abiFunction = getFunctionsByStateMutability(
           contract?.abi || [],
-          "external",
+          "external"
         ).find((fn) => fn.name === functionName);
 
         return {
@@ -108,7 +108,7 @@ export function createContractCall<
 >(
   contractName: TContractName,
   functionName: TFunctionName,
-  args: UseScaffoldArgsParam<TContractName, TFunctionName>["args"],
+  args: UseScaffoldArgsParam<TContractName, TFunctionName>["args"]
 ) {
   return { contractName, functionName, args };
 }

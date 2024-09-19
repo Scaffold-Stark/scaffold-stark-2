@@ -42,7 +42,7 @@ export const WriteOnlyFunctionForm = ({
 }: //   inheritedFrom,
 WriteOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
-    getInitialFormState(abiFunction),
+    getInitialFormState(abiFunction)
   );
   const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null);
   const { status: walletStatus } = useAccount();
@@ -57,7 +57,7 @@ WriteOnlyFunctionFormProps) => {
   // side effect to update error state when not connected
   useEffect(() => {
     setFormErrorMessage(
-      writeDisabled ? "Wallet not connected or in the wrong network" : null,
+      writeDisabled ? "Wallet not connected or in the wrong network" : null
     );
   }, [writeDisabled]);
 
@@ -90,7 +90,7 @@ WriteOnlyFunctionFormProps) => {
 
         console.error(
           "⚡️ ~ file: WriteOnlyFunctionForm.tsx:handleWrite ~ error",
-          message,
+          message
         );
       }
     }
