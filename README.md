@@ -93,6 +93,8 @@ yarn install
 yarn chain
 ```
 
+> To run a fork : `yarn chain --fork-network <URL> [--fork-block <BLOCK_NUMBER>]`
+
 This command starts a local Starknet network using Devnet. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `scaffold.config.ts` for your nextjs app.
 
 3. On a second terminal, deploy the sample contract:
