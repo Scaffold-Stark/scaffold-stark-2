@@ -11,7 +11,8 @@
     "vercel": "vercel",
     "vercel:yolo": "vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "postinstall": "cp -n .env.example .env.local"
   },
   "dependencies": {
     "@heroicons/react": "^2.1.3",
