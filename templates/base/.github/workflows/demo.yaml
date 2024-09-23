@@ -5,13 +5,12 @@ on:
     types: [closed]
     branches: [main]
     paths:
-      - 'packages/nextjs/**'
+      - "packages/nextjs/**"
 
 jobs:
   version-bump-nextjs:
     runs-on: ubuntu-22.04
     steps:
-
       - name: Checkout Source Repository
         uses: actions/checkout@v4
         with:
@@ -29,7 +28,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
-          registry-url: 'https://registry.yarnpkg.com'
+          registry-url: "https://registry.yarnpkg.com"
 
       - name: Deploy to vercel
         if: success()
@@ -61,4 +60,3 @@ jobs:
           slack-message: "GitHub deployed to vercel result: ${{ job.status }}\nRepository Name: ${{ github.repository }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
