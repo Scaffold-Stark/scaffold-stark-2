@@ -1,6 +1,6 @@
 import { Address } from "@starknet-react/chains";
 import { useDeployedContractInfo } from "./useDeployedContractInfo";
-import { useContractRead } from "@starknet-react/core";
+import { useReadContract } from "@starknet-react/core";
 import { BlockNumber } from "starknet";
 import { Abi } from "abi-wan-kanabi";
 import { formatUnits } from "ethers";
@@ -12,7 +12,7 @@ type UseScaffoldStrkBalanceProps = {
 const useScaffoldStrkBalance = ({ address }: UseScaffoldStrkBalanceProps) => {
   const { data: deployedContract } = useDeployedContractInfo("Strk");
 
-  const { data, ...props } = useContractRead({
+  const { data, ...props } = useReadContract({
     functionName: "balanceOf",
     address: deployedContract?.address,
     abi: deployedContract?.abi as Abi as any[],

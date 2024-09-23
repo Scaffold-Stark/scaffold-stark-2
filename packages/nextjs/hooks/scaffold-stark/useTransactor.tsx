@@ -1,4 +1,4 @@
-import { useAccount } from "@starknet-react/core";
+import { useAccount } from "~~/hooks/useAccount";
 import {
   AccountInterface,
   InvokeFunctionResponse,
@@ -48,7 +48,7 @@ export const useTransactor = (
   _walletClient?: AccountInterface,
 ): TransactionFunc => {
   let walletClient = _walletClient;
-  const { account } = useAccount();
+  const { account, address, status } = useAccount();
   const { targetNetwork } = useTargetNetwork();
   if (walletClient === undefined && account) {
     walletClient = account;
@@ -67,11 +67,6 @@ export const useTransactor = (
       | undefined = undefined;
     try {
       const networkId = await walletClient.getChainId();
-      // Get full transaction from public client
-      const publicClient = new RpcProvider({
-        nodeUrl: targetNetwork.rpcUrls.public.http[0],
-      });
-
       notificationId = notification.loading(
         <TxnNotification message="Awaiting for user confirmation" />,
       );
@@ -88,6 +83,7 @@ export const useTransactor = (
       } else {
         throw new Error("Incorrect transaction passed to transactor");
       }
+
       notification.remove(notificationId);
 
       const blockExplorerTxURL = networkId

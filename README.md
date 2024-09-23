@@ -31,29 +31,29 @@ Before you begin, you need to install the following tools:
 
 ### Starknet-devnet version
 
-To ensure the proper functioning of scaffold-stark, your local `starknet-devnet` version must be `0.0.4`. To accomplish this, first check your local starknet-devnet version:
+To ensure the proper functioning of scaffold-stark, your local `starknet-devnet` version must be `0.2.0`. To accomplish this, first check your local starknet-devnet version:
 
 ```sh
 starknet-devnet --version
 ```
 
-If your local starknet-devnet version is not `0.0.4`, you need to install it.
+If your local starknet-devnet version is not `0.2.0`, you need to install it.
 
 ```bash
-cargo install starknet-devnet --version 0.0.4
+cargo install starknet-devnet --version 0.2.0
 ```
 
 ### Scarb version
 
-To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.6.5`. To accomplish this, first check your local Scarb version:
+To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.8.2`. To accomplish this, first check your local Scarb version:
 
 ```sh
 scarb --version
 ```
 
-If your local Scarb version is not `2.6.5`, you need to install it.
+If your local Scarb version is not `2.8.2`, you need to install it.
 
-- Install Scarb `2.6.5` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
+- Install Scarb `2.8.2` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
 
 ### Starknet Foundry version
 
@@ -69,10 +69,10 @@ If your Starknet Foundry version is not `0.27.0`, you need to install it.
 
 ## Compatible versions
 
-- Starknet-devnet - v0.0.4
-- Scarb - v2.6.5
+- Starknet-devnet - v0.2.0
+- Scarb - v2.8.2
 - Snforge - v0.27.0
-- Cairo - v2.6.4
+- Cairo - v2.8.2
 - Rpc - v0.7.0
 
 ## Quickstart with Starknet-Devnet
@@ -92,6 +92,8 @@ yarn install
 ```bash
 yarn chain
 ```
+
+> To run a fork : `yarn chain --fork-network <URL> [--fork-block <BLOCK_NUMBER>]`
 
 This command starts a local Starknet network using Devnet. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `scaffold.config.ts` for your nextjs app.
 
@@ -113,11 +115,14 @@ yarn start
 
 Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
 
+5. Check your environment variables. We have a yarn postinstall script that helps to fill in your environment variables. If the environment variable does not exist, you can fill them it manually to get the app running!
+
 ## Quickstart with Sepolia Testnet
 
 <details>
 
 1. Make sure you alredy cloned this repo and installed dependencies.
+
 2. Prepare your environment variables.
 
 Find the `packages/snfoundry/.env` file and fill the env variables related to Sepolia testnet with your own wallet account contract address and private key.
