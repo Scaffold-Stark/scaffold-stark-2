@@ -49,6 +49,8 @@
     "@types/react-copy-to-clipboard": "^5.0.4",
     "@types/react-dom": "^18",
     "@vitejs/plugin-react": "^4.3.1",
+    "@vitest/coverage-istanbul": "^2.1.1",
+    "@vitest/coverage-v8": "^2.1.1",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.1.3",
