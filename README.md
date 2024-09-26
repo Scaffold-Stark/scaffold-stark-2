@@ -174,6 +174,10 @@ curl --location 'https://starknet-sepolia.public.blastapi.io/rpc/v0_7' \
 - Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
 - Edit your deployment scripts in `packages/snfoundry/script-ts/deploy.ts`
 - Edit your smart contract tests in `packages/snfoundry/contracts/src/test`. To run tests use `yarn test`
+- You can write unit tests for your Next.js app! Run them with one the following scripts below.
+  - `yarn test:nextjs` to run regular tests with watch mode
+  - `yarn test:nextjs run` to run regular tests without watch mode
+  - `yarn test:nextjs run --coverage` to run regular tests without watch mode with coverage
 
 ## Documentation
 

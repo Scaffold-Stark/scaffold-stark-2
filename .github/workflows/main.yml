@@ -60,6 +60,10 @@ jobs:
         run: yarn next:check-types
         working-directory: ./packages/nextjs
 
+      - name: Run Next.js tests
+        run: yarn test run
+        working-directory: ./packages/nextjs
+
       - name: Build Next.js project
         run: yarn build
         working-directory: ./packages/nextjs
