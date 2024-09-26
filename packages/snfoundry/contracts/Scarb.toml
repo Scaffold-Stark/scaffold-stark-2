@@ -8,10 +8,14 @@ edition = "2023_11"
 [dependencies]
 starknet = "2.8.2"
 # Change to just "openzeppelin" to use full features
-openzeppelin_utils = "0.17.0"
 openzeppelin_access = "0.17.0"
 openzeppelin_token = "0.17.0"
+
+[dev-dependencies]
+# Change to just "openzeppelin" to use full features
+openzeppelin_utils = "0.17.0"
 snforge_std = "0.30.0"
+
 
 [[target.starknet-contract]]
 casm = true
