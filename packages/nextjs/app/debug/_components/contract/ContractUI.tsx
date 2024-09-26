@@ -83,35 +83,45 @@ export const ContractUI = ({
             )}
           </div>
           <div className="bg-transparent border-gradient rounded-[5px] px-6 lg:px-8 py-4">
-            <ContractVariables // TODO : there is no contract variables on starknet
+            <ContractVariables
               refreshDisplayVariables={refreshDisplayVariables}
               deployedContractData={deployedContractData}
             />
           </div>
         </div>
-        <div className="col-span-1 lg:col-span-2 flex flex-col gap-6">
-          <div className="z-10">
-            <div className="rounded-[5px] border border-[#8A45FC] flex flex-col mt-10 relative bg-component">
-              <div className="bg-function w-[140px] h-[32.5px] absolute self-start -top-[43px] -left-[1px] -z-10 py-[0.55rem] clip-corner">
-                <div className="flex items-center justify-center space-x-2">
-                  <p className="my-0 text-sm text-center">Read</p>
-                </div>
-              </div>
-              <div className="p-5 divide-y divide-secondary">
+        <div className="lg:col-span-2">
+          <div className="bg-base-200 rounded-lg shadow-lg overflow-hidden">
+            <div role="tablist" className="tabs tabs-lifted">
+              <input
+                type="radio"
+                name="contract_tabs"
+                role="tab"
+                className="tab tab-lg"
+                aria-label="Read"
+                defaultChecked
+              />
+              <div
+                role="tabpanel"
+                className="tab-content bg-base-100 border-base-300 rounded-b-lg p-6"
+              >
+                <h3 className="text-xl font-bold mb-4">Read Contract</h3>
                 <ContractReadMethods
                   deployedContractData={deployedContractData}
                 />
               </div>
-            </div>
-          </div>
-          <div className="z-10">
-            <div className="rounded-[5px] border border-[#8A45FC] flex flex-col mt-10 relative bg-component">
-              <div className="w-[140px] h-[32.5px] absolute self-start -top-[43px] -left-[1px] -z-10 py-[0.55rem]  bg-function clip-corner">
-                <div className="flex items-center justify-center space-x-2">
-                  <p className="my-0 text-sm">Write</p>
-                </div>
-              </div>
-              <div className="p-5 divide-y divide-secondary">
+              
+              <input
+                type="radio"
+                name="contract_tabs"
+                role="tab"
+                className="tab tab-lg"
+                aria-label="Write"
+              />
+              <div
+                role="tabpanel"
+                className="tab-content bg-base-100 border-base-300 rounded-b-lg p-6"
+              >
+                <h3 className="text-xl font-bold mb-4">Write Contract</h3>
                 <ContractWriteMethods
                   deployedContractData={deployedContractData}
                   onChange={triggerRefreshDisplayVariables}
