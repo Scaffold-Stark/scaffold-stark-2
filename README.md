@@ -39,9 +39,7 @@ starknet-devnet --version
 
 If your local starknet-devnet version is not `0.2.0`, you need to install it.
 
-```bash
-cargo install starknet-devnet --version 0.2.0
-```
+- Install Starknet-devnet `0.2.0` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
 
 ### Scarb version
 
@@ -57,23 +55,23 @@ If your local Scarb version is not `2.8.2`, you need to install it.
 
 ### Starknet Foundry version
 
-To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.27.0. To accomplish this, first check your Starknet Foundry version:
+To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.30.0. To accomplish this, first check your Starknet Foundry version:
 
 ```sh
 snforge --version
 ```
 
-If your Starknet Foundry version is not `0.27.0`, you need to install it.
+If your Starknet Foundry version is not `0.30.0`, you need to install it.
 
-- Install Starknet Foundry `0.27.0` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
+- Install Starknet Foundry `0.30.0` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
 
 ## Compatible versions
 
 - Starknet-devnet - v0.2.0
 - Scarb - v2.8.2
-- Snforge - v0.27.0
+- Snforge - v0.30.0
 - Cairo - v2.8.2
-- Rpc - v0.7.0
+- Rpc - v0.7.1
 
 ## Quickstart with Starknet-Devnet
 
@@ -155,17 +153,19 @@ Visit your app on: `http://localhost:3000`. You can interact with your smart con
 
 ### RPC specific version
 
-To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, your RPC version must be `0.7.0`. This repository contains a .env.example file, where we provided the default RPC URL for the Starknet Testnet: `RPC_URL_SEPOLIA=https://starknet-sepolia.public.blastapi.io/rpc/v0_7`. Let's verify this RPC version is `0.7.0` by running the following command:
+To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, your RPC version must be `0.7.1`. This repository contains a `.env.example` file, where we provided the default RPC URL for the Starknet Testnet: `RPC_URL_SEPOLIA=https://starknet-sepolia.public.blastapi.io/rpc/v0_7`. Let's verify this RPC version is `0.7.1` by calling a `POST` request in an API platform like `Postman` or `Insommia` . Your API endpoint should be `https://starknet-sepolia.public.blastapi.io/rpc/v0_7` and the body should be:
 
-```sh
-curl --location 'https://starknet-sepolia.public.blastapi.io/rpc/v0_7' \
---data '{
-    "jsonrpc":"2.0",
-    "method":"starknet_specVersion",
-    "id":1
-}'
+```json
+{
+ "jsonrpc":"2.0",
+ "method":"starknet_specVersion",
+ "id":1
+}
 ```
 
+You have to paste the endpoint and body in the API platform and click on the `Send` button. If the response is `0.7.1`, then you are good to go. Otherwise, you have to get the correct RPC URL endpoint.
+
+![rpc-version](./packages/nextjs/public/rpc-version.png)
 </details>
 
 ## **What's next**
