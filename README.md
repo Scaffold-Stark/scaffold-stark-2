@@ -39,9 +39,7 @@ starknet-devnet --version
 
 If your local starknet-devnet version is not `0.2.0`, you need to install it.
 
-```bash
-cargo install starknet-devnet --version 0.2.0
-```
+- Install Starknet-devnet `0.2.0` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
 
 ### Scarb version
 
