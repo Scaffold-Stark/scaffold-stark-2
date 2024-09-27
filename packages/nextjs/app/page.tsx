@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import type { NextPage } from "next";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-stark";
-import { useAccount } from "@starknet-react/core";
+import { useAccount } from "~~/hooks/useAccount";
 import { Address as AddressType } from "@starknet-react/chains";
 import Image from "next/image";
 
@@ -25,12 +24,6 @@ const Home: NextPage = () => {
             </p>
             <Address address={connectedAddress.address as AddressType} />
           </div>
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="bg-underline italic text-base font-bold max-w-full break-words break-all inline-block">
-              packages/nextjs/app/page.tsx
-            </code>
-          </p>
           <p className="text-center text-lg">
             Edit your smart contract{" "}
             <code className="bg-underline italic text-base font-bold max-w-full break-words break-all inline-block">
@@ -76,13 +69,6 @@ const Home: NextPage = () => {
             </div>
           </div>
         </div>
-        {/* <div
-          onClick={() => {
-            writeAsync();
-          }}
-        >
-          TEST TX
-        </div> */}
       </div>
     </>
   );

@@ -15,11 +15,17 @@ const Wallet = ({
     connector: Connector,
   ) => void;
 }) => {
-  const isSvg = connector.icon.light?.startsWith("<svg");
   const [clicked, setClicked] = useState(false);
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
 
+  // connector has two : dark and light icon
+  const icon =
+    typeof connector.icon === "object"
+      ? resolvedTheme === "dark"
+        ? (connector.icon.dark as string)
+        : (connector.icon.light as string)
+      : (connector.icon as string);
   return (
     <button
       className={`flex gap-4 items-center text-neutral p-[.2rem] rounded-[4px] transition-all cursor-pointer ${isDarkMode ? "hover:bg-[#385183] border-[#4f4ab7]" : "hover:bg-gradient-light hover:border-none"} border pl-3 ${clicked ? "bg-ligth" : ""}`}
@@ -29,23 +35,14 @@ const Wallet = ({
       }}
     >
       <div className="h-[2.2rem] w-[2.2rem] rounded-[5px]">
-        {isSvg ? (
-          <div
-            className="h-full w-full object-cover rounded-[5px]"
-            dangerouslySetInnerHTML={{
-              __html: connector.icon.light ?? "",
-            }}
-          />
-        ) : (
-          <Image
-            alt={connector.name}
-            loader={loader}
-            src={connector.icon.light!}
-            width={70}
-            height={70}
-            className="h-full w-full object-cover rounded-[5px]"
-          />
-        )}
+        <Image
+          alt={connector.name}
+          loader={loader}
+          src={icon}
+          width={70}
+          height={70}
+          className="h-full w-full object-cover rounded-[5px]"
+        />
       </div>
       <p className="flex-1 text-start">{connector.name}</p>
     </button>

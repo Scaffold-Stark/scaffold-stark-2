@@ -3,8 +3,9 @@
   "version": "0.0.1",
   "scripts": {
     "chain": "starknet-devnet --seed 0 --account-class cairo1",
-    "deploy": "ts-node ./scripts-ts/helpers/command.ts deploy",
-    "test": "snforge test",
+    "deploy": "ts-node scripts-ts/helpers/deploy-wrapper.ts",
+    "deploy:reset": "ts-node scripts-ts/helpers/deploy-wrapper.ts --reset",
+    "test": "cd contracts && snforge test",
     "test-eslint": "node eslint-contract-name/eslint-plugin-contract-names.test.js",
     "compile": "scarb build",
     "format": "prettier --write 'scripts-ts/**/*.{ts,tsx}' && scarb fmt",
@@ -27,7 +28,7 @@
     "dotenv-cli": "^7.4.2",
     "envfile": "^6.18.0",
     "prettier": "^2.8.8",
-    "starknet": "6.7.0",
+    "starknet": "6.12.1",
     "toml": "^3.0.0",
     "tslib": "^2.6.2"
   }

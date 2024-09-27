@@ -35,11 +35,11 @@ const chainId = argv.network || "devnet";
 
 const getContractDataFromDeployments = (): Record<
   string,
-  Record<string, { address: string; abi: Abi }>
+  Record<string, { address: string; abi: Abi; classHash: string }>
 > => {
   const allContractsData: Record<
     string,
-    Record<string, { address: string; abi: Abi }>
+    Record<string, { address: string; abi: Abi; classHash: string }>
   > = {};
 
   //interfaces

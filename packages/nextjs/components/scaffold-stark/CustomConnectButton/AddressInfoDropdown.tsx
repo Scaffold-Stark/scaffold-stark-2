@@ -23,7 +23,6 @@ import { useDisconnect, useNetwork, useConnect } from "@starknet-react/core";
 import { getStarknetPFPIfExists } from "~~/utils/profile";
 import useConditionalStarkProfile from "~~/hooks/useConditionalStarkProfile";
 import { useTheme } from "next-themes";
-import { useEffect } from "react";
 
 const allowedNetworks = getTargetNetworks();
 
@@ -242,7 +241,8 @@ export const AddressInfoDropdown = ({
               document.body,
             )}
 
-          {allowedNetworks.length > 1 ? (
+          {/* TODO: reinstate if needed */}
+          {/* {allowedNetworks.length > 1 ? (
             <li className={selectingNetwork ? "hidden" : ""}>
               <button
                 className="btn-sm !rounded-xl flex gap-3 py-3"
@@ -255,7 +255,7 @@ export const AddressInfoDropdown = ({
                 <span>Switch Network</span>
               </button>
             </li>
-          ) : null}
+          ) : null} */}
           <li className={selectingNetwork ? "hidden" : ""}>
             <button
               className="menu-item text-secondary-content btn-sm !rounded-xl flex gap-3 py-3"

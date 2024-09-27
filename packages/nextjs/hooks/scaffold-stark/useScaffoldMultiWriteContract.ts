@@ -10,13 +10,14 @@ import {
   UseScaffoldArgsParam,
   UseScaffoldWriteConfig,
 } from "~~/utils/scaffold-stark/contract";
-import { useContractWrite, useNetwork } from "@starknet-react/core";
+import { useSendTransaction, useNetwork, Abi } from "@starknet-react/core";
 import { InvocationsDetails } from "starknet";
 import { notification } from "~~/utils/scaffold-stark";
 import { useMemo } from "react";
 import { useTransactor } from "./useTransactor";
 
 export const useScaffoldMultiWriteContract = <
+  TAbi extends Abi,
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>,
@@ -26,12 +27,12 @@ export const useScaffoldMultiWriteContract = <
   calls,
   options,
 }: {
-  calls: Array<UseScaffoldWriteConfig<TContractName, TFunctionName>>;
+  calls: Array<UseScaffoldWriteConfig<TAbi, TContractName, TFunctionName>>;
   options?: InvocationsDetails;
 }) => {
   const { targetNetwork } = useTargetNetwork();
   const { chain } = useNetwork();
-  const writeTx = useTransactor();
+  const sendTxnWrapper = useTransactor();
 
   const parsedCalls = useMemo(() => {
     if (calls) {
@@ -52,8 +53,14 @@ export const useScaffoldMultiWriteContract = <
           contractAddress: contract?.address,
           entrypoint: functionName,
           calldata:
-            abiFunction && unParsedArgs
-              ? parseFunctionParams(abiFunction, unParsedArgs, false).flat()
+            abiFunction && unParsedArgs && contract
+              ? parseFunctionParams({
+                  abiFunction,
+                  isRead: false,
+                  inputs: unParsedArgs as any[],
+                  isReadArgsParsing: false,
+                  abi: contract.abi,
+                }).flat()
               : [],
         };
       });
@@ -63,9 +70,8 @@ export const useScaffoldMultiWriteContract = <
   }, [calls]);
 
   // TODO add custom options
-  const wagmiContractWrite = useContractWrite({
+  const sendTransactionInstance = useSendTransaction({
     calls: parsedCalls,
-    options,
   });
 
   const sendContractWriteTx = async () => {
@@ -78,10 +84,10 @@ export const useScaffoldMultiWriteContract = <
       return;
     }
 
-    if (wagmiContractWrite.writeAsync) {
+    if (sendTransactionInstance.sendAsync) {
       try {
         // setIsMining(true);
-        return await writeTx(() => wagmiContractWrite.writeAsync());
+        return await sendTxnWrapper(() => sendTransactionInstance.sendAsync());
       } catch (e: any) {
         throw e;
       } finally {
@@ -94,12 +100,13 @@ export const useScaffoldMultiWriteContract = <
   };
 
   return {
-    ...wagmiContractWrite,
-    writeAsync: sendContractWriteTx,
+    ...sendTransactionInstance,
+    sendAsync: sendContractWriteTx,
   };
 };
 
 export function createContractCall<
+  TAbi extends Abi,
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>,
@@ -108,7 +115,7 @@ export function createContractCall<
 >(
   contractName: TContractName,
   functionName: TFunctionName,
-  args: UseScaffoldArgsParam<TContractName, TFunctionName>["args"],
+  args: UseScaffoldArgsParam<TAbi, TContractName, TFunctionName>["args"],
 ) {
   return { contractName, functionName, args };
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
@@ -17,9 +17,16 @@ export const Footer = () => {
     (state) => state.nativeCurrencyPrice,
   );
   const { targetNetwork } = useTargetNetwork();
-  const isLocalNetwork = targetNetwork.id === devnet.id;
-  const isSepoliaNetwork = targetNetwork.id === sepolia.id;
-  const isMainnetNetwork = targetNetwork.id === mainnet.id;
+
+  // NOTE: workaround - check by name also since in starknet react devnet and sepolia has the same chainId
+  const isLocalNetwork =
+    targetNetwork.id === devnet.id && targetNetwork.network === devnet.network;
+  const isSepoliaNetwork =
+    targetNetwork.id === sepolia.id &&
+    targetNetwork.network === sepolia.network;
+  const isMainnetNetwork =
+    targetNetwork.id === mainnet.id &&
+    targetNetwork.network === mainnet.network;
 
   return (
     <div className="min-h-0 py-5 px-1 mb-11 lg:mb-0 bg-base-100">
@@ -58,7 +65,7 @@ export const Footer = () => {
           <div className="flex justify-center items-center gap-2 text-sm w-full">
             <div className="text-center">
               <a
-                href="https://github.com/Quantum3-Labs/scaffold-stark-2"
+                href="https://github.com/Scaffold-Stark/scaffold-stark-2"
                 target="_blank"
                 rel="noreferrer"
                 className="link"
@@ -66,32 +73,7 @@ export const Footer = () => {
                 Fork me
               </a>
             </div>
-            <span>·</span>
-            {/* <div className="flex justify-center items-center gap-2">
-              <p className="m-0 text-center">
-                Built with <HeartIcon className="inline-block h-4 w-4" /> by
-              </p>
-              <a
-                className="flex justify-center items-center gap-1"
-                href="https://quantum3labs.com/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <BuidlGuidlLogo className="w-3 h-5 pb-1" />
-                <span className="link">Q3 Labs</span>
-              </a>
-              <p className="m-0 text-center">at</p>
-              <a
-                className="flex justify-center items-center gap-1"
-                href="https://buidlguidl.com/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <BuidlGuidlLogo className="w-3 h-5 pb-1" />
-                <span className="link">BuidlGuidl</span>
-              </a>
-            </div>
-            <span>·</span> */}
+
             <div className="text-center">
               <a
                 href="https://t.me/+wO3PtlRAreo4MDI9"
