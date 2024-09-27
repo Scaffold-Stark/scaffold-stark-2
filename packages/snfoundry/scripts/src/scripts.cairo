@@ -1,9 +1,7 @@
 use sncast_std::{
-    declare, deploy, invoke, call, DeclareResult, DeployResult, InvokeResult, CallResult, get_nonce,
-    FeeSettings, EthFeeSettings, ScriptCommandError
+    declare, deploy, get_nonce,
+    FeeSettings, EthFeeSettings
 };
-use core::serde::Serde;
-use starknet::{testing::cheatcode, ContractAddress, ClassHash};
 
 fn main() {
     let max_fee = 99999999999999999;
@@ -18,8 +16,8 @@ fn main() {
         FeeSettings::Eth(EthFeeSettings { max_fee: Option::Some(max_fee) }),
         Option::Some(declare_nonce)
     ).expect('declare failed'); 
-    let class_hash : ClassHash = declare_result.class_hash.try_into()
-    .expect('Invalid class hash value');
+
+    let class_hash = declare_result.class_hash;
     println!("declare result: {}", declare_result);
 
     

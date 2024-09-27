@@ -32,8 +32,8 @@ function deploy(network: string = "devnet"): void {
     console.log("sepolia network specified. Running...");
     command = `
       cd scripts && rm -rf scripts_alpha-sepolia_state.json && cd .. && rm -rf target && scarb build && 
-      sncast --url ${process.env.RPC_URL_SEPOLIA} account add --name "${deployerName}" --address ${process.env.ACCOUNT_ADDRESS_SEPOLIA} --private-key ${process.env.PRIVATE_KEY_SEPOLIA} --type oz --add-profile "${deployerName}" && 
-      sncast --url ${process.env.RPC_URL_SEPOLIA} --account "${deployerName}" script run scripts --package scripts && 
+      sncast account add --url ${process.env.RPC_URL_SEPOLIA} --name "${deployerName}" --address ${process.env.ACCOUNT_ADDRESS_SEPOLIA} --private-key ${process.env.PRIVATE_KEY_SEPOLIA} --type oz --add-profile "${deployerName}" && 
+      sncast --account "${deployerName}" script run scripts --package scripts --url ${process.env.RPC_URL_SEPOLIA} && 
       ts-node ./scripts-ts/helpers/parse-deployments.ts --network sepolia
     `;
   } else if (network === "devnet") {
@@ -41,17 +41,17 @@ function deploy(network: string = "devnet"): void {
       "No network specified. Running deployment on Devnet by default..."
     );
     command = `
-      cd scripts && rm -rf  scripts_SN_GOERLI_state.json && cd .. && rm -rf target && scarb build && 
-      sncast --url ${process.env.RPC_URL_DEVNET} account add --name "${deployerName}" --address ${process.env.ACCOUNT_ADDRESS_DEVNET} --private-key ${process.env.PRIVATE_KEY_DEVNET} --type oz --add-profile "${deployerName}" && 
-      sncast --url ${process.env.RPC_URL_DEVNET} --account "${deployerName}" script run scripts --package scripts && 
+      cd scripts && rm -rf  scripts_alpha-sepolia_state.json && cd .. && rm -rf target && scarb build && 
+      sncast account add --url ${process.env.RPC_URL_DEVNET} --name "${deployerName}" --address ${process.env.ACCOUNT_ADDRESS_DEVNET} --private-key ${process.env.PRIVATE_KEY_DEVNET} --type oz --add-profile "${deployerName}" && 
+      sncast --account "${deployerName}" script run scripts --package scripts --url ${process.env.RPC_URL_DEVNET} && 
       ts-node './scripts-ts/helpers/parse-deployments.ts'
     `;
   } else if (network === "mainnet") {
     console.log("mainnet specified. Running...");
     command = `
       cd scripts && rm -rf scripts_alpha-mainnet_state.json && cd .. && rm -rf target && scarb build && 
-      sncast --url ${process.env.RPC_URL_MAINNET} account add --name "${deployerName}" --address ${process.env.ACCOUNT_ADDRESS_MAINNET} --private-key ${process.env.PRIVATE_KEY_MAINNET} --type oz --add-profile "${deployerName}" && 
-      sncast --url ${process.env.RPC_URL_MAINNET} --account "${deployerName}" script run scripts --package scripts && 
+      sncast account add --url ${process.env.RPC_URL_MAINNET}  --name "${deployerName}" --address ${process.env.ACCOUNT_ADDRESS_MAINNET} --private-key ${process.env.PRIVATE_KEY_MAINNET} --type oz --add-profile "${deployerName}" && 
+      sncast --account "${deployerName}" script run scripts --url ${process.env.RPC_URL_MAINNET} && 
       ts-node ./scripts-ts/helpers/parse-deployments.ts --network mainnet
     `;
   } else {
