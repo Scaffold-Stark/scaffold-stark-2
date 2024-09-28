@@ -97,7 +97,7 @@ export const ContractUI = ({
         </div>
 
         <div className="col-span-1 lg:col-span-2 flex flex-col gap-6">
-          <div className="tabs tabs-boxed">
+          <div className="tabs tabs-bordered">
             {tabs.map((tab) => (
               <a
                   key={tab.id}
