@@ -2,8 +2,8 @@
 
 // @refresh reset
 import { useReducer, useState } from "react";
+import dynamic from 'next/dynamic';
 import { ContractReadMethods } from "./ContractReadMethods";
-// import { ContractWriteMethods } from "./ContractWriteMethods";
 import { Address, Balance } from "~~/components/scaffold-stark";
 import {
   useDeployedContractInfo,
@@ -12,8 +12,11 @@ import {
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { ContractName } from "~~/utils/scaffold-stark/contract";
 import { ContractVariables } from "./ContractVariables";
-import { ContractWriteMethods } from "./ContractWriteMethods";
 import { ClassHash } from "~~/components/scaffold-stark/ClassHash";
+
+const ContractWriteMethods = dynamic(() => import("./ContractWriteMethods").then(mod => mod.ContractWriteMethods), {
+  loading: () => <p>Loading Write Methods...</p>,
+});
 
 type ContractUIProps = {
   contractName: ContractName;
