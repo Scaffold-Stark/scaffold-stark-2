@@ -2,7 +2,7 @@
 
 // @refresh reset
 import { useReducer, useState } from "react";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 import { ContractReadMethods } from "./ContractReadMethods";
 import { Address, Balance } from "~~/components/scaffold-stark";
 import {
@@ -14,9 +14,13 @@ import { ContractName } from "~~/utils/scaffold-stark/contract";
 import { ContractVariables } from "./ContractVariables";
 import { ClassHash } from "~~/components/scaffold-stark/ClassHash";
 
-const ContractWriteMethods = dynamic(() => import("./ContractWriteMethods").then(mod => mod.ContractWriteMethods), {
-  loading: () => <p>Loading Write Methods...</p>,
-});
+const ContractWriteMethods = dynamic(
+  () =>
+    import("./ContractWriteMethods").then((mod) => mod.ContractWriteMethods),
+  {
+    loading: () => <p>Loading Write Methods...</p>,
+  },
+);
 
 type ContractUIProps = {
   contractName: ContractName;
@@ -40,8 +44,8 @@ export const ContractUI = ({
     useDeployedContractInfo(contractName);
 
   const tabs = [
-    { id: 'read', label: 'Read' },
-    { id: 'write', label: 'Write' }
+    { id: "read", label: "Read" },
+    { id: "write", label: "Write" },
   ];
 
   if (deployedContractLoading) {
@@ -103,11 +107,11 @@ export const ContractUI = ({
           <div className="tabs tabs-bordered">
             {tabs.map((tab) => (
               <a
-                  key={tab.id}
-                  className={`tab h-10 ${activeTab === tab.id ? 'tab-active !bg-[#8b45fd5e]' : ''}`}
-                  onClick={() => setActiveTab(tab.id)}
+                key={tab.id}
+                className={`tab h-10 ${activeTab === tab.id ? "tab-active !bg-[#8b45fd5e]" : ""}`}
+                onClick={() => setActiveTab(tab.id)}
               >
-              {tab.label}
+                {tab.label}
               </a>
             ))}
           </div>
