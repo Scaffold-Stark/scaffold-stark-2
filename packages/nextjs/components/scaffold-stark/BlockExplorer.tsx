@@ -46,18 +46,21 @@ export const BlockExplorer = () => {
         className="modal-toggle"
       />
       <label htmlFor="blockexplorer-modal" className="modal cursor-pointer">
-        <label className="modal-box relative">
+        <label className="modal-box flex flex-col gap-3 justify-around relative">
           {/* dummy input to capture event onclick on modal box */}
           <input className="h-0 w-0 absolute top-0 left-0" />
-          <h3 className="text-xl font-bold mb-3">Mainnet Block Explorers</h3>
+          <div className="flex items-center justify-between">
+
+          <h3 className="text-xl font-bold">Mainnet Block Explorers</h3>
           <label
             htmlFor="blockexplorer-modal"
-            className="btn btn-ghost btn-sm btn-circle absolute right-3 top-3"
+            className="btn btn-ghost btn-sm btn-circle"
           >
             ✕
           </label>
+          </div>
           <div className="mb-4 mt-6">
-            <div className="flex flex-col space-y-3">
+            <div className="flex flex-col gap-4">
               {blockExplorers.length &&
                 blockExplorers.map((blockexplorer, id) => (
                   <a

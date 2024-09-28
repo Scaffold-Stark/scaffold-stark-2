@@ -110,18 +110,19 @@ export const Faucet = () => {
       </label>
       <input type="checkbox" id="faucet-modal" className="modal-toggle" />
       <label htmlFor="faucet-modal" className="modal cursor-pointer">
-        <label className="modal-box relative">
+        <label className="modal-box flex flex-col justify-around relative">
           {/* dummy input to capture event onclick on modal box */}
           <input className="h-0 w-0 absolute top-0 left-0" />
-          <h3 className="text-xl font-bold mb-3">Local Faucet</h3>
+          <div className="flex items-center justify-between">
+          <h3 className="text-xl font-bold">Local Faucet</h3>
           <label
-            htmlFor="faucet-modal"
-            className="btn btn-ghost btn-sm btn-circle absolute right-3 top-3"
+              htmlFor="faucet-modal"
+              className="btn btn-ghost btn-sm btn-circle"
           >
             ✕
           </label>
-          <div className="space-y-3 mt-6">
-            <div className="flex flex-col space-y-3">
+          </div>
+            <div className="flex flex-col gap-8">
               <AddressInput
                 placeholder="Destination Address"
                 value={inputAddress ?? ""}
@@ -132,6 +133,7 @@ export const Faucet = () => {
                 value={sendValue}
                 onChange={(value) => setSendValue(value)}
               />
+            </div>
               <button
                 className="h-10 btn btn-primary btn-sm px-2 rounded-full"
                 onClick={sendETH}
@@ -144,8 +146,6 @@ export const Faucet = () => {
                 )}
                 <span>Send</span>
               </button>
-            </div>
-          </div>
         </label>
       </label>
     </div>
