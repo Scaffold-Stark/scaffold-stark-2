@@ -104,11 +104,11 @@ export const ContractUI = ({
         </div>
 
         <div className="col-span-1 lg:col-span-2 flex flex-col gap-6">
-          <div className="tabs tabs-boxed border border-[#8A45FC]">
+          <div className="tabs tabs-boxed border border-[#8A45FC] rounded-[5px]">
             {tabs.map((tab) => (
               <a
                 key={tab.id}
-                className={`tab h-10 ${activeTab === tab.id ? "tab-active !bg-[#8A45FC]" : ""}`}
+                className={`tab h-10 ${activeTab === tab.id ? "tab-active !bg-[#8A45FC] !rounded-[5px]" : ""}`}
                 onClick={() => setActiveTab(tab.id)}
               >
                 {tab.label}
