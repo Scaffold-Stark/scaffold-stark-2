@@ -35,7 +35,7 @@ export const BlockExplorer = () => {
   if (ConnectedChain?.id !== mainnet.id) {
     return null;
   }
-  
+
   return (
     <div>
       <label

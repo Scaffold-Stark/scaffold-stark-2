@@ -27,16 +27,14 @@ export const BlockExplorerSepolia = () => {
       link: "https://starkcompass.com/sepolia/",
     },
   ];
-  
+
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
 
-  
   // Render only on sepolia chain
   if (ConnectedChain?.id !== sepolia.id) {
     return null;
   }
-
 
   return (
     <div>
