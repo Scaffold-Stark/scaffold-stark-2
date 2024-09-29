@@ -28,12 +28,14 @@ export const BlockExplorer = () => {
     },
   ];
 
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === "dark";
+
   // Render only on mainnet chain
   if (ConnectedChain?.id !== mainnet.id) {
     return null;
   }
-  const { resolvedTheme } = useTheme();
-  const isDarkMode = resolvedTheme === "dark";
+  
   return (
     <div>
       <label
