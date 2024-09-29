@@ -82,7 +82,7 @@ export const Header = () => {
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   useOutsideClick(
     burgerMenuRef,
-    useCallback(() => setIsDrawerOpen(false), [])
+    useCallback(() => setIsDrawerOpen(false), []),
   );
   const { targetNetwork } = useTargetNetwork();
   const isLocalNetwork = targetNetwork.network === devnet.network;
