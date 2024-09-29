@@ -27,7 +27,7 @@ p {
   @apply shadow-md;
 }
 
-.modal-box{
+.modal-box {
   @apply min-h-[20rem] max-w-[25rem];
 }
 .btn.btn-ghost {

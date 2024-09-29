@@ -76,7 +76,7 @@ export const FaucetSepolia = () => {
           </>,
           {
             duration: 5000,
-          }
+          },
         );
       }
     };
@@ -144,7 +144,6 @@ export const FaucetSepolia = () => {
           </div>
         </>
       </GenericModal>
-      
     </div>
   );
 };

@@ -70,7 +70,7 @@ export const Faucet = () => {
           </>,
           {
             duration: 5000,
-          }
+          },
         );
       }
     };
