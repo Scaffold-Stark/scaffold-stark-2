@@ -126,7 +126,7 @@ export const FaucetSepolia = () => {
                   <a
                     href={faucet.link}
                     target="_blank"
-                    className={`h-12 flex items-center btn-sm px-6 gap-4 rounded-[4px] transition-all ${isDarkMode ? "hover:bg-[#385183] border-[#4f4ab7]" : "hover:bg-gradient-light hover:border-none"} border `}
+                    className={`h-12 flex items-center btn-sm px-6 gap-4 rounded-[4px] transition-all modal-border ${isDarkMode ? "hover:bg-[#385183]" : "hover:bg-slate-200"} border `}
                     key={id}
                   >
                     <div className="flex relative w-6 h-6">

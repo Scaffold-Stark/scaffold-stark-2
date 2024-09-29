@@ -134,7 +134,7 @@ export const Faucet = () => {
             />
           </div>
           <button
-            className="h-10 btn cursor-pointer btn-sm px-2 rounded-full"
+            className="h-10 btn cursor-pointer btn-sm px-2 rounded-[4px] bg-btn-wallet border-[#4f4ab7] border hover:bg-[#385183]"
             onClick={sendETH}
             disabled={loading}
           >
