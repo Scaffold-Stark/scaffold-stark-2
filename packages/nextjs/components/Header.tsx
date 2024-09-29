@@ -124,7 +124,7 @@ export const Header = () => {
 
   return (
     <div className="sticky lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
-      <div className="navbar-start w-auto lg:w-1/2">
+      <div className="navbar-start w-auto lg:w-1/2 -mr-2">
         <div className="lg:hidden dropdown" ref={burgerMenuRef}>
           <label
             tabIndex={0}
@@ -171,7 +171,7 @@ export const Header = () => {
           <HeaderMenuLinks />
         </ul>
       </div>
-      <div className="navbar-end flex-grow mr-1">
+      <div className="navbar-end flex-grow">
         <div className="flex items-center gap-2">
           {status === "connected" && !isDeployed ? (
             <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
