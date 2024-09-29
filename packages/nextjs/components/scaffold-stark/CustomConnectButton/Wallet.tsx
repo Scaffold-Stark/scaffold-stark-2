@@ -28,7 +28,7 @@ const Wallet = ({
       : (connector.icon as string);
   return (
     <button
-      className={`flex gap-4 items-center text-neutral  rounded-full py-2 px-8 transition-all ${isDarkMode ? "hover:bg-[#385183] border-[#4f4ab7]" : "hover:bg-gradient-light hover:border-none"} border ${clicked ? "bg-ligth" : ""}`}
+      className={`flex gap-4 items-center text-neutral  rounded-[4px] p-3 transition-all ${isDarkMode ? "hover:bg-[#385183] border-[#4f4ab7]" : "hover:bg-gradient-light hover:border-none"} border ${clicked ? "bg-ligth" : ""}`}
       onClick={(e) => {
         setClicked(true);
         handleConnectWallet(e, connector);

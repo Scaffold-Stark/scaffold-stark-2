@@ -14,6 +14,7 @@ import { mintEth } from "~~/services/web3/faucet";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { RpcProvider } from "starknet";
 import { notification } from "~~/utils/scaffold-stark";
+import GenericModal from "./CustomConnectButton/GenericModal";
 
 /**
  * Faucet modal which lets you send ETH to any address.
@@ -69,7 +70,7 @@ export const Faucet = () => {
           </>,
           {
             duration: 5000,
-          },
+          }
         );
       }
     };
@@ -109,45 +110,43 @@ export const Faucet = () => {
         <span>Faucet</span>
       </label>
       <input type="checkbox" id="faucet-modal" className="modal-toggle" />
-      <label htmlFor="faucet-modal" className="modal cursor-pointer">
-        <label className="modal-box flex flex-col justify-around relative">
-          {/* dummy input to capture event onclick on modal box */}
-          <input className="h-0 w-0 absolute top-0 left-0" />
+      <GenericModal modalId="faucet-modal">
+        <>
           <div className="flex items-center justify-between">
-          <h3 className="text-xl font-bold">Local Faucet</h3>
-          <label
+            <h3 className="text-xl font-bold">Local Faucet</h3>
+            <label
               htmlFor="faucet-modal"
               className="btn btn-ghost btn-sm btn-circle"
-          >
-            ✕
-          </label>
+            >
+              ✕
+            </label>
           </div>
-            <div className="flex flex-col gap-8">
-              <AddressInput
-                placeholder="Destination Address"
-                value={inputAddress ?? ""}
-                onChange={(value) => setInputAddress(value as AddressType)}
-              />
-              <EtherInput
-                placeholder="Amount to send"
-                value={sendValue}
-                onChange={(value) => setSendValue(value)}
-              />
-            </div>
-              <button
-                className="h-10 btn btn-primary btn-sm px-2 rounded-full"
-                onClick={sendETH}
-                disabled={loading}
-              >
-                {!loading ? (
-                  <BanknotesIcon className="h-6 w-6" />
-                ) : (
-                  <span className="loading loading-spinner loading-sm"></span>
-                )}
-                <span>Send</span>
-              </button>
-        </label>
-      </label>
+          <div className="flex flex-col gap-8">
+            <AddressInput
+              placeholder="Destination Address"
+              value={inputAddress ?? ""}
+              onChange={(value) => setInputAddress(value as AddressType)}
+            />
+            <EtherInput
+              placeholder="Amount to send"
+              value={sendValue}
+              onChange={(value) => setSendValue(value)}
+            />
+          </div>
+          <button
+            className="h-10 btn cursor-pointer btn-sm px-2 rounded-full"
+            onClick={sendETH}
+            disabled={loading}
+          >
+            {!loading ? (
+              <BanknotesIcon className="h-6 w-6" />
+            ) : (
+              <span className="loading loading-spinner loading-sm"></span>
+            )}
+            <span>Send</span>
+          </button>
+        </>
+      </GenericModal>
     </div>
   );
 };

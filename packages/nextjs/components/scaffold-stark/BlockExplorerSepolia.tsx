@@ -4,6 +4,8 @@ import { Address as AddressType, sepolia } from "@starknet-react/chains";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useNetwork } from "@starknet-react/core";
 import Image from "next/image";
+import GenericModal from "./CustomConnectButton/GenericModal";
+import { useTheme } from "next-themes";
 
 export const BlockExplorerSepolia = () => {
   const { chain: ConnectedChain } = useNetwork();
@@ -31,6 +33,8 @@ export const BlockExplorerSepolia = () => {
     return null;
   }
 
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === "dark";
   return (
     <div>
       <label
@@ -45,21 +49,16 @@ export const BlockExplorerSepolia = () => {
         id="sepolia-blockexplorer-modal"
         className="modal-toggle"
       />
-      <label
-        htmlFor="sepolia-blockexplorer-modal"
-        className="modal cursor-pointer"
-      >
-        <label className="modal-box flex flex-col gap-3 justify-around relative">
-          {/* dummy input to capture event onclick on modal box */}
-          <input className="h-0 w-0 absolute top-0 left-0" />
+      <GenericModal modalId="sepolia-blockexplorer-modal">
+        <>
           <div className="flex items-center justify-between">
-          <h3 className="text-xl font-bold">Sepolia Block Explorers</h3>
-          <label
-            htmlFor="sepolia-blockexplorer-modal"
-            className="btn btn-ghost btn-sm btn-circle"
-          >
-            ✕
-          </label>
+            <h3 className="text-xl font-bold">Sepolia Block Explorers</h3>
+            <label
+              htmlFor="sepolia-blockexplorer-modal"
+              className="btn btn-ghost btn-sm btn-circle"
+            >
+              ✕
+            </label>
           </div>
           <div className="mb-4 mt-6">
             <div className="flex flex-col gap-4">
@@ -68,7 +67,7 @@ export const BlockExplorerSepolia = () => {
                   <a
                     href={blockexplorer.link}
                     target="_blank"
-                    className="h-12 btn btn-primary flex justify-start btn-sm px-6 gap-4 rounded-full"
+                    className={`h-12 flex items-center btn-sm px-6 gap-4 rounded-[4px] transition-all ${isDarkMode ? "hover:bg-[#385183] border-[#4f4ab7]" : "hover:bg-gradient-light hover:border-none"} border `}
                     key={id}
                   >
                     <div className="flex relative w-6 h-6">
@@ -84,8 +83,8 @@ export const BlockExplorerSepolia = () => {
                 ))}
             </div>
           </div>
-        </label>
-      </label>
+        </>
+      </GenericModal>
     </div>
   );
 };

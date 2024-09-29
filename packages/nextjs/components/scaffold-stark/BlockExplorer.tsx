@@ -4,6 +4,8 @@ import { Address as AddressType, mainnet } from "@starknet-react/chains";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useNetwork } from "@starknet-react/core";
 import Image from "next/image";
+import GenericModal from "./CustomConnectButton/GenericModal";
+import { useTheme } from "next-themes";
 
 export const BlockExplorer = () => {
   const { chain: ConnectedChain } = useNetwork();
@@ -30,7 +32,8 @@ export const BlockExplorer = () => {
   if (ConnectedChain?.id !== mainnet.id) {
     return null;
   }
-
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === "dark";
   return (
     <div>
       <label
@@ -45,12 +48,8 @@ export const BlockExplorer = () => {
         id="blockexplorer-modal"
         className="modal-toggle"
       />
-      <label htmlFor="blockexplorer-modal" className="modal cursor-pointer">
-        <label className="modal-box flex flex-col gap-3 justify-around relative">
-          {/* dummy input to capture event onclick on modal box */}
-          <input className="h-0 w-0 absolute top-0 left-0" />
-          <div className="flex items-center justify-between">
-
+      <GenericModal modalId="blockexplorer-modal">
+        <div className="flex items-center justify-between">
           <h3 className="text-xl font-bold">Mainnet Block Explorers</h3>
           <label
             htmlFor="blockexplorer-modal"
@@ -58,32 +57,31 @@ export const BlockExplorer = () => {
           >
             ✕
           </label>
+        </div>
+        <div className="mb-4 mt-6">
+          <div className="flex flex-col gap-4">
+            {blockExplorers.length &&
+              blockExplorers.map((blockexplorer, id) => (
+                <a
+                  href={blockexplorer.link}
+                  target="_blank"
+                  className={`h-12 flex items-center btn-sm px-6 gap-4 rounded-[4px] transition-all ${isDarkMode ? "hover:bg-[#385183] border-[#4f4ab7]" : "hover:bg-gradient-light hover:border-none"} border `}
+                  key={id}
+                >
+                  <div className="flex relative w-6 h-6">
+                    <Image
+                      alt="Starknet Developers Hub"
+                      className="cursor-pointer"
+                      fill
+                      src={blockexplorer.img}
+                    />
+                  </div>
+                  <span className="text-sm m-0">{blockexplorer.name}</span>
+                </a>
+              ))}
           </div>
-          <div className="mb-4 mt-6">
-            <div className="flex flex-col gap-4">
-              {blockExplorers.length &&
-                blockExplorers.map((blockexplorer, id) => (
-                  <a
-                    href={blockexplorer.link}
-                    target="_blank"
-                    className="h-12 btn btn-primary flex justify-start btn-sm px-6 gap-4 rounded-full"
-                    key={id}
-                  >
-                    <div className="flex relative w-6 h-6">
-                      <Image
-                        alt="Starknet Developers Hub"
-                        className="cursor-pointer"
-                        fill
-                        src={blockexplorer.img}
-                      />
-                    </div>
-                    <p className="text-sm m-0">{blockexplorer.name}</p>
-                  </a>
-                ))}
-            </div>
-          </div>
-        </label>
-      </label>
+        </div>
+      </GenericModal>
     </div>
   );
 };
