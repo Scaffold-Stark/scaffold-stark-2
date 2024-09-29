@@ -82,7 +82,7 @@ export const Header = () => {
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   useOutsideClick(
     burgerMenuRef,
-    useCallback(() => setIsDrawerOpen(false), []),
+    useCallback(() => setIsDrawerOpen(false), [])
   );
   const { targetNetwork } = useTargetNetwork();
   const isLocalNetwork = targetNetwork.network === devnet.network;
@@ -140,7 +140,7 @@ export const Header = () => {
           {isDrawerOpen && (
             <ul
               tabIndex={0}
-              className="menu menu-compact dropdown-content mt-3 p-2 shadow rounded-box w-52"
+              className="menu menu-compact dropdown-content mt-3 p-2 shadow rounded-box w-52 bg-base-100"
               onClick={() => {
                 setIsDrawerOpen(false);
               }}
@@ -171,19 +171,23 @@ export const Header = () => {
           <HeaderMenuLinks />
         </ul>
       </div>
-      <div className="navbar-end flex-grow mr-4 gap-4">
-        {status === "connected" && !isDeployed ? (
-          <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
-            Wallet Not Deployed
-          </span>
-        ) : null}
-        <CustomConnectButton />
-        {/* <FaucetButton /> */}
-        <SwitchTheme
-          className={`pointer-events-auto ${
-            isLocalNetwork ? "self-end md:self-auto" : ""
-          }`}
-        />
+      <div className="navbar-end flex-grow mr-1">
+        <div className="flex items-center gap-2">
+          {status === "connected" && !isDeployed ? (
+            <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
+              Wallet Not Deployed
+            </span>
+          ) : null}
+          <CustomConnectButton />
+          {/* <FaucetButton /> */}
+          <div className="flex items-center">
+            <SwitchTheme
+              className={`pointer-events-auto ${
+                isLocalNetwork ? "mb-1 lg:mb-0" : ""
+              }`}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
