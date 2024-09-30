@@ -12,7 +12,6 @@
   },
   "scripts": {
     "chain": "yarn workspace @ss-2/snfoundry chain",
-    "deploy": "cd packages/snfoundry && yarn workspace @ss-2/snfoundry deploy",
     "deploy": "yarn workspace @ss-2/snfoundry deploy",
     "deploy:reset": "yarn workspace @ss-2/snfoundry  deploy:reset",
     "test": "yarn workspace @ss-2/snfoundry test",
