@@ -22,7 +22,6 @@ fn main() {
     // COMMENT OUT THE DECLARE PROCESS AND, UNCOMMENT THE BELOW, THEN PASS IN THE ALREADY DECLARED HASH (ONLY FOR SEPOLIA DEPLOYMENT)
     // let class_hash = ;
 
-    
     let deploy_nonce = get_nonce('pending');
     let deploy_result = deploy(
         class_hash,
