@@ -23,6 +23,7 @@ import { useDisconnect, useNetwork, useConnect } from "@starknet-react/core";
 import { getStarknetPFPIfExists } from "~~/utils/profile";
 import useConditionalStarkProfile from "~~/hooks/useConditionalStarkProfile";
 import { useTheme } from "next-themes";
+import { default as NextImage } from "next/image";
 
 const allowedNetworks = getTargetNetworks();
 
@@ -87,10 +88,10 @@ export const AddressInfoDropdown = ({
         >
           <div className="hidden [@media(min-width:412px)]:block">
             {getStarknetPFPIfExists(profile?.profilePicture) ? (
-              <img
-                src={profile?.profilePicture}
+              <NextImage
+                src={profile?.profilePicture || ""}
                 alt="Profile Picture"
-                className="rounded-full h-7 w-7"
+                className="rounded-full"
                 width={30}
                 height={30}
               />
