@@ -34,7 +34,7 @@ Object.entries(deployedContracts[network]).forEach(([contractName, contractInfo]
   
   try {
     execSync(
-      `sncast verify --contract-address ${address} --contract-name ${contractName} --network ${network} --verifier walnut` ,
+      `sncast verify --contract-address ${address} --contract-name ${contractName} --network ${network} --verifier walnut --confirm-verification` ,
       { stdio: 'inherit' }
     );
     console.log(`Successfully verified ${contractName}`);
