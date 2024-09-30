@@ -22,14 +22,21 @@ const generatedContractComment = `/**
  * You should not edit it manually or your changes might be overwritten.
  */`;
 
-
- const addContractsData = (
-  allContractsData: Record<string, Record<string, { address: string; abi: Abi; classHash: string }>>,
-  ...newContracts: Array<Record<string, Record<string, { address: string; abi: Abi; classHash: string }>>>
+const addContractsData = (
+  allContractsData: Record<
+    string,
+    Record<string, { address: string; abi: Abi; classHash: string }>
+  >,
+  ...newContracts: Array<
+    Record<
+      string,
+      Record<string, { address: string; abi: Abi; classHash: string }>
+    >
+  >
 ) => {
   // Iterate over each new contract object and merge it with the existing data
-  newContracts.forEach(newContract => {
-    Object.keys(newContract).forEach(chainId => {
+  newContracts.forEach((newContract) => {
+    Object.keys(newContract).forEach((chainId) => {
       if (!allContractsData[chainId]) {
         allContractsData[chainId] = {};
       }
@@ -41,7 +48,6 @@ const generatedContractComment = `/**
     });
   });
 };
- 
 
 interface CommandLineOptions {
   _: string[];
@@ -136,7 +142,7 @@ const getContractDataFromDeployments = (): Record<
 
         let deployTransactionTimeStamp = 0;
         let declareTransactionTimeStamp = 0;
-        if (jsonData.transactions && jsonData.transactions.transactions){
+        if (jsonData.transactions && jsonData.transactions.transactions) {
           for (const tx of Object.values(jsonData.transactions.transactions)) {
             if (tx.name === "deploy") {
               if (tx.timestamp > deployTransactionTimeStamp) {
@@ -146,19 +152,18 @@ const getContractDataFromDeployments = (): Record<
           }
         }
 
-        if (jsonData.transactions && jsonData.transactions.transactions){
+        if (jsonData.transactions && jsonData.transactions.transactions) {
           for (const txd of Object.values(jsonData.transactions.transactions)) {
             if (txd.name === "declare") {
               if (txd.timestamp > declareTransactionTimeStamp) {
                 declareTransactionTimeStamp = txd.timestamp;
-
               }
             }
           }
         }
         if (jsonData.transactions && jsonData.transactions.transactions) {
           for (const tx of Object.values(jsonData.transactions.transactions)) {
-            //filter feature goes in here 
+            //filter feature goes in here
             if (
               tx.name === "deploy" &&
               tx.output &&
@@ -167,7 +172,12 @@ const getContractDataFromDeployments = (): Record<
             ) {
               contractData.contract_address = tx.output.contract_address;
             }
-            if (tx.name === "declare" && tx.output && tx.output.class_hash && tx.timestamp == declareTransactionTimeStamp) {
+            if (
+              tx.name === "declare" &&
+              tx.output &&
+              tx.output.class_hash &&
+              tx.timestamp == declareTransactionTimeStamp
+            ) {
               contractData.class_hash = tx.output.class_hash;
             }
           }
@@ -198,9 +208,9 @@ const getContractDataFromDeployments = (): Record<
 
         Object.entries(combinedJsonArray).forEach(([contractName, data]) => {
           if (
-            data.contract_name != '' &&
-            data.contract_address != '' &&
-            data.class_hash != ''
+            data.contract_name != "" &&
+            data.contract_address != "" &&
+            data.class_hash != ""
           ) {
             try {
               const abiFilePath = path.join(
@@ -211,23 +221,21 @@ const getContractDataFromDeployments = (): Record<
                 fs.readFileSync(abiFilePath, "utf8")
               );
 
-              
               allContractsData[chainId] = {
-                  ...allContractsData[chainId],
-                  [data.contract_name]: {
-                      //@ts-ignore
-                      address: data.contract_address,
-                      abi: abiContent.abi.filter(
-                          (item) => item.type !== "l1_handler"
-                        ),
-                      classHash: data.class_hash, 
-                      },
-                    };
-            if (deployedContracts){
-              addContractsData(allContractsData,deployedContracts);
-            }
+                ...allContractsData[chainId],
+                [data.contract_name]: {
+                  //@ts-ignore
+                  address: data.contract_address,
+                  abi: abiContent.abi.filter(
+                    (item) => item.type !== "l1_handler"
+                  ),
+                  classHash: data.class_hash,
+                },
+              };
+              if (deployedContracts) {
+                addContractsData(allContractsData, deployedContracts);
+              }
             } catch (e) {}
-
           }
         });
       } catch (error) {
@@ -268,7 +276,3 @@ const generateTsAbis = () => {
   );
 };
 generateTsAbis();
-
-
-
-

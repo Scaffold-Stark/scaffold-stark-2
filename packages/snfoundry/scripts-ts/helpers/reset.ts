@@ -8,18 +8,18 @@ const generatedContractComment = `/**
  */`;
 const TARGET_DIR = path.join(__dirname, "../../../nextjs/contracts");
 function resetDeployedContracts(): void {
-    if (!fs.existsSync(TARGET_DIR)) {
-      fs.mkdirSync(TARGET_DIR);
-    }
-  
-    fs.writeFileSync(
-      path.join(TARGET_DIR, "deployedContracts.ts"),
-      prettier.format(
-        `${generatedContractComment}\n\nconst deployedContracts = {} as const;\n\nexport default deployedContracts;`,
-        {
-          parser: "typescript",
-        }
-      )
-    );
+  if (!fs.existsSync(TARGET_DIR)) {
+    fs.mkdirSync(TARGET_DIR);
   }
-  resetDeployedContracts();
+
+  fs.writeFileSync(
+    path.join(TARGET_DIR, "deployedContracts.ts"),
+    prettier.format(
+      `${generatedContractComment}\n\nconst deployedContracts = {} as const;\n\nexport default deployedContracts;`,
+      {
+        parser: "typescript",
+      }
+    )
+  );
+}
+resetDeployedContracts();
