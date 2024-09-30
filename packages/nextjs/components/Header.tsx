@@ -171,23 +171,19 @@ export const Header = () => {
           <HeaderMenuLinks />
         </ul>
       </div>
-      <div className="navbar-end flex-grow">
-        <div className="flex items-center gap-2">
-          {status === "connected" && !isDeployed ? (
-            <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
-              Wallet Not Deployed
-            </span>
-          ) : null}
-          <CustomConnectButton />
-          {/* <FaucetButton /> */}
-          <div className="flex items-center">
-            <SwitchTheme
-              className={`pointer-events-auto ${
-                isLocalNetwork ? "mb-1 lg:mb-0" : ""
-              }`}
-            />
-          </div>
-        </div>
+      <div className="navbar-end flex-grow mr-2 gap-4">
+        {status === "connected" && !isDeployed ? (
+          <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
+            Wallet Not Deployed
+          </span>
+        ) : null}
+        <CustomConnectButton />
+        {/* <FaucetButton /> */}
+        <SwitchTheme
+          className={`pointer-events-auto ${
+            isLocalNetwork ? "mb-1 lg:mb-0" : ""
+          }`}
+        />
       </div>
     </div>
   );

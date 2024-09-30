@@ -53,7 +53,7 @@ export const CustomConnectButton = () => {
           address={accountAddress as Address}
           className="min-h-0 h-auto"
         />
-        <span className="text-xs" style={{ color: networkColor }}>
+        <span className="text-xs ml-1" style={{ color: networkColor }}>
           {chain.name}
         </span>
       </div>

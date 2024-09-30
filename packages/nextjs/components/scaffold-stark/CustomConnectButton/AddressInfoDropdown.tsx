@@ -97,13 +97,13 @@ export const AddressInfoDropdown = ({
           ) : (
             <BlockieAvatar address={address} size={28} ensImage={ensAvatar} />
           )}
-          <span className="ml-4 mr-1 text-sm">
+          <span className="ml-2 mr-2 text-sm">
             {isENS(displayName)
               ? displayName
               : profile?.name ||
                 address?.slice(0, 6) + "..." + address?.slice(-4)}
           </span>
-          <ChevronDownIcon className="h-6 w-4 ml-2 sm:ml-0" />
+          <ChevronDownIcon className="h-6 w-4 ml-2 sm:ml-0 sm:block hidden" />
         </summary>
         <ul
           tabIndex={0}
