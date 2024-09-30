@@ -123,14 +123,16 @@ export const Header = () => {
   ]);
 
   return (
-    <div className="sticky lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
+    <div className="sticky lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2 bg-base-100 shadow-md">
       <div className="navbar-start w-auto lg:w-1/2 -mr-2">
         <div className="lg:hidden dropdown" ref={burgerMenuRef}>
           <label
             tabIndex={0}
-            className={`ml-1 btn btn-ghost ${
-              isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"
-            }`}
+            className={`ml-1 btn btn-ghost 
+              [@media(max-width:379px)]:!px-3 [@media(max-width:379px)]:!py-1 
+              [@media(max-width:379px)]:!h-9 [@media(max-width:379px)]:!min-h-0
+              [@media(max-width:379px)]:!w-10
+              ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"}`}
             onClick={() => {
               setIsDrawerOpen((prevIsOpenState) => !prevIsOpenState);
             }}

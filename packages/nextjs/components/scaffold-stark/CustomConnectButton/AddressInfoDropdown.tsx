@@ -85,18 +85,19 @@ export const AddressInfoDropdown = ({
           tabIndex={0}
           className="btn bg-transparent btn-sm px-2 py-[0.35rem] dropdown-toggle gap-0 !h-auto border border-[#5c4fe5] "
         >
-          {getStarknetPFPIfExists(profile?.profilePicture) ? (
-            //eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={profile?.profilePicture}
-              alt="Profile Picture"
-              className="rounded-full h-7 w-7"
-              width={30}
-              height={30}
-            />
-          ) : (
-            <BlockieAvatar address={address} size={28} ensImage={ensAvatar} />
-          )}
+          <div className="hidden [@media(min-width:412px)]:block">
+            {getStarknetPFPIfExists(profile?.profilePicture) ? (
+              <img
+                src={profile?.profilePicture}
+                alt="Profile Picture"
+                className="rounded-full h-7 w-7"
+                width={30}
+                height={30}
+              />
+            ) : (
+              <BlockieAvatar address={address} size={28} ensImage={ensAvatar} />
+            )}
+          </div>
           <span className="ml-2 mr-2 text-sm">
             {isENS(displayName)
               ? displayName
