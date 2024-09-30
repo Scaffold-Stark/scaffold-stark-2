@@ -1,4 +1,3 @@
-
 #[starknet::interface]
 pub trait IYourContract<TContractState> {
     fn greeting(self: @TContractState) -> ByteArray;
