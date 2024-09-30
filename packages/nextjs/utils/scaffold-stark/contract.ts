@@ -1,6 +1,7 @@
 import scaffoldConfig from "~~/scaffold.config";
 import deployedContractsData from "~~/contracts/deployedContracts";
 import predeployedContracts from "~~/contracts/predeployedContracts";
+import configExternalContracts from "~~/contracts/configExternalContracts";
 import type {
   Abi,
   ExtractAbiEventNames,
@@ -8,21 +9,23 @@ import type {
   ExtractArgs,
 } from "abi-wan-kanabi/dist/kanabi";
 import {
-  UseContractReadProps,
-  UseContractWriteProps,
+  UseReadContractProps,
+  UseSendTransactionProps,
 } from "@starknet-react/core";
 import { Address } from "@starknet-react/chains";
 import {
+  CairoCustomEnum,
   CairoOption,
   CairoOptionVariant,
   CairoResult,
   CairoResultVariant,
+  getChecksumAddress,
   uint256,
   validateAndParseAddress,
 } from "starknet";
 import { byteArray } from "starknet";
 import type { MergeDeepRecord } from "type-fest/source/merge-deep";
-import { feltToHex } from "~~/utils/scaffold-stark/common";
+import { feltToHex, isJsonString } from "~~/utils/scaffold-stark/common";
 import {
   isCairoArray,
   isCairoBigInt,
@@ -35,6 +38,7 @@ import {
   isCairoOption,
   isCairoResult,
   isCairoTuple,
+  isCairoType,
   isCairoU256,
   parseGenericType,
 } from "~~/utils/scaffold-stark/types";
@@ -72,7 +76,7 @@ export type GenericContractsDeclaration = {
   };
 };
 
-const deepMergeContracts = <
+export const deepMergeContracts = <
   L extends Record<PropertyKey, any>,
   E extends Record<PropertyKey, any>,
 >(
@@ -100,9 +104,14 @@ const deepMergeContracts = <
   >;
 };
 
+const mergedPredeployedContracts = deepMergeContracts(
+  predeployedContracts,
+  configExternalContracts,
+);
+
 const contractsData = deepMergeContracts(
   deployedContractsData,
-  predeployedContracts,
+  mergedPredeployedContracts,
 );
 
 type IsContractDeclarationMissing<TYes, TNo> = typeof contractsData extends {
@@ -160,9 +169,12 @@ export type AbiEnum = {
   variants: readonly AbiParameter[];
 };
 
-export const contracts = contractsData as GenericContractsDeclaration | null;
+// TODO: resolve type properly
+export const contracts =
+  contractsData as unknown as GenericContractsDeclaration | null;
 
 export type UseScaffoldWriteConfig<
+  TAbi extends Abi,
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>,
@@ -171,17 +183,17 @@ export type UseScaffoldWriteConfig<
 > = {
   contractName: TContractName;
 } & IsContractDeclarationMissing<
-  Partial<UseContractWriteProps> & {
+  Partial<UseSendTransactionProps> & {
     functionName: string;
     args: any[];
   },
   {
     functionName: TFunctionName;
   } & Omit<
-    UseContractWriteProps,
+    UseSendTransactionProps,
     "chainId" | "abi" | "address" | "functionName" | "mode"
   > &
-    UseScaffoldArgsParam<TContractName, TFunctionName>
+    UseScaffoldArgsParam<TAbi, TContractName, TFunctionName>
 >;
 
 type InferContractAbi<TContract> = TContract extends { abi: infer TAbi }
@@ -266,20 +278,21 @@ export type ExtractAbiFunctionScaffold<
   }
 >;
 
+// let emerson = singleFunction extends listOfFunctions ? true : false;
+
 export type UseScaffoldArgsParam<
+  TAbi extends Abi,
   TContractName extends ContractName,
-  TFunctionName extends ExtractAbiFunctionNamesScaffold<
-    ContractAbi<TContractName>
-  >,
+  TFunctionName extends ExtractAbiFunctionNamesScaffold<TAbi>,
 > =
   TFunctionName extends ExtractAbiFunctionNamesWithInputsScaffold<
-    ContractAbi<TContractName>
+    ContractAbi<ContractName>
   >
     ? {
         args: OptionalTupple<
           UnionToIntersection<
             ExtractArgs<
-              ContractAbi<TContractName>,
+              TAbi,
               ExtractAbiFunctionScaffold<
                 ContractAbi<TContractName>,
                 TFunctionName
@@ -288,23 +301,26 @@ export type UseScaffoldArgsParam<
           >
         >;
       }
-    : {
-        args?: never;
-      };
+    : { args?: any[] };
 
 export type UseScaffoldReadConfig<
+  TAbi extends Abi,
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
-    ContractAbi<TContractName>
+    ContractAbi<TContractName>,
+    "view"
   >,
 > = {
   contractName: TContractName;
 } & IsContractDeclarationMissing<
-  Partial<UseContractReadProps>,
+  Partial<UseReadContractProps<TAbi, TFunctionName>>,
   {
     functionName: TFunctionName;
-  } & UseScaffoldArgsParam<TContractName, TFunctionName> &
-    Omit<UseContractReadProps, "chainId" | "abi" | "address" | "functionName">
+  } & Omit<
+    UseReadContractProps<TAbi, TFunctionName>,
+    "chainId" | "abi" | "address" | "functionName" | "args"
+  > &
+    UseScaffoldArgsParam<TAbi, TContractName, TFunctionName>
 >;
 
 export type AbiFunctionOutputs<
@@ -380,11 +396,19 @@ export function getFunctionsByStateMutability(
 }
 
 // TODO: in the future when param decoding is standarized in wallets argent and braavos we can return the object
-// TODO : starknet react makes an input validation so we need to return objects for function reads
-function tryParsingParamReturnValues(fn: (x: any) => {}, param: any) {
+// new starknet react hooks (v3) doesnt use raw parse
+function tryParsingParamReturnValues(
+  fn: (x: any) => {},
+  param: any,
+  isReadArgsParsing: boolean,
+) {
   try {
     const objectValue = fn(param);
-    if (typeof objectValue === "object" && objectValue !== null) {
+    if (
+      typeof objectValue === "object" &&
+      objectValue !== null &&
+      !isReadArgsParsing
+    ) {
       // handle empty array
       return Object.values(objectValue).map((value) => {
         if (Array.isArray(value) && value.length === 0) return "0x0";
@@ -406,223 +430,346 @@ function tryParsingParamReturnObject(fn: (x: any) => {}, param: any) {
   }
 }
 
-//@ts-ignore
+const decodeParamsWithType = (paramType: string, param: any): unknown => {
+  const isRead = true;
+  if (isCairoTuple(paramType)) {
+    return objectToCairoTuple(param, paramType);
+  } else if (isCairoArray(paramType)) {
+    return tryParsingParamReturnObject((param) => {
+      const genericType = parseGenericType(paramType)[0];
+      return genericType
+        ? // @ts-expect-error item type is unknown
+          param.map((item) => parseParamWithType(genericType, item, isRead))
+        : param;
+    }, param);
+  } else if (isCairoOption(paramType)) {
+    return tryParsingParamReturnObject((x) => {
+      const option = x as CairoOption<any>;
+      return option.isNone()
+        ? "None"
+        : `Some(${parseParamWithType(paramType.split("<").pop()!, option.unwrap(), isRead)})`;
+    }, param);
+  } else if (isCairoResult(paramType)) {
+    return tryParsingParamReturnObject((x) => {
+      const result = x as CairoResult<any, any>;
+      const [ok, error] = parseGenericType(paramType);
+      return result.isOk()
+        ? `Ok(${parseParamWithType(ok, result.unwrap(), isRead)})`
+        : `Err(${parseParamWithType(error, result.unwrap(), isRead)})`;
+    }, param);
+  } else if (isCairoContractAddress(paramType)) {
+    return tryParsingParamReturnObject(
+      getChecksumAddress,
+      `0x${param.toString(16)}`,
+    );
+  } else if (isCairoU256(paramType)) {
+    return tryParsingParamReturnObject(uint256.uint256ToBN, param);
+  } else if (isCairoByteArray(paramType)) {
+    return tryParsingParamReturnObject(byteArray.stringFromByteArray, param);
+  } else if (isCairoFelt(paramType)) {
+    return feltToHex(param);
+  } else if (isCairoBool(paramType)) {
+    return typeof param === "boolean"
+      ? param
+      : (param as string).startsWith("0x0")
+        ? "false"
+        : "true";
+  } else if (isCairoBytes31(paramType)) {
+    return tryParsingParamReturnObject(
+      (x: bigint) => `0x${x.toString(16)}`,
+      param,
+    );
+  } else if (isCairoInt(paramType)) {
+    return tryParsingParamReturnObject(
+      (x) => (typeof x === "bigint" ? Number(x) : parseInt(x, 16)),
+      param,
+    );
+  } else if (isCairoBigInt(paramType)) {
+    return tryParsingParamReturnObject((x) => BigInt(x), param);
+  } else {
+    return tryParsingParamReturnObject((x) => x, param);
+  }
+};
+
+const encodeParamsWithType = (
+  paramType: string = "",
+  param: any,
+  isReadArgsParsing: boolean,
+): unknown => {
+  if (isCairoTuple(paramType)) {
+    return tryParsingParamReturnValues(
+      (x) => stringToObjectTuple(x, paramType, isReadArgsParsing),
+      param,
+      isReadArgsParsing,
+    );
+  } else if (isCairoArray(paramType)) {
+    const genericType = parseGenericType(paramType)[0];
+
+    // if we have to process string
+    if (typeof param === "string") {
+      const tokens = param.split(",");
+      const encodedArray = [];
+      if (genericType) {
+        if (!isReadArgsParsing) encodedArray.push(tokens.length);
+
+        encodedArray.push(
+          ...tokens.map((item) =>
+            encodeParamsWithType(
+              genericType,
+              typeof item === "string" ? item.trim() : item,
+              isReadArgsParsing,
+            ),
+          ),
+        );
+
+        return encodedArray;
+      } else {
+        return param;
+      }
+    }
+
+    // if we have to process array
+    else if (Array.isArray(param)) {
+      if (genericType) {
+        const encodedArray = [];
+        if (!isReadArgsParsing) encodedArray.push(param.length);
+
+        encodedArray.push(
+          ...param.map((item) =>
+            encodeParamsWithType(
+              genericType,
+              typeof item === "string" ? item.trim() : item,
+              isReadArgsParsing,
+            ),
+          ),
+        );
+
+        return encodedArray;
+      } else {
+        return param;
+      }
+    }
+
+    // fallback
+    else {
+      return param;
+    }
+  } else if (isCairoOption(paramType)) {
+    if (param === "None") {
+      return new CairoOption(CairoOptionVariant.None);
+    }
+    const type = parseGenericType(paramType);
+    const parsedParam = param.slice(5, param.length - 1);
+    const parsedValue = encodeParamsWithType(
+      type as string,
+      parsedParam,
+      isReadArgsParsing,
+    );
+    return new CairoOption(CairoOptionVariant.Some, parsedValue);
+  } else if (isCairoU256(paramType)) {
+    return tryParsingParamReturnValues(
+      uint256.bnToUint256,
+      param,
+      isReadArgsParsing,
+    );
+  } else if (isCairoFelt(paramType)) {
+    return param;
+  } else if (isCairoByteArray(paramType)) {
+    // starknet react next version only needs raw strings
+    if (isReadArgsParsing) return param;
+
+    return tryParsingParamReturnValues(
+      byteArray.byteArrayFromString,
+      param,
+      isReadArgsParsing,
+    );
+  } else if (isCairoContractAddress(paramType)) {
+    return tryParsingParamReturnValues(
+      validateAndParseAddress,
+      param,
+      isReadArgsParsing,
+    );
+  } else if (isCairoBool(paramType)) {
+    return param == "false" ? "0x0" : "0x1";
+  } else if (isCairoResult(paramType)) {
+    if (param) {
+      const variantType =
+        param.variant.Ok && param.variant.Ok.value
+          ? param.variant.Ok
+          : param.variant.Err;
+      const variantValue = variantType.value;
+
+      const resultVariant =
+        variantType === param.variant.Ok && param.variant.Ok.value
+          ? CairoResultVariant.Ok
+          : CairoResultVariant.Err;
+      const valueType: any = encodeParamsWithType(
+        variantType.type,
+        variantValue,
+        isReadArgsParsing,
+      );
+
+      return new CairoResult(resultVariant, valueType);
+    }
+  } else {
+    try {
+      // custom enum encoding
+      if (param?.variant && typeof param.variant == "object") {
+        const parsedVariant = Object.keys(param.variant).reduce(
+          (acc, key) => {
+            if (
+              param.variant[key].value === "" ||
+              param.variant[key].value === undefined
+            ) {
+              acc[key] = undefined;
+              return acc;
+            }
+
+            acc[key] = encodeParamsWithType(
+              param.variant[key].type,
+              param.variant[key].value,
+              isReadArgsParsing,
+            );
+            return acc;
+          },
+          {} as Record<string, any>,
+        );
+
+        const isDevnet =
+          scaffoldConfig.targetNetworks[0].network.toString() === "devnet";
+
+        if (isReadArgsParsing) return new CairoCustomEnum(parsedVariant);
+
+        const encodedCustomEnum =
+          encodeCustomEnumWithParsedVariants(parsedVariant);
+
+        return Object.values(parsedVariant).length > 0
+          ? isDevnet
+            ? encodedCustomEnum
+            : [[encodedCustomEnum]]
+          : undefined;
+      }
+
+      // encode to object (v3)
+      else if (!!isReadArgsParsing) {
+        return Object.keys(param).reduce(
+          (acc, key) => {
+            const parsed = encodeParamsWithType(
+              param[key].type,
+              param[key].value,
+              isReadArgsParsing,
+            );
+
+            if (parsed !== undefined && parsed !== "") {
+              acc[key] = parsed;
+            }
+            return acc;
+          },
+          {} as Record<string, any>,
+        );
+      }
+
+      // encode to rawargs
+      else {
+        return Object.keys(param).reduce((acc, key) => {
+          const parsed = encodeParamsWithType(
+            param[key].type,
+            param[key].value,
+            isReadArgsParsing,
+          );
+
+          if (parsed !== undefined && parsed !== "") {
+            if (Array.isArray(parsed)) {
+              acc.push(...parsed);
+            } else {
+              acc.push(parsed);
+            }
+          }
+          return acc;
+        }, [] as any[]);
+      }
+    } catch (err: any) {
+      console.error(err.stack);
+      return param;
+    }
+  }
+};
+
 export function parseParamWithType(
   paramType: string,
   param: any,
   isRead: boolean,
-) {
-  if (isRead) {
-    if (isCairoTuple(paramType)) {
-      return objectToCairoTuple(param, paramType);
-    } else if (isCairoArray(paramType)) {
-      return tryParsingParamReturnObject((param) => {
-        const genericType = parseGenericType(paramType)[0];
-        return genericType
-          ? //@ts-ignore
-            param.map((item) => parseParamWithType(genericType, item, isRead))
-          : param;
-      }, param);
-    } else if (isCairoOption(paramType)) {
-      //@ts-ignore
-      return tryParsingParamReturnObject((x) => {
-        const option = x as CairoOption<any>;
-        return option.isNone()
-          ? "None"
-          : `Some(${parseParamWithType(paramType.split("<").pop()!, option.unwrap(), isRead)})`;
-      }, param);
-    } else if (isCairoResult(paramType)) {
-      //@ts-ignore
-      return tryParsingParamReturnObject((x) => {
-        const result = x as CairoResult<any, any>;
-        const [ok, error] = parseGenericType(paramType);
-        return result.isOk()
-          ? `Ok(${parseParamWithType(ok, result.unwrap(), isRead)})`
-          : `Err(${parseParamWithType(error, result.unwrap(), isRead)})`;
-      }, param);
-    } else if (isCairoU256(paramType)) {
-      return tryParsingParamReturnObject(uint256.uint256ToBN, param);
-    } else if (isCairoByteArray(paramType)) {
-      return tryParsingParamReturnObject(byteArray.stringFromByteArray, param);
-    } else if (isCairoContractAddress(paramType)) {
-      return tryParsingParamReturnObject(validateAndParseAddress, param);
-    } else if (isCairoFelt(paramType)) {
-      return feltToHex(param);
-    } else if (isCairoBool(paramType)) {
-      return typeof param === "boolean"
-        ? param
-        : (param as string).startsWith("0x0")
-          ? "false"
-          : "true";
-    } else if (isCairoBytes31(paramType)) {
-      return tryParsingParamReturnObject(
-        (x: bigint) => `0x${x.toString(16)}`,
-        param,
-      );
-    } else if (isCairoInt(paramType)) {
-      return tryParsingParamReturnObject(
-        (x) => (typeof x === "bigint" ? Number(x) : parseInt(x, 16)),
-        param,
-      );
-    } else if (isCairoBigInt(paramType)) {
-      return tryParsingParamReturnObject((x) => BigInt(x), param);
-    } else {
-      return tryParsingParamReturnObject((x) => x, param);
-    }
-  } else {
-    if (isCairoTuple(paramType)) {
-      return tryParsingParamReturnValues(
-        (x) => stringToObjectTuple(x, paramType),
-        param,
-      );
-    } else if (isCairoArray(paramType)) {
-      const genericType = parseGenericType(paramType)[0];
-
-      // if we have to process string
-      if (typeof param === "string") {
-        const tokens = param.split(",");
-        if (genericType) {
-          //@ts-ignore
-          return [
-            tokens.length,
-            ...tokens
-              //@ts-ignore
-              .map((item) =>
-                parseParamWithType(genericType, item.trim(), isRead),
-              ),
-          ];
-        } else {
-          return param;
-        }
-      }
-
-      // if we have to process array
-      else if (Array.isArray(param)) {
-        if (genericType) {
-          //@ts-ignore
-          return [
-            param.length,
-            ...param
-              //@ts-ignore
-              .map((item) => parseParamWithType(genericType, item, isRead)),
-          ];
-        } else {
-          return param;
-        }
-      }
-
-      // fallback
-      else {
-        return param;
-      }
-    } else if (isCairoOption(paramType)) {
-      if (param === "None") {
-        return new CairoOption(CairoOptionVariant.None);
-      }
-      const type = parseGenericType(paramType);
-      const parsedParam = param.slice(5, param.length - 1);
-      //@ts-ignore
-      const parsedValue = parseParamWithType(
-        type as string,
-        parsedParam,
-        isRead,
-      );
-      return new CairoOption(CairoOptionVariant.Some, parsedValue);
-    } else if (isCairoU256(paramType)) {
-      return tryParsingParamReturnValues(uint256.bnToUint256, param);
-    } else if (isCairoFelt(paramType)) {
-      return param;
-    } else if (isCairoByteArray(paramType)) {
-      return tryParsingParamReturnValues(byteArray.byteArrayFromString, param);
-    } else if (isCairoContractAddress(paramType)) {
-      return tryParsingParamReturnValues(validateAndParseAddress, param);
-    } else if (isCairoBool(paramType)) {
-      return param == "false" ? "0x0" : "0x1";
-    } else if (isCairoResult(paramType)) {
-      if (param) {
-        const variantType =
-          param.variant.Ok && param.variant.Ok.value
-            ? param.variant.Ok
-            : param.variant.Err;
-        const variantValue = variantType.value;
-
-        const resultVariant =
-          variantType === param.variant.Ok && param.variant.Ok.value
-            ? CairoResultVariant.Ok
-            : CairoResultVariant.Err;
-        const valueType: any = isCairoU256(variantType.type)
-          ? uint256.bnToUint256(variantValue)
-          : isCairoByteArray(variantType.type)
-            ? byteArray.byteArrayFromString(variantValue)
-            : parseParamWithType(variantType.type, variantValue, false);
-
-        return new CairoResult(resultVariant, valueType);
-      }
-    } else {
-      try {
-        if (typeof param.variant == "object" && param.variant !== null) {
-          const parsedVariant = Object.keys(param.variant).reduce(
-            (acc, key) => {
-              if (
-                param.variant[key].value === "" ||
-                param.variant[key].value === undefined
-              ) {
-                acc[key] = undefined;
-                return acc;
-              }
-
-              acc[key] = parseParamWithType(
-                param.variant[key].type,
-                param.variant[key].value,
-                false,
-              );
-              return acc;
-            },
-            {} as Record<string, any>,
-          );
-
-          const isDevnet =
-            scaffoldConfig.targetNetworks[0].network.toString() === "devnet";
-
-          const encodedCustomEnum =
-            encodeCustomEnumWithParsedVariants(parsedVariant);
-
-          return Object.values(parsedVariant).length > 0
-            ? isDevnet
-              ? encodedCustomEnum
-              : [[encodedCustomEnum]]
-            : undefined;
-        } else {
-          return Object.keys(param).reduce((acc, key) => {
-            const parsed = parseParamWithType(
-              param[key].type,
-              param[key].value,
-              false,
-            );
-
-            if (parsed !== undefined && parsed !== "") {
-              if (Array.isArray(parsed)) {
-                acc.push(...parsed);
-              } else {
-                acc.push(parsed);
-              }
-            }
-            return acc;
-          }, [] as any[]);
-        }
-      } catch (err) {
-        //console.log(err);
-        return param;
-      }
-    }
-  }
+  isReadArgsParsing?: boolean,
+): any {
+  if (isRead) return decodeParamsWithType(paramType, param);
+  return encodeParamsWithType(paramType, param, !!isReadArgsParsing);
 }
 
-export function parseFunctionParams(
-  abiFunction: AbiFunction,
-  inputs: any[],
+export function deepParseValues(
+  value: any,
   isRead: boolean,
-) {
+  keyAndType?: any,
+  isReadArgsParsing?: boolean,
+): any {
+  if (keyAndType) {
+    return parseParamWithType(keyAndType, value, isRead, isReadArgsParsing);
+  }
+  if (typeof value === "string") {
+    if (isJsonString(value)) {
+      const parsed = JSON.parse(value);
+      return deepParseValues(parsed, isRead, null, isReadArgsParsing);
+    } else {
+      // It's a string but not a JSON string, return as is
+      return value;
+    }
+  } else if (Array.isArray(value)) {
+    // If it's an array, recursively parse each element
+    return value.map((element) =>
+      deepParseValues(element, isRead, null, isReadArgsParsing),
+    );
+  } else if (typeof value === "object" && value !== null) {
+    // If it's an object, recursively parse each value
+    return Object.entries(value).reduce((acc: any, [key, val]) => {
+      acc[key] = deepParseValues(val, isRead, key, isReadArgsParsing);
+      return acc;
+    }, {});
+  }
+
+  // Handle boolean values represented as strings
+  if (
+    value === "true" ||
+    value === "1" ||
+    value === "0x1" ||
+    value === "0x01" ||
+    value === "0x0001"
+  ) {
+    return true;
+  } else if (
+    value === "false" ||
+    value === "0" ||
+    value === "0x0" ||
+    value === "0x00" ||
+    value === "0x0000"
+  ) {
+    return false;
+  }
+
+  return value;
+}
+
+export function parseFunctionParams({
+  abiFunction,
+  abi,
+  inputs,
+  isRead,
+  isReadArgsParsing = false,
+}: {
+  abiFunction: AbiFunction;
+  abi: Abi;
+  inputs: any[];
+  isRead: boolean;
+  isReadArgsParsing?: boolean;
+}) {
   let parsedInputs: any[] = [];
 
   //check inputs length
@@ -630,11 +777,92 @@ export function parseFunctionParams(
     return inputs;
   }
 
-  inputs.forEach((input, idx) => {
-    const paramType = abiFunction.inputs[idx].type;
-    parsedInputs.push(parseParamWithType(paramType, input, isRead));
+  const formattedInputs = formatInputForParsing({
+    abi,
+    abiFunction,
+    args: inputs,
   });
+
+  console.debug({ formattedInputs });
+
+  formattedInputs.forEach((inputItem) => {
+    const { type: inputType, value: inputValue } = inputItem;
+
+    parsedInputs.push(
+      parseParamWithType(inputType, inputValue, isRead, !!isReadArgsParsing),
+    );
+  });
+
   return parsedInputs;
+}
+
+// helper to correctly map out types to values
+function formatInputForParsing({
+  abi,
+  abiFunction,
+  args,
+}: {
+  abi: Abi;
+  abiFunction: AbiFunction;
+  args: any[];
+}) {
+  const _formatInput = (
+    arg: any,
+    index: number,
+    inputsOrMembers: AbiParameter[],
+  ) => {
+    const { type: inputType } = inputsOrMembers[index];
+
+    // terminate at Cairo primitives
+    if (
+      isCairoType(inputType) ||
+      isCairoArray(inputType) ||
+      isCairoTuple(inputType)
+    ) {
+      return { type: inputType, value: arg };
+    }
+
+    // object parsing
+    // find struct definition in abi
+    const structDef = abi.find((item) => item.name === inputType);
+    const { type: structType, name: structName } = structDef as
+      | AbiStruct
+      | AbiEnum;
+
+    // enums
+    if (structType === "enum") {
+      const { variants } = structDef as AbiEnum;
+      const argKeys = Object.keys(arg);
+      const formattedEntries = argKeys.map((argKey, argIndex): any => {
+        // get the value
+        const structValue = arg[argKey];
+        return [
+          argKey,
+          _formatInput(structValue, argIndex, variants as AbiParameter[]),
+        ];
+      });
+      return { type: structName, value: { variant: Object.fromEntries } };
+    }
+
+    const { members } = structDef as AbiStruct;
+    const argKeys = Object.keys(arg);
+    const formattedEntries = argKeys.map((argKey, argIndex): any => {
+      // get the value
+      const structValue = arg[argKey];
+      return [
+        argKey,
+        _formatInput(structValue, argIndex, members as AbiParameter[]),
+      ];
+    });
+    return {
+      type: structName,
+      value: Object.fromEntries(formattedEntries),
+    };
+  };
+
+  return args.map((arg, index) =>
+    _formatInput(arg, index, abiFunction.inputs as AbiParameter[]),
+  );
 }
 
 function parseTuple(value: string): string[] {
@@ -674,7 +902,7 @@ function objectToCairoTuple(obj: { [key: number]: any }, type: string): string {
       const index = parseInt(key, 10);
       const value = obj[index];
       const valueType = types[index];
-      return parseParamWithType(valueType, value, true);
+      return decodeParamsWithType(valueType, value);
     })
     .join(",");
 
@@ -684,13 +912,14 @@ function objectToCairoTuple(obj: { [key: number]: any }, type: string): string {
 function stringToObjectTuple(
   tupleString: string,
   paramType: string,
+  isReadArgsParsing?: boolean,
 ): { [key: number]: any } {
   const values = parseTuple(tupleString);
   const types = parseTuple(paramType);
 
   const obj: { [key: number]: any } = {};
   values.forEach((value, index) => {
-    obj[index] = parseParamWithType(types[index], value, false);
+    obj[index] = encodeParamsWithType(types[index], value, !!isReadArgsParsing);
   });
 
   return obj;

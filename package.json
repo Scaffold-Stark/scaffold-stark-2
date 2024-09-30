@@ -1,6 +1,6 @@
 {
   "name": "ss-2",
-  "version": "0.2.10",
+  "version": "0.3.2",
   "author": "Q3 Labs",
   "license": "MIT",
   "private": true,
@@ -21,6 +21,7 @@
     "next:check-types": "yarn workspace @ss-2/nextjs check-types",
     "vercel": "yarn workspace @ss-2/nextjs vercel",
     "vercel:yolo": "yarn workspace @ss-2/nextjs vercel:yolo",
+    "test:nextjs": "yarn workspace @ss-2/nextjs test",
     "format": "yarn workspace @ss-2/nextjs format && yarn workspace @ss-2/snfoundry format",
     "format:check": "yarn workspace @ss-2/nextjs format:check && yarn workspace @ss-2/snfoundry format:check",
     "prepare": "husky"

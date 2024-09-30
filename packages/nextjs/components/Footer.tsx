@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
@@ -17,9 +17,16 @@ export const Footer = () => {
     (state) => state.nativeCurrencyPrice,
   );
   const { targetNetwork } = useTargetNetwork();
-  const isLocalNetwork = targetNetwork.id === devnet.id;
-  const isSepoliaNetwork = targetNetwork.id === sepolia.id;
-  const isMainnetNetwork = targetNetwork.id === mainnet.id;
+
+  // NOTE: workaround - check by name also since in starknet react devnet and sepolia has the same chainId
+  const isLocalNetwork =
+    targetNetwork.id === devnet.id && targetNetwork.network === devnet.network;
+  const isSepoliaNetwork =
+    targetNetwork.id === sepolia.id &&
+    targetNetwork.network === sepolia.network;
+  const isMainnetNetwork =
+    targetNetwork.id === mainnet.id &&
+    targetNetwork.network === mainnet.network;
 
   return (
     <div className="min-h-0 py-5 px-1 mb-11 lg:mb-0 bg-base-100">

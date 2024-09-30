@@ -1,8 +1,7 @@
 "use client";
 
 import type { NextPage } from "next";
-import { useAccount } from "@starknet-react/core";
-
+import { useAccount } from "~~/hooks/useAccount";
 const Home: NextPage = () => {
   const connectedAddress = useAccount();
 
