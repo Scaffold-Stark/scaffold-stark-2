@@ -23,19 +23,10 @@ export const CustomConnectButton = () => {
   const { account, status, address: accountAddress } = useAccount();
   const [accountChainId, setAccountChainId] = useState<bigint>(0n);
   const { chain } = useNetwork();
-  const [modalOpen, setModalOpen] = useState(false);
 
   const blockExplorerAddressLink = accountAddress
     ? getBlockExplorerAddressLink(targetNetwork, accountAddress)
     : undefined;
-
-  const handleWalletConnect = () => {
-    setModalOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setModalOpen(false);
-  };
 
   // effect to get chain id and address from account
   useEffect(() => {
@@ -49,19 +40,7 @@ export const CustomConnectButton = () => {
     }
   }, [account]);
 
-  if (status === "disconnected")
-    return (
-      <>
-        <button
-          className={`rounded-[18px] btn-sm font-bold px-8 bg-btn-wallet`}
-          onClick={handleWalletConnect}
-          type="button"
-        >
-          Connect
-        </button>
-        <ConnectModal isOpen={modalOpen} onClose={handleModalClose} />
-      </>
-    );
+  if (status === "disconnected") return <ConnectModal />;
 
   if (accountChainId !== targetNetwork.id) {
     return <WrongNetworkDropdown />;
