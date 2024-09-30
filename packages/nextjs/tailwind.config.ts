@@ -78,7 +78,11 @@ module.exports = {
               "linear-gradient(270deg, #A7ECFF -17.42%, #E8B6FF 109.05%)",
           },
           ".bg-modal": {
-            background: "rgba(255, 255, 255, 0.78)",
+            background:
+              "linear-gradient(270deg, #ece9fb -17.42%, #e3f4fd 109.05%)",
+          },
+          ".modal-border": {
+            border: "1px solid #5c4fe5",
           },
           ".bg-gradient-nav": {
             background: "#000000",
@@ -152,6 +156,9 @@ module.exports = {
           },
           ".bg-modal": {
             background: "linear-gradient(90deg, #2B2243 0%, #253751 100%)",
+          },
+          ".modal-border": {
+            border: "1px solid #4f4ab7",
           },
           ".bg-gradient-nav": {
             "background-image":
