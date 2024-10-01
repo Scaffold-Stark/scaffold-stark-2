@@ -86,9 +86,15 @@ for (let i = 0; i < args.length; i++) {
   }
 }
 
-if (command === "deploy") {
-  loadEnvVariables(envFilePath);
-  deploy(network);
-} else {
-  console.error("Invalid Command");
+function main() {
+  if (command === "deploy") {
+    loadEnvVariables(envFilePath);
+    deploy(network);
+  } else {
+    console.error("Invalid Command");
+  }
+}
+
+if (typeof module !== "undefined" && require.main === module) {
+  main();
 }
