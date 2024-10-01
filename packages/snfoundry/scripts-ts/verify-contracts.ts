@@ -2,6 +2,7 @@ import path from 'path';
 import { execSync } from 'child_process';
 import yargs from 'yargs';
 import fs from 'fs';
+import { green, red, yellow } from "./helpers/colorize-log";
 
 // Import deployedContracts
 import deployedContracts from '../../nextjs/contracts/deployedContracts';
@@ -29,7 +30,7 @@ function main() {
   
   // Remove comments and extract contract names
   const contractsToVerify = deployFileContent
-    .replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '')
+    .replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '') 
     .match(/contract:\s*"([^"]+)"/g)
     ?.map(match => match.split('"')[1]) || [];
 
@@ -41,22 +42,19 @@ function main() {
   Object.entries(deployedContracts[network]).forEach(([contract, contractInfo]: [string, any]) => {
     if (contractsToVerify.includes(contract)) {
       const { address } = contractInfo;
-      
-      console.log(`Verifying ${contract} on ${network}...`);
-      
+      console.log(yellow(`Verifying ${contract} on ${network}...`));
       try {
         execSync(
           `sncast verify --contract-address ${address} --contract-name ${contract} --network ${network} --verifier walnut --confirm-verification`,
           { stdio: 'inherit' }
         );
-        console.log(`Successfully verified ${contract}`);
+        console.log(green("Successfully verified"), contract);
       } catch (error) {
-        console.error(`Failed to verify ${contract}:`, error);
+        console.error(red(`Failed to verify ${contract}:`), error);
       }
     }
   });
-
-  console.log('Verification process completed.');
+  console.log(green("✅ Verification process completed."));
 }
 
 if (typeof module !== "undefined" && require.main === module) {
