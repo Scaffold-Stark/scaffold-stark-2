@@ -1,10 +1,7 @@
 import path from 'path';
 import { execSync } from 'child_process';
 import yargs from 'yargs';
-import fs from 'fs';
 import { green, red, yellow } from "./helpers/colorize-log";
-
-// Import deployedContracts
 import deployedContracts from '../../nextjs/contracts/deployedContracts';
 
 function main() {
@@ -19,39 +16,42 @@ function main() {
 
   const network = argv.network;
 
-  if (!deployedContracts[network]) {
-    console.error(`No deployed contracts found for network: ${network}`);
+  if (network !== 'sepolia' && network !== 'mainnet') {
+    console.error(`Unsupported network: ${network}. Please use 'sepolia' or 'mainnet'.`);
     process.exit(1);
   }
 
-  // Read and parse the deploy.ts file
-  const deployFilePath = path.resolve(__dirname, 'deploy.ts');
-  const deployFileContent = fs.readFileSync(deployFilePath, 'utf-8');
-  
-  // Remove comments and extract contract names
-  const contractsToVerify = deployFileContent
-    .replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '') 
-    .match(/contract:\s*"([^"]+)"/g)
-    ?.map(match => match.split('"')[1]) || [];
+  const contractsToVerify = deployedContracts[network];
+
+  if (!contractsToVerify) {
+    console.error(`No deployed contracts found for network: ${network}`);
+    process.exit(1);
+  }
 
   // Change to the contracts directory
   const contractsDir = path.resolve(__dirname, '../contracts');
   process.chdir(contractsDir);
 
   // Verify each contract
-  Object.entries(deployedContracts[network]).forEach(([contract, contractInfo]: [string, any]) => {
-    if (contractsToVerify.includes(contract)) {
-      const { address } = contractInfo;
-      console.log(yellow(`Verifying ${contract} on ${network}...`));
-      try {
-        execSync(
-          `sncast verify --contract-address ${address} --contract-name ${contract} --network ${network} --verifier walnut --confirm-verification`,
-          { stdio: 'inherit' }
-        );
-        console.log(green("Successfully verified"), contract);
-      } catch (error) {
-        console.error(red(`Failed to verify ${contract}:`), error);
-      }
+  Object.entries(contractsToVerify).forEach(([contractName, contractInfo]: [string, any]) => {
+    const { address, abi } = contractInfo;
+    const interfaceNameItem = abi.find(item => item.type === 'impl' && item.interface_name);
+    if (!interfaceNameItem) {
+      console.error(red(`Failed to find Contract for ${contractName}`));
+      return;
+    }
+    const contractParts = interfaceNameItem.interface_name.split('::');
+    const contract = contractParts[contractParts.length - 2];
+
+    console.log(yellow(`Verifying ${contractName} on ${network}...`));
+    try {
+      execSync(
+        `sncast verify --contract-address ${address} --contract-name ${contract} --network ${network} --verifier walnut --confirm-verification`,
+        { stdio: 'inherit' }
+      );
+      console.log(green("Successfully verified"), contractName);
+    } catch (error) {
+      console.error(red(`Failed to verify ${contractName}:`), error);
     }
   });
   console.log(green("✅ Verification process completed."));
