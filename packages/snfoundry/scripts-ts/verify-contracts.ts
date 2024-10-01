@@ -1,6 +1,7 @@
 import path from 'path';
 import { execSync } from 'child_process';
 import yargs from 'yargs';
+import fs from 'fs';
 
 // Import deployedContracts
 import deployedContracts from '../../nextjs/contracts/deployedContracts';
@@ -22,24 +23,36 @@ function main() {
     process.exit(1);
   }
 
+  // Read and parse the deploy.ts file
+  const deployFilePath = path.resolve(__dirname, 'deploy.ts');
+  const deployFileContent = fs.readFileSync(deployFilePath, 'utf-8');
+  
+  // Remove comments and extract contract names
+  const contractsToVerify = deployFileContent
+    .replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '')
+    .match(/contract:\s*"([^"]+)"/g)
+    ?.map(match => match.split('"')[1]) || [];
+
   // Change to the contracts directory
   const contractsDir = path.resolve(__dirname, '../contracts');
   process.chdir(contractsDir);
 
   // Verify each contract
-  Object.entries(deployedContracts[network]).forEach(([contractName, contractInfo]: [string, any]) => {
-    const { address } = contractInfo;
-    
-    console.log(`Verifying ${contractName} on ${network}...`);
-    
-    try {
-      execSync(
-        `sncast verify --contract-address ${address} --contract-name ${contractName} --network ${network} --verifier walnut --confirm-verification`,
-        { stdio: 'inherit' }
-      );
-      console.log(`Successfully verified ${contractName}`);
-    } catch (error) {
-      console.error(`Failed to verify ${contractName}:`, error);
+  Object.entries(deployedContracts[network]).forEach(([contract, contractInfo]: [string, any]) => {
+    if (contractsToVerify.includes(contract)) {
+      const { address } = contractInfo;
+      
+      console.log(`Verifying ${contract} on ${network}...`);
+      
+      try {
+        execSync(
+          `sncast verify --contract-address ${address} --contract-name ${contract} --network ${network} --verifier walnut --confirm-verification`,
+          { stdio: 'inherit' }
+        );
+        console.log(`Successfully verified ${contract}`);
+      } catch (error) {
+        console.error(`Failed to verify ${contract}:`, error);
+      }
     }
   });
 
