@@ -1,10 +1,8 @@
 import path from 'path';
 import { execSync } from 'child_process';
 import yargs from 'yargs';
-
 // Import deployedContracts
-const deployedContractsPath = path.resolve(__dirname, '../../nextjs/contracts/deployedContracts');
-const deployedContracts = require(deployedContractsPath).default;
+import deployedContracts from '../../nextjs/contracts/deployedContracts';
 
 // Parse command line arguments
 const argv = yargs(process.argv.slice(2))
