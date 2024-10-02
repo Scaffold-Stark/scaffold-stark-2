@@ -1,153 +1,134 @@
-import Image from "next/image";
-import GenericModal from "./GenericModal";
 import { Connector, useConnect } from "@starknet-react/core";
-import React, { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import Wallet from "~~/components/scaffold-stark/CustomConnectButton/Wallet";
 import { useLocalStorage } from "usehooks-ts";
 import { burnerAccounts } from "~~/utils/devnetAccounts";
 import { BurnerConnector } from "~~/services/web3/stark-burner/BurnerConnector";
-
-type Props = {
-  isOpen: boolean;
-  onClose: () => void;
-};
-
+import { useTheme } from "next-themes";
+import { BlockieAvatar } from "../BlockieAvatar";
+import GenericModal from "./GenericModal";
 const loader = ({ src }: { src: string }) => {
   return src;
 };
 
-const ConnectModal = ({ isOpen, onClose }: Props) => {
-  const [animate, setAnimate] = useState(false);
+const ConnectModal = () => {
+  const modalRef = useRef<HTMLInputElement>(null);
   const [isBurnerWallet, setIsBurnerWallet] = useState(false);
 
-  const closeModal = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    setAnimate(false);
-    setTimeout(() => {
-      onClose();
-    }, 400);
-    setIsBurnerWallet(false);
-  };
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === "dark";
 
-  useEffect(() => setAnimate(isOpen), [isOpen]);
-
-  const { connectors, connect } = useConnect();
+  const { connectors, connect, error, status, ...props } = useConnect();
 
   const [_, setLastConnector] = useLocalStorage<{ id: string; ix?: number }>(
     "lastUsedConnector",
     { id: "" },
     {
       initializeWithValue: false,
-    }
+    },
   );
+
+  const handleCloseModal = () => {
+    if (modalRef.current) {
+      modalRef.current.checked = false;
+    }
+  };
 
   function handleConnectWallet(
     e: React.MouseEvent<HTMLButtonElement>,
-    connector: Connector
+    connector: Connector,
   ): void {
     if (connector.id === "burner-wallet") {
       setIsBurnerWallet(true);
       return;
     }
-
     connect({ connector });
     setLastConnector({ id: connector.id });
-    closeModal(e);
+    handleCloseModal();
   }
 
   function handleConnectBurner(
     e: React.MouseEvent<HTMLButtonElement>,
-    ix: number
+    ix: number,
   ) {
     const connector = connectors.find(
-      (it) => it.id == "burner-wallet"
+      (it) => it.id == "burner-wallet",
     ) as BurnerConnector;
     if (connector) {
       connector.burnerAccount = burnerAccounts[ix];
       connect({ connector });
       setLastConnector({ id: connector.id, ix });
-      closeModal(e);
+      handleCloseModal();
     }
   }
 
   return (
-    <GenericModal
-      isOpen={isOpen}
-      onClose={closeModal}
-      animate={animate}
-      className={`w-[90vw] mx-auto md:max-h-[30rem] md:max-w-[25rem] bg-background border border-border pb-4`}
-    >
-      <div className="flex p-4 w-full lg:p-0 ">
-        <div className="basis-5/6 lg:col-span-2   lg:py-4 lg:pl-8">
-          <h2 className="text-center my-4 lg:text-start font-bold text-base-100 text-[1.125em]">
-            Connect a Wallet
-          </h2>
-        </div>
-        <div className="ml-auto lg:col-span-3 lg:py-4 lg:pr-8 text-base-100 self-center">
-          <button
-            onClick={(e) => {
-              closeModal(e);
-              e.stopPropagation();
-            }}
-            className="w-8 h-8  grid place-content-center rounded-full  text-base-100"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
+    <div>
+      <label
+        htmlFor="connect-modal"
+        className="rounded-[18px]  btn-sm font-bold px-8 bg-btn-wallet py-3 cursor-pointer"
+      >
+        <span>Connect</span>
+      </label>
+      <input
+        ref={modalRef}
+        type="checkbox"
+        id="connect-modal"
+        className="modal-toggle"
+      />
+      <GenericModal modalId="connect-modal">
+        <>
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-bold">
+              {isBurnerWallet ? "Choose account" : "Connect a Wallet"}
+            </h3>
+            <label
+              onClick={() => setIsBurnerWallet(false)}
+              htmlFor="connect-modal"
+              className="btn btn-ghost btn-sm btn-circle cursor-pointer"
             >
-              <path
-                fill="currentColor"
-                d="m6.4 18.308l-.708-.708l5.6-5.6l-5.6-5.6l.708-.708l5.6 5.6l5.6-5.6l.708.708l-5.6 5.6l5.6 5.6l-.708.708l-5.6-5.6z"
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
-      <div className="flex flex-col flex-1 justify-between  ">
-        <div className="px-8 lg:h-full lg:col-span-2  ">
-          {/*  <h4 className="mb-[1rem] text-base-100 font-semibold">Popular</h4> */}
-          <div className="flex flex-col gap-4 ">
-            {connectors.map((connector, index) => (
-              <Wallet
-                key={connector.id || index}
-                connector={connector}
-                loader={loader}
-                handleConnectWallet={handleConnectWallet}
-              />
-            ))}
+              ✕
+            </label>
           </div>
-        </div>
-        <div className=" h-fit lg:h-full lg:border-none lg:col-span-3 lg:px-8 lg:py-0 lg:flex lg:flex-col pb-[20px]">
-          {isBurnerWallet ? (
-            <>
-              <div className="text-base-100 font-medium">
-                <h4>Choose account</h4>
-              </div>
-              <div className="flex flex-col pb-[20px] items-center justify-end gap-3">
-                <div className="h-[300px] overflow-y-auto flex w-full flex-col gap-2">
-                  {burnerAccounts.map((burnerAcc, ix) => (
-                    // eslint-disable-next-line react/jsx-key
-                    <div className="w-full flex flex-col">
-                      <button
+          <div className="flex flex-col flex-1 lg:grid">
+            <div className="flex flex-col gap-4 w-full px-8 py-10">
+              {!isBurnerWallet ? (
+                connectors.map((connector, index) => (
+                  <Wallet
+                    key={connector.id || index}
+                    connector={connector}
+                    loader={loader}
+                    handleConnectWallet={handleConnectWallet}
+                  />
+                ))
+              ) : (
+                <div className="flex flex-col pb-[20px] justify-end gap-3">
+                  <div className="h-[300px] overflow-y-auto flex w-full flex-col gap-2">
+                    {burnerAccounts.map((burnerAcc, ix) => (
+                      <div
                         key={burnerAcc.publicKey}
-                        className=" border-2 border-primary-content rounded-md text-base-100 hover:bg-primary-content py-[4px] pl-[10px] flex"
-                        onClick={(e) => handleConnectBurner(e, ix)}
+                        className="w-full flex flex-col"
                       >
-                        {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}
-                      </button>
-                    </div>
-                  ))}
+                        <button
+                          className={`hover:bg-gradient-modal border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4 ${isDarkMode ? "border-[#385183]" : ""}`}
+                          onClick={(e) => handleConnectBurner(e, ix)}
+                        >
+                          <BlockieAvatar
+                            address={burnerAcc.accountAddress}
+                            size={35}
+                          />
+                          {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </>
-          ) : (
-            <></>
-          )}
-        </div>
-      </div>
-    </GenericModal>
+              )}
+            </div>
+          </div>
+        </>
+      </GenericModal>
+    </div>
   );
 };
 

@@ -1,15 +1,16 @@
 #[starknet::interface]
 pub trait IYourContract<TContractState> {
-    fn gretting(self: @TContractState) -> ByteArray;
-    fn set_gretting(ref self: TContractState, new_greeting: ByteArray, amount_eth: u256);
+    fn greeting(self: @TContractState) -> ByteArray;
+    fn set_greeting(ref self: TContractState, new_greeting: ByteArray, amount_eth: u256);
     fn withdraw(ref self: TContractState);
     fn premium(self: @TContractState) -> bool;
 }
 
 #[starknet::contract]
 mod YourContract {
-    use openzeppelin::access::ownable::OwnableComponent;
-    use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
+    use openzeppelin_access::ownable::OwnableComponent;
+    use openzeppelin_token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
+    use starknet::storage::Map;
     use starknet::{ContractAddress, contract_address_const};
     use starknet::{get_caller_address, get_contract_address};
     use super::{IYourContract};
@@ -47,7 +48,7 @@ mod YourContract {
         greeting: ByteArray,
         premium: bool,
         total_counter: u256,
-        user_gretting_counter: LegacyMap<ContractAddress, u256>,
+        user_greeting_counter: Map<ContractAddress, u256>,
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
     }
@@ -62,17 +63,18 @@ mod YourContract {
 
     #[abi(embed_v0)]
     impl YourContractImpl of IYourContract<ContractState> {
-        fn gretting(self: @ContractState) -> ByteArray {
+        fn greeting(self: @ContractState) -> ByteArray {
             self.greeting.read()
         }
-        fn set_gretting(ref self: ContractState, new_greeting: ByteArray, amount_eth: u256) {
+        fn set_greeting(ref self: ContractState, new_greeting: ByteArray, amount_eth: u256) {
             self.greeting.write(new_greeting);
             self.total_counter.write(self.total_counter.read() + 1);
-            let user_counter = self.user_gretting_counter.read(get_caller_address());
-            self.user_gretting_counter.write(get_caller_address(), user_counter + 1);
+            let user_counter = self.user_greeting_counter.read(get_caller_address());
+            self.user_greeting_counter.write(get_caller_address(), user_counter + 1);
 
             if amount_eth > 0 {
-                // In `Debug Contract` or UI implementation call `approve` on ETH contract before invoke fn set_gretting()
+                // In `Debug Contract` or UI implementation call `approve` on ETH contract before
+                // invoke fn set_greeting()
                 self
                     .eth_token
                     .read()

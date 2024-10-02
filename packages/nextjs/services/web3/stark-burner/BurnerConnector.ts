@@ -1,5 +1,17 @@
-import { InjectedConnector, starknetChainId } from "@starknet-react/core";
-import { Account, AccountInterface, RpcProvider } from "starknet";
+import {
+  InjectedConnector,
+  UserRejectedRequestError,
+  starknetChainId,
+} from "@starknet-react/core";
+import {
+  Account,
+  AccountInterface,
+  Call,
+  CallData,
+  RpcProvider,
+  byteArray,
+  uint256,
+} from "starknet";
 import {
   ConnectorData,
   ConnectorIcons,
@@ -7,6 +19,11 @@ import {
 import { Chain, devnet } from "@starknet-react/chains";
 import scaffoldConfig from "~~/scaffold.config";
 import { BurnerAccount, burnerAccounts } from "~~/utils/devnetAccounts";
+import {
+  RequestFnCall,
+  RpcMessage,
+  RpcTypeToMessageMap,
+} from "@starknet-io/types-js";
 
 export const burnerWalletId = "burner-wallet";
 export const burnerWalletName = "Burner Wallet";
@@ -46,6 +63,7 @@ export class BurnerConnector extends InjectedConnector {
         }),
         this.burnerAccount.accountAddress,
         this.burnerAccount.privateKey,
+        "1",
       ),
     );
   }
@@ -67,6 +85,39 @@ export class BurnerConnector extends InjectedConnector {
 
   async ready(): Promise<boolean> {
     return Promise.resolve((await this.account()).address !== "");
+  }
+
+  async request<T extends RpcMessage["type"]>(
+    call: RequestFnCall<T>,
+  ): Promise<RpcTypeToMessageMap[T]["result"]> {
+    if (call.params && "calls" in call.params) {
+      let compiledCalls = call.params.calls;
+      try {
+        // TODO : starknet connector uses "emtrypoint" instead of "entry_point"
+        // TODO : starknet connector uses "contract_address" instead of "contractAddress"
+        compiledCalls.forEach((element) => {
+          //@ts-ignore
+          element.calldata = CallData.compile(element.calldata);
+          //@ts-ignore
+          element.contractAddress = element.contract_address;
+          //@ts-ignore
+          element.entrypoint = element.entry_point;
+          // element.calldata.__compiled__ = true;
+        });
+
+        return await (
+          await this.account()
+        )
+          //@ts-ignore
+          .execute(compiledCalls, {
+            version: "0x3",
+          });
+      } catch (e) {
+        throw e;
+      }
+    }
+
+    return await super.request(call);
   }
 
   async connect(): Promise<ConnectorData> {

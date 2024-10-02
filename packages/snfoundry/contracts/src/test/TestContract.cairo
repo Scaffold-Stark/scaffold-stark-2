@@ -1,6 +1,6 @@
 use contracts::YourContract::{IYourContractDispatcher, IYourContractDispatcherTrait};
-use openzeppelin::utils::serde::SerializedAppend;
-use snforge_std::{declare, ContractClassTrait};
+use openzeppelin_utils::serde::SerializedAppend;
+use snforge_std::{declare, ContractClassTrait, DeclareResultTrait};
 use starknet::{ContractAddress, contract_address_const};
 
 fn OWNER() -> ContractAddress {
@@ -8,7 +8,7 @@ fn OWNER() -> ContractAddress {
 }
 
 fn deploy_contract(name: ByteArray) -> ContractAddress {
-    let contract = declare(name).unwrap();
+    let contract = declare(name).unwrap().contract_class();
     let mut calldata = array![];
     calldata.append_serde(OWNER());
     let (contract_address, _) = contract.deploy(@calldata).unwrap();
@@ -21,12 +21,11 @@ fn test_deployment_values() {
 
     let dispatcher = IYourContractDispatcher { contract_address };
 
-    let current_gretting = dispatcher.gretting();
-    let expected_gretting: ByteArray = "Building Unstoppable Apps!!!";
-    assert_eq!(current_gretting, expected_gretting, "Should have the right message on deploy");
+    let current_greeting = dispatcher.greeting();
+    let expected_greeting: ByteArray = "Building Unstoppable Apps!!!";
+    assert(current_greeting == expected_greeting, 'Should have the right message');
 
     let new_greeting: ByteArray = "Learn Scaffold-Stark 2! :)";
-    dispatcher.set_gretting(new_greeting.clone(), 0); // we transfer 0 eth
-
-    assert_eq!(dispatcher.gretting(), new_greeting, "Should allow setting a new message");
+    dispatcher.set_greeting(new_greeting.clone(), 0); // we transfer 0 eth
+    assert(dispatcher.greeting() == new_greeting, 'Should allow set new message');
 }

@@ -3,7 +3,7 @@ import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { ContractName } from "~~/utils/scaffold-stark/contract";
 import { useTargetNetwork } from "./useTargetNetwork";
 import { Contract, RpcProvider } from "starknet";
-import { useAccount } from "@starknet-react/core";
+import { useAccount } from "~~/hooks/useAccount";
 
 export const useScaffoldContract = <TContractName extends ContractName>({
   contractName,

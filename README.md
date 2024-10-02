@@ -16,7 +16,7 @@
 - 🔥 **Burner Wallet & Prefunded Account**: Quickly test your application with a burner wallet and prefunded accounts.
 - 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with Starknet network.
 
-![Debug Contracts tab](https://raw.githubusercontent.com/Quantum3-Labs/scaffold-stark-2/main/packages/nextjs/public/debug-image.png)
+![Debug Contracts tab](./packages/nextjs/public/debug-image.png)
 
 ## Requirements
 
@@ -31,48 +31,47 @@ Before you begin, you need to install the following tools:
 
 ### Starknet-devnet version
 
-To ensure the proper functioning of scaffold-stark, your local `starknet-devnet` version must be `0.0.4`. To accomplish this, first check your local starknet-devnet version:
+To ensure the proper functioning of scaffold-stark, your local `starknet-devnet` version must be `0.2.0`. To accomplish this, first check your local starknet-devnet version:
 
 ```sh
 starknet-devnet --version
 ```
 
-If your local starknet-devnet version is not `0.0.4`, you need to install it.
+If your local starknet-devnet version is not `0.2.0`, you need to install it.
 
-```bash
-cargo install starknet-devnet --version 0.0.4
-```
+- Install Starknet-devnet `0.2.0` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
 
 ### Scarb version
 
-To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.6.5`. To accomplish this, first check your local Scarb version:
+To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.8.2`. To accomplish this, first check your local Scarb version:
 
 ```sh
 scarb --version
 ```
 
-If your local Scarb version is not `2.6.5`, you need to install it.
+If your local Scarb version is not `2.8.2`, you need to install it.
 
-- Install Scarb `2.6.5` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
+- Install Scarb `2.8.2` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
 
 ### Starknet Foundry version
 
-To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.27.0. To accomplish this, first check your Starknet Foundry version:
+To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.30.0. To accomplish this, first check your Starknet Foundry version:
 
 ```sh
 snforge --version
 ```
 
-If your Starknet Foundry version is not `0.27.0`, you need to install it.
+If your Starknet Foundry version is not `0.30.0`, you need to install it.
 
-- Install Starknet Foundry `0.27.0` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
+- Install Starknet Foundry `0.30.0` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
 
 ## Compatible versions
 
-- Scarb - v2.6.5
-- Snforge - v0.27.0
-- Cairo - v2.6.4
-- Rpc - v0.7.0
+- Starknet-devnet - v0.2.0
+- Scarb - v2.8.2
+- Snforge - v0.30.0
+- Cairo - v2.8.2
+- Rpc - v0.7.1
 
 ## Quickstart with Starknet-Devnet
 
@@ -81,7 +80,7 @@ To get started with Scaffold-Stark, follow the steps below:
 1. Clone this repo and install dependencies
 
 ```bash
-git clone https://github.com/Quantum3-Labs/scaffold-stark-2.git
+git clone https://github.com/Scaffold-Stark/scaffold-stark-2.git
 cd scaffold-stark-2
 yarn install
 ```
@@ -91,6 +90,8 @@ yarn install
 ```bash
 yarn chain
 ```
+
+> To run a fork : `yarn chain --fork-network <URL> [--fork-block <BLOCK_NUMBER>]`
 
 This command starts a local Starknet network using Devnet. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `scaffold.config.ts` for your nextjs app.
 
@@ -112,11 +113,14 @@ yarn start
 
 Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
 
+5. Check your environment variables. We have a yarn postinstall script that helps to fill in your environment variables. If the environment variable does not exist, you can fill them it manually to get the app running!
+
 ## Quickstart with Sepolia Testnet
 
 <details>
 
 1. Make sure you alredy cloned this repo and installed dependencies.
+
 2. Prepare your environment variables.
 
 Find the `packages/snfoundry/.env` file and fill the env variables related to Sepolia testnet with your own wallet account contract address and private key.
@@ -125,7 +129,7 @@ Find the `packages/snfoundry/.env` file and fill the env variables related to Se
 
 Find the `packages/nextjs/scaffold.config.ts` file and change the `targetNetworks` to `[chains.sepolia]`.
 
-![chall-0-scaffold-config](https://raw.githubusercontent.com/Quantum3-Labs/speedrunstark/simple-nft-example/packages/nextjs/public/ch0-scaffold-config.png)
+![chall-0-scaffold-config](./packages/nextjs/public/scaffold-config.png)
 
 4. Get some testnet tokens
 
@@ -149,17 +153,19 @@ Visit your app on: `http://localhost:3000`. You can interact with your smart con
 
 ### RPC specific version
 
-To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, your RPC version must be `0.7.0`. This repository contains a .env.example file, where we provided the default RPC URL for the Starknet Testnet: `RPC_URL_SEPOLIA=https://starknet-sepolia.public.blastapi.io/rpc/v0_7`. Let's verify this RPC version is `0.7.0` by running the following command:
+To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, your RPC version must be `0.7.1`. This repository contains a `.env.example` file, where we provided the default RPC URL for the Starknet Testnet: `RPC_URL_SEPOLIA=https://starknet-sepolia.public.blastapi.io/rpc/v0_7`. Let's verify this RPC version is `0.7.1` by calling a `POST` request in an API platform like `Postman` or `Insommia` . Your API endpoint should be `https://starknet-sepolia.public.blastapi.io/rpc/v0_7` and the body should be:
 
-```sh
-curl --location 'https://starknet-sepolia.public.blastapi.io/rpc/v0_7' \
---data '{
-    "jsonrpc":"2.0",
-    "method":"starknet_specVersion",
-    "id":1
-}'
+```json
+{
+ "jsonrpc":"2.0",
+ "method":"starknet_specVersion",
+ "id":1
+}
 ```
 
+You have to paste the endpoint and body in the API platform and click on the `Send` button. If the response is `0.7.1`, then you are good to go. Otherwise, you have to get the correct RPC URL endpoint.
+
+![rpc-version](./packages/nextjs/public/rpc-version.png)
 </details>
 
 ## **What's next**
@@ -168,6 +174,10 @@ curl --location 'https://starknet-sepolia.public.blastapi.io/rpc/v0_7' \
 - Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
 - Edit your deployment scripts in `packages/snfoundry/script-ts/deploy.ts`
 - Edit your smart contract tests in `packages/snfoundry/contracts/src/test`. To run tests use `yarn test`
+- You can write unit tests for your Next.js app! Run them with one the following scripts below.
+  - `yarn test:nextjs` to run regular tests with watch mode
+  - `yarn test:nextjs run` to run regular tests without watch mode
+  - `yarn test:nextjs run --coverage` to run regular tests without watch mode with coverage
 
 ## Documentation
 
@@ -179,4 +189,4 @@ To know more about its features, check out our [website](https://scaffoldstark.c
 
 We welcome contributions to Scaffold-Stark!
 
-Please see [CONTRIBUTING.MD](https://github.com/Quantum3-Labs/scaffold-stark-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-Stark.
+Please see [CONTRIBUTING.MD](https://github.com/Scaffold-Stark/scaffold-stark-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-Stark.

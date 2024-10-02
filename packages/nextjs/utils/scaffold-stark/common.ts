@@ -1,7 +1,7 @@
 // To be used in JSON.stringify when a field might be bigint
 // https://wagmi.sh/react/faq#bigint-serialization
 import { Address } from "@starknet-react/chains";
-import { validateAndParseAddress } from "starknet";
+import { getChecksumAddress, validateAndParseAddress } from "starknet";
 
 export const replacer = (_key: string, value: unknown) => {
   if (
@@ -9,7 +9,7 @@ export const replacer = (_key: string, value: unknown) => {
     (typeof value !== "object" || typeof value === null) &&
     value.toString().length >= 76
   ) {
-    return validateAndParseAddress(value.toString());
+    return getChecksumAddress(`0x${BigInt(value.toString()).toString(16)}`);
   } else if (typeof value === "bigint") {
     return value.toString();
   }
@@ -76,4 +76,13 @@ export function calculatePercentage(amount: bigint, total: bigint): number {
 
   const percentage = (Number(amount) / Number(total)) * 100;
   return percentage;
+}
+
+export function isJsonString(str: string) {
+  try {
+    JSON.parse(str);
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
