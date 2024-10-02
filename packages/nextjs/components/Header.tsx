@@ -34,11 +34,6 @@ export const menuLinks: HeaderMenuLink[] = [
     href: "/debug",
     icon: <BugAntIcon className="h-4 w-4" />,
   },
-  {
-    label: "Configure Contracts",
-    href: "/configure",
-    icon: <Cog8ToothIcon className="h-4 w-4" />,
-  },
 ];
 
 export const HeaderMenuLinks = () => {
