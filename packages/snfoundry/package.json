@@ -2,14 +2,14 @@
   "name": "@ss-2/snfoundry",
   "version": "0.0.1",
   "scripts": {
-    "chain": "starknet-devnet --seed 0 --account-class cairo1",
-    "deploy": "ts-node scripts-ts/helpers/deploy-wrapper.ts",
-    "deploy:reset": "ts-node scripts-ts/helpers/deploy-wrapper.ts --reset",
-    "test": "cd contracts && snforge test",
+    "chain": "starknet-devnet --seed 0 --account-class cairo1 && cd scripts && rm -rf scripts_alpha-sepolia_state.json && cd .. && ts-node ./scripts-ts/helpers/reset.ts",
+    "deploy": "ts-node ./scripts-ts/helpers/command.ts deploy",
+    "deploy:reset": "ts-node ./scripts-ts/helpers/reset.ts && ts-node ./scripts-ts/helpers/command.ts deploy",
+    "test": "snforge test",
     "test-eslint": "node eslint-contract-name/eslint-plugin-contract-names.test.js",
-    "compile": "cd contracts && scarb build",
-    "format": "prettier --write 'scripts-ts/**/*.{ts,tsx}' && cd contracts && scarb fmt",
-    "format:check": "prettier --check 'scripts-ts/**/*.{ts,tsx}' && cd contracts && scarb fmt --check",
+    "compile": "scarb build",
+    "format": "prettier --write 'scripts-ts/**/*.{ts,tsx}' && scarb fmt",
+    "format:check": "prettier --check 'scripts-ts/**/*.{ts,tsx}' && scarb fmt --check",
     "postinstall": "shx cp -n .env.example .env"
   },
   "devDependencies": {
@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "dotenv": "^16.3.1",
+    "dotenv-cli": "^7.4.2",
     "envfile": "^6.18.0",
     "prettier": "^2.8.8",
     "starknet": "6.12.1",

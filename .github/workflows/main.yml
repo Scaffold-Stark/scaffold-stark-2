@@ -36,7 +36,7 @@ jobs:
 
       - name: Run snforge tests
         run: snforge test
-        working-directory: ./packages/snfoundry/contracts
+        working-directory: ./packages/snfoundry
 
       - name: Setup node env
         uses: actions/setup-node@v3

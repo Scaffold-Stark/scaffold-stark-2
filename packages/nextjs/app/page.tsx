@@ -31,7 +31,7 @@ const Home: NextPage = () => {
             </code>{" "}
             in{" "}
             <code className="bg-underline italic text-base font-bold max-w-full break-words break-all inline-block">
-              packages/snfoundry/contracts/src
+              packages/snfoundry/src
             </code>
           </p>
         </div>

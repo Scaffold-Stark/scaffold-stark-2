@@ -123,14 +123,16 @@ export const Header = () => {
   ]);
 
   return (
-    <div className="sticky lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
-      <div className="navbar-start w-auto lg:w-1/2">
+    <div className=" lg:static top-0 navbar min-h-0 flex-shrink-0 justify-between z-20 px-0 sm:px-2">
+      <div className="navbar-start w-auto lg:w-1/2 -mr-2">
         <div className="lg:hidden dropdown" ref={burgerMenuRef}>
           <label
             tabIndex={0}
-            className={`ml-1 btn btn-ghost ${
-              isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"
-            }`}
+            className={`ml-1 btn btn-ghost 
+              [@media(max-width:379px)]:!px-3 [@media(max-width:379px)]:!py-1 
+              [@media(max-width:379px)]:!h-9 [@media(max-width:379px)]:!min-h-0
+              [@media(max-width:379px)]:!w-10
+              ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"}`}
             onClick={() => {
               setIsDrawerOpen((prevIsOpenState) => !prevIsOpenState);
             }}
@@ -140,7 +142,7 @@ export const Header = () => {
           {isDrawerOpen && (
             <ul
               tabIndex={0}
-              className="menu menu-compact dropdown-content mt-3 p-2 shadow rounded-box w-52"
+              className="menu menu-compact dropdown-content mt-3 p-2 shadow rounded-box w-52 bg-base-100"
               onClick={() => {
                 setIsDrawerOpen(false);
               }}
@@ -171,7 +173,7 @@ export const Header = () => {
           <HeaderMenuLinks />
         </ul>
       </div>
-      <div className="navbar-end flex-grow mr-4 gap-4">
+      <div className="navbar-end flex-grow mr-2 gap-4">
         {status === "connected" && !isDeployed ? (
           <span className="bg-[#8a45fc] text-[9px] p-1 text-white">
             Wallet Not Deployed
@@ -181,7 +183,7 @@ export const Header = () => {
         {/* <FaucetButton /> */}
         <SwitchTheme
           className={`pointer-events-auto ${
-            isLocalNetwork ? "self-end md:self-auto" : ""
+            isLocalNetwork ? "mb-1 lg:mb-0" : ""
           }`}
         />
       </div>

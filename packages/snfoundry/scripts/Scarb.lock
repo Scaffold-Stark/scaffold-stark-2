@@ -2,6 +2,15 @@
 version = 1
 
 [[package]]
+name = "scripts"
+version = "0.1.0"
+dependencies = [
+ "contracts",
+ "sncast_std",
+ "snforge_std",
+]
+
+[[package]]
 name = "contracts"
 version = "0.2.0"
 dependencies = [
@@ -69,6 +78,11 @@ name = "snforge_scarb_plugin"
 version = "0.2.0"
 source = "registry+https://scarbs.xyz/"
 checksum = "sha256:2e4ce3ebe3f49548bd26908391b5d78537a765d827df0d96c32aeb88941d0d67"
+
+[[package]]
+name = "sncast_std"
+version = "0.27.0"
+source = "git+https://github.com/foundry-rs/starknet-foundry?tag=v0.27.0#2d99b7c00678ef0363881ee0273550c44a9263de"
 
 [[package]]
 name = "snforge_std"

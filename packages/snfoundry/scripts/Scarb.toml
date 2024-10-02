@@ -1,0 +1,21 @@
+[package]
+name = "scripts"
+version = "0.1.0"
+edition = "2023_11"
+
+# See more keys and their definitions at https://docs.swmansion.com/scarb/docs/reference/manifest.html
+
+[dependencies]
+sncast_std = { git = "https://github.com/foundry-rs/starknet-foundry", tag = "v0.31.0" }
+starknet = "=2.8.2"
+contracts = { path = "../" }
+
+[lib]
+sierra = true
+casm = true
+
+[[target.starknet-contract]]
+build-external-contracts = [
+    "contracts::*"
+]
+
