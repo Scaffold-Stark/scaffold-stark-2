@@ -32,7 +32,7 @@ jobs:
         run: curl -L https://raw.githubusercontent.com/foundry-rs/starknet-foundry/master/scripts/install.sh | sh
 
       - name: Install snforge
-        run: snfoundryup -v 0.27.0
+        run: snfoundryup -v 0.30.0
 
       - name: Run snforge tests
         run: snforge test
@@ -58,6 +58,10 @@ jobs:
 
       - name: Check typings on Next.js
         run: yarn next:check-types
+        working-directory: ./packages/nextjs
+
+      - name: Run Next.js tests
+        run: yarn test run
         working-directory: ./packages/nextjs
 
       - name: Build Next.js project

@@ -2,7 +2,7 @@ name: Version Bump and Notify
 
 on:
   pull_request:
-    types: [closed]
+    types: [merged]
     branches: [main]
 
 jobs:

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { NextPage } from "next";
 import { Address } from "~~/components/scaffold-stark";
-import { useAccount } from "@starknet-react/core";
+import { useAccount } from "~~/hooks/useAccount";
 import { Address as AddressType } from "@starknet-react/chains";
 import Image from "next/image";
 import HooksExample from "~~/components/HooksExample";
