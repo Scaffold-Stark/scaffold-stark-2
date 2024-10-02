@@ -76,7 +76,7 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
   return (
     <>
       <button
-        className={`btn btn-sm btn-ghost flex flex-col font-normal items-center hover:bg-transparent ${className}`}
+        className={` btn btn-sm btn-ghost flex flex-col font-normal items-center hover:bg-transparent ${className}`}
         onClick={toggleBalanceMode}
       >
         <div className="w-full flex items-center justify-center">
@@ -92,7 +92,7 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
             </div>
           ) : (
             <>
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row sm:gap-4">
                 <div className="flex">
                   <span>{parseFloat(formatted).toFixed(4)}</span>
                   <span className="text-[0.8em] font-bold ml-1">
