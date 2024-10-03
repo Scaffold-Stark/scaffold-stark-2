@@ -81,7 +81,7 @@ export default function DownloadContracts() {
               This tool allows you to fetch the ABI of a contract by entering
               its address. It will download a configuration file that can be
               used to replace or append to your local{" "}
-              <code className="text-function">predeployedContracts.ts</code>{" "}
+              <code className="text-function">configExternalContracts.ts</code>{" "}
               file, allowing you to debug in the{" "}
               <code className="text-function">/debug</code> page.
             </p>
