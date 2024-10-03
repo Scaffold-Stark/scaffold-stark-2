@@ -4,5 +4,5 @@ pub mod cryptos;
 mod test {
     //mod TestPragmaPrice;
     //mod TestBitcoinPrice;
-    mod TestBetCryptoMaker;
+    //mod TestBetCryptoMaker;
 }

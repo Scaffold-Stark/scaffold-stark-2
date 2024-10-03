@@ -2,7 +2,6 @@
 use pragma_lib::abi::{IPragmaABIDispatcher, IPragmaABIDispatcherTrait};
 use pragma_lib::types::{AggregationMode, DataType, PragmaPricesResponse};
 use starknet::ContractAddress;
-use starknet::contract_address::contract_address_const;
 
 
 #[starknet::interface]
@@ -18,8 +17,6 @@ pub trait IPragmaPrice<TContractState> {
 #[starknet::component]
 pub mod PragmaPrice {
     use super::ContractAddress;
-    use super::IPragmaPrice;
-    use super::contract_address_const;
     use super::{AggregationMode, DataType, PragmaPricesResponse};
     use super::{IPragmaABIDispatcher, IPragmaABIDispatcherTrait};
 

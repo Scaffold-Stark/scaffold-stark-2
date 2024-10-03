@@ -10,7 +10,7 @@ starknet = "2.8.2"
 # Change to just "openzeppelin" to use full features
 openzeppelin_access = "0.17.0"
 openzeppelin_token = "0.17.0"
-pragma_lib = { git = "https://github.com/astraly-labs/pragma-lib.git"}
+pragma_lib = { git = "https://github.com/astraly-labs/pragma-lib" }
 
 [dev-dependencies]
 openzeppelin_utils = "0.17.0"
