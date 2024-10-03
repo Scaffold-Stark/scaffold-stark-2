@@ -12,7 +12,7 @@ export const burnerAccounts: BurnerAccount[] = [
     publicKey:
       "0x39d9e6ce352ad4530a0ef5d5a18fd3303c3606a7fa6ac5b620020ad681cc33b",
   },
-  /* {
+  {
     accountAddress:
       "0x78662e7352d062084b0010068b99288486c2d8b914f6e2a55ce945f8792c8b1",
     privateKey: "0xe1406455b7d66b1690803be066cbe5e",
@@ -74,5 +74,5 @@ export const burnerAccounts: BurnerAccount[] = [
     privateKey: "0x57b2f8431c772e647712ae93cc616638",
     publicKey:
       "0x374f7fcb50bc2d6b8b7a267f919232e3ac68354ce3eafe88d3df323fc1deb23",
-  }, */
+  },
 ];
