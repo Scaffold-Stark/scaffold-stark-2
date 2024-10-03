@@ -1,8 +1,8 @@
 use contracts::YourContract::{IYourContractDispatcher, IYourContractDispatcherTrait};
+use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 use openzeppelin_utils::serde::SerializedAppend;
 use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, cheat_caller_address, CheatSpan};
 use starknet::{ContractAddress, contract_address_const};
-use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 
 // Real contract address deployed on Sepolia
 fn OWNER() -> ContractAddress {
