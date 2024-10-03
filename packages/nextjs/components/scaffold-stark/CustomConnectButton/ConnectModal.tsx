@@ -14,18 +14,19 @@ const loader = ({ src }: { src: string }) => {
 const ConnectModal = () => {
   const modalRef = useRef<HTMLInputElement>(null);
   const [isBurnerWallet, setIsBurnerWallet] = useState(false);
-
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
-
   const { connectors, connect, error, status, ...props } = useConnect();
-
   const [_, setLastConnector] = useLocalStorage<{ id: string; ix?: number }>(
     "lastUsedConnector",
     { id: "" },
     {
       initializeWithValue: false,
     },
+  );
+  const [, setLastConnectionTime] = useLocalStorage<number>(
+    "lastConnectionTime",
+    0,
   );
 
   const handleCloseModal = () => {
@@ -44,6 +45,7 @@ const ConnectModal = () => {
     }
     connect({ connector });
     setLastConnector({ id: connector.id });
+    setLastConnectionTime(Date.now()); // Store the current time
     handleCloseModal();
   }
 
@@ -70,6 +72,7 @@ const ConnectModal = () => {
       >
         <span>Connect</span>
       </label>
+
       <input
         ref={modalRef}
         type="checkbox"
