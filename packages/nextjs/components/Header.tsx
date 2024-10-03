@@ -16,7 +16,6 @@ import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { devnet } from "@starknet-react/chains";
 import { SwitchTheme } from "./SwitchTheme";
 import { useAccount, useNetwork, useProvider } from "@starknet-react/core";
-import { BlockIdentifier } from "starknet";
 
 type HeaderMenuLink = {
   label: string;
@@ -37,6 +36,11 @@ export const menuLinks: HeaderMenuLink[] = [
   {
     label: "Configure Contracts",
     href: "/configure",
+    icon: <Cog8ToothIcon className="h-4 w-4" />,
+  },
+  {
+    label: "Hooks",
+    href: "/hooks",
     icon: <Cog8ToothIcon className="h-4 w-4" />,
   },
 ];
