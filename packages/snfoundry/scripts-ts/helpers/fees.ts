@@ -18,7 +18,7 @@ export const erc20ABI = [
         type: "felt",
       },
     ],
-    name: "balanceOf",
+    name: "balance_of",
     outputs: [
       {
         name: "balance",
@@ -90,7 +90,7 @@ export async function getBalance(
 ): Promise<bigint> {
   try {
     const contract = new Contract(erc20ABI, tokenAddress, provider);
-    const { balance } = await contract.balanceOf(account);
+    const { balance } = await contract.balance_of(account);
     return uint256.uint256ToBN(balance);
   } catch (error) {
     console.error("Error fetching balance:", error);
