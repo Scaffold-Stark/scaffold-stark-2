@@ -58,13 +58,14 @@ export const Footer = () => {
                 <BlockExplorer />
               </>
             )}
-              <Link
-                href={"/configure"}
-                passHref
-                className="btn btn-sm font-normal gap-1 cursor-pointer border border-[#32BAC4] shadow-none">
-                <Cog8ToothIcon className="h-4 w-4 text-[#32BAC4]" />
-                <span>Configure Contracts</span>
-              </Link>
+            <Link
+              href={"/configure"}
+              passHref
+              className="btn btn-sm font-normal gap-1 cursor-pointer border border-[#32BAC4] shadow-none"
+            >
+              <Cog8ToothIcon className="h-4 w-4 text-[#32BAC4]" />
+              <span>Configure Contracts</span>
+            </Link>
           </div>
         </div>
       </div>
