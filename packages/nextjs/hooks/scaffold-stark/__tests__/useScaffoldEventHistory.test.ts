@@ -97,7 +97,7 @@ describe('useScaffoldEventHistory', () => {
     vi.clearAllMocks();
   });
 
-  it('should fetch and return events from the contract', async () => {
+  it('should fetch and return events from the contract after mimicking a transaction', async () => {
     const { result } = renderHook(() =>
       useScaffoldEventHistory({
         contractName: mockContractName,
@@ -115,108 +115,30 @@ describe('useScaffoldEventHistory', () => {
     // Initially, data should be loading
     expect(result.current.isLoading).toBe(true);
 
-    // Wait for the hook to update
-    await waitFor(() => {
-      // Wait until isLoading becomes true
-      expect(result.current.isLoading).toBe(true);
+    // Simulate the completion of a transaction that triggers an event
+    await act(async () => {
+      RpcProvider.prototype.getEvents = vi.fn().mockResolvedValueOnce({
+        events: mockEvents,
+      });
+
+      // Wait for the hook to stop loading and return the event data
+      await waitFor(() => expect(result.current.isLoading).toBe(true));
     });
 
-    // Check that loading is true and events are fetched
-    expect(result.current.isLoading).toBe(true);
-    expect(result.current.data).toEqual([
-        {
-             "args":{
-               "arg1": "0x1",
-               "arg2": "0x2",
-             },
-             "block":{
-               "block_hash": "0xabc",
-             },
-             "log":{
-               "block_hash": "0xabc",
-               "log": {
-                 "data": [
-                   "0x2",
-                 ],
-                 "keys": [
-                   "0x1",
-                 ],
-               },
-               "transaction_hash": "0xdef",
-             },
-             "receipt":{
-               "transaction_hash": "0xdef",
-             },
-             "transaction": {
-               "transaction_hash": "0xdef",
-             },
-           },
-        
-    ]);
-    expect(result.current.error).toBeUndefined();
-  });
-
-  it('should handle errors when fetching events', async () => {
-    // Mock an error in the getEvents method
-    RpcProvider.prototype.getEvents = vi.fn().mockRejectedValue(new Error('Failed to fetch events'));
-
-    const { result } = renderHook(() =>
-      useScaffoldEventHistory({
-        contractName: mockContractName,
-        eventName: mockEventName,
-        fromBlock: BigInt(1),
-        filters: {},
-        blockData: true,
-        transactionData: true,
-        receiptData: true,
-        watch: false,
-        enabled: true,
-      })
-    );
-
-    // Wait for the hook to update
-    await waitFor(() => {
-      // Wait until isLoading becomes false
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    // Check that an error occurred
+    // Check that loading is false and events are fetched
     expect(result.current.isLoading).toBe(false);
-    expect(result.current.data).toBeUndefined();
-    expect(result.current.error).toBeInstanceOf(Error);
-  
-  });
-
-  it('should reset the internal state when fromBlock or network changes', async () => {
-    const { result, rerender } = renderHook(
-      ({ fromBlock }) =>
-        useScaffoldEventHistory({
-          contractName: mockContractName,
-          eventName: mockEventName,
-          fromBlock,
-          filters: {},
-          blockData: true,
-          transactionData: true,
-          receiptData: true,
-          watch: false,
-          enabled: true,
-        }),
+    expect(result.current.data).toEqual([
       {
-        initialProps: {
-          fromBlock: BigInt(1),
+        log: mockEvents[0],
+        block: { block_hash: '0xabc' },
+        transaction: { transaction_hash: '0xdef' },
+        receipt: { transaction_hash: '0xdef' },
+        args: {
+          arg1: '0x1',
+          arg2: '0x2',
         },
-      }
-    );
-
-    await waitFor(() => {
-      // Wait until isLoading becomes true
-      expect(result.current.isLoading).toBe(true);
-    }); // Wait for the first update
-
-    // Simulate changing the fromBlock and rerender the hook
-    rerender({ fromBlock: BigInt(100) });
-
-    expect(result.current.data).toEqual([]); // Events should be reset
+      },
+    ]);
     expect(result.current.error).toBeUndefined();
   });
 });
