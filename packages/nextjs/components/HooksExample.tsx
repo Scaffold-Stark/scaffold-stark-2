@@ -9,6 +9,8 @@ import {
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
+import useScaffoldEthBalance from "~~/hooks/scaffold-stark/useScaffoldEthBalance";
+import useScaffoldStrkBalance from "~~/hooks/scaffold-stark/useScaffoldStrkBalance";
 import { ContractName } from "~~/utils/scaffold-stark/contract";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
 import { InputBase, IntegerInput } from "~~/components/scaffold-stark/";
@@ -35,6 +37,14 @@ const HooksExample: React.FC = () => {
   const { data: contract, isLoading: isContractLoading } = useScaffoldContract({
     contractName: contractName as ContractName,
   });
+
+  const { formatted: ethBalance } = contract
+    ? useScaffoldEthBalance({ address: contract.address })
+    : { formatted: "0" };
+
+  const { formatted: strkBalance } = contract
+    ? useScaffoldStrkBalance({ address: contract.address })
+    : { formatted: "0" };
 
   const { targetNetwork } = useTargetNetwork();
 
@@ -121,6 +131,31 @@ const HooksExample: React.FC = () => {
               <p>No contract loaded</p>
             )}
           </div>
+        </div>
+        {/* ETH Balance */}
+        <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
+          <div className="trapeze"></div>
+          <h2 className="text-xl font-semibold mb-4">
+            Contract ETH Balance (useScaffoldEthBalance)
+          </h2>
+          {contract ? (
+            <p>{ethBalance} ETH</p>
+          ) : (
+            <p>Contract not loaded</p>
+          )}
+        </div>
+
+        {/* STRK Balance */}
+        <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
+          <div className="trapeze"></div>
+          <h2 className="text-xl font-semibold mb-4">
+            Contract STRK Balance (useScaffoldStrkBalance)
+          </h2>
+          {contract ? (
+            <p>{strkBalance} STRK</p>
+          ) : (
+            <p>Contract not loaded</p>
+          )}
         </div>
 
         {/* Set Greeting */}
