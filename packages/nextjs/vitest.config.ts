@@ -5,7 +5,13 @@ import path from "path";
 export default defineConfig({
   plugins: [react()],
   test: {
+    // coverage: {  
+    //   reporter: ['text', 'json', 'html'],
+    //   include: ['src/**/*.ts', 'src/**/*.tsx', "jsdom"],
+    
+    // },
     environment: "jsdom",
+
   },
   resolve: {
     alias: {
@@ -13,3 +19,5 @@ export default defineConfig({
     },
   },
 });
+
+
