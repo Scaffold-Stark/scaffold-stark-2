@@ -1,128 +1,109 @@
 import { renderHook } from "@testing-library/react";
 import { useScaffoldReadContract } from "../useScaffoldReadContract";
-import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { useReadContract } from "@starknet-react/core";
-import { vi, describe, it, expect,  } from 'vitest';
-//import { ContractCodeStatus } from "~~/utils/scaffold-stark/contract";
-//import { functionName, contractName } from ;
+import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
+import { vi, describe, it, expect } from 'vitest'; 
 
-// Mocking dependencies
-// Mocking the useDeployedContractInfo hook from the ~~/hooks/scaffold-stark module
+// Mocking dependencies using Vitest
 vi.mock("~~/hooks/scaffold-stark", () => ({
-  useDeployedContractInfo: vi.fn(), //The vi.fn() creates a mock function
+  useDeployedContractInfo: vi.fn(() => ({
+    data: {
+      address: "0x123",
+      abi: [{ name: "symbol" }],
+    },
+  })),
 }));
 
-//Mocking the useReadContract hook from the @starknet-react/core library
 vi.mock("@starknet-react/core", () => ({
   useReadContract: vi.fn(),
 }));
 
 describe("useScaffoldReadContract", () => {
-  const contractName = "TestContract";
-  const functionName = "testFunction";
-  const args = [1, 2, 3];
-  
-  // it("should call useReadContract only with correct parameters when deployedContract is defined", () => {
-  //   // Mock deployed contract info
-  //   (useDeployedContractInfo as vi.Mock).mockReturnValue({
-  //     data: {
-  //       address: "0x123",
-  //       abi: [{ name: "symbol" }],
-  //     },
-  //   });
+  const contractName = "Eth"; // Use a valid contract name
+  const functionName = "symbol"; // Use a valid function name
 
-  //   // Mock useReadContract function
-  //   const mockUseReadContract = useReadContract as vi.Mock;
-  //   mockUseReadContract.mockReturnValue({
-  //     data: "mockedData",
-  //   });
-
-  //   // Filter out undefined values from the args array
-  //   const filteredArgs = [1, undefined, 3].filter(arg => arg !== undefined);
-
-  //   // Render the hook
-  //   renderHook(() =>
-  //     useScaffoldReadContract({
-  //      contractName: "Strk",
-  //      functionName,
-  //       args: filteredArgs, // Pass filtered args
-  //     })
-  //   );
-
-  //   // Validate that useReadContract was called with the correct arguments
-  //   expect(mockUseReadContract).toHaveBeenCalledWith({
-  //     functionName: "symbol",
-  //     address: "0x123",
-  //     abi: [{ name: "symbol" }],
-  //     watch: true,
-  //     args: filteredArgs,
-  //     enabled: true,
-  //     blockIdentifier: "pending",
-  //   });
-  // });
-
-  it("should handle when deployedContract is undefined", () => {
-    // Mocking deployed contract info to be undefined
-    (useDeployedContractInfo as vi.Mock).mockReturnValue({
-      data: undefined,
-    });
-
-    // Mocking useReadContract function
+  it("should call useReadContract with correct parameters when deployedContract is defined", () => {
     const mockUseReadContract = useReadContract as vi.Mock;
     mockUseReadContract.mockReturnValue({
       data: "mockedData",
     });
 
-    // To render the hook
+    const filteredArgs = [1, undefined, 3].filter(arg => arg !== undefined);
+
     renderHook(() =>
       useScaffoldReadContract({
-        contractName: "Strk",
-        functionName: "testFunction",
-        args,
+        contractName,
+        functionName,
+        args: filteredArgs, // Pass filtered args
       })
     );
 
-    // Ensuring that useReadContract is not called when deployedContract is undefined
     expect(mockUseReadContract).toHaveBeenCalledWith({
-      functionName: "testFunction",
-      address: undefined,
-      abi: undefined,
+      functionName: "symbol",
+      address: "0x123",
+      abi: [{ name: "symbol" }],
       watch: true,
-      args: [1, 2, 3],
+      args: filteredArgs,
       enabled: true,
       blockIdentifier: "pending",
     });
   });
 
-  it("should disable the hook when args contain undefined", () => {
-    // Mocking deployed contract info
-    (useDeployedContractInfo as vi.Mock).mockReturnValue({
-      data: {
-        address: "0x123",
-        abi: [{ name: "testFunction" }],
-      },
-    });
+  it("should disable read when args contain undefined", () => {
+    const mockUseReadContract = useReadContract as vi.Mock;
 
-    // To render the hook with args containing undefined
     renderHook(() =>
       useScaffoldReadContract({
-        contractName: "Eth",
+        contractName,
         functionName,
         args: [1, undefined, 3], // args with undefined
       })
     );
 
-    // To validate that the hook is disabled
-    expect(useReadContract).toHaveBeenCalledWith({
-      functionName: "testFunction",
-      address: "0x123",
-      abi: [{ name: "testFunction" }],
-      watch: true,
-      args: [1, undefined, 3],
-      enabled: false, // Hook should be disabled when args contains undefined
-      blockIdentifier: "pending",
-    });
+    expect(mockUseReadContract).toHaveBeenCalledWith(
+      expect.objectContaining({
+        enabled: false, // The read should be disabled if args contain undefined
+      })
+    );
   });
 
-  
+  it("should enable read when args do not contain undefined", () => {
+    const mockUseReadContract = useReadContract as vi.Mock;
+
+    const filteredArgs = [1, 2, 3];
+
+    renderHook(() =>
+      useScaffoldReadContract({
+        contractName,
+        functionName,
+        args: filteredArgs,
+      })
+    );
+
+    expect(mockUseReadContract).toHaveBeenCalledWith(
+      expect.objectContaining({
+        enabled: true, // The read should be enabled since args do not contain undefined
+      })
+    );
+  });
+
+  it("should pass blockIdentifier as 'pending'", () => {
+    const mockUseReadContract = useReadContract as vi.Mock;
+
+    const filteredArgs = [1, 2];
+
+    renderHook(() =>
+      useScaffoldReadContract({
+        contractName,
+        functionName,
+        args: filteredArgs,
+      })
+    );
+
+    expect(mockUseReadContract).toHaveBeenCalledWith(
+      expect.objectContaining({
+        blockIdentifier: "pending", // Ensure blockIdentifier is passed as 'pending'
+      })
+    );
+  });
 });

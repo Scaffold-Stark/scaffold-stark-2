@@ -3040,6 +3040,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vitest/coverage-v8@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@vitest/coverage-v8@npm:2.1.2"
+  dependencies:
+    "@ampproject/remapping": ^2.3.0
+    "@bcoe/v8-coverage": ^0.2.3
+    debug: ^4.3.6
+    istanbul-lib-coverage: ^3.2.2
+    istanbul-lib-report: ^3.0.1
+    istanbul-lib-source-maps: ^5.0.6
+    istanbul-reports: ^3.1.7
+    magic-string: ^0.30.11
+    magicast: ^0.3.4
+    std-env: ^3.7.0
+    test-exclude: ^7.0.1
+    tinyrainbow: ^1.2.0
+  peerDependencies:
+    "@vitest/browser": 2.1.2
+    vitest: 2.1.2
+  peerDependenciesMeta:
+    "@vitest/browser":
+      optional: true
+  checksum: 510efabda04f765f427ff6d2df528cc3cd1534ec8c6f5cfc2c403e23e9969f148979d8363109aef1ba0dd0724d19e0e2140b893caa86218345872852cc51d591
+  languageName: node
+  linkType: hard
+
 "@vitest/coverage-v8@npm:^2.1.1":
   version: 2.1.1
   resolution: "@vitest/coverage-v8@npm:2.1.1"
@@ -8805,6 +8831,7 @@ __metadata:
   resolution: "ss-2@workspace:."
   dependencies:
     "@testing-library/react": ^16.0.1
+    "@vitest/coverage-v8": 2.1.2
     daisyui: ^4.7.3
     husky: ^9.0.11
     pinst: ^3.0.0
