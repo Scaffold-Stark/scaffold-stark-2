@@ -7,10 +7,12 @@ import { vi, describe, it, expect,  } from 'vitest';
 //import { functionName, contractName } from ;
 
 // Mocking dependencies
+// Mocking the useDeployedContractInfo hook from the ~~/hooks/scaffold-stark module
 vi.mock("~~/hooks/scaffold-stark", () => ({
-  useDeployedContractInfo: vi.fn(),
+  useDeployedContractInfo: vi.fn(), //The vi.fn() creates a mock function
 }));
 
+//Mocking the useReadContract hook from the @starknet-react/core library
 vi.mock("@starknet-react/core", () => ({
   useReadContract: vi.fn(),
 }));
@@ -20,7 +22,7 @@ describe("useScaffoldReadContract", () => {
   const functionName = "testFunction";
   const args = [1, 2, 3];
   
-  // it("should call useReadContract with correct parameters when deployedContract is defined", () => {
+  // it("should call useReadContract only with correct parameters when deployedContract is defined", () => {
   //   // Mock deployed contract info
   //   (useDeployedContractInfo as vi.Mock).mockReturnValue({
   //     data: {
@@ -41,8 +43,8 @@ describe("useScaffoldReadContract", () => {
   //   // Render the hook
   //   renderHook(() =>
   //     useScaffoldReadContract({
-  //       contractName,
-  //       functionName,
+  //      contractName: "Strk",
+  //      functionName,
   //       args: filteredArgs, // Pass filtered args
   //     })
   //   );
@@ -60,27 +62,27 @@ describe("useScaffoldReadContract", () => {
   // });
 
   it("should handle when deployedContract is undefined", () => {
-    // Mock deployed contract info to be undefined
+    // Mocking deployed contract info to be undefined
     (useDeployedContractInfo as vi.Mock).mockReturnValue({
       data: undefined,
     });
 
-    // Mock useReadContract function
+    // Mocking useReadContract function
     const mockUseReadContract = useReadContract as vi.Mock;
     mockUseReadContract.mockReturnValue({
       data: "mockedData",
     });
 
-    // Render the hook
+    // To render the hook
     renderHook(() =>
       useScaffoldReadContract({
-        contractName,
-        functionName,
+        contractName: "Strk",
+        functionName: "testFunction",
         args,
       })
     );
 
-    // Ensure useReadContract is not called when deployedContract is undefined
+    // Ensuring that useReadContract is not called when deployedContract is undefined
     expect(mockUseReadContract).toHaveBeenCalledWith({
       functionName: "testFunction",
       address: undefined,
@@ -93,7 +95,7 @@ describe("useScaffoldReadContract", () => {
   });
 
   it("should disable the hook when args contain undefined", () => {
-    // Mock deployed contract info
+    // Mocking deployed contract info
     (useDeployedContractInfo as vi.Mock).mockReturnValue({
       data: {
         address: "0x123",
@@ -104,7 +106,7 @@ describe("useScaffoldReadContract", () => {
     // To render the hook with args containing undefined
     renderHook(() =>
       useScaffoldReadContract({
-        contractName,
+        contractName: "Eth",
         functionName,
         args: [1, undefined, 3], // args with undefined
       })
@@ -117,8 +119,10 @@ describe("useScaffoldReadContract", () => {
       abi: [{ name: "testFunction" }],
       watch: true,
       args: [1, undefined, 3],
-      enabled: false, // Hook should be disabled when args contain undefined
+      enabled: false, // Hook should be disabled when args contains undefined
       blockIdentifier: "pending",
     });
   });
+
+  
 });
