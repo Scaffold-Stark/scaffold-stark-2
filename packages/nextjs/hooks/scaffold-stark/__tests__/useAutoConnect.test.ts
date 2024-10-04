@@ -67,7 +67,10 @@ describe("useAutoConnect", () => {
   });
 
   it("should auto-connect to the burner wallet and set burnerAccount if savedConnector exists", () => {
-    vi.mocked(useReadLocalStorage).mockReturnValue({ id: "burner-wallet", ix: 1 });
+    vi.mocked(useReadLocalStorage).mockReturnValue({
+      id: "burner-wallet",
+      ix: 1,
+    });
 
     renderHook(() => useAutoConnect());
 
@@ -88,7 +91,9 @@ describe("useAutoConnect", () => {
   });
 
   it("should not connect if saved connector is not found in the connectors list", () => {
-    vi.mocked(useReadLocalStorage).mockReturnValue({ id: "non-existent-connector" });
+    vi.mocked(useReadLocalStorage).mockReturnValue({
+      id: "non-existent-connector",
+    });
 
     renderHook(() => useAutoConnect());
 
