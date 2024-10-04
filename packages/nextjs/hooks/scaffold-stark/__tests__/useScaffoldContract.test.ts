@@ -9,6 +9,7 @@ import { Contract, RpcProvider } from "starknet";
 import type { Mock } from "vitest";
 import { ContractName } from "~~/utils/scaffold-stark/contract";
 
+//Using vitest's functionality to mock modules from different paths 
 vi.mock("~~/hooks/scaffold-stark/useDeployedContractInfo");
 vi.mock("~~/hooks/scaffold-stark/useTargetNetwork");
 vi.mock("~~/hooks/useAccount");
@@ -26,7 +27,7 @@ describe("useScaffoldContract", () => {
     const mockAddress = "0x12345";
     const contractName: ContractName = "Strk";
 
-    //All necessary mocks
+    //Some necessary mocks
     const mockedUseDeployedContractInfo = useDeployedContractInfo as unknown as Mock;
     const mockedUseTargetNetwork = useTargetNetwork as unknown as Mock;
     const mockedUseAccount = useAccount as unknown as Mock;
