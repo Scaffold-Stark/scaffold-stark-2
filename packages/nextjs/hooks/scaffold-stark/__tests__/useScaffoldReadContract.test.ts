@@ -1,7 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import { useScaffoldReadContract } from "../useScaffoldReadContract";
 import { useReadContract } from "@starknet-react/core";
-import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { vi, describe, it, expect } from 'vitest'; 
 
 // Mocking dependencies using Vitest
