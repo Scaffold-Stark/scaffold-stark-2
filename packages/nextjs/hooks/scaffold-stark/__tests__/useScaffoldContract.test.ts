@@ -25,7 +25,8 @@ describe("useScaffoldContract", () => {
     const mockAbi = [{ type: "function", name: "mockFunction", inputs: [], outputs: [] }];
     const mockAddress = "0x12345";
     const contractName: ContractName = "Strk";
-  
+
+    //All necessary mocks
     const mockedUseDeployedContractInfo = useDeployedContractInfo as unknown as Mock;
     const mockedUseTargetNetwork = useTargetNetwork as unknown as Mock;
     const mockedUseAccount = useAccount as unknown as Mock;
@@ -51,7 +52,7 @@ describe("useScaffoldContract", () => {
   
       mockedUseAccount.mockReturnValue({
         account: {
-          address: "0xAccount",
+          address: "0x129846",
         },
       });
   
@@ -72,7 +73,7 @@ describe("useScaffoldContract", () => {
         expect(result.current.data?.address).toBe(mockAddress);
         expect(result.current.data?.abi).toEqual(mockAbi);
     });
-    
+
     it("should return undefined contract when deployedContractData is not available", () => {
         mockedUseDeployedContractInfo.mockReturnValueOnce({
           data: undefined,
@@ -84,5 +85,23 @@ describe("useScaffoldContract", () => {
         expect(result.current.data).toBeUndefined();
         expect(result.current.isLoading).toBe(false);
     });
-    
+
+    it("should create RpcProvider with the correct public URL", () => {
+      renderHook(() => useScaffoldContract({ contractName }));
+  
+      expect(MockedRpcProvider).toHaveBeenCalledWith({ nodeUrl: "https://mock-rpc-url" });
+    });    
+
+    it("should set isLoading to true when deployed contract is loading", () => {
+      mockedUseDeployedContractInfo.mockReturnValueOnce({
+        data: undefined,
+        isLoading: true,
+      });
+  
+      const { result } = renderHook(() => useScaffoldContract({ contractName }));
+  
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.data).toBeUndefined();
+    });
+
 });  
