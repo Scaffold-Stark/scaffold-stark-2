@@ -20,3 +20,69 @@ vi.mock("starknet", () => {
     RpcProvider: vi.fn(),
   };
 });
+
+describe("useScaffoldContract", () => {
+    const mockAbi = [{ type: "function", name: "mockFunction", inputs: [], outputs: [] }];
+    const mockAddress = "0x12345";
+    const contractName: ContractName = "Strk";
+  
+    const mockedUseDeployedContractInfo = useDeployedContractInfo as unknown as Mock;
+    const mockedUseTargetNetwork = useTargetNetwork as unknown as Mock;
+    const mockedUseAccount = useAccount as unknown as Mock;
+    const MockedContract = Contract as unknown as Mock;
+    const MockedRpcProvider = RpcProvider as unknown as Mock;
+  
+    beforeEach(() => {
+      vi.resetAllMocks();
+  
+      mockedUseDeployedContractInfo.mockReturnValue({
+        data: {
+          abi: mockAbi,
+          address: mockAddress,
+        },
+        isLoading: false,
+      });
+  
+      mockedUseTargetNetwork.mockReturnValue({
+        targetNetwork: {
+          rpcUrls: { public: { http: ["https://mock-rpc-url"] } },
+        },
+      });
+  
+      mockedUseAccount.mockReturnValue({
+        account: {
+          address: "0xAccount",
+        },
+      });
+  
+      MockedContract.mockImplementation(() => ({
+        address: mockAddress,
+        abi: mockAbi,
+      }));
+  
+      MockedRpcProvider.mockImplementation(() => ({
+        nodeAddress: "https://mock-rpc-url",
+      }));
+    });
+
+    it("should return a contract when deployedContractData is available", () => {
+        const { result } = renderHook(() => useScaffoldContract({ contractName }));
+    
+        expect(result.current.data).toBeDefined();
+        expect(result.current.data?.address).toBe(mockAddress);
+        expect(result.current.data?.abi).toEqual(mockAbi);
+    });
+    
+    it("should return undefined contract when deployedContractData is not available", () => {
+        mockedUseDeployedContractInfo.mockReturnValueOnce({
+          data: undefined,
+          isLoading: false,
+        });
+    
+        const { result } = renderHook(() => useScaffoldContract({ contractName }));
+    
+        expect(result.current.data).toBeUndefined();
+        expect(result.current.isLoading).toBe(false);
+    });
+    
+});  

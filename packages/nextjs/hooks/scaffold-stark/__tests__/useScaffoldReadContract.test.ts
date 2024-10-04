@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react";
 import { useScaffoldReadContract } from "../useScaffoldReadContract";
 import { useReadContract } from "@starknet-react/core";
-import { vi, describe, it, expect } from 'vitest'; 
+import { vi, describe, it, expect, Mock } from 'vitest'; 
 
 // Mocking dependencies using Vitest
 vi.mock("~~/hooks/scaffold-stark", () => ({
@@ -18,11 +18,13 @@ vi.mock("@starknet-react/core", () => ({
 }));
 
 describe("useScaffoldReadContract", () => {
-  const contractName = "Eth"; // Use a valid contract name
-  const functionName = "symbol"; // Use a valid function name
+  const contractName = "Eth"; // Using a valid contract name. we could use 'TestContract' here
+  const functionName = "symbol"; // Using a valid function name. we could actually use 'testFunction' here
+
+  const mockUseReadContract = useReadContract as unknown as Mock;
 
   it("should call useReadContract with correct parameters when deployedContract is defined", () => {
-    const mockUseReadContract = useReadContract as vi.Mock;
+    
     mockUseReadContract.mockReturnValue({
       data: "mockedData",
     });
@@ -49,7 +51,6 @@ describe("useScaffoldReadContract", () => {
   });
 
   it("should disable read when args contain undefined", () => {
-    const mockUseReadContract = useReadContract as vi.Mock;
 
     renderHook(() =>
       useScaffoldReadContract({
@@ -67,8 +68,7 @@ describe("useScaffoldReadContract", () => {
   });
 
   it("should enable read when args do not contain undefined", () => {
-    const mockUseReadContract = useReadContract as vi.Mock;
-
+    
     const filteredArgs = [1, 2, 3];
 
     renderHook(() =>
@@ -81,14 +81,13 @@ describe("useScaffoldReadContract", () => {
 
     expect(mockUseReadContract).toHaveBeenCalledWith(
       expect.objectContaining({
-        enabled: true, // The read should be enabled since args do not contain undefined
+        enabled: true, // The read should be enabled since args do not contain undefined, args was filtered  
       })
     );
   });
 
   it("should pass blockIdentifier as 'pending'", () => {
-    const mockUseReadContract = useReadContract as vi.Mock;
-
+    
     const filteredArgs = [1, 2];
 
     renderHook(() =>
@@ -101,7 +100,7 @@ describe("useScaffoldReadContract", () => {
 
     expect(mockUseReadContract).toHaveBeenCalledWith(
       expect.objectContaining({
-        blockIdentifier: "pending", // Ensure blockIdentifier is passed as 'pending'
+        blockIdentifier: "pending", // Ensure blockIdentifier is passed as 'pending'. using the default which is 'pending'
       })
     );
   });
