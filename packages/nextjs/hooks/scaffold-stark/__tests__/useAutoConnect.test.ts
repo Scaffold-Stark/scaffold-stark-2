@@ -27,7 +27,7 @@ vi.mock("~~/utils/devnetAccounts", () => ({
 }));
 
 describe("useAutoConnect", () => {
-  let mockConnect: vi.Mock;
+  let mockConnect: ReturnType<typeof vi.fn>;
   let mockConnectors: any[];
 
   beforeEach(() => {
@@ -36,11 +36,11 @@ describe("useAutoConnect", () => {
       { id: "wallet-1" },
       { id: "burner-wallet", burnerAccount: null },
     ];
-    (useConnect as vi.Mock).mockReturnValue({
+    (useConnect as ReturnType<typeof vi.fn>).mockReturnValue({
       connect: mockConnect,
       connectors: mockConnectors,
     });
-    vi.mocked(scaffoldConfig).walletAutoConnect = true;
+    vi.spyOn(scaffoldConfig, "walletAutoConnect", "get").mockReturnValue(true);
   });
 
   afterEach(() => {
@@ -58,7 +58,9 @@ describe("useAutoConnect", () => {
   });
 
   it("should not auto-connect if walletAutoConnect is disabled", () => {
-    vi.mocked(scaffoldConfig).walletAutoConnect = false;
+    vi.spyOn(scaffoldConfig, "walletAutoConnect", "get").mockReturnValue(
+      false as true,
+    );
     vi.mocked(useReadLocalStorage).mockReturnValue({ id: "wallet-1" });
 
     renderHook(() => useAutoConnect());
