@@ -45,7 +45,7 @@ const ConnectModal = () => {
     }
     connect({ connector });
     setLastConnector({ id: connector.id });
-    setLastConnectionTime(Date.now()); // Store the current time
+    setLastConnectionTime(Date.now());
     handleCloseModal();
   }
 

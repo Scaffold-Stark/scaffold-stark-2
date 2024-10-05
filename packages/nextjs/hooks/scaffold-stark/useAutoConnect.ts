@@ -22,7 +22,6 @@ export const useAutoConnect = (): void => {
       const currentTime = Date.now();
       const ttlExpired =
         currentTime - (lastConnectionTime || 0) > scaffoldConfig.autoConnectTTL;
-
       if (!ttlExpired) {
         const connector = connectors.find(
           (conn) => conn.id == savedConnector?.id,
