@@ -209,7 +209,8 @@ const deployContract = async (
   const constructorCalldata = constructorArgs
     ? contractCalldata.compile("constructor", constructorArgs)
     : [];
-  console.log(yellow("Deploying Contract "), contract);
+
+  console.log(yellow("Deploying Contract "), contractName || contract);
 
   let { classHash } = await declareIfNot_NotWait(
     {

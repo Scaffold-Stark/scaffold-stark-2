@@ -28,13 +28,13 @@ const Wallet = ({
       : (connector.icon as string);
   return (
     <button
-      className={`flex gap-4 items-center text-neutral p-[.2rem] rounded-[4px] transition-all cursor-pointer ${isDarkMode ? "hover:bg-[#385183] border-[#4f4ab7]" : "hover:bg-gradient-light hover:border-none"} border pl-3 ${clicked ? "bg-ligth" : ""}`}
+      className={`flex gap-4 items-center text-neutral  rounded-[4px] p-3 transition-all ${isDarkMode ? "hover:bg-[#385183] border-[#4f4ab7]" : "hover:bg-slate-200 border-[#5c4fe5]"} border ${clicked ? "bg-ligth" : ""}`}
       onClick={(e) => {
         setClicked(true);
         handleConnectWallet(e, connector);
       }}
     >
-      <div className="h-[2.2rem] w-[2.2rem] rounded-[5px]">
+      <div className="h-[1.5rem] w-[1.5rem] rounded-[5px]">
         <Image
           alt={connector.name}
           loader={loader}
@@ -44,7 +44,7 @@ const Wallet = ({
           className="h-full w-full object-cover rounded-[5px]"
         />
       </div>
-      <p className="flex-1 text-start">{connector.name}</p>
+      <span className=" text-start m-0">{connector.name}</span>
     </button>
   );
 };
