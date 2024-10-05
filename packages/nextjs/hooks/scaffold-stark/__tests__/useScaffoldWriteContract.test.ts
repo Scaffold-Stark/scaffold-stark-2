@@ -1,6 +1,9 @@
 import { renderHook, act } from '@testing-library/react';
 import { useScaffoldWriteContract } from '~~/hooks/scaffold-stark/useScaffoldWriteContract';
-import { useDeployedContractInfo, useTransactor } from '~~/hooks/scaffold-stark';
+import {
+  useDeployedContractInfo,
+  useTransactor,
+} from '~~/hooks/scaffold-stark';
 import { useTargetNetwork } from '~~/hooks/scaffold-stark/useTargetNetwork';
 import { useSendTransaction } from '@starknet-react/core';
 import { vi, describe, beforeEach, it, expect } from 'vitest';
@@ -26,7 +29,8 @@ describe('useScaffoldWriteContract', () => {
   const functionName = 'transfer';
   const args: readonly [string, number] = ['0x1234', 1000];
 
-  const mockUseDeployedContractInfo = useDeployedContractInfo as unknown as Mock;
+  const mockUseDeployedContractInfo =
+    useDeployedContractInfo as unknown as Mock;
   const mochUseSendTransaction = useSendTransaction as unknown as Mock;
   const mockUseTransactor = useTransactor as unknown as Mock;
   const mockUseTargetNetwork = useTargetNetwork as unknown as Mock;
