@@ -1,12 +1,12 @@
-import { Connector, useConnect } from '@starknet-react/core';
-import { useRef, useState } from 'react';
-import Wallet from '~~/components/scaffold-stark/CustomConnectButton/Wallet';
-import { useLocalStorage } from 'usehooks-ts';
-import { burnerAccounts } from '~~/utils/devnetAccounts';
-import { BurnerConnector } from '~~/services/web3/stark-burner/BurnerConnector';
-import { useTheme } from 'next-themes';
-import { BlockieAvatar } from '../BlockieAvatar';
-import GenericModal from './GenericModal';
+import { Connector, useConnect } from "@starknet-react/core";
+import { useRef, useState } from "react";
+import Wallet from "~~/components/scaffold-stark/CustomConnectButton/Wallet";
+import { useLocalStorage } from "usehooks-ts";
+import { burnerAccounts } from "~~/utils/devnetAccounts";
+import { BurnerConnector } from "~~/services/web3/stark-burner/BurnerConnector";
+import { useTheme } from "next-themes";
+import { BlockieAvatar } from "../BlockieAvatar";
+import GenericModal from "./GenericModal";
 const loader = ({ src }: { src: string }) => {
   return src;
 };
@@ -15,17 +15,17 @@ const ConnectModal = () => {
   const modalRef = useRef<HTMLInputElement>(null);
   const [isBurnerWallet, setIsBurnerWallet] = useState(false);
   const { resolvedTheme } = useTheme();
-  const isDarkMode = resolvedTheme === 'dark';
+  const isDarkMode = resolvedTheme === "dark";
   const { connectors, connect, error, status, ...props } = useConnect();
   const [_, setLastConnector] = useLocalStorage<{ id: string; ix?: number }>(
-    'lastUsedConnector',
-    { id: '' },
+    "lastUsedConnector",
+    { id: "" },
     {
       initializeWithValue: false,
     },
   );
   const [, setLastConnectionTime] = useLocalStorage<number>(
-    'lastConnectionTime',
+    "lastConnectionTime",
     0,
   );
 
@@ -39,7 +39,7 @@ const ConnectModal = () => {
     e: React.MouseEvent<HTMLButtonElement>,
     connector: Connector,
   ): void {
-    if (connector.id === 'burner-wallet') {
+    if (connector.id === "burner-wallet") {
       setIsBurnerWallet(true);
       return;
     }
@@ -54,7 +54,7 @@ const ConnectModal = () => {
     ix: number,
   ) {
     const connector = connectors.find(
-      (it) => it.id == 'burner-wallet',
+      (it) => it.id == "burner-wallet",
     ) as BurnerConnector;
     if (connector) {
       connector.burnerAccount = burnerAccounts[ix];
@@ -83,7 +83,7 @@ const ConnectModal = () => {
         <>
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-bold">
-              {isBurnerWallet ? 'Choose account' : 'Connect a Wallet'}
+              {isBurnerWallet ? "Choose account" : "Connect a Wallet"}
             </h3>
             <label
               onClick={() => setIsBurnerWallet(false)}
@@ -113,7 +113,7 @@ const ConnectModal = () => {
                         className="w-full flex flex-col"
                       >
                         <button
-                          className={`hover:bg-gradient-modal border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4 ${isDarkMode ? 'border-[#385183]' : ''}`}
+                          className={`hover:bg-gradient-modal border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4 ${isDarkMode ? "border-[#385183]" : ""}`}
                           onClick={(e) => handleConnectBurner(e, ix)}
                         >
                           <BlockieAvatar
