@@ -101,19 +101,9 @@ describe("useScaffoldMultiWriteContract Hook", () => {
   it("should correctly parse contract calls", () => {
     // Mock contract and ABI
 
-    contracts["testNetwork"] = {
-      MyContract: {
-        address: "0x123",
-
-        abi: [{ name: "myFunction", stateMutability: "external", inputs: [] }],
-      },
-    };
-
     const { result } = renderHook(() =>
       useScaffoldMultiWriteContract({
-        calls: [
-          { contractName: "Strk", functionName: "transfer", args: [] },
-        ],
+        calls: [{ contractName: "Strk", functionName: "transfer", args: [] }],
       }),
     );
 
@@ -127,9 +117,7 @@ describe("useScaffoldMultiWriteContract Hook", () => {
 
     const { result } = renderHook(() =>
       useScaffoldMultiWriteContract({
-        calls: [
-          { contractName: "Strk", functionName: "transfer", args: [] },
-        ],
+        calls: [{ contractName: "Strk", functionName: "transfer", args: [] }],
       }),
     );
 
@@ -151,9 +139,7 @@ describe("useScaffoldMultiWriteContract Hook", () => {
 
     const { result } = renderHook(() =>
       useScaffoldMultiWriteContract({
-        calls: [
-          { contractName: "Strk", functionName: "transfer", args: [] },
-        ],
+        calls: [{ contractName: "Strk", functionName: "transfer", args: [] }],
       }),
     );
 
@@ -171,19 +157,9 @@ describe("useScaffoldMultiWriteContract Hook", () => {
   });
 
   it("should show error if contract ABI is missing", async () => {
-    contracts["testNetwork"] = {
-      MyContract: {
-        address: "0x123",
-
-        abi: undefined, // ABI is missing
-      },
-    };
-
     const { result } = renderHook(() =>
       useScaffoldMultiWriteContract({
-        calls: [
-          { contractName: "Strk", functionName: "transfer", args: [] },
-        ],
+        calls: [{ contractName: "Strk", functionName: "transfer", args: [] }],
       }),
     );
 
@@ -205,9 +181,7 @@ describe("useScaffoldMultiWriteContract Hook", () => {
 
     const { result } = renderHook(() =>
       useScaffoldMultiWriteContract({
-        calls: [
-          { contractName: "Strk", functionName: "transfer", args: [] },
-        ],
+        calls: [{ contractName: "Strk", functionName: "transfer", args: [] }],
       }),
     );
 
@@ -223,9 +197,7 @@ describe("useScaffoldMultiWriteContract Hook", () => {
 
     const { result } = renderHook(() =>
       useScaffoldMultiWriteContract({
-        calls: [
-          { contractName: "Strk", functionName: "transfer", args: [] },
-        ],
+        calls: [{ contractName: "Strk", functionName: "transfer", args: [] }],
       }),
     );
 
