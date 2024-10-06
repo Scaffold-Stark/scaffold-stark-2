@@ -97,7 +97,9 @@ describe("useScaffoldMultiWriteContract Hook", () => {
 
     const { result } = renderHook(() =>
       useScaffoldMultiWriteContract({
-        calls: [{ contractName: "Strk", functionName: "transfer", args: ["arg1", 1] }],
+        calls: [
+          { contractName: "Strk", functionName: "transfer", args: ["arg1", 1] },
+        ],
       }),
     );
 
@@ -111,7 +113,9 @@ describe("useScaffoldMultiWriteContract Hook", () => {
 
     const { result } = renderHook(() =>
       useScaffoldMultiWriteContract({
-        calls: [{ contractName: "Strk", functionName: "transfer", args: ["arg1", 1] }],
+        calls: [
+          { contractName: "Strk", functionName: "transfer", args: ["arg1", 1] },
+        ],
       }),
     );
 
