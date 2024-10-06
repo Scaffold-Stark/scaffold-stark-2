@@ -141,7 +141,7 @@ const HooksExample: React.FC = () => {
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
           <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">
-            Contract Information (useScaffoldContract)
+            Contract Information (<code>useScaffoldContract</code>)
           </h2>
           <div>
             {isContractLoading ? (
@@ -157,7 +157,7 @@ const HooksExample: React.FC = () => {
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
           <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">
-            Contract ETH Balance (useScaffoldEthBalance)
+            Contract ETH Balance (<code>useScaffoldEthBalance</code>)
           </h2>
           {isEthBalanceLoading ? (
             <p>Loading contract...</p>
@@ -172,7 +172,7 @@ const HooksExample: React.FC = () => {
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
           <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">
-            Contract STRK Balance (useScaffoldStrkBalance)
+            Contract STRK Balance (<code>useScaffoldStrkBalance</code>)
           </h2>
           {isStrkBalanceLoading ? (
             <p>Loading contract...</p>
@@ -187,7 +187,7 @@ const HooksExample: React.FC = () => {
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
           <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">
-            Currency Price (useNativeCurrencyPrice)
+            Currency Price (<code>useNativeCurrencyPrice</code>)
           </h2>
           <p>ETH Price: ${nativeCurrencyPrice}</p>
           <p>STRK Price: ${strkCurrencyPrice}</p>
@@ -197,7 +197,7 @@ const HooksExample: React.FC = () => {
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
           <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">
-            Set Greeting (useScaffoldEventHistory)
+            Set Greeting (<code>useScaffoldEventHistory</code>)
           </h2>
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2">
@@ -233,7 +233,7 @@ const HooksExample: React.FC = () => {
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
           <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">
-            Current Greeting (useScaffoldReadContract)
+            Current Greeting (<code>useScaffoldReadContract</code>)
           </h2>
           <div>
             {isGreetingLoading ? (
@@ -250,7 +250,7 @@ const HooksExample: React.FC = () => {
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
           <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">
-            Premium Status (useScaffoldReadContract)
+            Premium Status (<code>useScaffoldReadContract</code>)
           </h2>
           <div>
             {isPremiumLoading ? (
@@ -267,7 +267,7 @@ const HooksExample: React.FC = () => {
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 pb-8 md:pb-4 relative shadow">
           <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">
-            Withdraw (useScaffoldWriteContract)
+            Withdraw (<code>useScaffoldWriteContract</code>)
           </h2>
           <button
             onClick={handleWithdraw}
@@ -281,7 +281,7 @@ const HooksExample: React.FC = () => {
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
           <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">
-            Network Information (useTargetNetwork)
+            Network Information (<code>useTargetNetwork</code>)
           </h2>
           <p>Current Network: {targetNetwork.name}</p>
         </div>
@@ -313,7 +313,7 @@ const HooksExample: React.FC = () => {
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
           <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">
-            Greeting Changed Events (useScaffoldEventHistory)
+            Greeting Changed Events (<code>useScaffoldEventHistory</code>)
           </h2>
           <ol type="1">
             {greetingChangedEvents?.map((item, i) => (
