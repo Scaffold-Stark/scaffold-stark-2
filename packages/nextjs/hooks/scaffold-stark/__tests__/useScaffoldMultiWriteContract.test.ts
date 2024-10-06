@@ -13,15 +13,9 @@ import { useNetwork, useSendTransaction } from "@starknet-react/core";
 
 import { useTransactor } from "../useTransactor";
 
-import { contracts } from "~~/utils/scaffold-stark/contract";
-
-import { notification } from "~~/utils/scaffold-stark";
-
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 
 import { Contract, RpcProvider } from "starknet";
-
-import { ContractName } from "~~/utils/scaffold-stark/contract";
 
 // Mock the external dependencies
 
@@ -139,7 +133,9 @@ describe("useScaffoldMultiWriteContract Hook", () => {
 
     const { result } = renderHook(() =>
       useScaffoldMultiWriteContract({
-        calls: [{ contractName: "Strk", functionName: "transfer", args: [] }],
+        calls: [
+          { contractName: "Strk", functionName: "transfer", args: ["arg1", 1] },
+        ],
       }),
     );
 
@@ -159,7 +155,9 @@ describe("useScaffoldMultiWriteContract Hook", () => {
   it("should show error if contract ABI is missing", async () => {
     const { result } = renderHook(() =>
       useScaffoldMultiWriteContract({
-        calls: [{ contractName: "Strk", functionName: "transfer", args: [] }],
+        calls: [
+          { contractName: "Strk", functionName: "transfer", args: ["arg1", 1] },
+        ],
       }),
     );
 
@@ -181,7 +179,9 @@ describe("useScaffoldMultiWriteContract Hook", () => {
 
     const { result } = renderHook(() =>
       useScaffoldMultiWriteContract({
-        calls: [{ contractName: "Strk", functionName: "transfer", args: [] }],
+        calls: [
+          { contractName: "Strk", functionName: "transfer", args: ["arg1", 1] },
+        ],
       }),
     );
 
@@ -197,7 +197,9 @@ describe("useScaffoldMultiWriteContract Hook", () => {
 
     const { result } = renderHook(() =>
       useScaffoldMultiWriteContract({
-        calls: [{ contractName: "Strk", functionName: "transfer", args: [] }],
+        calls: [
+          { contractName: "Strk", functionName: "transfer", args: ["arg1", 1] },
+        ],
       }),
     );
 
@@ -217,18 +219,14 @@ describe("useScaffoldMultiWriteContract Hook", () => {
 
 describe("createContractCall Function", () => {
   it("should create a contract call object", () => {
-    const contractCall = createContractCall("Strk", "transfer", [
-      "arg1",
-
-      "arg2",
-    ]);
+    const contractCall = createContractCall("Strk", "transfer", ["arg1", 1]);
 
     expect(contractCall).toEqual({
       contractName: "Strk",
 
       functionName: "transfer",
 
-      args: ["arg1", "arg2"],
+      args: ["arg1", 1],
     });
   });
 });
