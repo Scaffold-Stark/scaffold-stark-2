@@ -7,6 +7,8 @@ import { BurnerConnector } from "~~/services/web3/stark-burner/BurnerConnector";
 import { useTheme } from "next-themes";
 import { BlockieAvatar } from "../BlockieAvatar";
 import GenericModal from "./GenericModal";
+import scaffoldConfig from "~~/scaffold.config";
+
 const loader = ({ src }: { src: string }) => {
   return src;
 };
@@ -26,7 +28,7 @@ const ConnectModal = () => {
   );
   const [, setLastConnectionTime] = useLocalStorage<number>(
     "lastConnectionTime",
-    0,
+    scaffoldConfig.lastConnectedTime,
   );
 
   const handleCloseModal = () => {

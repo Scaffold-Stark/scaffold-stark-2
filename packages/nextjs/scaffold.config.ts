@@ -6,6 +6,7 @@ export type ScaffoldConfig = {
   onlyLocalBurnerWallet: boolean;
   rpcProviderUrl: string;
   walletAutoConnect: boolean;
+  lastConnectedTime: number;
   autoConnectTTL: number;
 };
 
@@ -17,6 +18,7 @@ const scaffoldConfig = {
   // The interval at which your front-end polls the RPC servers for new data
   // it has no effect if you only target the local network (default is 30_000)
   pollingInterval: 30_000,
+  lastConnectedTime: 0,
   /**
    * Auto connect:
    * 1. If the user was connected into a wallet before, on page reload reconnect automatically
