@@ -38,13 +38,9 @@ const HooksExample: React.FC = () => {
     contractName: contractName as ContractName,
   });
 
-  const { formatted: ethBalance } = contract
-    ? useScaffoldEthBalance({ address: contract.address })
-    : { formatted: "0" };
+  const { formatted: ethBalance, isLoading: isEthBalanceLoading } = useScaffoldEthBalance({ address: contract?.address });
 
-  const { formatted: strkBalance } = contract
-    ? useScaffoldStrkBalance({ address: contract.address })
-    : { formatted: "0" };
+  const { formatted: strkBalance, isLoading: isStrkBalanceLoading } = useScaffoldStrkBalance({ address: contract?.address });
 
   const { targetNetwork } = useTargetNetwork();
 
@@ -138,10 +134,12 @@ const HooksExample: React.FC = () => {
           <h2 className="text-xl font-semibold mb-4">
             Contract ETH Balance (useScaffoldEthBalance)
           </h2>
-          {contract ? (
+          {isEthBalanceLoading ? (
+            <p>Loading contract...</p>
+          ) : contract ? (
             <p>{ethBalance} ETH</p>
           ) : (
-            <p>Contract not loaded</p>
+            <p>No contract loaded</p>
           )}
         </div>
 
@@ -151,10 +149,12 @@ const HooksExample: React.FC = () => {
           <h2 className="text-xl font-semibold mb-4">
             Contract STRK Balance (useScaffoldStrkBalance)
           </h2>
-          {contract ? (
+          {isStrkBalanceLoading ? (
+            <p>Loading contract...</p>
+          ) : contract ? (
             <p>{strkBalance} STRK</p>
           ) : (
-            <p>Contract not loaded</p>
+            <p>No contract loaded</p>
           )}
         </div>
 
