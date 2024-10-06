@@ -179,7 +179,7 @@ describe("useScaffoldMultiWriteContract Hook", () => {
   });
 
   it("should send contract write transaction", async () => {
-    (useTransactor as Mock).mockReturnValue((fn) => fn());
+    (useTransactor as Mock).mockReturnValue((fn: any) => fn());
 
     const { result } = renderHook(() =>
       useScaffoldMultiWriteContract({
