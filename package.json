@@ -24,7 +24,8 @@
     "test:nextjs": "yarn workspace @ss-2/nextjs test",
     "format": "yarn workspace @ss-2/nextjs format && yarn workspace @ss-2/snfoundry format",
     "format:check": "yarn workspace @ss-2/nextjs format:check && yarn workspace @ss-2/snfoundry format:check",
-    "prepare": "husky"
+    "prepare": "husky",
+    "verify": "yarn workspace @ss-2/snfoundry verify"
   },
   "packageManager": "yarn@3.2.3",
   "devDependencies": {
