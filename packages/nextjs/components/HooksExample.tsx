@@ -25,7 +25,8 @@ const HooksExample: React.FC = () => {
   const [newGreeting, setNewGreeting] = useState<string>("");
   const [amountEth, setAmountEth] = useState<string>("");
   const [fromBlock, setFromBlock] = useState<bigint>(0n);
-  const [selectedNetwork, setSelectedNetwork] = useState<string>("mainnet");
+  // Commented code for useSwitchNetwork hook
+  //const [selectedNetwork, setSelectedNetwork] = useState<string>("mainnet");
 
   const convertToWei = (amount: string) => {
     try {
@@ -96,16 +97,17 @@ const HooksExample: React.FC = () => {
       watch: true,
     });
 
-  const { switchNetwork } = useSwitchNetwork();
+  // Commented code for useSwitchNetwork hook
+  // const { switchNetwork } = useSwitchNetwork();
 
-  const handleSwitchNetwork = async () => {
-    try {
-      await switchNetwork(selectedNetwork);
-      console.log(`Switched to ${selectedNetwork}`);
-    } catch (error) {
-      console.error("Failed to switch network:", error);
-    }
-  }
+  // const handleSwitchNetwork = async () => {
+  //   try {
+  //     await switchNetwork(selectedNetwork);
+  //     console.log(`Switched to ${selectedNetwork}`);
+  //   } catch (error) {
+  //     console.error("Failed to switch network:", error);
+  //   }
+  // }
 
   const handleSetGreeting = async () => {
     try {
@@ -284,7 +286,7 @@ const HooksExample: React.FC = () => {
           <p>Current Network: {targetNetwork.name}</p>
         </div>
 
-        {/* Switch Network */}
+        {/* Switch Network
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
           <div className="trapeze"></div>
           <h2 className="text-xl font-semibold mb-4">
@@ -305,7 +307,7 @@ const HooksExample: React.FC = () => {
           >
             Switch Network
           </button>
-        </div>    
+        </div>     */}
 
         {/* Greeting Changed Events */}
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
