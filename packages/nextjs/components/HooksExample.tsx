@@ -11,6 +11,9 @@ import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldRead
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
 import useScaffoldEthBalance from "~~/hooks/scaffold-stark/useScaffoldEthBalance";
 import useScaffoldStrkBalance from "~~/hooks/scaffold-stark/useScaffoldStrkBalance";
+import { useNativeCurrencyPrice } from "~~/hooks/scaffold-stark/useNativeCurrencyPrice";
+import { useGlobalState } from "~~/services/store/store";
+import { useSwitchNetwork } from "~~/hooks/scaffold-stark/useSwitchNetwork";
 import { ContractName } from "~~/utils/scaffold-stark/contract";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
 import { InputBase, IntegerInput } from "~~/components/scaffold-stark/";
@@ -22,6 +25,7 @@ const HooksExample: React.FC = () => {
   const [newGreeting, setNewGreeting] = useState<string>("");
   const [amountEth, setAmountEth] = useState<string>("");
   const [fromBlock, setFromBlock] = useState<bigint>(0n);
+  const [selectedNetwork, setSelectedNetwork] = useState<string>("mainnet");
 
   const convertToWei = (amount: string) => {
     try {
@@ -38,9 +42,17 @@ const HooksExample: React.FC = () => {
     contractName: contractName as ContractName,
   });
 
-  const { formatted: ethBalance, isLoading: isEthBalanceLoading } = useScaffoldEthBalance({ address: contract?.address });
+  const { formatted: ethBalance, isLoading: isEthBalanceLoading } = useScaffoldEthBalance({ 
+    address: contract?.address
+  });
 
-  const { formatted: strkBalance, isLoading: isStrkBalanceLoading } = useScaffoldStrkBalance({ address: contract?.address });
+  const { formatted: strkBalance, isLoading: isStrkBalanceLoading } = useScaffoldStrkBalance({
+    address: contract?.address
+  });
+
+  useNativeCurrencyPrice();
+  const nativeCurrencyPrice = useGlobalState((state) => state.nativeCurrencyPrice);
+  const strkCurrencyPrice = useGlobalState((state) => state.strkCurrencyPrice);
 
   const { targetNetwork } = useTargetNetwork();
 
@@ -83,6 +95,17 @@ const HooksExample: React.FC = () => {
       fromBlock,
       watch: true,
     });
+
+  const { switchNetwork } = useSwitchNetwork();
+
+  const handleSwitchNetwork = async () => {
+    try {
+      await switchNetwork(selectedNetwork);
+      console.log(`Switched to ${selectedNetwork}`);
+    } catch (error) {
+      console.error("Failed to switch network:", error);
+    }
+  }
 
   const handleSetGreeting = async () => {
     try {
@@ -157,6 +180,16 @@ const HooksExample: React.FC = () => {
             <p>No contract loaded</p>
           )}
         </div>
+
+        {/* Native Currency Price */}
+        <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
+          <div className="trapeze"></div>
+          <h2 className="text-xl font-semibold mb-4">
+            Currency Price (useNativeCurrencyPrice)
+          </h2>
+          <p>ETH Price: ${nativeCurrencyPrice}</p>
+          <p>STRK Price: ${strkCurrencyPrice}</p>
+        </div>        
 
         {/* Set Greeting */}
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
@@ -250,6 +283,29 @@ const HooksExample: React.FC = () => {
           </h2>
           <p>Current Network: {targetNetwork.name}</p>
         </div>
+
+        {/* Switch Network */}
+        <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
+          <div className="trapeze"></div>
+          <h2 className="text-xl font-semibold mb-4">
+            Switch Network (useSwitchNetwork)
+          </h2>
+          <select
+            value={selectedNetwork}
+            onChange={(e) => setSelectedNetwork(e.target.value)}
+            className="select select-bordered w-full mb-4"
+          >
+            <option value="mainnet">Mainnet</option>
+            <option value="testnet">Testnet</option>
+            <option value="devnet">Devnet</option>
+          </select>
+          <button
+            onClick={handleSwitchNetwork}
+            className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
+          >
+            Switch Network
+          </button>
+        </div>    
 
         {/* Greeting Changed Events */}
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
