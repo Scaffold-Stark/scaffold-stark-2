@@ -7,6 +7,9 @@ import { BurnerConnector } from "~~/services/web3/stark-burner/BurnerConnector";
 import { useTheme } from "next-themes";
 import { BlockieAvatar } from "../BlockieAvatar";
 import GenericModal from "./GenericModal";
+import scaffoldConfig from "~~/scaffold.config";
+import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
+
 const loader = ({ src }: { src: string }) => {
   return src;
 };
@@ -14,18 +17,19 @@ const loader = ({ src }: { src: string }) => {
 const ConnectModal = () => {
   const modalRef = useRef<HTMLInputElement>(null);
   const [isBurnerWallet, setIsBurnerWallet] = useState(false);
-
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
-
   const { connectors, connect, error, status, ...props } = useConnect();
-
   const [_, setLastConnector] = useLocalStorage<{ id: string; ix?: number }>(
     "lastUsedConnector",
     { id: "" },
     {
       initializeWithValue: false,
     },
+  );
+  const [, setLastConnectionTime] = useLocalStorage<number>(
+    LAST_CONNECTED_TIME_LOCALSTORAGE_KEY,
+    0,
   );
 
   const handleCloseModal = () => {
@@ -44,6 +48,7 @@ const ConnectModal = () => {
     }
     connect({ connector });
     setLastConnector({ id: connector.id });
+    setLastConnectionTime(Date.now());
     handleCloseModal();
   }
 
@@ -70,6 +75,7 @@ const ConnectModal = () => {
       >
         <span>Connect</span>
       </label>
+
       <input
         ref={modalRef}
         type="checkbox"

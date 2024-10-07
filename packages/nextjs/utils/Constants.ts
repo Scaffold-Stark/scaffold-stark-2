@@ -272,6 +272,8 @@ const universalErc20Abi = [
   },
 ] as const;
 
+export const LAST_CONNECTED_TIME_LOCALSTORAGE_KEY = "lastConnectedTime";
+
 export {
   devnetEthClassHash,
   devnetStrkClassHash,
