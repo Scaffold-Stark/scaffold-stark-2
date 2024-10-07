@@ -53,7 +53,7 @@ const mockSendTransaction = vi.fn();
 
 const mockTransactor = vi.fn((fn) => fn());
 
-const mockedUseNetwork = useNetwork  as Mock;
+const mockedUseNetwork = useNetwork as Mock;
 
 const useTargetNetworkMock = useTargetNetwork as Mock;
 const useSendTransactionMock = useSendTransaction as Mock;
@@ -63,7 +63,6 @@ const ContractMock = Contract as Mock;
 const useNetworkMock = useNetwork as Mock;
 
 describe("useScaffoldMultiWriteContract Hook", () => {
-
   const mockAbi = [
     { type: "function", name: "mockFunction", inputs: [], outputs: [] },
   ];
