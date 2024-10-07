@@ -8,6 +8,7 @@ import { useTheme } from "next-themes";
 import { BlockieAvatar } from "../BlockieAvatar";
 import GenericModal from "./GenericModal";
 import scaffoldConfig from "~~/scaffold.config";
+import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
 
 const loader = ({ src }: { src: string }) => {
   return src;
@@ -27,8 +28,8 @@ const ConnectModal = () => {
     },
   );
   const [, setLastConnectionTime] = useLocalStorage<number>(
-    "lastConnectionTime",
-    scaffoldConfig.lastConnectedTime,
+    LAST_CONNECTED_TIME_LOCALSTORAGE_KEY,
+    0,
   );
 
   const handleCloseModal = () => {
