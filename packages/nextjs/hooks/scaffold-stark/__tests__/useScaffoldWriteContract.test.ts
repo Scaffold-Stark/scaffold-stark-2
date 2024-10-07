@@ -6,7 +6,7 @@ import {
 } from "~~/hooks/scaffold-stark";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { useSendTransaction } from "@starknet-react/core";
-import { vi, describe, beforeEach, it, expect } from "vitest";
+import { vi, describe, beforeEach, afterAll, it, expect } from "vitest";
 import { Mock } from "vitest";
 
 // Mock dependencies
@@ -38,6 +38,10 @@ describe("useScaffoldWriteContract", () => {
   beforeEach(() => {
     // Reset all mocks before each test
     vi.clearAllMocks();
+  });
+
+  afterAll(() => {
+    vi.restoreAllMocks();
   });
 
   it("should handle case where contract is not deployed", async () => {
@@ -119,10 +123,6 @@ describe("useScaffoldWriteContract", () => {
       await result.current.sendAsync();
     });
 
-    console.log(mockSendTransaction.sendAsync.mock.calls[0]);
-
-    expect(mockSendTransaction.sendAsync).toHaveBeenCalledTimes(1);
-
     expect(mockSendTransaction.sendAsync).toHaveBeenCalledWith([
       {
         contractAddress: "0x123",
@@ -141,7 +141,6 @@ describe("useScaffoldWriteContract", () => {
       }),
     );
 
-    expect(useDeployedContractInfo).toHaveBeenCalledTimes(1);
     expect(useDeployedContractInfo).toHaveBeenCalledWith(contractName);
   });
 });

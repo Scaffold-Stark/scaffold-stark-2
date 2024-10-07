@@ -49,12 +49,20 @@ vi.mock("~~/hooks/scaffold-stark", () => ({
   useTransactor: vi.fn(),
 }));
 
+const mockSendTransaction = vi.fn();
+
+const mockTransactor = vi.fn((fn) => fn());
+
+const mockedUseNetwork = useNetwork  as Mock;
+
+const useTargetNetworkMock = useTargetNetwork as Mock;
+const useSendTransactionMock = useSendTransaction as Mock;
+const useTransactorMock = useTransactor as Mock;
+const useDeployedContractInfoMock = useDeployedContractInfo as Mock;
+const ContractMock = Contract as Mock;
+const useNetworkMock = useNetwork as Mock;
+
 describe("useScaffoldMultiWriteContract Hook", () => {
-  const mockSendTransaction = vi.fn();
-
-  const mockTransactor = vi.fn((fn) => fn());
-
-  const mockedUseNetwork = useNetwork as unknown as Mock;
 
   const mockAbi = [
     { type: "function", name: "mockFunction", inputs: [], outputs: [] },
@@ -65,19 +73,19 @@ describe("useScaffoldMultiWriteContract Hook", () => {
   beforeEach(() => {
     vi.resetAllMocks();
 
-    (useTargetNetwork as Mock).mockReturnValue({
+    useTargetNetworkMock.mockReturnValue({
       targetNetwork: { network: "testNetwork", id: 1 },
     });
 
     mockedUseNetwork.mockReturnValue({ chain: { id: 1 } });
 
-    (useSendTransaction as Mock).mockReturnValue({
+    useSendTransactionMock.mockReturnValue({
       sendAsync: mockSendTransaction,
     });
 
-    (useTransactor as Mock).mockReturnValue(mockTransactor);
+    useTransactorMock.mockReturnValue(mockTransactor);
 
-    (useDeployedContractInfo as Mock).mockReturnValue({
+    useDeployedContractInfoMock.mockReturnValue({
       data: {
         address: "0x123",
 
@@ -85,7 +93,7 @@ describe("useScaffoldMultiWriteContract Hook", () => {
       },
     });
 
-    (Contract as Mock).mockImplementation(() => ({
+    ContractMock.mockImplementation(() => ({
       address: mockAddress,
 
       abi: mockAbi,
@@ -109,7 +117,7 @@ describe("useScaffoldMultiWriteContract Hook", () => {
   });
 
   it("should return error if wallet is not connected", async () => {
-    (useNetwork as Mock).mockReturnValueOnce({ chain: null });
+    useNetworkMock.mockReturnValueOnce({ chain: null });
 
     const { result } = renderHook(() =>
       useScaffoldMultiWriteContract({
@@ -133,7 +141,7 @@ describe("useScaffoldMultiWriteContract Hook", () => {
   });
 
   it("should handle wrong network", async () => {
-    (useNetwork as Mock).mockReturnValueOnce({ chain: { id: 2 } });
+    useNetworkMock.mockReturnValueOnce({ chain: { id: 2 } });
 
     const { result } = renderHook(() =>
       useScaffoldMultiWriteContract({
@@ -179,7 +187,7 @@ describe("useScaffoldMultiWriteContract Hook", () => {
   });
 
   it("should send contract write transaction", async () => {
-    (useTransactor as Mock).mockReturnValue((fn: any) => fn());
+    useTransactorMock.mockReturnValue((fn: any) => fn());
 
     const { result } = renderHook(() =>
       useScaffoldMultiWriteContract({
@@ -197,7 +205,7 @@ describe("useScaffoldMultiWriteContract Hook", () => {
   });
 
   it("should show error notification if sendAsync is not available", async () => {
-    (useSendTransaction as Mock).mockReturnValueOnce({ sendAsync: null });
+    useSendTransactionMock.mockReturnValueOnce({ sendAsync: null });
 
     const { result } = renderHook(() =>
       useScaffoldMultiWriteContract({
