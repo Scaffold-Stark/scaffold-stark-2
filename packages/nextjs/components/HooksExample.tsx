@@ -18,6 +18,7 @@ import { ContractName } from "~~/utils/scaffold-stark/contract";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
 import { InputBase, IntegerInput } from "~~/components/scaffold-stark/";
 import { parseUnits } from "ethers";
+import { Skeleton } from "@radix-ui/themes";
 
 const HooksExample: React.FC = () => {
   const [contractName, setContractName] =
@@ -43,16 +44,20 @@ const HooksExample: React.FC = () => {
     contractName: contractName as ContractName,
   });
 
-  const { formatted: ethBalance, isLoading: isEthBalanceLoading } = useScaffoldEthBalance({ 
-    address: contract?.address
-  });
+  const { formatted: ethBalance, isLoading: isEthBalanceLoading } =
+    useScaffoldEthBalance({
+      address: contract?.address,
+    });
 
-  const { formatted: strkBalance, isLoading: isStrkBalanceLoading } = useScaffoldStrkBalance({
-    address: contract?.address
-  });
+  const { formatted: strkBalance, isLoading: isStrkBalanceLoading } =
+    useScaffoldStrkBalance({
+      address: contract?.address,
+    });
 
   useNativeCurrencyPrice();
-  const nativeCurrencyPrice = useGlobalState((state) => state.nativeCurrencyPrice);
+  const nativeCurrencyPrice = useGlobalState(
+    (state) => state.nativeCurrencyPrice,
+  );
   const strkCurrencyPrice = useGlobalState((state) => state.strkCurrencyPrice);
 
   const { targetNetwork } = useTargetNetwork();
@@ -144,9 +149,8 @@ const HooksExample: React.FC = () => {
             Contract Information (<code>useScaffoldContract</code>)
           </h2>
           <div>
-            {isContractLoading ? (
-              <p>Loading contract...</p>
-            ) : contract ? (
+            {isContractLoading && <Skeleton />}
+            {!isContractLoading && contract ? (
               <p className="break-words">Contract loaded: {contract.address}</p>
             ) : (
               <p>No contract loaded</p>
@@ -159,9 +163,8 @@ const HooksExample: React.FC = () => {
           <h2 className="text-xl font-semibold mb-4">
             Contract ETH Balance (<code>useScaffoldEthBalance</code>)
           </h2>
-          {isEthBalanceLoading ? (
-            <p>Loading contract...</p>
-          ) : contract ? (
+          {isEthBalanceLoading && <Skeleton />}
+          {!isEthBalanceLoading && contract ? (
             <p>{ethBalance} ETH</p>
           ) : (
             <p>No contract loaded</p>
@@ -174,9 +177,8 @@ const HooksExample: React.FC = () => {
           <h2 className="text-xl font-semibold mb-4">
             Contract STRK Balance (<code>useScaffoldStrkBalance</code>)
           </h2>
-          {isStrkBalanceLoading ? (
-            <p>Loading contract...</p>
-          ) : contract ? (
+          {isStrkBalanceLoading && <Skeleton />}
+          {!isStrkBalanceLoading && contract ? (
             <p>{strkBalance} STRK</p>
           ) : (
             <p>No contract loaded</p>
@@ -191,7 +193,7 @@ const HooksExample: React.FC = () => {
           </h2>
           <p>ETH Price: ${nativeCurrencyPrice}</p>
           <p>STRK Price: ${strkCurrencyPrice}</p>
-        </div>        
+        </div>
 
         {/* Set Greeting */}
         <div className="rounded-[5px] bg-base-100 border border-gradient p-4 relative shadow">
@@ -236,9 +238,8 @@ const HooksExample: React.FC = () => {
             Current Greeting (<code>useScaffoldReadContract</code>)
           </h2>
           <div>
-            {isGreetingLoading ? (
-              <p>Loading greeting...</p>
-            ) : greeting !== undefined ? (
+            {isGreetingLoading && <Skeleton />}
+            {!isGreetingLoading && greeting !== undefined ? (
               <p className="break-words">{`Greeting: ${greeting}`}</p>
             ) : (
               <p>No greeting set</p>
@@ -253,9 +254,8 @@ const HooksExample: React.FC = () => {
             Premium Status (<code>useScaffoldReadContract</code>)
           </h2>
           <div>
-            {isPremiumLoading ? (
-              <p>Loading premium status...</p>
-            ) : isPremium !== undefined ? (
+            {isPremiumLoading && <Skeleton />}
+            {!isPremiumLoading && isPremium !== undefined ? (
               <p>{`Premium: ${isPremium ? "Yes" : "No"}`}</p>
             ) : (
               <p>Unable to fetch premium status</p>
