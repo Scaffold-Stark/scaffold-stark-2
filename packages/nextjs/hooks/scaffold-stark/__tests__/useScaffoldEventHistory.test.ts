@@ -1,57 +1,67 @@
 import { renderHook, act, waitFor } from "@testing-library/react";
-import { useScaffoldEventHistory } from '../useScaffoldEventHistory';
-import { useDeployedContractInfo } from '~~/hooks/scaffold-stark';
-import { useTargetNetwork } from '../useTargetNetwork';
-import { useProvider } from '@starknet-react/core';
-import { RpcProvider } from 'starknet';
-import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from "vitest";
+import { useScaffoldEventHistory } from "../useScaffoldEventHistory";
+import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
+import { useTargetNetwork } from "../useTargetNetwork";
+import { useProvider } from "@starknet-react/core";
+import { RpcProvider } from "starknet";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+  type Mock,
+} from "vitest";
 
 // Mock dependencies
-vi.mock('~~/hooks/scaffold-stark', () => ({
+vi.mock("~~/hooks/scaffold-stark", () => ({
   useDeployedContractInfo: vi.fn(),
 }));
 
-vi.mock('../useTargetNetwork', () => ({
+vi.mock("../useTargetNetwork", () => ({
   useTargetNetwork: vi.fn(),
 }));
 
-vi.mock('@starknet-react/core', () => ({
+vi.mock("@starknet-react/core", () => ({
   useProvider: vi.fn(),
 }));
 
-describe('useScaffoldEventHistory', () => {
+describe("useScaffoldEventHistory", () => {
   const mockContractName: "Eth" | "Strk" = "Strk";
-  const mockEventName: "openzeppelin::token::erc20_v070::erc20::ERC20::Transfer" | "openzeppelin::token::erc20_v070::erc20::ERC20::Event"
- = "openzeppelin::token::erc20_v070::erc20::ERC20::Event";
+  const mockEventName:
+    | "openzeppelin::token::erc20_v070::erc20::ERC20::Transfer"
+    | "openzeppelin::token::erc20_v070::erc20::ERC20::Event" =
+    "openzeppelin::token::erc20_v070::erc20::ERC20::Event";
   const mockDeployedContractData = {
     abi: [
       {
-        type: 'event',
+        type: "event",
         name: mockEventName,
         members: [
-          { name: 'arg1', type: 'felt', kind: 'key' },
-          { name: 'arg2', type: 'felt', kind: 'data' },
+          { name: "arg1", type: "felt", kind: "key" },
+          { name: "arg2", type: "felt", kind: "data" },
         ],
       },
     ],
-    address: '0x1234567890abcdef',
+    address: "0x1234567890abcdef",
   };
   const mockTargetNetwork = {
-    id: 'testnet',
+    id: "testnet",
     rpcUrls: {
       public: {
-        http: ['https://mock-rpc-url'],
+        http: ["https://mock-rpc-url"],
       },
     },
   };
   const mockEvents = [
     {
       log: {
-        keys: ['0x1'],
-        data: ['0x2'],
+        keys: ["0x1"],
+        data: ["0x2"],
       },
-      block_hash: '0xabc',
-      transaction_hash: '0xdef',
+      block_hash: "0xabc",
+      transaction_hash: "0xdef",
     },
   ];
 
@@ -81,15 +91,15 @@ describe('useScaffoldEventHistory', () => {
     });
 
     RpcProvider.prototype.getBlockWithTxHashes = vi.fn().mockResolvedValue({
-      block_hash: '0xabc',
+      block_hash: "0xabc",
     });
 
     RpcProvider.prototype.getTransactionByHash = vi.fn().mockResolvedValue({
-      transaction_hash: '0xdef',
+      transaction_hash: "0xdef",
     });
 
     RpcProvider.prototype.getTransactionReceipt = vi.fn().mockResolvedValue({
-      transaction_hash: '0xdef',
+      transaction_hash: "0xdef",
     });
   });
 
@@ -97,7 +107,7 @@ describe('useScaffoldEventHistory', () => {
     vi.clearAllMocks();
   });
 
-  it('should fetch and return events from the contract after mimicking a transaction', async () => {
+  it("should fetch and return events from the contract after mimicking a transaction", async () => {
     const { result } = renderHook(() =>
       useScaffoldEventHistory({
         contractName: mockContractName,
@@ -109,7 +119,7 @@ describe('useScaffoldEventHistory', () => {
         receiptData: true,
         watch: false,
         enabled: true,
-      })
+      }),
     );
 
     // Initially, data should be loading
@@ -130,12 +140,12 @@ describe('useScaffoldEventHistory', () => {
     expect(result.current.data).toEqual([
       {
         log: mockEvents[0],
-        block: { block_hash: '0xabc' },
-        transaction: { transaction_hash: '0xdef' },
-        receipt: { transaction_hash: '0xdef' },
+        block: { block_hash: "0xabc" },
+        transaction: { transaction_hash: "0xdef" },
+        receipt: { transaction_hash: "0xdef" },
         args: {
-          arg1: '0x1',
-          arg2: '0x2',
+          arg1: "0x1",
+          arg2: "0x2",
         },
       },
     ]);
