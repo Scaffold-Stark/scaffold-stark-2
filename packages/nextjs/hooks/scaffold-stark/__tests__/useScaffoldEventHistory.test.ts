@@ -120,7 +120,7 @@ describe("useScaffoldEventHistory", () => {
         receiptData: true,
         watch: false,
         enabled: true,
-      })
+      }),
     );
 
     // Initially, data should be loading
