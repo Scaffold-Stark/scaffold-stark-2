@@ -66,15 +66,16 @@ describe("useScaffoldEventHistory", () => {
   ];
 
   beforeEach(() => {
+    // @ts-ignore
     (useDeployedContractInfo as vi.Mock).mockReturnValue({
       data: mockDeployedContractData,
       isLoading: false,
     });
-
-    (useTargetNetwork as vi.Mock).mockReturnValue({
+    // @ts-ignore
+    (useTargetNetwork as Vi.Mock).mockReturnValue({
       targetNetwork: mockTargetNetwork,
     });
-
+    // @ts-ignore
     (useProvider as vi.Mock).mockReturnValue({
       provider: new RpcProvider({
         nodeUrl: mockTargetNetwork.rpcUrls.public.http[0],
