@@ -8664,6 +8664,7 @@ __metadata:
     pinst: ^3.0.0
     postcss: ^8.4.38
     prettier: ^3.2.5
+    vitest: ^2.1.2
   languageName: unknown
   linkType: soft
 
@@ -9790,7 +9791,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^2.1.1":
+"vitest@npm:^2.1.1, vitest@npm:^2.1.2":
   version: 2.1.2
   resolution: "vitest@npm:2.1.2"
   dependencies:
