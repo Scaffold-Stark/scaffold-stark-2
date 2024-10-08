@@ -55,6 +55,19 @@ const deployScript = async (): Promise<void> => {
       }
   );
 
+  await deployContract(
+    {
+      contract: "BetMaker",
+      contractName: "BetMaker",
+      constructorArgs: {
+        owner: deployer.address,
+      },
+      options: {
+        //maxFee: BigInt(1000000000000)
+      }
+    }
+);
+
 
   // await deployContract({
   //   contract: "BetCryptoMaker",

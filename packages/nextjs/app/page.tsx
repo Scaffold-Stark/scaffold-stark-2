@@ -10,6 +10,7 @@ import Image from "next/image";
 import { InfiniteMovingCards } from "./Uikit/components/ui/infinite-moving-card";
 import { BetsOverview } from "./BetsOverview";
 import { CryptoBetsOverview } from "./CryptoBetsOverview";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
 
 function Home() {
   const items: {
@@ -113,6 +114,12 @@ function Home() {
       ),
     },
   ];
+
+  const { data: greeting } = useScaffoldReadContract({
+    contractName: "BetMaker",
+    functionName: "greeting",
+  });
+  console.log("GREEREE", greeting);
   return (
     <>
       <InfiniteMovingCards
@@ -122,6 +129,7 @@ function Home() {
         className="!mb-20"
       />
       <CryptoBetsOverview />
+      {greeting}
       {/* <BetsOverview /> */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 max-w-7xl mx-auto w-full my-20"></div>
       {/* <div className="flex items-center flex-col flex-grow pt-10">

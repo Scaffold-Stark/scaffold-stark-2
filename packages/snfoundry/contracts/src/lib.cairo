@@ -1,5 +1,6 @@
 //mod YourContract;
 pub mod cryptos;
+pub mod BetMaker;
 #[cfg(test)]
 mod test {
     //mod TestPragmaPrice;
