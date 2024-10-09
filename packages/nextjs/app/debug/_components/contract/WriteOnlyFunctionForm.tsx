@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   ContractInput,
+  //   TxReceipt,
   getFunctionInputKey,
   getInitialFormState,
   getParsedContractFunctionArgs,
@@ -27,6 +28,7 @@ type WriteOnlyFunctionFormProps = {
   abiFunction: AbiFunction;
   onChange: () => void;
   contractAddress: Address;
+  //   inheritedFrom?: string;
 };
 
 export const WriteOnlyFunctionForm = ({
@@ -141,6 +143,7 @@ export const WriteOnlyFunctionForm = ({
       >
         <p className="font-medium my-0 break-words text-function">
           {abiFunction.name}
+          {/* <InheritanceTooltip inheritedFrom={undefined} /> */}
         </p>
         {inputs}
         <div className="flex justify-between gap-2">
@@ -172,7 +175,7 @@ export const WriteOnlyFunctionForm = ({
         </div>
       </div>
       {zeroInputs && txResult ? (
-        <div className="flex-grow basis-0 ">
+        <div className="flex-grow basis-0">
           <TxReceipt txResult={txResult} />
         </div>
       ) : null}

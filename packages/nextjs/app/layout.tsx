@@ -3,7 +3,6 @@ import { ScaffoldStarkAppWithProviders } from "~~/components/ScaffoldStarkAppWit
 import "~~/styles/globals.css";
 import { ThemeProvider } from "~~/components/ThemeProvider";
 import { Space_Grotesk } from "next/font/google";
-
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"] });
 
 export const metadata: Metadata = {

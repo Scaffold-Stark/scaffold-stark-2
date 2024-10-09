@@ -37,8 +37,8 @@ If your local starknet-devnet version is not `0.2.0`, you need to install it.
 ### Compatible versions
 
 - Starknet-devnet - v0.2.0
-- Scarb - v2.8.2
-- Snforge - v0.30.0
+- Scarb - v2.8.3
+- Snforge - v0.31.0
 - Cairo - v2.8.2
 - RPC - v0.7.1
 
