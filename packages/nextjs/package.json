@@ -20,7 +20,7 @@
     "@radix-ui/themes": "2.0.3",
     "@starknet-io/types-js": "^0.7.7",
     "@starknet-react/chains": "^3.0.0",
-    "@starknet-react/core": "^3.0.0",
+    "@starknet-react/core": "^3.0.1",
     "@starknet-react/typescript-config": "0.0.0",
     "abi-wan-kanabi": "^2.2.2",
     "blo": "^1.1.1",
