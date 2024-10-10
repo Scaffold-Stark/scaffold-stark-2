@@ -59,12 +59,12 @@ export class BurnerConnector extends InjectedConnector {
       new Account(
         new RpcProvider({
           nodeUrl: this.chain.rpcUrls.public.http[0],
-          // chainId: starknetChainId(this.chain.id), // TODO : check how this affects wrong network. can we get this from the chain directly ? 
+          // chainId: starknetChainId(this.chain.id), // TODO : check how this affects wrong network. can we get this from the chain directly ?
         }),
         this.burnerAccount.accountAddress,
         this.burnerAccount.privateKey,
         "1",
-        "0x2"
+        "0x2",
       ),
     );
   }
