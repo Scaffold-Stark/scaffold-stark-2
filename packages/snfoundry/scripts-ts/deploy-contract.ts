@@ -18,7 +18,7 @@ import { getTxVersion } from "./helpers/fees";
 
 interface Arguments {
   network: string;
-  reset: boolean;
+  noreset: boolean;
   fee?: string;
   [x: string]: unknown;
   _: (string | number)[];
@@ -31,10 +31,10 @@ const argv = yargs(process.argv.slice(2))
     description: "Specify the network",
     demandOption: true,
   })
-  .option("reset", {
-    alias: "r",
+  .option("noreset", {
+    alias: "nr",
     type: "boolean",
-    description: "Reset deployments",
+    description: "Do not reset deployments (keep existing deployments)",
     default: false,
   })
   .option("fee", {
@@ -47,7 +47,7 @@ const argv = yargs(process.argv.slice(2))
   .parseSync() as Arguments;
 
 const networkName: string = argv.network;
-const resetDeployments: boolean = argv.reset;
+const resetDeployments: boolean = argv.noreset;
 const feeToken: string = argv.fee;
 
 let deployments = {};
@@ -295,11 +295,9 @@ const exportDeployments = () => {
     `../deployments/${networkName}_latest.json`
   );
 
-  let finalDeployments = resetDeployments
-    ? deployments
-    : { ...loadExistingDeployments(), ...deployments };
+  const resetDeployments: boolean = !argv.noreset;
 
-  if (fs.existsSync(networkPath) && !resetDeployments) {
+  if (!resetDeployments && fs.existsSync(networkPath)) {
     const currentTimestamp = new Date().getTime();
     fs.renameSync(
       networkPath,
@@ -307,7 +305,11 @@ const exportDeployments = () => {
     );
   }
 
-  fs.writeFileSync(networkPath, JSON.stringify(finalDeployments, null, 2));
+  if (resetDeployments && fs.existsSync(networkPath)) {
+    fs.unlinkSync(networkPath);
+  }
+
+  fs.writeFileSync(networkPath, JSON.stringify(deployments, null, 2));
 };
 
 export {
