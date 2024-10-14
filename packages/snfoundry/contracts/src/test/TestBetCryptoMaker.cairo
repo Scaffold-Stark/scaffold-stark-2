@@ -71,7 +71,7 @@ fn test_create_bet() {
         );
 
     assert!(dispatcher.getTotalBets() == 1, "Total bets should be 1.");
-//dispatcher.claimRewards(78);
+    //dispatcher.claimRewards(78);
 }
 
 
@@ -258,14 +258,15 @@ fn test_claim_rewards() {
     >();
     let contract_address = deploy_contract("BetCryptoMaker");
     let (eth_token, nimbora_token) = setup();
-    
+
     prank(CheatTarget::One(eth_token.contract_address), user_address, CheatSpan::TargetCalls(1));
     eth_token.approve(contract_address, 7000000000000000000);
 
-    prank(CheatTarget::One(eth_token.contract_address), contract_address, CheatSpan::TargetCalls(1));
+    prank(
+        CheatTarget::One(eth_token.contract_address), contract_address, CheatSpan::TargetCalls(1)
+    );
     eth_token.transferFrom(user_address, contract_address, 7000000000000000000);
 
-    
     let dispatcher = IBetCryptoMakerDispatcher { contract_address };
 
     prank(CheatTarget::One(contract_address), OWNER(), CheatSpan::TargetCalls(1));
@@ -353,15 +354,14 @@ fn test_claim_rewards() {
     );
     dispatcher.getBet(bet_id).nimbora.claim_withdrawal(contract_address, 0);
 
-  
-
     //prank(CheatTarget::One(contract_address), user_address, CheatSpan::TargetCalls(1));
     assert!(!dispatcher.checkHasClaimed(user_address, bet_id), "Bet is not supposed to be claimed");
 
     //Refaire un checkHasClaimed à faux à la toute fin
 
     prank(CheatTarget::One(contract_address), user_address, CheatSpan::TargetCalls(1));
-    //(PLUS TARD) essayer de claim no et vérifier que cela ne fait rien car l'user n'a pas voté de no
+    //(PLUS TARD) essayer de claim no et vérifier que cela ne fait rien car l'user n'a pas voté de
+    //no
 
     assert!(
         eth_token.balanceOf(user_address) == initial_balanceOf_user - 7, "Wrong user balance (2)"

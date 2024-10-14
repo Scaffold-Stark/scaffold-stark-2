@@ -42,32 +42,27 @@ import { green } from "./helpers/colorize-log";
  * @returns {Promise<void>}
  */
 const deployScript = async (): Promise<void> => {
-  await deployContract(
-      {
-        contract: "YourContract",
-        contractName: "YourContractExportName",
-        constructorArgs: {
-          owner: deployer.address,
-        },
-        options: {
-          //maxFee: BigInt(1000000000000)
-        }
-      }
-  );
+  await deployContract({
+    contract: "YourContract",
+    contractName: "YourContractExportName",
+    constructorArgs: {
+      owner: deployer.address,
+    },
+    options: {
+      //maxFee: BigInt(1000000000000)
+    },
+  });
 
-  await deployContract(
-    {
-      contract: "BetMaker",
-      contractName: "BetMaker",
-      constructorArgs: {
-        owner: deployer.address,
-      },
-      options: {
-        //maxFee: BigInt(1000000000000)
-      }
-    }
-);
-
+  await deployContract({
+    contract: "BetMaker",
+    contractName: "BetMaker",
+    constructorArgs: {
+      owner: deployer.address,
+    },
+    options: {
+      //maxFee: BigInt(1000000000000)
+    },
+  });
 
   // await deployContract({
   //   contract: "BetCryptoMaker",
@@ -87,7 +82,6 @@ deployScript()
     console.log(green("All Setup Done"));
   })
   .catch(console.error);
-
 
 // ETH reference_token_price: 349956000000,
 // BTC reference_token_price: 652086109850,

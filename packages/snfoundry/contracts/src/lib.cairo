@@ -1,9 +1,9 @@
 //mod YourContract;
-pub mod cryptos;
 pub mod BetMaker;
+pub mod cryptos;
 #[cfg(test)]
 mod test {
     //mod TestPragmaPrice;
-    //mod TestBitcoinPrice;
-    //mod TestBetCryptoMaker;
+//mod TestBitcoinPrice;
+//mod TestBetCryptoMaker;
 }

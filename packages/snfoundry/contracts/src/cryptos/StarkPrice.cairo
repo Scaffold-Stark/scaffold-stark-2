@@ -31,7 +31,7 @@ pub trait IStarkPrice<TContractState> {
     fn set_pragma_checkpoint(self: @TContractState);
     fn set_bet_result_price(ref self: TContractState);
     fn get_contract_current_timestamp(self: @TContractState) -> u64;
-// TODO: owner claim balance of contract
+    // TODO: owner claim balance of contract
 // TODO: owner set new bet
 }
 

@@ -162,11 +162,11 @@ export function CryptoBetsOverview() {
             <Skeleton
               percentageYes={calculatePercentage(
                 item?.total_bet_yes_amount,
-                item?.total_bet_amount
+                item?.total_bet_amount,
               )}
               percentageNo={calculatePercentage(
                 item?.total_bet_no_amount,
-                item?.total_bet_amount
+                item?.total_bet_amount,
               )}
             />
           }
@@ -176,7 +176,7 @@ export function CryptoBetsOverview() {
               🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
               <span
                 className={cn(
-                  `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`
+                  `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`,
                 )}
               >
                 {`Prize Pool ${parseFloat(formatUnits(item?.total_bet_amount || "0")).toFixed(4)} ETH`}

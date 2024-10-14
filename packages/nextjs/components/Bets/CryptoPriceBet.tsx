@@ -99,7 +99,7 @@ function CryptoPriceBet({ cryptoPriceData, isLoading }: CryptoPriceBetProps) {
               <h2 className="text-white text-sm">Total Yes</h2>
               <p className="text-primary text-2xl font-bold">
                 {parseFloat(
-                  formatUnits(cryptoPriceData?.total_bet_yes_amount)
+                  formatUnits(cryptoPriceData?.total_bet_yes_amount),
                 ).toFixed(4)}
                 &nbsp;ETH
               </p>
@@ -111,7 +111,7 @@ function CryptoPriceBet({ cryptoPriceData, isLoading }: CryptoPriceBetProps) {
               <h2 className="text-white text-sm">Total No</h2>
               <p className="text-destructive text-2xl font-bold">
                 {parseFloat(
-                  formatUnits(cryptoPriceData?.total_bet_no_amount)
+                  formatUnits(cryptoPriceData?.total_bet_no_amount),
                 ).toFixed(4)}
                 &nbsp;ETH
               </p>
@@ -128,7 +128,7 @@ function CryptoPriceBet({ cryptoPriceData, isLoading }: CryptoPriceBetProps) {
           <h2 className="text-white text-sm">Prize Pool</h2>
           <p className="text-primary text-2xl font-bold">
             {parseFloat(formatUnits(cryptoPriceData?.total_bet_amount)).toFixed(
-              4
+              4,
             )}
             &nbsp;ETH
           </p>

@@ -488,8 +488,7 @@ pub mod BetCryptoMaker {
             let caller_address = get_caller_address();
             let winner_result = self.bets.read(bet_id).winner_result;
             let yes_win = winner_result.is_yes_outcome;
-            
-            
+
             let mut nimbora_total = winner_result.nimbora_total_amount_with_yield;
             loop { // TO DELETE FOR REAL USE - to cover nimbora fees
                 if nimbora_total > self.bets.read(bet_id).total_bet_amount {
@@ -497,21 +496,20 @@ pub mod BetCryptoMaker {
                 }
                 nimbora_total = nimbora_total + 1;
             };
-            let mut yield_generated = nimbora_total
-                - self.bets.read(bet_id).total_bet_amount;
+            let mut yield_generated = nimbora_total - self.bets.read(bet_id).total_bet_amount;
 
             if claim_yes {
-         
                 let mut user_yes_amount = self.user_bet_yes_amount.read((caller_address, bet_id));
                 if user_yes_amount.amount > 0 && user_yes_amount.has_claimed == false {
                     if yes_win {
-                      
                         let transfer_amount = user_yes_amount.amount
-                            + ((user_yes_amount.amount * precision
+                            + ((user_yes_amount.amount
+                                * precision
                                 / self.bets.read(bet_id).total_bet_yes_amount)
-                                * yield_generated) / precision; // amount earned with yield
+                                * yield_generated)
+                                / precision; // amount earned with yield
                         self.bets.read(bet_id).bet_token.transfer(caller_address, transfer_amount);
-                    // refund + yield
+                        // refund + yield
                     } else {
                         // refund
                         let transfer_amount = user_yes_amount.amount;
@@ -528,10 +526,13 @@ pub mod BetCryptoMaker {
                 if user_no_amount.amount > 0 && user_no_amount.has_claimed == false {
                     if yes_win == false {
                         let transfer_amount = user_no_amount.amount
-                            + ((user_no_amount.amount * precision/ self.bets.read(bet_id).total_bet_no_amount)
-                                * yield_generated) / precision; // amount earned with yield
+                            + ((user_no_amount.amount
+                                * precision
+                                / self.bets.read(bet_id).total_bet_no_amount)
+                                * yield_generated)
+                                / precision; // amount earned with yield
                         self.bets.read(bet_id).bet_token.transfer(caller_address, transfer_amount);
-                    // refund + yield
+                        // refund + yield
                     } else {
                         // refund
                         let transfer_amount = user_no_amount.amount;
