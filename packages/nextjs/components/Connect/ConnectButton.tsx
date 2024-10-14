@@ -44,7 +44,14 @@ export const ConnectButton = () => {
   }, [account]);
 
   if (status === "disconnected")
-    return <Button className="">Connect Wallet</Button>;
+    return (
+      <Button
+        className="border-primary text-primary hover:text-primary"
+        variant={"outline"}
+      >
+        Connect Wallet
+      </Button>
+    );
 
   if (accountChainId !== targetNetwork.id) {
     return <WrongNetworkDropdown />;
@@ -55,9 +62,9 @@ export const ConnectButton = () => {
       <div className="flex flex-col items-center max-sm:mt-2">
         <Balance
           address={accountAddress as Address}
-          className="min-h-0 h-auto"
+          className="h-auto min-h-0"
         />
-        <span className="text-xs ml-1" style={{ color: networkColor }}>
+        <span className="ml-1 text-xs" style={{ color: networkColor }}>
           {chain.name}
         </span>
       </div>
