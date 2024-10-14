@@ -35,7 +35,7 @@ try {
       ` --fee ${process.env.FEE_TOKEN}` +
       ` --no-reset ${process.env.NO_RESET}` +
       ` && ts-node ../scripts-ts/helpers/parse-deployments.ts && cd ..`,
-    { stdio: "inherit" },
+    { stdio: "inherit" }
   );
 } catch (error) {
   console.error("Error during deployment:", error);
