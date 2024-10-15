@@ -55,9 +55,9 @@ export const HeaderMenuLinks = () => {
               passHref
               className={`${
                 isActive
-                  ? "!bg-gradient-nav !text-white active:bg-gradient-nav shadow-md"
+                  ? "!bg-gradient-nav active:bg-gradient-nav !text-white shadow-md"
                   : ""
-              } py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col hover:bg-gradient-nav hover:text-white`}
+              } hover:bg-gradient-nav grid grid-flow-col gap-2 rounded-full px-3 py-1.5 text-sm hover:text-white`}
             >
               {icon}
               <span>{label}</span>
@@ -78,7 +78,7 @@ export const Header = () => {
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   useOutsideClick(
     burgerMenuRef,
-    useCallback(() => setIsDrawerOpen(false), [])
+    useCallback(() => setIsDrawerOpen(false), []),
   );
   const { targetNetwork } = useTargetNetwork();
   const isLocalNetwork = targetNetwork.network === devnet.network;
@@ -119,8 +119,8 @@ export const Header = () => {
   ]);
 
   return (
-    <div className="sticky flex lg:static top-0 navbar bg-background border-b border-border min-h-0 flex-shrink-0 justify-between z-20 shadow-md px-6 h-16 items-center">
-      <div className="flex justify-center items-center">
+    <div className="navbar sticky top-0 z-20 flex h-16 min-h-0 flex-shrink-0 items-center justify-between border-b border-border bg-background px-6 shadow-md lg:static">
+      <div className="flex items-center justify-center">
         <Link href={"/"}>
           <Image
             src={"/starksight-green.png"}

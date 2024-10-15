@@ -25,7 +25,7 @@ function Home() {
           alt={"bitcoin"}
           width={450}
           height={50}
-          className="h-full w-full "
+          className="h-full w-full"
         />
       ),
     },
@@ -37,7 +37,7 @@ function Home() {
           alt={"bitcoin"}
           width={450}
           height={50}
-          className="h-full w-full "
+          className="h-full w-full"
         />
       ),
     },
@@ -49,7 +49,7 @@ function Home() {
           alt={"bitcoin"}
           width={626}
           height={432}
-          className="h-full w-full "
+          className="h-full w-full"
         />
       ),
     },
@@ -61,7 +61,7 @@ function Home() {
           alt={"bitcoin"}
           width={350}
           height={50}
-          className="h-full w-full "
+          className="h-full w-full"
         />
       ),
     },
@@ -73,7 +73,7 @@ function Home() {
           alt={"bitcoin"}
           width={450}
           height={50}
-          className="h-full w-full "
+          className="h-full w-full"
         />
       ),
     },
@@ -85,7 +85,7 @@ function Home() {
           alt={"bitcoin"}
           width={450}
           height={50}
-          className="h-full w-full "
+          className="h-full w-full"
         />
       ),
     },
@@ -97,7 +97,7 @@ function Home() {
           alt={"bitcoin"}
           width={626}
           height={432}
-          className="h-full w-full "
+          className="h-full w-full"
         />
       ),
     },
@@ -109,7 +109,7 @@ function Home() {
           alt={"bitcoin"}
           width={350}
           height={50}
-          className="h-full w-full "
+          className="h-full w-full"
         />
       ),
     },
@@ -131,7 +131,7 @@ function Home() {
       <CryptoBetsOverview />
       {greeting}
       {/* <BetsOverview /> */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 max-w-7xl mx-auto w-full my-20"></div>
+      <div className="mx-auto my-20 grid w-full max-w-7xl grid-cols-1 gap-4 lg:grid-cols-3"></div>
       {/* <div className="flex items-center flex-col flex-grow pt-10">
         <div className="px-5">
           <h1 className="text-center">
