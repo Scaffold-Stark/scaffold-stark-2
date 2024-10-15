@@ -76,7 +76,7 @@ export const useScaffoldWriteContract = <
   }) => {
     // if no args supplied, use the one supplied from hook
     let newArgs = params?.args;
-    if (!newArgs) {
+    if (Object.keys(newArgs || {}).length <= 0) {
       newArgs = args;
     }
 
@@ -100,7 +100,7 @@ export const useScaffoldWriteContract = <
         ? parseFunctionParams({
             abiFunction,
             abi: deployedContractData.abi,
-            inputs: args as any[],
+            inputs: newArgs as any[],
             isRead: false,
             isReadArgsParsing: false,
           }).flat(Infinity)
