@@ -22,8 +22,6 @@ const argv = yargs(process.argv.slice(2))
   })
   .parseSync() as CommandLineOptions;
 
-console.log(argv);
-
 // Set the NETWORK environment variable based on the --network argument
 process.env.NETWORK = argv.network || "devnet";
 process.env.FEE_TOKEN = argv.fee || "eth";
@@ -37,7 +35,7 @@ try {
       ` --fee ${process.env.FEE_TOKEN}` +
       ` --no-reset ${process.env.NO_RESET}` +
       ` && ts-node ../scripts-ts/helpers/parse-deployments.ts && cd ..`,
-    { stdio: "inherit" },
+    { stdio: "inherit" }
   );
 } catch (error) {
   console.error("Error during deployment:", error);
