@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ContractInput,
   //   TxReceipt,
@@ -14,7 +14,6 @@ import {
   useSendTransaction,
   useNetwork,
   useTransactionReceipt,
-  useAccount,
 } from "@starknet-react/core";
 import { Abi } from "abi-wan-kanabi";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
@@ -27,6 +26,7 @@ import {
 } from "starknet";
 import { TxReceipt } from "./TxReceipt";
 import { useTransactor } from "~~/hooks/scaffold-stark";
+import { useAccount } from "~~/hooks/useAccount";
 
 type WriteOnlyFunctionFormProps = {
   abi: Abi;
@@ -46,21 +46,18 @@ export const WriteOnlyFunctionForm = ({
     getInitialFormState(abiFunction),
   );
   const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null);
-  const { status: walletStatus } = useAccount();
+  const { status: walletStatus, isConnected, account, chainId } = useAccount();
   const { chain } = useNetwork();
   const writeTxn = useTransactor();
   const { targetNetwork } = useTargetNetwork();
-  const writeDisabled =
-    !chain ||
-    chain?.network !== targetNetwork.network ||
-    walletStatus === "disconnected";
 
-  // side effect to update error state when not connected
-  useEffect(() => {
-    setFormErrorMessage(
-      writeDisabled ? "Wallet not connected or in the wrong network" : null,
-    );
-  }, [writeDisabled]);
+  const writeDisabled = useMemo(
+    () =>
+      !chain ||
+      chain?.network !== targetNetwork.network ||
+      walletStatus === "disconnected",
+    [chain, targetNetwork.network, walletStatus],
+  );
 
   const {
     data: result,
@@ -137,6 +134,11 @@ export const WriteOnlyFunctionForm = ({
   });
   const zeroInputs = inputs.length === 0;
 
+  const errorMsg = (() => {
+    if (writeDisabled) return "Wallet not connected or on wrong network";
+    return formErrorMessage;
+  })();
+
   return (
     <div className="py-5 space-y-3 first:pt-0 last:pb-1">
       <div
@@ -159,14 +161,14 @@ export const WriteOnlyFunctionForm = ({
           )}
           <div
             className={`flex ${
-              formErrorMessage &&
+              !!errorMsg &&
               "tooltip before:content-[attr(data-tip)] before:right-[-10px] before:left-auto before:transform-none"
             }`}
-            data-tip={`${formErrorMessage}`}
+            data-tip={`${errorMsg}`}
           >
             <button
               className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
-              disabled={!!formErrorMessage || isLoading}
+              disabled={writeDisabled || !!formErrorMessage || isLoading}
               onClick={handleWrite}
             >
               {isLoading && (

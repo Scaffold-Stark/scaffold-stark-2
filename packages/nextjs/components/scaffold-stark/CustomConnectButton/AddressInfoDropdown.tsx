@@ -23,6 +23,7 @@ import { useDisconnect, useNetwork, useConnect } from "@starknet-react/core";
 import { getStarknetPFPIfExists } from "~~/utils/profile";
 import useConditionalStarkProfile from "~~/hooks/useConditionalStarkProfile";
 import { useTheme } from "next-themes";
+import { default as NextImage } from "next/image";
 
 const allowedNetworks = getTargetNetworks();
 
@@ -83,27 +84,28 @@ export const AddressInfoDropdown = ({
       <details ref={dropdownRef} className="dropdown dropdown-end leading-3">
         <summary
           tabIndex={0}
-          className="btn bg-transparent btn-sm pl-0 pr-2 dropdown-toggle gap-0 !h-auto border border-[#5c4fe5] "
+          className="btn bg-transparent btn-sm px-2 py-[0.35rem] dropdown-toggle gap-0 !h-auto border border-[#5c4fe5] "
         >
-          {getStarknetPFPIfExists(profile?.profilePicture) ? (
-            //eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={profile?.profilePicture}
-              alt="Profile Picture"
-              className="rounded-full h-8 w-8"
-              width={30}
-              height={30}
-            />
-          ) : (
-            <BlockieAvatar address={address} size={30} ensImage={ensAvatar} />
-          )}
-          <span className="ml-4 mr-1">
+          <div className="hidden [@media(min-width:412px)]:block">
+            {getStarknetPFPIfExists(profile?.profilePicture) ? (
+              <NextImage
+                src={profile?.profilePicture || ""}
+                alt="Profile Picture"
+                className="rounded-full"
+                width={30}
+                height={30}
+              />
+            ) : (
+              <BlockieAvatar address={address} size={28} ensImage={ensAvatar} />
+            )}
+          </div>
+          <span className="ml-2 mr-2 text-sm">
             {isENS(displayName)
               ? displayName
               : profile?.name ||
                 address?.slice(0, 6) + "..." + address?.slice(-4)}
           </span>
-          <ChevronDownIcon className="h-6 w-4 ml-2 sm:ml-0" />
+          <ChevronDownIcon className="h-6 w-4 ml-2 sm:ml-0 sm:block hidden" />
         </summary>
         <ul
           tabIndex={0}
@@ -241,7 +243,8 @@ export const AddressInfoDropdown = ({
               document.body,
             )}
 
-          {allowedNetworks.length > 1 ? (
+          {/* TODO: reinstate if needed */}
+          {/* {allowedNetworks.length > 1 ? (
             <li className={selectingNetwork ? "hidden" : ""}>
               <button
                 className="btn-sm !rounded-xl flex gap-3 py-3"
@@ -254,7 +257,7 @@ export const AddressInfoDropdown = ({
                 <span>Switch Network</span>
               </button>
             </li>
-          ) : null}
+          ) : null} */}
           <li className={selectingNetwork ? "hidden" : ""}>
             <button
               className="menu-item text-secondary-content btn-sm !rounded-xl flex gap-3 py-3"

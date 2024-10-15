@@ -20,58 +20,40 @@ export const CustomConnectButton = () => {
   useAutoConnect();
   const networkColor = useNetworkColor();
   const { targetNetwork } = useTargetNetwork();
-  const { account, status } = useAccount();
+  const { account, status, address: accountAddress } = useAccount();
   const [accountChainId, setAccountChainId] = useState<bigint>(0n);
-  const [accountAddress, setAccountAddress] = useState<Address>();
   const { chain } = useNetwork();
-  const [modalOpen, setModalOpen] = useState(false);
 
   const blockExplorerAddressLink = accountAddress
     ? getBlockExplorerAddressLink(targetNetwork, accountAddress)
     : undefined;
 
-  const handleWalletConnect = () => {
-    setModalOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setModalOpen(false);
-  };
-
+  // effect to get chain id and address from account
   useEffect(() => {
     if (account) {
       const getChainId = async () => {
         const chainId = await account.channel.getChainId();
         setAccountChainId(BigInt(chainId as string));
-        const address = account.address;
-        setAccountAddress(address as Address);
       };
 
       getChainId();
     }
   }, [account]);
 
-  return status == "disconnected" ? (
+  if (status === "disconnected") return <ConnectModal />;
+
+  if (accountChainId !== targetNetwork.id) {
+    return <WrongNetworkDropdown />;
+  }
+
+  return (
     <>
-      <button
-        className={`rounded-[18px] btn-sm font-bold px-8 bg-btn-wallet`}
-        onClick={handleWalletConnect}
-        type="button"
-      >
-        Connect
-      </button>
-      <ConnectModal isOpen={modalOpen} onClose={handleModalClose} />
-    </>
-  ) : accountChainId != targetNetwork.id ? (
-    <WrongNetworkDropdown />
-  ) : (
-    <>
-      <div className="flex flex-col items-center mr-1">
+      <div className="flex flex-col items-center max-sm:mt-2">
         <Balance
           address={accountAddress as Address}
           className="min-h-0 h-auto"
         />
-        <span className="text-xs" style={{ color: networkColor }}>
+        <span className="text-xs ml-1" style={{ color: networkColor }}>
           {chain.name}
         </span>
       </div>
