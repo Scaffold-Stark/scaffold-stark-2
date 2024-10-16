@@ -783,13 +783,11 @@ export function parseFunctionParams({
     args: inputs,
   });
 
-  console.debug({ formattedInputs });
-
   formattedInputs.forEach((inputItem) => {
     const { type: inputType, value: inputValue } = inputItem;
 
     parsedInputs.push(
-      parseParamWithType(inputType, inputValue, isRead, !!isReadArgsParsing),
+      deepParseValues(inputValue, isRead, inputType, !!isReadArgsParsing),
     );
   });
 
@@ -841,7 +839,10 @@ function formatInputForParsing({
           _formatInput(structValue, argIndex, variants as AbiParameter[]),
         ];
       });
-      return { type: structName, value: { variant: Object.fromEntries } };
+      return {
+        type: structName,
+        value: { variant: Object.fromEntries(formattedEntries) },
+      };
     }
 
     const { members } = structDef as AbiStruct;
