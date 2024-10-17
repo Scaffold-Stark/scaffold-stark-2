@@ -11,7 +11,7 @@ import {
   UseScaffoldWriteConfig,
 } from "~~/utils/scaffold-stark/contract";
 import { useSendTransaction, useNetwork, Abi } from "@starknet-react/core";
-import { InvocationsDetails } from "starknet";
+import { Contract as StarknetJsContract, InvocationsDetails } from "starknet";
 import { notification } from "~~/utils/scaffold-stark";
 import { useMemo } from "react";
 import { useTransactor } from "./useTransactor";
@@ -44,30 +44,38 @@ export const useScaffoldMultiWriteContract = <
           contractName as ContractName
         ] as Contract<TContractName>;
 
-        const abiFunction = getFunctionsByStateMutability(
-          contract?.abi || [],
-          "external",
-        ).find((fn) => fn.name === functionName);
+        // TODO: see if we still need this
+        // const abiFunction = getFunctionsByStateMutability(
+        //   contract?.abi || [],
+        //   "external",
+        // ).find((fn) => fn.name === functionName);
+
+        // we convert to starknetjs contract instance here since deployed data may be undefined if contract is not deployed
+        const contractInstance = new StarknetJsContract(
+          contract.abi,
+          contract.address,
+        );
 
         return {
-          contractAddress: contract?.address,
-          entrypoint: functionName,
-          calldata:
-            abiFunction && unParsedArgs && contract
-              ? parseFunctionParams({
-                  abiFunction,
-                  isRead: false,
-                  inputs: unParsedArgs as any[],
-                  isReadArgsParsing: false,
-                  abi: contract.abi,
-                }).flat()
-              : [],
+          ...contractInstance.populate(functionName, unParsedArgs as any[]),
+
+          // TODO: see if we still need this
+          // calldata:
+          //   abiFunction && unParsedArgs && contract
+          //     ? parseFunctionParams({
+          //         abiFunction,
+          //         isRead: false,
+          //         inputs: unParsedArgs as any[],
+          //         isReadArgsParsing: false,
+          //         abi: contract.abi,
+          //       }).flat()
+          //     : [],
         };
       });
     } else {
       return [];
     }
-  }, [calls]);
+  }, [calls, targetNetwork.network]);
 
   // TODO add custom options
   const sendTransactionInstance = useSendTransaction({
