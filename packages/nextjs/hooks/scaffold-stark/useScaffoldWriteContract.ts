@@ -51,40 +51,23 @@ export const useScaffoldWriteContract = <
     [deployedContractData?.abi, functionName],
   );
 
-  const parsedParams = useMemo(() => {
-    if (args && abiFunction && deployedContractData) {
-      // TODO: see if we need this later
-      // const parsed = parseFunctionParams({
-      //   abiFunction,
-      //   abi: deployedContractData.abi,
-      //   inputs: args as any[],
-      //   isRead: false,
-      //   isReadArgsParsing: true,
-      // }).flat(Infinity);
-      // return parsed;
+  // TODO: see if we need this bit later
+  // const parsedParams = useMemo(() => {
+  //   if (args && abiFunction && deployedContractData) {
+  //     const parsed = parseFunctionParams({
+  //       abiFunction,
+  //       abi: deployedContractData.abi,
+  //       inputs: args as any[],
+  //       isRead: false,
+  //       isReadArgsParsing: true,
+  //     }).flat(Infinity);
+  //     return parsed;
+  //   }
+  //   return [];
+  // }, [args, abiFunction, deployedContractData]);
 
-      // we convert to starknetjs contract instance here since deployed data may be undefined if contract is not deployed
-      const contractInstance = new StarknetJsContract(
-        deployedContractData.abi,
-        deployedContractData.address,
-      );
-
-      return contractInstance.populate(functionName, args as any[]);
-    }
-    return [];
-  }, [args, abiFunction, deployedContractData, functionName]);
-
-  const sendTransactionInstance = useSendTransaction({
-    calls: deployedContractData
-      ? [
-          {
-            contractAddress: deployedContractData?.address,
-            entrypoint: functionName,
-            calldata: parsedParams,
-          },
-        ]
-      : [],
-  });
+  // leave blank for now since default args will be called by the trigger function anyway
+  const sendTransactionInstance = useSendTransaction({});
 
   const sendContractWriteTx = useCallback(
     async (params?: {
