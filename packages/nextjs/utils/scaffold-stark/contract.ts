@@ -458,10 +458,7 @@ const decodeParamsWithType = (paramType: string, param: any): unknown => {
         : `Err(${parseParamWithType(error, result.unwrap(), isRead)})`;
     }, param);
   } else if (isCairoContractAddress(paramType)) {
-    return tryParsingParamReturnObject(
-      getChecksumAddress,
-      `0x${param.toString(16)}`,
-    );
+    return tryParsingParamReturnObject(validateAndParseAddress, param);
   } else if (isCairoU256(paramType)) {
     return tryParsingParamReturnObject(uint256.uint256ToBN, param);
   } else if (isCairoByteArray(paramType)) {
