@@ -11,6 +11,8 @@ import { InfiniteMovingCards } from "./Uikit/components/ui/infinite-moving-card"
 import { BetsOverview } from "./BetsOverview";
 import { CryptoBetsOverview } from "./CryptoBetsOverview";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
+import { Button } from "./Uikit/components/ui/button";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
 
 function Home() {
   const items: {
@@ -117,8 +119,24 @@ function Home() {
 
   const { data: greeting } = useScaffoldReadContract({
     contractName: "BetMaker",
-    functionName: "greeting",
+    functionName: "get_crypto_bet",
+    args: [1],
   });
+
+  const { sendAsync } = useScaffoldWriteContract({
+    contractName: "BetMaker",
+    functionName: "create_crypto_bet",
+    args: [123],
+  });
+
+  const handleCreateBet = async () => {
+    try {
+      const result = await sendAsync();
+      console.log("Transaction successful:", result);
+    } catch (error) {
+      console.error("Transaction failed:", error);
+    }
+  };
   console.log("GREEREE", greeting);
   return (
     <>
@@ -128,6 +146,7 @@ function Home() {
         speed="slow"
         className="!mb-20"
       />
+      <Button onClick={handleCreateBet}>Test create bet</Button>
       <CryptoBetsOverview />
       {greeting}
       {/* <BetsOverview /> */}

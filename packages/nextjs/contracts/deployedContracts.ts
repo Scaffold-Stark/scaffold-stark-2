@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     YourContractExportName: {
       address:
-        "0x651a1dc6f4fa10d2b43d21f1c39a0767e7a1050ac67b8d448b14ba18c7f88b6",
+        "0x477688096487c3eb3eb20e7a3beccb975376bbe6d2c8f8d752810ae2922832f",
       abi: [
         {
           type: "impl",
@@ -263,12 +263,26 @@ const deployedContracts = {
     },
     BetMaker: {
       address:
-        "0x79a1a0cd6cf9a9eba9741249256cf58ef6ca42062188b7ff0602d69c611eb18",
+        "0x4cd8796b9bcb379c27d070e6a0922c2f409d91ae96fa9793130423a150404c4",
       abi: [
         {
           type: "impl",
           name: "BetMakerImpl",
           interface_name: "contracts::BetMaker::IBetMaker",
+        },
+        {
+          type: "struct",
+          name: "core::integer::u256",
+          members: [
+            {
+              name: "low",
+              type: "core::integer::u128",
+            },
+            {
+              name: "high",
+              type: "core::integer::u128",
+            },
+          ],
         },
         {
           type: "struct",
@@ -289,20 +303,6 @@ const deployedContracts = {
           ],
         },
         {
-          type: "struct",
-          name: "core::integer::u256",
-          members: [
-            {
-              name: "low",
-              type: "core::integer::u128",
-            },
-            {
-              name: "high",
-              type: "core::integer::u128",
-            },
-          ],
-        },
-        {
           type: "enum",
           name: "core::bool",
           variants: [
@@ -317,50 +317,178 @@ const deployedContracts = {
           ],
         },
         {
+          type: "struct",
+          name: "contracts::BetMaker::StrategyInfos",
+          members: [
+            {
+              name: "name",
+              type: "core::felt252",
+            },
+            {
+              name: "symbol",
+              type: "core::felt252",
+            },
+            {
+              name: "address",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+          ],
+        },
+        {
+          type: "enum",
+          name: "contracts::BetMaker::YieldStrategy",
+          variants: [
+            {
+              name: "None",
+              type: "()",
+            },
+            {
+              name: "Nimbora",
+              type: "contracts::BetMaker::StrategyInfos",
+            },
+            {
+              name: "Nostra",
+              type: "()",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::BetMaker::Outcome",
+          members: [
+            {
+              name: "name",
+              type: "core::felt252",
+            },
+            {
+              name: "bought_amount",
+              type: "core::integer::u256",
+            },
+          ],
+        },
+        {
+          type: "enum",
+          name: "core::option::Option::<contracts::BetMaker::Outcome>",
+          variants: [
+            {
+              name: "Some",
+              type: "contracts::BetMaker::Outcome",
+            },
+            {
+              name: "None",
+              type: "()",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::BetMaker::CryptoBet",
+          members: [
+            {
+              name: "bet_id",
+              type: "core::integer::u256",
+            },
+            {
+              name: "name",
+              type: "core::byte_array::ByteArray",
+            },
+            {
+              name: "image",
+              type: "core::byte_array::ByteArray",
+            },
+            {
+              name: "category",
+              type: "core::felt252",
+            },
+            {
+              name: "description",
+              type: "core::byte_array::ByteArray",
+            },
+            {
+              name: "is_settled",
+              type: "core::bool",
+            },
+            {
+              name: "is_active",
+              type: "core::bool",
+            },
+            {
+              name: "deadline",
+              type: "core::integer::u64",
+            },
+            {
+              name: "vote_deadline",
+              type: "core::integer::u64",
+            },
+            {
+              name: "total_money_betted",
+              type: "core::integer::u256",
+            },
+            {
+              name: "yield_strategy",
+              type: "contracts::BetMaker::YieldStrategy",
+            },
+            {
+              name: "reference_price_key",
+              type: "core::felt252",
+            },
+            {
+              name: "reference_price",
+              type: "core::integer::u256",
+            },
+            {
+              name: "bet_condition",
+              type: "core::integer::u8",
+            },
+            {
+              name: "outcomes",
+              type: "(contracts::BetMaker::Outcome, contracts::BetMaker::Outcome)",
+            },
+            {
+              name: "winning_outcome",
+              type: "core::option::Option::<contracts::BetMaker::Outcome>",
+            },
+          ],
+        },
+        {
           type: "interface",
           name: "contracts::BetMaker::IBetMaker",
           items: [
             {
               type: "function",
-              name: "greeting",
-              inputs: [],
+              name: "create_crypto_bet",
+              inputs: [
+                {
+                  name: "deadline",
+                  type: "core::integer::u64",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "get_crypto_bet",
+              inputs: [
+                {
+                  name: "bet_id",
+                  type: "core::integer::u256",
+                },
+              ],
               outputs: [
                 {
-                  type: "core::byte_array::ByteArray",
+                  type: "contracts::BetMaker::CryptoBet",
                 },
               ],
               state_mutability: "view",
             },
             {
               type: "function",
-              name: "set_greeting",
-              inputs: [
-                {
-                  name: "new_greeting",
-                  type: "core::byte_array::ByteArray",
-                },
-                {
-                  name: "amount_eth",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "withdraw",
-              inputs: [],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "premium",
+              name: "get_crypto_bets_count",
               inputs: [],
               outputs: [
                 {
-                  type: "core::bool",
+                  type: "core::integer::u256",
                 },
               ],
               state_mutability: "view",
@@ -471,27 +599,12 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::BetMaker::BetMaker::GreetingChanged",
+          name: "contracts::BetMaker::BetMaker::CryptoBetCreated",
           kind: "struct",
           members: [
             {
-              name: "greeting_setter",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "new_greeting",
-              type: "core::byte_array::ByteArray",
-              kind: "key",
-            },
-            {
-              name: "premium",
-              type: "core::bool",
-              kind: "data",
-            },
-            {
-              name: "value",
-              type: "core::integer::u256",
+              name: "market",
+              type: "contracts::BetMaker::CryptoBet",
               kind: "data",
             },
           ],
@@ -507,15 +620,15 @@ const deployedContracts = {
               kind: "flat",
             },
             {
-              name: "GreetingChanged",
-              type: "contracts::BetMaker::BetMaker::GreetingChanged",
+              name: "CryptoBetCreated",
+              type: "contracts::BetMaker::BetMaker::CryptoBetCreated",
               kind: "nested",
             },
           ],
         },
       ],
       classHash:
-        "0x2d3f360b60989fe69b4b1faa8eae15dadb56cfc5d5201b7643ee98682baf8ac",
+        "0x7d168513c1ae424a5f6084f0f852ff3ddff7675a69ff8b20480841892a3fbbb",
     },
   },
 } as const;
