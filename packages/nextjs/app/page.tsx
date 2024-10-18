@@ -126,7 +126,13 @@ function Home() {
   const { sendAsync } = useScaffoldWriteContract({
     contractName: "BetMaker",
     functionName: "create_crypto_bet",
-    args: [123],
+    args: [
+      {
+        name: "test",
+        symbol: "felt252",
+        address: 0x3759ed21701538d2e1bc5896611166a06585cdbbeeddd1fbdd25da10b2174d3,
+      },
+    ],
   });
 
   const handleCreateBet = async () => {

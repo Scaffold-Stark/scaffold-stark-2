@@ -49,7 +49,7 @@ pub struct CryptoBet {
     yield_strategy: YieldStrategy,
     reference_price_key: felt252, // Key representing the reference price for the asset pair, e.g., BTC/USD for Bitcoin in USD
     reference_price: u256,
-    bet_condition: u8, // 0 => less than reference_price, 1 => greater than reference_price
+    bet_condition: u256, // 0 => less than reference_price, 1 => greater than reference_price
     outcomes: (Outcome, Outcome),
     winning_outcome: Option<Outcome>,
 }
@@ -58,18 +58,18 @@ pub struct CryptoBet {
 pub trait IBetMaker<TContractState> {
     fn create_crypto_bet(
         ref self: TContractState,
-        //name: ByteArray,
-        //image: ByteArray,
-        //category: felt252,
-        //description: ByteArray,
-        deadline: u64,
-        //vote_deadline: u64,
+        // name: ByteArray,
+        // image: ByteArray,
+        // category: felt252,
+        // description: ByteArray,
+        // deadline: u256, // TODO: Move back value to u64 when scaffold deserialize is working
+        // vote_deadline: u256, // TODO: Move back value to u64 when scaffold deserialize is working
         //yield_strategy_type: (u8, ContractAddress), // First argument is the index representing
         //the strategy to use according to YieldStrategy struct , e.g., 1 -> NimboraStrategy
-        //yield_strategy_infos: (felt252, felt252), // Name and symbol of YieldStrategy
-        //reference_price_key: felt252,
-        //reference_price: u256,
-        //bet_condition: u8,
+        yield_strategy_infos: StrategyInfos, // Name and symbol of YieldStrategy
+        // reference_price_key: felt252,
+    // reference_price: u256, // TODO: Move back value to u8 when scaffold deserialize is
+    // working bet_condition: u256,
     //outcomes: (felt252, felt252)
     );
 
@@ -196,17 +196,19 @@ mod BetMaker {
         // }
 
         fn create_crypto_bet(
-            ref self: ContractState,
-            //name: ByteArray,
-            //image: ByteArray,
-            //category: felt252,
-            //description: ByteArray,
-            deadline: u64,
-            //vote_deadline: u64,
-            //reference_price_key: felt252,
-            //reference_price: u256,
-            //bet_condition: u8,
-        ) {//self.ownable.assert_only_owner();
+            ref self: ContractState, // name: ByteArray,
+            // image: ByteArray,
+            // category: felt252,
+            // description: ByteArray,
+            // deadline: u256, // TODO: Move back value to u64 when scaffold deserialize is working
+            // vote_deadline: u256, // TODO: Move back value to u64 when scaffold deserialize is
+            // working
+            yield_strategy_infos: StrategyInfos,
+            // reference_price_key: felt252,
+        // reference_price: u256,
+        // bet_condition: u256, // TODO: Move back value to u8 when scaffold deserialize is
+        // working
+        ) { //self.ownable.assert_only_owner();
         }
         fn get_crypto_bet(self: @ContractState, bet_id: u256) -> CryptoBet {
             self.crypto_bets.read(bet_id)
