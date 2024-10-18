@@ -14,8 +14,7 @@ pragma_lib = { git = "https://github.com/astraly-labs/pragma-lib" }
 
 [dev-dependencies]
 openzeppelin_utils = "0.17.0"
-snforge_std = "0.30.0"
-
+snforge_std = "0.31.0"
 
 [[target.starknet-contract]]
 casm = true
@@ -24,6 +23,6 @@ casm = true
 sort-module-level-items = true
 
 [[tool.snforge.fork]]
-name = "TEST"
-url = "https://rpc.nethermind.io/mainnet-juno/?apikey=Zh5vBpotTbH8DlbCyWqyuQHARB2O5A2gGVck3gzBNXkXlqAP"
-block_id.number = "649020"
+name = "SEPOLIA_LATEST"
+url = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
+block_id.tag = "latest"

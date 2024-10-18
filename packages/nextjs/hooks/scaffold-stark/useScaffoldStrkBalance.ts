@@ -13,7 +13,7 @@ const useScaffoldStrkBalance = ({ address }: UseScaffoldStrkBalanceProps) => {
   const { data: deployedContract } = useDeployedContractInfo("Strk");
 
   const { data, ...props } = useReadContract({
-    functionName: "balanceOf",
+    functionName: "balance_of",
     address: deployedContract?.address,
     abi: deployedContract?.abi as Abi as any[],
     watch: true,

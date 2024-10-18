@@ -9,7 +9,7 @@ pub trait IYourContract<TContractState> {
 #[starknet::contract]
 mod YourContract {
     use openzeppelin_access::ownable::OwnableComponent;
-    use openzeppelin_token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
+    use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     use starknet::storage::Map;
     use starknet::{ContractAddress, contract_address_const};
     use starknet::{get_caller_address, get_contract_address};
@@ -44,7 +44,6 @@ mod YourContract {
 
     #[storage]
     struct Storage {
-        eth_token: IERC20CamelDispatcher,
         greeting: ByteArray,
         premium: bool,
         total_counter: u256,
@@ -55,8 +54,6 @@ mod YourContract {
 
     #[constructor]
     fn constructor(ref self: ContractState, owner: ContractAddress) {
-        let eth_contract_address = contract_address_const::<ETH_CONTRACT_ADDRESS>();
-        self.eth_token.write(IERC20CamelDispatcher { contract_address: eth_contract_address });
         self.greeting.write("Building Unstoppable Apps!!!");
         self.ownable.initializer(owner);
     }
@@ -75,10 +72,10 @@ mod YourContract {
             if amount_eth > 0 {
                 // In `Debug Contract` or UI implementation call `approve` on ETH contract before
                 // invoke fn set_greeting()
-                self
-                    .eth_token
-                    .read()
-                    .transferFrom(get_caller_address(), get_contract_address(), amount_eth);
+                let eth_contract_address = contract_address_const::<ETH_CONTRACT_ADDRESS>();
+                let eth_dispatcher = IERC20Dispatcher { contract_address: eth_contract_address };
+                eth_dispatcher
+                    .transfer_from(get_caller_address(), get_contract_address(), amount_eth);
                 self.premium.write(true);
             } else {
                 self.premium.write(false);
@@ -95,8 +92,10 @@ mod YourContract {
         }
         fn withdraw(ref self: ContractState) {
             self.ownable.assert_only_owner();
-            let balance = self.eth_token.read().balanceOf(get_contract_address());
-            self.eth_token.read().transfer(self.ownable.owner(), balance);
+            let eth_contract_address = contract_address_const::<ETH_CONTRACT_ADDRESS>();
+            let eth_dispatcher = IERC20Dispatcher { contract_address: eth_contract_address };
+            let balance = eth_dispatcher.balance_of(get_contract_address());
+            eth_dispatcher.transfer(self.ownable.owner(), balance);
         }
         fn premium(self: @ContractState) -> bool {
             self.premium.read()

@@ -4,7 +4,7 @@ import React, { useCallback, useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BugAntIcon, Cog8ToothIcon } from "@heroicons/react/24/outline";
+import { BugAntIcon } from "@heroicons/react/24/outline";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { useTheme } from "next-themes";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
@@ -28,11 +28,6 @@ export const menuLinks: HeaderMenuLink[] = [
     label: "Debug Contracts",
     href: "/debug",
     icon: <BugAntIcon className="h-4 w-4" />,
-  },
-  {
-    label: "Configure Contracts",
-    href: "/configure",
-    icon: <Cog8ToothIcon className="h-4 w-4" />,
   },
 ];
 
