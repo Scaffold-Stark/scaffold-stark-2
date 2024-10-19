@@ -4,7 +4,8 @@ use starknet::{ContractAddress};
 pub struct StrategyInfos {
     name: felt252,
     symbol: felt252,
-    address: ContractAddress
+    address: ContractAddress,
+    yield_strategy_type: u256 // TODO: u256 -> u8
 }
 
 trait ProcessingYield {
@@ -25,13 +26,25 @@ impl ProcessingYieldImpl of ProcessingYield {
 pub enum YieldStrategy {
     None, // index 0
     Nimbora: StrategyInfos, // index 1
-    Nostra
+    Nostra: StrategyInfos
+}
+
+#[derive(Copy, Serde, Drop, starknet::Store, PartialEq, Hash)]
+pub struct CreateBetOutcomesArgument {
+    outcome_yes: felt252,
+    outcome_no: felt252
 }
 
 #[derive(Copy, Serde, Drop, starknet::Store, PartialEq, Hash)]
 pub struct Outcome {
     name: felt252,
     bought_amount: u256,
+}
+
+#[derive(Copy, Serde, Drop, starknet::Store, PartialEq, Hash)]
+pub struct Outcomes {
+    outcome_yes: Outcome,
+    outcome_no: Outcome,
 }
 
 #[derive(Drop, Serde, starknet::Store)]
@@ -43,34 +56,32 @@ pub struct CryptoBet {
     description: ByteArray,
     is_settled: bool,
     is_active: bool,
-    deadline: u64,
-    vote_deadline: u64,
+    deadline: u256, // TODO: u256 -> u64
+    vote_deadline: u256, // TODO: u256 -> u64
     total_money_betted: u256,
     yield_strategy: YieldStrategy,
     reference_price_key: felt252, // Key representing the reference price for the asset pair, e.g., BTC/USD for Bitcoin in USD
     reference_price: u256,
-    bet_condition: u256, // 0 => less than reference_price, 1 => greater than reference_price
-    outcomes: (Outcome, Outcome),
-    winning_outcome: Option<Outcome>,
+    bet_condition: u256, // 0 => less than reference_price, 1 => greater than reference_price // TODO: bet_condition u256 -> u8
+    outcomes: Outcomes,
+    winner_outcome: Option<Outcome>,
 }
 
 #[starknet::interface]
 pub trait IBetMaker<TContractState> {
     fn create_crypto_bet(
         ref self: TContractState,
-        // name: ByteArray,
-        // image: ByteArray,
-        // category: felt252,
-        // description: ByteArray,
-        // deadline: u256, // TODO: Move back value to u64 when scaffold deserialize is working
-        // vote_deadline: u256, // TODO: Move back value to u64 when scaffold deserialize is working
-        //yield_strategy_type: (u8, ContractAddress), // First argument is the index representing
-        //the strategy to use according to YieldStrategy struct , e.g., 1 -> NimboraStrategy
-        yield_strategy_infos: StrategyInfos, // Name and symbol of YieldStrategy
-        // reference_price_key: felt252,
-    // reference_price: u256, // TODO: Move back value to u8 when scaffold deserialize is
-    // working bet_condition: u256,
-    //outcomes: (felt252, felt252)
+        name: ByteArray,
+        image: ByteArray,
+        category: felt252,
+        description: ByteArray,
+        deadline: u256, // TODO: u256 -> u64
+        vote_deadline: u256, // TODO: u256 -> u64   
+        yield_strategy_infos: StrategyInfos,
+        reference_price_key: felt252,
+        reference_price: u256,
+        bet_condition: u256, // TODO: bet_condition u256 -> u8
+        outcomes: CreateBetOutcomesArgument
     );
 
     fn get_crypto_bet(self: @TContractState, bet_id: u256) -> CryptoBet;
@@ -85,7 +96,10 @@ mod BetMaker {
     use starknet::storage::Map;
     use starknet::{ContractAddress};
     // use starknet::{get_caller_address, get_contract_address};
-    use super::{IBetMaker, CryptoBet, YieldStrategy, Outcome, StrategyInfos};
+    use super::{
+        IBetMaker, CryptoBet, Outcome, Outcomes, CreateBetOutcomesArgument, YieldStrategy,
+        StrategyInfos
+    };
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
 
@@ -122,94 +136,80 @@ mod BetMaker {
     }
 
 
-    fn create_yield_strategy(
-        yield_strategy_type: (u8, ContractAddress), yield_strategy_infos: (felt252, felt252)
-    ) -> YieldStrategy {
-        let (name, symbol) = yield_strategy_infos;
-        let (yield_type, yield_contract_address) = yield_strategy_type;
+    fn create_yield_strategy(yield_strategy_infos: StrategyInfos) -> YieldStrategy {
+        let yield_type = yield_strategy_infos.yield_strategy_type;
 
-        let strategy_infos = StrategyInfos { name, symbol, address: yield_contract_address };
+        let converted_yield_type: u8 = yield_type
+            .try_into()
+            .unwrap(); // TODO: Not necessary when u8 will be used for yield_type
 
-        match yield_type {
+        match converted_yield_type {
             0 => YieldStrategy::None,
-            1 => YieldStrategy::Nimbora(strategy_infos),
-            2 => YieldStrategy::Nostra,
+            1 => YieldStrategy::Nimbora(yield_strategy_infos),
+            2 => YieldStrategy::Nostra(yield_strategy_infos),
             _ => YieldStrategy::None
         }
     }
 
     #[abi(embed_v0)]
     impl BetMakerImpl of IBetMaker<ContractState> {
-        // fn create_crypto_bet(
-        //     ref self: ContractState,
-        //     name: ByteArray,
-        //     image: ByteArray,
-        //     category: felt252,
-        //     description: ByteArray,
-        //     deadline: u64,
-        //     vote_deadline: u64,
-        //     yield_strategy_type: (u8, ContractAddress),
-        //     yield_strategy_infos: (felt252, felt252),
-        //     reference_price_key: felt252,
-        //     reference_price: u256,
-        //     bet_condition: u8,
-        //     outcomes: (felt252, felt252)
-        // ) {
-        //     self.ownable.assert_only_owner();
-
-        //     // Initialize outcomes
-        //     let (result1, result2) = outcomes;
-        //     let mut outcome1 = Outcome { name: result1, bought_amount: 0 };
-        //     let mut outcome2 = Outcome { name: result2, bought_amount: 0 };
-
-        //     let outcomes = (outcome1, outcome2);
-
-        //     // Initialize strategy
-        //     let yield_strategy = create_yield_strategy(yield_strategy_type,
-        //     yield_strategy_infos);
-
-        //     // Initialize Crypto Bet
-        //     let crypto_bet = CryptoBet {
-        //         bet_id: self.total_crypto_bets.read() + 1,
-        //         name,
-        //         image,
-        //         category,
-        //         description,
-        //         is_settled: false,
-        //         is_active: true,
-        //         deadline,
-        //         vote_deadline,
-        //         total_money_betted: 0,
-        //         yield_strategy,
-        //         reference_price_key,
-        //         reference_price,
-        //         bet_condition,
-        //         outcomes,
-        //         winning_outcome: Option::None,
-        //     };
-        //     self.total_crypto_bets.write(self.total_crypto_bets.read() + 1);
-        //     self.crypto_bets.write(self.total_crypto_bets.read(), crypto_bet);
-
-        //     // Emit CryptoBetCreation Event
-        //     let new_bet = self.crypto_bets.read(self.total_crypto_bets.read());
-        //     self.emit(CryptoBetCreated { market: new_bet });
-        // }
-
         fn create_crypto_bet(
-            ref self: ContractState, // name: ByteArray,
-            // image: ByteArray,
-            // category: felt252,
-            // description: ByteArray,
-            // deadline: u256, // TODO: Move back value to u64 when scaffold deserialize is working
-            // vote_deadline: u256, // TODO: Move back value to u64 when scaffold deserialize is
-            // working
+            ref self: ContractState,
+            name: ByteArray,
+            image: ByteArray,
+            category: felt252,
+            description: ByteArray,
+            deadline: u256,
+            vote_deadline: u256,
             yield_strategy_infos: StrategyInfos,
-            // reference_price_key: felt252,
-        // reference_price: u256,
-        // bet_condition: u256, // TODO: Move back value to u8 when scaffold deserialize is
-        // working
-        ) { //self.ownable.assert_only_owner();
+            reference_price_key: felt252,
+            reference_price: u256,
+            bet_condition: u256,
+            outcomes: CreateBetOutcomesArgument
+        ) {
+            // TODO: Put back owner assert
+            //self.ownable.assert_only_owner();
+
+            // Initialize outcomes
+            let outcome_yes_name = outcomes.outcome_yes;
+            let outcome_no_name = outcomes.outcome_no;
+
+            let mut outcome_yes = Outcome { name: outcome_yes_name, bought_amount: 0 };
+            let mut outcome_no = Outcome { name: outcome_no_name, bought_amount: 0 };
+
+            let outcomes = Outcomes { outcome_yes, outcome_no };
+
+            // Initialize strategy
+            let yield_strategy = create_yield_strategy(yield_strategy_infos);
+
+            // Initialize Crypto Bet
+            let crypto_bet = CryptoBet {
+                bet_id: self.total_crypto_bets.read() + 1,
+                name,
+                image,
+                category,
+                description,
+                is_settled: false,
+                is_active: true,
+                deadline,
+                vote_deadline,
+                total_money_betted: 0,
+                yield_strategy,
+                reference_price_key,
+                reference_price,
+                bet_condition,
+                outcomes,
+                winner_outcome: Option::None,
+            };
+            self.total_crypto_bets.write(self.total_crypto_bets.read() + 1);
+            self.crypto_bets.write(self.total_crypto_bets.read(), crypto_bet);
+
+            // Emit CryptoBetCreation Event
+            let new_bet = self.crypto_bets.read(self.total_crypto_bets.read());
+            self.emit(CryptoBetCreated { market: new_bet });
         }
+
+
         fn get_crypto_bet(self: @ContractState, bet_id: u256) -> CryptoBet {
             self.crypto_bets.read(bet_id)
         }

@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     YourContractExportName: {
       address:
-        "0x71c7daf11d9e1efedc3f8b426cb25cc9951f47dd430dcdfac2535b888f89dd7",
+        "0x632d1991484b71fc57e58b14e21c237f0e5612d856066bfc7da9fe640d00495",
       abi: [
         {
           type: "impl",
@@ -263,7 +263,7 @@ const deployedContracts = {
     },
     BetMaker: {
       address:
-        "0x743c3d63ef31f7548abdfc830b29e12b4d66a38b50c7de3daa419fc04009fe6",
+        "0x69e02800eed3fb3b8f9fb94c4248a3da47ad6d89bf4f6a41dbd14de9b77c26a",
       abi: [
         {
           type: "impl",
@@ -272,19 +272,19 @@ const deployedContracts = {
         },
         {
           type: "struct",
-          name: "contracts::BetMaker::StrategyInfos",
+          name: "core::byte_array::ByteArray",
           members: [
             {
-              name: "name",
+              name: "data",
+              type: "core::array::Array::<core::bytes_31::bytes31>",
+            },
+            {
+              name: "pending_word",
               type: "core::felt252",
             },
             {
-              name: "symbol",
-              type: "core::felt252",
-            },
-            {
-              name: "address",
-              type: "core::starknet::contract_address::ContractAddress",
+              name: "pending_word_len",
+              type: "core::integer::u32",
             },
           ],
         },
@@ -304,19 +304,37 @@ const deployedContracts = {
         },
         {
           type: "struct",
-          name: "core::byte_array::ByteArray",
+          name: "contracts::BetMaker::StrategyInfos",
           members: [
             {
-              name: "data",
-              type: "core::array::Array::<core::bytes_31::bytes31>",
-            },
-            {
-              name: "pending_word",
+              name: "name",
               type: "core::felt252",
             },
             {
-              name: "pending_word_len",
-              type: "core::integer::u32",
+              name: "symbol",
+              type: "core::felt252",
+            },
+            {
+              name: "address",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "yield_strategy_type",
+              type: "core::integer::u256",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::BetMaker::CreateBetOutcomesArgument",
+          members: [
+            {
+              name: "outcome_yes",
+              type: "core::felt252",
+            },
+            {
+              name: "outcome_no",
+              type: "core::felt252",
             },
           ],
         },
@@ -348,7 +366,7 @@ const deployedContracts = {
             },
             {
               name: "Nostra",
-              type: "()",
+              type: "contracts::BetMaker::StrategyInfos",
             },
           ],
         },
@@ -363,6 +381,20 @@ const deployedContracts = {
             {
               name: "bought_amount",
               type: "core::integer::u256",
+            },
+          ],
+        },
+        {
+          type: "struct",
+          name: "contracts::BetMaker::Outcomes",
+          members: [
+            {
+              name: "outcome_yes",
+              type: "contracts::BetMaker::Outcome",
+            },
+            {
+              name: "outcome_no",
+              type: "contracts::BetMaker::Outcome",
             },
           ],
         },
@@ -414,11 +446,11 @@ const deployedContracts = {
             },
             {
               name: "deadline",
-              type: "core::integer::u64",
+              type: "core::integer::u256",
             },
             {
               name: "vote_deadline",
-              type: "core::integer::u64",
+              type: "core::integer::u256",
             },
             {
               name: "total_money_betted",
@@ -442,10 +474,10 @@ const deployedContracts = {
             },
             {
               name: "outcomes",
-              type: "(contracts::BetMaker::Outcome, contracts::BetMaker::Outcome)",
+              type: "contracts::BetMaker::Outcomes",
             },
             {
-              name: "winning_outcome",
+              name: "winner_outcome",
               type: "core::option::Option::<contracts::BetMaker::Outcome>",
             },
           ],
@@ -459,8 +491,48 @@ const deployedContracts = {
               name: "create_crypto_bet",
               inputs: [
                 {
+                  name: "name",
+                  type: "core::byte_array::ByteArray",
+                },
+                {
+                  name: "image",
+                  type: "core::byte_array::ByteArray",
+                },
+                {
+                  name: "category",
+                  type: "core::felt252",
+                },
+                {
+                  name: "description",
+                  type: "core::byte_array::ByteArray",
+                },
+                {
+                  name: "deadline",
+                  type: "core::integer::u256",
+                },
+                {
+                  name: "vote_deadline",
+                  type: "core::integer::u256",
+                },
+                {
                   name: "yield_strategy_infos",
                   type: "contracts::BetMaker::StrategyInfos",
+                },
+                {
+                  name: "reference_price_key",
+                  type: "core::felt252",
+                },
+                {
+                  name: "reference_price",
+                  type: "core::integer::u256",
+                },
+                {
+                  name: "bet_condition",
+                  type: "core::integer::u256",
+                },
+                {
+                  name: "outcomes",
+                  type: "contracts::BetMaker::CreateBetOutcomesArgument",
                 },
               ],
               outputs: [],
@@ -628,7 +700,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x3c8f8896585b83d173bc009ab399aad9471f501f62e703d6f7ff82e1083d807",
+        "0x240b7da275e2f4ba0d5ce048db2cf2a2f2a4437e06538024b0cc21606ec2fc9",
     },
   },
 } as const;

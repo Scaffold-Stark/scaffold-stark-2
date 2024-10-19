@@ -98,7 +98,13 @@ const config = {
       gradient: "gradient 8s linear infinite",
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("daisyui")],
+
+  daisyui: {
+    themes: [
+      
+    ],
+  },
 } satisfies Config;
 
 export default config;

@@ -18,9 +18,9 @@ const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
   const isDarkMode = resolvedTheme === "dark";
   return (
     <>
-      <div className="flex relative flex-col min-h-screen bg-main">
+      <div className="bg-main relative flex min-h-screen flex-col">
         <Header />
-        <main className="relative flex flex-col flex-1">{children}</main>
+        <main className="relative flex flex-1 flex-col">{children}</main>
       </div>
       <Toaster />
     </>
