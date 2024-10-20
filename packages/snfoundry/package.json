@@ -1,0 +1,35 @@
+{
+  "name": "@ss-2/snfoundry",
+  "version": "0.0.1",
+  "scripts": {
+    "chain": "starknet-devnet --seed 0 --account-class cairo1",
+    "deploy": "ts-node scripts-ts/helpers/deploy-wrapper.ts",
+    "deploy:no-reset": "yarn workspace @ss-2/snfoundry deploy --no-reset",
+    "test": "cd contracts && snforge test",
+    "test-eslint": "node eslint-contract-name/eslint-plugin-contract-names.test.js",
+    "compile": "cd contracts && scarb build",
+    "format": "prettier --write 'scripts-ts/**/*.{ts,tsx}' && cd contracts && scarb fmt",
+    "format:check": "prettier --check 'scripts-ts/**/*.{ts,tsx}' && cd contracts && scarb fmt --check",
+    "postinstall": "shx cp -n .env.example .env",
+    "verify": "ts-node scripts-ts/verify-contracts.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/prettier": "^2",
+    "@types/yargs": "^17.0.32",
+    "globals": "^15.8.0",
+    "shx": "^0.3.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5",
+    "typescript-eslint": "^7.16.1",
+    "yargs": "^17.7.2"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "envfile": "^6.18.0",
+    "prettier": "^2.8.8",
+    "starknet": "6.12.1",
+    "toml": "^3.0.0",
+    "tslib": "^2.6.2"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "ss-2",
+  "version": "0.3.2",
+  "author": "Q3 Labs",
+  "license": "MIT",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/snfoundry",
+      "packages/nextjs"
+    ]
+  },
+  "scripts": {
+    "chain": "yarn workspace @ss-2/snfoundry chain",
+    "deploy": "yarn workspace @ss-2/snfoundry deploy",
+    "deploy:no-reset": "yarn workspace @ss-2/snfoundry deploy --no-reset",
+    "test": "yarn workspace @ss-2/snfoundry test",
+    "compile": "yarn workspace @ss-2/snfoundry compile",
+    "start": "yarn workspace @ss-2/nextjs dev",
+    "next:lint": "yarn workspace @ss-2/nextjs lint",
+    "next:check-types": "yarn workspace @ss-2/nextjs check-types",
+    "vercel": "yarn workspace @ss-2/nextjs vercel",
+    "vercel:yolo": "yarn workspace @ss-2/nextjs vercel:yolo",
+    "test:nextjs": "yarn workspace @ss-2/nextjs test",
+    "format": "yarn workspace @ss-2/nextjs format && yarn workspace @ss-2/snfoundry format",
+    "format:check": "yarn workspace @ss-2/nextjs format:check && yarn workspace @ss-2/snfoundry format:check",
+    "prepare": "husky",
+    "verify": "yarn workspace @ss-2/snfoundry verify"
+  },
+  "packageManager": "yarn@3.2.3",
+  "devDependencies": {
+    "daisyui": "^4.7.3",
+    "husky": "^9.0.11",
+    "pinst": "^3.0.0",
+    "prettier": "^3.2.5"
+  },
+  "dependencies": {
+    "postcss": "^8.4.38"
+  }
+}

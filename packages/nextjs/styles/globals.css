@@ -1,0 +1,134 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+:root,
+[data-theme] {
+  background: oklch(var(--b2));
+}
+
+body {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
+p {
+  margin: 1rem 0;
+}
+
+.btn {
+  @apply shadow-md;
+}
+
+.modal-box {
+  @apply min-h-[20rem] max-w-[25rem];
+}
+.btn.btn-ghost {
+  @apply shadow-none;
+}
+
+.circle-gradient {
+  border-radius: 630px;
+  background: #bd93f1;
+  filter: blur(229px);
+  position: absolute;
+  top: 0;
+}
+
+.circle-gradient-blue {
+  border-radius: 630px;
+  background: #a6e8fe;
+  filter: blur(250px);
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.border-gradient {
+  border: 1px solid #5c4fe5;
+}
+
+.bg-modal {
+  backdrop-filter: blur(7.449999809265137px);
+}
+
+.custom::after {
+  position: absolute !important;
+  display: block !important;
+  height: 0.5rem !important;
+  width: 0.5rem !important;
+  top: 1rem !important;
+  right: 1.4rem !important;
+  transform: translateY(-100%) rotate(45deg) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  content: "" !important;
+  box-shadow: 2px 2px !important;
+  pointer-events: none !important;
+}
+
+@layer utilities {
+  .clip-corner {
+    clip-path: polygon(0 0, calc(100% - 1rem) 0, 100% 1rem, 100% 100%, 0 100%);
+  }
+
+  .clip-corner::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    width: 1rem;
+    height: 1rem;
+    background: inherit;
+    border-top: 1px solid #8a45fc;
+    border-right: 1px solid #8a45fc;
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+    z-index: 10;
+  }
+}
+
+.circle-gradient-dark {
+  position: absolute;
+  top: 0;
+  left: 60px;
+  border-radius: 630px;
+  background: #7353d2;
+  filter: blur(229px);
+}
+
+.circle-gradient-blue-dark {
+  border-radius: 630px;
+  background: #0ea9ff;
+  filter: blur(250px);
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+@layer utilities {
+  .trapeze {
+    width: 84px;
+    height: 6px;
+    clip-path: polygon(10% 100%, 90% 100%, 100% 0, 0 0);
+    position: relative;
+    background-color: #5c4fe5;
+    position: absolute;
+    top: -1px;
+  }
+  .trapeze::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    width: 84px;
+    height: 6px;
+    background: inherit;
+    clip-path: polygon(100% 100%, 100% 0, 90% 100%);
+  }
+}
