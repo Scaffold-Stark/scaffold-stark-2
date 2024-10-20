@@ -1,0 +1,15 @@
+.vscode/**
+node_modules
+local-devnet
+package-lock.json
+.idea
+
+# yarn / eslint
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.eslintcache
+.DS_Store

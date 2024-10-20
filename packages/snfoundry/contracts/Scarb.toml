@@ -1,0 +1,27 @@
+[package]
+name = "contracts"
+version = "0.2.0"
+edition = "2023_11"
+
+# See more keys and their definitions at https://docs.swmansion.com/scarb/docs/reference/manifest.html
+
+[dependencies]
+starknet = "2.8.2"
+# Change to just "openzeppelin" to use full features
+openzeppelin_access = "0.17.0"
+openzeppelin_token = "0.17.0"
+
+[dev-dependencies]
+openzeppelin_utils = "0.17.0"
+snforge_std = "0.31.0"
+
+[[target.starknet-contract]]
+casm = true
+
+[tool.fmt]
+sort-module-level-items = true
+
+[[tool.snforge.fork]]
+name = "SEPOLIA_LATEST"
+url = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
+block_id.tag = "latest"
