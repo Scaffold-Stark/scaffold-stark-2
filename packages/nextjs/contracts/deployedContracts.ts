@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     YourContractExportName: {
       address:
-        "0x632d1991484b71fc57e58b14e21c237f0e5612d856066bfc7da9fe640d00495",
+        "0x6eac54009019040c7289664bb7450a97d399a39fdbe29054466f9d59a4a394a",
       abi: [
         {
           type: "impl",
@@ -263,7 +263,7 @@ const deployedContracts = {
     },
     BetMaker: {
       address:
-        "0x69e02800eed3fb3b8f9fb94c4248a3da47ad6d89bf4f6a41dbd14de9b77c26a",
+        "0x5cc4a90aaf175ac5e42d45c6e3426b841a062db314caf98b0a05b1d1d0ece42",
       abi: [
         {
           type: "impl",
@@ -335,6 +335,38 @@ const deployedContracts = {
             {
               name: "outcome_no",
               type: "core::felt252",
+            },
+          ],
+        },
+        {
+          type: "enum",
+          name: "contracts::BetMaker::BetType",
+          variants: [
+            {
+              name: "Crypto",
+              type: "()",
+            },
+            {
+              name: "Sports",
+              type: "()",
+            },
+            {
+              name: "Other",
+              type: "()",
+            },
+          ],
+        },
+        {
+          type: "enum",
+          name: "contracts::BetMaker::PositionType",
+          variants: [
+            {
+              name: "Yes",
+              type: "()",
+            },
+            {
+              name: "No",
+              type: "()",
             },
           ],
         },
@@ -540,6 +572,30 @@ const deployedContracts = {
             },
             {
               type: "function",
+              name: "create_user_position",
+              inputs: [
+                {
+                  name: "bet_id",
+                  type: "core::integer::u256",
+                },
+                {
+                  name: "bet_type",
+                  type: "contracts::BetMaker::BetType",
+                },
+                {
+                  name: "position_type",
+                  type: "contracts::BetMaker::PositionType",
+                },
+                {
+                  name: "amount",
+                  type: "core::integer::u256",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
               name: "get_crypto_bet",
               inputs: [
                 {
@@ -700,7 +756,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x240b7da275e2f4ba0d5ce048db2cf2a2f2a4437e06538024b0cc21606ec2fc9",
+        "0x419917bfff758bfdfc59bd0ee58efe8d4fe38babd4d742334baab1efaf6e0ac",
     },
   },
 } as const;

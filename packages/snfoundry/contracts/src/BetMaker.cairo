@@ -22,6 +22,19 @@ impl ProcessingYieldImpl of ProcessingYield {
     }
 }
 
+#[derive(Copy, Serde, Drop, starknet::Store, PartialEq, Hash)]
+pub enum BetType {
+    Crypto,
+    Sports,
+    Other
+}
+
+#[derive(Copy, Serde, Drop, starknet::Store, PartialEq, Hash)]
+pub enum PositionType {
+    Yes,
+    No,
+}
+
 #[derive(Drop, Serde, starknet::Store)]
 pub enum YieldStrategy {
     None, // index 0
@@ -83,7 +96,13 @@ pub trait IBetMaker<TContractState> {
         bet_condition: u256, // TODO: bet_condition u256 -> u8
         outcomes: CreateBetOutcomesArgument
     );
-
+    fn create_user_position(
+        ref self: TContractState,
+        bet_id: u256,
+        bet_type: BetType,
+        position_type: PositionType,
+        amount: u256
+    );
     fn get_crypto_bet(self: @TContractState, bet_id: u256) -> CryptoBet;
     fn get_crypto_bets_count(self: @TContractState) -> u256;
 }
@@ -98,7 +117,7 @@ mod BetMaker {
     // use starknet::{get_caller_address, get_contract_address};
     use super::{
         IBetMaker, CryptoBet, Outcome, Outcomes, CreateBetOutcomesArgument, YieldStrategy,
-        StrategyInfos
+        StrategyInfos, BetType, PositionType
     };
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
@@ -209,6 +228,14 @@ mod BetMaker {
             self.emit(CryptoBetCreated { market: new_bet });
         }
 
+
+        fn create_user_position(
+            ref self: ContractState,
+            bet_id: u256,
+            bet_type: BetType,
+            position_type: PositionType,
+            amount: u256
+        ) {}
 
         fn get_crypto_bet(self: @ContractState, bet_id: u256) -> CryptoBet {
             self.crypto_bets.read(bet_id)
