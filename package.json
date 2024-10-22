@@ -13,7 +13,7 @@
   "scripts": {
     "chain": "yarn workspace @ss-2/snfoundry chain",
     "deploy": "yarn workspace @ss-2/snfoundry deploy",
-    "deploy:reset": "yarn workspace @ss-2/snfoundry  deploy:reset",
+    "deploy:no-reset": "yarn workspace @ss-2/snfoundry deploy --no-reset",
     "test": "yarn workspace @ss-2/snfoundry test",
     "compile": "yarn workspace @ss-2/snfoundry compile",
     "start": "yarn workspace @ss-2/nextjs dev",
