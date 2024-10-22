@@ -13,7 +13,7 @@ export const useAutoConnect = (): void => {
     "lastUsedConnector",
   );
 
-  const lastConnectionTime = useReadLocalStorage<number>("lastConnectionTime");
+  const lastConnectionTime = useReadLocalStorage<number>("lastConnectedTime");
 
   const { connect, connectors } = useConnect();
 
@@ -39,5 +39,5 @@ export const useAutoConnect = (): void => {
         }
       }
     }
-  }, [connect, connectors, savedConnector]);
+  }, [connect, connectors, lastConnectionTime, savedConnector]);
 };
