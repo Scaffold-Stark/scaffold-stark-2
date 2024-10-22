@@ -1,3 +1,4 @@
+use openzeppelin_token::erc20::interface::{IERC20Dispatcher};
 use starknet::{ContractAddress};
 
 #[derive(Drop, Serde, starknet::Store)]
@@ -20,6 +21,12 @@ impl ProcessingYieldImpl of ProcessingYield {
             YieldStrategy::None => { println!("None!") },
         }
     }
+}
+
+#[derive(Copy, Serde, Drop, starknet::Store, PartialEq, Hash)]
+pub enum ERC20BetTokenType {
+    Eth: ContractAddress,
+    Usdc: ContractAddress
 }
 
 #[derive(Copy, Serde, Drop, starknet::Store, PartialEq, Hash)]
@@ -60,6 +67,12 @@ pub struct Outcomes {
     outcome_no: Outcome,
 }
 
+#[derive(Copy, Serde, Drop, starknet::Store)]
+pub struct ERC20BetToken {
+    name: felt252,
+    dispatcher: IERC20Dispatcher,
+}
+
 #[derive(Drop, Serde, starknet::Store)]
 pub struct CryptoBet {
     bet_id: u256,
@@ -76,6 +89,7 @@ pub struct CryptoBet {
     reference_price_key: felt252, // Key representing the reference price for the asset pair, e.g., BTC/USD for Bitcoin in USD
     reference_price: u256,
     bet_condition: u256, // 0 => less than reference_price, 1 => greater than reference_price // TODO: bet_condition u256 -> u8
+    bet_token: ERC20BetToken, // Token used to make a bet, e.g., USDC
     outcomes: Outcomes,
     winner_outcome: Option<Outcome>,
 }
@@ -94,6 +108,7 @@ pub trait IBetMaker<TContractState> {
         reference_price_key: felt252,
         reference_price: u256,
         bet_condition: u256, // TODO: bet_condition u256 -> u8
+        bet_token_address: ERC20BetTokenType,
         outcomes: CreateBetOutcomesArgument
     );
     fn create_user_position(
@@ -109,15 +124,14 @@ pub trait IBetMaker<TContractState> {
 
 #[starknet::contract]
 mod BetMaker {
+    use openzeppelin_token::erc20::interface::{IERC20Dispatcher};
     use openzeppelin_access::ownable::OwnableComponent;
-    // use openzeppelin_token::erc20::interface::{IERC20CamelDispatcher,
-    // IERC20CamelDispatcherTrait};
     use starknet::storage::Map;
     use starknet::{ContractAddress};
     // use starknet::{get_caller_address, get_contract_address};
     use super::{
         IBetMaker, CryptoBet, Outcome, Outcomes, CreateBetOutcomesArgument, YieldStrategy,
-        StrategyInfos, BetType, PositionType
+        StrategyInfos, BetType, PositionType, ERC20BetTokenType, ERC20BetToken
     };
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
@@ -184,6 +198,7 @@ mod BetMaker {
             reference_price_key: felt252,
             reference_price: u256,
             bet_condition: u256,
+            bet_token_address: ERC20BetTokenType,
             outcomes: CreateBetOutcomesArgument
         ) {
             // TODO: Put back owner assert
@@ -201,6 +216,17 @@ mod BetMaker {
             // Initialize strategy
             let yield_strategy = create_yield_strategy(yield_strategy_infos);
 
+            // Initialize Bet token
+
+            let bet_token = match bet_token_address {
+                ERC20BetTokenType::Eth(address) => ERC20BetToken {
+                    name: 'Eth', dispatcher: IERC20Dispatcher { contract_address: address },
+                },
+                ERC20BetTokenType::Usdc(address) => ERC20BetToken {
+                    name: 'Usdc', dispatcher: IERC20Dispatcher { contract_address: address },
+                },
+            };
+
             // Initialize Crypto Bet
             let crypto_bet = CryptoBet {
                 bet_id: self.total_crypto_bets.read() + 1,
@@ -217,6 +243,7 @@ mod BetMaker {
                 reference_price_key,
                 reference_price,
                 bet_condition,
+                bet_token,
                 outcomes,
                 winner_outcome: Option::None,
             };
