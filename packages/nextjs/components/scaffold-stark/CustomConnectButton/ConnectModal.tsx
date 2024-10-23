@@ -63,6 +63,7 @@ const ConnectModal = () => {
       connector.burnerAccount = burnerAccounts[ix];
       connect({ connector });
       setLastConnector({ id: connector.id, ix });
+      setLastConnectionTime(Date.now());
       handleCloseModal();
     }
   }
