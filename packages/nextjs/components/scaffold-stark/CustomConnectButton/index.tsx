@@ -41,7 +41,7 @@ export const CustomConnectButton = () => {
   }, [account]);
 
   if (status === "disconnected") return <ConnectModal />;
-
+  // TODO : add tag for fork on scaffold config and dont show wrong network dropdown if fork is true
   if (accountChainId !== targetNetwork.id) {
     return <WrongNetworkDropdown />;
   }

@@ -2226,7 +2226,7 @@ __metadata:
     "@radix-ui/themes": 2.0.3
     "@starknet-io/types-js": ^0.7.7
     "@starknet-react/chains": ^3.0.0
-    "@starknet-react/core": ^3.0.0
+    "@starknet-react/core": ^3.0.1
     "@starknet-react/typescript-config": 0.0.0
     "@testing-library/dom": ^10.4.0
     "@testing-library/react": ^16.0.1
@@ -2303,9 +2303,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@starknet-react/core@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@starknet-react/core@npm:3.0.0"
+"@starknet-react/core@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "@starknet-react/core@npm:3.0.1"
   dependencies:
     "@starknet-io/types-js": ^0.7.7
     "@starknet-react/chains": ^3.0.0
@@ -2317,7 +2317,7 @@ __metadata:
     get-starknet-core: ^4.0.0
     react: ^18.0
     starknet: ^6.11.0
-  checksum: 7fe460751d006a79f456ad5c9d3debb51c34ee3308955cad484850d1a6b7f4cbf9ee2ab545c59b747364eba5a718f48b84352911c84995e398d694aa86b93103
+  checksum: 602fc4879f80316137df7be743a1c01bad6b71a1a201fc48100524e98e5b7eac05b1378e991e3c352acafc55278b9a6c23ff75359ef6c067b116f02fbdaec598
   languageName: node
   linkType: hard
 

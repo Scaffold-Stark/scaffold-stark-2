@@ -59,11 +59,12 @@ export class BurnerConnector extends InjectedConnector {
       new Account(
         new RpcProvider({
           nodeUrl: this.chain.rpcUrls.public.http[0],
-          chainId: starknetChainId(this.chain.id),
+          // chainId: starknetChainId(this.chain.id), // TODO : check how this affects wrong network. can we get this from the chain directly ?
         }),
         this.burnerAccount.accountAddress,
         this.burnerAccount.privateKey,
         "1",
+        "0x2",
       ),
     );
   }
@@ -104,14 +105,11 @@ export class BurnerConnector extends InjectedConnector {
           element.entrypoint = element.entry_point;
           // element.calldata.__compiled__ = true;
         });
-
         return await (
           await this.account()
         )
           //@ts-ignore
-          .execute(compiledCalls, {
-            version: "0x3",
-          });
+          .execute(compiledCalls);
       } catch (e) {
         throw e;
       }
