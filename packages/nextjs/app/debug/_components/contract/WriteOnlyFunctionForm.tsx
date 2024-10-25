@@ -76,8 +76,6 @@ export const WriteOnlyFunctionForm = ({
   }, [error]);
 
   const handleWrite = async () => {
-    console.log(getArgsAsStringInputFromForm(form, false));
-
     if (sendAsync) {
       try {
         const makeWriteWithParams = () =>
