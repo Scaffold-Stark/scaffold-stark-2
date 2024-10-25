@@ -74,16 +74,15 @@ export const ArrayInput = ({
                     nextInputObject = nextInputRecipe(parentForm!);
                   }
 
-                  const currentInputArray = { ...inputArr };
-
-                  // we do some nasty workaround
-                  currentInputArray[index] =
-                    nextInputObject?.[`input_${index}`] || null;
-
-                  setInputArr(currentInputArray);
+                  setInputArr((currentInputArray: any) => {
+                    return {
+                      ...currentInputArray,
+                      [index]: nextInputObject?.[index] || null,
+                    };
+                  });
                 }}
-                form={inputArr[index]}
-                stateObjectKey={`input_${index}`}
+                form={inputArr}
+                stateObjectKey={index}
                 paramType={
                   {
                     name: `${abiParameter.name}[${index}]`,

@@ -90,7 +90,6 @@ export const getArgsAsStringInputFromForm = (
     // array
     if (isCairoArray(key)) {
       const genericType = parseGenericType(key)[0];
-      console.log({ genericType });
       return value.map((arrayValue: any) =>
         _encodeValueFromKey(genericType, arrayValue),
       );
