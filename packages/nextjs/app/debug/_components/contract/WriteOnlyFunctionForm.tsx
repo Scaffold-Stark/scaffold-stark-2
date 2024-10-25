@@ -6,7 +6,7 @@ import {
   //   TxReceipt,
   getFunctionInputKey,
   getInitialFormState,
-  getParsedContractFunctionArgs,
+  getArgsAsStringInputFromForm,
   transformAbiFunction,
 } from "~~/app/debug/_components/contract";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
@@ -14,6 +14,7 @@ import {
   useSendTransaction,
   useNetwork,
   useTransactionReceipt,
+  useContract,
 } from "@starknet-react/core";
 import { Abi } from "abi-wan-kanabi";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
@@ -54,23 +55,17 @@ export const WriteOnlyFunctionForm = ({
     [chain, targetNetwork.network, walletStatus],
   );
 
+  const { contract: contractInstance } = useContract({
+    abi,
+    address: contractAddress,
+  });
+
   const {
     data: result,
     isPending: isLoading,
     sendAsync,
     error,
-  } = useSendTransaction({
-    calls: [
-      {
-        contractAddress,
-        entrypoint: abiFunction.name,
-
-        // use infinity to completely flatten array from n dimensions to 1 dimension
-        // writing in starknet next still needs rawArgs parsing, use v2 parsing
-        calldata: getParsedContractFunctionArgs(form, false).flat(Infinity),
-      },
-    ],
-  });
+  } = useSendTransaction({});
 
   // side effect for error logging
   useEffect(() => {
@@ -81,9 +76,31 @@ export const WriteOnlyFunctionForm = ({
   }, [error]);
 
   const handleWrite = async () => {
+    console.log(getArgsAsStringInputFromForm(form, false));
+
     if (sendAsync) {
       try {
-        const makeWriteWithParams = () => sendAsync();
+        const makeWriteWithParams = () =>
+          sendAsync(
+            !!contractInstance
+              ? [
+                  // {
+                  //   contractAddress,
+                  //   entrypoint: abiFunction.name,
+
+                  //   // use infinity to completely flatten array from n dimensions to 1 dimension
+                  //   // writing in starknet next still needs rawArgs parsing, use v2 parsing
+                  //   calldata: getParsedContractFunctionArgs(form, false).flat(
+                  //     Infinity,
+                  //   ),
+                  // },
+                  contractInstance.populate(
+                    abiFunction.name,
+                    getArgsAsStringInputFromForm(form, false),
+                  ),
+                ]
+              : [],
+          );
         await writeTxn(makeWriteWithParams);
         onChange();
       } catch (e: any) {

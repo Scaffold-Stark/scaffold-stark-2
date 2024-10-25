@@ -7,12 +7,12 @@ import {
   displayTxResult,
   getFunctionInputKey,
   getInitialFormState,
-  getParsedContractFunctionArgs,
+  getArgsAsStringInputFromForm,
   transformAbiFunction,
 } from "~~/app/debug/_components/contract";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { BlockNumber } from "starknet";
-import { useReadContract } from "@starknet-react/core";
+import { useContract, useReadContract } from "@starknet-react/core";
 import { ContractInput } from "./ContractInput";
 
 type ReadOnlyFunctionFormProps = {
@@ -33,12 +33,17 @@ export const ReadOnlyFunctionForm = ({
   const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null);
   const lastForm = useRef(form);
 
+  const { contract: contractInstance } = useContract({
+    abi,
+    address: contractAddress,
+  });
+
   const { isFetching, data, refetch, error } = useReadContract({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
     args: inputValue || [],
-    enabled: !!inputValue,
+    enabled: !!inputValue && !!contractInstance,
     blockIdentifier: "pending" as BlockNumber,
   });
 
@@ -66,8 +71,7 @@ export const ReadOnlyFunctionForm = ({
   });
 
   const handleRead = () => {
-    const newInputValue = getParsedContractFunctionArgs(form, false, true);
-
+    const newInputValue = getArgsAsStringInputFromForm(form, false, true);
     if (JSON.stringify(form) !== JSON.stringify(lastForm.current)) {
       setInputValue(newInputValue);
       lastForm.current = form;
