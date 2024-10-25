@@ -1,10 +1,12 @@
 import { cairo, CairoCustomEnum } from "starknet";
 import {
+  isCairoArray,
   isCairoBigInt,
   isCairoBool,
   isCairoFelt,
   isCairoInt,
   isCairoTuple,
+  parseGenericType,
 } from "~~/utils/scaffold-stark";
 import {
   AbiEnum,
@@ -85,21 +87,17 @@ export const getArgsAsStringInputFromForm = (
   isReadArgsParsing?: boolean,
 ) => {
   const _encodeValueFromKey = (key: string = "", value: any): any => {
-    // translate boolean input
-    if (isCairoBool(key)) return convertStringInputToBool(value);
-
-    // encode tuple input
-    if (isCairoTuple(key)) return cairo.tuple(parseTuple(value));
-
-    if (
-      isValidNumber(value) &&
-      (isCairoBigInt(key) || isCairoInt(key) || isCairoFelt(key))
-    ) {
-      return parseInt(value, 16);
+    // array
+    if (isCairoArray(key)) {
+      const genericType = parseGenericType(key)[0];
+      console.log({ genericType });
+      return value.map((arrayValue: any) =>
+        _encodeValueFromKey(genericType, arrayValue),
+      );
     }
 
     // enum & struct
-    if (key.includes("contracts::struct")) {
+    if (key.includes("contracts::")) {
       type FormStructValue = {
         type: string;
         value: any;
@@ -141,6 +139,28 @@ export const getArgsAsStringInputFromForm = (
         },
       );
       return Object.fromEntries(remappedEntries);
+    }
+
+    // encode tuple input
+    if (isCairoTuple(key)) {
+      console.log({ key });
+      const tupleKeys = parseTuple(key.replace(/^.*\(/, "("));
+      const tupleValues = parseTuple(value);
+      return cairo.tuple(
+        ...tupleValues.map((tupleValue, index) =>
+          _encodeValueFromKey(tupleKeys[index], tupleValue),
+        ),
+      );
+    }
+
+    // translate boolean input
+    if (isCairoBool(key)) return convertStringInputToBool(value);
+
+    if (
+      isValidNumber(value) &&
+      (isCairoBigInt(key) || isCairoInt(key) || isCairoFelt(key))
+    ) {
+      return parseInt(value, 16);
     }
 
     return value;

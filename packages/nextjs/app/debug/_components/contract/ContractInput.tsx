@@ -8,6 +8,7 @@ import {
   isCairoArray,
   isCairoBigInt,
   isCairoInt,
+  isCairoTuple,
   isCairoType,
   isCairoU256,
 } from "~~/utils/scaffold-stark";
@@ -58,6 +59,11 @@ export const ContractInput = ({
           setFormErrorMessage={setFormErrorMessage}
         />
       );
+    }
+
+    // we prio tuples here to avoid wrong input
+    else if (isCairoTuple(paramType.type)) {
+      return <InputBase {...inputProps} />;
     } else if (
       isCairoInt(paramType.type) ||
       isCairoBigInt(paramType.type) ||

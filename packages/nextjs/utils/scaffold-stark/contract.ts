@@ -863,7 +863,7 @@ function formatInputForParsing({
   );
 }
 
-function parseTuple(value: string): string[] {
+export function parseTuple(value: string): string[] {
   const values: string[] = [];
   let depth = 0;
   let current = "";
