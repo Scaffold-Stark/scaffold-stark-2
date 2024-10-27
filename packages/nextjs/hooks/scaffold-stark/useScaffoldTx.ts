@@ -3,80 +3,70 @@ import { useTargetNetwork } from "./useTargetNetwork";
 import { BigNumberish, RpcProvider } from "starknet";
 
 /**
- * Hook para obtener transacciones y número de transacciones en un bloque específico de StarkNet
- * @param blockNumber - El número de bloque del cual se quieren obtener transacciones
- * @param watch - Si está en true, actualiza las transacciones cada pollingInterval milisegundos
- * @param enabled - Si está en false, deshabilita el hook
+ * Hook to fetch transactions and transaction count for a specific block in StarkNet
+ * @param blockNumber - The block number to fetch transactions from
+ * @param watch - If true, updates transactions every pollingInterval milliseconds
+ * @param enabled - If false, disables the hook
  */
-export const useScaffoldTx = ({
-  blockNumber, // Cambiado para aceptar el número de bloque como parámetro
+export const useDataTransaction = ({
+  blockNumber,
   watch = false,
   enabled = true,
 }: {
-  blockNumber?: number; // Añadido como opción
+  blockNumber?: number;
   watch?: boolean;
   enabled?: boolean;
 }) => {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
-  const [transactionCount, setTransactionCount] = useState<number | undefined>(
-    undefined,
-  );
-  const [starknetVersion, setStarknetVersion] = useState<string | undefined>(
-    undefined,
-  );
+  const [transactionCount, setTransactionCount] = useState<number | undefined>(undefined);
+  const [starknetVersion, setStarknetVersion] = useState<string | undefined>(undefined);
 
   const { targetNetwork } = useTargetNetwork();
 
-  // Inicializamos el proveedor con la URL del nodo RPC
+  // Initialize the provider with the RPC node URL
   const publicClient = useMemo(() => {
     return new RpcProvider({
       nodeUrl: targetNetwork.rpcUrls.public.http[0],
     });
   }, [targetNetwork.rpcUrls.public.http]);
 
-  // Función para obtener las transacciones de un bloque
-  const readTransactionsFromBlock = async (blockNumber: number) => {
+  // Function to fetch transactions from a specific block
+  const fetchTransactionsFromBlock = async (blockNumber: number) => {
     setIsLoading(true);
-    setError(undefined); // Limpiar error antes de la nueva solicitud
+    setError(undefined); // Clear previous errors
 
     try {
-      console.log("Reading Block Number:", blockNumber);
+      console.log("Fetching Block Number:", blockNumber);
 
-      // Llamada para obtener el bloque con las transacciones
+      // Fetch the block with transaction hashes
       const block = await publicClient.getBlockWithTxHashes(blockNumber);
 
-      // Confirmar si obtuvimos el bloque
       if (block) {
         console.log("Block data:", block);
 
-        // Si el bloque tiene transacciones, las establecemos
         if ("transactions" in block) {
-          const transactionCount = block.transactions.length;
-          console.log(
-            `Found ${transactionCount} transactions in block ${blockNumber}`,
-          );
+          const count = block.transactions.length;
+          console.log(`Found ${count} transactions in block ${blockNumber}`);
           setTransactions(block.transactions);
-          setTransactionCount(transactionCount); // Guardar el número de transacciones
+          setTransactionCount(count); // Set transaction count
 
-          // Extraer la versión de StarkNet
+          // Extract StarkNet version if available
           if ("starknet_version" in block) {
-            setStarknetVersion(block.starknet_version); // Extraer la versión de StarkNet
+            setStarknetVersion(block.starknet_version);
           } else {
             console.warn("StarkNet version is not available.");
           }
         } else {
-          throw new Error(`Block ${blockNumber} does not have transactions.`);
+          throw new Error(`Block ${blockNumber} does not contain any transactions.`);
         }
       } else {
         throw new Error(`Block ${blockNumber} not found.`);
       }
     } catch (e: any) {
       console.error("Error fetching transactions:", e);
-      setError(
-        e.message || "Unknown error occurred while fetching transactions",
-      );
+      setError(e.message || "Unknown error occurred while fetching transactions");
     } finally {
       setIsLoading(false);
     }
@@ -85,27 +75,24 @@ export const useScaffoldTx = ({
   useEffect(() => {
     if (enabled && blockNumber !== undefined) {
       console.log("Fetching data for block:", blockNumber);
-      readTransactionsFromBlock(blockNumber);
+      fetchTransactionsFromBlock(blockNumber);
 
       if (watch) {
         const interval = setInterval(() => {
           console.log("Polling block data for block:", blockNumber);
-          readTransactionsFromBlock(blockNumber);
-        }, 30000);
+          fetchTransactionsFromBlock(blockNumber);
+        }, 30000); // Poll every 30 seconds
 
-        return () => {
-          clearInterval(interval);
-        };
+        return () => clearInterval(interval);
       }
     }
-  }, [enabled, publicClient, watch, blockNumber]); // Añadido blockNumber como dependencia
+  }, [enabled, publicClient, watch, blockNumber]);
 
   return {
     transactions,
-    transactionsCount: transactionCount || transactions.length, // Devuelve el conteo de transacciones correctamente
-    blockNumber,
+    transactionCount: transactionCount || transactions.length,
     starknetVersion,
     isLoading,
     error,
   };
-};
+}
