@@ -55,6 +55,13 @@ pub struct CreateBetOutcomesArgument {
     outcome_no: felt252
 }
 
+#[derive(Drop, Serde, starknet::Store)]
+pub struct UserPosition {
+    position_type: PositionType,
+    amount: u256,
+    has_claimed: bool,
+}
+
 #[derive(Copy, Serde, Drop, starknet::Store, PartialEq, Hash)]
 pub struct Outcome {
     name: felt252,
@@ -134,7 +141,7 @@ mod BetMaker {
     use starknet::{get_caller_address, get_contract_address, get_block_timestamp};
     use super::{
         IBetMaker, CryptoBet, Outcome, Outcomes, CreateBetOutcomesArgument, YieldStrategy,
-        StrategyInfos, BetType, PositionType, ERC20BetTokenType, ERC20BetToken
+        StrategyInfos, BetType, PositionType, ERC20BetTokenType, ERC20BetToken, UserPosition
     };
 
     const PROCESSING_FEE: u256 = 2;
@@ -152,6 +159,7 @@ mod BetMaker {
         #[flat]
         OwnableEvent: OwnableComponent::Event,
         CryptoBetCreated: CryptoBetCreated,
+        CryptoBetPositionCreated: CryptoBetPositionCreated,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -159,9 +167,16 @@ mod BetMaker {
         market: CryptoBet
     }
 
+    #[derive(Drop, starknet::Event)]
+    struct CryptoBetPositionCreated {
+        user: ContractAddress,
+        market: CryptoBet,
+        position: UserPosition
+    }
+
     #[storage]
     struct Storage {
-        // user_bet: Map<(ContractAddress, u256, u8, u8), UserBet>,
+        user_positions: Map<(ContractAddress, u256, BetType), UserPosition>,
         crypto_bets: Map<u256, CryptoBet>,
         total_crypto_bets: u256,
         vault_wallet: ContractAddress,
@@ -305,11 +320,23 @@ mod BetMaker {
                     }
                     bet_data.total_money_betted += bought_amount;
                     self.crypto_bets.write(bet_id, bet_data);
-                  
-                    // TODO: create user position in storage
-                    // TODO: handle yield generator
-                    // TODO: handle events
 
+                    let user_position = UserPosition { position_type, amount, has_claimed: false };
+                    self
+                        .user_positions
+                        .write((get_caller_address(), bet_id, bet_type), user_position);
+
+                    // TODO: handle yield generator strategy
+
+                    let new_bet = self.crypto_bets.read(bet_id);
+                    self
+                        .emit(
+                            CryptoBetPositionCreated {
+                                user: get_caller_address(),
+                                market: new_bet,
+                                position: UserPosition { position_type, amount, has_claimed: false }
+                            }
+                        );
                 },
                 BetType::Sports => panic!("Type not supported yet!"),
                 BetType::Other => panic!("Type not supported yet!"),
