@@ -1,4 +1,4 @@
-use openzeppelin_token::erc20::interface::{IERC20Dispatcher};
+use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 use starknet::{ContractAddress};
 
 #[derive(Drop, Serde, starknet::Store)]
@@ -120,19 +120,24 @@ pub trait IBetMaker<TContractState> {
     );
     fn get_crypto_bet(self: @TContractState, bet_id: u256) -> CryptoBet;
     fn get_crypto_bets_count(self: @TContractState) -> u256;
+    fn get_vault_wallet(self: @TContractState) -> ContractAddress;
+
+    fn set_vault_wallet(ref self: TContractState, wallet: ContractAddress);
 }
 
 #[starknet::contract]
 mod BetMaker {
-    use openzeppelin_token::erc20::interface::{IERC20Dispatcher};
+    use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     use openzeppelin_access::ownable::OwnableComponent;
     use starknet::storage::Map;
     use starknet::{ContractAddress};
-    // use starknet::{get_caller_address, get_contract_address};
+    use starknet::{get_caller_address, get_contract_address, get_block_timestamp};
     use super::{
         IBetMaker, CryptoBet, Outcome, Outcomes, CreateBetOutcomesArgument, YieldStrategy,
         StrategyInfos, BetType, PositionType, ERC20BetTokenType, ERC20BetToken
     };
+
+    const PROCESSING_FEE: u256 = 2;
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
 
@@ -159,6 +164,7 @@ mod BetMaker {
         // user_bet: Map<(ContractAddress, u256, u8, u8), UserBet>,
         crypto_bets: Map<u256, CryptoBet>,
         total_crypto_bets: u256,
+        vault_wallet: ContractAddress,
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
     }
@@ -217,7 +223,6 @@ mod BetMaker {
             let yield_strategy = create_yield_strategy(yield_strategy_infos);
 
             // Initialize Bet token
-
             let bet_token = match bet_token_address {
                 ERC20BetTokenType::Eth(address) => ERC20BetToken {
                     name: 'Eth', dispatcher: IERC20Dispatcher { contract_address: address },
@@ -262,7 +267,55 @@ mod BetMaker {
             bet_type: BetType,
             position_type: PositionType,
             amount: u256
-        ) {}
+        ) {
+            assert!(amount > 0, "You must send some funds to place a bet.");
+            match bet_type {
+                BetType::Crypto => {
+                    let mut bet_data = self.crypto_bets.read(bet_id);
+                    let converted_deadline: u64 = bet_data
+                        .deadline
+                        .try_into()
+                        .unwrap(); // TODO: Not necessary when u64 will be used for deadline
+                    let converted_vote_deadline: u64 = bet_data
+                        .vote_deadline
+                        .try_into()
+                        .unwrap(); // TODO: Not necessary when u64 will be used for vote_deadline
+
+                    assert!(bet_data.is_active, "Bet is not active.");
+                    assert!(get_block_timestamp() < converted_deadline, "Bet has expired.");
+                    assert!(get_block_timestamp() < converted_vote_deadline, "Votes are closed.");
+
+                    bet_data
+                        .bet_token
+                        .dispatcher
+                        .transfer_from(get_caller_address(), get_contract_address(), amount);
+                    bet_data
+                        .bet_token
+                        .dispatcher
+                        .transfer(self.vault_wallet.read(), amount * PROCESSING_FEE / 100);
+
+                    let bought_amount = amount - amount * PROCESSING_FEE / 100;
+                    match position_type {
+                        PositionType::Yes => {
+                            bet_data.outcomes.outcome_yes.bought_amount += bought_amount;
+                        },
+                        PositionType::No => {
+                            bet_data.outcomes.outcome_no.bought_amount += bought_amount;
+                        }
+                    }
+                    bet_data.total_money_betted += bought_amount;
+                    self.crypto_bets.write(bet_id, bet_data);
+                  
+                    // TODO: create user position in storage
+                    // TODO: handle yield generator
+                    // TODO: handle events
+
+                },
+                BetType::Sports => panic!("Type not supported yet!"),
+                BetType::Other => panic!("Type not supported yet!"),
+                _ => panic!("Invalid bet type"),
+            }
+        }
 
         fn get_crypto_bet(self: @ContractState, bet_id: u256) -> CryptoBet {
             self.crypto_bets.read(bet_id)
@@ -270,6 +323,16 @@ mod BetMaker {
 
         fn get_crypto_bets_count(self: @ContractState) -> u256 {
             self.total_crypto_bets.read()
+        }
+
+        fn get_vault_wallet(self: @ContractState) -> ContractAddress {
+            self.ownable.assert_only_owner();
+            self.vault_wallet.read()
+        }
+
+        fn set_vault_wallet(ref self: ContractState, wallet: ContractAddress) {
+            self.ownable.assert_only_owner();
+            self.vault_wallet.write(wallet);
         }
     }
 }
