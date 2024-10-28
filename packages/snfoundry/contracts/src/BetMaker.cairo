@@ -128,6 +128,13 @@ pub trait IBetMaker<TContractState> {
     fn get_crypto_bet(self: @TContractState, bet_id: u256) -> CryptoBet;
     fn get_crypto_bets_count(self: @TContractState) -> u256;
     fn get_vault_wallet(self: @TContractState) -> ContractAddress;
+    fn get_user_position(
+        self: @TContractState,
+        caller: ContractAddress,
+        bet_id: u256,
+        bet_type: BetType,
+        position_id: u256
+    ) -> UserPosition;
 
     fn set_vault_wallet(ref self: TContractState, wallet: ContractAddress);
 }
@@ -136,6 +143,7 @@ pub trait IBetMaker<TContractState> {
 mod BetMaker {
     use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     use openzeppelin_access::ownable::OwnableComponent;
+    use starknet::contract_address::contract_address_const;
     use starknet::storage::Map;
     use starknet::{ContractAddress};
     use starknet::{get_caller_address, get_contract_address, get_block_timestamp};
@@ -171,12 +179,18 @@ mod BetMaker {
     struct CryptoBetPositionCreated {
         user: ContractAddress,
         market: CryptoBet,
-        position: UserPosition
+        position: UserPosition,
+        position_id: u256 // TODO: update last u256 to u16/u32
     }
 
     #[storage]
     struct Storage {
-        user_positions: Map<(ContractAddress, u256, BetType), UserPosition>,
+        user_positions: Map<
+            (ContractAddress, u256, BetType, u256), UserPosition
+        >, // TODO: update last u256 to u16/u32
+        user_total_positions: Map<
+            (ContractAddress, u256, BetType), u256
+        >, // TODO: update last u256 to u16/u32
         crypto_bets: Map<u256, CryptoBet>,
         total_crypto_bets: u256,
         vault_wallet: ContractAddress,
@@ -186,7 +200,14 @@ mod BetMaker {
 
     #[constructor]
     fn constructor(ref self: ContractState, owner: ContractAddress) {
+        //self.ownable.initializer(owner); // TODO: Put back owner
+
+        // TODO: Remove all down part
+        let owner = contract_address_const::<
+            0x061a88ec8c3691da159f2de0579869604ab00e1476a20b10df71d2bd8b847b8c
+        >();
         self.ownable.initializer(owner);
+        self.vault_wallet.write(owner);
     }
 
 
@@ -222,8 +243,7 @@ mod BetMaker {
             bet_token_address: ERC20BetTokenType,
             outcomes: CreateBetOutcomesArgument
         ) {
-            // TODO: Put back owner assert
-            //self.ownable.assert_only_owner();
+            self.ownable.assert_only_owner();
 
             // Initialize outcomes
             let outcome_yes_name = outcomes.outcome_yes;
@@ -321,10 +341,27 @@ mod BetMaker {
                     bet_data.total_money_betted += bought_amount;
                     self.crypto_bets.write(bet_id, bet_data);
 
+                    self
+                        .user_total_positions
+                        .write(
+                            (get_caller_address(), bet_id, bet_type),
+                            self.user_total_positions.read((get_caller_address(), bet_id, bet_type))
+                                + 1
+                        );
                     let user_position = UserPosition { position_type, amount, has_claimed: false };
                     self
                         .user_positions
-                        .write((get_caller_address(), bet_id, bet_type), user_position);
+                        .write(
+                            (
+                                get_caller_address(),
+                                bet_id,
+                                bet_type,
+                                self
+                                    .user_total_positions
+                                    .read((get_caller_address(), bet_id, bet_type))
+                            ),
+                            user_position
+                        );
 
                     // TODO: handle yield generator strategy
 
@@ -334,7 +371,12 @@ mod BetMaker {
                             CryptoBetPositionCreated {
                                 user: get_caller_address(),
                                 market: new_bet,
-                                position: UserPosition { position_type, amount, has_claimed: false }
+                                position: UserPosition {
+                                    position_type, amount, has_claimed: false
+                                },
+                                position_id: self
+                                    .user_total_positions
+                                    .read((get_caller_address(), bet_id, bet_type))
                             }
                         );
                 },
@@ -356,6 +398,17 @@ mod BetMaker {
             self.ownable.assert_only_owner();
             self.vault_wallet.read()
         }
+
+        fn get_user_position(
+            self: @ContractState,
+            caller: ContractAddress,
+            bet_id: u256,
+            bet_type: BetType,
+            position_id: u256
+        ) -> UserPosition {
+            self.user_positions.read((caller, bet_id, bet_type, position_id))
+        }
+
 
         fn set_vault_wallet(ref self: ContractState, wallet: ContractAddress) {
             self.ownable.assert_only_owner();
