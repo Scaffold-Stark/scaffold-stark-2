@@ -1,7 +1,83 @@
 use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
-use starknet::{ContractAddress};
+use starknet::{ContractAddress, eth_address::EthAddress};
 
-#[derive(Drop, Serde, starknet::Store)]
+
+// Nimbora structs and interface
+#[derive(Copy, Drop, Serde, starknet::Store)]
+struct WithdrawalInfo {
+    epoch: u256,
+    shares: u256,
+    claimed: bool
+}
+
+impl WithdrawalInfoIntoSpan of Into<WithdrawalInfo, Span<felt252>> {
+    fn into(self: WithdrawalInfo) -> Span<felt252> {
+        let mut serialized_struct: Array<felt252> = array![];
+        self.serialize(ref serialized_struct);
+        serialized_struct.span()
+    }
+}
+
+#[derive(Copy, Drop, Serde, PartialEq)]
+struct StrategyReportL2 {
+    l1_strategy: EthAddress,
+    action_id: u256,
+    amount: u256,
+    processed: bool,
+    new_share_price: u256
+}
+
+#[starknet::interface]
+pub trait ITokenManager<TContractState> {
+    fn pooling_manager(self: @TContractState) -> ContractAddress;
+    fn l1_strategy(self: @TContractState) -> EthAddress;
+    fn underlying(self: @TContractState) -> ContractAddress;
+    fn token(self: @TContractState) -> ContractAddress;
+    fn performance_fees(self: @TContractState) -> u256;
+    fn tvl_limit(self: @TContractState) -> u256;
+    fn withdrawal_epoch_delay(self: @TContractState) -> u256;
+    fn handled_epoch_withdrawal_len(self: @TContractState) -> u256;
+    fn epoch(self: @TContractState) -> u256;
+    fn l1_net_asset_value(self: @TContractState) -> u256;
+    fn underlying_transit(self: @TContractState) -> u256;
+    fn buffer(self: @TContractState) -> u256;
+    fn withdrawal_info(self: @TContractState, user: ContractAddress, id: u256) -> WithdrawalInfo;
+    fn user_withdrawal_len(self: @TContractState, user: ContractAddress) -> u256;
+    fn dust_limit(self: @TContractState) -> u256;
+    fn total_assets(self: @TContractState) -> u256;
+    fn total_underlying_due(self: @TContractState) -> u256;
+    fn withdrawal_exchange_rate(self: @TContractState, epoch: u256) -> u256;
+    fn withdrawal_pool(self: @TContractState, epoch: u256) -> u256;
+    fn withdrawal_share(self: @TContractState, epoch: u256) -> u256;
+    fn convert_to_shares(self: @TContractState, amount: u256) -> u256;
+    fn convert_to_assets(self: @TContractState, shares: u256) -> u256;
+
+
+    fn initialiser(ref self: TContractState, token: ContractAddress);
+
+    fn set_performance_fees(ref self: TContractState, new_performance_fees: u256);
+
+    fn set_tvl_limit(ref self: TContractState, new_tvl_limit: u256);
+
+    fn set_withdrawal_epoch_delay(ref self: TContractState, new_withdrawal_epoch_delay: u256);
+
+    fn set_dust_limit(ref self: TContractState, new_dust_limit: u256);
+
+    fn deposit(
+        ref self: TContractState, assets: u256, receiver: ContractAddress, referal: ContractAddress
+    );
+
+    fn request_withdrawal(ref self: TContractState, shares: u256);
+
+    fn claim_withdrawal(ref self: TContractState, user: ContractAddress, id: u256);
+
+    fn handle_report(
+        ref self: TContractState, new_l1_net_asset_value: u256, underlying_bridged_amount: u256
+    ) -> StrategyReportL2;
+}
+
+// Structs and enums
+#[derive(Drop, Serde, Copy, starknet::Store)]
 pub struct StrategyInfos {
     name: felt252,
     symbol: felt252,
@@ -9,18 +85,12 @@ pub struct StrategyInfos {
     yield_strategy_type: u256 // TODO: u256 -> u8
 }
 
-trait ProcessingYield {
-    fn deposit_liquidity(self: YieldStrategy);
-}
-
-impl ProcessingYieldImpl of ProcessingYield {
-    fn deposit_liquidity(self: YieldStrategy) {
-        match self {
-            YieldStrategy::Nimbora(value) => { println!("Nimbora! {:?}", value.symbol) },
-            YieldStrategy::Nostra => { println!("Nostra!") },
-            YieldStrategy::None => { println!("None!") },
-        }
-    }
+#[derive(Drop, Serde, Copy, starknet::Store)]
+pub struct NimboraStrategyInfos {
+    name: felt252,
+    symbol: felt252,
+    address: ContractAddress,
+    shares: u256
 }
 
 #[derive(Copy, Serde, Drop, starknet::Store, PartialEq, Hash)]
@@ -42,10 +112,10 @@ pub enum PositionType {
     No,
 }
 
-#[derive(Drop, Serde, starknet::Store)]
+#[derive(Drop, Serde, Copy, starknet::Store)]
 pub enum YieldStrategy {
     None, // index 0
-    Nimbora: StrategyInfos, // index 1
+    Nimbora: NimboraStrategyInfos, // index 1
     Nostra: StrategyInfos
 }
 
@@ -142,6 +212,7 @@ pub trait IBetMaker<TContractState> {
 #[starknet::contract]
 mod BetMaker {
     use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
+    use super::{ITokenManagerDispatcher, ITokenManagerDispatcherTrait};
     use openzeppelin_access::ownable::OwnableComponent;
     use starknet::contract_address::contract_address_const;
     use starknet::storage::Map;
@@ -149,7 +220,8 @@ mod BetMaker {
     use starknet::{get_caller_address, get_contract_address, get_block_timestamp};
     use super::{
         IBetMaker, CryptoBet, Outcome, Outcomes, CreateBetOutcomesArgument, YieldStrategy,
-        StrategyInfos, BetType, PositionType, ERC20BetTokenType, ERC20BetToken, UserPosition
+        StrategyInfos, NimboraStrategyInfos, BetType, PositionType, ERC20BetTokenType,
+        ERC20BetToken, UserPosition
     };
 
     const PROCESSING_FEE: u256 = 2;
@@ -210,7 +282,7 @@ mod BetMaker {
         self.vault_wallet.write(owner);
     }
 
-
+    // Private methods
     fn create_yield_strategy(yield_strategy_infos: StrategyInfos) -> YieldStrategy {
         let yield_type = yield_strategy_infos.yield_strategy_type;
 
@@ -220,10 +292,30 @@ mod BetMaker {
 
         match converted_yield_type {
             0 => YieldStrategy::None,
-            1 => YieldStrategy::Nimbora(yield_strategy_infos),
+            1 => {
+                let nimbora_strategy_infos = NimboraStrategyInfos {
+                    name: yield_strategy_infos.name,
+                    symbol: yield_strategy_infos.symbol,
+                    address: yield_strategy_infos.address,
+                    shares: 0
+                };
+                YieldStrategy::Nimbora(nimbora_strategy_infos)
+            },
             2 => YieldStrategy::Nostra(yield_strategy_infos),
             _ => YieldStrategy::None
         }
+    }
+
+    fn depositToNimbora(
+        nimbora_address: ContractAddress, eth_dispatcher: IERC20Dispatcher, amount_eth: u256
+    ) -> u256 {
+        let nimbora_dispatcher = ITokenManagerDispatcher { contract_address: nimbora_address };
+
+        eth_dispatcher.approve(nimbora_dispatcher.contract_address, amount_eth);
+        nimbora_dispatcher.deposit(amount_eth, get_contract_address(), get_contract_address());
+
+        let amount_shares_received = nimbora_dispatcher.convert_to_shares(amount_eth);
+        amount_shares_received
     }
 
     #[abi(embed_v0)]
@@ -363,14 +455,29 @@ mod BetMaker {
                             user_position
                         );
 
-                    // TODO: handle yield generator strategy
+                    let mut new_bet = self.crypto_bets.read(bet_id);
+                    match new_bet.yield_strategy {
+                        YieldStrategy::Nimbora(mut yield_strategy_infos) => {
+                            let earned_shares = depositToNimbora(
+                                yield_strategy_infos.address,
+                                new_bet.bet_token.dispatcher,
+                                bought_amount
+                            );
+                            yield_strategy_infos.shares += earned_shares;
 
-                    let new_bet = self.crypto_bets.read(bet_id);
+                            let mut new_bet = self.crypto_bets.read(bet_id);
+                            new_bet.yield_strategy = YieldStrategy::Nimbora(yield_strategy_infos);
+                            self.crypto_bets.write(bet_id, new_bet);
+                        },
+                        _ => {}
+                    }
+
+                    let mut final_bet = self.crypto_bets.read(bet_id);
                     self
                         .emit(
                             CryptoBetPositionCreated {
                                 user: get_caller_address(),
-                                market: new_bet,
+                                market: final_bet,
                                 position: UserPosition {
                                     position_type, amount, has_claimed: false
                                 },
