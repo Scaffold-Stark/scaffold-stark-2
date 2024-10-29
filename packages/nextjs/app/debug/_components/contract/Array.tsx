@@ -67,12 +67,11 @@ export const ArrayInput = ({
                     | Record<string, any>
                     | ((arg: Record<string, any>) => void),
                 ) => {
-                  let nextInputObject: Record<string, any> = nextInputRecipe;
-
-                  // set state recipe function, handle
-                  if (typeof nextInputRecipe === "function") {
-                    nextInputObject = nextInputRecipe(parentForm!);
-                  }
+                  // if we find a function (a.k.a setState recipe), we run it to generate the next state based on recpe, else just use the object passed in
+                  const nextInputObject: Record<string, any> =
+                    typeof nextInputRecipe === "function"
+                      ? nextInputRecipe(parentForm!)
+                      : nextInputRecipe;
 
                   setInputArr((currentInputArray: any) => {
                     return {
