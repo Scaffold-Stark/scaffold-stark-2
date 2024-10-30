@@ -4,7 +4,7 @@ import {
   exportDeployments,
   deployer,
 } from "./deploy-contract";
-import { green, red } from "./helpers/colorize-log";
+import { green } from "./helpers/colorize-log";
 
 /**
  * Deploy a contract using the specified parameters.
