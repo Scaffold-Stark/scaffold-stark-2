@@ -272,9 +272,8 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
 
     }
   } catch (error) {
-    console.error(red("Error executing deploy calls: "), error);
     // split the calls in half and try again recursively
-    if (deployCalls.length > 1) {
+    if (deployCalls.length > 100) {
       let half = Math.ceil(deployCalls.length / 2);
       let firstHalf = deployCalls.slice(0, half);
       let secondHalf = deployCalls.slice(half);
@@ -282,6 +281,8 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
       await executeDeployCalls(options);
       deployCalls = secondHalf;
       await executeDeployCalls(options);
+    } else {
+      throw error;
     }
   }
 };
