@@ -4,7 +4,7 @@ import {
   exportDeployments,
   deployer,
 } from "./deploy-contract";
-import { green } from "./helpers/colorize-log";
+import { green, red } from "./helpers/colorize-log";
 
 /**
  * Deploy a contract using the specified parameters.
@@ -54,6 +54,9 @@ deployScript()
   .then(async () => {
     executeDeployCalls().then(() => {
       exportDeployments();
+      console.log(green("All Setup Done"));
+    }).catch((error) => {
+      console.error(red("Error executing deploy calls: "), error);
     });
   })
   .catch(console.error);
