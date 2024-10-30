@@ -52,11 +52,14 @@ const deployScript = async (): Promise<void> => {
 
 deployScript()
   .then(async () => {
-    executeDeployCalls().then(() => {
-      exportDeployments();
-      console.log(green("All Setup Done"));
-    }).catch((error) => {
-      console.error(red("Error executing deploy calls: "), error);
-    });
+    executeDeployCalls()
+      .then(() => {
+        exportDeployments();
+        console.log(green("All Setup Done"));
+      })
+      .catch((e) => {
+        console.error(e);
+        process.exit(1); // exit with error so that non subsequent scripts are run
+      });
   })
   .catch(console.error);

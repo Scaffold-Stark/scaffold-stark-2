@@ -260,17 +260,17 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
     let { transaction_hash } = await deployer.execute(deployCalls, {
       ...options,
       version: txVersion,
-      maxFee: 79783014000
     });
-    console.log(green("Deploy Calls Executed at "), transaction_hash);
     if (networkName === "sepolia" || networkName === "mainnet") {
-      const receipt = await provider.waitForTransaction(transaction_hash) as TransactionReceipt;
+      const receipt = (await provider.waitForTransaction(
+        transaction_hash
+      )) as TransactionReceipt;
       if (receipt.execution_status !== "SUCCEEDED") {
         const revertReason = receipt.revert_reason;
         throw new Error(red(`Deploy Calls Failed: ${revertReason}`));
       }
-
     }
+    console.log(green("Deploy Calls Executed at "), transaction_hash);
   } catch (error) {
     // split the calls in half and try again recursively
     if (deployCalls.length > 100) {
