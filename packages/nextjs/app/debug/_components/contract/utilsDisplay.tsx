@@ -1,5 +1,11 @@
 import { ReactElement } from "react";
-import { CairoCustomEnum, Uint256, validateChecksumAddress } from "starknet";
+import {
+  CairoCustomEnum,
+  getChecksumAddress,
+  Uint256,
+  validateAndParseAddress,
+  validateChecksumAddress,
+} from "starknet";
 import { Address } from "~~/components/scaffold-stark";
 import { replacer } from "~~/utils/scaffold-stark/common";
 import {
@@ -31,7 +37,7 @@ export const displayTxResult = (
   if (displayContent == null) {
     return "";
   }
-  if (functionOutputs != null && functionOutputs.length != 0) {
+  if (functionOutputs !== null && functionOutputs.length !== 0) {
     if (displayContent instanceof CairoCustomEnum) {
       return JSON.stringify(
         { [displayContent.activeVariant()]: displayContent.unwrap() },
@@ -40,10 +46,19 @@ export const displayTxResult = (
     }
 
     const type = functionOutputs[0].type;
-    const parsedParam = parseParamWithType(type, displayContent, true);
+    const parsedParam = displayContent as any;
 
     if (typeof parsedParam === "object")
       return JSON.stringify(parsedParam, replacer);
+
+    if (isCairoContractAddress(type)) {
+      return asText ? (
+        // BigNumberish here if you look at the code, the tostring method does not work properly
+        getChecksumAddress(`0x${parsedParam.toString(16)}`)
+      ) : (
+        <Address address={`0x${parsedParam.toString(16)}` as `0x${string}`} />
+      );
+    }
 
     if (typeof parsedParam === "bigint") {
       if (
@@ -82,15 +97,7 @@ export const displayTxResult = (
       return `"${parsedParam.toString()}"`;
     }
 
-    return isCairoContractAddress(type) &&
-      validateChecksumAddress(parsedParam) &&
-      !asText ? (
-      <Address address={parsedParam as `0x${string}`} />
-    ) : typeof parsedParam === "object" ? (
-      JSON.stringify(parsedParam, replacer, 2)
-    ) : (
-      parsedParam.toString()
-    );
+    return parsedParam.toString();
   }
 
   return JSON.stringify(displayContent, replacer, 2);
