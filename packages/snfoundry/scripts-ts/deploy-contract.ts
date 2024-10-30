@@ -11,6 +11,7 @@ import {
   DeclareContractPayload,
   UniversalDetails,
   isSierra,
+  TransactionReceipt,
 } from "starknet";
 import { DeployContractParams, Network } from "./types";
 import { green, red, yellow } from "./helpers/colorize-log";
@@ -259,10 +260,16 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
     let { transaction_hash } = await deployer.execute(deployCalls, {
       ...options,
       version: txVersion,
+      maxFee: 79783014000
     });
     console.log(green("Deploy Calls Executed at "), transaction_hash);
     if (networkName === "sepolia" || networkName === "mainnet") {
-      await provider.waitForTransaction(transaction_hash);
+      const receipt = await provider.waitForTransaction(transaction_hash) as TransactionReceipt;
+      if (receipt.execution_status !== "SUCCEEDED") {
+        const revertReason = receipt.revert_reason;
+        throw new Error(red(`Deploy Calls Failed: ${revertReason}`));
+      }
+
     }
   } catch (error) {
     console.error(red("Error executing deploy calls: "), error);

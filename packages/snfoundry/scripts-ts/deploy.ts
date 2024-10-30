@@ -52,9 +52,8 @@ const deployScript = async (): Promise<void> => {
 
 deployScript()
   .then(async () => {
-    await executeDeployCalls();
-    exportDeployments();
-
-    console.log(green("All Setup Done"));
+    executeDeployCalls().then(() => {
+      exportDeployments();
+    });
   })
   .catch(console.error);
