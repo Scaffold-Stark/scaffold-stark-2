@@ -1,4 +1,4 @@
-use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
+use openzeppelin_token::erc20::interface::{IERC20Dispatcher};
 use starknet::{ContractAddress, eth_address::EthAddress};
 
 
@@ -79,10 +79,10 @@ pub trait ITokenManager<TContractState> {
 // Structs and enums
 #[derive(Drop, Serde, Copy, starknet::Store)]
 pub struct StrategyInfos {
-    name: felt252,
-    symbol: felt252,
-    address: ContractAddress,
-    yield_strategy_type: u256 // TODO: u256 -> u8
+    pub name: felt252,
+    pub symbol: felt252,
+    pub address: ContractAddress,
+    pub yield_strategy_type: u256 // TODO: u256 -> u8
 }
 
 #[derive(Drop, Serde, Copy, starknet::Store)]
@@ -121,8 +121,8 @@ pub enum YieldStrategy {
 
 #[derive(Copy, Serde, Drop, starknet::Store, PartialEq, Hash)]
 pub struct CreateBetOutcomesArgument {
-    outcome_yes: felt252,
-    outcome_no: felt252
+    pub outcome_yes: felt252,
+    pub outcome_no: felt252
 }
 
 #[derive(Drop, Serde, starknet::Store)]
@@ -205,6 +205,9 @@ pub trait IBetMaker<TContractState> {
         bet_type: BetType,
         position_id: u256
     ) -> UserPosition;
+    fn get_user_total_positions(
+        self: @TContractState, caller: ContractAddress, bet_id: u256, bet_type: BetType
+    ) -> u256;
 
     fn set_vault_wallet(ref self: TContractState, wallet: ContractAddress);
 }
@@ -214,7 +217,7 @@ mod BetMaker {
     use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     use super::{ITokenManagerDispatcher, ITokenManagerDispatcherTrait};
     use openzeppelin_access::ownable::OwnableComponent;
-    use starknet::contract_address::contract_address_const;
+    // use starknet::contract_address::contract_address_const;
     use starknet::storage::Map;
     use starknet::{ContractAddress};
     use starknet::{get_caller_address, get_contract_address, get_block_timestamp};
@@ -272,12 +275,6 @@ mod BetMaker {
 
     #[constructor]
     fn constructor(ref self: ContractState, owner: ContractAddress) {
-        //self.ownable.initializer(owner); // TODO: Put back owner
-
-        // TODO: Remove all down part
-        let owner = contract_address_const::<
-            0x061a88ec8c3691da159f2de0579869604ab00e1476a20b10df71d2bd8b847b8c
-        >();
         self.ownable.initializer(owner);
         self.vault_wallet.write(owner);
     }
@@ -514,6 +511,12 @@ mod BetMaker {
             position_id: u256
         ) -> UserPosition {
             self.user_positions.read((caller, bet_id, bet_type, position_id))
+        }
+
+        fn get_user_total_positions(
+            self: @ContractState, caller: ContractAddress, bet_id: u256, bet_type: BetType
+        ) -> u256 {
+            self.user_total_positions.read((caller, bet_id, bet_type))
         }
 
 

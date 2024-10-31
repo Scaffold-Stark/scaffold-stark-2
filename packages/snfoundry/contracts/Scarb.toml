@@ -26,3 +26,8 @@ sort-module-level-items = true
 name = "SEPOLIA_LATEST"
 url = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
 block_id.tag = "latest"
+
+[[tool.snforge.fork]]
+name = "MAINNET_LATEST"
+url = "https://rpc.nethermind.io/mainnet-juno/rpc/v0_7?apikey=YOUR_API_KEY"
+block_id.tag = "latest"
