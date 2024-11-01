@@ -4,14 +4,7 @@ import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { useTargetNetwork } from "../useTargetNetwork";
 import { useProvider } from "@starknet-react/core";
 import { RpcProvider } from "starknet";
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockDeployedContractData } from "./seed/mockDeployedContractData";
 
 // Mock dependencies
@@ -71,16 +64,19 @@ describe("useScaffoldEventHistory", () => {
    */
   const mockEvents = [
     {
-      transaction_hash: "0x32fd3f52de430871452ba8f0e919df62d62371ae14854970751bb218f907043",
-      block_hash: "0x3b2711fe29eba45f2a0250c34901d15e37b495599fac1a74960a09cc83e1234",
+      transaction_hash:
+        "0x32fd3f52de430871452ba8f0e919df62d62371ae14854970751bb218f907043",
+      block_hash:
+        "0x3b2711fe29eba45f2a0250c34901d15e37b495599fac1a74960a09cc83e1234",
       block_number: 4,
-      from_address: "0x4157387adde0a8300c484badd9dcae316f3ce4aef745d724774c775201ae7a6",
+      from_address:
+        "0x4157387adde0a8300c484badd9dcae316f3ce4aef745d724774c775201ae7a6",
       keys: [
         "0x5bd809fd302dcb761cc197e17ab97cea5927a14a155597700cd4780ce32953",
         "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
         "0x0",
         "0x68656c6c6f20776f726c64",
-        "0xb"
+        "0xb",
       ],
       data: [
         "0x1",
@@ -93,8 +89,8 @@ describe("useScaffoldEventHistory", () => {
         "0x5",
         "0x2",
         "0xa",
-        "0x14"
-      ]
+        "0x14",
+      ],
     },
   ];
 
@@ -168,7 +164,6 @@ describe("useScaffoldEventHistory", () => {
       await waitFor(() => expect(result.current.isLoading).toBe(true));
     });
 
-
     // Check that loading is false and events are fetched
     expect(result.current.isLoading).toBe(false);
     expect(result.current.data).toEqual([
@@ -181,7 +176,8 @@ describe("useScaffoldEventHistory", () => {
           arr_val: [10n, 20n],
           bool_val: true,
           message: "hello world",
-          sender: 2846891009026995430665703316224827616914889274105712248413538305735679628945n,
+          sender:
+            2846891009026995430665703316224827616914889274105712248413538305735679628945n,
           tuple_val: {
             0: 1n,
             1: 2n,
@@ -189,7 +185,7 @@ describe("useScaffoldEventHistory", () => {
             3: 4n,
             4: 5n,
           },
-          u256_val: 1024n
+          u256_val: 1024n,
         },
       },
     ]);
