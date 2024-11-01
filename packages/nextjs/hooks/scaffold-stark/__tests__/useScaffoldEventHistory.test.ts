@@ -140,8 +140,8 @@ describe("useScaffoldEventHistory", () => {
   it("should fetch and return events from the contract after mimicking a transaction", async () => {
     const { result } = renderHook(() =>
       useScaffoldEventHistory({
-        contractName: mockContractName,
-        eventName: mockEventName,
+        contractName: mockContractName as any,
+        eventName: mockEventName as never,
         fromBlock: BigInt(1),
         filters: {},
         blockData: true,
