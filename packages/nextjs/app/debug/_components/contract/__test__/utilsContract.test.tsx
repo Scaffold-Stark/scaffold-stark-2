@@ -32,7 +32,55 @@ describe("utilsContract", () => {
     expect(getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": '0x000' }, false, true)).toEqual([false]);
   });
 
-  it("should parse struct correctly", () => {
+  it("should parse tuple input correctly", () => {
+    const form = {
+      "echo_tuple_input_(core::integer::u8, core::integer::u16)": "(1,2)"
+    }
+    const result = getArgsAsStringInputFromForm(form, false, true);
+    expect(result).toEqual([
+      {
+        "0": 1,
+        "1": 2
+      }
+    ])
+  });
+
+  it("should parse enum input correctly", () => {
+    const form = {
+      "echo_enum_u_input_u8_core::integer::u8": "1",
+      "echo_enum_u_input_contracts::YourModel::Message": {
+        "variant": {
+          "Quit": {
+            "type": "()",
+            "value": ""
+          },
+          "Echo": {
+            "type": "core::felt252",
+            "value": "32"
+          },
+          "Move": {
+            "type": "(core::integer::u128, core::integer::u128)",
+            "value": ""
+          }
+        }
+      },
+      "echo_enum_u_input_u16_core::integer::u16": "3",
+      "echo_enum_u_input_u32_core::integer::i32": "4"
+    }
+    const result = getArgsAsStringInputFromForm(form, false, true);
+    expect(result).toEqual([
+      1,
+      {
+        "variant": {
+          "Echo": 32
+        }
+      },
+      3,
+      4
+    ])
+  });
+
+  it("should parse complex struct with enum & tuple inside correctly", () => {
     const form = {
       "echo_struct_input_contracts::YourModel::User": {
         "name": {
@@ -78,41 +126,6 @@ describe("utilsContract", () => {
           }
         }
       }
-    ])
-  });
-
-  it("should parse multi input correctly", () => {
-    const form = {
-      "echo_enum_u_input_u8_core::integer::u8": "1",
-      "echo_enum_u_input_contracts::YourModel::Message": {
-        "variant": {
-          "Quit": {
-            "type": "()",
-            "value": ""
-          },
-          "Echo": {
-            "type": "core::felt252",
-            "value": "32"
-          },
-          "Move": {
-            "type": "(core::integer::u128, core::integer::u128)",
-            "value": ""
-          }
-        }
-      },
-      "echo_enum_u_input_u16_core::integer::u16": "3",
-      "echo_enum_u_input_u32_core::integer::i32": "4"
-    }
-    const result = getArgsAsStringInputFromForm(form, false, true);
-    expect(result).toEqual([
-      1,
-      {
-        "variant": {
-          "Echo": 32
-        }
-      },
-      3,
-      4
     ])
   });
 });
