@@ -62,6 +62,10 @@ const deployScript = async (): Promise<void> => {
     contract: "Tuples",
     constructorArgs: {},
   });
+  await deployContract({
+    contract: "Events",
+    constructorArgs: {},
+  });
 };
 
 deployScript()
