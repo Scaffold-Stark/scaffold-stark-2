@@ -6,6 +6,7 @@ import {
   isCairoFelt,
   isCairoInt,
   isCairoTuple,
+  isCairoU256,
   parseGenericType,
 } from "~~/utils/scaffold-stark";
 import {
@@ -77,6 +78,15 @@ function isValidNumber(input?: string): boolean {
   const decimalNumberRegex = /^[-+]?(\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?$/;
   return decimalNumberRegex.test(input || "");
 }
+
+function isValidHexNumber(input?: string): boolean {
+  // Check for empty string
+  if ((input || "").length === 0) return false;
+
+  // Check if it's a valid hex number (starts with '0x' or '0X')
+  return /^0x[0-9a-fA-F]+$/i.test(input || "");
+}
+
 
 /**
  * parses form input with array support
@@ -156,11 +166,19 @@ export const getArgsAsStringInputFromForm = (
     if (isCairoBool(key)) return convertStringInputToBool(value);
 
     if (
-      isValidNumber(value) &&
-      (isCairoBigInt(key) || isCairoInt(key) || isCairoFelt(key))
+      isValidHexNumber(value) &&
+      (isCairoBigInt(key) || isCairoInt(key) || isCairoFelt(key) || isCairoU256(key))
     ) {
       return parseInt(value, 16);
     }
+
+    if (
+      isValidNumber(value) &&
+      (isCairoBigInt(key) || isCairoInt(key) || isCairoFelt(key) || isCairoU256(key))
+    ) {
+      return parseInt(value, 10);
+    }
+
 
     return value;
   };
