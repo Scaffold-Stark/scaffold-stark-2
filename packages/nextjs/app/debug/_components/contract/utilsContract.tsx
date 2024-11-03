@@ -87,7 +87,6 @@ function isValidHexNumber(input?: string): boolean {
   return /^0x[0-9a-fA-F]+$/i.test(input || "");
 }
 
-
 /**
  * parses form input with array support
  */
@@ -167,18 +166,23 @@ export const getArgsAsStringInputFromForm = (
 
     if (
       isValidHexNumber(value) &&
-      (isCairoBigInt(key) || isCairoInt(key) || isCairoFelt(key) || isCairoU256(key))
+      (isCairoBigInt(key) ||
+        isCairoInt(key) ||
+        isCairoFelt(key) ||
+        isCairoU256(key))
     ) {
       return parseInt(value, 16);
     }
 
     if (
       isValidNumber(value) &&
-      (isCairoBigInt(key) || isCairoInt(key) || isCairoFelt(key) || isCairoU256(key))
+      (isCairoBigInt(key) ||
+        isCairoInt(key) ||
+        isCairoFelt(key) ||
+        isCairoU256(key))
     ) {
       return parseInt(value, 10);
     }
-
 
     return value;
   };
