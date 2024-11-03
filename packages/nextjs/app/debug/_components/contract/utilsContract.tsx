@@ -90,11 +90,7 @@ function isValidHexNumber(input?: string): boolean {
 /**
  * parses form input with array support
  */
-export const getArgsAsStringInputFromForm = (
-  form: Record<string, any>,
-  isRead: boolean,
-  isReadArgsParsing?: boolean,
-) => {
+export const getArgsAsStringInputFromForm = (form: Record<string, any>) => {
   const _encodeValueFromKey = (key: string = "", value: any): any => {
     // array
     if (isCairoArray(key)) {
@@ -151,7 +147,6 @@ export const getArgsAsStringInputFromForm = (
 
     // encode tuple input
     if (isCairoTuple(key)) {
-      console.log({ key });
       const tupleKeys = parseTuple(key.replace(/^.*\(/, "("));
       const tupleValues = parseTuple(value);
       return cairo.tuple(

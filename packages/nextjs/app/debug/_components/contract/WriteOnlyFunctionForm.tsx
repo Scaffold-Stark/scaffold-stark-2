@@ -82,19 +82,9 @@ export const WriteOnlyFunctionForm = ({
           sendAsync(
             !!contractInstance
               ? [
-                  // {
-                  //   contractAddress,
-                  //   entrypoint: abiFunction.name,
-
-                  //   // use infinity to completely flatten array from n dimensions to 1 dimension
-                  //   // writing in starknet next still needs rawArgs parsing, use v2 parsing
-                  //   calldata: getParsedContractFunctionArgs(form, false).flat(
-                  //     Infinity,
-                  //   ),
-                  // },
                   contractInstance.populate(
                     abiFunction.name,
-                    getArgsAsStringInputFromForm(form, false),
+                    getArgsAsStringInputFromForm(form),
                   ),
                 ]
               : [],

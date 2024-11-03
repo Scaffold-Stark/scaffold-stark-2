@@ -71,7 +71,7 @@ export const ReadOnlyFunctionForm = ({
   });
 
   const handleRead = () => {
-    const newInputValue = getArgsAsStringInputFromForm(form, false, true);
+    const newInputValue = getArgsAsStringInputFromForm(form);
     if (JSON.stringify(form) !== JSON.stringify(lastForm.current)) {
       setInputValue(newInputValue);
       lastForm.current = form;

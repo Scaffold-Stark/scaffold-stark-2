@@ -4,163 +4,93 @@ import { getArgsAsStringInputFromForm } from "../utilsContract";
 describe("utilsContract", () => {
   it("should parse integer form correctly", () => {
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::integer::u8": "10" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::integer::u8": "10" }),
     ).toEqual([10]);
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::integer::u16": "10" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({
+        "echo_u8_input_core::integer::u16": "10",
+      }),
     ).toEqual([10]);
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::integer::u32": "10" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({
+        "echo_u8_input_core::integer::u32": "10",
+      }),
     ).toEqual([10]);
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::integer::u64": "10" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({
+        "echo_u8_input_core::integer::u64": "10",
+      }),
     ).toEqual([10]);
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::integer::u128": "10" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({
+        "echo_u8_input_core::integer::u128": "10",
+      }),
     ).toEqual([10]);
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::integer::u256": "10" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({
+        "echo_u8_input_core::integer::u256": "10",
+      }),
     ).toEqual([10]);
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::felt252": "10" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::felt252": "10" }),
     ).toEqual([10]);
 
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::integer::i8": "10" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::integer::i8": "10" }),
     ).toEqual([10]);
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::integer::i16": "10" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({
+        "echo_u8_input_core::integer::i16": "10",
+      }),
     ).toEqual([10]);
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::integer::i32": "10" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({
+        "echo_u8_input_core::integer::i32": "10",
+      }),
     ).toEqual([10]);
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::integer::i64": "10" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({
+        "echo_u8_input_core::integer::i64": "10",
+      }),
     ).toEqual([10]);
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::integer::i128": "10" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({
+        "echo_u8_input_core::integer::i128": "10",
+      }),
     ).toEqual([10]);
   });
 
   it("should parse bool form correctly", () => {
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::bool": "true" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "true" }),
     ).toEqual([true]);
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::bool": "1" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "1" }),
     ).toEqual([true]);
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::bool": "0x1" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0x1" }),
     ).toEqual([true]);
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::bool": "0x01" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0x01" }),
     ).toEqual([true]);
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::bool": "0x001" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0x001" }),
     ).toEqual([true]);
 
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::bool": "false" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "false" }),
     ).toEqual([false]);
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::bool": "0" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0" }),
     ).toEqual([false]);
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::bool": "0x0" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0x0" }),
     ).toEqual([false]);
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::bool": "0x00" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0x00" }),
     ).toEqual([false]);
     expect(
-      getArgsAsStringInputFromForm(
-        { "echo_u8_input_core::bool": "0x000" },
-        false,
-        true,
-      ),
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0x000" }),
     ).toEqual([false]);
   });
 
@@ -168,7 +98,7 @@ describe("utilsContract", () => {
     const form = {
       "echo_tuple_input_(core::integer::u8, core::integer::u16)": "(1,2)",
     };
-    const result = getArgsAsStringInputFromForm(form, false, true);
+    const result = getArgsAsStringInputFromForm(form);
     expect(result).toEqual([
       {
         "0": 1,
@@ -199,7 +129,7 @@ describe("utilsContract", () => {
       "echo_enum_u_input_u16_core::integer::u16": "3",
       "echo_enum_u_input_u32_core::integer::i32": "4",
     };
-    const result = getArgsAsStringInputFromForm(form, false, true);
+    const result = getArgsAsStringInputFromForm(form);
     expect(result).toEqual([
       1,
       {
@@ -244,7 +174,7 @@ describe("utilsContract", () => {
         },
       },
     };
-    const result = getArgsAsStringInputFromForm(form, false, true);
+    const result = getArgsAsStringInputFromForm(form);
     expect(result).toEqual([
       {
         name: "john",
