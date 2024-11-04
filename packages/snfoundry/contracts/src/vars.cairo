@@ -87,8 +87,8 @@ pub trait IVars<TContractState> {
 
 #[starknet::contract]
 mod Vars {
-    use super::{ContractAddress, IVars};
     use starknet::storage::Map;
+    use super::{ContractAddress, IVars};
 
     #[storage]
     struct Storage {

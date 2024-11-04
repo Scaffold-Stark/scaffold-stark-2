@@ -45,8 +45,8 @@ pub trait ITuples<TContractState> {
 
 #[starknet::contract]
 mod Tuples {
-    use super::{ContractAddress, ITuples};
     use starknet::storage::Map;
+    use super::{ContractAddress, ITuples};
 
     #[storage]
     struct Storage {

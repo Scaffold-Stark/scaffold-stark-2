@@ -79,10 +79,10 @@ pub trait IComplex<TContractState> {
 
 #[starknet::contract]
 mod Complex {
+    use starknet::storage::Map;
     use super::{
         ContractAddress, IComplex, StructWithTuple, ComplexStruct, SampleStruct, StructWith4Layers
     };
-    use starknet::storage::Map;
 
     #[storage]
     struct Storage {

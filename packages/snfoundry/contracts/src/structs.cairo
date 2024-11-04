@@ -119,11 +119,11 @@ pub trait IStructs<TContractState> {
 
 #[starknet::contract]
 mod Structs {
+    use starknet::storage::Map;
     use super::{
         ContractAddress, IStructs, SampleEnum, SampleNestedStruct, SampleStruct,
         StructWithFiveElements, StructWithEightElements, StructWith4Layers
     };
-    use starknet::storage::Map;
 
     #[storage]
     struct Storage {
