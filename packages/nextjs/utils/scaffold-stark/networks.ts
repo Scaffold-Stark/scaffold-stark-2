@@ -27,8 +27,10 @@ export function getBlockExplorerTxLink(network: string, txnHash: string) {
   const chainNames = Object.keys(chains);
 
   const targetChainArr = chainNames.filter((chainName) => {
-    const wagmiChain = chains[chainName as keyof typeof chains];
-    return wagmiChain.network === network;
+    const starknetReactChain = chains[
+      chainName as keyof typeof chains
+    ] as chains.Chain;
+    return starknetReactChain.network === network;
   });
 
   if (targetChainArr.length === 0) {
