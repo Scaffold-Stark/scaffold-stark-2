@@ -34,6 +34,19 @@ struct Layer3NestedStruct {
 // EVENTS
 
 #[derive(Drop, starknet::Event)]
+pub struct EmptyEvent {}
+
+#[derive(Drop, starknet::Event)]
+pub struct EventWithBytes31 {
+    element1: bytes31,
+}
+
+#[derive(Drop, starknet::Event)]
+pub struct EventWithOption {
+    element1: Option<u256>,
+}
+
+#[derive(Drop, starknet::Event)]
 pub struct SimpleEvent {
     id: u256,
     name: ByteArray,
@@ -129,6 +142,8 @@ pub struct UpdatedAge {
 
 #[starknet::interface]
 pub trait IEvents<TContractState> {
+    fn emit_empty_event(ref self: TContractState);
+    fn emit_event_with_two_types(ref self: TContractState, element1: bytes31, element2: u256);
     fn emit_simple_event(ref self: TContractState, id: u256, name: ByteArray);
     fn emit_event_with_simple_types(
         ref self: TContractState, element1: u256, element2: felt252, element3: bool, element4: i128
@@ -197,11 +212,11 @@ pub trait IEvents<TContractState> {
 #[starknet::contract]
 mod Events {
     use super::{
-        ContractAddress, SampleNestedStruct, SampleEnum, SampleNestedEnum, Layer2NestedStruct,
-        Layer3NestedStruct, IEvents, SimpleEvent, EventWithSimpleTypes, EventWithComplexTypes,
-        EventWithEnum, EventWithNestedEnum, EventWithTwoKeys, EventWithTuple, EventWithNestedStruct,
-        EventWithLayer2NestedStruct, EventWithLayer3NestedStruct, EventWithoutFlat, EventFlat,
-        UpdatedName, UpdatedAge,
+        ContractAddress, EmptyEvent, EventWithBytes31, EventWithOption, SampleNestedStruct,
+        SampleEnum, SampleNestedEnum, Layer2NestedStruct, Layer3NestedStruct, IEvents, SimpleEvent,
+        EventWithSimpleTypes, EventWithComplexTypes, EventWithEnum, EventWithNestedEnum,
+        EventWithTwoKeys, EventWithTuple, EventWithNestedStruct, EventWithLayer2NestedStruct,
+        EventWithLayer3NestedStruct, EventWithoutFlat, EventFlat, UpdatedName, UpdatedAge,
     };
 
 
@@ -211,6 +226,9 @@ mod Events {
     #[event]
     #[derive(Drop, starknet::Event)]
     pub enum Event {
+        EmptyEvent: EmptyEvent,
+        EventWithBytes31: EventWithBytes31,
+        EventWithOption: EventWithOption,
         SimpleEvent: SimpleEvent,
         EventWithSimpleTypes: EventWithSimpleTypes,
         EventWithComplexTypes: EventWithComplexTypes,
@@ -231,8 +249,21 @@ mod Events {
 
     #[abi(embed_v0)]
     impl EventsImpl of IEvents<ContractState> {
+        fn emit_empty_event(ref self: ContractState) {
+            self.emit(EmptyEvent {});
+        }
+
         fn emit_simple_event(ref self: ContractState, id: u256, name: ByteArray) {
             self.emit(SimpleEvent { id, name });
+        }
+
+        fn emit_event_with_two_types(ref self: ContractState, element1: bytes31, element2: u256) {
+            self.emit(EventWithBytes31 { element1 });
+            if element2 < 5 {
+                self.emit(EventWithOption { element1: Option::Some(element2) });
+            } else {
+                self.emit(EventWithOption { element1: Option::None });
+            }
         }
 
         fn emit_event_with_simple_types(
