@@ -2,6 +2,7 @@ use starknet::ContractAddress;
 
 #[derive(Drop, Serde, starknet::Store)]
 enum SampleEnum {
+    #[default]
     enum1: u256,
     enum2: u256,
     enum3: ByteArray,
