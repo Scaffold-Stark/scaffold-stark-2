@@ -10,6 +10,7 @@ import {
   transformAbiFunction,
   FormErrorMessageState,
   getTopErrorMessage,
+  isError,
 } from "~~/app/debug/_components/contract";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import {
@@ -171,7 +172,7 @@ export const WriteOnlyFunctionForm = ({
           >
             <button
               className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
-              disabled={writeDisabled || !!formErrorMessage || isLoading}
+              disabled={writeDisabled || isError(formErrorMessage) || isLoading}
               onClick={handleWrite}
             >
               {isLoading && (
