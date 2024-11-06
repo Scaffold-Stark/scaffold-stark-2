@@ -1,10 +1,14 @@
 use contracts::BetMaker::{IBetMakerDispatcher, IBetMakerDispatcherTrait};
+use contracts::BetMaker::{ITokenManagerDispatcher, ITokenManagerDispatcherTrait};
 use contracts::BetMaker::{
     StrategyInfos, CreateBetOutcomesArgument, ERC20BetTokenType, BetType, PositionType
 };
 use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 use openzeppelin_utils::serde::SerializedAppend;
-use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, cheat_caller_address, CheatSpan};
+use snforge_std::{
+    declare, ContractClassTrait, DeclareResultTrait, cheat_caller_address, CheatSpan, store,
+    map_entry_address
+};
 use starknet::{ContractAddress, contract_address_const};
 
 // Real contract address deployed on Mainnet with Eth
@@ -35,10 +39,16 @@ fn NIMBORA_TOKEN_ADDRESS() -> ContractAddress {
     contract_address_const::<0x0316ec509f7ad89b7e6e03d15a436df634454f95e815536d616af03edc850fa3>()
 }
 
+// Adress of pragma contract
+fn ORACLE_CONTRACT_ADDRESS() -> ContractAddress {
+    contract_address_const::<0x2a85bd616f912537c50a49a4076db02c00b29b2cdc8a197ce92ed1837fa875b>()
+}
+
 fn deploy_contract(name: ByteArray) -> ContractAddress {
     let contract_class = declare(name).unwrap().contract_class();
     let mut calldata = array![];
     calldata.append_serde(OWNER());
+    calldata.append_serde(ORACLE_CONTRACT_ADDRESS());
     let (contract_address, _) = contract_class.deploy(@calldata).unwrap();
     contract_address
 }
@@ -160,6 +170,7 @@ fn test_create_user_position_from_crypto_nimbora_bet() {
     assert(eth_dispatcher.balance_of(contract_address) == 0, 'Funds should be on Nimbora');
     assert(dispatcher.get_user_total_positions(OWNER(), 1, BetType::Crypto) == 1, '')
 }
+
 #[test]
 #[fork("MAINNET_LATEST")]
 fn test_create_user_position_from_crypto_classic_bet() {
@@ -181,5 +192,68 @@ fn test_create_user_position_from_crypto_classic_bet() {
 
     assert(usdc_dispatcher.balance_of(contract_address) != 0, 'Contract should have funds');
     assert(dispatcher.get_user_total_positions(USER_WITH_USDC(), 1, BetType::Crypto) == 1, '')
+}
+
+#[test]
+#[fork("MAINNET_LATEST")]
+fn test_fetch_oracle_crypto_price() {
+    let contract_address = deploy_contract("BetMaker");
+
+    let dispatcher = IBetMakerDispatcher { contract_address };
+    assert(dispatcher.get_oracle_crypto_price('BTC/USD') != 0, 'Oracle not working');
+}
+
+#[test]
+#[fork("MAINNET_LATEST")]
+fn test_settle_crypto_nimbora_bet() {
+    let contract_address = deploy_contract("BetMaker");
+    let dispatcher = IBetMakerDispatcher { contract_address };
+    let nimbora_manager_dispatcher = ITokenManagerDispatcher {
+        contract_address: NIMBORA_CONTRACT_ADDRESS()
+    };
+    let nimbora_dispatcher = IERC20Dispatcher { contract_address: NIMBORA_TOKEN_ADDRESS() };
+    let eth_dispatcher = IERC20Dispatcher { contract_address: ETH_CONTRACT_ADDRESS() };
+    initialize_crypto_nimbora_bet(contract_address, dispatcher);
+
+    let amount_to_transfer = 500;
+    cheat_caller_address(ETH_CONTRACT_ADDRESS(), OWNER(), CheatSpan::TargetCalls(1));
+    eth_dispatcher.approve(contract_address, amount_to_transfer);
+    let approved_amount = eth_dispatcher.allowance(OWNER(), contract_address);
+    assert(approved_amount == amount_to_transfer, 'Not the right amount approved');
+
+    cheat_caller_address(contract_address, OWNER(), CheatSpan::TargetCalls(1));
+    dispatcher.create_user_position(1, BetType::Crypto, PositionType::Yes, amount_to_transfer);
+    assert(eth_dispatcher.balance_of(contract_address) == 0, 'Funds should be on Nimbora');
+    assert(nimbora_dispatcher.balance_of(contract_address) != 0, 'Bet should have shares');
+    let total_shares_amount = nimbora_dispatcher.balance_of(contract_address);
+
+    cheat_caller_address(contract_address, OWNER(), CheatSpan::TargetCalls(1));
+    dispatcher.settle_crypto_bet(1);
+
+    assert(nimbora_dispatcher.balance_of(contract_address) == 0, 'Shares should be claimed');
+
+    let new_epoch: u256 = nimbora_manager_dispatcher.handled_epoch_withdrawal_len() + 2;
+    let handled_epoch_withdrawal_len_array_value: Array<felt252> = array![
+        new_epoch.low.into(), new_epoch.high.into()
+    ];
+    store(
+        NIMBORA_CONTRACT_ADDRESS(),
+        selector!("handled_epoch_withdrawal_len"),
+        handled_epoch_withdrawal_len_array_value.span()
+    );
+
+    let amount = nimbora_manager_dispatcher.convert_to_assets(total_shares_amount);
+    let map_value_balance: Array<felt252> = array![amount.low.into(), amount.high.into()];
+
+    let map_key_balance: Array<felt252> = array![NIMBORA_CONTRACT_ADDRESS().try_into().unwrap()];
+
+    store(
+        eth_dispatcher.contract_address,
+        map_entry_address(selector!("ERC20_balances"), map_key_balance.span()),
+        map_value_balance.span()
+    );
+    assert(eth_dispatcher.balance_of(contract_address) == 0, 'Funds are coming from Nimbora');
+    nimbora_manager_dispatcher.claim_withdrawal(contract_address, 0);
+    assert(eth_dispatcher.balance_of(contract_address) != 0, 'Funds are missing');
 }
 

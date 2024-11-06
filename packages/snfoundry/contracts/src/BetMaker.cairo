@@ -136,6 +136,7 @@ pub struct UserPosition {
 pub struct Outcome {
     name: felt252,
     bought_amount: u256,
+    bought_amount_with_yield: u256
 }
 
 #[derive(Copy, Serde, Drop, starknet::Store, PartialEq, Hash)]
@@ -164,7 +165,7 @@ pub struct CryptoBet {
     total_money_betted: u256,
     yield_strategy: YieldStrategy,
     reference_price_key: felt252, // Key representing the reference price for the asset pair, e.g., BTC/USD for Bitcoin in USD
-    reference_price: u256,
+    reference_price: u256, // TODO: u256 -> u128
     bet_condition: u256, // 0 => less than reference_price, 1 => greater than reference_price // TODO: bet_condition u256 -> u8
     bet_token: ERC20BetToken, // Token used to make a bet, e.g., USDC
     outcomes: Outcomes,
@@ -195,6 +196,12 @@ pub trait IBetMaker<TContractState> {
         position_type: PositionType,
         amount: u256
     );
+
+    fn settle_crypto_bet(ref self: TContractState, bet_id: u256);
+    fn settle_crypto_bet_manually(
+        ref self: TContractState, bet_id: u256, winner_type: PositionType
+    );
+
     fn get_crypto_bet(self: @TContractState, bet_id: u256) -> CryptoBet;
     fn get_crypto_bets_count(self: @TContractState) -> u256;
     fn get_vault_wallet(self: @TContractState) -> ContractAddress;
@@ -208,15 +215,18 @@ pub trait IBetMaker<TContractState> {
     fn get_user_total_positions(
         self: @TContractState, caller: ContractAddress, bet_id: u256, bet_type: BetType
     ) -> u256;
-
+    fn get_oracle_crypto_price(self: @TContractState, asset_key: felt252) -> u128;
     fn set_vault_wallet(ref self: TContractState, wallet: ContractAddress);
 }
 
 #[starknet::contract]
 mod BetMaker {
     use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
+    use pragma_lib::types::{AggregationMode, DataType, PragmaPricesResponse};
     use super::{ITokenManagerDispatcher, ITokenManagerDispatcherTrait};
     use openzeppelin_access::ownable::OwnableComponent;
+    use contracts::PragmaComponent::IPragmaComponent;
+    use contracts::PragmaComponent::PragmaComponent;
     // use starknet::contract_address::contract_address_const;
     use starknet::storage::Map;
     use starknet::{ContractAddress};
@@ -230,6 +240,7 @@ mod BetMaker {
     const PROCESSING_FEE: u256 = 2;
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
+    component!(path: PragmaComponent, storage: pragma, event: PragmaComponentEvent);
 
     #[abi(embed_v0)]
     impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
@@ -241,8 +252,11 @@ mod BetMaker {
     enum Event {
         #[flat]
         OwnableEvent: OwnableComponent::Event,
+        #[flat]
+        PragmaComponentEvent: PragmaComponent::Event,
         CryptoBetCreated: CryptoBetCreated,
         CryptoBetPositionCreated: CryptoBetPositionCreated,
+        CryptoBetSettled: CryptoBetSettled
     }
 
     #[derive(Drop, starknet::Event)]
@@ -258,6 +272,11 @@ mod BetMaker {
         position_id: u256 // TODO: update last u256 to u16/u32
     }
 
+    #[derive(Drop, starknet::Event)]
+    struct CryptoBetSettled {
+        market: CryptoBet
+    }
+
     #[storage]
     struct Storage {
         user_positions: Map<
@@ -271,10 +290,15 @@ mod BetMaker {
         vault_wallet: ContractAddress,
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
+        #[substorage(v0)]
+        pragma: PragmaComponent::Storage,
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, owner: ContractAddress) {
+    fn constructor(
+        ref self: ContractState, owner: ContractAddress, pragma_address: ContractAddress
+    ) {
+        self.pragma.initializer(pragma_address);
         self.ownable.initializer(owner);
         self.vault_wallet.write(owner);
     }
@@ -303,7 +327,7 @@ mod BetMaker {
         }
     }
 
-    fn depositToNimbora(
+    fn deposit_to_nimbora(
         nimbora_address: ContractAddress, eth_dispatcher: IERC20Dispatcher, amount_eth: u256
     ) -> u256 {
         let nimbora_dispatcher = ITokenManagerDispatcher { contract_address: nimbora_address };
@@ -338,8 +362,12 @@ mod BetMaker {
             let outcome_yes_name = outcomes.outcome_yes;
             let outcome_no_name = outcomes.outcome_no;
 
-            let mut outcome_yes = Outcome { name: outcome_yes_name, bought_amount: 0 };
-            let mut outcome_no = Outcome { name: outcome_no_name, bought_amount: 0 };
+            let mut outcome_yes = Outcome {
+                name: outcome_yes_name, bought_amount: 0, bought_amount_with_yield: 0
+            };
+            let mut outcome_no = Outcome {
+                name: outcome_no_name, bought_amount: 0, bought_amount_with_yield: 0
+            };
 
             let outcomes = Outcomes { outcome_yes, outcome_no };
 
@@ -383,7 +411,6 @@ mod BetMaker {
             let new_bet = self.crypto_bets.read(self.total_crypto_bets.read());
             self.emit(CryptoBetCreated { market: new_bet });
         }
-
 
         fn create_user_position(
             ref self: ContractState,
@@ -455,7 +482,7 @@ mod BetMaker {
                     let mut new_bet = self.crypto_bets.read(bet_id);
                     match new_bet.yield_strategy {
                         YieldStrategy::Nimbora(mut yield_strategy_infos) => {
-                            let earned_shares = depositToNimbora(
+                            let earned_shares = deposit_to_nimbora(
                                 yield_strategy_infos.address,
                                 new_bet.bet_token.dispatcher,
                                 bought_amount
@@ -490,6 +517,89 @@ mod BetMaker {
             }
         }
 
+        fn settle_crypto_bet(ref self: ContractState, bet_id: u256) {
+            self.ownable.assert_only_owner();
+            assert(bet_id <= self.total_crypto_bets.read(), 'Bet does not exist');
+            let mut bet_data = self.crypto_bets.read(bet_id);
+            assert(bet_data.is_settled == false, 'Bet is already settled');
+
+            bet_data.is_settled = true;
+            bet_data.is_active = false;
+
+            let result_price = self
+                .pragma
+                .get_asset_price_median(DataType::SpotEntry(bet_data.reference_price_key));
+
+            let converted_result_price: u256 = result_price
+                .into(); // TODO: Remove when reference_price is u128
+            if bet_data.bet_condition == 0 {
+                if converted_result_price < bet_data.reference_price {
+                    bet_data.winner_outcome = Option::Some(bet_data.outcomes.outcome_yes);
+                } else {
+                    bet_data.winner_outcome = Option::Some(bet_data.outcomes.outcome_no);
+                }
+            } else {
+                if converted_result_price > bet_data.reference_price {
+                    bet_data.winner_outcome = Option::Some(bet_data.outcomes.outcome_yes);
+                } else {
+                    bet_data.winner_outcome = Option::Some(bet_data.outcomes.outcome_no);
+                }
+            }
+
+            match bet_data.yield_strategy {
+                YieldStrategy::Nimbora(mut yield_strategy_infos) => {
+                    if yield_strategy_infos.shares > 0 {
+                        let nimbora_dispatcher = ITokenManagerDispatcher {
+                            contract_address: yield_strategy_infos.address
+                        };
+                        nimbora_dispatcher.request_withdrawal(yield_strategy_infos.shares);
+
+                        match bet_data.winner_outcome {
+                            Option::Some(outcome) => {
+                                let mut winner_outcome = outcome;
+                                winner_outcome
+                                    .bought_amount_with_yield = nimbora_dispatcher
+                                    .convert_to_assets(yield_strategy_infos.shares);
+                                bet_data.winner_outcome = Option::Some(winner_outcome);
+                            },
+                            Option::None => {},
+                        }
+
+                        yield_strategy_infos.shares = 0;
+                        bet_data.yield_strategy = YieldStrategy::Nimbora(yield_strategy_infos);
+                    }
+                },
+                _ => {}
+            }
+            self.crypto_bets.write(bet_id, bet_data);
+            let new_bet = self.crypto_bets.read(bet_id);
+            self.emit(CryptoBetSettled { market: new_bet });
+        }
+
+        fn settle_crypto_bet_manually(
+            ref self: ContractState, bet_id: u256, winner_type: PositionType
+        ) {
+            self.ownable.assert_only_owner();
+            assert(bet_id <= self.total_crypto_bets.read(), 'Bet does not exist');
+            let mut bet_data = self.crypto_bets.read(bet_id);
+            assert(bet_data.is_settled == false, 'Bet is already settled');
+
+            bet_data.is_settled = true;
+            bet_data.is_active = false;
+
+            match winner_type {
+                PositionType::Yes => {
+                    bet_data.winner_outcome = Option::Some(bet_data.outcomes.outcome_yes);
+                },
+                PositionType::No => {
+                    bet_data.winner_outcome = Option::Some(bet_data.outcomes.outcome_no);
+                }
+            }
+            self.crypto_bets.write(bet_id, bet_data);
+            let new_bet = self.crypto_bets.read(bet_id);
+            self.emit(CryptoBetSettled { market: new_bet });
+        }
+
         fn get_crypto_bet(self: @ContractState, bet_id: u256) -> CryptoBet {
             self.crypto_bets.read(bet_id)
         }
@@ -519,6 +629,9 @@ mod BetMaker {
             self.user_total_positions.read((caller, bet_id, bet_type))
         }
 
+        fn get_oracle_crypto_price(self: @ContractState, asset_key: felt252) -> u128 {
+            self.pragma.get_asset_price_median(DataType::SpotEntry(asset_key))
+        }
 
         fn set_vault_wallet(ref self: ContractState, wallet: ContractAddress) {
             self.ownable.assert_only_owner();
