@@ -11,6 +11,7 @@ import {
   DeclareContractPayload,
   UniversalDetails,
   isSierra,
+  TransactionReceipt,
 } from "starknet";
 import { DeployContractParams, Network } from "./types";
 import { green, red, yellow } from "./helpers/colorize-log";
@@ -260,14 +261,19 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
       ...options,
       version: txVersion,
     });
-    console.log(green("Deploy Calls Executed at "), transaction_hash);
     if (networkName === "sepolia" || networkName === "mainnet") {
-      await provider.waitForTransaction(transaction_hash);
+      const receipt = (await provider.waitForTransaction(
+        transaction_hash
+      )) as TransactionReceipt;
+      if (receipt.execution_status !== "SUCCEEDED") {
+        const revertReason = receipt.revert_reason;
+        throw new Error(red(`Deploy Calls Failed: ${revertReason}`));
+      }
     }
+    console.log(green("Deploy Calls Executed at "), transaction_hash);
   } catch (error) {
-    console.error(red("Error executing deploy calls: "), error);
     // split the calls in half and try again recursively
-    if (deployCalls.length > 1) {
+    if (deployCalls.length > 100) {
       let half = Math.ceil(deployCalls.length / 2);
       let firstHalf = deployCalls.slice(0, half);
       let secondHalf = deployCalls.slice(half);
@@ -275,6 +281,8 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
       await executeDeployCalls(options);
       deployCalls = secondHalf;
       await executeDeployCalls(options);
+    } else {
+      throw error;
     }
   }
 };
