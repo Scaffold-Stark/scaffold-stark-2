@@ -95,7 +95,11 @@ export const ReadOnlyFunctionForm = ({
             <div className="bg-input text-sm px-4 py-1.5 break-words">
               <p className="font-bold m-0 mb-1">Result:</p>
               <pre className="whitespace-pre-wrap break-words">
-                {displayTxResult(data, false, abiFunction?.outputs)}
+                {displayTxResult({
+                  displayContent: data,
+                  asText: false,
+                  functionOutputs: abiFunction?.outputs,
+                })}
               </pre>
             </div>
           )}
