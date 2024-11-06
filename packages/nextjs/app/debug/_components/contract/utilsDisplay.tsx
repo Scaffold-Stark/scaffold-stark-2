@@ -20,6 +20,37 @@ type DisplayContent =
   | DisplayContent[]
   | unknown;
 
+// each error will have its own key
+export type FormErrorMessageState = Record<string, string>;
+
+export function addError(
+  state: FormErrorMessageState,
+  key: string,
+  message: string,
+): FormErrorMessageState {
+  return {
+    ...state,
+    [key]: message,
+  };
+}
+
+export function clearError(
+  state: FormErrorMessageState,
+  key: string,
+): FormErrorMessageState {
+  delete state[key];
+  return state;
+}
+
+export function isError(state: FormErrorMessageState): boolean {
+  return Object.values(state).filter((value) => !!value).length > 0;
+}
+
+export function getTopErrorMessage(state: FormErrorMessageState): string {
+  if (!isError(state)) return "";
+  return Object.values(state).filter((value) => !!value)[0];
+}
+
 export const displayTxResult = (
   displayContent: DisplayContent | DisplayContent[],
   asText: boolean,

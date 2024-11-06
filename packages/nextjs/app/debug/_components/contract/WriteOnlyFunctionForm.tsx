@@ -8,6 +8,8 @@ import {
   getInitialFormState,
   getArgsAsStringInputFromForm,
   transformAbiFunction,
+  FormErrorMessageState,
+  getTopErrorMessage,
 } from "~~/app/debug/_components/contract";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import {
@@ -41,7 +43,8 @@ export const WriteOnlyFunctionForm = ({
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialFormState(abiFunction),
   );
-  const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null);
+  const [formErrorMessage, setFormErrorMessage] =
+    useState<FormErrorMessageState>({});
   const { status: walletStatus, isConnected, account, chainId } = useAccount();
   const { chain } = useNetwork();
   const writeTxn = useTransactor();
@@ -136,7 +139,7 @@ export const WriteOnlyFunctionForm = ({
 
   const errorMsg = (() => {
     if (writeDisabled) return "Wallet not connected or on wrong network";
-    return formErrorMessage;
+    return getTopErrorMessage(formErrorMessage);
   })();
 
   return (

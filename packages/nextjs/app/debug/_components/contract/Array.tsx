@@ -9,6 +9,7 @@ import { replacer } from "~~/utils/scaffold-stark/common";
 import { ContractInput } from "./ContractInput";
 import { Abi } from "abi-wan-kanabi";
 import { parseGenericType } from "~~/utils/scaffold-stark";
+import { FormErrorMessageState } from "./utilsDisplay";
 
 type ArrayProps = {
   abi: Abi;
@@ -16,7 +17,7 @@ type ArrayProps = {
   parentForm: Record<string, any> | undefined;
   setParentForm: (form: Record<string, any>) => void;
   parentStateObjectKey: string;
-  setFormErrorMessage: Dispatch<SetStateAction<string | null>>;
+  setFormErrorMessage: Dispatch<SetStateAction<FormErrorMessageState>>;
 };
 
 export const ArrayInput = ({

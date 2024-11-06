@@ -9,6 +9,9 @@ import {
   getInitialFormState,
   getArgsAsStringInputFromForm,
   transformAbiFunction,
+  FormErrorMessageState,
+  isError,
+  getTopErrorMessage,
 } from "~~/app/debug/_components/contract";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { BlockNumber } from "starknet";
@@ -30,7 +33,8 @@ export const ReadOnlyFunctionForm = ({
     getInitialFormState(abiFunction),
   );
   const [inputValue, setInputValue] = useState<any | undefined>(undefined);
-  const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null);
+  const [formErrorMessage, setFormErrorMessage] =
+    useState<FormErrorMessageState>({});
   const lastForm = useRef(form);
 
   const { contract: contractInstance } = useContract({
@@ -99,15 +103,15 @@ export const ReadOnlyFunctionForm = ({
 
         <div
           className={`flex ${
-            formErrorMessage &&
+            isError(formErrorMessage) &&
             "tooltip before:content-[attr(data-tip)] before:right-[-10px] before:left-auto before:transform-none"
           }`}
-          data-tip={`${formErrorMessage}`}
+          data-tip={`${getTopErrorMessage(formErrorMessage)}`}
         >
           <button
             className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
             onClick={handleRead}
-            disabled={(inputValue && isFetching) || !!formErrorMessage}
+            disabled={(inputValue && isFetching) || isError(formErrorMessage)}
           >
             {inputValue && isFetching && (
               <span className="loading loading-spinner loading-xs"></span>
