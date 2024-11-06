@@ -5,15 +5,12 @@ import {
   ContractName,
   contracts,
   ExtractAbiFunctionNamesScaffold,
-  getFunctionsByStateMutability,
-  parseFunctionParams,
   UseScaffoldArgsParam,
   UseScaffoldWriteConfig,
 } from "~~/utils/scaffold-stark/contract";
 import { useSendTransaction, useNetwork, Abi } from "@starknet-react/core";
 import { Contract as StarknetJsContract, InvocationsDetails } from "starknet";
 import { notification } from "~~/utils/scaffold-stark";
-import { useMemo } from "react";
 import { useTransactor } from "./useTransactor";
 
 export const useScaffoldMultiWriteContract = <
@@ -33,50 +30,6 @@ export const useScaffoldMultiWriteContract = <
   const { targetNetwork } = useTargetNetwork();
   const { chain } = useNetwork();
   const sendTxnWrapper = useTransactor();
-
-  // TODO: commented out in case we need it again
-  // const parsedCalls = useMemo(() => {
-  //   if (calls) {
-  //     return calls.map((call) => {
-  //       const functionName = call.functionName;
-  //       const contractName = call.contractName;
-  //       const unParsedArgs = call.args as any[];
-  //       const contract = contracts?.[targetNetwork.network]?.[
-  //         contractName as ContractName
-  //       ] as Contract<TContractName>;
-
-  //       // TODO: see if we still need this
-  //       // const abiFunction = getFunctionsByStateMutability(
-  //       //   contract?.abi || [],
-  //       //   "external",
-  //       // ).find((fn) => fn.name === functionName);
-
-  //       // we convert to starknetjs contract instance here since deployed data may be undefined if contract is not deployed
-  //       const contractInstance = new StarknetJsContract(
-  //         contract.abi,
-  //         contract.address,
-  //       );
-
-  //       return {
-  //         ...contractInstance.populate(functionName, unParsedArgs as any[]),
-
-  //         // TODO: see if we still need this
-  //         // calldata:
-  //         //   abiFunction && unParsedArgs && contract
-  //         //     ? parseFunctionParams({
-  //         //         abiFunction,
-  //         //         isRead: false,
-  //         //         inputs: unParsedArgs as any[],
-  //         //         isReadArgsParsing: false,
-  //         //         abi: contract.abi,
-  //         //       }).flat()
-  //         //     : [],
-  //       };
-  //     });
-  //   } else {
-  //     return [];
-  //   }
-  // }, [calls, targetNetwork.network]);
 
   // TODO add custom options
 
