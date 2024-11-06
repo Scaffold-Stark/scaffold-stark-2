@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Address as AddressType } from "@starknet-react/chains";
-import { getChecksumAddress, validateChecksumAddress } from "starknet";
+import {
+  getChecksumAddress,
+  validateAndParseAddress,
+  validateChecksumAddress,
+} from "starknet";
 import { devnet } from "@starknet-react/chains";
 import {
   CheckCircleIcon,
@@ -45,9 +49,14 @@ export const Address = ({
   const [ens, setEns] = useState<string | null>();
   const [ensAvatar, setEnsAvatar] = useState<string | null>();
   const [addressCopied, setAddressCopied] = useState(false);
-  const checkSumAddress = address ? getChecksumAddress(address) : undefined;
+
   const { targetNetwork } = useTargetNetwork();
   const { data: profile } = useConditionalStarkProfile(address);
+
+  const checkSumAddress = useMemo(() => {
+    if (!address) return undefined;
+    return getChecksumAddress(address);
+  }, [address]);
 
   //   const checkSumAddress = address ? address : undefined;
 

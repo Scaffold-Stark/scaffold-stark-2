@@ -14,6 +14,7 @@ import { mintEth } from "~~/services/web3/faucet";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { RpcProvider } from "starknet";
 import { notification } from "~~/utils/scaffold-stark";
+import GenericModal from "./CustomConnectButton/GenericModal";
 
 /**
  * Faucet modal which lets you send ETH to any address.
@@ -109,45 +110,43 @@ export const Faucet = () => {
         <span>Faucet</span>
       </label>
       <input type="checkbox" id="faucet-modal" className="modal-toggle" />
-      <label htmlFor="faucet-modal" className="modal cursor-pointer">
-        <label className="modal-box relative">
-          {/* dummy input to capture event onclick on modal box */}
-          <input className="h-0 w-0 absolute top-0 left-0" />
-          <h3 className="text-xl font-bold mb-3">Local Faucet</h3>
-          <label
-            htmlFor="faucet-modal"
-            className="btn btn-ghost btn-sm btn-circle absolute right-3 top-3"
-          >
-            ✕
-          </label>
-          <div className="space-y-3 mt-6">
-            <div className="flex flex-col space-y-3">
-              <AddressInput
-                placeholder="Destination Address"
-                value={inputAddress ?? ""}
-                onChange={(value) => setInputAddress(value as AddressType)}
-              />
-              <EtherInput
-                placeholder="Amount to send"
-                value={sendValue}
-                onChange={(value) => setSendValue(value)}
-              />
-              <button
-                className="h-10 btn btn-primary btn-sm px-2 rounded-full"
-                onClick={sendETH}
-                disabled={loading}
-              >
-                {!loading ? (
-                  <BanknotesIcon className="h-6 w-6" />
-                ) : (
-                  <span className="loading loading-spinner loading-sm"></span>
-                )}
-                <span>Send</span>
-              </button>
-            </div>
+      <GenericModal modalId="faucet-modal">
+        <>
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-bold">Local Faucet</h3>
+            <label
+              htmlFor="faucet-modal"
+              className="btn btn-ghost btn-sm btn-circle"
+            >
+              ✕
+            </label>
           </div>
-        </label>
-      </label>
+          <div className="flex flex-col gap-8">
+            <AddressInput
+              placeholder="Destination Address"
+              value={inputAddress ?? ""}
+              onChange={(value) => setInputAddress(value as AddressType)}
+            />
+            <EtherInput
+              placeholder="Amount to send"
+              value={sendValue}
+              onChange={(value) => setSendValue(value)}
+            />
+          </div>
+          <button
+            className="h-10 btn cursor-pointer btn-sm px-2 rounded-[4px] bg-btn-wallet border-[#4f4ab7] border hover:bg-[#385183]"
+            onClick={sendETH}
+            disabled={loading}
+          >
+            {!loading ? (
+              <BanknotesIcon className="h-6 w-6" />
+            ) : (
+              <span className="loading loading-spinner loading-sm"></span>
+            )}
+            <span>Send</span>
+          </button>
+        </>
+      </GenericModal>
     </div>
   );
 };

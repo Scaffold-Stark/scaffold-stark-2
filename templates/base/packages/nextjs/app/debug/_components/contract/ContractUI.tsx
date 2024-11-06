@@ -1,9 +1,9 @@
 "use client";
 
 // @refresh reset
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
+import dynamic from "next/dynamic";
 import { ContractReadMethods } from "./ContractReadMethods";
-// import { ContractWriteMethods } from "./ContractWriteMethods";
 import { Address, Balance } from "~~/components/scaffold-stark";
 import {
   useDeployedContractInfo,
@@ -12,8 +12,15 @@ import {
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { ContractName } from "~~/utils/scaffold-stark/contract";
 import { ContractVariables } from "./ContractVariables";
-import { ContractWriteMethods } from "./ContractWriteMethods";
 import { ClassHash } from "~~/components/scaffold-stark/ClassHash";
+
+const ContractWriteMethods = dynamic(
+  () =>
+    import("./ContractWriteMethods").then((mod) => mod.ContractWriteMethods),
+  {
+    loading: () => <p>Loading Write Methods...</p>,
+  },
+);
 
 type ContractUIProps = {
   contractName: ContractName;
@@ -27,6 +34,7 @@ export const ContractUI = ({
   contractName,
   className = "",
 }: ContractUIProps) => {
+  const [activeTab, setActiveTab] = useState("read");
   const [refreshDisplayVariables, triggerRefreshDisplayVariables] = useReducer(
     (value) => !value,
     false,
@@ -34,6 +42,11 @@ export const ContractUI = ({
   const { targetNetwork } = useTargetNetwork();
   const { data: deployedContractData, isLoading: deployedContractLoading } =
     useDeployedContractInfo(contractName);
+
+  const tabs = [
+    { id: "read", label: "Read" },
+    { id: "write", label: "Write" },
+  ];
 
   if (deployedContractLoading) {
     return (
@@ -89,33 +102,33 @@ export const ContractUI = ({
             />
           </div>
         </div>
+
         <div className="col-span-1 lg:col-span-2 flex flex-col gap-6">
-          <div className="z-10">
-            <div className="rounded-[5px] border border-[#8A45FC] flex flex-col mt-10 relative bg-component">
-              <div className="bg-function w-[140px] h-[32.5px] absolute self-start -top-[43px] -left-[1px] -z-10 py-[0.55rem] clip-corner">
-                <div className="flex items-center justify-center space-x-2">
-                  <p className="my-0 text-sm text-center">Read</p>
-                </div>
-              </div>
-              <div className="p-5 divide-y divide-secondary">
-                <ContractReadMethods
-                  deployedContractData={deployedContractData}
-                />
-              </div>
-            </div>
+          <div className="tabs tabs-boxed border border-[#8A45FC] rounded-[5px] bg-transparent">
+            {tabs.map((tab) => (
+              <a
+                key={tab.id}
+                className={`tab h-10 ${activeTab === tab.id ? "tab-active !bg-[#8A45FC] !rounded-[5px] !text-white" : ""}`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                {tab.label}
+              </a>
+            ))}
           </div>
           <div className="z-10">
-            <div className="rounded-[5px] border border-[#8A45FC] flex flex-col mt-10 relative bg-component">
-              <div className="w-[140px] h-[32.5px] absolute self-start -top-[43px] -left-[1px] -z-10 py-[0.55rem]  bg-function clip-corner">
-                <div className="flex items-center justify-center space-x-2">
-                  <p className="my-0 text-sm">Write</p>
-                </div>
-              </div>
+            <div className="rounded-[5px] border border-[#8A45FC] flex flex-col relative bg-component">
               <div className="p-5 divide-y divide-secondary">
-                <ContractWriteMethods
-                  deployedContractData={deployedContractData}
-                  onChange={triggerRefreshDisplayVariables}
-                />
+                {activeTab === "read" && (
+                  <ContractReadMethods
+                    deployedContractData={deployedContractData}
+                  />
+                )}
+                {activeTab === "write" && (
+                  <ContractWriteMethods
+                    deployedContractData={deployedContractData}
+                    onChange={triggerRefreshDisplayVariables}
+                  />
+                )}
               </div>
             </div>
           </div>
