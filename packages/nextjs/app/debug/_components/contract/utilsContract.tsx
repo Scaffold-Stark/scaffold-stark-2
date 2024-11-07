@@ -101,8 +101,6 @@ function isValidHexNumber(input?: string): boolean {
  */
 export const getArgsAsStringInputFromForm = (form: Record<string, any>) => {
   const _encodeValueFromKey = (key: string = "", value: any): any => {
-    if (!value) return;
-
     // array
     if (isCairoArray(key)) {
       const genericType = parseGenericType(key)[0];
@@ -139,7 +137,9 @@ export const getArgsAsStringInputFromForm = (form: Record<string, any>) => {
         ) {
           // for some value we return with the corresponding value
           if (!!enumObject.Some) {
-            if ((enumObject.Some as FormStructValue).value)
+            if (
+              typeof (enumObject.Some as FormStructValue).value !== "undefined"
+            )
               return new CairoOption(
                 CairoOptionVariant.Some,
                 _encodeValueFromKey(
@@ -161,21 +161,25 @@ export const getArgsAsStringInputFromForm = (form: Record<string, any>) => {
         ) {
           // for some value we return with the corresponding value
           if (!!enumObject.Ok) {
-            return new CairoResult(
-              CairoResultVariant.Ok,
-              _encodeValueFromKey(
-                (enumObject.Ok as FormStructValue).type,
-                (enumObject.Ok as FormStructValue).value,
-              ),
-            );
+            if (typeof (enumObject.Ok as FormStructValue).value !== "undefined")
+              return new CairoResult(
+                CairoResultVariant.Ok,
+                _encodeValueFromKey(
+                  (enumObject.Ok as FormStructValue).type,
+                  (enumObject.Ok as FormStructValue).value,
+                ),
+              );
           } else if (!!enumObject.Err) {
-            return new CairoResult(
-              CairoResultVariant.Err,
-              _encodeValueFromKey(
-                (enumObject.Err as FormStructValue).type,
-                (enumObject.Err as FormStructValue).value,
-              ),
-            );
+            if (
+              typeof (enumObject.Err as FormStructValue).value !== "undefined"
+            )
+              return new CairoResult(
+                CairoResultVariant.Err,
+                _encodeValueFromKey(
+                  (enumObject.Err as FormStructValue).type,
+                  (enumObject.Err as FormStructValue).value,
+                ),
+              );
           }
         }
 
