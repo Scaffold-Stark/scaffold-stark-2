@@ -54,15 +54,6 @@ export const Struct = ({
           value: index === activeVariantIndex ? values[index] : undefined,
         };
       });
-
-      // check for enum validity
-      if (values.filter((item) => (item || "").length > 0).length > 1) {
-        setFormErrorMessage((prev) =>
-          addError(prev, "enumError", "Enums can only have one active value"),
-        );
-      } else {
-        setFormErrorMessage((prev) => clearError(prev, "enumError"));
-      }
     }
 
     setParentForm({
@@ -71,7 +62,7 @@ export const Struct = ({
         abiMember.type === "struct" ? argsStruct : { variant: argsStruct },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [abiMember, JSON.stringify(form, replacer)]);
+  }, [abiMember, JSON.stringify(form, replacer), activeVariantIndex]);
 
   if (!abiMember) return null;
 

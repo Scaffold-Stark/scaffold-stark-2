@@ -136,18 +136,15 @@ export const getArgsAsStringInputFromForm = (form: Record<string, any>) => {
           isCairoOption(key)
         ) {
           // for some value we return with the corresponding value
-          if (!!enumObject.Some) {
-            if (
-              typeof (enumObject.Some as FormStructValue).value !== "undefined"
-            )
-              return new CairoOption(
-                CairoOptionVariant.Some,
-                _encodeValueFromKey(
-                  (enumObject.Some as FormStructValue).type,
-                  (enumObject.Some as FormStructValue).value,
-                ),
-              );
-          }
+
+          if ((enumObject.Some as FormStructValue).value !== undefined)
+            return new CairoOption(
+              CairoOptionVariant.Some,
+              _encodeValueFromKey(
+                (enumObject.Some as FormStructValue).type,
+                (enumObject.Some as FormStructValue).value,
+              ),
+            );
 
           // set to none as default
           return new CairoOption(CairoOptionVariant.None);
@@ -160,26 +157,24 @@ export const getArgsAsStringInputFromForm = (form: Record<string, any>) => {
           isCairoResult(key)
         ) {
           // for some value we return with the corresponding value
-          if (!!enumObject.Ok) {
-            if (typeof (enumObject.Ok as FormStructValue).value !== "undefined")
-              return new CairoResult(
-                CairoResultVariant.Ok,
-                _encodeValueFromKey(
-                  (enumObject.Ok as FormStructValue).type,
-                  (enumObject.Ok as FormStructValue).value,
-                ),
-              );
-          } else if (!!enumObject.Err) {
-            if (
-              typeof (enumObject.Err as FormStructValue).value !== "undefined"
-            )
-              return new CairoResult(
-                CairoResultVariant.Err,
-                _encodeValueFromKey(
-                  (enumObject.Err as FormStructValue).type,
-                  (enumObject.Err as FormStructValue).value,
-                ),
-              );
+          if ((enumObject.Ok as FormStructValue).value !== undefined)
+            return new CairoResult(
+              CairoResultVariant.Ok,
+              _encodeValueFromKey(
+                (enumObject.Ok as FormStructValue).type,
+                (enumObject.Ok as FormStructValue).value,
+              ),
+            );
+          else if (
+            typeof (enumObject.Err as FormStructValue).value !== undefined
+          ) {
+            return new CairoResult(
+              CairoResultVariant.Err,
+              _encodeValueFromKey(
+                (enumObject.Err as FormStructValue).type,
+                (enumObject.Err as FormStructValue).value,
+              ),
+            );
           }
         }
 

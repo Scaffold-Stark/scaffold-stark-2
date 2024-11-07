@@ -1,5 +1,11 @@
 import { ReactElement } from "react";
-import { CairoCustomEnum, getChecksumAddress, Uint256 } from "starknet";
+import {
+  CairoCustomEnum,
+  CairoOption,
+  CairoResult,
+  getChecksumAddress,
+  Uint256,
+} from "starknet";
 import { Address } from "~~/components/scaffold-stark";
 import { replacer } from "~~/utils/scaffold-stark/common";
 import { AbiOutput } from "~~/utils/scaffold-stark/contract";
@@ -77,6 +83,22 @@ export const displayTxResult = ({
         { [displayContent.activeVariant()]: displayContent.unwrap() },
         replacer,
       );
+    }
+
+    if (displayContent instanceof CairoOption) {
+      if (displayContent.isNone()) {
+        JSON.stringify({ None: displayContent.unwrap() }, replacer);
+      }
+
+      return JSON.stringify({ Some: displayContent.unwrap() }, replacer);
+    }
+
+    if (displayContent instanceof CairoResult) {
+      if (displayContent.isOk()) {
+        JSON.stringify({ Ok: displayContent.unwrap() }, replacer);
+      }
+
+      return JSON.stringify({ Err: displayContent.unwrap() }, replacer);
     }
 
     const type = contentType ?? functionOutputs[0].type;
