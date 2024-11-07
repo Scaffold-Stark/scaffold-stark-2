@@ -167,6 +167,7 @@ export const displayType = (type: string) => {
     const kindOfArray = type.split("::").at(2);
     const parsed = parseGenericType(type);
 
+    // special handling for result since we need to pop both types
     if (isCairoResult(type)) {
       const type1 = parsed[0].split("::").pop();
       const type2 = parsed[1].split("::").pop();
