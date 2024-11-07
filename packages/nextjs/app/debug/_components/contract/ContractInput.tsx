@@ -13,6 +13,7 @@ import {
   isCairoArray,
   isCairoBigInt,
   isCairoInt,
+  isCairoResult,
   isCairoTuple,
   isCairoType,
   isCairoU256,
@@ -28,6 +29,7 @@ type ContractInputProps = {
   stateObjectKey: string;
   paramType: AbiParameter;
   setFormErrorMessage: Dispatch<SetStateAction<FormErrorMessageState>>;
+  isDisabled?: boolean;
 };
 
 export const ContractInput = ({
@@ -37,6 +39,7 @@ export const ContractInput = ({
   stateObjectKey,
   paramType,
   setFormErrorMessage,
+  isDisabled,
 }: ContractInputProps) => {
   const inputProps = {
     name: stateObjectKey,
@@ -62,13 +65,14 @@ export const ContractInput = ({
           parentForm={form}
           setParentForm={setForm}
           setFormErrorMessage={setFormErrorMessage}
+          isDisabled={isDisabled}
         />
       );
     }
 
     // we prio tuples here to avoid wrong input
     else if (isCairoTuple(paramType.type)) {
-      return <InputBase {...inputProps} />;
+      return <InputBase {...inputProps} disabled={isDisabled} />;
     } else if (
       isCairoInt(paramType.type) ||
       isCairoBigInt(paramType.type) ||
@@ -78,6 +82,7 @@ export const ContractInput = ({
         <IntegerInput
           {...inputProps}
           variant={paramType.type}
+          disabled={isDisabled}
           onError={(errMessage: string | null) =>
             setFormErrorMessage((prev) => {
               if (!!errMessage)
@@ -87,8 +92,12 @@ export const ContractInput = ({
           }
         />
       );
-    } else if (isCairoType(paramType.type)) {
-      return <InputBase {...inputProps} />;
+    } else if (
+      isCairoType(paramType.type) &&
+      !isCairoResult(paramType.type) &&
+      !isCairoResult(paramType.type)
+    ) {
+      return <InputBase {...inputProps} disabled={isDisabled} />;
     } else {
       return (
         <Struct
@@ -102,6 +111,7 @@ export const ContractInput = ({
             // @ts-ignore
             (member) => member.name === paramType.type,
           )}
+          isDisabled={isDisabled}
         />
       );
     }
