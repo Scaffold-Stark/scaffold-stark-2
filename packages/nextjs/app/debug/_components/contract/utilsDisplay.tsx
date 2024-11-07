@@ -4,8 +4,11 @@ import { Address } from "~~/components/scaffold-stark";
 import { replacer } from "~~/utils/scaffold-stark/common";
 import { AbiOutput } from "~~/utils/scaffold-stark/contract";
 import {
+  isCairoArray,
   isCairoByteArray,
   isCairoContractAddress,
+  isCairoOption,
+  isCairoResult,
   isCairoTuple,
   parseGenericType,
 } from "~~/utils/scaffold-stark/types";
@@ -160,9 +163,17 @@ export const displayType = (type: string) => {
   }
 
   // arrays and options
-  else if (type.includes("core::array") || type.includes("core::option")) {
+  else if (isCairoResult(type) || isCairoArray(type) || isCairoOption(type)) {
     const kindOfArray = type.split("::").at(2);
     const parsed = parseGenericType(type);
+
+    if (isCairoResult(type)) {
+      const type1 = parsed[0].split("::").pop();
+      const type2 = parsed[1].split("::").pop();
+      return `Result<${type1}, ${type2}>`;
+    }
+
+    // others
     const arrayType = Array.isArray(parsed)
       ? parsed[0].split("::").pop()
       : `(${parsed
