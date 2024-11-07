@@ -3,11 +3,17 @@
 import { Dispatch, SetStateAction } from "react";
 import { InputBase, IntegerInput } from "~~/components/scaffold-stark";
 import { AbiParameter } from "~~/utils/scaffold-stark/contract";
-import { displayType } from "./utilsDisplay";
+import {
+  addError,
+  clearError,
+  displayType,
+  FormErrorMessageState,
+} from "./utilsDisplay";
 import {
   isCairoArray,
   isCairoBigInt,
   isCairoInt,
+  isCairoTuple,
   isCairoType,
   isCairoU256,
 } from "~~/utils/scaffold-stark";
@@ -21,7 +27,7 @@ type ContractInputProps = {
   form: Record<string, any> | undefined;
   stateObjectKey: string;
   paramType: AbiParameter;
-  setFormErrorMessage: Dispatch<SetStateAction<string | null>>;
+  setFormErrorMessage: Dispatch<SetStateAction<FormErrorMessageState>>;
 };
 
 export const ContractInput = ({
@@ -58,6 +64,11 @@ export const ContractInput = ({
           setFormErrorMessage={setFormErrorMessage}
         />
       );
+    }
+
+    // we prio tuples here to avoid wrong input
+    else if (isCairoTuple(paramType.type)) {
+      return <InputBase {...inputProps} />;
     } else if (
       isCairoInt(paramType.type) ||
       isCairoBigInt(paramType.type) ||
@@ -68,7 +79,11 @@ export const ContractInput = ({
           {...inputProps}
           variant={paramType.type}
           onError={(errMessage: string | null) =>
-            setFormErrorMessage(errMessage)
+            setFormErrorMessage((prev) => {
+              if (!!errMessage)
+                return addError(prev, "intError" + stateObjectKey, errMessage);
+              return clearError(prev, "intError" + stateObjectKey);
+            })
           }
         />
       );

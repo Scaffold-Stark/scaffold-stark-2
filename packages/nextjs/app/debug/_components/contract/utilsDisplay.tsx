@@ -1,11 +1,8 @@
 import { ReactElement } from "react";
-import { CairoCustomEnum, Uint256, validateChecksumAddress } from "starknet";
+import { CairoCustomEnum, getChecksumAddress, Uint256 } from "starknet";
 import { Address } from "~~/components/scaffold-stark";
 import { replacer } from "~~/utils/scaffold-stark/common";
-import {
-  AbiOutput,
-  parseParamWithType,
-} from "~~/utils/scaffold-stark/contract";
+import { AbiOutput } from "~~/utils/scaffold-stark/contract";
 import {
   isCairoByteArray,
   isCairoContractAddress,
@@ -23,15 +20,55 @@ type DisplayContent =
   | DisplayContent[]
   | unknown;
 
-export const displayTxResult = (
-  displayContent: DisplayContent | DisplayContent[],
-  asText: boolean,
-  functionOutputs: readonly AbiOutput[] = [],
-): string | ReactElement | number => {
+// each error will have its own key
+export type FormErrorMessageState = Record<string, string>;
+
+export function addError(
+  state: FormErrorMessageState,
+  key: string,
+  message: string,
+): FormErrorMessageState {
+  return {
+    ...state,
+    [key]: message,
+  };
+}
+
+export function clearError(
+  state: FormErrorMessageState,
+  key: string,
+): FormErrorMessageState {
+  delete state[key];
+  return state;
+}
+
+export function isError(state: FormErrorMessageState): boolean {
+  return Object.values(state).filter((value) => !!value).length > 0;
+}
+
+export function getTopErrorMessage(state: FormErrorMessageState): string {
+  if (!isError(state)) return "";
+  return Object.values(state).filter((value) => !!value)[0];
+}
+
+export const displayTxResult = ({
+  displayContent,
+  asText,
+  functionOutputs = [],
+  contentType,
+}: {
+  displayContent: DisplayContent | DisplayContent[];
+  asText: boolean;
+  functionOutputs?: readonly AbiOutput[];
+
+  // for recursive parsing such as arrays and objects
+  contentType?: string;
+}): string | ReactElement | number => {
   if (displayContent == null) {
     return "";
   }
-  if (functionOutputs != null && functionOutputs.length != 0) {
+
+  if (functionOutputs !== null && functionOutputs.length !== 0) {
     if (displayContent instanceof CairoCustomEnum) {
       return JSON.stringify(
         { [displayContent.activeVariant()]: displayContent.unwrap() },
@@ -39,11 +76,52 @@ export const displayTxResult = (
       );
     }
 
-    const type = functionOutputs[0].type;
-    const parsedParam = parseParamWithType(type, displayContent, true);
+    const type = contentType ?? functionOutputs[0].type;
+    const parsedParam = displayContent as any;
 
-    if (typeof parsedParam === "object")
+    if (Array.isArray(parsedParam)) {
+      // handle contract address
+      const arrayGenericType = parseGenericType(type)[0];
+
+      // not clean, workaround just to get contract addresses displayed properly
+      if (isCairoContractAddress(arrayGenericType)) {
+        return JSON.stringify(
+          parsedParam.map((addressInBigInt) =>
+            getChecksumAddress(`0x${addressInBigInt.toString(16)}`),
+          ),
+        );
+      }
+
+      const displayable = JSON.stringify(
+        parsedParam.map((v) => {
+          const txResult = displayTxResultAsText(v, arrayGenericType);
+          if (typeof txResult === "string")
+            return txResult.replaceAll('"', "").replaceAll("\n", "");
+          return txResult;
+        }),
+        replacer,
+      );
+
+      return asText ? (
+        displayable
+      ) : (
+        <span style={{ overflowWrap: "break-word", width: "100%" }}>
+          {displayable}
+        </span>
+      );
+    }
+
+    if (typeof parsedParam === "object" && !Array.isArray(parsedParam))
       return JSON.stringify(parsedParam, replacer);
+
+    if (isCairoContractAddress(type)) {
+      return asText ? (
+        // BigNumberish here if you look at the code, the tostring method does not work properly
+        getChecksumAddress(`0x${parsedParam.toString(16)}`)
+      ) : (
+        <Address address={`0x${parsedParam.toString(16)}` as `0x${string}`} />
+      );
+    }
 
     if (typeof parsedParam === "bigint") {
       if (
@@ -56,23 +134,6 @@ export const displayTxResult = (
       }
     }
 
-    if (Array.isArray(parsedParam)) {
-      const mostReadable = (v: DisplayContent) =>
-        ["number", "boolean"].includes(typeof v) ? v : displayTxResultAsText(v);
-      const displayable = JSON.stringify(
-        parsedParam.map(mostReadable),
-        replacer,
-      );
-
-      return asText ? (
-        displayable
-      ) : (
-        <span style={{ overflowWrap: "break-word", width: "100%" }}>
-          {displayable.replaceAll(",", ",\n")}
-        </span>
-      );
-    }
-
     if (isCairoTuple(type)) {
       return parsedParam;
     }
@@ -82,15 +143,7 @@ export const displayTxResult = (
       return `"${parsedParam.toString()}"`;
     }
 
-    return isCairoContractAddress(type) &&
-      validateChecksumAddress(parsedParam) &&
-      !asText ? (
-      <Address address={parsedParam as `0x${string}`} />
-    ) : typeof parsedParam === "object" ? (
-      JSON.stringify(parsedParam, replacer, 2)
-    ) : (
-      parsedParam.toString()
-    );
+    return parsedParam.toString();
   }
 
   return JSON.stringify(displayContent, replacer, 2);
@@ -129,5 +182,7 @@ export const displayType = (type: string) => {
   return type;
 };
 
-const displayTxResultAsText = (displayContent: DisplayContent) =>
-  displayTxResult(displayContent, true);
+const displayTxResultAsText = (
+  displayContent: DisplayContent,
+  contentType?: string,
+) => displayTxResult({ displayContent, asText: true, contentType });

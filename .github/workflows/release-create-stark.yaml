@@ -2,11 +2,12 @@ name: Version Bump and Notify
 
 on:
   pull_request:
-    types: [merged]
+    types: [closed]
     branches: [main]
 
 jobs:
   check_commit:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
       SHOULD_RUN: ${{ steps.check_commit.outputs.SHOULD_RUN }}
