@@ -129,12 +129,14 @@ pub struct CreateBetOutcomesArgument {
 pub struct UserPosition {
     position_type: PositionType,
     amount: u256,
+    bought_amount: u256, // amount minus fees
     has_claimed: bool,
 }
 
 #[derive(Copy, Serde, Drop, starknet::Store, PartialEq, Hash)]
 pub struct Outcome {
     name: felt252,
+    pos_type: PositionType,
     bought_amount: u256,
     bought_amount_with_yield: u256
 }
@@ -202,6 +204,15 @@ pub trait IBetMaker<TContractState> {
         ref self: TContractState, bet_id: u256, winner_type: PositionType
     );
 
+    fn claim_rewards(ref self: TContractState, bet_id: u256, bet_type: BetType, position_id: u256);
+
+    fn get_position_rewards_amount(
+        self: @TContractState,
+        caller: ContractAddress,
+        bet_id: u256,
+        bet_type: BetType,
+        position_id: u256
+    ) -> u256;
     fn get_crypto_bet(self: @TContractState, bet_id: u256) -> CryptoBet;
     fn get_crypto_bets_count(self: @TContractState) -> u256;
     fn get_vault_wallet(self: @TContractState) -> ContractAddress;
@@ -222,7 +233,7 @@ pub trait IBetMaker<TContractState> {
 #[starknet::contract]
 mod BetMaker {
     use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
-    use pragma_lib::types::{AggregationMode, DataType, PragmaPricesResponse};
+    use pragma_lib::types::{DataType};
     use super::{ITokenManagerDispatcher, ITokenManagerDispatcherTrait};
     use openzeppelin_access::ownable::OwnableComponent;
     use contracts::PragmaComponent::IPragmaComponent;
@@ -363,10 +374,16 @@ mod BetMaker {
             let outcome_no_name = outcomes.outcome_no;
 
             let mut outcome_yes = Outcome {
-                name: outcome_yes_name, bought_amount: 0, bought_amount_with_yield: 0
+                name: outcome_yes_name,
+                pos_type: PositionType::Yes,
+                bought_amount: 0,
+                bought_amount_with_yield: 0
             };
             let mut outcome_no = Outcome {
-                name: outcome_no_name, bought_amount: 0, bought_amount_with_yield: 0
+                name: outcome_no_name,
+                pos_type: PositionType::No,
+                bought_amount: 0,
+                bought_amount_with_yield: 0
             };
 
             let outcomes = Outcomes { outcome_yes, outcome_no };
@@ -422,6 +439,7 @@ mod BetMaker {
             assert!(amount > 0, "You must send some funds to place a bet.");
             match bet_type {
                 BetType::Crypto => {
+                    assert(bet_id <= self.total_crypto_bets.read(), 'Bet does not exist');
                     let mut bet_data = self.crypto_bets.read(bet_id);
                     let converted_deadline: u64 = bet_data
                         .deadline
@@ -464,7 +482,9 @@ mod BetMaker {
                             self.user_total_positions.read((get_caller_address(), bet_id, bet_type))
                                 + 1
                         );
-                    let user_position = UserPosition { position_type, amount, has_claimed: false };
+                    let user_position = UserPosition {
+                        position_type, amount, bought_amount, has_claimed: false
+                    };
                     self
                         .user_positions
                         .write(
@@ -503,7 +523,7 @@ mod BetMaker {
                                 user: get_caller_address(),
                                 market: final_bet,
                                 position: UserPosition {
-                                    position_type, amount, has_claimed: false
+                                    position_type, amount, bought_amount, has_claimed: false
                                 },
                                 position_id: self
                                     .user_total_positions
@@ -598,6 +618,141 @@ mod BetMaker {
             self.crypto_bets.write(bet_id, bet_data);
             let new_bet = self.crypto_bets.read(bet_id);
             self.emit(CryptoBetSettled { market: new_bet });
+        }
+
+        fn claim_rewards(
+            ref self: ContractState, bet_id: u256, bet_type: BetType, position_id: u256
+        ) {
+            match bet_type {
+                BetType::Crypto => {
+                    assert(bet_id <= self.total_crypto_bets.read(), 'Bet does not exist');
+                    let mut bet_data = self.crypto_bets.read(bet_id);
+                    let total_positions = self
+                        .user_total_positions
+                        .read((get_caller_address(), bet_id, bet_type));
+                    assert(bet_data.is_settled == true, 'Bet should be settled');
+                    assert(position_id <= total_positions, 'Position does not exist');
+
+                    let user_postion = self
+                        .user_positions
+                        .read((get_caller_address(), bet_id, bet_type, position_id));
+                    assert(user_postion.has_claimed == false, 'Already claimed');
+                    let winner_outcome = bet_data.winner_outcome.unwrap();
+
+                    match bet_data.yield_strategy {
+                        YieldStrategy::Nimbora(_) => {
+                            if winner_outcome.pos_type == user_postion.position_type {
+                                let precision = 1000000000000;
+                                let total_bought_amount = bet_data
+                                    .outcomes
+                                    .outcome_yes
+                                    .bought_amount
+                                    + bet_data.outcomes.outcome_no.bought_amount;
+                                let yield_generated = if winner_outcome
+                                    .bought_amount_with_yield > total_bought_amount {
+                                    winner_outcome.bought_amount_with_yield - total_bought_amount
+                                } else {
+                                    0
+                                };
+                                let user_percentage_of_money_in_pool = user_postion.bought_amount
+                                    * precision
+                                    / winner_outcome.bought_amount;
+                                let earned_amount = user_percentage_of_money_in_pool
+                                    * yield_generated
+                                    / precision;
+                                let transfer_amount = user_postion.bought_amount + earned_amount;
+                                bet_data
+                                    .bet_token
+                                    .dispatcher
+                                    .transfer(get_caller_address(), transfer_amount);
+            
+                            } else {
+                                bet_data
+                                    .bet_token
+                                    .dispatcher
+                                    .transfer(get_caller_address(), user_postion.bought_amount);
+                        
+                            }
+                        },
+                        _ => {
+                            // TODO: Implement claim for classic bets
+                            panic!("Claim not supported yet.")
+                        }
+                    }
+
+                    self
+                        .user_positions
+                        .write(
+                            (get_caller_address(), bet_id, bet_type, position_id),
+                            UserPosition {
+                                position_type: user_postion.position_type,
+                                amount: user_postion.amount,
+                                bought_amount: user_postion.bought_amount,
+                                has_claimed: true
+                            }
+                        );
+                    // TODO: emit event
+                },
+                BetType::Sports => panic!("Type not supported yet!"),
+                BetType::Other => panic!("Type not supported yet!"),
+                _ => panic!("Invalid bet type"),
+            }
+        }
+
+        fn get_position_rewards_amount(
+            self: @ContractState,
+            caller: ContractAddress,
+            bet_id: u256,
+            bet_type: BetType,
+            position_id: u256
+        ) -> u256 {
+            match bet_type {
+                BetType::Crypto => {
+                    let mut bet_data = self.crypto_bets.read(bet_id);
+                    assert(bet_data.is_settled == true, 'Bet should be settled');
+                    let user_postion = self
+                        .user_positions
+                        .read((caller, bet_id, bet_type, position_id));
+                    assert(user_postion.has_claimed == false, 'Already claimed');
+                    let winner_outcome = bet_data.winner_outcome.unwrap();
+
+                    match bet_data.yield_strategy {
+                        YieldStrategy::Nimbora(_) => {
+                            if winner_outcome.pos_type == user_postion.position_type {
+                                let precision = 1000000000000;
+                                let total_bought_amount = bet_data
+                                    .outcomes
+                                    .outcome_yes
+                                    .bought_amount
+                                    + bet_data.outcomes.outcome_no.bought_amount;
+                                let yield_generated = if winner_outcome
+                                    .bought_amount_with_yield > total_bought_amount {
+                                    winner_outcome.bought_amount_with_yield - total_bought_amount
+                                } else {
+                                    0
+                                };
+                                let user_percentage_of_money_in_pool = user_postion.bought_amount
+                                    * precision
+                                    / winner_outcome.bought_amount;
+                                let earned_amount = user_percentage_of_money_in_pool
+                                    * yield_generated
+                                    / precision;
+                                let transfer_amount = user_postion.bought_amount + earned_amount;
+                                return transfer_amount;
+                            } else {
+                                return user_postion.bought_amount;
+                            }
+                        },
+                        _ => {
+                            // TODO: Implement get for classic bets
+                            panic!("Not implemented yet!")
+                        }
+                    }
+                },
+                BetType::Sports => panic!("Type not supported yet!"),
+                BetType::Other => panic!("Type not supported yet!"),
+                _ => panic!("Invalid bet type"),
+            }
         }
 
         fn get_crypto_bet(self: @ContractState, bet_id: u256) -> CryptoBet {
