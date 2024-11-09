@@ -17,14 +17,12 @@ export async function POST(req: NextRequest) {
       `${generatedContractComment}\n\nconst configExternalContracts = ${JSON.stringify(data)} as const;\n\nexport default configExternalContracts;`,
       {
         parser: "typescript",
-      }
+      },
     );
-
-    console.log(fileContent);
 
     fs.writeFileSync(
       path.join(TARGET_DIR, "configExternalContracts.ts"),
-      fileContent
+      fileContent,
     );
 
     return NextResponse.json({ success: true });
@@ -32,7 +30,7 @@ export async function POST(req: NextRequest) {
     console.error(error);
     return NextResponse.json(
       { error: "Failed to write contract file" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

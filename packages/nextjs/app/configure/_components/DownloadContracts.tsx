@@ -39,7 +39,7 @@ export default function DownloadContracts() {
       };
       const mergedPredeployedContracts = deepMergeContracts(
         contractData,
-        configExternalContracts
+        configExternalContracts,
       );
 
       generateContractsFile(mergedPredeployedContracts);
@@ -58,7 +58,6 @@ export default function DownloadContracts() {
         },
         body: JSON.stringify(contractsData),
       });
-      console.log(response.ok);
       if (!response.ok) {
         throw new Error("Failed to save contract");
       }
@@ -80,18 +79,12 @@ export default function DownloadContracts() {
           <div className="flex-1">
             <div className="font-bold my-3 text-lg">Instructions</div>
             <p className="my-2">
-              This tool allows you to fetch the ABI of a contract by entering
-              its address. It will download a configuration file that can be
-              used to replace or append to your local{" "}
-              <code className="text-function">configExternalContracts.ts</code>{" "}
-              file, allowing you to debug in the{" "}
-              <code className="text-function">/debug</code> page.
+              This tool fetch contract ABI and classhash to enable code
+              autocomplete when using hooks and interaction with fetched
+              contract at debug page.
             </p>
             <ol className="flex flex-col gap-2 list-decimal list-outside my-6 space-y-1 ml-4">
-              <li className="pl-3">
-                Enter the contract address and name within the designated input
-                fields.
-              </li>
+              <li className="pl-3">Enter contract name and address.</li>
               <li className="pl-3">
                 Click the{" "}
                 <strong className="text-function">
@@ -100,16 +93,12 @@ export default function DownloadContracts() {
                 button.
               </li>
               <li className="pl-3">
-                The tool will fetch the ABI, address, and classHash from the
-                network and generate a configuration file.
-              </li>
-              <li className="pl-3">
-                Download the file and replace it to your local{" "}
                 <code className="text-function">
                   configExternalContracts.ts
                 </code>{" "}
-                file.
+                will be updated with the fetched contract configuration.
               </li>
+
               <li className="pl-3">
                 Use the{" "}
                 <Link href={"/debug"} className="text-function">
@@ -119,10 +108,6 @@ export default function DownloadContracts() {
                 hooks.
               </li>
             </ol>
-            <p className="mt-2">
-              Ensure that the format of the ABI matches the expected format in
-              your project before replacing the file.
-            </p>
           </div>
           <div className="flex-1 px-12">
             {targetNetwork && (
