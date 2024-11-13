@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { decodeContractResponse } from "../utilsDisplay";
-import { abi } from "./seed/mockABI";
+import { abi } from "./mock/mockABI";
 
 describe("utilsDisplay", () => {
   it("should parse basic integer response successfully", () => {
