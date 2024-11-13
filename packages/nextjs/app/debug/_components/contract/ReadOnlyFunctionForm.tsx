@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from "react";
 import { Abi } from "abi-wan-kanabi";
 import { Address } from "@starknet-react/chains";
 import {
-  displayTxResult,
   getFunctionInputKey,
   getInitialFormState,
   getArgsAsStringInputFromForm,
@@ -12,6 +11,7 @@ import {
   FormErrorMessageState,
   isError,
   getTopErrorMessage,
+  decodeContractResponse,
 } from "~~/app/debug/_components/contract";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { BlockNumber } from "starknet";
@@ -95,10 +95,11 @@ export const ReadOnlyFunctionForm = ({
             <div className="bg-input text-sm px-4 py-1.5 break-words">
               <p className="font-bold m-0 mb-1">Result:</p>
               <pre className="whitespace-pre-wrap break-words">
-                {displayTxResult({
-                  displayContent: data,
-                  asText: false,
+                {decodeContractResponse({
+                  resp: data,
+                  abi,
                   functionOutputs: abiFunction?.outputs,
+                  asText: true,
                 })}
               </pre>
             </div>
