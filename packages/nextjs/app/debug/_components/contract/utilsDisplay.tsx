@@ -1,99 +1,269 @@
-import { ReactElement } from "react";
-import { CairoCustomEnum, Uint256, validateChecksumAddress } from "starknet";
-import { Address } from "~~/components/scaffold-stark";
+import { getChecksumAddress, Uint256 } from "starknet";
 import { replacer } from "~~/utils/scaffold-stark/common";
-import {
-  AbiOutput,
-  parseParamWithType,
-} from "~~/utils/scaffold-stark/contract";
-import {
-  isCairoByteArray,
-  isCairoContractAddress,
-  isCairoTuple,
-  parseGenericType,
-} from "~~/utils/scaffold-stark/types";
+import { AbiOutput } from "~~/utils/scaffold-stark/contract";
+import { parseGenericType } from "~~/utils/scaffold-stark/types";
 import { formatEther } from "ethers";
+import { Abi } from "abi-wan-kanabi";
 
-type DisplayContent =
-  | Uint256
-  | string
-  | bigint
-  | boolean
-  | Object
-  | DisplayContent[]
-  | unknown;
+type DisplayContent = Uint256 | string | bigint | boolean | Object | unknown;
 
-export const displayTxResult = (
-  displayContent: DisplayContent | DisplayContent[],
-  asText: boolean,
-  functionOutputs: readonly AbiOutput[] = [],
-): string | ReactElement | number => {
-  if (displayContent == null) {
+// each error will have its own key
+export type FormErrorMessageState = Record<string, string>;
+
+export function addError(
+  state: FormErrorMessageState,
+  key: string,
+  message: string,
+): FormErrorMessageState {
+  return {
+    ...state,
+    [key]: message,
+  };
+}
+
+export function clearError(
+  state: FormErrorMessageState,
+  key: string,
+): FormErrorMessageState {
+  delete state[key];
+  return state;
+}
+
+export function isError(state: FormErrorMessageState): boolean {
+  return Object.values(state).filter((value) => !!value).length > 0;
+}
+
+export function getTopErrorMessage(state: FormErrorMessageState): string {
+  if (!isError(state)) return "";
+  return Object.values(state).filter((value) => !!value)[0];
+}
+
+const baseNumberType = new Set([
+  "core::integer::u512",
+  "core::integer::u256",
+  "core::integer::u128",
+  "core::integer::u64",
+  "core::integer::u32",
+  "core::integer::u16",
+  "core::integer::u8",
+  "core::integer::i256",
+  "core::integer::i128",
+  "core::integer::i64",
+  "core::integer::i32",
+  "core::integer::i16",
+  "core::integer::i8",
+]);
+const baseHexType = new Set(["core::felt252"]);
+const baseType = new Set([
+  "core::starknet::contract_address::ContractAddress",
+  "core::starknet::eth_address::EthAddress",
+  "core::starknet::class_hash::ClassHash",
+  "core::felt252",
+  "core::integer::u512",
+  "core::integer::u256",
+  "core::integer::u128",
+  "core::integer::u64",
+  "core::integer::u32",
+  "core::integer::u16",
+  "core::integer::u8",
+  "core::integer::i256",
+  "core::integer::i128",
+  "core::integer::i64",
+  "core::integer::i32",
+  "core::integer::i16",
+  "core::integer::i8",
+  "core::bool",
+  "core::bytes_31::bytes31",
+  "core::byte_array::ByteArray",
+]);
+
+const hexToAscii = (hexString: string): string => {
+  if (!hexString) {
     return "";
   }
-  if (functionOutputs != null && functionOutputs.length != 0) {
-    if (displayContent instanceof CairoCustomEnum) {
-      return JSON.stringify(
-        { [displayContent.activeVariant()]: displayContent.unwrap() },
-        replacer,
-      );
-    }
+  if (hexString.length <= 2 || hexString.length % 2 !== 0) {
+    return "";
+  }
+  if (hexString.startsWith("0x")) {
+    hexString = hexString.slice(2);
+  }
+  let asciiString = "";
+  for (let i = 0; i < hexString.length; i += 2) {
+    const hexCode = hexString.slice(i, i + 2);
+    const charCode = parseInt(hexCode, 16);
+    asciiString += String.fromCharCode(charCode);
+  }
+  return asciiString;
+};
 
-    const type = functionOutputs[0].type;
-    const parsedParam = parseParamWithType(type, displayContent, true);
+const getFieldType = (type: string, abi: Abi): any => {
+  if (
+    type.startsWith("core::array::Array") ||
+    /^\([^()]*\)$/.test(type) ||
+    baseType.has(type)
+  ) {
+    return { type };
+  }
+  return abi.find((item) => item.name === type);
+};
 
-    if (typeof parsedParam === "object")
-      return JSON.stringify(parsedParam, replacer);
-
-    if (typeof parsedParam === "bigint") {
+const _decodeContractResponseItem = (
+  respItem: any,
+  abiType: any,
+  abi: Abi,
+  showAsString?: boolean,
+): any => {
+  if (respItem === undefined) {
+    return "";
+  }
+  if (abiType.type && baseNumberType.has(abiType.type)) {
+    if (typeof respItem === "bigint") {
       if (
-        parsedParam <= BigInt(Number.MAX_SAFE_INTEGER) &&
-        parsedParam >= BigInt(Number.MIN_SAFE_INTEGER)
+        respItem <= BigInt(Number.MAX_SAFE_INTEGER) &&
+        respItem >= BigInt(Number.MIN_SAFE_INTEGER)
       ) {
-        return Number(parsedParam);
+        return Number(respItem);
       } else {
-        return "Ξ " + formatEther(parsedParam);
+        return "Ξ " + formatEther(respItem);
       }
     }
+    return Number(respItem);
+  }
 
-    if (Array.isArray(parsedParam)) {
-      const mostReadable = (v: DisplayContent) =>
-        ["number", "boolean"].includes(typeof v) ? v : displayTxResultAsText(v);
-      const displayable = JSON.stringify(
-        parsedParam.map(mostReadable),
-        replacer,
+  if (
+    abiType.type &&
+    abiType.type === "core::starknet::contract_address::ContractAddress"
+  ) {
+    return getChecksumAddress(`0x${respItem.toString(16)}`);
+  }
+
+  if (abiType.type && baseHexType.has(abiType.type)) {
+    const hexString = `0x${respItem.toString(16)}`;
+    if (showAsString) {
+      return hexToAscii(hexString) || hexString;
+    }
+    return hexString;
+  }
+
+  if (abiType.type && abiType.type === "core::bool") {
+    return respItem;
+  }
+
+  if (abiType.type && abiType.type === "core::byte_array::ByteArray") {
+    if (showAsString) {
+      return hexToAscii(respItem) || respItem;
+    }
+    return respItem;
+  }
+
+  // tuple
+  if (abiType.type && /^\([^()]*\)$/.test(abiType.type)) {
+    const tupleTypes: any[] = abiType.type
+      .match(/\(([^)]+)\)/)[1]
+      .split(/\s*,\s*/);
+    if (tupleTypes.length !== Object.keys(respItem).length) {
+      return "";
+    }
+    const decodedArr = tupleTypes.map((type, index) => {
+      return _decodeContractResponseItem(
+        respItem[index],
+        getFieldType(type, abi),
+        abi,
       );
+    });
+    return `(${decodedArr})`;
+  }
 
-      return asText ? (
-        displayable
-      ) : (
-        <span style={{ overflowWrap: "break-word", width: "100%" }}>
-          {displayable.replaceAll(",", ",\n")}
-        </span>
-      );
+  // array
+  if (abiType.type && abiType.type.startsWith("core::array::Array")) {
+    const match = abiType.type.match(/<([^>]+)>/);
+    const arrItemType = match ? match[1] : null;
+    if (!arrItemType || !Array.isArray(respItem)) {
+      return [];
     }
-
-    if (isCairoTuple(type)) {
-      return parsedParam;
-    }
-
-    // use quotation for byte arrays to prevent confusion
-    if (isCairoByteArray(type)) {
-      return `"${parsedParam.toString()}"`;
-    }
-
-    return isCairoContractAddress(type) &&
-      validateChecksumAddress(parsedParam) &&
-      !asText ? (
-      <Address address={parsedParam as `0x${string}`} />
-    ) : typeof parsedParam === "object" ? (
-      JSON.stringify(parsedParam, replacer, 2)
-    ) : (
-      parsedParam.toString()
+    return respItem.map((arrItem) =>
+      _decodeContractResponseItem(arrItem, getFieldType(arrItemType, abi), abi),
     );
   }
 
-  return JSON.stringify(displayContent, replacer, 2);
+  // struct
+  if (abiType.type === "struct") {
+    const members = abiType.members;
+    const decoded: Record<string, any> = {};
+    for (const [structKey, structValue] of Object.entries(respItem)) {
+      const structItemDef = (members || []).find(
+        (item: any) => item.name === structKey,
+      );
+      if (structItemDef && structItemDef.type) {
+        decoded[structKey] = _decodeContractResponseItem(
+          structValue,
+          structItemDef,
+          abi,
+        );
+      }
+    }
+    return decoded;
+  }
+
+  if (abiType.type === "enum") {
+    const variant = (respItem as any).variant;
+    const variants = abiType.variants;
+    for (const [enumKey, enumValue] of Object.entries(variant)) {
+      if (enumValue === undefined) {
+        continue;
+      }
+      const enumItemDef = (variants || []).find(
+        (item: any) => item.name === enumKey,
+      );
+      if (enumItemDef && enumItemDef.type) {
+        return {
+          [enumKey]: _decodeContractResponseItem(enumValue, enumItemDef, abi),
+        };
+      }
+    }
+  }
+  return respItem;
+};
+
+export const decodeContractResponse = ({
+  resp,
+  abi,
+  functionOutputs,
+  asText,
+  showAsString,
+}: {
+  resp: DisplayContent | DisplayContent[];
+  abi: Abi;
+  functionOutputs?: readonly AbiOutput[];
+  asText?: boolean;
+  showAsString?: boolean;
+}) => {
+  const abiTypes = (functionOutputs || [])
+    .map((output) => output.type)
+    .map((type) => getFieldType(type, abi));
+  let arrResp = [resp];
+  if (!abiTypes.length || arrResp.length !== abiTypes.length) {
+    return JSON.stringify(resp, replacer, 2);
+  }
+  const decoded: any[] = [];
+  for (let index = 0; index < arrResp.length; index++) {
+    decoded.push(
+      _decodeContractResponseItem(
+        arrResp[index],
+        abiTypes[index],
+        abi,
+        showAsString,
+      ),
+    );
+  }
+
+  const decodedResult = decoded.length === 1 ? decoded[0] : decoded;
+  if (asText) {
+    return typeof decodedResult === "string"
+      ? decodedResult
+      : JSON.stringify(decodedResult, replacer);
+  }
+  return decodedResult;
 };
 
 export const displayTuple = (tupleString: string): string => {
@@ -128,6 +298,3 @@ export const displayType = (type: string) => {
   }
   return type;
 };
-
-const displayTxResultAsText = (displayContent: DisplayContent) =>
-  displayTxResult(displayContent, true);
