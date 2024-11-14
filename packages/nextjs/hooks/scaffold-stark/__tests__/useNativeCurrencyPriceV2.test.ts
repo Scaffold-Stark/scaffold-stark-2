@@ -1,16 +1,16 @@
-import { renderHook } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { useNativeCurrencyPriceV2 } from '../useNativeCurrencyPriceV2';
-import { priceService } from '~~/services/web3/PriceService';
-import { useGlobalState } from '~~/services/store/store';
+import { renderHook } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { useNativeCurrencyPriceV2 } from "../useNativeCurrencyPriceV2";
+import { priceService } from "~~/services/web3/PriceService";
+import { useGlobalState } from "~~/services/store/store";
 
 // Mock the store
-vi.mock('~~/services/store/store', () => ({
+vi.mock("~~/services/store/store", () => ({
   useGlobalState: vi.fn(),
 }));
 
 // Mock the price service
-vi.mock('~~/services/web3/PriceService', () => ({
+vi.mock("~~/services/web3/PriceService", () => ({
   priceService: {
     getNextId: vi.fn(),
     startPolling: vi.fn(),
@@ -18,18 +18,18 @@ vi.mock('~~/services/web3/PriceService', () => ({
   },
 }));
 
-describe('useNativeCurrencyPriceV2', () => {
+describe("useNativeCurrencyPriceV2", () => {
   const mockSetNativeCurrencyPrice = vi.fn();
   const mockSetStrkCurrencyPrice = vi.fn();
   const mockIds = {
     first: 123,
-    second: 124
+    second: 124,
   };
 
   beforeEach(() => {
     // Setup mocks
     vi.mocked(useGlobalState).mockImplementation((selector) => {
-      if (selector.toString().includes('setNativeCurrencyPrice')) {
+      if (selector.toString().includes("setNativeCurrencyPrice")) {
         return mockSetNativeCurrencyPrice;
       }
       return mockSetStrkCurrencyPrice;
@@ -42,26 +42,28 @@ describe('useNativeCurrencyPriceV2', () => {
     vi.clearAllMocks();
   });
 
-  it('should start polling on mount', () => {
+  it("should start polling on mount", () => {
     renderHook(() => useNativeCurrencyPriceV2());
 
     expect(priceService.getNextId).toHaveBeenCalled();
     expect(priceService.startPolling).toHaveBeenCalledWith(
       mockIds.first.toString(),
       mockSetNativeCurrencyPrice,
-      mockSetStrkCurrencyPrice
+      mockSetStrkCurrencyPrice,
     );
   });
 
-  it('should stop polling on unmount', () => {
+  it("should stop polling on unmount", () => {
     const { unmount } = renderHook(() => useNativeCurrencyPriceV2());
 
     unmount();
 
-    expect(priceService.stopPolling).toHaveBeenCalledWith(mockIds.first.toString());
+    expect(priceService.stopPolling).toHaveBeenCalledWith(
+      mockIds.first.toString(),
+    );
   });
 
-  it('should maintain the same polling instance across rerenders', () => {
+  it("should maintain the same polling instance across rerenders", () => {
     const { rerender } = renderHook(() => useNativeCurrencyPriceV2());
     const firstCallArgs = vi.mocked(priceService.startPolling).mock.calls[0];
 
@@ -73,18 +75,18 @@ describe('useNativeCurrencyPriceV2', () => {
     expect(priceService.getNextId).toReturnWith(Number(firstCallArgs[0]));
   });
 
-  it('should use store setters from global state', () => {
+  it("should use store setters from global state", () => {
     renderHook(() => useNativeCurrencyPriceV2());
 
     expect(useGlobalState).toHaveBeenCalledWith(expect.any(Function));
     expect(priceService.startPolling).toHaveBeenCalledWith(
       mockIds.first.toString(),
       mockSetNativeCurrencyPrice,
-      mockSetStrkCurrencyPrice
+      mockSetStrkCurrencyPrice,
     );
   });
 
-  it('should handle multiple instances correctly', () => {
+  it("should handle multiple instances correctly", () => {
     vi.mocked(priceService.getNextId)
       .mockReturnValueOnce(mockIds.first)
       .mockReturnValueOnce(mockIds.second);
@@ -96,25 +98,29 @@ describe('useNativeCurrencyPriceV2', () => {
       1,
       mockIds.first.toString(),
       mockSetNativeCurrencyPrice,
-      mockSetStrkCurrencyPrice
+      mockSetStrkCurrencyPrice,
     );
     expect(priceService.startPolling).toHaveBeenNthCalledWith(
       2,
       mockIds.second.toString(),
       mockSetNativeCurrencyPrice,
-      mockSetStrkCurrencyPrice
+      mockSetStrkCurrencyPrice,
     );
 
     unmount1();
-    expect(priceService.stopPolling).toHaveBeenCalledWith(mockIds.first.toString());
+    expect(priceService.stopPolling).toHaveBeenCalledWith(
+      mockIds.first.toString(),
+    );
 
     unmount2();
-    expect(priceService.stopPolling).toHaveBeenCalledWith(mockIds.second.toString());
+    expect(priceService.stopPolling).toHaveBeenCalledWith(
+      mockIds.second.toString(),
+    );
   });
 
-  it('should handle errors in global state selectors gracefully', () => {
+  it("should handle errors in global state selectors gracefully", () => {
     vi.mocked(useGlobalState).mockImplementation(() => {
-      return () => { };
+      return () => {};
     });
 
     expect(() => {

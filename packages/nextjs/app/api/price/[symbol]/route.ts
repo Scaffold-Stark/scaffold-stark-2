@@ -1,13 +1,18 @@
-export async function GET(_: Request, { params: { symbol } }: { params: { symbol: string } }) {
+export async function GET(
+  _: Request,
+  { params: { symbol } }: { params: { symbol: string } },
+) {
   let apiUrl = "";
   if (symbol === "ETH") {
-    apiUrl = "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd";
+    apiUrl =
+      "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd";
   } else if (symbol === "STRK") {
-    apiUrl = "https://api.coingecko.com/api/v3/simple/price?ids=starknet&vs_currencies=usd";
+    apiUrl =
+      "https://api.coingecko.com/api/v3/simple/price?ids=starknet&vs_currencies=usd";
   } else {
     return Response.json({
       ethereum: { usd: 0 },
-      starknet: { usd: 0 }
+      starknet: { usd: 0 },
     });
   }
   try {
@@ -20,7 +25,7 @@ export async function GET(_: Request, { params: { symbol } }: { params: { symbol
   } catch (e) {
     return Response.json({
       ethereum: { usd: 0 },
-      starknet: { usd: 0 }
+      starknet: { usd: 0 },
     });
   }
 }

@@ -28,15 +28,18 @@ export const fetchPriceFromCoingecko = async (
 class PriceService {
   private static instance: PriceService;
   private intervalId: NodeJS.Timeout | null = null;
-  private listeners: Map<any, {
-    setNativeCurrencyPrice: (price: number) => void;
-    setStrkCurrencyPrice: (price: number) => void;
-  }> = new Map();
+  private listeners: Map<
+    any,
+    {
+      setNativeCurrencyPrice: (price: number) => void;
+      setStrkCurrencyPrice: (price: number) => void;
+    }
+  > = new Map();
   private currentNativeCurrencyPrice: number = 0;
   private currentStrkCurrencyPrice: number = 0;
   private idCounter: number = 0;
 
-  private constructor() { }
+  private constructor() {}
 
   static getInstance(): PriceService {
     if (!PriceService.instance) {
@@ -97,11 +100,15 @@ class PriceService {
         this.currentStrkCurrencyPrice = strkPrice;
       }
       this.listeners.forEach((listener) => {
-        listener.setNativeCurrencyPrice(ethPrice || this.currentNativeCurrencyPrice);
-        listener.setStrkCurrencyPrice(strkPrice || this.currentStrkCurrencyPrice);
+        listener.setNativeCurrencyPrice(
+          ethPrice || this.currentNativeCurrencyPrice,
+        );
+        listener.setStrkCurrencyPrice(
+          strkPrice || this.currentStrkCurrencyPrice,
+        );
       });
     } catch (error) {
-      console.error('Error fetching prices:', error);
+      console.error("Error fetching prices:", error);
     }
   }
 }
