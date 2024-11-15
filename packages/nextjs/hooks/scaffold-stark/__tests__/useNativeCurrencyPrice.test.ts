@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { useNativeCurrencyPriceV2 } from "../useNativeCurrencyPriceV2";
+import { useNativeCurrencyPrice } from "../useNativeCurrencyPrice";
 import { priceService } from "~~/services/web3/PriceService";
 import { useGlobalState } from "~~/services/store/store";
 
@@ -18,7 +18,7 @@ vi.mock("~~/services/web3/PriceService", () => ({
   },
 }));
 
-describe("useNativeCurrencyPriceV2", () => {
+describe("useNativeCurrencyPrice", () => {
   const mockSetNativeCurrencyPrice = vi.fn();
   const mockSetStrkCurrencyPrice = vi.fn();
   const mockIds = {
@@ -43,7 +43,7 @@ describe("useNativeCurrencyPriceV2", () => {
   });
 
   it("should start polling on mount", () => {
-    renderHook(() => useNativeCurrencyPriceV2());
+    renderHook(() => useNativeCurrencyPrice());
 
     expect(priceService.getNextId).toHaveBeenCalled();
     expect(priceService.startPolling).toHaveBeenCalledWith(
@@ -54,7 +54,7 @@ describe("useNativeCurrencyPriceV2", () => {
   });
 
   it("should stop polling on unmount", () => {
-    const { unmount } = renderHook(() => useNativeCurrencyPriceV2());
+    const { unmount } = renderHook(() => useNativeCurrencyPrice());
 
     unmount();
 
@@ -64,7 +64,7 @@ describe("useNativeCurrencyPriceV2", () => {
   });
 
   it("should maintain the same polling instance across rerenders", () => {
-    const { rerender } = renderHook(() => useNativeCurrencyPriceV2());
+    const { rerender } = renderHook(() => useNativeCurrencyPrice());
     const firstCallArgs = vi.mocked(priceService.startPolling).mock.calls[0];
 
     vi.clearAllMocks();
@@ -76,7 +76,7 @@ describe("useNativeCurrencyPriceV2", () => {
   });
 
   it("should use store setters from global state", () => {
-    renderHook(() => useNativeCurrencyPriceV2());
+    renderHook(() => useNativeCurrencyPrice());
 
     expect(useGlobalState).toHaveBeenCalledWith(expect.any(Function));
     expect(priceService.startPolling).toHaveBeenCalledWith(
@@ -91,8 +91,8 @@ describe("useNativeCurrencyPriceV2", () => {
       .mockReturnValueOnce(mockIds.first)
       .mockReturnValueOnce(mockIds.second);
 
-    const { unmount: unmount1 } = renderHook(() => useNativeCurrencyPriceV2());
-    const { unmount: unmount2 } = renderHook(() => useNativeCurrencyPriceV2());
+    const { unmount: unmount1 } = renderHook(() => useNativeCurrencyPrice());
+    const { unmount: unmount2 } = renderHook(() => useNativeCurrencyPrice());
 
     expect(priceService.startPolling).toHaveBeenNthCalledWith(
       1,
@@ -120,11 +120,11 @@ describe("useNativeCurrencyPriceV2", () => {
 
   it("should handle errors in global state selectors gracefully", () => {
     vi.mocked(useGlobalState).mockImplementation(() => {
-      return () => {};
+      return () => { };
     });
 
     expect(() => {
-      renderHook(() => useNativeCurrencyPriceV2());
+      renderHook(() => useNativeCurrencyPrice());
     }).not.toThrow();
   });
 });
