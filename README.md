@@ -131,7 +131,7 @@ Find the `packages/nextjs/scaffold.config.ts` file and change the `targetNetwork
 
 ![chall-0-scaffold-config](./packages/nextjs/public/scaffold-config.png)
 
-4. Get some testnet tokens
+4. Get some testnet tokens.
 
 You will need to get some `ETH` or `STRK` Sepolia tokens to deploy your contract to Sepolia testnet.
 
