@@ -1,14 +1,14 @@
 # Contributing to Scaffold-Stark
 
-Thank you for your interest in contributing to Scaffold-Stark! Your support enhances this StarkNet-focused framework that bridges smart contract integration with web applications.
+Thank you for your interest in contributing to Scaffold-Stark! Your support enhances this Starknet-focused framework that bridges smart contract integration with web applications.
 
 ## About the Project
 
-**Scaffold-Stark** provides a full DApp development template, offering seamless integration of StarkNet smart contracts with web applications. **SpeedrunStark.com** offers interactive challenges that serve to practice your Cairo and StarkNet skills, learn how to use the provided hooks, and launch your applications swiftly with potential rewards.
+**Scaffold-Stark** provides a full DApp development template, offering seamless integration of Starket smart contracts with web applications. **SpeedrunStark.com** offers interactive challenges that serve to practice your Cairo and Starknet skills, learn how to use the provided hooks, and launch your applications swiftly with potential rewards.
 
 ## Project Vision
 
-Our goal is to simplify the DApp development and learning process, enabling developers to launch applications efficiently while understanding the intricacies of StarkNet.
+Our goal is to simplify the DApp development and learning process, enabling developers to launch applications efficiently while understanding the intricacies of Starknet.
 
 ## How to Get Involved
 
