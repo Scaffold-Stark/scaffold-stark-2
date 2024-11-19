@@ -29,5 +29,5 @@ block_id.tag = "latest"
 
 [[tool.snforge.fork]]
 name = "MAINNET_LATEST"
-url = "https://rpc.nethermind.io/mainnet-juno/rpc/v0_7?apikey=YOUR_API_KEY"
+url = "https://rpc.nethermind.io/mainnet-juno/rpc/v0_7?apikey=<APIKEY>"
 block_id.tag = "latest"
