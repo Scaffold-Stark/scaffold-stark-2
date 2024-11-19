@@ -65,10 +65,10 @@ export const Address = ({
   // Skeleton UI
   if (!checkSumAddress) {
     return (
-      <div className="animate-pulse flex space-x-4">
-        <div className="rounded-md bg-slate-300 h-6 w-6"></div>
+      <div className="flex animate-pulse space-x-4">
+        <div className="h-6 w-6 rounded-md bg-slate-300"></div>
         <div className="flex items-center space-y-6">
-          <div className="h-2 w-28 bg-slate-300 rounded"></div>
+          <div className="h-2 w-28 rounded bg-slate-300"></div>
         </div>
       </div>
     );
@@ -99,7 +99,7 @@ export const Address = ({
           <img
             src={profile?.profilePicture}
             alt="Profile Picture"
-            className="rounded-full h-6 w-6"
+            className="h-6 w-6 rounded-full"
             width={24}
             height={24}
           />
@@ -133,7 +133,7 @@ export const Address = ({
       )}
       {addressCopied ? (
         <CheckCircleIcon
-          className="ml-1.5 text-xl font-normal text-sky-600 h-5 w-5 cursor-pointer"
+          className="ml-1.5 h-5 w-5 cursor-pointer text-xl font-normal text-sky-600"
           aria-hidden="true"
         />
       ) : (
@@ -147,7 +147,7 @@ export const Address = ({
           }}
         >
           <DocumentDuplicateIcon
-            className="ml-1.5 text-xl font-normal text-sky-600 h-5 w-5 cursor-pointer"
+            className="ml-1.5 h-5 w-5 cursor-pointer text-xl font-normal text-sky-600"
             aria-hidden="true"
           />
         </CopyToClipboard>

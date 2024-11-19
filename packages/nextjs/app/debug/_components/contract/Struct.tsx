@@ -69,12 +69,12 @@ export const Struct = ({
 
   return (
     <div>
-      <div className="collapse bg-base-200 pl-4 pt-1.5 pb-2 border-2 border-secondary custom-after">
-        <input type="checkbox" className="min-h-fit peer" />
-        <div className="collapse-title p-0 min-h-fit peer-checked:mb-2 text-primary-content/50">
+      <div className="custom-after collapse border-2 border-secondary bg-base-200 pb-2 pl-4 pt-1.5">
+        <input type="checkbox" className="peer min-h-fit" />
+        <div className="collapse-title min-h-fit p-0 text-primary-content/50 peer-checked:mb-2">
           <p className="m-0 p-0 text-[1rem]">{abiMember.type}</p>
         </div>
-        <div className="ml-3 flex-col space-y-4 border-secondary/80 border-l-2 pl-4 collapse-content">
+        <div className="collapse-content ml-3 flex-col space-y-4 border-l-2 border-secondary/80 pl-4">
           {abiMember.type === "struct"
             ? abiMember.members.map((member, index) => {
                 const key = getFunctionInputKey(

@@ -72,7 +72,7 @@ const ConnectModal = () => {
     <div>
       <label
         htmlFor="connect-modal"
-        className="rounded-[18px]  btn-sm font-bold px-8 bg-btn-wallet py-3 cursor-pointer"
+        className="bg-btn-wallet btn-sm cursor-pointer rounded-[18px] px-8 py-3 font-bold"
       >
         <span>Connect</span>
       </label>
@@ -92,13 +92,13 @@ const ConnectModal = () => {
             <label
               onClick={() => setIsBurnerWallet(false)}
               htmlFor="connect-modal"
-              className="btn btn-ghost btn-sm btn-circle cursor-pointer"
+              className="btn btn-circle btn-ghost btn-sm cursor-pointer"
             >
               ✕
             </label>
           </div>
-          <div className="flex flex-col flex-1 lg:grid">
-            <div className="flex flex-col gap-4 w-full px-8 py-10">
+          <div className="flex flex-1 flex-col lg:grid">
+            <div className="flex w-full flex-col gap-4 px-8 py-10">
               {!isBurnerWallet ? (
                 connectors.map((connector, index) => (
                   <Wallet
@@ -109,15 +109,15 @@ const ConnectModal = () => {
                   />
                 ))
               ) : (
-                <div className="flex flex-col pb-[20px] justify-end gap-3">
-                  <div className="h-[300px] overflow-y-auto flex w-full flex-col gap-2">
+                <div className="flex flex-col justify-end gap-3 pb-[20px]">
+                  <div className="flex h-[300px] w-full flex-col gap-2 overflow-y-auto">
                     {burnerAccounts.map((burnerAcc, ix) => (
                       <div
                         key={burnerAcc.publicKey}
-                        className="w-full flex flex-col"
+                        className="flex w-full flex-col"
                       >
                         <button
-                          className={`hover:bg-gradient-modal border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4 ${isDarkMode ? "border-[#385183]" : ""}`}
+                          className={`hover:bg-gradient-modal flex items-center gap-4 rounded-md border py-[8px] pl-[10px] pr-16 text-neutral ${isDarkMode ? "border-[#385183]" : ""}`}
                           onClick={(e) => handleConnectBurner(e, ix)}
                         >
                           <BlockieAvatar

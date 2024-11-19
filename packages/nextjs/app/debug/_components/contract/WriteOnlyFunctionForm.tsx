@@ -135,13 +135,13 @@ export const WriteOnlyFunctionForm = ({
   })();
 
   return (
-    <div className="py-5 space-y-3 first:pt-0 last:pb-1">
+    <div className="space-y-3 py-5 first:pt-0 last:pb-1">
       <div
         className={`flex gap-3 ${
-          zeroInputs ? "flex-row justify-between items-center" : "flex-col"
+          zeroInputs ? "flex-row items-center justify-between" : "flex-col"
         }`}
       >
-        <p className="font-medium my-0 break-words text-function">
+        <p className="text-function my-0 break-words font-medium">
           {abiFunction.name}
           {/* <InheritanceTooltip inheritedFrom={undefined} /> */}
         </p>
@@ -157,12 +157,12 @@ export const WriteOnlyFunctionForm = ({
           <div
             className={`flex ${
               !!errorMsg &&
-              "tooltip before:content-[attr(data-tip)] before:right-[-10px] before:left-auto before:transform-none"
+              "tooltip before:left-auto before:right-[-10px] before:transform-none before:content-[attr(data-tip)]"
             }`}
             data-tip={`${errorMsg}`}
           >
             <button
-              className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
+              className="bg-gradient-dark btn btn-sm border-none text-white shadow-none"
               disabled={writeDisabled || !!formErrorMessage || isLoading}
               onClick={handleWrite}
             >

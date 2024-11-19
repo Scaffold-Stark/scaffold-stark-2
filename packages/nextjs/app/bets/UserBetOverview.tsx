@@ -41,19 +41,19 @@ function UserBetOverview({ bet }: { bet: any }) {
   });
 
   return (
-    <div className="w-full h-full">
-      <Card className="shadow-md rounded-lg p-4 flex flex-col justify-between">
+    <div className="h-full w-full">
+      <Card className="flex flex-col justify-between rounded-lg p-4 shadow-md">
         <div>
-          <h3 className="text-lg font-bold mb-2">{bet.name}</h3>
-          <p className="text-gray-500 mb-2">
+          <h3 className="mb-2 text-lg font-bold">{bet.name}</h3>
+          <p className="mb-2 text-gray-500">
             {shortString.decodeShortString(bet.category)}
           </p>
-          <p className="text-gray-500 mb-2">
+          <p className="mb-2 text-gray-500">
             Bet amount :{" "}
             {parseFloat(formatUnits(bet?.amount || "0")).toFixed(4)} ETH
           </p>
           <p
-            className={`${bet.is_yes ? "text-primary" : "text-destructive"} font-bold mb-2`}
+            className={`${bet.is_yes ? "text-primary" : "text-destructive"} mb-2 font-bold`}
           >
             Your choice : {bet.is_yes ? "Yes" : "No"}
           </p>
@@ -68,7 +68,7 @@ function UserBetOverview({ bet }: { bet: any }) {
             Claim Rewards
           </Button>
         ) : bet.is_bet_ended && bet.has_claimed ? (
-          <Badge variant={"secondary"} className="text-center h-10">
+          <Badge variant={"secondary"} className="h-10 text-center">
             Claimed!
           </Badge>
         ) : (

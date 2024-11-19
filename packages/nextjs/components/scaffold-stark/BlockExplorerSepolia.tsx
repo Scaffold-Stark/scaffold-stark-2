@@ -40,7 +40,7 @@ export const BlockExplorerSepolia = () => {
     <div>
       <label
         htmlFor="sepolia-blockexplorer-modal"
-        className="btn btn-sm font-normal gap-1 border border-[#32BAC4] shadow-none"
+        className="btn btn-sm gap-1 border border-[#32BAC4] font-normal shadow-none"
       >
         <MagnifyingGlassIcon className="h-4 w-4 text-[#32BAC4]" />
         <span>Block Explorer</span>
@@ -56,7 +56,7 @@ export const BlockExplorerSepolia = () => {
             <h3 className="text-xl font-bold">Sepolia Block Explorers</h3>
             <label
               htmlFor="sepolia-blockexplorer-modal"
-              className="btn btn-ghost btn-sm btn-circle"
+              className="btn btn-circle btn-ghost btn-sm"
             >
               ✕
             </label>
@@ -68,10 +68,10 @@ export const BlockExplorerSepolia = () => {
                   <a
                     href={blockexplorer.link}
                     target="_blank"
-                    className={`h-12 flex items-center btn-sm px-6 gap-4 rounded-[4px] transition-all modal-border ${isDarkMode ? "hover:bg-[#385183]" : "hover:bg-slate-200"} border `}
+                    className={`modal-border btn-sm flex h-12 items-center gap-4 rounded-[4px] px-6 transition-all ${isDarkMode ? "hover:bg-[#385183]" : "hover:bg-slate-200"} border`}
                     key={id}
                   >
-                    <div className="flex relative w-6 h-6">
+                    <div className="relative flex h-6 w-6">
                       <Image
                         alt="Starknet Developers Hub"
                         className="cursor-pointer"
@@ -79,7 +79,7 @@ export const BlockExplorerSepolia = () => {
                         src={blockexplorer.img}
                       />
                     </div>
-                    <p className="text-sm m-0">{blockexplorer.name}</p>
+                    <p className="m-0 text-sm">{blockexplorer.name}</p>
                   </a>
                 ))}
             </div>

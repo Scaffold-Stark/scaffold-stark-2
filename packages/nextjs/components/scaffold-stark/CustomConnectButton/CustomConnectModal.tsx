@@ -78,21 +78,21 @@ const CustomConnectModal = () => {
       isOpen={isOpen}
       onClose={closeModal}
       animate={animate}
-      className={`w-[90vw] mx-auto md:max-h-[30rem] md:max-w-[25rem] bg-background border border-border pb-4`}
+      className={`mx-auto w-[90vw] border border-border bg-background pb-4 md:max-h-[30rem] md:max-w-[25rem]`}
     >
-      <div className="flex p-4 w-full lg:p-0 ">
-        <div className="basis-5/6 lg:col-span-2   lg:py-4 lg:pl-8">
-          <h2 className="text-center my-4 lg:text-start font-bold text-base-100 text-[1.125em]">
+      <div className="flex w-full p-4 lg:p-0">
+        <div className="basis-5/6 lg:col-span-2 lg:py-4 lg:pl-8">
+          <h2 className="my-4 text-center text-[1.125em] font-bold text-base-100 lg:text-start">
             Connect a Wallet
           </h2>
         </div>
-        <div className="ml-auto lg:col-span-3 lg:py-4 lg:pr-8 text-base-100 self-center">
+        <div className="ml-auto self-center text-base-100 lg:col-span-3 lg:py-4 lg:pr-8">
           <button
             onClick={(e) => {
               closeModal(e);
               e.stopPropagation();
             }}
-            className="w-8 h-8  grid place-content-center rounded-full  text-base-100"
+            className="grid h-8 w-8 place-content-center rounded-full text-base-100"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -108,10 +108,10 @@ const CustomConnectModal = () => {
           </button>
         </div>
       </div>
-      <div className="flex flex-col flex-1 justify-between  ">
-        <div className="px-8 lg:h-full lg:col-span-2  ">
+      <div className="flex flex-1 flex-col justify-between">
+        <div className="px-8 lg:col-span-2 lg:h-full">
           {/*  <h4 className="mb-[1rem] text-base-100 font-semibold">Popular</h4> */}
-          <div className="flex flex-col gap-4 ">
+          <div className="flex flex-col gap-4">
             {connectors.map((connector, index) => (
               <Wallet
                 key={connector.id || index}
@@ -122,20 +122,20 @@ const CustomConnectModal = () => {
             ))}
           </div>
         </div>
-        <div className=" h-fit lg:h-full lg:border-none lg:col-span-3 lg:px-8 lg:py-0 lg:flex lg:flex-col pb-[20px]">
+        <div className="h-fit pb-[20px] lg:col-span-3 lg:flex lg:h-full lg:flex-col lg:border-none lg:px-8 lg:py-0">
           {isBurnerWallet ? (
             <>
-              <div className="text-base-100 font-medium">
+              <div className="font-medium text-base-100">
                 <h4>Choose account</h4>
               </div>
-              <div className="flex flex-col pb-[20px] items-center justify-end gap-3">
-                <div className="h-[300px] overflow-y-auto flex w-full flex-col gap-2">
+              <div className="flex flex-col items-center justify-end gap-3 pb-[20px]">
+                <div className="flex h-[300px] w-full flex-col gap-2 overflow-y-auto">
                   {burnerAccounts.map((burnerAcc, ix) => (
                     // eslint-disable-next-line react/jsx-key
-                    <div className="w-full flex flex-col">
+                    <div className="flex w-full flex-col">
                       <button
                         key={burnerAcc.publicKey}
-                        className=" border-2 border-primary-content rounded-md text-base-100 hover:bg-primary-content py-[4px] pl-[10px] flex"
+                        className="flex rounded-md border-2 border-primary-content py-[4px] pl-[10px] text-base-100 hover:bg-primary-content"
                         onClick={(e) => handleConnectBurner(e, ix)}
                       >
                         {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}

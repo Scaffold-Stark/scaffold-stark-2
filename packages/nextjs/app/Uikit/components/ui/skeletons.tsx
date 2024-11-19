@@ -1,8 +1,8 @@
 export const SkeletonShort = () => {
   return (
-    <div className="animate-pulse flex space-x-4">
+    <div className="flex animate-pulse space-x-4">
       <div className="flex items-center space-y-6">
-        <div className="h-3 w-28 bg-slate-300 rounded"></div>
+        <div className="h-3 w-28 rounded bg-slate-300"></div>
       </div>
     </div>
   );
@@ -10,9 +10,9 @@ export const SkeletonShort = () => {
 
 export const SkeletonLong = () => {
   return (
-    <div className="animate-pulse flex space-x-4">
-      <div className="flex items-center space-y-6 w-full">
-        <div className="h-8 w-full bg-slate-300 rounded"></div>
+    <div className="flex animate-pulse space-x-4">
+      <div className="flex w-full items-center space-y-6">
+        <div className="h-8 w-full rounded bg-slate-300"></div>
       </div>
     </div>
   );
@@ -20,9 +20,9 @@ export const SkeletonLong = () => {
 
 export const SkeletonHeader = () => {
   return (
-    <div className="animate-pulse flex space-x-4 h-full">
-      <div className="flex items-center space-y-6 w-full">
-        <div className="h-full w-full bg-slate-300 rounded"></div>
+    <div className="flex h-full animate-pulse space-x-4">
+      <div className="flex w-full items-center space-y-6">
+        <div className="h-full w-full rounded bg-slate-300"></div>
       </div>
     </div>
   );

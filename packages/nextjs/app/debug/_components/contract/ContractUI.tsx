@@ -58,7 +58,7 @@ export const ContractUI = ({
 
   if (!deployedContractData) {
     return (
-      <p className="text-3xl mt-14">
+      <p className="mt-14 text-3xl">
         {`No contract found by the name of "${contractName}" on chain "${targetNetwork.name}"!`}
       </p>
     );
@@ -66,11 +66,11 @@ export const ContractUI = ({
 
   return (
     <div
-      className={`grid grid-cols-1 lg:grid-cols-6 px-6 lg:px-10 lg:gap-12 w-full max-w-7xl my-0 ${className}`}
+      className={`my-0 grid w-full max-w-7xl grid-cols-1 px-6 lg:grid-cols-6 lg:gap-12 lg:px-10 ${className}`}
     >
-      <div className="col-span-5 grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
+      <div className="col-span-5 grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-10">
         <div className="col-span-1 flex flex-col">
-          <div className="bg-transparent border-gradient rounded-[5px] px-6 lg:px-8 mb-6 space-y-1 py-4">
+          <div className="border-gradient mb-6 space-y-1 rounded-[5px] bg-transparent px-6 py-4 lg:px-8">
             <div className="flex">
               <div className="flex flex-col gap-1">
                 <span className="font-bold">{contractName}</span>
@@ -79,11 +79,11 @@ export const ContractUI = ({
                   classHash={deployedContractData.classHash}
                   size="xs"
                 />
-                <div className="flex gap-1 items-center">
-                  <span className="font-bold text-sm">Balance:</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-sm font-bold">Balance:</span>
                   <Balance
                     address={deployedContractData.address}
-                    className="px-0 h-1.5 min-h-[0.375rem] text-network"
+                    className="text-network h-1.5 min-h-[0.375rem] px-0"
                   />
                 </div>
               </div>
@@ -95,7 +95,7 @@ export const ContractUI = ({
               </p>
             )}
           </div>
-          <div className="bg-transparent border-gradient rounded-[5px] px-6 lg:px-8 py-4">
+          <div className="border-gradient rounded-[5px] bg-transparent px-6 py-4 lg:px-8">
             <ContractVariables // TODO : there is no contract variables on starknet
               refreshDisplayVariables={refreshDisplayVariables}
               deployedContractData={deployedContractData}
@@ -103,12 +103,12 @@ export const ContractUI = ({
           </div>
         </div>
 
-        <div className="col-span-1 lg:col-span-2 flex flex-col gap-6">
-          <div className="tabs tabs-boxed border border-[#8A45FC] rounded-[5px] bg-transparent">
+        <div className="col-span-1 flex flex-col gap-6 lg:col-span-2">
+          <div className="tabs-boxed tabs rounded-[5px] border border-[#8A45FC] bg-transparent">
             {tabs.map((tab) => (
               <a
                 key={tab.id}
-                className={`tab h-10 ${activeTab === tab.id ? "tab-active !bg-[#8A45FC] !rounded-[5px] !text-white" : ""}`}
+                className={`tab h-10 ${activeTab === tab.id ? "tab-active !rounded-[5px] !bg-[#8A45FC] !text-white" : ""}`}
                 onClick={() => setActiveTab(tab.id)}
               >
                 {tab.label}
@@ -116,8 +116,8 @@ export const ContractUI = ({
             ))}
           </div>
           <div className="z-10">
-            <div className="rounded-[5px] border border-[#8A45FC] flex flex-col relative bg-component">
-              <div className="p-5 divide-y divide-secondary">
+            <div className="bg-component relative flex flex-col rounded-[5px] border border-[#8A45FC]">
+              <div className="divide-y divide-secondary p-5">
                 {activeTab === "read" && (
                   <ContractReadMethods
                     deployedContractData={deployedContractData}

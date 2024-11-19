@@ -83,7 +83,7 @@ function ConnectWallets() {
                     className="flex w-full flex-col"
                   >
                     <button
-                      className={`hover:bg-gradient-modal text-neutral flex items-center gap-4 rounded-md border py-[8px] pl-[10px] pr-16 ${isDarkMode ? "border-[#385183]" : ""}`}
+                      className={`hover:bg-gradient-modal flex items-center gap-4 rounded-md border py-[8px] pl-[10px] pr-16 text-neutral ${isDarkMode ? "border-[#385183]" : ""}`}
                       onClick={(e) => handleConnectBurner(e, ix)}
                     >
                       <BlockieAvatar

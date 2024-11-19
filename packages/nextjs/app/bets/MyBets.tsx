@@ -263,7 +263,7 @@ function MyBets() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto shrink-0">
-                <FilterIcon className="w-4 h-4 mr-2" />
+                <FilterIcon className="mr-2 h-4 w-4" />
                 Filter by category
               </Button>
             </DropdownMenuTrigger>
@@ -272,13 +272,13 @@ function MyBets() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 h-56">
+        <div className="grid h-56 grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {Array(3)
             .fill(0)
             .map((_, index) => {
               return (
-                <div key={index} className="w-full h-full">
-                  <Card className="shadow-md rounded-lg p-4 flex flex-col justify-between h-full">
+                <div key={index} className="h-full w-full">
+                  <Card className="flex h-full flex-col justify-between rounded-lg p-4 shadow-md">
                     <div className="h-3/4">
                       <SkeletonHeader />
                     </div>
@@ -297,7 +297,7 @@ function MyBets() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto shrink-0">
-              <FilterIcon className="w-4 h-4 mr-2" />
+              <FilterIcon className="mr-2 h-4 w-4" />
               Filter by category
             </Button>
           </DropdownMenuTrigger>
@@ -325,22 +325,22 @@ function MyBets() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {filteredBets.length === 0 && "No bets with this category."}
         {filteredBets
           .filter((bet) => bet.display === true)
           .map((bet) => {
             return (
               <div key={bet.id}>
-                <Card className="shadow-md rounded-lg p-4 flex flex-col justify-between">
+                <Card className="flex flex-col justify-between rounded-lg p-4 shadow-md">
                   <div>
-                    <h3 className="text-lg font-bold mb-2">{bet.name}</h3>
-                    <p className="text-gray-500 mb-2">{bet.category}</p>
-                    <p className="text-gray-500 mb-2">
+                    <h3 className="mb-2 text-lg font-bold">{bet.name}</h3>
+                    <p className="mb-2 text-gray-500">{bet.category}</p>
+                    <p className="mb-2 text-gray-500">
                       Bet amount : {bet.amount} ETH
                     </p>
                     <p
-                      className={`${bet.choice ? "text-primary" : "text-destructive"} font-bold mb-2`}
+                      className={`${bet.choice ? "text-primary" : "text-destructive"} mb-2 font-bold`}
                     >
                       Your choice : {bet.choice ? "Yes" : "No"}
                     </p>
@@ -357,7 +357,7 @@ function MyBets() {
                     </Button>
                   ) : isDatePassed(bet.betInfos?.end_date || 0n) &&
                     !bet.betInfos?.is_token_price_end_set ? (
-                    <Badge variant={"secondary"} className="text-center h-10">
+                    <Badge variant={"secondary"} className="h-10 text-center">
                       Waiting for results to be set...
                     </Badge>
                   ) : (

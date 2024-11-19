@@ -47,23 +47,23 @@ export const Faucet = () => {
         console.error("⚡️ ~ file: Faucet.tsx:checkChain ~ error", error);
         notification.error(
           <>
-            <p className="font-bold mt-0 mb-1">
+            <p className="mb-1 mt-0 font-bold">
               Cannot connect to local provider
             </p>
             <p className="m-0">
               - Did you forget to run{" "}
-              <code className="italic bg-base-300 text-base font-bold">
+              <code className="bg-base-300 text-base font-bold italic">
                 yarn chain
               </code>{" "}
               ?
             </p>
             <p className="mt-1 break-normal">
               - Or you can change{" "}
-              <code className="italic bg-base-300 text-base font-bold">
+              <code className="bg-base-300 text-base font-bold italic">
                 targetNetwork
               </code>{" "}
               in{" "}
-              <code className="italic bg-base-300 text-base font-bold">
+              <code className="bg-base-300 text-base font-bold italic">
                 scaffold.config.ts
               </code>
             </p>
@@ -104,7 +104,7 @@ export const Faucet = () => {
     <div>
       <label
         htmlFor="faucet-modal"
-        className="btn btn-sm font-normal gap-1 border border-[#32BAC4] shadow-none"
+        className="btn btn-sm gap-1 border border-[#32BAC4] font-normal shadow-none"
       >
         <BanknotesIcon className="h-4 w-4 text-[#32BAC4]" />
         <span>Faucet</span>
@@ -116,7 +116,7 @@ export const Faucet = () => {
             <h3 className="text-xl font-bold">Local Faucet</h3>
             <label
               htmlFor="faucet-modal"
-              className="btn btn-ghost btn-sm btn-circle"
+              className="btn btn-circle btn-ghost btn-sm"
             >
               ✕
             </label>
@@ -134,7 +134,7 @@ export const Faucet = () => {
             />
           </div>
           <button
-            className="h-10 btn cursor-pointer btn-sm px-2 rounded-[4px] bg-btn-wallet border-[#4f4ab7] border hover:bg-[#385183]"
+            className="bg-btn-wallet btn btn-sm h-10 cursor-pointer rounded-[4px] border border-[#4f4ab7] px-2 hover:bg-[#385183]"
             onClick={sendETH}
             disabled={loading}
           >

@@ -26,7 +26,7 @@ export const SwitchTheme = ({ className }: { className?: string }) => {
 
   return (
     <div
-      className={`flex space-x-2 h-5 items-center justify-center text-sm border-l border-neutral px-4 ${className}`}
+      className={`flex h-5 items-center justify-center space-x-2 border-l border-neutral px-4 text-sm ${className}`}
     >
       {
         <label

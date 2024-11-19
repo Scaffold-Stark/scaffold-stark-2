@@ -61,7 +61,7 @@ export const ClassHash = ({
       )}
       {addressCopied ? (
         <CheckCircleIcon
-          className="ml-1.5 text-xl font-normal text-sky-600 h-5 w-5 cursor-pointer"
+          className="ml-1.5 h-5 w-5 cursor-pointer text-xl font-normal text-sky-600"
           aria-hidden="true"
         />
       ) : (
@@ -75,7 +75,7 @@ export const ClassHash = ({
           }}
         >
           <DocumentDuplicateIcon
-            className="ml-1.5 text-xl font-normal text-sky-600 h-5 w-5 cursor-pointer"
+            className="ml-1.5 h-5 w-5 cursor-pointer text-xl font-normal text-sky-600"
             aria-hidden="true"
           />
         </CopyToClipboard>

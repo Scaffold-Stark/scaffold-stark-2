@@ -52,7 +52,7 @@ const Skeleton = ({
       initial="initial"
       animate="animate"
       whileHover="hover"
-      className="flex w-full h-full min-h-[6rem] dark:bg-dot-white/[0.2] bg-dot-black/[0.2] space-y-2 items-end self-center space-x-8"
+      className="dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex h-full min-h-[6rem] w-full items-end space-x-8 space-y-2 self-center"
     >
       {arr.map((_, i) => (
         <motion.div
@@ -61,7 +61,7 @@ const Skeleton = ({
           style={{
             maxHeight: i === 0 ? percentageYes + "%" : percentageNo + "%",
           }}
-          className={`flex flex-row rounded p-3 items-center justify-center space-x-2 w-full h-4 ${i === 0 ? "bg-primary" : "bg-destructive"}`}
+          className={`flex h-4 w-full flex-row items-center justify-center space-x-2 rounded p-3 ${i === 0 ? "bg-primary" : "bg-destructive"}`}
         >
           {i === 0
             ? Math.round(percentageYes) + "%"
@@ -103,7 +103,7 @@ export function BetsOverview() {
           🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
           <span
             className={cn(
-              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`,
+              `animate-gradient inline bg-foreground bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent`,
             )}
           >
             {`Prize Pool ${parseFloat(formatUnits(bitcoinPriceData?.total_amount || "0")).toFixed(4)} ETH`}
@@ -147,7 +147,7 @@ export function BetsOverview() {
           🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
           <span
             className={cn(
-              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`,
+              `animate-gradient inline bg-foreground bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent`,
             )}
           >
             {`Prize Pool ${parseFloat(formatUnits(etherPriceData?.total_amount || "0")).toFixed(4)} ETH`}
@@ -191,7 +191,7 @@ export function BetsOverview() {
           🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
           <span
             className={cn(
-              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`,
+              `animate-gradient inline bg-foreground bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent`,
             )}
           >
             {`Prize Pool ${parseFloat(formatUnits(starkPriceData?.total_amount || "0")).toFixed(4)} ETH`}
@@ -236,7 +236,7 @@ export function BetsOverview() {
           🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
           <span
             className={cn(
-              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`,
+              `animate-gradient inline bg-foreground bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent`,
             )}
           >
             {`Prize Pool 999999 ETH`}
@@ -258,7 +258,7 @@ export function BetsOverview() {
           🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
           <span
             className={cn(
-              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`,
+              `animate-gradient inline bg-foreground bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent`,
             )}
           >
             {`Prize Pool 13490 ETH`}
@@ -280,7 +280,7 @@ export function BetsOverview() {
           🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
           <span
             className={cn(
-              `inline animate-gradient bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent bg-foreground`,
+              `animate-gradient inline bg-foreground bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent`,
             )}
           >
             {`Prize Pool 190 ETH`}

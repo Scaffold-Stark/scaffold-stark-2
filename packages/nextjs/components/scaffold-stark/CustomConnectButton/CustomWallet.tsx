@@ -28,7 +28,7 @@ const CustomWallet = ({
       : (connector.icon as string);
   return (
     <button
-      className={`flex gap-4 items-center text-neutral  rounded-[4px] p-3 transition-all ${isDarkMode ? "hover:bg-[#385183] border-[#4f4ab7]" : "hover:bg-slate-200 border-[#5c4fe5]"} border ${clicked ? "bg-ligth" : ""}`}
+      className={`flex items-center gap-4 rounded-[4px] p-3 text-neutral transition-all ${isDarkMode ? "border-[#4f4ab7] hover:bg-[#385183]" : "border-[#5c4fe5] hover:bg-slate-200"} border ${clicked ? "bg-ligth" : ""}`}
       onClick={(e) => {
         setClicked(true);
         handleConnectWallet(e, connector);
@@ -37,7 +37,7 @@ const CustomWallet = ({
       <div className="h-[2.4rem] w-[2.2rem] rounded-[5px] p-1">
         {isSvg ? (
           <div
-            className="h-full w-full object-cover rounded-[5px]"
+            className="h-full w-full rounded-[5px] object-cover"
             dangerouslySetInnerHTML={{
               __html: connector.icon.light ?? "",
             }}
@@ -49,11 +49,11 @@ const CustomWallet = ({
             src={connector.icon.light!}
             width={70}
             height={70}
-            className="h-full w-full object-cover rounded-[5px]"
+            className="h-full w-full rounded-[5px] object-cover"
           />
         )}
       </div>
-      <span className=" text-start m-0">{connector.name}</span>
+      <span className="m-0 text-start">{connector.name}</span>
     </button>
   );
 };

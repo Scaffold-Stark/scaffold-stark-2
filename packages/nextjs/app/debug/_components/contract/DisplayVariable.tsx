@@ -59,7 +59,7 @@ export const DisplayVariable = ({
     <div className="space-y-1 pb-2">
       <div className="flex items-center">
         <h3
-          className={`font-medium text-lg mb-0 break-all ${isDarkMode ? "text-[#4DB4FF]" : "text-[#7800FF]"}`}
+          className={`mb-0 break-all text-lg font-medium ${isDarkMode ? "text-[#4DB4FF]" : "text-[#7800FF]"}`}
         >
           {abiFunction.name}
         </h3>
@@ -78,11 +78,11 @@ export const DisplayVariable = ({
         </button>
         {/* <InheritanceTooltip inheritedFrom={inheritedFrom} /> */}
       </div>
-      <div className="text-neutral font-medium flex flex-col items-start">
+      <div className="flex flex-col items-start font-medium text-neutral">
         <div>
           <div
-            className={`break-all block transition bg-transparent ${
-              showAnimation ? "bg-warning rounded-sm animate-pulse-fast" : ""
+            className={`block break-all bg-transparent transition ${
+              showAnimation ? "animate-pulse-fast rounded-sm bg-warning" : ""
             }`}
           >
             {displayTxResult(result, false, abiFunction?.outputs)}

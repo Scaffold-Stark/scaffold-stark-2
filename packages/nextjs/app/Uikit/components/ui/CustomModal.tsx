@@ -30,24 +30,24 @@ const ConnectModal = ({
       isOpen={isOpen}
       onClose={closeModal}
       animate={animate}
-      className={`w-[90vw] mx-auto md:max-h-[30rem] md:max-w-[30rem] bg-background border border-border pb-4`}
+      className={`mx-auto w-[90vw] border border-border bg-background pb-4 md:max-h-[30rem] md:max-w-[30rem]`}
     >
-      <div className="flex p-4 w-full lg:p-0 lg:grid lg:grid-cols-5">
+      <div className="flex w-full p-4 lg:grid lg:grid-cols-5 lg:p-0">
         <div
           className="basis-5/6 lg:col-span-2 lg:py-4 lg:pl-8"
           style={{ width: "40rem" }}
         >
-          <h2 className="text-center my-4 lg:text-start font-bold text-base-100 text-[1.125em]">
+          <h2 className="my-4 text-center text-[1.125em] font-bold text-base-100 lg:text-start">
             {title}
           </h2>
         </div>
-        <div className="ml-auto lg:col-span-3 lg:py-4 lg:pr-8 text-base-100">
+        <div className="ml-auto text-base-100 lg:col-span-3 lg:py-4 lg:pr-8">
           <button
             onClick={(e) => {
               closeModal(e);
               e.stopPropagation();
             }}
-            className="w-8 h-8  grid place-content-center rounded-full  text-base-100"
+            className="grid h-8 w-8 place-content-center rounded-full text-base-100"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

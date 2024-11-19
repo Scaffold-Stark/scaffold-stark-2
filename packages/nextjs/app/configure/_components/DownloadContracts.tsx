@@ -69,14 +69,14 @@ export default function DownloadContracts() {
   };
 
   return (
-    <div className="flex flex-col gap-y-6 lg:gap-y-8 py-8 lg:py-12 justify-center items-center">
-      <div className="p-6 px-8 mx-2 border-gradient rounded-[5px] w-full max-w-6xl contract-content">
-        <div className="text-xl mb-2 font-bold">
+    <div className="flex flex-col items-center justify-center gap-y-6 py-8 lg:gap-y-8 lg:py-12">
+      <div className="border-gradient contract-content mx-2 w-full max-w-6xl rounded-[5px] p-6 px-8">
+        <div className="mb-2 text-xl font-bold">
           Fetch Contract Configuration File from Contract Address
         </div>
-        <div className="flex flex-col gap-12 sm:gap-24 sm:flex-row">
+        <div className="flex flex-col gap-12 sm:flex-row sm:gap-24">
           <div className="flex-1">
-            <div className="font-bold my-3 text-lg">Instructions</div>
+            <div className="my-3 text-lg font-bold">Instructions</div>
             <p className="my-2">
               This tool allows you to fetch the ABI of a contract by entering
               its address. It will download a configuration file that can be
@@ -85,7 +85,7 @@ export default function DownloadContracts() {
               file, allowing you to debug in the{" "}
               <code className="text-function">/debug</code> page.
             </p>
-            <ol className="flex flex-col gap-2 list-decimal list-outside my-6 space-y-1 ml-4">
+            <ol className="my-6 ml-4 flex list-outside list-decimal flex-col gap-2 space-y-1">
               <li className="pl-3">
                 Enter the contract address and name within the designated input
                 fields.
@@ -124,32 +124,32 @@ export default function DownloadContracts() {
           </div>
           <div className="flex-1 px-12">
             {targetNetwork && (
-              <div className="my-4 flex text-md flex-col">
-                <div className="w-24 mb-2 font-medium break-words text-function">
+              <div className="text-md my-4 flex flex-col">
+                <div className="text-function mb-2 w-24 break-words font-medium">
                   Network
                 </div>
                 <span>{targetNetwork.name}</span>
               </div>
             )}
-            <div className="flex flex-col my-6">
-              <div className="w-24 mb-2 font-medium break-words text-function">
+            <div className="my-6 flex flex-col">
+              <div className="text-function mb-2 w-24 break-words font-medium">
                 Contract
               </div>
               <input
                 value={symbol}
                 onChange={handleInputChange}
                 list="symbols"
-                className="input bg-input input-ghost rounded-none focus-within:border-transparent focus:outline-none h-[2.2rem] min-h-[2.2rem] px-4 border w-full text-sm placeholder:text-[#9596BF] text-neutral"
+                className="input input-ghost h-[2.2rem] min-h-[2.2rem] w-full rounded-none border bg-input px-4 text-sm text-neutral placeholder:text-[#9596BF] focus-within:border-transparent focus:outline-none"
                 placeholder="Enter contract name"
               />
             </div>
-            <div className="flex flex-col text-accent my-6">
-              <div className="w-24 mb-2 font-medium break-words text-function">
+            <div className="my-6 flex flex-col text-accent">
+              <div className="text-function mb-2 w-24 break-words font-medium">
                 Address
               </div>
               <div className="flex flex-1 gap-4">
                 <input
-                  className="input bg-input input-ghost rounded-none focus-within:border-transparent focus:outline-none h-[2.2rem] min-h-[2.2rem] px-4 border w-full text-sm placeholder:text-[#9596BF] text-neutral"
+                  className="input input-ghost h-[2.2rem] min-h-[2.2rem] w-full rounded-none border bg-input px-4 text-sm text-neutral placeholder:text-[#9596BF] focus-within:border-transparent focus:outline-none"
                   type="text"
                   placeholder="Enter contract address"
                   value={address}
@@ -157,7 +157,7 @@ export default function DownloadContracts() {
                 />
               </div>
               <button
-                className="btn btn-sm mt-12 max-w-56 bg-gradient-nav !text-white shadow-md flex gap-2"
+                className="bg-gradient-nav btn btn-sm mt-12 flex max-w-56 gap-2 !text-white shadow-md"
                 onClick={handleDownload}
               >
                 Download Contract File

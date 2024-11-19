@@ -101,9 +101,7 @@ const config = {
   plugins: [require("tailwindcss-animate"), require("daisyui")],
 
   daisyui: {
-    themes: [
-      
-    ],
+    themes: [],
   },
 } satisfies Config;
 

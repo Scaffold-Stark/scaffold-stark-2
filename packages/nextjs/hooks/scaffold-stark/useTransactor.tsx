@@ -23,14 +23,14 @@ const TxnNotification = ({
   blockExplorerLink?: string;
 }) => {
   return (
-    <div className={`flex flex-col ml-1 cursor-default`}>
+    <div className={`ml-1 flex cursor-default flex-col`}>
       <p className="my-0">{message}</p>
       {blockExplorerLink && blockExplorerLink.length > 0 ? (
         <a
           href={blockExplorerLink}
           target="_blank"
           rel="noreferrer"
-          className="block link text-md"
+          className="text-md link block"
         >
           check out transaction
         </a>

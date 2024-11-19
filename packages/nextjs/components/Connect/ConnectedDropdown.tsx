@@ -145,7 +145,7 @@ function ConnectedDropdown({
 
         <DropdownMenuItem>
           <button
-            className="menu-item text-secondary-content flex items-center gap-3 !rounded-xl"
+            className="menu-item flex items-center gap-3 !rounded-xl text-secondary-content"
             type="button"
             onClick={() => disconnect()}
           >

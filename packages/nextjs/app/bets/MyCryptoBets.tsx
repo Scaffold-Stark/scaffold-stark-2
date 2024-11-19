@@ -59,7 +59,7 @@ function MyCryptoBets() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto shrink-0">
-                <FilterIcon className="w-4 h-4 mr-2" />
+                <FilterIcon className="mr-2 h-4 w-4" />
                 Filter by category
               </Button>
             </DropdownMenuTrigger>
@@ -68,13 +68,13 @@ function MyCryptoBets() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 h-56">
+        <div className="grid h-56 grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {Array(3)
             .fill(0)
             .map((_, index) => {
               return (
-                <div key={index} className="w-full h-full">
-                  <Card className="shadow-md rounded-lg p-4 flex flex-col justify-between h-full">
+                <div key={index} className="h-full w-full">
+                  <Card className="flex h-full flex-col justify-between rounded-lg p-4 shadow-md">
                     <div className="h-3/4">
                       <SkeletonHeader />
                     </div>
@@ -93,7 +93,7 @@ function MyCryptoBets() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto shrink-0">
-              <FilterIcon className="w-4 h-4 mr-2" />
+              <FilterIcon className="mr-2 h-4 w-4" />
               Filter by category
             </Button>
           </DropdownMenuTrigger>
@@ -121,7 +121,7 @@ function MyCryptoBets() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {bets.length === 0 && "No bets ongoing."}
         {bets.map((bet) => {
           return <UserBetOverview bet={bet} key={bet.id} />;

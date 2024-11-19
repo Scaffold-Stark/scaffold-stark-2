@@ -84,7 +84,7 @@ export const AddressInfoDropdown = ({
       <details ref={dropdownRef} className="dropdown dropdown-end leading-3">
         <summary
           tabIndex={0}
-          className="btn bg-transparent btn-sm px-2 py-[0.35rem] dropdown-toggle gap-0 !h-auto border border-[#5c4fe5] "
+          className="dropdown-toggle btn btn-sm !h-auto gap-0 border border-[#5c4fe5] bg-transparent px-2 py-[0.35rem]"
         >
           <div className="hidden [@media(min-width:412px)]:block">
             {getStarknetPFPIfExists(profile?.profilePicture) ? (
@@ -105,21 +105,21 @@ export const AddressInfoDropdown = ({
               : profile?.name ||
                 address?.slice(0, 6) + "..." + address?.slice(-4)}
           </span>
-          <ChevronDownIcon className="h-6 w-4 ml-2 sm:ml-0 sm:block hidden" />
+          <ChevronDownIcon className="ml-2 hidden h-6 w-4 sm:ml-0 sm:block" />
         </summary>
         <ul
           tabIndex={0}
-          className={`dropdown-content menu z-[2] p-2 mt-2 rounded-[5px] gap-1 border border-[#5c4fe5] bg-base-100`}
+          className={`menu dropdown-content z-[2] mt-2 gap-1 rounded-[5px] border border-[#5c4fe5] bg-base-100 p-2`}
         >
           <NetworkOptions hidden={!selectingNetwork} />
           <li className={selectingNetwork ? "hidden" : ""}>
             {addressCopied ? (
-              <div className="btn-sm !rounded-xl flex gap-3 py-3">
+              <div className="btn-sm flex gap-3 !rounded-xl py-3">
                 <CheckCircleIcon
-                  className="text-xl font-normal h-6 w-4 cursor-pointer ml-2 sm:ml-0"
+                  className="ml-2 h-6 w-4 cursor-pointer text-xl font-normal sm:ml-0"
                   aria-hidden="true"
                 />
-                <span className=" whitespace-nowrap">Copy address</span>
+                <span className="whitespace-nowrap">Copy address</span>
               </div>
             ) : (
               <CopyToClipboard
@@ -131,12 +131,12 @@ export const AddressInfoDropdown = ({
                   }, 800);
                 }}
               >
-                <div className="btn-sm !rounded-xl flex gap-3 py-3">
+                <div className="btn-sm flex gap-3 !rounded-xl py-3">
                   <DocumentDuplicateIcon
-                    className="text-xl font-normal h-6 w-4 cursor-pointer ml-2 sm:ml-0"
+                    className="ml-2 h-6 w-4 cursor-pointer text-xl font-normal sm:ml-0"
                     aria-hidden="true"
                   />
-                  <span className=" whitespace-nowrap">Copy address</span>
+                  <span className="whitespace-nowrap">Copy address</span>
                 </div>
               </CopyToClipboard>
             )}
@@ -144,19 +144,19 @@ export const AddressInfoDropdown = ({
           <li className={selectingNetwork ? "hidden" : ""}>
             <label
               htmlFor="qrcode-modal"
-              className="btn-sm !rounded-xl flex gap-3 py-3"
+              className="btn-sm flex gap-3 !rounded-xl py-3"
             >
-              <QrCodeIcon className="h-6 w-4 ml-2 sm:ml-0" />
+              <QrCodeIcon className="ml-2 h-6 w-4 sm:ml-0" />
               <span className="whitespace-nowrap">View QR Code</span>
             </label>
           </li>
           {chain.network != "devnet" ? (
             <li className={selectingNetwork ? "hidden" : ""}>
               <button
-                className="menu-item btn-sm !rounded-xl flex gap-3 py-3"
+                className="menu-item btn-sm flex gap-3 !rounded-xl py-3"
                 type="button"
               >
-                <ArrowTopRightOnSquareIcon className="h-6 w-4 ml-2 sm:ml-0" />
+                <ArrowTopRightOnSquareIcon className="ml-2 h-6 w-4 sm:ml-0" />
                 <a
                   target="_blank"
                   href={blockExplorerAddressLink}
@@ -172,13 +172,13 @@ export const AddressInfoDropdown = ({
           {chain.network == "devnet" ? (
             <li className={selectingNetwork ? "hidden" : ""}>
               <button
-                className="menu-item btn-sm !rounded-xl flex gap-3 py-3"
+                className="menu-item btn-sm flex gap-3 !rounded-xl py-3"
                 type="button"
                 onClick={() => {
                   setShowBurnerAccounts(true);
                 }}
               >
-                <UserCircleIcon className="h-6 w-4 ml-2 sm:ml-0" />
+                <UserCircleIcon className="ml-2 h-6 w-4 sm:ml-0" />
                 <span className="whitespace-nowrap">Switch Account</span>
               </button>
             </li>
@@ -187,17 +187,17 @@ export const AddressInfoDropdown = ({
           {showBurnerAccounts &&
             createPortal(
               <>
-                <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-                  <div className="relative w-auto my-6 mx-auto max-w-5xl">
-                    <div className="border border-[#4f4ab7] rounded-lg shadow-lg relative w-full mx-auto md:max-h-[30rem] md:max-w-[25rem] bg-base-100 outline-none focus:outline-none">
-                      <div className="flex items-start justify-between p-4 pt-8 rounded-t">
-                        <div className="flex justify-center items-center w-11/12">
-                          <h2 className="text-lg text-center text-neutral m-0">
+                <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
+                  <div className="relative mx-auto my-6 w-auto max-w-5xl">
+                    <div className="relative mx-auto w-full rounded-lg border border-[#4f4ab7] bg-base-100 shadow-lg outline-none focus:outline-none md:max-h-[30rem] md:max-w-[25rem]">
+                      <div className="flex items-start justify-between rounded-t p-4 pt-8">
+                        <div className="flex w-11/12 items-center justify-center">
+                          <h2 className="m-0 text-center text-lg text-neutral">
                             Choose Account
                           </h2>
                         </div>
                         <button
-                          className="w-8 h-8 place-content-end rounded-full justify-center items-center flex"
+                          className="flex h-8 w-8 place-content-end items-center justify-center rounded-full"
                           onClick={() => setShowBurnerAccounts(false)}
                         >
                           <svg
@@ -213,16 +213,16 @@ export const AddressInfoDropdown = ({
                           </svg>
                         </button>
                       </div>
-                      <div className="flex flex-col items-center justify-center gap-3 mx-8 pb-10 pt-8">
-                        <div className="h-[300px] overflow-y-auto flex w-full flex-col gap-2">
+                      <div className="mx-8 flex flex-col items-center justify-center gap-3 pb-10 pt-8">
+                        <div className="flex h-[300px] w-full flex-col gap-2 overflow-y-auto">
                           {burnerAccounts.map((burnerAcc, ix) => (
                             // eslint-disable-next-line react/jsx-key
                             <div
                               key={burnerAcc.publicKey}
-                              className="w-full flex flex-col"
+                              className="flex w-full flex-col"
                             >
                               <button
-                                className={`${isDarkMode ? "hover:bg-[#385183] border-[#385183]" : "hover:bg-gradient-light "} border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4`}
+                                className={`${isDarkMode ? "border-[#385183] hover:bg-[#385183]" : "hover:bg-gradient-light"} flex items-center gap-4 rounded-md border py-[8px] pl-[10px] pr-16 text-neutral`}
                                 onClick={(e) => handleConnectBurner(e, ix)}
                               >
                                 <BlockieAvatar
@@ -238,7 +238,7 @@ export const AddressInfoDropdown = ({
                     </div>
                   </div>
                 </div>
-                <div className="backdrop-blur fixed inset-0 z-40"></div>
+                <div className="fixed inset-0 z-40 backdrop-blur"></div>
               </>,
               document.body,
             )}
@@ -260,11 +260,11 @@ export const AddressInfoDropdown = ({
           ) : null} */}
           <li className={selectingNetwork ? "hidden" : ""}>
             <button
-              className="menu-item text-secondary-content btn-sm !rounded-xl flex gap-3 py-3"
+              className="menu-item btn-sm flex gap-3 !rounded-xl py-3 text-secondary-content"
               type="button"
               onClick={() => disconnect()}
             >
-              <ArrowLeftEndOnRectangleIcon className="h-6 w-4 ml-2 sm:ml-0" />{" "}
+              <ArrowLeftEndOnRectangleIcon className="ml-2 h-6 w-4 sm:ml-0" />{" "}
               <span>Disconnect</span>
             </button>
           </li>

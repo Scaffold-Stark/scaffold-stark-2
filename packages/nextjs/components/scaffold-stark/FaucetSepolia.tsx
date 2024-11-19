@@ -53,23 +53,23 @@ export const FaucetSepolia = () => {
         console.error("⚡️ ~ file: Faucet.tsx:checkChain ~ error", error);
         notification.error(
           <>
-            <p className="font-bold mt-0 mb-1">
+            <p className="mb-1 mt-0 font-bold">
               Cannot connect to local provider
             </p>
             <p className="m-0">
               - Did you forget to run{" "}
-              <code className="italic bg-base-300 text-base font-bold">
+              <code className="bg-base-300 text-base font-bold italic">
                 yarn chain
               </code>{" "}
               ?
             </p>
             <p className="mt-1 break-normal">
               - Or you can change{" "}
-              <code className="italic bg-base-300 text-base font-bold">
+              <code className="bg-base-300 text-base font-bold italic">
                 targetNetwork
               </code>{" "}
               in{" "}
-              <code className="italic bg-base-300 text-base font-bold">
+              <code className="bg-base-300 text-base font-bold italic">
                 scaffold.config.ts
               </code>
             </p>
@@ -96,7 +96,7 @@ export const FaucetSepolia = () => {
     <div>
       <label
         htmlFor="faucet-modal"
-        className="btn btn-sm font-normal gap-1 border border-[#32BAC4] shadow-none"
+        className="btn btn-sm gap-1 border border-[#32BAC4] font-normal shadow-none"
       >
         <BanknotesIcon className="h-4 w-4 text-[#32BAC4]" />
         <span>Faucet</span>
@@ -105,15 +105,15 @@ export const FaucetSepolia = () => {
       <GenericModal modalId="faucet-modal">
         <>
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-bold mb-3">Sepolia Faucets</h3>
+            <h3 className="mb-3 text-xl font-bold">Sepolia Faucets</h3>
             <label
               htmlFor="faucet-modal"
-              className="btn btn-ghost btn-sm btn-circle"
+              className="btn btn-circle btn-ghost btn-sm"
             >
               ✕
             </label>
           </div>
-          <p className="text-xs mb-6">
+          <p className="mb-6 text-xs">
             <span className="font-medium underline">Disclaimer:</span>
             <br /> Please note that these external websites are provided for
             your convenience. We do not have control over the content and
@@ -126,10 +126,10 @@ export const FaucetSepolia = () => {
                   <a
                     href={faucet.link}
                     target="_blank"
-                    className={`h-12 flex items-center btn-sm px-6 gap-4 rounded-[4px] transition-all modal-border ${isDarkMode ? "hover:bg-[#385183]" : "hover:bg-slate-200"} border `}
+                    className={`modal-border btn-sm flex h-12 items-center gap-4 rounded-[4px] px-6 transition-all ${isDarkMode ? "hover:bg-[#385183]" : "hover:bg-slate-200"} border`}
                     key={id}
                   >
-                    <div className="flex relative w-6 h-6">
+                    <div className="relative flex h-6 w-6">
                       <Image
                         alt="Starknet Developers Hub"
                         className="cursor-pointer"
@@ -137,7 +137,7 @@ export const FaucetSepolia = () => {
                         src={faucet.img}
                       />
                     </div>
-                    <span className="text-sm m-0">{faucet.name}</span>
+                    <span className="m-0 text-sm">{faucet.name}</span>
                   </a>
                 ))}
             </div>

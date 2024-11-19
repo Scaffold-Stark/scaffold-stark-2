@@ -23,9 +23,9 @@ import ShineBorder from "~~/app/Uikit/components/ui/shine-border";
 
 const SkeletonShort = () => {
   return (
-    <div className="animate-pulse flex space-x-4">
+    <div className="flex animate-pulse space-x-4">
       <div className="flex items-center space-y-6">
-        <div className="h-3 w-28 bg-slate-300 rounded"></div>
+        <div className="h-3 w-28 rounded bg-slate-300"></div>
       </div>
     </div>
   );
@@ -89,22 +89,22 @@ function BitcoinPriceBet({
             </CardContent>
           </Card>
         ) : (
-          <div className="flex items-center justify-center space-x-4  p-4 rounded-lg border">
-            <div className="flex flex-col items-center justify-center w-1/2 p-4 rounded-lg">
-              <h2 className="text-white text-sm">Total Yes</h2>
-              <p className="text-primary text-2xl font-bold">
+          <div className="flex items-center justify-center space-x-4 rounded-lg border p-4">
+            <div className="flex w-1/2 flex-col items-center justify-center rounded-lg p-4">
+              <h2 className="text-sm text-white">Total Yes</h2>
+              <p className="text-2xl font-bold text-primary">
                 {parseFloat(
                   formatUnits(bitcoinPriceData?.total_amount_yes),
                 ).toFixed(4)}
                 &nbsp;ETH
               </p>
             </div>
-            <div className="flex items-center justify-center w-9 h-8 ">
+            <div className="flex h-8 w-9 items-center justify-center">
               <Swords className="text-primary" />
             </div>
-            <div className="flex flex-col items-center justify-center p-4 rounded-lg">
-              <h2 className="text-white text-sm">Total No</h2>
-              <p className="text-destructive text-2xl font-bold">
+            <div className="flex flex-col items-center justify-center rounded-lg p-4">
+              <h2 className="text-sm text-white">Total No</h2>
+              <p className="text-2xl font-bold text-destructive">
                 {parseFloat(
                   formatUnits(bitcoinPriceData?.total_amount_no),
                 ).toFixed(4)}
@@ -116,12 +116,12 @@ function BitcoinPriceBet({
       </div>
 
       <ShineBorder
-        className="text-center text-2xl font-bold capitalize w-full !bg-transparent mt-3"
+        className="mt-3 w-full !bg-transparent text-center text-2xl font-bold capitalize"
         color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
       >
-        <div className="flex flex-col items-center justify-center p-4 rounded-lg">
-          <h2 className="text-white text-sm">Prize Pool</h2>
-          <p className="text-primary text-2xl font-bold">
+        <div className="flex flex-col items-center justify-center rounded-lg p-4">
+          <h2 className="text-sm text-white">Prize Pool</h2>
+          <p className="text-2xl font-bold text-primary">
             {parseFloat(formatUnits(bitcoinPriceData?.total_amount)).toFixed(4)}
             &nbsp;ETH
           </p>
@@ -132,7 +132,7 @@ function BitcoinPriceBet({
         <div className="grid gap-2">
           <div className="flex justify-between">
             <Label htmlFor="bet-amount">Enter Bet Amount</Label>
-            <Label htmlFor="bet-amount" className="text-muted-foreground flex">
+            <Label htmlFor="bet-amount" className="flex text-muted-foreground">
               {`Balance `}&nbsp;
               <Balance address={address as AddressType} />
             </Label>

@@ -73,30 +73,30 @@ export const InfiniteMovingCards = ({
     <div
       ref={containerRef}
       className={cn(
-        "scroller relative z-20  max-w-7xl overflow-hidden  [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]",
+        "scroller relative z-20 max-w-7xl overflow-hidden [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]",
         className,
       )}
     >
       <ul
         ref={scrollerRef}
         className={cn(
-          " flex min-w-full shrink-0 gap-4 py-4 w-max flex-nowrap",
-          start && "animate-scroll ",
+          "flex w-max min-w-full shrink-0 flex-nowrap gap-4 py-4",
+          start && "animate-scroll",
           pauseOnHover && "hover:[animation-play-state:paused]",
         )}
       >
         {items.map((item, idx) => (
           <div
-            className="w-[350px] max-w-full relative rounded-2xl border flex-shrink-0 border-slate-700 md:w-[450px] overflow-hidden  max-h-56"
+            className="relative max-h-56 w-[350px] max-w-full flex-shrink-0 overflow-hidden rounded-2xl border border-slate-700 md:w-[450px]"
             /* tyle={{
               background:
                 "linear-gradient(180deg, var(--slate-800), var(--slate-900)",
             }} */
             key={idx}
           >
-            <div className="flex items-end absolute inset-0 bg-gradient-to-t from-black to-[hsl(var(--primary)/49%)] px-8 py-6 via-black/70">
+            <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black via-black/70 to-[hsl(var(--primary)/49%)] px-8 py-6">
               <blockquote>
-                <span className=" relative z-20 text-lg leading-[1.6] text-gray-100 font-medium">
+                <span className="relative z-20 text-lg font-medium leading-[1.6] text-gray-100">
                   {item.quote}
                 </span>
               </blockquote>

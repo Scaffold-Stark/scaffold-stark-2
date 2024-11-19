@@ -24,7 +24,7 @@ type NotificationOptions = {
 
 const ENUM_STATUSES = {
   success: <CheckCircleIcon className="w-7 text-success" />,
-  loading: <span className="w-6 loading loading-spinner"></span>,
+  loading: <span className="loading loading-spinner w-6"></span>,
   error: <ExclamationCircleIcon className="w-7 text-error" />,
   info: <InformationCircleIcon className="w-7 text-info" />,
   warning: <ExclamationTriangleIcon className="w-7 text-warning" />,
@@ -46,18 +46,17 @@ const Notification = ({
   return toast.custom(
     (t) => (
       <div
-        className={`flex flex-row items-start justify-between max-w-sm rounded-xl shadow-center shadow-accent bg-base-200 p-4 transform-gpu relative transition-all duration-500 ease-in-out space-x-2
-        ${
+        className={`shadow-center relative flex max-w-sm transform-gpu flex-row items-start justify-between space-x-2 rounded-xl bg-base-200 p-4 shadow-accent transition-all duration-500 ease-in-out ${
           position.substring(0, 3) == "top"
             ? `hover:translate-y-1 ${t.visible ? "top-0" : "-top-96"}`
             : `hover:-translate-y-1 ${t.visible ? "bottom-0" : "-bottom-96"}`
         }`}
       >
-        <div className="leading-[0] self-center">
+        <div className="self-center leading-[0]">
           {icon ? icon : ENUM_STATUSES[status]}
         </div>
         <div
-          className={`overflow-x-hidden break-words whitespace-pre-line ${
+          className={`overflow-x-hidden whitespace-pre-line break-words ${
             icon ? "mt-1" : ""
           }`}
         >

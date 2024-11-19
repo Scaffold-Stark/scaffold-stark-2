@@ -50,12 +50,12 @@ export const ArrayInput = ({
 
   return (
     <div>
-      <div className="collapse bg-base-200 pl-4 pt-1.5 pb-2 border-2 border-secondary custom-after">
-        <input type="checkbox" className="min-h-fit peer" />
-        <div className="collapse-title p-0 min-h-fit peer-checked:mb-2 text-primary-content/50">
+      <div className="custom-after collapse border-2 border-secondary bg-base-200 pb-2 pl-4 pt-1.5">
+        <input type="checkbox" className="peer min-h-fit" />
+        <div className="collapse-title min-h-fit p-0 text-primary-content/50 peer-checked:mb-2">
           <p className="m-0 p-0 text-[1rem]">array (length: {arrLength + 1})</p>
         </div>
-        <div className="ml-3 flex-col space-y-4 border-secondary/80 border-l-2 pl-4 collapse-content">
+        <div className="collapse-content ml-3 flex-col space-y-4 border-l-2 border-secondary/80 pl-4">
           {/*  do note here that the "index" are basically array keys */}
           {Object.keys(inputArr).map((index) => {
             return (
@@ -104,12 +104,12 @@ export const ArrayInput = ({
                 }));
                 setArrLength(nextLength);
               }}
-              className="btn  btn-sm shadow-none border border-success text-white"
+              className="btn btn-sm border border-success text-white shadow-none"
             >
               + Add (push)
             </button>
             <button
-              className="btn  btn-sm shadow-none border border-error text-white"
+              className="btn btn-sm border border-error text-white shadow-none"
               onClick={() => {
                 if (arrLength > -1) {
                   const nextInputArr = { ...inputArr };

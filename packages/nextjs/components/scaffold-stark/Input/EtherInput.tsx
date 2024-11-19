@@ -135,7 +135,7 @@ export const EtherInput = ({
       onChange={handleChangeNumber}
       disabled={disabled}
       prefix={
-        <span className="pl-4 mr-2 text-accent self-center">
+        <span className="mr-2 self-center pl-4 text-accent">
           {internalUsdMode ? "$" : "Ξ"}
         </span>
       }
@@ -144,12 +144,12 @@ export const EtherInput = ({
           className={`${
             nativeCurrencyPrice > 0
               ? ""
-              : "tooltip tooltip-secondary before:content-[attr(data-tip)] before:right-[-10px] before:left-auto before:transform-none"
+              : "tooltip tooltip-secondary before:left-auto before:right-[-10px] before:transform-none before:content-[attr(data-tip)]"
           }`}
           data-tip="Unable to fetch price"
         >
           <button
-            className="btn btn-primary h-[2rem] min-h-[2rem] mt-[.1rem]"
+            className="btn btn-primary mt-[.1rem] h-[2rem] min-h-[2rem]"
             onClick={toggleMode}
             disabled={!internalUsdMode && !nativeCurrencyPrice}
           >

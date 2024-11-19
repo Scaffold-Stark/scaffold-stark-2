@@ -77,15 +77,15 @@ export const ReadOnlyFunctionForm = ({
 
   return (
     <div className="flex flex-col gap-3 py-5 first:pt-0 last:pb-1">
-      <p className="font-medium my-0 break-words text-function">
+      <p className="text-function my-0 break-words font-medium">
         {abiFunction.name}
       </p>
       {inputElements}
-      <div className="flex justify-between gap-2 flex-wrap">
-        <div className="flex-grow w-4/5">
+      <div className="flex flex-wrap justify-between gap-2">
+        <div className="w-4/5 flex-grow">
           {data !== null && data !== undefined && (
-            <div className="bg-input text-sm px-4 py-1.5 break-words">
-              <p className="font-bold m-0 mb-1">Result:</p>
+            <div className="break-words bg-input px-4 py-1.5 text-sm">
+              <p className="m-0 mb-1 font-bold">Result:</p>
               <pre className="whitespace-pre-wrap break-words">
                 {displayTxResult(data, false, abiFunction?.outputs)}
               </pre>
@@ -96,12 +96,12 @@ export const ReadOnlyFunctionForm = ({
         <div
           className={`flex ${
             formErrorMessage &&
-            "tooltip before:content-[attr(data-tip)] before:right-[-10px] before:left-auto before:transform-none"
+            "tooltip before:left-auto before:right-[-10px] before:transform-none before:content-[attr(data-tip)]"
           }`}
           data-tip={`${formErrorMessage}`}
         >
           <button
-            className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
+            className="bg-gradient-dark btn btn-sm border-none text-white shadow-none"
             onClick={handleRead}
             disabled={(inputValue && isFetching) || !!formErrorMessage}
           >

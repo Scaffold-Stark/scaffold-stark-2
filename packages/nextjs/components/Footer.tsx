@@ -30,13 +30,13 @@ export const Footer = () => {
     targetNetwork.network === mainnet.network;
 
   return (
-    <div className="min-h-0 py-5 px-1 mb-11 lg:mb-0 bg-base-100">
+    <div className="mb-11 min-h-0 bg-base-100 px-1 py-5 lg:mb-0">
       <div>
-        <div className="fixed flex justify-between items-center w-full z-10 p-4 bottom-0 left-0 pointer-events-none">
-          <div className="flex flex-col md:flex-row gap-2 pointer-events-auto">
+        <div className="pointer-events-none fixed bottom-0 left-0 z-10 flex w-full items-center justify-between p-4">
+          <div className="pointer-events-auto flex flex-col gap-2 md:flex-row">
             {nativeCurrencyPrice > 0 && (
               <div>
-                <div className="btn btn-sm font-normal gap-1 cursor-auto border border-[#32BAC4] shadow-none">
+                <div className="btn btn-sm cursor-auto gap-1 border border-[#32BAC4] font-normal shadow-none">
                   <CurrencyDollarIcon className="h-4 w-4 text-[#32BAC4]" />
                   <span>{nativeCurrencyPrice}</span>
                 </div>
@@ -61,7 +61,7 @@ export const Footer = () => {
             <Link
               href={"/configure"}
               passHref
-              className="btn btn-sm font-normal gap-1 cursor-pointer border border-[#32BAC4] shadow-none"
+              className="btn btn-sm cursor-pointer gap-1 border border-[#32BAC4] font-normal shadow-none"
             >
               <Cog8ToothIcon className="h-4 w-4 text-[#32BAC4]" />
               <span>Configure Contracts</span>
@@ -71,7 +71,7 @@ export const Footer = () => {
       </div>
       <div className="w-full">
         <ul className="menu menu-horizontal w-full">
-          <div className="flex justify-center items-center gap-2 text-sm w-full">
+          <div className="flex w-full items-center justify-center gap-2 text-sm">
             <div className="text-center">
               <a
                 href="https://github.com/Scaffold-Stark/scaffold-stark-2"

@@ -19,11 +19,11 @@ export const TxReceipt = (
   const [txResultCopied, setTxResultCopied] = useState(false);
 
   return (
-    <div className="flex text-sm rounded-[5px] peer-checked:rounded-b-none min-h-0 bg-input py-0">
+    <div className="flex min-h-0 rounded-[5px] bg-input py-0 text-sm peer-checked:rounded-b-none">
       <div className="mt-1 pl-2">
         {txResultCopied ? (
           <CheckCircleIcon
-            className="ml-1.5 text-xl font-normal text-sky-600 h-5 w-5 cursor-pointer"
+            className="ml-1.5 h-5 w-5 cursor-pointer text-xl font-normal text-sky-600"
             aria-hidden="true"
           />
         ) : (
@@ -37,19 +37,19 @@ export const TxReceipt = (
             }}
           >
             <DocumentDuplicateIcon
-              className="ml-1.5 text-xl font-normal text-sky-600 h-5 w-5 cursor-pointer"
+              className="ml-1.5 h-5 w-5 cursor-pointer text-xl font-normal text-sky-600"
               aria-hidden="true"
             />
           </CopyToClipboard>
         )}
       </div>
-      <div className="flex-wrap collapse collapse-arrow">
-        <input type="checkbox" className="min-h-0 peer" />
-        <div className="collapse-title text-xs min-h-0 py-1.5 pl-1 custom">
+      <div className="collapse collapse-arrow flex-wrap">
+        <input type="checkbox" className="peer min-h-0" />
+        <div className="custom collapse-title min-h-0 py-1.5 pl-1 text-xs">
           <strong>Transaction Receipt</strong>
         </div>
-        <div className="collapse-content overflow-auto bg-transparent rounded-t-none rounded-3xl">
-          <pre className="text-xs pt-4">{displayTxResult(txResult, false)}</pre>
+        <div className="collapse-content overflow-auto rounded-3xl rounded-t-none bg-transparent">
+          <pre className="pt-4 text-xs">{displayTxResult(txResult, false)}</pre>
         </div>
       </div>
     </div>
