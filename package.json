@@ -35,6 +35,7 @@
     "prettier": "^3.2.5"
   },
   "dependencies": {
-    "postcss": "^8.4.38"
+    "postcss": "^8.4.38",
+    "starknetid.js": "^4.0.1"
   }
 }

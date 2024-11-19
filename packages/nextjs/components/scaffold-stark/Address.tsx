@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Address as AddressType } from "@starknet-react/chains";
@@ -51,7 +51,11 @@ export const Address = ({
   const [addressCopied, setAddressCopied] = useState(false);
 
   const { targetNetwork } = useTargetNetwork();
-  const { data: profile } = useConditionalStarkProfile(address);
+  const { data: fetchedProfile } = useConditionalStarkProfile(address);
+
+  useEffect(() => {
+    console.debug({ profile: fetchedProfile });
+  }, [fetchedProfile]);
 
   const checkSumAddress = useMemo(() => {
     if (!address) return undefined;
@@ -94,8 +98,8 @@ export const Address = ({
   let displayAddress =
     checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4);
 
-  if (ens) {
-    displayAddress = ens;
+  if (!!fetchedProfile) {
+    displayAddress = fetchedProfile.name;
   } else if (format === "long") {
     displayAddress = checkSumAddress;
   }
@@ -103,10 +107,10 @@ export const Address = ({
   return (
     <div className="flex items-center">
       <div className="flex-shrink-0">
-        {getStarknetPFPIfExists(profile?.profilePicture) ? (
+        {getStarknetPFPIfExists(fetchedProfile?.profilePicture) ? (
           //eslint-disable-next-line @next/next/no-img-element
           <img
-            src={profile?.profilePicture}
+            src={fetchedProfile?.profilePicture}
             alt="Profile Picture"
             className="rounded-full h-6 w-6"
             width={24}
@@ -122,12 +126,12 @@ export const Address = ({
       </div>
       {disableAddressLink ? (
         <span className={`ml-1.5 text-${size} font-normal`}>
-          {profile?.name || displayAddress}
+          {fetchedProfile?.name || displayAddress}
         </span>
       ) : targetNetwork.network === devnet.network ? (
         <span className={`ml-1.5 text-${size} font-normal`}>
           <Link href={blockExplorerAddressLink}>
-            {profile?.name || displayAddress}
+            {fetchedProfile?.name || displayAddress}
           </Link>
         </span>
       ) : (
@@ -137,7 +141,7 @@ export const Address = ({
           href={blockExplorerAddressLink}
           rel="noopener noreferrer"
         >
-          {profile?.name || displayAddress}
+          {fetchedProfile?.name || displayAddress}
         </a>
       )}
       {addressCopied ? (
