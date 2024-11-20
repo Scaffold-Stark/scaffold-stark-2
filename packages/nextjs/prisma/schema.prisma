@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model bets {
+  id                                   Int                       @id @default(autoincrement())
+  bet_id                               BigInt
+  bet_type                             String                    @db.VarChar(50)
+  name                                 String
+  image                                String?
+  category                             String?
+  description                          String?
+  is_settled                           Boolean
+  is_active                            Boolean
+  deadline                             BigInt
+  vote_deadline                        BigInt
+  total_money_betted                   BigInt
+  yield_strategy_type                  Int                       @db.SmallInt
+  yield_strategy_name                  String?
+  yield_strategy_symbol                String?
+  yield_strategy_address               String?
+  reference_price_key                  String?
+  reference_price                      Decimal?                  @db.Decimal(38, 0)
+  bet_condition                        Int?                      @db.SmallInt
+  bet_token_name                       String
+  bet_token_address                    String
+  outcome_yes_name                     String
+  outcome_yes_bought_amount            BigInt
+  outcome_yes_bought_amount_with_yield BigInt
+  outcome_no_name                      String
+  outcome_no_bought_amount             BigInt
+  outcome_no_bought_amount_with_yield  BigInt
+  winner_outcome                       String?
+  cursor                               Unsupported("int8range")? @map("_cursor")
+}

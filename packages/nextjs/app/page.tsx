@@ -13,8 +13,14 @@ import { CryptoBetsOverview } from "./CryptoBetsOverview";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
 import { Button } from "./Uikit/components/ui/button";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
+import { useQuery } from "@tanstack/react-query";
 
 function Home() {
+  const { isPending, error, data } = useQuery({
+    queryKey: ["bets"],
+    queryFn: () => fetch("/api/bets").then((res) => res.json()),
+  });
+
   const items: {
     quote: string;
     image?: React.ReactNode;
@@ -143,7 +149,7 @@ function Home() {
       console.error("Transaction failed:", error);
     }
   };
-  console.log("GREEREE", greeting);
+
   return (
     <>
       <InfiniteMovingCards
