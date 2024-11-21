@@ -1,5 +1,10 @@
-import * as chains from "@starknet-react/chains";
 import scaffoldConfig from "~~/scaffold.config";
+import { devnet, sepolia, mainnet, Chain } from "@starknet-react/chains";
+export const chains = {
+  devnet,
+  sepolia,
+  mainnet,
+};
 
 type ChainAttributes = {
   // color | [lightThemeColor, darkThemeColor]
@@ -7,7 +12,7 @@ type ChainAttributes = {
   nativeCurrencyTokenAddress?: string;
 };
 
-export type ChainWithAttributes = chains.Chain & Partial<ChainAttributes>;
+export type ChainWithAttributes = Chain & Partial<ChainAttributes>;
 
 export const NETWORKS_EXTRA_DATA: Record<string, ChainAttributes> = {
   [chains.devnet.network]: {
@@ -50,10 +55,7 @@ export function getBlockExplorerTxLink(network: string, txnHash: string) {
  * Gives the block explorer URL for a given address.
  * Defaults to Etherscan if no (wagmi) block explorer is configured for the network.
  */
-export function getBlockExplorerAddressLink(
-  network: chains.Chain,
-  address: string,
-) {
+export function getBlockExplorerAddressLink(network: Chain, address: string) {
   const blockExplorerBaseURL = network.explorers?.starkscan[0];
   if (network.network === chains.devnet.network) {
     return `/blockexplorer/address/${address}`;
@@ -70,10 +72,7 @@ export function getBlockExplorerAddressLink(
  * Gives the block explorer URL for a given classhash.
  * Defaults to Etherscan if no (wagmi) block explorer is configured for the network.
  */
-export function getBlockExplorerClasshashLink(
-  network: chains.Chain,
-  address: string,
-) {
+export function getBlockExplorerClasshashLink(network: Chain, address: string) {
   const blockExplorerBaseURL = network.explorers?.starkscan[0];
   if (network.network === chains.devnet.network) {
     return `/blockexplorer/class/${address}`;
@@ -86,7 +85,7 @@ export function getBlockExplorerClasshashLink(
   return `${blockExplorerBaseURL}/class/${address}`;
 }
 
-export function getBlockExplorerLink(network: chains.Chain) {
+export function getBlockExplorerLink(network: Chain) {
   switch (network) {
     case chains.mainnet:
       return "https://starkscan.co/";
