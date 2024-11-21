@@ -2257,6 +2257,7 @@ __metadata:
     react-dom: ^18
     react-hot-toast: ^2.4.1
     starknet: 6.12.1
+    starknetid.js: ^4.0.1
     tailwindcss: ^3.3.0
     type-fest: ^4.6.0
     typescript: ^5
@@ -8727,7 +8728,6 @@ __metadata:
     pinst: ^3.0.0
     postcss: ^8.4.38
     prettier: ^3.2.5
-    starknetid.js: ^4.0.1
   languageName: unknown
   linkType: soft
 
