@@ -1,8 +1,8 @@
 # 🏗 Scaffold-Stark
 
 <h4 align="center">
-  <a href="https://www.docs.scaffoldstark.com/">Documentation</a> |
-  <a href="https://www.scaffoldstark.com/">Website</a> |
+  <a href="https://docs.scaffoldstark.com/">Documentation</a> |
+  <a href="https://scaffoldstark.com/">Website</a> |
   <a href="https://scaffold-stark-demo.vercel.app/debug">Demo</a>
 </h4>
 
@@ -11,8 +11,8 @@
 ⚙️ Built using NextJS, Starknet.js, Scarb, Starknet-React, Starknet Foundry and Typescript.
 
 - ✅ **Contract Fast Reload**: Your frontend auto-adapts to your smart contracts as you deploy them.
-- 🪝 [**Custom hooks**](https://www.docs.scaffoldstark.com/hooks/): Collection of React hooks wrapper around [starknet-react](https://starknet-react.com/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://www.docs.scaffoldstark.com/components): Collection of common web3 components to quickly build your frontend.
+- 🪝 [**Custom hooks**](https://docs.scaffoldstark.com/hooks/): Collection of React hooks wrapper around [starknet-react](https://starknet-react.com/) to simplify interactions with smart contracts with typescript autocompletion.
+- 🧱 [**Components**](https://docs.scaffoldstark.com/components): Collection of common web3 components to quickly build your frontend.
 - 🔥 **Burner Wallet & Prefunded Account**: Quickly test your application with a burner wallet and prefunded accounts.
 - 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with Starknet network.
 
@@ -25,7 +25,7 @@ Before you begin, you need to install the following tools:
 - [Node (>= v18.17)](https://nodejs.org/en/download/)
 - Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
 - [Git](https://git-scm.com/downloads)
-- [Rust](https://www.rust-lang.org/tools/install)
+- [Rust](https://rust-lang.org/tools/install)
 - [asdf](https://asdf-vm.com/guide/getting-started.html)
 - [Cairo 1.0 extension for VSCode](https://marketplace.visualstudio.com/items?itemName=starkware.cairo1)
 
@@ -181,7 +181,7 @@ You have to paste the endpoint and body in the API platform and click on the `Se
 
 ## Documentation
 
-Visit our [docs](https://www.docs.scaffoldstark.com/) to learn how to start building with Scaffold-Stark.
+Visit our [docs](https://docs.scaffoldstark.com/) to learn how to start building with Scaffold-Stark.
 
 To know more about its features, check out our [website](https://scaffoldstark.com)
 
