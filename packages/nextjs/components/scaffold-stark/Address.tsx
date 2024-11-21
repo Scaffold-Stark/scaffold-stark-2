@@ -19,6 +19,7 @@ import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
 import { BlockieAvatar } from "~~/components/scaffold-stark/BlockieAvatar";
 import { getStarknetPFPIfExists } from "~~/utils/profile";
 import useConditionalStarkProfile from "~~/hooks/useConditionalStarkProfile";
+import Image from "next/image";
 
 type AddressProps = {
   address?: AddressType;
@@ -46,34 +47,34 @@ export const Address = ({
   format,
   size = "base",
 }: AddressProps) => {
-  const [ens, setEns] = useState<string | null>();
   const [ensAvatar, setEnsAvatar] = useState<string | null>();
   const [addressCopied, setAddressCopied] = useState(false);
+  const [isUseBlockie, setIsUseBlockie] = useState(false);
 
   const { targetNetwork } = useTargetNetwork();
   const { data: fetchedProfile } = useConditionalStarkProfile(address);
-
-  useEffect(() => {
-    console.debug({ profile: fetchedProfile });
-  }, [fetchedProfile]);
 
   const checkSumAddress = useMemo(() => {
     if (!address) return undefined;
     return getChecksumAddress(address);
   }, [address]);
 
-  //   const checkSumAddress = address ? address : undefined;
+  const blockExplorerAddressLink = getBlockExplorerAddressLink(
+    targetNetwork,
+    checkSumAddress || address || "",
+  );
 
-  // TODO add starkprofile | not working on devnet now
-  //const { data: fetchedProfile } = useStarkProfile({ address });
+  const [displayAddress, setDisplayAddress] = useState(
+    checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4),
+  );
 
-  // We need to apply this pattern to avoid Hydration errors.
-  // useEffect(() => {
-  //   if (fetchedProfile) {
-  //     setEns(fetchedProfile.name);
-  //     setEnsAvatar(fetchedProfile.profilePicture);
-  //   }
-  // }, [fetchedProfile]);
+  useEffect(() => {
+    if (!!fetchedProfile) {
+      setDisplayAddress(fetchedProfile.name || "");
+    } else if (format === "long") {
+      setDisplayAddress(checkSumAddress || address || "");
+    }
+  }, [fetchedProfile, checkSumAddress, address, format]);
 
   // Skeleton UI
   if (!checkSumAddress) {
@@ -91,36 +92,26 @@ export const Address = ({
     return <span className="text-error">Wrong address</span>;
   }
 
-  const blockExplorerAddressLink = getBlockExplorerAddressLink(
-    targetNetwork,
-    checkSumAddress,
-  );
-  let displayAddress =
-    checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4);
-
-  if (!!fetchedProfile) {
-    displayAddress = fetchedProfile.name;
-  } else if (format === "long") {
-    displayAddress = checkSumAddress;
-  }
-
   return (
     <div className="flex items-center">
       <div className="flex-shrink-0">
-        {getStarknetPFPIfExists(fetchedProfile?.profilePicture) ? (
-          //eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={fetchedProfile?.profilePicture}
-            alt="Profile Picture"
-            className="rounded-full h-6 w-6"
-            width={24}
-            height={24}
-          />
-        ) : (
+        {isUseBlockie ? (
           <BlockieAvatar
             address={checkSumAddress}
             ensImage={ensAvatar}
             size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
+          />
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={fetchedProfile?.profilePicture || ""}
+            alt="Profile Picture"
+            className="rounded-full h-6 w-6"
+            width={24}
+            height={24}
+            onError={() => {
+              setIsUseBlockie(true);
+            }}
           />
         )}
       </div>

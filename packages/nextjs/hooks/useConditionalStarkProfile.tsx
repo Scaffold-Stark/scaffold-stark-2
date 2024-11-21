@@ -6,36 +6,38 @@ import {
 import * as chains from "@starknet-react/chains";
 import scaffoldConfig from "~~/scaffold.config";
 import { useEffect, useMemo, useState } from "react";
-import { constants, Provider, StarkProfile } from "starknet";
+import { constants, Provider, RpcProvider, StarkProfile } from "starknet";
 import { StarknetIdNavigator } from "starknetid.js";
+import { useTargetNetwork } from "./scaffold-stark/useTargetNetwork";
 
+// this hook is a workaround, basically a re-implement of the starknet react hook with conditional rendering.
 const useConditionalStarkProfile = (address: chains.Address | undefined) => {
   const shouldUseProfile =
     scaffoldConfig.targetNetworks[0].id !== chains.devnet.id;
 
+  const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState<StarkProfile | undefined>();
+  const { targetNetwork } = useTargetNetwork();
+  const publicNodeUrl = targetNetwork.rpcUrls.public.http[0];
 
-  // Conditional hooks are not recommended, but in this case, it's the best approach to avoid issues on devnet.
-
-  const { provider } = useProvider();
-
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // const profile = shouldUseProfile
-  //   ? // eslint-disable-next-line react-hooks/rules-of-hooks
-  //     useStarkProfile({ address })
-  //   : { data: undefined };
-
-  // const name = useStarkName({ address });
+  const provider = useMemo(() => {
+    return new RpcProvider({
+      nodeUrl: publicNodeUrl,
+    });
+  }, [publicNodeUrl]);
 
   useEffect(() => {
     const wrappedProvider = new StarknetIdNavigator(
       provider as any,
       constants.StarknetChainId.SN_MAIN,
     );
-    if (shouldUseProfile && !!address)
+    if (shouldUseProfile && !!address) {
+      setIsLoading(true);
       wrappedProvider.getStarkProfiles([address]).then((profileData) => {
         if (profileData.length > 0) setProfile(profileData[0]);
+        setIsLoading(false);
       });
+    }
   }, [address, provider, shouldUseProfile]);
 
   useEffect(() => {
