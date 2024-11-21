@@ -1,5 +1,10 @@
-import * as chains from "@starknet-react/chains";
 import scaffoldConfig from "~~/scaffold.config";
+import { devnet, sepolia, mainnet, Chain } from "@starknet-react/chains";
+export const chains = {
+  devnet,
+  sepolia,
+  mainnet,
+};
 
 type ChainAttributes = {
   // color | [lightThemeColor, darkThemeColor]
@@ -7,7 +12,7 @@ type ChainAttributes = {
   nativeCurrencyTokenAddress?: string;
 };
 
-export type ChainWithAttributes = chains.Chain & Partial<ChainAttributes>;
+export type ChainWithAttributes = Chain & Partial<ChainAttributes>;
 
 export const NETWORKS_EXTRA_DATA: Record<string, ChainAttributes> = {
   [chains.devnet.network]: {
@@ -51,7 +56,7 @@ export function getBlockExplorerTxLink(network: string, txnHash: string) {
  * Defaults to Etherscan if no (wagmi) block explorer is configured for the network.
  */
 export function getBlockExplorerAddressLink(
-  network: chains.Chain,
+  network: Chain,
   address: string,
 ) {
   const blockExplorerBaseURL = network.explorers?.starkscan[0];
@@ -71,7 +76,7 @@ export function getBlockExplorerAddressLink(
  * Defaults to Etherscan if no (wagmi) block explorer is configured for the network.
  */
 export function getBlockExplorerClasshashLink(
-  network: chains.Chain,
+  network: Chain,
   address: string,
 ) {
   const blockExplorerBaseURL = network.explorers?.starkscan[0];
@@ -86,7 +91,7 @@ export function getBlockExplorerClasshashLink(
   return `${blockExplorerBaseURL}/class/${address}`;
 }
 
-export function getBlockExplorerLink(network: chains.Chain) {
+export function getBlockExplorerLink(network: Chain) {
   switch (network) {
     case chains.mainnet:
       return "https://starkscan.co/";
