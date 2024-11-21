@@ -55,10 +55,7 @@ export function getBlockExplorerTxLink(network: string, txnHash: string) {
  * Gives the block explorer URL for a given address.
  * Defaults to Etherscan if no (wagmi) block explorer is configured for the network.
  */
-export function getBlockExplorerAddressLink(
-  network: Chain,
-  address: string,
-) {
+export function getBlockExplorerAddressLink(network: Chain, address: string) {
   const blockExplorerBaseURL = network.explorers?.starkscan[0];
   if (network.network === chains.devnet.network) {
     return `/blockexplorer/address/${address}`;
@@ -75,10 +72,7 @@ export function getBlockExplorerAddressLink(
  * Gives the block explorer URL for a given classhash.
  * Defaults to Etherscan if no (wagmi) block explorer is configured for the network.
  */
-export function getBlockExplorerClasshashLink(
-  network: Chain,
-  address: string,
-) {
+export function getBlockExplorerClasshashLink(network: Chain, address: string) {
   const blockExplorerBaseURL = network.explorers?.starkscan[0];
   if (network.network === chains.devnet.network) {
     return `/blockexplorer/class/${address}`;
