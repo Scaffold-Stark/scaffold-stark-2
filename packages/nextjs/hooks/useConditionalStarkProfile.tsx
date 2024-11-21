@@ -29,7 +29,9 @@ const useConditionalStarkProfile = (address: chains.Address | undefined) => {
   useEffect(() => {
     const wrappedProvider = new StarknetIdNavigator(
       provider as any,
-      constants.StarknetChainId.SN_MAIN,
+      targetNetwork.id === chains.sepolia.id
+        ? constants.StarknetChainId.SN_SEPOLIA
+        : constants.StarknetChainId.SN_MAIN,
     );
     if (shouldUseProfile && !!address) {
       setIsLoading(true);
@@ -38,7 +40,7 @@ const useConditionalStarkProfile = (address: chains.Address | undefined) => {
         setIsLoading(false);
       });
     }
-  }, [address, provider, shouldUseProfile]);
+  }, [address, provider, shouldUseProfile, targetNetwork.id]);
 
   useEffect(() => {
     console.log({ profile, address });
