@@ -9,12 +9,16 @@ import {
   UseScaffoldWriteConfig,
 } from "~~/utils/scaffold-stark/contract";
 import { useSendTransaction, useNetwork, Abi } from "@starknet-react/core";
-import { Contract as StarknetJsContract, InvocationsDetails, Call } from "starknet";
+import {
+  Contract as StarknetJsContract,
+  InvocationsDetails,
+  Call,
+} from "starknet";
 import { notification } from "~~/utils/scaffold-stark";
 import { useTransactor } from "./useTransactor";
 
 function isRawCall(value: Call | any): value is Call {
-  return 'entrypoint' in value
+  return "entrypoint" in value;
 }
 
 export const useScaffoldMultiWriteContract = <
@@ -28,7 +32,9 @@ export const useScaffoldMultiWriteContract = <
   calls,
   options,
 }: {
-  calls: Array<UseScaffoldWriteConfig<TAbi, TContractName, TFunctionName> | Call>;
+  calls: Array<
+    UseScaffoldWriteConfig<TAbi, TContractName, TFunctionName> | Call
+  >;
   options?: InvocationsDetails;
 }) => {
   const { targetNetwork } = useTargetNetwork();
