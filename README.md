@@ -113,13 +113,13 @@ yarn start
 
 Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
 
-5. Check your environment variables. We have a yarn postinstall script that helps to fill in your environment variables. If the environment variable does not exist, you can fill them it manually to get the app running!
+5. Check your environment variables. We have a yarn postinstall script that helps to fill in your environment variables. If the environment variables do not exist, you can fill them manually to get the app running!
 
 ## Quickstart with Sepolia Testnet
 
 <details>
 
-1. Make sure you alredy cloned this repo and installed dependencies.
+1. Make sure you already cloned this repo and installed dependencies.
 
 2. Prepare your environment variables.
 
@@ -174,7 +174,7 @@ You have to paste the endpoint and body in the API platform and click on the `Se
 - Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
 - Edit your deployment scripts in `packages/snfoundry/script-ts/deploy.ts`
 - Edit your smart contract tests in `packages/snfoundry/contracts/src/test`. To run tests use `yarn test`
-- You can write unit tests for your Next.js app! Run them with one the following scripts below.
+- You can write unit tests for your Next.js app! Run them with one of the following scripts below.
   - `yarn test:nextjs` to run regular tests with watch mode
   - `yarn test:nextjs run` to run regular tests without watch mode
   - `yarn test:nextjs run --coverage` to run regular tests without watch mode with coverage
