@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { decodeContractResponse } from "../utilsDisplay";
 import { abi } from "./mock/mockABI";
+import {
+  CairoOption,
+  CairoOptionVariant,
+  CairoResult,
+  CairoResultVariant,
+} from "starknet";
 
 describe("utilsDisplay", () => {
   it("should parse basic integer response successfully", () => {
@@ -248,5 +254,61 @@ describe("utilsDisplay", () => {
     ).toEqual(
       '{"val3":[{"addr":"0x0000000000000000000000000000000000000000000000000000000000000000","val":256},{"addr":"0x05260a965b7152B18D953a68BAbae359E423e083650AFdA2052Eae8F4C22F279","val":128}]}',
     );
+  });
+
+  it("should parse option correctly", () => {
+    expect(
+      decodeContractResponse({
+        resp: new CairoOption(CairoOptionVariant.Some, 123),
+        abi,
+        functionOutputs: [
+          {
+            type: "core::option::Option::<core::integer::u256>",
+          },
+        ],
+        asText: true,
+      }),
+    ).toEqual('{"Some":123}');
+
+    expect(
+      decodeContractResponse({
+        resp: new CairoOption(CairoOptionVariant.None),
+        abi,
+        functionOutputs: [
+          {
+            type: "core::option::Option::<core::integer::u256>",
+          },
+        ],
+        asText: true,
+      }),
+    ).toEqual('{"None":true}');
+  });
+
+  it("should parse result correctly", () => {
+    expect(
+      decodeContractResponse({
+        resp: new CairoResult(CairoResultVariant.Ok, true),
+        abi,
+        functionOutputs: [
+          {
+            type: "core::result::Result::<core::bool, core::integer::u64>",
+          },
+        ],
+        asText: true,
+      }),
+    ).toEqual('{"Ok":true}');
+
+    expect(
+      decodeContractResponse({
+        resp: new CairoResult(CairoResultVariant.Err, 12),
+        abi,
+        functionOutputs: [
+          {
+            type: "core::result::Result::<core::bool, core::integer::u64>",
+          },
+        ],
+        asText: true,
+      }),
+    ).toEqual('{"Err":12}');
   });
 });

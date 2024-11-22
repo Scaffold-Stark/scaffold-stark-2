@@ -210,6 +210,11 @@ const _decodeContractResponseItem = (
     return decoded;
   }
 
+  // option and result are enums but we don't want to process them as enums
+  if (isCairoOption(abiType.name) || isCairoResult(abiType.name)) {
+    return respItem;
+  }
+
   if (abiType.type === "enum") {
     const variant = (respItem as any).variant;
     const variants = abiType.variants;
