@@ -113,7 +113,7 @@ yarn start
 
 Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
 
-5. Check your environment variables. We have a yarn postinstall script that helps to fill in your environment variables. If the environment variables do not exist, you can fill them manually to get the app running!
+5. Check your environment variables. We have a yarn postinstall script that helps to fill in your environment variables. If any environment variables are missing, you can fill them in manually to get the app running!
 
 ## Quickstart with Sepolia Testnet
 
