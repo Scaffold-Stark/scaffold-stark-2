@@ -110,6 +110,7 @@ export const Struct = ({
                       name={`radio-${index}`}
                       className="radio radio-xs radio-secondary"
                       checked={index === activeVariantIndex}
+                      onChange={() => {}}
                       onClick={() => {
                         setActiveVariantIndex(index);
                       }}
