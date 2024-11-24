@@ -211,8 +211,14 @@ const _decodeContractResponseItem = (
   }
 
   // option and result are enums but we don't want to process them as enums
+  // possibly facing name or type that are defined as members of struct or standalone typing
   // we need the fallback so that it does not crash
-  if (isCairoOption(abiType.name || "") || isCairoResult(abiType.name || "")) {
+  if (
+    isCairoOption(abiType.name || "") ||
+    isCairoOption(abiType.type || "") ||
+    isCairoResult(abiType.name || "") ||
+    isCairoResult(abiType.type || "")
+  ) {
     return respItem;
   }
 
