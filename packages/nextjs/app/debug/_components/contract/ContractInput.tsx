@@ -13,6 +13,7 @@ import {
   isCairoArray,
   isCairoBigInt,
   isCairoInt,
+  isCairoOption,
   isCairoResult,
   isCairoTuple,
   isCairoType,
@@ -95,7 +96,7 @@ export const ContractInput = ({
     } else if (
       isCairoType(paramType.type) &&
       !isCairoResult(paramType.type) &&
-      !isCairoResult(paramType.type)
+      !isCairoOption(paramType.type)
     ) {
       return <InputBase {...inputProps} disabled={isDisabled} />;
     } else {
