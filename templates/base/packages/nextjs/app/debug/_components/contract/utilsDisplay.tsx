@@ -1,7 +1,12 @@
 import { getChecksumAddress, Uint256 } from "starknet";
 import { replacer } from "~~/utils/scaffold-stark/common";
 import { AbiOutput } from "~~/utils/scaffold-stark/contract";
-import { parseGenericType } from "~~/utils/scaffold-stark/types";
+import {
+  isCairoArray,
+  isCairoOption,
+  isCairoResult,
+  parseGenericType,
+} from "~~/utils/scaffold-stark/types";
 import { formatEther } from "ethers";
 import { Abi } from "abi-wan-kanabi";
 
@@ -205,6 +210,18 @@ const _decodeContractResponseItem = (
     return decoded;
   }
 
+  // option and result are enums but we don't want to process them as enums
+  // possibly facing name or type that are defined as members of struct or standalone typing
+  // we need the fallback so that it does not crash
+  if (
+    isCairoOption(abiType.name || "") ||
+    isCairoOption(abiType.type || "") ||
+    isCairoResult(abiType.name || "") ||
+    isCairoResult(abiType.type || "")
+  ) {
+    return respItem;
+  }
+
   if (abiType.type === "enum") {
     const variant = (respItem as any).variant;
     const variants = abiType.variants;
@@ -277,9 +294,18 @@ export const displayType = (type: string) => {
   }
 
   // arrays and options
-  else if (type.includes("core::array") || type.includes("core::option")) {
+  else if (isCairoResult(type) || isCairoArray(type) || isCairoOption(type)) {
     const kindOfArray = type.split("::").at(2);
     const parsed = parseGenericType(type);
+
+    // special handling for result since we need to pop both types
+    if (isCairoResult(type)) {
+      const type1 = parsed[0].split("::").pop();
+      const type2 = parsed[1].split("::").pop();
+      return `Result<${type1}, ${type2}>`;
+    }
+
+    // others
     const arrayType = Array.isArray(parsed)
       ? parsed[0].split("::").pop()
       : `(${parsed
