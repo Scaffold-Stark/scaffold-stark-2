@@ -487,4 +487,32 @@ export const abi: any = [
       },
     ],
   },
+  {
+    type: "enum",
+    name: "core::option::Option::<core::integer::u256>",
+    variants: [
+      {
+        name: "Some",
+        type: "core::integer::u256",
+      },
+      {
+        name: "None",
+        type: "()",
+      },
+    ],
+  },
+  {
+    type: "enum",
+    name: "core::result::Result::<core::bool, core::integer::u64>",
+    variants: [
+      {
+        name: "Ok",
+        type: "core::bool",
+      },
+      {
+        name: "Err",
+        type: "core::integer::u64",
+      },
+    ],
+  },
 ];
