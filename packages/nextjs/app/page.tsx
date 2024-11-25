@@ -43,8 +43,8 @@ const Home: NextPage = () => {
               <Image
                 src="/debug-icon.svg"
                 alt="icon"
-                width={25}
-                height={25}
+                width={26}
+                height={30}
               ></Image>
               <p>
                 Tinker with your smart contract using the{" "}
@@ -60,7 +60,7 @@ const Home: NextPage = () => {
                 src="/explorer-icon.svg"
                 alt="icon"
                 width={20}
-                height={20}
+                height={32}
               ></Image>
               <p>
                 Play around with Multiwrite transactions using
