@@ -1,316 +1,109 @@
 "use client";
 
-import React from "react";
-
-import { motion } from "framer-motion";
-import { Bitcoin, ChevronRight } from "lucide-react";
-
-import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
+import React, { useEffect, useState } from "react";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInView } from "react-intersection-observer";
+import { Bet } from "~~/types/bet";
 import {
-  calculatePercentage,
-  formatDate,
-  parseStarkPriceToNumber,
-  parseTokenPriceToNumber,
-} from "~~/utils/scaffold-stark/common";
-import BitcoinPriceBet from "~~/components/Bets/BitcoinPriceBet";
-import { formatUnits } from "ethers";
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "./Uikit/components/ui/alert";
+import { Rocket, Terminal, TriangleAlert } from "lucide-react";
+import BetsOverviewSkeletons, {
+  BetOverviewSkeletons,
+} from "./skeletons/BetsOverviewSkeletons";
+import BetCard from "~~/components/BetCard";
 
-import { title } from "process";
-import { BentoGrid, BentoGridItem } from "./Uikit/components/ui/bento-grid";
-import { cn } from "./Uikit/lib/utils";
-import AnimatedGradientText from "./Uikit/components/ui/animated-text";
-import EtherPriceBet from "~~/components/Bets/EtherPriceBet";
-import StarkPriceBet from "~~/components/Bets/StarkPriceBet";
-
-const Skeleton = ({
-  percentageYes,
-  percentageNo,
-}: {
-  percentageYes: number;
-  percentageNo: number;
-}) => {
-  const variants = {
-    initial: {
-      height: 0,
-    },
-    animate: {
-      height: "100%",
-      transition: {
-        duration: 0.2,
-      },
-    },
-    hover: {
-      height: ["0%", "100%"],
-      transition: {
-        duration: 2,
-      },
-    },
-  };
-  const arr = new Array(2).fill(0);
-  return (
-    <motion.div
-      initial="initial"
-      animate="animate"
-      whileHover="hover"
-      className="dark:bg-dot-white/[0.2] bg-dot-black/[0.2] flex h-full min-h-[6rem] w-full items-end space-x-8 space-y-2 self-center"
-    >
-      {arr.map((_, i) => (
-        <motion.div
-          key={"skelenton-two" + i}
-          variants={variants}
-          style={{
-            maxHeight: i === 0 ? percentageYes + "%" : percentageNo + "%",
-          }}
-          className={`flex h-4 w-full flex-row items-center justify-center space-x-2 rounded p-3 ${i === 0 ? "bg-primary" : "bg-destructive"}`}
-        >
-          {i === 0
-            ? Math.round(percentageYes) + "%"
-            : Math.round(percentageNo) + "%"}
-        </motion.div>
-      ))}
-    </motion.div>
+async function getBets(page: number, itemsPerPage: number = 6) {
+  const res = await fetch(
+    `/api/bets?page=${page}&itemsPerPage=${itemsPerPage}`,
   );
-};
+  if (!res.ok) {
+    throw new Error("Could not fetch bets");
+  }
+  const json = await res.json();
+  return json as Bet[];
+}
 
-export function BetsOverview() {
-  const { data: bitcoinPriceData, isLoading: isLoadingBitcoinPrice } =
-    useScaffoldReadContract({
-      contractName: "BitcoinPrice",
-      functionName: "get_current_bet",
-      args: undefined,
-    });
+function BetsOverview() {
+  const { ref, inView } = useInView({
+    /* Optional options */
+    threshold: 0,
+  });
 
-  const { data: etherPriceData, isLoading: isLoadingEtherPrice } =
-    useScaffoldReadContract({
-      contractName: "EtherPrice",
-      functionName: "get_current_bet",
-      args: undefined,
-    });
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteQuery({
+    queryKey: ["bets"],
+    initialPageParam: 1,
+    queryFn: ({ pageParam }) => getBets(pageParam),
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      if (!(lastPage && lastPage.length > 0)) {
+        return undefined;
+      }
+      return lastPageParam + 1;
+    },
+    getPreviousPageParam: (firstPage, allPages, firstPageParam) => {
+      if (firstPageParam <= 1) {
+        return undefined;
+      }
+      return firstPageParam - 1;
+    },
+  });
 
-  const { data: starkPriceData, isLoading: isLoadingStarkPrice } =
-    useScaffoldReadContract({
-      contractName: "StarkPrice",
-      functionName: "get_current_bet",
-      args: undefined,
-    });
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      void fetchNextPage();
+    }
+  }, [inView]);
 
-  const isLoading =
-    isLoadingBitcoinPrice || isLoadingEtherPrice || isLoadingStarkPrice;
-  const items = [
-    {
-      headerTitle: (
-        <AnimatedGradientText>
-          🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
-          <span
-            className={cn(
-              `animate-gradient inline bg-foreground bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent`,
-            )}
-          >
-            {`Prize Pool ${parseFloat(formatUnits(bitcoinPriceData?.total_amount || "0")).toFixed(4)} ETH`}
-          </span>
-        </AnimatedGradientText>
-      ),
-      title: `Crypto Price Bet`,
-      description: (
-        <span className="text-sm">
-          {`Bitcoin above  ${parseTokenPriceToNumber(
-            bitcoinPriceData?.reference_token_price,
-          )} before ${formatDate(bitcoinPriceData?.end_date)}?`}
-        </span>
-      ),
-      header: (
-        <Skeleton
-          percentageYes={calculatePercentage(
-            bitcoinPriceData?.total_amount_yes,
-            bitcoinPriceData?.total_amount,
-          )}
-          percentageNo={calculatePercentage(
-            bitcoinPriceData?.total_amount_no,
-            bitcoinPriceData?.total_amount,
-          )}
-        />
-      ),
-      className: "md:col-span-1",
-      modelTitle: `Bitcoin above  ${parseTokenPriceToNumber(
-        bitcoinPriceData?.reference_token_price,
-      )} before ${formatDate(bitcoinPriceData?.end_date)}?`,
-      modalContent: (
-        <BitcoinPriceBet
-          bitcoinPriceData={bitcoinPriceData}
-          isLoading={isLoadingBitcoinPrice}
-        />
-      ),
-    },
-    {
-      headerTitle: (
-        <AnimatedGradientText>
-          🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
-          <span
-            className={cn(
-              `animate-gradient inline bg-foreground bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent`,
-            )}
-          >
-            {`Prize Pool ${parseFloat(formatUnits(etherPriceData?.total_amount || "0")).toFixed(4)} ETH`}
-          </span>
-        </AnimatedGradientText>
-      ),
-      title: `Crypto Price Bet`,
-      description: (
-        <span className="text-sm">
-          {`Ether above  ${parseTokenPriceToNumber(
-            etherPriceData?.reference_token_price,
-          )} before ${formatDate(etherPriceData?.end_date)}?`}
-        </span>
-      ),
-      header: (
-        <Skeleton
-          percentageYes={calculatePercentage(
-            etherPriceData?.total_amount_yes,
-            etherPriceData?.total_amount,
-          )}
-          percentageNo={calculatePercentage(
-            etherPriceData?.total_amount_no,
-            etherPriceData?.total_amount,
-          )}
-        />
-      ),
-      className: "md:col-span-1",
-      modelTitle: `ether above  ${parseTokenPriceToNumber(
-        etherPriceData?.reference_token_price,
-      )} before ${formatDate(etherPriceData?.end_date)}?`,
-      modalContent: (
-        <EtherPriceBet
-          etherPriceData={etherPriceData}
-          isLoading={isLoadingEtherPrice}
-        />
-      ),
-    },
-    {
-      headerTitle: (
-        <AnimatedGradientText>
-          🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
-          <span
-            className={cn(
-              `animate-gradient inline bg-foreground bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent`,
-            )}
-          >
-            {`Prize Pool ${parseFloat(formatUnits(starkPriceData?.total_amount || "0")).toFixed(4)} ETH`}
-          </span>
-        </AnimatedGradientText>
-      ),
-      title: `Crypto Price Bet`,
-      description: (
-        <span className="text-sm">
-          {`Stark above  ${parseStarkPriceToNumber(
-            starkPriceData?.reference_token_price,
-          ).toFixed(2)} before ${formatDate(starkPriceData?.end_date)}?`}
-        </span>
-      ),
-      header: (
-        <Skeleton
-          percentageYes={calculatePercentage(
-            starkPriceData?.total_amount_yes,
-            starkPriceData?.total_amount,
-          )}
-          percentageNo={calculatePercentage(
-            starkPriceData?.total_amount_no,
-            starkPriceData?.total_amount,
-          )}
-        />
-      ),
-      className: "md:col-span-1",
-      modelTitle: `Stark above  ${parseStarkPriceToNumber(
-        starkPriceData?.reference_token_price,
-      ).toFixed(2)} before ${formatDate(starkPriceData?.end_date)}?`,
-      modalContent: (
-        <StarkPriceBet
-          starkPriceData={starkPriceData}
-          isLoading={isLoadingStarkPrice}
-        />
-      ),
-    },
-    /* Coming soon bets */
-    {
-      headerTitle: (
-        <AnimatedGradientText>
-          🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
-          <span
-            className={cn(
-              `animate-gradient inline bg-foreground bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent`,
-            )}
-          >
-            {`Prize Pool 999999 ETH`}
-          </span>
-        </AnimatedGradientText>
-      ),
-      title: `Degen Bet`,
-      description: (
-        <span className="text-sm">{`Eli Ben-Sasson president of the SEC ?`}</span>
-      ),
-      header: <Skeleton percentageYes={70} percentageNo={30} />,
-      className: "md:col-span-1",
-      modelTitle: `Eli Ben-Sasson president of the SEC ?`,
-      modalContent: <>Coming soon...</>,
-    },
-    {
-      headerTitle: (
-        <AnimatedGradientText>
-          🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
-          <span
-            className={cn(
-              `animate-gradient inline bg-foreground bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent`,
-            )}
-          >
-            {`Prize Pool 13490 ETH`}
-          </span>
-        </AnimatedGradientText>
-      ),
-      title: `Sport Bet`,
-      description: (
-        <span className="text-sm">{`France winner of the Europa league ?`}</span>
-      ),
-      header: <Skeleton percentageYes={100} percentageNo={0} />,
-      className: "md:col-span-1",
-      modelTitle: `France winner of the Europa league ?`,
-      modalContent: <>Coming soon...</>,
-    },
-    {
-      headerTitle: (
-        <AnimatedGradientText>
-          🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
-          <span
-            className={cn(
-              `animate-gradient inline bg-foreground bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent`,
-            )}
-          >
-            {`Prize Pool 190 ETH`}
-          </span>
-        </AnimatedGradientText>
-      ),
-      title: `Political bet`,
-      description: (
-        <span className="text-sm">{`Donald Trump wins the Presidential Election?`}</span>
-      ),
-      header: <Skeleton percentageYes={45} percentageNo={55} />,
-      className: "md:col-span-1",
-      modelTitle: `Donald Trump wins the Presidential Election?`,
-      modalContent: <>Coming soon...</>,
-    },
-  ];
+  if (status === "pending") return <BetsOverviewSkeletons />;
+  if (status === "error")
+    return (
+      <Alert className="w-2/4">
+        <TriangleAlert className="h-4 w-4" />
+        <AlertTitle>Could not fetch data</AlertTitle>
+        <AlertDescription>Try to reload the page</AlertDescription>
+      </Alert>
+    );
+
   return (
-    <BentoGrid className="mx-auto md:auto-rows-[24rem]" isLoading={isLoading}>
-      {items.map((item, i) => (
-        <BentoGridItem
-          key={i}
-          title={item.title}
-          description={item.description}
-          header={item.header}
-          className={cn("[&>p:text-lg]", item.className)}
-          headerTitle={item.headerTitle}
-          modelTitle={item.modelTitle}
-          modalContent={item.modalContent}
-        />
-      ))}
-    </BentoGrid>
+    <>
+      {data.pages[0].length === 0 ? (
+        <Alert className="w-2/4">
+          <Rocket className="h-4 w-4" />
+          <AlertTitle>No active bets</AlertTitle>
+          <AlertDescription>
+            Exciting betting opportunities are coming your way soon!
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
+      <div className="grid w-full grid-cols-[repeat(auto-fill,_380px)] justify-center gap-8">
+        {data.pages.map((bets, i) => (
+          <React.Fragment key={i}>
+            {bets.map((bet) => (
+              <BetCard key={bet.bet_id} bet={bet} />
+            ))}
+          </React.Fragment>
+        ))}
+
+        {isFetchingNextPage ? (
+          <BetOverviewSkeletons />
+        ) : hasNextPage ? null : (
+          ""
+        )}
+      </div>
+
+      <div ref={ref}></div>
+    </>
   );
 }
+
+export default BetsOverview;

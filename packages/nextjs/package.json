@@ -49,6 +49,7 @@
     "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
+    "react-intersection-observer": "^9.13.1",
     "starknet": "6.12.1",
     "starknet-dev": "npm:starknet@6.7.0",
     "tailwind-merge": "^2.3.0",

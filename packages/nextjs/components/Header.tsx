@@ -114,7 +114,7 @@ export const Header = () => {
   ]);
 
   return (
-    <div className="navbar sticky top-0 z-20 flex h-16 min-h-0 flex-shrink-0 items-center justify-between border-b border-border bg-background px-6 shadow-md lg:static">
+    <div className="navbar sticky top-0 z-30 flex h-16 min-h-0 flex-shrink-0 items-center justify-between border-b border-border bg-background px-6 shadow-md lg:static">
       <div className="flex items-center justify-center">
         <Link href={"/"}>
           <Image
