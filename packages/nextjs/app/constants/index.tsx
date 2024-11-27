@@ -106,3 +106,14 @@ export const BetTokenImage = {
   Eth: "/ethereum-eth-logo.png",
   Usdc: "/usd-coin-usdc-logo.png",
 };
+
+export enum BetType {
+  CRYPTO = "Crypto",
+  SPORTS = "Sports",
+  OTHER = "Other",
+}
+
+export enum PositionType {
+  Yes = "Yes",
+  No = "No",
+}

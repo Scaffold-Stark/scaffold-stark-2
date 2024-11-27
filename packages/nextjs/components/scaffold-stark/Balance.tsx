@@ -100,12 +100,12 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
                   </span>
                 </div>
 
-                <div className="flex">
+                {/*  <div className="flex">
                   <span>{parseFloat(strkFormatted).toFixed(4)}</span>
                   <span className="ml-1 text-[0.8em] font-bold">
                     {strkSymbol}
                   </span>
-                </div>
+                </div> */}
               </div>
             </>
           )}

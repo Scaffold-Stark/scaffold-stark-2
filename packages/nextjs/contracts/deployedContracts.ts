@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     YourContractExportName: {
       address:
-        "0x55dc459537422f2ccbe236fa7ef8f83ead1c6b0040dfe56f7d39ee5910c5cc4",
+        "0x7483316d5a2787d93eebef838bcfe3ec18d5416efcdce501b6ea0cd4e7239f1",
       abi: [
         {
           type: "impl",
@@ -263,7 +263,7 @@ const deployedContracts = {
     },
     BetMaker: {
       address:
-        "0x713c6d6bb2a519aa6ff6252d0177690c96cee45750f7f1e3cc6204b3710562d",
+        "0xf22069fcd71f7f56362e506b0c0efee4dd4da19877fcff378b27b44ab8b4f2",
       abi: [
         {
           type: "impl",
@@ -1001,27 +1001,13 @@ const deployedContracts = {
           variants: [],
         },
         {
-          type: "struct",
-          name: "contracts::BetMaker::CryptoBetCreation",
-          members: [
-            {
-              name: "bet_id",
-              type: "core::integer::u256",
-            },
-            {
-              name: "name",
-              type: "core::byte_array::ByteArray",
-            },
-          ],
-        },
-        {
           type: "event",
           name: "contracts::BetMaker::BetMaker::CryptoBetCreated",
           kind: "struct",
           members: [
             {
               name: "market",
-              type: "contracts::BetMaker::CryptoBetCreation",
+              type: "contracts::BetMaker::CryptoBet",
               kind: "data",
             },
           ],
@@ -1099,7 +1085,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x253b3214e799d0eeb400583312310ea3d5246b99dabeeef571a37a2eace63c3",
+        "0x49352dcacaf227ccef0c4572d612f2b0a36047d0762929e8bb5da8b7ac1cfc9",
     },
   },
 } as const;

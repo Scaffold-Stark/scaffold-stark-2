@@ -1,3 +1,4 @@
+import { useAccount, useNetwork } from "@starknet-react/core";
 import { Button } from "~~/app/Uikit/components/ui/button";
 import { cn } from "~~/app/Uikit/lib/utils";
 import { Bet } from "~~/types/bet";
@@ -6,10 +7,27 @@ import { calculatePercentage } from "~~/utils/scaffold-stark/common";
 import AnimatedGradientText from "~~/app/Uikit/components/ui/animated-text";
 import { formatUnits } from "ethers";
 import Image from "next/image";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { NimboraStrategy } from "~~/types/nimbora";
-import { BetTokenImage } from "~~/app/constants";
+import { BetTokenImage, BetType, PositionType } from "~~/app/constants";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~~/app/Uikit/components/ui/dialog";
+import { Label } from "~~/app/Uikit/components/ui/label";
+import { Input } from "~~/app/Uikit/components/ui/input";
+import ShineBorder from "~~/app/Uikit/components/ui/shine-border";
+import { Swords } from "lucide-react";
+import { Balance } from "./scaffold-stark";
+import { CairoCustomEnum } from "starknet";
+import { useScaffoldMultiWriteContract } from "~~/hooks/scaffold-stark/useScaffoldMultiWriteContract";
+import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 
 const BetStats = ({
   percentageYes,
@@ -62,6 +80,66 @@ const BetStats = ({
 };
 
 function BetCard({ bet }: { bet: Bet }) {
+  const { address, status, chainId, isConnecting, ...props } = useAccount();
+  const [amountEth, setAmountEth] = useState<number | null>(null);
+  const betToken = bet.bet_token_name as "Eth" | "Usdc";
+  const betType = bet.bet_type as keyof typeof BetType;
+  const needConnection = !isConnecting && !address;
+  const { data: betMakerInfos } = useDeployedContractInfo("BetMaker");
+  const betTypeEnum = new CairoCustomEnum({
+    [BetType.CRYPTO]: betType === "CRYPTO" ? "value" : undefined,
+    [BetType.SPORTS]: betType === "SPORTS" ? "value" : undefined,
+    [BetType.OTHER]: betType === "OTHER" ? "value" : undefined,
+  });
+
+  const positionYesTypeEnum = new CairoCustomEnum({
+    [PositionType.Yes]: "value",
+    [PositionType.No]: undefined,
+  });
+
+  const positionNoTypeEnum = new CairoCustomEnum({
+    [PositionType.Yes]: undefined,
+    [PositionType.No]: "value",
+  });
+
+  const { sendAsync: voteYes } = useScaffoldMultiWriteContract({
+    calls: [
+      {
+        contractName: "Eth",
+        functionName: "approve",
+        args: [betMakerInfos?.address, (amountEth ?? 0) * 10 ** 18],
+      },
+      {
+        contractName: "BetMaker",
+        functionName: "create_user_position",
+        args: [
+          BigInt(bet.bet_id),
+          betTypeEnum,
+          positionYesTypeEnum,
+          (amountEth ?? 0) * 10 ** 18,
+        ],
+      },
+    ],
+  });
+  const { sendAsync: voteNo } = useScaffoldMultiWriteContract({
+    calls: [
+      {
+        contractName: "Eth",
+        functionName: "approve",
+        args: [betMakerInfos?.address, (amountEth ?? 0) * 10 ** 18],
+      },
+      {
+        contractName: "BetMaker",
+        functionName: "create_user_position",
+        args: [
+          BigInt(bet.bet_id),
+          betTypeEnum,
+          positionNoTypeEnum,
+          (amountEth ?? 0) * 10 ** 18,
+        ],
+      },
+    ],
+  });
   const isNoLossMarket = useMemo(() => {
     if (bet.yield_strategy_type === 0) return false;
     return true;
@@ -91,7 +169,6 @@ function BetCard({ bet }: { bet: Bet }) {
     return 0;
   }, [bet.yield_strategy_type]);
 
-  const betToken = bet.bet_token_name as "Eth" | "Usdc";
   return (
     <div
       className={cn(
@@ -154,13 +231,136 @@ function BetCard({ bet }: { bet: Bet }) {
           <span className="font-bold">No</span>
         </div>
       </div>
-      <Button
-        variant={"secondary"}
-        className="cursor-pointer"
-        /* onClick={() => setModalOpen(true)} */
-      >
-        Make Your Move
-      </Button>
+
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant={"secondary"} className="cursor-pointer">
+            Make Your Move
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="lg:max-w-2xl">
+          <DialogHeader className="max-w-[29rem] lg:max-w-2xl">
+            <DialogTitle>{bet.name}</DialogTitle>
+            <DialogDescription>{bet.description}</DialogDescription>
+          </DialogHeader>
+          <div className="max-w-[29rem] lg:max-w-2xl">
+            <div>
+              <div className="flex items-center justify-center space-x-4 rounded-lg border p-4">
+                <div className="flex w-1/2 flex-col items-center justify-center rounded-lg p-4">
+                  <h2 className="text-sm text-white">Total Yes</h2>
+                  <p className="text-2xl font-bold text-primary">
+                    {parseFloat(
+                      formatUnits(bet.outcome_yes_bought_amount),
+                    ).toFixed(4)}
+                    &nbsp;{betToken.toUpperCase()}
+                  </p>
+                </div>
+                <div className="flex h-8 w-9 items-center justify-center">
+                  <Swords className="text-primary" />
+                </div>
+                <div className="flex w-1/2 flex-col items-center justify-center rounded-lg p-4">
+                  <h2 className="text-sm text-white">Total No</h2>
+                  <p className="text-2xl font-bold text-destructive">
+                    {parseFloat(
+                      formatUnits(bet.outcome_no_bought_amount),
+                    ).toFixed(4)}
+                    &nbsp;{betToken.toUpperCase()}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {isNoLossMarket ? (
+              <div className="flex space-x-2">
+                <ShineBorder
+                  className="mt-3 w-full !bg-transparent text-center text-2xl font-bold capitalize"
+                  color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+                >
+                  <div className="flex flex-col items-center justify-center rounded-lg p-4">
+                    <h2 className="text-sm text-white">Prize Pool</h2>
+                    <p className="text-2xl font-bold text-primary">
+                      {parseFloat(formatUnits(bet.total_money_betted)).toFixed(
+                        4,
+                      )}
+                      &nbsp;{betToken.toUpperCase()}
+                    </p>
+                  </div>
+                </ShineBorder>
+                <ShineBorder
+                  className="mt-3 w-full !bg-transparent text-center text-2xl font-bold capitalize"
+                  color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+                >
+                  <div className="flex flex-col items-center justify-center rounded-lg p-4">
+                    <h2 className="text-sm text-white">APR</h2>
+                    <p className="text-2xl font-bold text-primary">{"22%"}</p>
+                  </div>
+                </ShineBorder>
+              </div>
+            ) : (
+              <ShineBorder
+                className="mt-3 w-full !bg-transparent text-center text-2xl font-bold capitalize"
+                color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+              >
+                <div className="flex flex-col items-center justify-center rounded-lg p-4">
+                  <h2 className="text-sm text-white">Prize Pool</h2>
+                  <p className="text-2xl font-bold text-primary">
+                    {parseFloat(formatUnits(bet.total_money_betted)).toFixed(4)}
+                    &nbsp;{betToken.toUpperCase()}
+                  </p>
+                </div>
+              </ShineBorder>
+            )}
+            <div className="mt-6 space-y-4">
+              <div className="grid gap-2">
+                <div className="flex justify-between">
+                  <Label htmlFor="bet-amount">Enter Bet Amount</Label>
+                  <Label
+                    htmlFor="bet-amount"
+                    className="flex text-muted-foreground"
+                  >
+                    {needConnection ? (
+                      "Please connect your wallet."
+                    ) : (
+                      <div className="flex items-center justify-center">
+                        {`Balance:`} <Balance address={address} />
+                      </div>
+                    )}
+                  </Label>
+                </div>
+                <Input
+                  id="bet-amount"
+                  type="number"
+                  placeholder={`0,00 ${bet.bet_token_name.toUpperCase()}`}
+                  className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                  value={amountEth ?? undefined}
+                  onChange={(e) => setAmountEth(parseFloat(e.target.value))}
+                />
+              </div>
+              <div className="flex gap-4">
+                <Button
+                  className="flex-1"
+                  disabled={needConnection}
+                  onClick={() => {
+                    voteYes();
+                  }}
+                >
+                  {needConnection ? "Connect Wallet" : "Vote Yes"}
+                </Button>
+                <Button
+                  variant={"destructive"}
+                  disabled={needConnection}
+                  className="flex-1"
+                  onClick={() => {
+                    voteNo();
+                  }}
+                >
+                  {needConnection ? "Connect Wallet" : "Vote No"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
