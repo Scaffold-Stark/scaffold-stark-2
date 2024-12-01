@@ -109,6 +109,24 @@ const deployContract_NotWait = async (payload: {
   }
 };
 
+const findContractFile = (
+  contract: string,
+  fileType: "compiled_contract_class" | "contract_class"
+): string => {
+  const targetDir = path.resolve(__dirname, "../contracts/target/dev");
+  const files = fs.readdirSync(targetDir);
+
+  // Look for files that end with the contract name and file type
+  const pattern = new RegExp(`.*${contract}\\.${fileType}\\.json$`);
+  const matchingFile = files.find((file) => pattern.test(file));
+
+  if (!matchingFile) {
+    throw new Error(`Could not find ${fileType} file for contract ${contract}`);
+  }
+
+  return path.join(targetDir, matchingFile);
+};
+
 /**
  * Deploy a contract using the specified parameters.
  *
@@ -156,28 +174,13 @@ const deployContract = async (
   try {
     compiledContractCasm = JSON.parse(
       fs
-        .readFileSync(
-          path.resolve(
-            __dirname,
-            `../contracts/target/dev/contracts_${contract}.compiled_contract_class.json`
-          )
-        )
+        .readFileSync(findContractFile(contract, "compiled_contract_class"))
         .toString("ascii")
     );
   } catch (error) {
-    if (
-      typeof error.message === "string" &&
-      error.message.includes("no such file") &&
-      error.message.includes("compiled_contract_class")
-    ) {
-      const match = error.message.match(
-        /\/dev\/(.+?)\.compiled_contract_class/
-      );
-      const missingContract = match ? match[1].split("_").pop() : "Unknown";
+    if (error.message.includes("Could not find")) {
       console.error(
-        red(
-          `The contract "${missingContract}" doesn't exist or is not compiled`
-        )
+        red(`The contract "${contract}" doesn't exist or is not compiled`)
       );
     } else {
       console.error(red("Error reading compiled contract class file: "), error);
@@ -191,12 +194,7 @@ const deployContract = async (
   try {
     compiledContractSierra = JSON.parse(
       fs
-        .readFileSync(
-          path.resolve(
-            __dirname,
-            `../contracts/target/dev/contracts_${contract}.contract_class.json`
-          )
-        )
+        .readFileSync(findContractFile(contract, "contract_class"))
         .toString("ascii")
     );
   } catch (error) {
