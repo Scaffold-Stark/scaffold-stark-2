@@ -9,6 +9,7 @@ on:
 
 jobs:
   version-bump-nextjs:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout Source Repository

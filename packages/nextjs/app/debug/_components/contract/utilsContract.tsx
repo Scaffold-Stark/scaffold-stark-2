@@ -1,10 +1,19 @@
-import { cairo, CairoCustomEnum } from "starknet";
+import {
+  cairo,
+  CairoCustomEnum,
+  CairoOption,
+  CairoOptionVariant,
+  CairoResult,
+  CairoResultVariant,
+} from "starknet";
 import {
   isCairoArray,
   isCairoBigInt,
   isCairoBool,
   isCairoFelt,
   isCairoInt,
+  isCairoOption,
+  isCairoResult,
   isCairoTuple,
   isCairoU256,
   parseGenericType,
@@ -101,7 +110,11 @@ export const getArgsAsStringInputFromForm = (form: Record<string, any>) => {
     }
 
     // enum & struct
-    if (key.includes("contracts::")) {
+    if (
+      key.includes("contracts::") ||
+      isCairoResult(key) ||
+      isCairoOption(key)
+    ) {
       type FormStructValue = {
         type: string;
         value: any;
@@ -115,6 +128,56 @@ export const getArgsAsStringInputFromForm = (form: Record<string, any>) => {
         // construct empty enums
         const enumObject = structObject.variant as any;
         const enumVariants = Object.keys(enumObject);
+
+        // check for option
+        if (
+          enumVariants.includes("Some") &&
+          enumVariants.includes("None") &&
+          isCairoOption(key)
+        ) {
+          // for some value we return with the corresponding value
+
+          if ((enumObject.Some as FormStructValue).value !== undefined)
+            return new CairoOption(
+              CairoOptionVariant.Some,
+              _encodeValueFromKey(
+                (enumObject.Some as FormStructValue).type,
+                (enumObject.Some as FormStructValue).value,
+              ),
+            );
+
+          // set to none as default
+          return new CairoOption(CairoOptionVariant.None);
+        }
+
+        // check for result
+        if (
+          enumVariants.includes("Ok") &&
+          enumVariants.includes("Err") &&
+          isCairoResult(key)
+        ) {
+          // for some value we return with the corresponding value
+          if ((enumObject.Ok as FormStructValue).value !== undefined)
+            return new CairoResult(
+              CairoResultVariant.Ok,
+              _encodeValueFromKey(
+                (enumObject.Ok as FormStructValue).type,
+                (enumObject.Ok as FormStructValue).value,
+              ),
+            );
+          else if (
+            typeof (enumObject.Err as FormStructValue).value !== undefined
+          ) {
+            return new CairoResult(
+              CairoResultVariant.Err,
+              _encodeValueFromKey(
+                (enumObject.Err as FormStructValue).type,
+                (enumObject.Err as FormStructValue).value,
+              ),
+            );
+          }
+        }
+
         const restructuredEnum = Object.fromEntries(
           enumVariants.map((variant) => [
             variant,
@@ -126,6 +189,11 @@ export const getArgsAsStringInputFromForm = (form: Record<string, any>) => {
               : undefined,
           ]),
         );
+
+        if (enumVariants.includes("Some") && enumVariants.includes("None")) {
+          console.log("options", { restructuredEnum });
+          console.log("options", "we found an option");
+        }
 
         return new CairoCustomEnum(restructuredEnum);
       }

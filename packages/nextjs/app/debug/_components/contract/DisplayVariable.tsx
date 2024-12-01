@@ -90,7 +90,7 @@ export const DisplayVariable = ({
               abi,
               functionOutputs: abiFunction?.outputs,
               asText: true,
-              showAsString: true,
+              showAsString: false,
             })}
           </div>
         </div>
