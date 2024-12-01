@@ -34,7 +34,7 @@ export function getBlockExplorerTxLink(network: string, txnHash: string) {
   const targetChainArr = chainNames.filter((chainName) => {
     const starknetReactChain = chains[
       chainName as keyof typeof chains
-    ] as chains.Chain;
+    ] as Chain;
     return starknetReactChain.network === network;
   });
 
@@ -55,7 +55,7 @@ export function getBlockExplorerTxLink(network: string, txnHash: string) {
 
 /**
  * Gives the block explorer URL for a given address.
- * Defaults to Etherscan if no (wagmi) block explorer is configured for the network.
+ * Defaults to Starkscan if no block explorer is configured for the network.
  */
 export function getBlockExplorerAddressLink(network: Chain, address: string) {
   const blockExplorerBaseURL = network.explorers?.starkscan[0];
@@ -72,7 +72,7 @@ export function getBlockExplorerAddressLink(network: Chain, address: string) {
 
 /**
  * Gives the block explorer URL for a given classhash.
- * Defaults to Etherscan if no (wagmi) block explorer is configured for the network.
+ * Defaults to Starkscan if no block explorer is configured for the network.
  */
 export function getBlockExplorerClasshashLink(network: Chain, address: string) {
   const blockExplorerBaseURL = network.explorers?.starkscan[0];
