@@ -51,7 +51,7 @@ describe("useScaffoldContract", () => {
     mockUseProvider.mockReturnValue({
       provider: new RpcProvider({
         nodeUrl: "https://mock-rpc-url",
-      })
+      }),
     });
 
     mockedUseAccount.mockReturnValue({

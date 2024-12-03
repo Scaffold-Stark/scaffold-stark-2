@@ -10,7 +10,10 @@ import {
   useNetworkColor,
 } from "~~/hooks/scaffold-stark";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
-import { ContractCodeStatus, ContractName } from "~~/utils/scaffold-stark/contract";
+import {
+  ContractCodeStatus,
+  ContractName,
+} from "~~/utils/scaffold-stark/contract";
 import { ContractVariables } from "./ContractVariables";
 import { ClassHash } from "~~/components/scaffold-stark/ClassHash";
 
@@ -40,8 +43,11 @@ export const ContractUI = ({
     false,
   );
   const { targetNetwork } = useTargetNetwork();
-  const { raw: deployedContractData, isLoading: deployedContractLoading, status } =
-    useDeployedContractInfo(contractName);
+  const {
+    raw: deployedContractData,
+    isLoading: deployedContractLoading,
+    status,
+  } = useDeployedContractInfo(contractName);
 
   const tabs = [
     { id: "read", label: "Read" },

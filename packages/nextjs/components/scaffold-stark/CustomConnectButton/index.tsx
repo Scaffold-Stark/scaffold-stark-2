@@ -25,8 +25,11 @@ export const CustomConnectButton = () => {
   const { chain } = useNetwork();
 
   const blockExplorerAddressLink = useMemo(() => {
-    return accountAddress && getBlockExplorerAddressLink(targetNetwork, accountAddress);
-  }, [accountAddress, targetNetwork])
+    return (
+      accountAddress &&
+      getBlockExplorerAddressLink(targetNetwork, accountAddress)
+    );
+  }, [accountAddress, targetNetwork]);
 
   // effect to get chain id and address from account
   useEffect(() => {

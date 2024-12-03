@@ -3,7 +3,6 @@ import Image from "next/image";
 import { ConnectedAddress } from "~~/components/ConnectedAddress";
 
 const Home = () => {
-
   return (
     <div className="flex items-center flex-col flex-grow pt-10">
       <div className="px-5">

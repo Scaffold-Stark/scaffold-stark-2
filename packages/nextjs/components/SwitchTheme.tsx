@@ -16,7 +16,7 @@ export const SwitchTheme = ({ className }: { className?: string }) => {
   };
 
   const isDarkMode = useMemo(() => {
-    return resolvedTheme === "dark"
+    return resolvedTheme === "dark";
   }, [resolvedTheme]);
 
   return (

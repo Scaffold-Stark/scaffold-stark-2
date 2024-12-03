@@ -61,6 +61,6 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
     data: status === ContractCodeStatus.DEPLOYED ? deployedContract : undefined,
     isLoading: status === ContractCodeStatus.LOADING,
     raw: deployedContract,
-    status
+    status,
   };
 };

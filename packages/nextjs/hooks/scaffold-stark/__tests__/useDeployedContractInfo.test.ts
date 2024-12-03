@@ -577,7 +577,7 @@ describe("useDeployedContractInfo", () => {
     (useProvider as Mock).mockReturnValue({
       provider: new RpcProvider({
         nodeUrl: "https://mock-rpc-url",
-      })
+      }),
     });
   });
 
