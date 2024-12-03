@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useTargetNetwork } from "./useTargetNetwork";
 import { useIsMounted } from "usehooks-ts";
 import {
@@ -7,7 +7,8 @@ import {
   Contract,
   contracts,
 } from "~~/utils/scaffold-stark/contract";
-import { BlockIdentifier, RpcProvider } from "starknet";
+import { BlockIdentifier } from "starknet";
+import { useProvider } from "@starknet-react/core";
 
 export const useDeployedContractInfo = <TContractName extends ContractName>(
   contractName: TContractName,
@@ -20,14 +21,7 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
   const [status, setStatus] = useState<ContractCodeStatus>(
     ContractCodeStatus.LOADING,
   );
-  const publicNodeUrl = targetNetwork.rpcUrls.public.http[0];
-
-  // Use useMemo to memoize the publicClient object
-  const publicClient = useMemo(() => {
-    return new RpcProvider({
-      nodeUrl: publicNodeUrl,
-    });
-  }, [publicNodeUrl]);
+  const { provider: publicClient } = useProvider();
 
   useEffect(() => {
     const checkContractDeployment = async () => {
