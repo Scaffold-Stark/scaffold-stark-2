@@ -36,9 +36,9 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
         return;
       }
 
-      let contractClasHash: string | undefined = undefined;
+      let contractClassHash: string | undefined = undefined;
       try {
-        contractClasHash = await publicClient.getClassHashAt(
+        contractClassHash = await publicClient.getClassHashAt(
           deployedContract.address,
           "pending" as BlockIdentifier,
         );
@@ -53,7 +53,7 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
         return;
       }
       // If contract code is `0x` => no contract deployed on that address
-      if (contractClasHash == undefined) {
+      if (contractClassHash == undefined) {
         setStatus(ContractCodeStatus.NOT_FOUND);
         return;
       }
@@ -66,5 +66,7 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
   return {
     data: status === ContractCodeStatus.DEPLOYED ? deployedContract : undefined,
     isLoading: status === ContractCodeStatus.LOADING,
+    raw: deployedContract,
+    status
   };
 };
