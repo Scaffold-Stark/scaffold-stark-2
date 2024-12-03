@@ -121,7 +121,10 @@ const findContractFile = (
   const matchingFile = files.find((file) => pattern.test(file));
 
   if (!matchingFile) {
-    throw new Error(`Could not find ${fileType} file for contract ${contract}`);
+    throw new Error(
+      `Could not find ${fileType} file for contract "${contract}". ` +
+        `Try removing snfoundry/contracts/target, then run 'yarn compile' and check if your contract name is correct inside the contracts/target/dev directory.`
+    );
   }
 
   return path.join(targetDir, matchingFile);
