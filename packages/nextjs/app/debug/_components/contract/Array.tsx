@@ -18,6 +18,7 @@ type ArrayProps = {
   setParentForm: (form: Record<string, any>) => void;
   parentStateObjectKey: string;
   setFormErrorMessage: Dispatch<SetStateAction<FormErrorMessageState>>;
+  isDisabled?: boolean;
 };
 
 export const ArrayInput = ({
@@ -27,6 +28,7 @@ export const ArrayInput = ({
   parentStateObjectKey,
   abiParameter,
   setFormErrorMessage,
+  isDisabled,
 }: ArrayProps) => {
   // array in object representation
   const [inputArr, setInputArr] = useState<any>({});
@@ -63,6 +65,7 @@ export const ArrayInput = ({
               <ContractInput
                 abi={abi}
                 key={index}
+                isDisabled={isDisabled}
                 setForm={(
                   nextInputRecipe:
                     | Record<string, any>
