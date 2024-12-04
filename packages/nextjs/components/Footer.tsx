@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-
 import { Cog8ToothIcon, CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { useGlobalState } from "~~/services/store/store";
