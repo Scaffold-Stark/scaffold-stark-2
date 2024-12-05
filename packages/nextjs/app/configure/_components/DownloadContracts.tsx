@@ -41,7 +41,7 @@ export default function DownloadContracts() {
       };
       const mergedPredeployedContracts = deepMergeContracts(
         contractData,
-        configExternalContracts
+        configExternalContracts,
       );
 
       generateContractsFile(mergedPredeployedContracts);
@@ -62,7 +62,7 @@ export default function DownloadContracts() {
       {
         parser: "typescript",
         plugins: [parserTypescript, prettierPluginEstree],
-      }
+      },
     );
     const blob = new Blob([configExternalContracts], {
       type: "text/typescript",
