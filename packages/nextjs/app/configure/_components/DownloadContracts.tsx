@@ -1,7 +1,7 @@
 "use client";
 
 import { useProvider } from "@starknet-react/core";
-import React, { useState } from "react";
+import { useCallback, useState } from "react";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import configExternalContracts from "~~/contracts/configExternalContracts";
 import { deepMergeContracts } from "~~/utils/scaffold-stark/contract";
@@ -17,12 +17,8 @@ export default function DownloadContracts() {
 
   const { targetNetwork } = useTargetNetwork();
   const [symbol, setSymbol] = useState<string>("");
-  const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    const value = e.target.value;
-    setSymbol(value);
-  };
 
-  const handleDownload = async () => {
+  const handleDownload = useCallback(async () => {
     if (!address) return;
     try {
       const [apiResponse, classHash] = await Promise.all([
@@ -49,7 +45,7 @@ export default function DownloadContracts() {
       console.error(error);
       return;
     }
-  };
+  }, [address, provider, symbol, targetNetwork.network]);
 
   const generateContractsFile = async (contractsData: Object) => {
     const generatedContractComment = `/**
