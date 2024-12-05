@@ -1,7 +1,7 @@
 "use client";
 
 import { useProvider } from "@starknet-react/core";
-import React, { useState } from "react";
+import { useCallback, useState } from "react";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import configExternalContracts from "~~/contracts/configExternalContracts";
 import { deepMergeContracts } from "~~/utils/scaffold-stark/contract";
@@ -14,12 +14,8 @@ export default function DownloadContracts() {
 
   const { targetNetwork } = useTargetNetwork();
   const [symbol, setSymbol] = useState<string>("");
-  const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    const value = e.target.value;
-    setSymbol(value);
-  };
 
-  const handleDownload = async () => {
+  const handleDownload = useCallback(async () => {
     if (!address) return;
     try {
       const [apiResponse, classHash] = await Promise.all([
@@ -46,7 +42,7 @@ export default function DownloadContracts() {
       console.error(error);
       return;
     }
-  };
+  }, [address, provider, symbol, targetNetwork.network]);
 
   const generateContractsFile = (contractsData: Object) => {
     const generatedContractComment = `/**
@@ -137,7 +133,7 @@ export default function DownloadContracts() {
               </div>
               <input
                 value={symbol}
-                onChange={handleInputChange}
+                onChange={(e) => setSymbol(e.target.value)}
                 list="symbols"
                 className="input bg-input input-ghost rounded-none focus-within:border-transparent focus:outline-none h-[2.2rem] min-h-[2.2rem] px-4 border w-full text-sm placeholder:text-[#9596BF] text-neutral"
                 placeholder="Enter contract name"
