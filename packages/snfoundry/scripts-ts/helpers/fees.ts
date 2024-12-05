@@ -1,14 +1,6 @@
-import {
-  CairoContract,
-  CompiledSierra,
-  Contract,
-  Provider,
-  uint256,
-  Abi,
-} from "starknet";
+import { Contract, Provider, uint256, Abi } from "starknet";
 import { red, yellow } from "./colorize-log";
 import { Network } from "../types";
-import { isString } from "util";
 
 export const erc20ABI = [
   {
