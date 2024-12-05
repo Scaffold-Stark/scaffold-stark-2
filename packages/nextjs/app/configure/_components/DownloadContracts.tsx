@@ -85,33 +85,33 @@ export default function DownloadContracts() {
           <div className="flex-1">
             <div className="font-bold my-3 text-lg">Instructions</div>
             <p className="my-2">
-              This tool fetch contract ABI and classhash to enable code
-              autocomplete when using hooks and interaction with fetched
-              contract at debug page.
+              This tool generate a contract configuration file by entering a
+              contract address and name. The downloaded file can be used to
+              replace your local{" "}
+              <code className="text-function">configExternalContracts.ts</code>{" "}
+              for debugging.
             </p>
             <ol className="flex flex-col gap-2 list-decimal list-outside my-6 space-y-1 ml-4">
-              <li className="pl-3">Enter contract name and address.</li>
+              <li className="pl-3">Enter contract name and address</li>
               <li className="pl-3">
-                Click the{" "}
+                Click{" "}
                 <strong className="text-function">
                   Download Contract File
-                </strong>{" "}
-                button.
+                </strong>
               </li>
               <li className="pl-3">
+                Replace your{" "}
                 <code className="text-function">
                   configExternalContracts.ts
                 </code>{" "}
-                will be updated with the fetched contract configuration.
+                file
               </li>
-
               <li className="pl-3">
-                Use the{" "}
+                Debug your contract at{" "}
                 <Link href={"/debug"} className="text-function">
                   <code>/debug</code>
                 </Link>{" "}
-                page to interact with and test the contract using the scaffold
-                hooks.
+                and use hooks with the downloaded contract
               </li>
             </ol>
           </div>
@@ -130,7 +130,7 @@ export default function DownloadContracts() {
               </div>
               <input
                 value={symbol}
-                onChange={handleInputChange}
+                onChange={(e) => setSymbol(e.target.value)}
                 list="symbols"
                 className="input bg-input input-ghost rounded-none focus-within:border-transparent focus:outline-none h-[2.2rem] min-h-[2.2rem] px-4 border w-full text-sm placeholder:text-[#9596BF] text-neutral"
                 placeholder="Enter contract name"
