@@ -13,7 +13,8 @@ import { useTargetNetwork } from "./scaffold-stark/useTargetNetwork";
 // this hook is a workaround, basically a re-implement of the starknet react hook with conditional rendering.
 const useConditionalStarkProfile = (address: chains.Address | undefined) => {
   const shouldUseProfile =
-    scaffoldConfig.targetNetworks[0].id !== chains.devnet.id;
+    // @ts-expect-error program thinks this is a constant but its changed at code level
+    scaffoldConfig.targetNetworks[0].network !== chains.devnet.network;
 
   const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState<StarkProfile | undefined>();
@@ -27,20 +28,25 @@ const useConditionalStarkProfile = (address: chains.Address | undefined) => {
   }, [publicNodeUrl]);
 
   useEffect(() => {
+    if (!shouldUseProfile) {
+      return;
+    }
+
     const wrappedProvider = new StarknetIdNavigator(
       provider as any,
-      targetNetwork.id === chains.sepolia.id
+      targetNetwork.network === chains.sepolia.network
         ? constants.StarknetChainId.SN_SEPOLIA
         : constants.StarknetChainId.SN_MAIN,
     );
-    if (shouldUseProfile && !!address) {
+
+    if (!!address) {
       setIsLoading(true);
-      wrappedProvider.getStarkProfiles([address]).then((profileData) => {
-        if (profileData.length > 0) setProfile(profileData[0]);
+      wrappedProvider.getProfileData(address).then((profileData) => {
+        setProfile(profileData);
         setIsLoading(false);
       });
     }
-  }, [address, provider, shouldUseProfile, targetNetwork.id]);
+  }, [address, provider, shouldUseProfile, targetNetwork]);
 
   useEffect(() => {
     console.log({ profile, address });
