@@ -8,7 +8,7 @@ import scaffoldConfig from "~~/scaffold.config";
 import { useEffect, useMemo, useState } from "react";
 import { constants, Provider, RpcProvider, StarkProfile } from "starknet";
 import { StarknetIdNavigator } from "starknetid.js";
-import { useTargetNetwork } from "./scaffold-stark/useTargetNetwork";
+import { useTargetNetwork } from "./useTargetNetwork";
 
 const shouldUseProfile = () => {
   const set = new Set(["mainnet", "sepolia"]);
@@ -20,7 +20,7 @@ const shouldUseProfile = () => {
 };
 
 // this hook is a workaround, basically a re-implement of the starknet react hook with conditional rendering.
-const useConditionalStarkProfile = (address: chains.Address | undefined) => {
+const useScaffoldStarkProfile = (address: chains.Address | undefined) => {
   const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState<StarkProfile | undefined>();
   const { targetNetwork } = useTargetNetwork();
@@ -51,13 +51,13 @@ const useConditionalStarkProfile = (address: chains.Address | undefined) => {
         setIsLoading(false);
       });
     }
-  }, [address, provider, shouldUseProfile, targetNetwork]);
+  }, [address, provider, targetNetwork]);
 
   useEffect(() => {
     console.log({ profile, address });
   }, [profile, address]);
 
-  return { data: profile };
+  return { data: profile, isLoading };
 };
 
-export default useConditionalStarkProfile;
+export default useScaffoldStarkProfile;

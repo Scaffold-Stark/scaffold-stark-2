@@ -18,7 +18,7 @@ import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
 import { BlockieAvatar } from "~~/components/scaffold-stark/BlockieAvatar";
 import { getStarknetPFPIfExists } from "~~/utils/profile";
-import useConditionalStarkProfile from "~~/hooks/useConditionalStarkProfile";
+import useScaffoldStarkProfile from "~~/hooks/scaffold-stark/useScaffoldStarkProfile";
 import Image from "next/image";
 
 type AddressProps = {
@@ -52,7 +52,7 @@ export const Address = ({
   const [isUseBlockie, setIsUseBlockie] = useState(false);
 
   const { targetNetwork } = useTargetNetwork();
-  const { data: fetchedProfile } = useConditionalStarkProfile(address);
+  const { data: fetchedProfile } = useScaffoldStarkProfile(address);
 
   const checkSumAddress = useMemo(() => {
     if (!address) return undefined;
