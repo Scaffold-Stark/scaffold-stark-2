@@ -1,7 +1,8 @@
-import * as chains from "@starknet-react/chains";
+import { Chain } from "@starknet-react/chains";
+import { supportedChains as chains } from "./supportedChains";
 
 export type ScaffoldConfig = {
-  targetNetworks: readonly chains.Chain[];
+  targetNetworks: readonly Chain[];
   pollingInterval: number;
   onlyLocalBurnerWallet: boolean;
   rpcProviderUrl: string;

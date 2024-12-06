@@ -1,10 +1,10 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 import { useDeployedContractInfo } from "../useDeployedContractInfo";
-import { ContractCodeStatus } from "~~/utils/scaffold-stark/contract";
-import { RpcProvider } from "starknet";
 import { useTargetNetwork } from "../useTargetNetwork";
 import { useIsMounted } from "usehooks-ts";
+import { useProvider } from "@starknet-react/core";
+import { RpcProvider } from "starknet";
 
 const mockGetClassHashAt = vi
   .fn()
@@ -24,6 +24,8 @@ vi.mock("starknet", () => ({
     getClassHashAt: mockGetClassHashAt,
   })),
 }));
+
+vi.mock("@starknet-react/core");
 
 vi.mock("~~/utils/scaffold-stark/contract", () => ({
   // these are hoisted to the top, so the variable has to re-declared into the test suite
@@ -572,6 +574,11 @@ describe("useDeployedContractInfo", () => {
     vi.clearAllMocks();
     (useTargetNetwork as Mock).mockReturnValue(mockUseTargetNetwork);
     (useIsMounted as Mock).mockReturnValue(mockIsMounted);
+    (useProvider as Mock).mockReturnValue({
+      provider: new RpcProvider({
+        nodeUrl: "https://mock-rpc-url",
+      }),
+    });
   });
 
   it("should initially set the status to LOADING", () => {

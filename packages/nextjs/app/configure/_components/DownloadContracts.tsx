@@ -18,6 +18,7 @@ export default function DownloadContracts() {
   const { targetNetwork } = useTargetNetwork();
   const [contractName, setContractName] = useState<string>("");
 
+
   const handleDownload = useCallback(async () => {
     if (!address) return;
     try {
