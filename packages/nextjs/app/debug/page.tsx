@@ -9,11 +9,7 @@ export const metadata = getMetadata({
 });
 
 const Debug: NextPage = () => {
-  return (
-    <>
-      <DebugContracts />
-    </>
-  );
+  return <DebugContracts />;
 };
 
 export default Debug;

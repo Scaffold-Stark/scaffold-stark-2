@@ -10,12 +10,17 @@ import { constants, Provider, RpcProvider, StarkProfile } from "starknet";
 import { StarknetIdNavigator } from "starknetid.js";
 import { useTargetNetwork } from "./scaffold-stark/useTargetNetwork";
 
+const shouldUseProfile = () => {
+  const set = new Set(["mainnet", "sepolia"]);
+  return (
+    set.has(scaffoldConfig.targetNetworks[0].network) &&
+    // @ts-expect-error we use network here since devnet and sepolia has the same id, and this will silence the compiler since it thinks constant will always be false when it fact its changed at code level
+    scaffoldConfig.targetNetworks[0].network !== chains.devnet.network
+  );
+};
+
 // this hook is a workaround, basically a re-implement of the starknet react hook with conditional rendering.
 const useConditionalStarkProfile = (address: chains.Address | undefined) => {
-  const shouldUseProfile =
-    // @ts-expect-error program thinks this is a constant but its changed at code level
-    scaffoldConfig.targetNetworks[0].network !== chains.devnet.network;
-
   const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState<StarkProfile | undefined>();
   const { targetNetwork } = useTargetNetwork();
@@ -28,7 +33,7 @@ const useConditionalStarkProfile = (address: chains.Address | undefined) => {
   }, [publicNodeUrl]);
 
   useEffect(() => {
-    if (!shouldUseProfile) {
+    if (!shouldUseProfile()) {
       return;
     }
 

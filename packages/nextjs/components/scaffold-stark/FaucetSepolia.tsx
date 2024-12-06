@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Address as AddressType, sepolia } from "@starknet-react/chains";
+import { useEffect } from "react";
+import { sepolia } from "@starknet-react/chains";
 import { BanknotesIcon } from "@heroicons/react/24/outline";
-import { useNetwork } from "@starknet-react/core";
-import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
-import { RpcProvider } from "starknet";
+import { useNetwork, useProvider } from "@starknet-react/core";
 import { notification } from "~~/utils/scaffold-stark";
 import Image from "next/image";
 import GenericModal from "./CustomConnectButton/GenericModal";
@@ -16,7 +14,6 @@ import { useTheme } from "next-themes";
  */
 export const FaucetSepolia = () => {
   const { chain: ConnectedChain } = useNetwork();
-  const { targetNetwork } = useTargetNetwork();
 
   const sepoliaFaucets = [
     {
@@ -36,15 +33,7 @@ export const FaucetSepolia = () => {
     },
   ];
 
-  const publicNodeUrl = targetNetwork.rpcUrls.public.http[0];
-
-  // Use useMemo to memoize the publicClient object
-  const publicClient = useMemo(() => {
-    return new RpcProvider({
-      nodeUrl: publicNodeUrl,
-    });
-  }, [publicNodeUrl]);
-
+  const { provider: publicClient } = useProvider();
   useEffect(() => {
     const checkChain = async () => {
       try {
@@ -134,6 +123,7 @@ export const FaucetSepolia = () => {
                         alt="Starknet Developers Hub"
                         className="cursor-pointer"
                         fill
+                        sizes="1.5rem"
                         src={faucet.img}
                       />
                     </div>

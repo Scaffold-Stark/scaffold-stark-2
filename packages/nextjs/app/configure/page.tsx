@@ -8,11 +8,7 @@ export const metadata = getMetadata({
 });
 
 const Configure: NextPage = () => {
-  return (
-    <>
-      <DownloadContracts />
-    </>
-  );
+  return <DownloadContracts />;
 };
 
 export default Configure;
