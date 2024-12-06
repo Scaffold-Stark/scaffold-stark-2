@@ -10,7 +10,10 @@ import {
   useNetworkColor,
 } from "~~/hooks/scaffold-stark";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
-import { ContractName } from "~~/utils/scaffold-stark/contract";
+import {
+  ContractCodeStatus,
+  ContractName,
+} from "~~/utils/scaffold-stark/contract";
 import { ContractVariables } from "./ContractVariables";
 import { ClassHash } from "~~/components/scaffold-stark/ClassHash";
 
@@ -40,23 +43,18 @@ export const ContractUI = ({
     false,
   );
   const { targetNetwork } = useTargetNetwork();
-  const { data: deployedContractData, isLoading: deployedContractLoading } =
-    useDeployedContractInfo(contractName);
+  const {
+    raw: deployedContractData,
+    isLoading: deployedContractLoading,
+    status,
+  } = useDeployedContractInfo(contractName);
 
   const tabs = [
     { id: "read", label: "Read" },
     { id: "write", label: "Write" },
   ];
 
-  if (deployedContractLoading) {
-    return (
-      <div className="mt-14">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    );
-  }
-
-  if (!deployedContractData) {
+  if (status === ContractCodeStatus.NOT_FOUND) {
     return (
       <p className="text-3xl mt-14">
         {`No contract found by the name of "${contractName}" on chain "${targetNetwork.name}"!`}
@@ -79,7 +77,7 @@ export const ContractUI = ({
                   classHash={deployedContractData.classHash}
                   size="xs"
                 />
-                <div className="flex gap-1 items-center">
+                <div className="flex gap-1 items-center h-5">
                   <span className="font-bold text-sm">Balance:</span>
                   <Balance
                     address={deployedContractData.address}
@@ -130,6 +128,11 @@ export const ContractUI = ({
                   />
                 )}
               </div>
+              {deployedContractLoading && (
+                <div className="absolute inset-0 rounded-[5px] bg-white/20 z-10">
+                  <div className="animate-spin h-4 w-4 border-2 border-purple-500 border-t-transparent rounded-full absolute top-4 right-4" />
+                </div>
+              )}
             </div>
           </div>
         </div>
