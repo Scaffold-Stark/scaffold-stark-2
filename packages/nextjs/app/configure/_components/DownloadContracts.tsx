@@ -16,7 +16,7 @@ export default function DownloadContracts() {
   const [address, setAddress] = useState<string>("");
 
   const { targetNetwork } = useTargetNetwork();
-  const [symbol, setSymbol] = useState<string>("");
+  const [contractName, setContractName] = useState<string>("");
 
   const handleDownload = useCallback(async () => {
     if (!address) return;
@@ -28,7 +28,7 @@ export default function DownloadContracts() {
 
       const contractData = {
         [targetNetwork.network]: {
-          [symbol]: {
+          [contractName]: {
             address,
             classHash,
             abi: apiResponse.abi,
@@ -45,7 +45,7 @@ export default function DownloadContracts() {
       console.error(error);
       return;
     }
-  }, [address, provider, symbol, targetNetwork.network]);
+  }, [address, provider, contractName, targetNetwork.network]);
 
   const generateContractsFile = async (contractsData: Object) => {
     const generatedContractComment = `/**
@@ -125,8 +125,8 @@ export default function DownloadContracts() {
                 Contract
               </div>
               <input
-                value={symbol}
-                onChange={(e) => setSymbol(e.target.value)}
+                value={contractName}
+                onChange={(e) => setContractName(e.target.value)}
                 list="symbols"
                 className="input bg-input input-ghost rounded-none focus-within:border-transparent focus:outline-none h-[2.2rem] min-h-[2.2rem] px-4 border w-full text-sm placeholder:text-[#9596BF] text-neutral"
                 placeholder="Enter contract name"
