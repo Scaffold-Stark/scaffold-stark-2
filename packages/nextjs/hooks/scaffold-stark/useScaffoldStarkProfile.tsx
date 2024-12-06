@@ -14,7 +14,6 @@ const shouldUseProfile = () => {
   const set = new Set(["mainnet", "sepolia"]);
   return (
     set.has(scaffoldConfig.targetNetworks[0].network) &&
-    // @ts-expect-error we use network here since devnet and sepolia has the same id, and this will silence the compiler since it thinks constant will always be false when it fact its changed at code level
     scaffoldConfig.targetNetworks[0].network !== chains.devnet.network
   );
 };
@@ -52,10 +51,6 @@ const useScaffoldStarkProfile = (address: chains.Address | undefined) => {
       });
     }
   }, [address, provider, targetNetwork]);
-
-  useEffect(() => {
-    console.log({ profile, address });
-  }, [profile, address]);
 
   return { data: profile, isLoading };
 };
