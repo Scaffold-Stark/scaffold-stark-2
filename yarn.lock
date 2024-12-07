@@ -2271,7 +2271,6 @@ __metadata:
     react-dom: ^18
     react-hot-toast: ^2.4.1
     starknet: 6.12.1
-    starknetid.js: ^4.0.1
     tailwindcss: ^3.3.0
     type-fest: ^4.6.0
     typescript: ^5
@@ -8798,16 +8797,6 @@ __metadata:
     ts-mixer: ^6.0.3
     url-join: ^4.0.1
   checksum: 58afeddde1e2fb0d8caae0cb615bd0b3d0aed04d27465af0607f77247731bbf7d1e4b2f0a99ff596e53175abfadf5d08353f4b838f96038f7a88b706c6bd0bb6
-  languageName: node
-  linkType: hard
-
-"starknetid.js@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "starknetid.js@npm:4.0.1"
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-    starknet: ^6.9.0
-  checksum: ece8a56b322fbf2ef60f476bfa3c3932a205cde60046ea1577059e559c2c83c468ee2697792e559693d45b6d75d6e8f42552249bb65c657b0ca884f6b4d4f0ae
   languageName: node
   linkType: hard
 

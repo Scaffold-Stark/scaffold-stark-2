@@ -4,11 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Address as AddressType } from "@starknet-react/chains";
-import {
-  getChecksumAddress,
-  validateAndParseAddress,
-  validateChecksumAddress,
-} from "starknet";
+import { getChecksumAddress, validateChecksumAddress } from "starknet";
 import { devnet } from "@starknet-react/chains";
 import {
   CheckCircleIcon,
@@ -17,9 +13,7 @@ import {
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
 import { BlockieAvatar } from "~~/components/scaffold-stark/BlockieAvatar";
-import { getStarknetPFPIfExists } from "~~/utils/profile";
 import useScaffoldStarkProfile from "~~/hooks/scaffold-stark/useScaffoldStarkProfile";
-import Image from "next/image";
 
 type AddressProps = {
   address?: AddressType;
@@ -52,7 +46,7 @@ export const Address = ({
   const [isUseBlockie, setIsUseBlockie] = useState(false);
 
   const { targetNetwork } = useTargetNetwork();
-  const { data: fetchedProfile } = useScaffoldStarkProfile(address);
+  const { data: fetchedProfile, isLoading } = useScaffoldStarkProfile(address);
 
   const checkSumAddress = useMemo(() => {
     if (!address) return undefined;
@@ -69,15 +63,21 @@ export const Address = ({
   );
 
   useEffect(() => {
-    if (!!fetchedProfile) {
-      setDisplayAddress(fetchedProfile.name || "");
+    const addressWithFallback = checkSumAddress || address || "";
+
+    if (fetchedProfile?.name) {
+      setDisplayAddress(fetchedProfile.name);
     } else if (format === "long") {
-      setDisplayAddress(checkSumAddress || address || "");
+      setDisplayAddress(addressWithFallback || "");
+    } else {
+      setDisplayAddress(
+        addressWithFallback.slice(0, 6) + "..." + addressWithFallback.slice(-4),
+      );
     }
   }, [fetchedProfile, checkSumAddress, address, format]);
 
   // Skeleton UI
-  if (!checkSumAddress) {
+  if (!checkSumAddress || isLoading) {
     return (
       <div className="animate-pulse flex space-x-4">
         <div className="rounded-md bg-slate-300 h-6 w-6"></div>
