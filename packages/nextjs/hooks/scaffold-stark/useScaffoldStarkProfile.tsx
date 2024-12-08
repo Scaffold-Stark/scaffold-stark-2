@@ -70,8 +70,8 @@ const useScaffoldStarkProfile = (address: chains.Address | undefined) => {
         setProfile(data);
       })
       .catch((e) => {
-        console.dir(e);
-        console.error(`[useScaffoldStarkProfile] ` + e);
+        console.error(`[useScaffoldStarkProfile] ` + e.message);
+        setProfile(undefined);
       })
       .finally(() => {
         setIsLoading(false);
