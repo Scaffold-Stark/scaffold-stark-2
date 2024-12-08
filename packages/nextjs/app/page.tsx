@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ConnectedAddress } from "~~/components/ConnectedAddress";
+import { Address } from "~~/components/scaffold-stark";
 
 const Home = () => {
   return (
@@ -11,6 +12,7 @@ const Home = () => {
           <span className="block text-4xl font-bold">Scaffold-Stark 2</span>
         </h1>
         <ConnectedAddress />
+        <Address address="0x074a19c75acc3e5947f8515c025bc4286b56572c763acec95198fc87d1df9895"></Address>
         <p className="text-center text-lg">
           Edit your smart contract{" "}
           <code className="bg-underline italic text-base font-bold max-w-full break-words break-all inline-block">
