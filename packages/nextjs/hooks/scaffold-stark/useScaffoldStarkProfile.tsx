@@ -7,7 +7,6 @@ const shouldUseProfile = () => {
   const set = new Set(["mainnet", "sepolia"]);
   return (
     set.has(scaffoldConfig.targetNetworks[0].network) &&
-    // @ts-expect-error program thinks this is constant
     scaffoldConfig.targetNetworks[0].network !== chains.devnet.network
   );
 };
