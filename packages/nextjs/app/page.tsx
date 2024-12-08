@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ConnectedAddress } from "~~/components/ConnectedAddress";
-import { Address } from "~~/components/scaffold-stark";
 
 const Home = () => {
   return (
