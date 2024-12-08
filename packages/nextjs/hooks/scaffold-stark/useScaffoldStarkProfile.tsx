@@ -23,6 +23,10 @@ const fetchProfileFromApi = async (address: string) => {
     `${starknetIdApiBaseUrl}/addr_to_domain?addr=${address}`,
   );
 
+  if (!addrToDomainRes.ok) {
+    throw new Error(await addrToDomainRes.text());
+  }
+
   const addrToDomainJson = await addrToDomainRes.json();
 
   const domain = addrToDomainJson.domain;
@@ -30,6 +34,8 @@ const fetchProfileFromApi = async (address: string) => {
   const profileRes = await fetch(
     `${starknetIdApiBaseUrl}/domain_to_data?domain=${domain}`,
   );
+
+  if (!profileRes.ok) throw new Error(await profileRes.text());
 
   const profileData = await profileRes.json();
 
@@ -63,11 +69,13 @@ const useScaffoldStarkProfile = (address: chains.Address | undefined) => {
       .then((data) => {
         setProfile(data);
       })
+      .catch((e) => {
+        console.dir(e);
+        console.error(`[useScaffoldStarkProfile] ` + e);
+      })
       .finally(() => {
         setIsLoading(false);
       });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, isEnabled]);
 
   return { data: profile, isLoading };
