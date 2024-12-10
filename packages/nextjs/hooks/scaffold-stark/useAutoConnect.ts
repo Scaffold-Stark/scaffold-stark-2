@@ -4,6 +4,7 @@ import { useConnect } from "@starknet-react/core";
 import scaffoldConfig from "~~/scaffold.config";
 import type { BurnerConnector } from "~~/services/web3/stark-burner/BurnerConnector";
 import { burnerAccounts } from "~~/utils/devnetAccounts";
+import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
 
 /**
  * Automatically connect to a wallet/connector based on config and prior wallet
@@ -13,7 +14,9 @@ export const useAutoConnect = (): void => {
     "lastUsedConnector",
   );
 
-  const lastConnectionTime = useReadLocalStorage<number>("lastConnectionTime");
+  const lastConnectionTime = useReadLocalStorage<number>(
+    LAST_CONNECTED_TIME_LOCALSTORAGE_KEY,
+  );
 
   const { connect, connectors } = useConnect();
 
@@ -39,5 +42,5 @@ export const useAutoConnect = (): void => {
         }
       }
     }
-  }, [connect, connectors, savedConnector]);
+  }, [connect, connectors, lastConnectionTime, savedConnector]);
 };

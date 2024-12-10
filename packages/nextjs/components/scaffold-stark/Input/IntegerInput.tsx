@@ -52,6 +52,7 @@ export const IntegerInput = ({
       disabled={disabled}
       suffix={
         !inputError &&
+        !disabled &&
         !disableMultiplyBy1e18 && (
           <div
             className="space-x-4 flex tooltip tooltip-top tooltip-primary before:content-[attr(data-tip)] before:right-[-10px] before:left-auto before:transform-none text-white"

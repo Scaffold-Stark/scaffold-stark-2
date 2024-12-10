@@ -26,13 +26,13 @@ jobs:
         uses: actions/checkout@master
 
       - name: Install scarb
-        run: curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh -s -- -v 2.8.2
+        run: curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh -s -- -v 2.8.5
 
       - name: Install snfoundryup
         run: curl -L https://raw.githubusercontent.com/foundry-rs/starknet-foundry/master/scripts/install.sh | sh
 
       - name: Install snforge
-        run: snfoundryup -v 0.30.0
+        run: snfoundryup -v 0.33.0
 
       - name: Run snforge tests
         run: snforge test
