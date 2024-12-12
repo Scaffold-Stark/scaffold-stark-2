@@ -15,9 +15,8 @@ import {
 import { useLocalStorage } from "usehooks-ts";
 import { BlockieAvatar, isENS } from "~~/components/scaffold-stark";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
-import { BurnerConnector } from "~~/services/web3/stark-burner/BurnerConnector";
+import { BurnerConnector, burnerAccounts } from "@scaffold-stark/stark-burner";
 import { getTargetNetworks } from "~~/utils/scaffold-stark";
-import { burnerAccounts } from "~~/utils/devnetAccounts";
 import { Address } from "@starknet-react/chains";
 import { useDisconnect, useNetwork, useConnect } from "@starknet-react/core";
 import { getStarknetPFPIfExists } from "~~/utils/profile";
@@ -60,10 +59,8 @@ export const AddressInfoDropdown = ({
     e: React.MouseEvent<HTMLButtonElement>,
     ix: number,
   ) {
-    const connector = connectors.find(
-      (it) => it.id == "burner-wallet",
-    ) as BurnerConnector;
-    if (connector) {
+    const connector = connectors.find((it) => it.id == "burner-wallet");
+    if (connector && connector instanceof BurnerConnector) {
       connector.burnerAccount = burnerAccounts[ix];
       connect({ connector });
       setLastConnector({ id: connector.id, ix });
