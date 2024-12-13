@@ -11,6 +11,7 @@ import {
   DeclareContractPayload,
   UniversalDetails,
   isSierra,
+  TransactionReceipt,
 } from "starknet";
 import { DeployContractParams, Network } from "./types";
 import { green, red, yellow } from "./helpers/colorize-log";
@@ -32,10 +33,11 @@ const argv = yargs(process.argv.slice(2))
     demandOption: true,
   })
   .option("reset", {
-    alias: "r",
+    alias: "nr",
     type: "boolean",
-    description: "Reset deployments",
-    default: false,
+    description:
+      "(--no-reset) Do not reset deployments (keep existing deployments)",
+    default: true,
   })
   .option("fee", {
     type: "string",
@@ -107,6 +109,27 @@ const deployContract_NotWait = async (payload: {
   }
 };
 
+const findContractFile = (
+  contract: string,
+  fileType: "compiled_contract_class" | "contract_class"
+): string => {
+  const targetDir = path.resolve(__dirname, "../contracts/target/dev");
+  const files = fs.readdirSync(targetDir);
+
+  // Look for files that end with the contract name and file type
+  const pattern = new RegExp(`.*${contract}\\.${fileType}\\.json$`);
+  const matchingFile = files.find((file) => pattern.test(file));
+
+  if (!matchingFile) {
+    throw new Error(
+      `Could not find ${fileType} file for contract "${contract}". ` +
+        `Try removing snfoundry/contracts/target, then run 'yarn compile' and check if your contract name is correct inside the contracts/target/dev directory.`
+    );
+  }
+
+  return path.join(targetDir, matchingFile);
+};
+
 /**
  * Deploy a contract using the specified parameters.
  *
@@ -154,28 +177,13 @@ const deployContract = async (
   try {
     compiledContractCasm = JSON.parse(
       fs
-        .readFileSync(
-          path.resolve(
-            __dirname,
-            `../contracts/target/dev/contracts_${contract}.compiled_contract_class.json`
-          )
-        )
+        .readFileSync(findContractFile(contract, "compiled_contract_class"))
         .toString("ascii")
     );
   } catch (error) {
-    if (
-      typeof error.message === "string" &&
-      error.message.includes("no such file") &&
-      error.message.includes("compiled_contract_class")
-    ) {
-      const match = error.message.match(
-        /\/dev\/(.+?)\.compiled_contract_class/
-      );
-      const missingContract = match ? match[1].split("_").pop() : "Unknown";
+    if (error.message.includes("Could not find")) {
       console.error(
-        red(
-          `The contract "${missingContract}" doesn't exist or is not compiled`
-        )
+        red(`The contract "${contract}" doesn't exist or is not compiled`)
       );
     } else {
       console.error(red("Error reading compiled contract class file: "), error);
@@ -189,12 +197,7 @@ const deployContract = async (
   try {
     compiledContractSierra = JSON.parse(
       fs
-        .readFileSync(
-          path.resolve(
-            __dirname,
-            `../contracts/target/dev/contracts_${contract}.contract_class.json`
-          )
-        )
+        .readFileSync(findContractFile(contract, "contract_class"))
         .toString("ascii")
     );
   } catch (error) {
@@ -209,7 +212,8 @@ const deployContract = async (
   const constructorCalldata = constructorArgs
     ? contractCalldata.compile("constructor", constructorArgs)
     : [];
-  console.log(yellow("Deploying Contract "), contract);
+
+  console.log(yellow("Deploying Contract "), contractName || contract);
 
   let { classHash } = await declareIfNot_NotWait(
     {
@@ -258,14 +262,19 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
       ...options,
       version: txVersion,
     });
-    console.log(green("Deploy Calls Executed at "), transaction_hash);
     if (networkName === "sepolia" || networkName === "mainnet") {
-      await provider.waitForTransaction(transaction_hash);
+      const receipt = (await provider.waitForTransaction(
+        transaction_hash
+      )) as TransactionReceipt;
+      if (receipt.execution_status !== "SUCCEEDED") {
+        const revertReason = receipt.revert_reason;
+        throw new Error(red(`Deploy Calls Failed: ${revertReason}`));
+      }
     }
+    console.log(green("Deploy Calls Executed at "), transaction_hash);
   } catch (error) {
-    console.error(red("Error executing deploy calls: "), error);
     // split the calls in half and try again recursively
-    if (deployCalls.length > 1) {
+    if (deployCalls.length > 100) {
       let half = Math.ceil(deployCalls.length / 2);
       let firstHalf = deployCalls.slice(0, half);
       let secondHalf = deployCalls.slice(half);
@@ -273,6 +282,8 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
       await executeDeployCalls(options);
       deployCalls = secondHalf;
       await executeDeployCalls(options);
+    } else {
+      throw error;
     }
   }
 };
@@ -294,11 +305,9 @@ const exportDeployments = () => {
     `../deployments/${networkName}_latest.json`
   );
 
-  let finalDeployments = resetDeployments
-    ? deployments
-    : { ...loadExistingDeployments(), ...deployments };
+  const resetDeployments: boolean = argv.reset;
 
-  if (fs.existsSync(networkPath) && !resetDeployments) {
+  if (!resetDeployments && fs.existsSync(networkPath)) {
     const currentTimestamp = new Date().getTime();
     fs.renameSync(
       networkPath,
@@ -306,7 +315,11 @@ const exportDeployments = () => {
     );
   }
 
-  fs.writeFileSync(networkPath, JSON.stringify(finalDeployments, null, 2));
+  if (resetDeployments && fs.existsSync(networkPath)) {
+    fs.unlinkSync(networkPath);
+  }
+
+  fs.writeFileSync(networkPath, JSON.stringify(deployments, null, 2));
 };
 
 export {

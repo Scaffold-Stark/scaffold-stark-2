@@ -7,6 +7,8 @@ import { BurnerConnector } from "~~/services/web3/stark-burner/BurnerConnector";
 import { useTheme } from "next-themes";
 import { BlockieAvatar } from "../BlockieAvatar";
 import GenericModal from "./GenericModal";
+import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
+
 const loader = ({ src }: { src: string }) => {
   return src;
 };
@@ -14,18 +16,19 @@ const loader = ({ src }: { src: string }) => {
 const ConnectModal = () => {
   const modalRef = useRef<HTMLInputElement>(null);
   const [isBurnerWallet, setIsBurnerWallet] = useState(false);
-
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
-
   const { connectors, connect, error, status, ...props } = useConnect();
-
   const [_, setLastConnector] = useLocalStorage<{ id: string; ix?: number }>(
     "lastUsedConnector",
     { id: "" },
     {
       initializeWithValue: false,
-    },
+    }
+  );
+  const [, setLastConnectionTime] = useLocalStorage<number>(
+    LAST_CONNECTED_TIME_LOCALSTORAGE_KEY,
+    0
   );
 
   const handleCloseModal = () => {
@@ -36,7 +39,7 @@ const ConnectModal = () => {
 
   function handleConnectWallet(
     e: React.MouseEvent<HTMLButtonElement>,
-    connector: Connector,
+    connector: Connector
   ): void {
     if (connector.id === "burner-wallet") {
       setIsBurnerWallet(true);
@@ -44,20 +47,22 @@ const ConnectModal = () => {
     }
     connect({ connector });
     setLastConnector({ id: connector.id });
+    setLastConnectionTime(Date.now());
     handleCloseModal();
   }
 
   function handleConnectBurner(
     e: React.MouseEvent<HTMLButtonElement>,
-    ix: number,
+    ix: number
   ) {
     const connector = connectors.find(
-      (it) => it.id == "burner-wallet",
+      (it) => it.id == "burner-wallet"
     ) as BurnerConnector;
     if (connector) {
       connector.burnerAccount = burnerAccounts[ix];
       connect({ connector });
       setLastConnector({ id: connector.id, ix });
+      setLastConnectionTime(Date.now());
       handleCloseModal();
     }
   }
@@ -70,6 +75,7 @@ const ConnectModal = () => {
       >
         <span>Connect</span>
       </label>
+
       <input
         ref={modalRef}
         type="checkbox"

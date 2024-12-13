@@ -1,8 +1,8 @@
 # 🏗 Scaffold-Stark
 
 <h4 align="center">
-  <a href="https://www.docs.scaffoldstark.com/">Documentation</a> |
-  <a href="https://www.scaffoldstark.com/">Website</a> |
+  <a href="https://docs.scaffoldstark.com/">Documentation</a> |
+  <a href="https://scaffoldstark.com/">Website</a> |
   <a href="https://scaffold-stark-demo.vercel.app/debug">Demo</a>
 </h4>
 
@@ -11,8 +11,8 @@
 ⚙️ Built using NextJS, Starknet.js, Scarb, Starknet-React, Starknet Foundry and Typescript.
 
 - ✅ **Contract Fast Reload**: Your frontend auto-adapts to your smart contracts as you deploy them.
-- 🪝 [**Custom hooks**](https://www.docs.scaffoldstark.com/hooks/): Collection of React hooks wrapper around [starknet-react](https://starknet-react.com/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://www.docs.scaffoldstark.com/components): Collection of common web3 components to quickly build your frontend.
+- 🪝 [**Custom hooks**](https://docs.scaffoldstark.com/hooks/): Collection of React hooks wrapper around [starknet-react](https://starknet-react.com/) to simplify interactions with smart contracts with typescript autocompletion.
+- 🧱 [**Components**](https://docs.scaffoldstark.com/components): Collection of common web3 components to quickly build your frontend.
 - 🔥 **Burner Wallet & Prefunded Account**: Quickly test your application with a burner wallet and prefunded accounts.
 - 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with Starknet network.
 
@@ -25,52 +25,52 @@ Before you begin, you need to install the following tools:
 - [Node (>= v18.17)](https://nodejs.org/en/download/)
 - Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
 - [Git](https://git-scm.com/downloads)
-- [Rust](https://www.rust-lang.org/tools/install)
+- [Rust](https://rust-lang.org/tools/install)
 - [asdf](https://asdf-vm.com/guide/getting-started.html)
 - [Cairo 1.0 extension for VSCode](https://marketplace.visualstudio.com/items?itemName=starkware.cairo1)
 
 ### Starknet-devnet version
 
-To ensure the proper functioning of scaffold-stark, your local `starknet-devnet` version must be `0.2.0`. To accomplish this, first check your local starknet-devnet version:
+To ensure the proper functioning of scaffold-stark, your local `starknet-devnet` version must be `0.2.3`. To accomplish this, first check your local starknet-devnet version:
 
 ```sh
 starknet-devnet --version
 ```
 
-If your local starknet-devnet version is not `0.2.0`, you need to install it.
+If your local starknet-devnet version is not `0.2.3`, you need to install it.
 
-- Install Starknet-devnet `0.2.0` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
+- Install Starknet-devnet `0.2.3` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
 
 ### Scarb version
 
-To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.8.2`. To accomplish this, first check your local Scarb version:
+To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.9.2`. To accomplish this, first check your local Scarb version:
 
 ```sh
 scarb --version
 ```
 
-If your local Scarb version is not `2.8.2`, you need to install it.
+If your local Scarb version is not `2.9.2`, you need to install it.
 
-- Install Scarb `2.8.2` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
+- Install Scarb `2.9.2` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
 
 ### Starknet Foundry version
 
-To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.30.0. To accomplish this, first check your Starknet Foundry version:
+To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.31.0. To accomplish this, first check your Starknet Foundry version:
 
 ```sh
 snforge --version
 ```
 
-If your Starknet Foundry version is not `0.30.0`, you need to install it.
+If your Starknet Foundry version is not `0.34.0`, you need to install it.
 
-- Install Starknet Foundry `0.30.0` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
+- Install Starknet Foundry `0.34.0` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
 
 ## Compatible versions
 
-- Starknet-devnet - v0.2.0
-- Scarb - v2.8.2
-- Snforge - v0.30.0
-- Cairo - v2.8.2
+- Starknet-devnet - v0.2.3
+- Scarb - v2.9.2
+- Snforge - v0.34.0
+- Cairo - v2.9.2
 - Rpc - v0.7.1
 
 ## Quickstart with Starknet-Devnet
@@ -131,7 +131,7 @@ Find the `packages/nextjs/scaffold.config.ts` file and change the `targetNetwork
 
 ![chall-0-scaffold-config](./packages/nextjs/public/scaffold-config.png)
 
-4. Get some testnet tokens
+4. Get some testnet tokens.
 
 You will need to get some `ETH` or `STRK` Sepolia tokens to deploy your contract to Sepolia testnet.
 
@@ -181,7 +181,7 @@ You have to paste the endpoint and body in the API platform and click on the `Se
 
 ## Documentation
 
-Visit our [docs](https://www.docs.scaffoldstark.com/) to learn how to start building with Scaffold-Stark.
+Visit our [docs](https://docs.scaffoldstark.com/) to learn how to start building with Scaffold-Stark.
 
 To know more about its features, check out our [website](https://scaffoldstark.com)
 

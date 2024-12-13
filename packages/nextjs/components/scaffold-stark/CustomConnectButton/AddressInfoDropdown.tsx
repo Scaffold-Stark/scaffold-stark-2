@@ -21,8 +21,9 @@ import { burnerAccounts } from "~~/utils/devnetAccounts";
 import { Address } from "@starknet-react/chains";
 import { useDisconnect, useNetwork, useConnect } from "@starknet-react/core";
 import { getStarknetPFPIfExists } from "~~/utils/profile";
-import useConditionalStarkProfile from "~~/hooks/useConditionalStarkProfile";
+import useScaffoldStarkProfile from "~~/hooks/scaffold-stark/useScaffoldStarkProfile";
 import { useTheme } from "next-themes";
+import { default as NextImage } from "next/image";
 
 const allowedNetworks = getTargetNetworks();
 
@@ -41,7 +42,7 @@ export const AddressInfoDropdown = ({
 }: AddressInfoDropdownProps) => {
   const { disconnect } = useDisconnect();
   const [addressCopied, setAddressCopied] = useState(false);
-  const { data: profile } = useConditionalStarkProfile(address);
+  const { data: profile } = useScaffoldStarkProfile(address);
   const { chain } = useNetwork();
   const [showBurnerAccounts, setShowBurnerAccounts] = useState(false);
   const [selectingNetwork, setSelectingNetwork] = useState(false);
@@ -57,10 +58,10 @@ export const AddressInfoDropdown = ({
 
   function handleConnectBurner(
     e: React.MouseEvent<HTMLButtonElement>,
-    ix: number,
+    ix: number
   ) {
     const connector = connectors.find(
-      (it) => it.id == "burner-wallet",
+      (it) => it.id == "burner-wallet"
     ) as BurnerConnector;
     if (connector) {
       connector.burnerAccount = burnerAccounts[ix];
@@ -75,7 +76,7 @@ export const AddressInfoDropdown = ({
     { id: "" },
     {
       initializeWithValue: false,
-    },
+    }
   );
 
   return (
@@ -85,25 +86,26 @@ export const AddressInfoDropdown = ({
           tabIndex={0}
           className="btn bg-transparent btn-sm px-2 py-[0.35rem] dropdown-toggle gap-0 !h-auto border border-[#5c4fe5] "
         >
-          {getStarknetPFPIfExists(profile?.profilePicture) ? (
-            //eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={profile?.profilePicture}
-              alt="Profile Picture"
-              className="rounded-full h-7 w-7"
-              width={30}
-              height={30}
-            />
-          ) : (
-            <BlockieAvatar address={address} size={28} ensImage={ensAvatar} />
-          )}
-          <span className="ml-4 mr-1 text-sm">
+          <div className="hidden [@media(min-width:412px)]:block">
+            {getStarknetPFPIfExists(profile?.profilePicture) ? (
+              <NextImage
+                src={profile?.profilePicture || ""}
+                alt="Profile Picture"
+                className="rounded-full"
+                width={30}
+                height={30}
+              />
+            ) : (
+              <BlockieAvatar address={address} size={28} ensImage={ensAvatar} />
+            )}
+          </div>
+          <span className="ml-2 mr-2 text-sm">
             {isENS(displayName)
               ? displayName
               : profile?.name ||
                 address?.slice(0, 6) + "..." + address?.slice(-4)}
           </span>
-          <ChevronDownIcon className="h-6 w-4 ml-2 sm:ml-0" />
+          <ChevronDownIcon className="h-6 w-4 ml-2 sm:ml-0 sm:block hidden" />
         </summary>
         <ul
           tabIndex={0}
@@ -238,7 +240,7 @@ export const AddressInfoDropdown = ({
                 </div>
                 <div className="backdrop-blur fixed inset-0 z-40"></div>
               </>,
-              document.body,
+              document.body
             )}
 
           {/* TODO: reinstate if needed */}

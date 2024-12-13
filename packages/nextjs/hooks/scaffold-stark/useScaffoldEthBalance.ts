@@ -13,7 +13,7 @@ const useScaffoldEthBalance = ({ address }: UseScaffoldEthBalanceProps) => {
   const { data: deployedContract } = useDeployedContractInfo("Eth");
 
   const { data, ...props } = useReadContract({
-    functionName: "balanceOf",
+    functionName: "balance_of",
     address: deployedContract?.address,
     abi: deployedContract?.abi as Abi as any[],
     watch: true,

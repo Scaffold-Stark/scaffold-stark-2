@@ -5,7 +5,7 @@ import {
   CheckCircleIcon,
   DocumentDuplicateIcon,
 } from "@heroicons/react/24/outline";
-import { displayTxResult } from "~~/app/debug/_components/contract";
+import { decodeContractResponse } from "~~/app/debug/_components/contract";
 
 export const TxReceipt = (
   txResult:
@@ -28,7 +28,14 @@ export const TxReceipt = (
           />
         ) : (
           <CopyToClipboard
-            text={displayTxResult(txResult, false) as string}
+            text={
+              decodeContractResponse({
+                resp: txResult,
+                abi: [],
+                functionOutputs: [],
+                asText: true,
+              }) as string
+            }
             onCopy={() => {
               setTxResultCopied(true);
               setTimeout(() => {
@@ -49,7 +56,14 @@ export const TxReceipt = (
           <strong>Transaction Receipt</strong>
         </div>
         <div className="collapse-content overflow-auto bg-transparent rounded-t-none rounded-3xl">
-          <pre className="text-xs pt-4">{displayTxResult(txResult, false)}</pre>
+          <pre className="text-xs pt-4">
+            {decodeContractResponse({
+              resp: txResult,
+              abi: [],
+              functionOutputs: [],
+              asText: true,
+            })}
+          </pre>
         </div>
       </div>
     </div>
