@@ -1,7 +1,7 @@
 use contracts::YourContract::{IYourContractDispatcher, IYourContractDispatcherTrait};
 use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 use openzeppelin_utils::serde::SerializedAppend;
-use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, cheat_caller_address, CheatSpan};
+use snforge_std::{CheatSpan, ContractClassTrait, DeclareResultTrait, cheat_caller_address, declare};
 use starknet::{ContractAddress, contract_address_const};
 
 // Real contract address deployed on Sepolia
@@ -43,7 +43,7 @@ fn test_transfer() {
     let your_contract_address = deploy_contract("YourContract");
 
     let your_contract_dispatcher = IYourContractDispatcher {
-        contract_address: your_contract_address
+        contract_address: your_contract_address,
     };
     let erc20_dispatcher = IERC20Dispatcher { contract_address: eth_contract_address };
     let amount_to_transfer = 500;
