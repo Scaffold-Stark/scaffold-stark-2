@@ -3,18 +3,20 @@ import scaffoldConfig from "~~/scaffold.config";
 import { useEffect, useState } from "react";
 import { StarkProfile } from "starknet";
 
-type network = "mainnet" | "sepolia" | "devnet"
+type network = "mainnet" | "sepolia" | "devnet";
 
 const shouldUseProfile = () => {
   const set = new Set(["mainnet", "sepolia"]);
   return (
     set.has(scaffoldConfig.targetNetworks[0].network) &&
-    scaffoldConfig.targetNetworks[0].network as network !== chains.devnet.network
+    (scaffoldConfig.targetNetworks[0].network as network) !==
+      chains.devnet.network
   );
 };
 
 const starknetIdApiBaseUrl =
-  scaffoldConfig.targetNetworks[0].network as network === chains.mainnet.network
+  (scaffoldConfig.targetNetworks[0].network as network) ===
+  chains.mainnet.network
     ? "https://api.starknet.id"
     : "https://sepolia.api.starknet.id";
 
@@ -41,9 +43,7 @@ const fetchProfileFromApi = async (address: string) => {
 
   const id = BigInt(profileData.id).toString();
 
-  const uriRes = await fetch(
-    `${starknetIdApiBaseUrl}/uri?id=${id}`
-  );
+  const uriRes = await fetch(`${starknetIdApiBaseUrl}/uri?id=${id}`);
 
   const uriData = await uriRes.json();
 

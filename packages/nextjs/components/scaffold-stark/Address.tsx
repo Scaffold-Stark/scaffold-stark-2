@@ -105,7 +105,11 @@ export const Address = ({
             height={24}
           />
         ) : (
-          <BlockieAvatar address={checkSumAddress} size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]} ensImage={ensAvatar} />
+          <BlockieAvatar
+            address={checkSumAddress}
+            size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
+            ensImage={ensAvatar}
+          />
         )}
       </div>
       {disableAddressLink ? (
