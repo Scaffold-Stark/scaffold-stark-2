@@ -3,17 +3,18 @@ import scaffoldConfig from "~~/scaffold.config";
 import { useEffect, useState } from "react";
 import { StarkProfile } from "starknet";
 
+type network = "mainnet" | "sepolia" | "devnet"
+
 const shouldUseProfile = () => {
   const set = new Set(["mainnet", "sepolia"]);
   return (
     set.has(scaffoldConfig.targetNetworks[0].network) &&
-    scaffoldConfig.targetNetworks[0].network !== chains.devnet.network
+    scaffoldConfig.targetNetworks[0].network as network !== chains.devnet.network
   );
 };
 
 const starknetIdApiBaseUrl =
-  // @ts-expect-error program thinks this is constant
-  scaffoldConfig.targetNetworks[0].network === chains.mainnet.network
+  scaffoldConfig.targetNetworks[0].network as network === chains.mainnet.network
     ? "https://api.starknet.id"
     : "https://sepolia.api.starknet.id";
 
@@ -38,11 +39,18 @@ const fetchProfileFromApi = async (address: string) => {
 
   const profileData = await profileRes.json();
 
+  const id = BigInt(profileData.id).toString();
+
+  const uriRes = await fetch(
+    `${starknetIdApiBaseUrl}/uri?id=${id}`
+  );
+
+  const uriData = await uriRes.json();
+
   return {
     name: profileData.domain.domain,
-
+    profilePicture: uriData.image,
     // TODO: figure out where these go in case we have PFP, because its a bit complex to parse the data
-    // profilePicture?: string;
     // discord?: string;
     // twitter?: string;
     // github?: string;

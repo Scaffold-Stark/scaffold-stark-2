@@ -14,6 +14,8 @@ import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
 import { BlockieAvatar } from "~~/components/scaffold-stark/BlockieAvatar";
 import useScaffoldStarkProfile from "~~/hooks/scaffold-stark/useScaffoldStarkProfile";
+import { getStarknetPFPIfExists } from "~~/utils/profile";
+import { default as NextImage } from "next/image";
 
 type AddressProps = {
   address?: AddressType;
@@ -43,7 +45,6 @@ export const Address = ({
 }: AddressProps) => {
   const [ensAvatar, setEnsAvatar] = useState<string | null>();
   const [addressCopied, setAddressCopied] = useState(false);
-  const [isUseBlockie, setIsUseBlockie] = useState(false);
 
   const { targetNetwork } = useTargetNetwork();
   const { data: fetchedProfile, isLoading } = useScaffoldStarkProfile(address);
@@ -95,24 +96,16 @@ export const Address = ({
   return (
     <div className="flex items-center">
       <div className="flex-shrink-0">
-        {isUseBlockie ? (
-          <BlockieAvatar
-            address={checkSumAddress}
-            ensImage={ensAvatar}
-            size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
-          />
-        ) : (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+        {getStarknetPFPIfExists(fetchedProfile?.profilePicture) ? (
+          <NextImage
             src={fetchedProfile?.profilePicture || ""}
             alt="Profile Picture"
-            className="rounded-full h-6 w-6"
+            className="rounded-full"
             width={24}
             height={24}
-            onError={() => {
-              setIsUseBlockie(true);
-            }}
           />
+        ) : (
+          <BlockieAvatar address={checkSumAddress} size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]} ensImage={ensAvatar} />
         )}
       </div>
       {disableAddressLink ? (
