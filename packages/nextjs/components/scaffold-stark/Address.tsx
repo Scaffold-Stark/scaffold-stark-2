@@ -14,6 +14,7 @@ import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
 import { BlockieAvatar } from "~~/components/scaffold-stark/BlockieAvatar";
 import useScaffoldStarkProfile from "~~/hooks/scaffold-stark/useScaffoldStarkProfile";
+import ConnectModal from "./CustomConnectButton/ConnectModal";
 
 type AddressProps = {
   address?: AddressType;
@@ -77,7 +78,7 @@ export const Address = ({
   }, [fetchedProfile, checkSumAddress, address, format]);
 
   // Skeleton UI
-  if (!checkSumAddress || isLoading) {
+  if (isLoading) {
     return (
       <div className="animate-pulse flex space-x-4">
         <div className="rounded-md bg-slate-300 h-6 w-6"></div>
@@ -86,6 +87,18 @@ export const Address = ({
         </div>
       </div>
     );
+  }
+
+  if(!checkSumAddress) {
+    return (
+      <div className="animate-pulse flex space-x-4">
+      <div className="rounded-md bg-slate-300 h-6 w-6"></div>
+      <div className="flex items-center space-y-6">
+        <div className="px-2 italic text-base font-bold text-gray-500 bg-slate-300 rounded">You haven&apos;t connected your wallet yet</div>
+      </div>
+      <ConnectModal/>
+    </div>
+    )
   }
 
   if (!validateChecksumAddress(checkSumAddress)) {
