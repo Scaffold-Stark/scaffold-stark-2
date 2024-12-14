@@ -15,7 +15,7 @@ const targetNetworks = getTargetNetworks();
 export const connectors = getConnectors();
 
 // workaround helper function to properly disconnect with removing local storage (prevent autoconnect infinite loop)
-function withDisconnectWrapper(connector: InjectedConnector | Connector) {
+function withDisconnectWrapper(connector: Connector) {
   const connectorDisconnect = connector.disconnect;
   const _disconnect = (): Promise<void> => {
     localStorage.removeItem("lastUsedConnector");
