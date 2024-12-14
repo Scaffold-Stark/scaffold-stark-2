@@ -157,16 +157,72 @@ To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, 
 
 ```json
 {
- "jsonrpc":"2.0",
- "method":"starknet_specVersion",
- "id":1
+  "jsonrpc": "2.0",
+  "method": "starknet_specVersion",
+  "id": 1
 }
 ```
 
 You have to paste the endpoint and body in the API platform and click on the `Send` button. If the response is `0.7.1`, then you are good to go. Otherwise, you have to get the correct RPC URL endpoint.
 
 ![rpc-version](./packages/nextjs/public/rpc-version.png)
+
 </details>
+
+## Test Controller Connector with Ngrok
+
+Ngrok is a tool that is a tool that allows you expose a local server to the internet securely. Since the Controller connector requires HTTPS for testing, Ngrok simplifies the process by providing a secure URL for your app.
+
+1. Install Ngrok
+
+You can install Ngrok in two ways:
+
+- Using Homebrew:
+
+```sh
+brew install ngrok
+```
+
+- Download from Ngrok's Website:
+
+Visit the [Ngrok download page](https://download.ngrok.com) to download the agent for your platform.
+
+Alternatively, refer to the [Setup & Installation page in your Ngrok dashboard](https://dashboard.ngrok.com/get-started/setup) for platform-specific instructions.
+
+2. Connect Your Account
+
+To use Ngrok, you need an Ngrok account. If you don’t have one, [sign up for free](https://dashboard.ngrok.com/signup).
+
+- Retrieve your [Ngrok authtoken](https://dashboard.ngrok.com/get-started/your-authtoken) from the dashboard.
+
+- Run the following command to connect your Ngrok agent to your account:
+
+```sh
+ngrok config add-authtoken <TOKEN>
+```
+
+Replace `<TOKEN>` with the authtoken you copied.
+
+3. Start Ngrok and Put Your App Online
+
+- Start ngrok by running:
+
+```sh
+ngrok http http://localhost:8080
+```
+
+Replace `http://localhost:8080` with the URL and port where your application is running. For
+
+example:
+
+- If your app listens on port `3000`, use `http://localhost:3000`.
+
+4. Access Your App Online
+
+Once Ngrok is running, you’ll see details in your terminal, including a Forwarding URL.
+
+- Open the forwarding URL in your browser to view your app.
+- Ngrok provides a valid HTTPS certificate automatically, so your app is secure and ready for testing.
 
 ## **What's next**
 
