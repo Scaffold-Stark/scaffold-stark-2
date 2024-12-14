@@ -173,23 +173,44 @@ You have to paste the endpoint and body in the API platform and click on the `Se
 
 Ngrok is a tool that is a tool that allows you expose a local server to the internet securely. Since the Controller connector requires HTTPS for testing, Ngrok simplifies the process by providing a secure URL for your app.
 
-1. Install Ngrok
+### 1. Install Ngrok
 
-You can install Ngrok in two ways:
+**For macOS**:
 
-- Using Homebrew:
+Install Ngrok using Homebrew:
 
 ```sh
 brew install ngrok
 ```
 
-- Download from Ngrok's Website:
+**For Windows**:
+
+Install Ngrok using Chocolatey:
+
+```sh
+choco install ngrok
+```
+
+**For Linux**:
+
+Install Ngrok using Apt:
+
+```sh
+curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc \
+	| sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null \
+	&& echo "deb https://ngrok-agent.s3.amazonaws.com buster main" \
+	| sudo tee /etc/apt/sources.list.d/ngrok.list \
+	&& sudo apt update \
+	&& sudo apt install ngrok
+```
+
+Or Download from Ngrok's Website:
 
 Visit the [Ngrok download page](https://download.ngrok.com) to download the agent for your platform.
 
 Alternatively, refer to the [Setup & Installation page in your Ngrok dashboard](https://dashboard.ngrok.com/get-started/setup) for platform-specific instructions.
 
-2. Connect Your Account
+### 2. Connect Your Account
 
 To use Ngrok, you need an Ngrok account. If you don’t have one, [sign up for free](https://dashboard.ngrok.com/signup).
 
@@ -203,7 +224,7 @@ ngrok config add-authtoken <TOKEN>
 
 Replace `<TOKEN>` with the authtoken you copied.
 
-3. Start Ngrok and Put Your App Online
+### 3. Start Ngrok and Put Your App Online
 
 - Start ngrok by running:
 
@@ -217,7 +238,7 @@ example:
 
 - If your app listens on port `3000`, use `http://localhost:3000`.
 
-4. Access Your App Online
+### 4. Access Your App Online
 
 Once Ngrok is running, you’ll see details in your terminal, including a Forwarding URL.
 
