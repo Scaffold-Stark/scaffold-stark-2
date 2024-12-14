@@ -58,13 +58,13 @@ describe("useTransactor", () => {
     expect(notification.loading).toHaveBeenCalledWith(
       expect.objectContaining({
         props: { message: "Awaiting for user confirmation" },
-      })
+      }),
     );
     expect(notification.success).toHaveBeenCalledWith(
       expect.objectContaining({
         props: { message: "Transaction completed successfully!" },
       }),
-      { icon: "🎉" }
+      { icon: "🎉" },
     );
     expect(txHash).toBe("mock-tx-hash");
   });
@@ -92,7 +92,7 @@ describe("useTransactor", () => {
     const { result } = renderHook(() => useTransactor(walletClientMock));
 
     await expect(result.current(null)).rejects.toThrow(
-      "Incorrect transaction passed to transactor"
+      "Incorrect transaction passed to transactor",
     );
   });
 });
