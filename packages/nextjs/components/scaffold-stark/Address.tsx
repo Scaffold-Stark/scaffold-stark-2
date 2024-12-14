@@ -89,16 +89,10 @@ export const Address = ({
     );
   }
 
-  if(!checkSumAddress) {
+  if (!checkSumAddress) {
     return (
-      <div className="animate-pulse flex space-x-4">
-      <div className="rounded-md bg-slate-300 h-6 w-6"></div>
-      <div className="flex items-center space-y-6">
-        <div className="px-2 italic text-base font-bold text-gray-500 bg-slate-300 rounded">You haven&apos;t connected your wallet yet</div>
-      </div>
-      <ConnectModal/>
-    </div>
-    )
+      <div className="italic text-base font-bold ">Wallet not connected</div>
+    );
   }
 
   if (!validateChecksumAddress(checkSumAddress)) {
