@@ -1,15 +1,21 @@
-import { argent, braavos, InjectedConnector } from "@starknet-react/core";
+import {
+  argent,
+  braavos,
+  Connector,
+  InjectedConnector,
+} from "@starknet-react/core";
 import { getTargetNetworks } from "~~/utils/scaffold-stark";
 import { BurnerConnector } from "./stark-burner/BurnerConnector";
 import scaffoldConfig from "~~/scaffold.config";
 import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
+import { controllerInstance } from "~~/utils/scaffold-stark/controller";
 
 const targetNetworks = getTargetNetworks();
 
 export const connectors = getConnectors();
 
 // workaround helper function to properly disconnect with removing local storage (prevent autoconnect infinite loop)
-function withDisconnectWrapper(connector: InjectedConnector) {
+function withDisconnectWrapper(connector: InjectedConnector | Connector) {
   const connectorDisconnect = connector.disconnect;
   const _disconnect = (): Promise<void> => {
     localStorage.removeItem("lastUsedConnector");
@@ -23,7 +29,7 @@ function withDisconnectWrapper(connector: InjectedConnector) {
 function getConnectors() {
   const { targetNetworks } = scaffoldConfig;
 
-  const connectors = [argent(), braavos()];
+  const connectors = [argent(), braavos(), controllerInstance];
 
   if (
     targetNetworks.some((network) => (network.network as string) === "devnet")
