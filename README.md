@@ -171,6 +171,8 @@ You have to paste the endpoint and body in the API platform and click on the `Se
 
 ## Test Controller Connector with Ngrok
 
+To ensure the proper functioning of the Cartridge Controller, make sure you're using `@cartridge/connector` version `0.5.5`.
+
 Ngrok is a tool that is a tool that allows you expose a local server to the internet securely. Since the Controller connector requires HTTPS for testing, Ngrok simplifies the process by providing a secure URL for your app.
 
 ### 1. Install Ngrok

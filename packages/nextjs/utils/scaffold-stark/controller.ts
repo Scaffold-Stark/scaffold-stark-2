@@ -1,7 +1,7 @@
 "use client";
 import ControllerConnector from "@cartridge/connector/controller";
 import { Chain, mainnet, sepolia } from "@starknet-react/chains";
-import { Connector } from "@starknet-react/core";
+import { InjectedConnector } from "@starknet-react/core";
 import scaffoldConfig from "~~/scaffold.config";
 
 function controllerProvider(chain: Chain) {
@@ -17,4 +17,4 @@ function controllerProvider(chain: Chain) {
 
 export const controllerInstance = new ControllerConnector({
   rpc: controllerProvider(scaffoldConfig.targetNetworks[0]).nodeUrl,
-}) as never as Connector;
+}) as never as InjectedConnector;
