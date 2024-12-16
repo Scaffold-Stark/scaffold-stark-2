@@ -3,6 +3,7 @@ import { getTargetNetworks } from "~~/utils/scaffold-stark";
 import { BurnerConnector } from "./stark-burner/BurnerConnector";
 import scaffoldConfig from "~~/scaffold.config";
 import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
+import { controllerInstance } from "~~/utils/scaffold-stark/controller";
 
 const targetNetworks = getTargetNetworks();
 
@@ -29,6 +30,12 @@ function getConnectors() {
     targetNetworks.some((network) => (network.network as string) === "devnet")
   ) {
     connectors.push(new BurnerConnector());
+  }
+
+  if (
+    !targetNetworks.some((network) => (network.network as string) === "devnet")
+  ) {
+    connectors.push(controllerInstance);
   }
 
   return connectors.sort(() => Math.random() - 0.5).map(withDisconnectWrapper);
