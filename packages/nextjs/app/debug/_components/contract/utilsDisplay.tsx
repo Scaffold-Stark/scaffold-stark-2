@@ -1,5 +1,5 @@
 import { getChecksumAddress, Uint256 } from "starknet";
-import { replacer } from "~~/utils/scaffold-stark/common";
+import { feltToHex, replacer } from "~~/utils/scaffold-stark/common";
 import { AbiOutput } from "~~/utils/scaffold-stark/contract";
 import {
   isCairoArray,
@@ -139,11 +139,11 @@ const _decodeContractResponseItem = (
     abiType.type &&
     abiType.type === "core::starknet::contract_address::ContractAddress"
   ) {
-    return getChecksumAddress(`0x${respItem.toString(16)}`);
+    return getChecksumAddress(feltToHex(respItem));
   }
 
   if (abiType.type && baseHexType.has(abiType.type)) {
-    const hexString = `0x${respItem.toString(16)}`;
+    const hexString = feltToHex(respItem);
     if (showAsString) {
       return hexToAscii(hexString) || hexString;
     }
