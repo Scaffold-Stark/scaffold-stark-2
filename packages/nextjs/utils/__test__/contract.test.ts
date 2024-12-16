@@ -5,6 +5,7 @@ import {
   contracts,
   parseParamWithType,
 } from "../scaffold-stark/contract";
+import { Abi } from "abi-wan-kanabi";
 
 vi.mock("../contract", () => {
   const originalModule = vi.importActual("../scaffold-stark/contract");
@@ -130,7 +131,7 @@ describe("deepMergeContracts", () => {
 
 describe("getFunctionsByStateMutability", () => {
   it("should return only functions with the specified state mutability", () => {
-    const abi = [
+    const abi: Abi = [
       {
         type: "function",
         name: "func1",
@@ -141,7 +142,7 @@ describe("getFunctionsByStateMutability", () => {
       {
         type: "function",
         name: "func2",
-        state_mutability: "nonpayable",
+        state_mutability: "external",
         inputs: [],
         outputs: [],
       },
@@ -173,8 +174,14 @@ describe("getFunctionsByStateMutability", () => {
     ]);
   });
   it("should return an empty array if no functions match the state mutability", () => {
-    const abi = [
-      { type: "function", name: "func1", state_mutability: "external" },
+    const abi: Abi = [
+      {
+        type: "function",
+        name: "func1",
+        state_mutability: "external",
+        inputs: [],
+        outputs: [],
+      },
     ];
 
     const result = getFunctionsByStateMutability(abi, "view");
@@ -182,29 +189,60 @@ describe("getFunctionsByStateMutability", () => {
   });
 
   it("should handle mixed ABI types", () => {
-    const abi = [
+    const abi: Abi = [
       {
-        type: "interface",
-        name: "MyInterface",
-        items: [
-          { type: "function", name: "func1", state_mutability: "view" },
-          { type: "function", name: "func2", state_mutability: "external" },
-        ],
+        type: "function",
+        name: "func1",
+        state_mutability: "view",
+        inputs: [],
+        outputs: [],
       },
-      { type: "function", name: "func3", state_mutability: "view" },
-      { type: "struct", name: "MyStruct" },
+      {
+        type: "function",
+        name: "func2",
+        state_mutability: "external",
+        inputs: [],
+        outputs: [],
+      },
+      {
+        type: "function",
+        name: "func3",
+        state_mutability: "view",
+        inputs: [],
+        outputs: [],
+      },
     ];
 
     const result = getFunctionsByStateMutability(abi, "view");
     expect(result).toEqual([
-      { type: "function", name: "func1", state_mutability: "view" },
-      { type: "function", name: "func3", state_mutability: "view" },
+      {
+        type: "function",
+        name: "func1",
+        state_mutability: "view",
+        inputs: [],
+        outputs: [],
+      },
+      {
+        type: "function",
+        name: "func3",
+        state_mutability: "view",
+        inputs: [],
+        outputs: [],
+      },
     ]);
   });
 
   it("should handle empty or invalid ABI", () => {
     const emptyAbi: any[] = [];
-    const invalidAbi = [{ type: "something" }];
+    const invalidAbi: Abi = [
+      {
+        type: "function",
+        name: "func1",
+        state_mutability: "external",
+        inputs: [],
+        outputs: [],
+      },
+    ];
 
     expect(getFunctionsByStateMutability(emptyAbi, "view")).toEqual([]);
     expect(getFunctionsByStateMutability(invalidAbi, "view")).toEqual([]);
@@ -218,10 +256,11 @@ describe("Contract Declarations", () => {
   });
 
   it("should have a valid contract structure", () => {
+    expect(contracts).toBeDefined();
     if (contracts) {
-      Object.keys(contracts).forEach((network) => {
+      Object.keys(contracts!).forEach((network) => {
         expect(typeof network).toBe("string");
-        const networkContracts = contracts[network];
+        const networkContracts = contracts![network];
 
         Object.keys(networkContracts).forEach((contractName) => {
           const contract = networkContracts[contractName];
