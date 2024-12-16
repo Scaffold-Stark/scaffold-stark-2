@@ -12,6 +12,7 @@ vi.mock("../contract", () => {
   return {
     ...originalModule,
     // ...vi.importActual('../scaffold-stark/contract'),
+    parseParamWithType: vi.fn(),
     encodeParamsWithType: vi.fn(),
     decodeParamsWithType: vi.fn(),
   };
@@ -270,5 +271,41 @@ describe("Contract Declarations", () => {
         });
       });
     }
+  });
+
+  it("should collect only function items from ABI", () => {
+    const abi: Abi = [
+      {
+        type: "interface",
+        name: "MyInterface",
+        items: [
+          {
+            type: "function",
+            name: "func1",
+            state_mutability: "view",
+            inputs: [],
+            outputs: [],
+          },
+          {
+            type: "function",
+            name: "func2",
+            state_mutability: "external",
+            inputs: [],
+            outputs: [],
+          },
+        ],
+      },
+    ];
+
+    const result = getFunctionsByStateMutability(abi, "view");
+    expect(result).toEqual([
+      {
+        type: "function",
+        name: "func1",
+        state_mutability: "view",
+        inputs: [],
+        outputs: [],
+      },
+    ]);
   });
 });
