@@ -4,6 +4,7 @@ import {
   getFunctionsByStateMutability,
   contracts,
   parseParamWithType,
+  parseTuple,
 } from "../scaffold-stark/contract";
 import { Abi } from "abi-wan-kanabi";
 
@@ -307,5 +308,25 @@ describe("Contract Declarations", () => {
         outputs: [],
       },
     ]);
+  });
+});
+
+describe("parseTuple", () => {
+  it("should parse a simple tuple", () => {
+    const input = "(1, 2, 3)";
+    const result = parseTuple(input);
+    expect(result).toEqual(["1", "2", "3"]);
+  });
+
+  it("should parse a nested tuple", () => {
+    const input = "(1, (2, 3), 4)";
+    const result = parseTuple(input);
+    expect(result).toEqual(["1", "(2, 3)", "4"]);
+  });
+
+  it("should handle spaces around elements", () => {
+    const input = "( 1 ,  2 ,  3 )";
+    const result = parseTuple(input);
+    expect(result).toEqual(["1", "2", "3"]);
   });
 });
