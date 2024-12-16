@@ -63,6 +63,7 @@ describe("useScaffoldContract", () => {
     MockedContract.mockImplementation(() => ({
       address: mockAddress,
       abi: mockAbi,
+      call: vi.fn(),
     }));
 
     MockedRpcProvider.mockImplementation(() => ({
