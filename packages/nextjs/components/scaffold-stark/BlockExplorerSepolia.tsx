@@ -76,6 +76,7 @@ export const BlockExplorerSepolia = () => {
                         alt="Starknet Developers Hub"
                         className="cursor-pointer"
                         fill
+                        sizes="1.5rem"
                         src={blockexplorer.img}
                       />
                     </div>
