@@ -11,7 +11,7 @@ export const useScaffoldContract = <TContractName extends ContractName>({
 }) => {
   const { data: deployedContractData, isLoading: deployedContractLoading } =
     useDeployedContractInfo(contractName);
-  
+
   const { provider: publicClient } = useProvider();
 
   const contract = useMemo(() => {
@@ -20,7 +20,7 @@ export const useScaffoldContract = <TContractName extends ContractName>({
     const contractInstance = new Contract(
       deployedContractData.abi as Abi,
       deployedContractData.address,
-      publicClient
+      publicClient,
     );
 
     const originalCall = contractInstance.call.bind(contractInstance);
