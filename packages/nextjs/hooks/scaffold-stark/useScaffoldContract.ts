@@ -1,7 +1,7 @@
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { ContractName } from "~~/utils/scaffold-stark/contract";
 import { Contract, Abi } from "starknet";
-import { useProvider } from "@starknet-react/core";
+import { useProvider, useAccount } from "@starknet-react/core";
 import { useMemo } from "react";
 
 export const useScaffoldContract = <TContractName extends ContractName>({
@@ -13,14 +13,15 @@ export const useScaffoldContract = <TContractName extends ContractName>({
     useDeployedContractInfo(contractName);
 
   const { provider: publicClient } = useProvider();
+  const { account } = useAccount();
 
   const contract = useMemo(() => {
-    if (!deployedContractData) return undefined;
+    if (!deployedContractData || !account) return undefined;
 
     const contractInstance = new Contract(
       deployedContractData.abi as Abi,
       deployedContractData.address,
-      publicClient,
+      account,
     );
 
     const originalCall = contractInstance.call.bind(contractInstance);
@@ -33,7 +34,7 @@ export const useScaffoldContract = <TContractName extends ContractName>({
     };
 
     return contractInstance;
-  }, [deployedContractData, publicClient]);
+  }, [deployedContractData, publicClient, account]);
 
   return {
     data: contract,

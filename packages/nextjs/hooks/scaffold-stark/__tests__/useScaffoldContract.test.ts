@@ -2,7 +2,8 @@ import { vi, describe, it, expect, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useScaffoldContract } from "~~/hooks/scaffold-stark/useScaffoldContract";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark/useDeployedContractInfo";
-import { useAccount } from "~~/hooks/useAccount";
+// import { useAccount } from "~~/hooks/useAccount";
+import { useAccount } from "@starknet-react/core";
 import { Contract, RpcProvider } from "starknet";
 
 import type { Mock } from "vitest";
@@ -59,6 +60,7 @@ describe("useScaffoldContract", () => {
         address: "0x129846",
       },
     });
+    console.log("accounttt", mockedUseAccount.mock.results);
 
     MockedContract.mockImplementation(() => ({
       address: mockAddress,
