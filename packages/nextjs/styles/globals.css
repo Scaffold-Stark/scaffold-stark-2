@@ -27,9 +27,28 @@ p {
   @apply shadow-md;
 }
 
-.modal-box {
-  @apply min-h-[20rem] max-w-[25rem];
+html {
+  @apply overflow-y-scroll overflow-x-hidden;
 }
+
+body {
+  @apply overflow-y-auto overflow-x-hidden;
+}
+
+.modal {
+  @apply overflow-hidden;
+}
+
+.modal-box {
+  @apply min-h-[20rem] max-w-[25rem] overflow-hidden;
+  transform: translateZ(0);
+}
+
+.modal-backdrop,
+.modal.backdrop-blur {
+  @apply fixed inset-0 overflow-hidden;
+}
+
 .btn.btn-ghost {
   @apply shadow-none;
 }
