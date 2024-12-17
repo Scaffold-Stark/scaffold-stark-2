@@ -19,7 +19,7 @@
     "@heroicons/react": "^2.1.3",
     "@radix-ui/react-icons": "1.3.0",
     "@radix-ui/themes": "2.0.3",
-    "@scaffold-stark/stark-burner": "0.1.4",
+    "@scaffold-stark/stark-burner": "0.1.6",
     "@starknet-io/types-js": "^0.7.7",
     "@starknet-react/chains": "^3.1.0",
     "@starknet-react/core": "^3.6.0",
