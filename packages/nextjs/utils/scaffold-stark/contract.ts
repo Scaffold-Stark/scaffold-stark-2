@@ -472,10 +472,7 @@ const decodeParamsWithType = (paramType: string, param: any): unknown => {
         ? "false"
         : "true";
   } else if (isCairoBytes31(paramType)) {
-    return tryParsingParamReturnObject(
-      (x: bigint) => `0x${x.toString(16)}`,
-      param,
-    );
+    return tryParsingParamReturnObject((x: bigint) => feltToHex(x), param);
   } else if (isCairoInt(paramType)) {
     return tryParsingParamReturnObject(
       (x) => (typeof x === "bigint" ? Number(x) : parseInt(x, 16)),
