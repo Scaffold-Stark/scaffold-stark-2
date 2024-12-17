@@ -24,6 +24,8 @@ export const CustomConnectButton = () => {
   const [accountChainId, setAccountChainId] = useState<bigint>(0n);
   const { chain } = useNetwork();
 
+
+
   const blockExplorerAddressLink = useMemo(() => {
     return (
       accountAddress &&
