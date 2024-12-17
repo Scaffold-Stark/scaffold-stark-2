@@ -44,7 +44,7 @@ export const useDataTransaction = (blockNumber: number) => {
         return 0;
       }
     },
-    [publicClient]
+    [publicClient],
   );
 
   const calculateAverageFee = useCallback(
@@ -69,7 +69,7 @@ export const useDataTransaction = (blockNumber: number) => {
         const fetchEthPrice = async () => {
           try {
             const response = await fetch(
-              "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
+              "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd",
             );
             const data = await response.json();
             return data.ethereum.usd;
@@ -89,7 +89,7 @@ export const useDataTransaction = (blockNumber: number) => {
         return 0;
       }
     },
-    [publicClient]
+    [publicClient],
   );
 
   const fetchBlockData = useCallback(async () => {
