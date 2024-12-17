@@ -116,7 +116,7 @@ describe("useScaffoldContract", () => {
     expect(MockedContract).toHaveBeenCalledWith(
       mockAbi,
       mockAddress,
-      expect.anything()
+      expect.anything(),
     );
   });
 
@@ -135,7 +135,7 @@ describe("useScaffoldContract", () => {
     expect(MockedContract).toHaveBeenCalledWith(
       mockAbi,
       mockAddress,
-      expect.anything()
+      expect.anything(),
     );
   });
 
