@@ -164,7 +164,6 @@ describe("useScaffoldContract", () => {
         throw new Error("Mock Error");
       })
       .mockResolvedValueOnce("fallback-response");
-
     MockedContract.mockImplementation(() => ({
       call: originalCall,
     }));
@@ -173,13 +172,11 @@ describe("useScaffoldContract", () => {
     if (!contract) {
       throw new Error("Contract instance is undefined");
     }
-
     const response = await contract.call("mockFunction");
     expect(originalCall).toHaveBeenCalledTimes(2);
     expect(originalCall).toHaveBeenNthCalledWith(1, "mockFunction", {
       parseResponse: false,
     });
-
     expect(originalCall).toHaveBeenNthCalledWith(2, "mockFunction");
     expect(response).toEqual("fallback-response");
   });
