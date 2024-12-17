@@ -21,41 +21,49 @@ const starknetIdApiBaseUrl =
     : "https://sepolia.api.starknet.id";
 
 const fetchProfileFromApi = async (address: string) => {
-  const addrToDomainRes = await fetch(
-    `${starknetIdApiBaseUrl}/addr_to_domain?addr=${address}`,
-  );
+  try {
+    const addrToDomainRes = await fetch(
+      `${starknetIdApiBaseUrl}/addr_to_domain?addr=${address}`,
+    );
 
-  if (!addrToDomainRes.ok) {
-    throw new Error(await addrToDomainRes.text());
+    if (!addrToDomainRes.ok) {
+      throw new Error(await addrToDomainRes.text());
+    }
+
+    const addrToDomainJson = await addrToDomainRes.json();
+
+    const domain = addrToDomainJson.domain;
+
+    const profileRes = await fetch(
+      `${starknetIdApiBaseUrl}/domain_to_data?domain=${domain}`,
+    );
+
+    if (!profileRes.ok) throw new Error(await profileRes.text());
+
+    const profileData = await profileRes.json();
+
+    const id = BigInt(profileData.id).toString();
+
+    const uriRes = await fetch(`${starknetIdApiBaseUrl}/uri?id=${id}`);
+
+    const uriData = await uriRes.json();
+
+    return {
+      name: profileData.domain.domain,
+      profilePicture: uriData.image,
+      // TODO: figure out where these go in case we have PFP, because its a bit complex to parse the data
+      // discord?: string;
+      // twitter?: string;
+      // github?: string;
+      // proofOfPersonhood?: boolean;
+    };
+  } catch (e) {
+    console.error(e);
+    return {
+      name: "",
+      profilePicture: "",
+    };
   }
-
-  const addrToDomainJson = await addrToDomainRes.json();
-
-  const domain = addrToDomainJson.domain;
-
-  const profileRes = await fetch(
-    `${starknetIdApiBaseUrl}/domain_to_data?domain=${domain}`,
-  );
-
-  if (!profileRes.ok) throw new Error(await profileRes.text());
-
-  const profileData = await profileRes.json();
-
-  const id = BigInt(profileData.id).toString();
-
-  const uriRes = await fetch(`${starknetIdApiBaseUrl}/uri?id=${id}`);
-
-  const uriData = await uriRes.json();
-
-  return {
-    name: profileData.domain.domain,
-    profilePicture: uriData.image,
-    // TODO: figure out where these go in case we have PFP, because its a bit complex to parse the data
-    // discord?: string;
-    // twitter?: string;
-    // github?: string;
-    // proofOfPersonhood?: boolean;
-  };
 };
 
 // this hook is a workaround, basically a re-implement of the starknet react hook with conditional rendering.
