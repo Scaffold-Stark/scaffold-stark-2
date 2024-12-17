@@ -28,11 +28,11 @@ p {
 }
 
 html {
-  @apply overflow-y-scroll;
+  @apply overflow-y-scroll overflow-x-hidden;
 }
 
 body {
-  @apply overflow-y-auto;
+  @apply overflow-y-auto overflow-x-hidden;
 }
 
 .modal {
