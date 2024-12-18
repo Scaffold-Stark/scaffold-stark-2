@@ -21,7 +21,7 @@ export const useScaffoldContract = <TContractName extends ContractName>({
     const contractInstance = new Contract(
       deployedContractData.abi as Abi,
       deployedContractData.address,
-      account,
+      account || publicClient,
     );
 
     const originalCall = contractInstance.call.bind(contractInstance);
