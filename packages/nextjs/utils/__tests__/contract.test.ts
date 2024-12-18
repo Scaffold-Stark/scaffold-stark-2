@@ -8,17 +8,6 @@ import {
 } from "../scaffold-stark/contract";
 import { Abi } from "abi-wan-kanabi";
 
-vi.mock("../contract", () => {
-  const originalModule = vi.importActual("../scaffold-stark/contract");
-  return {
-    ...originalModule,
-    // ...vi.importActual('../scaffold-stark/contract'),
-    parseParamWithType: vi.fn(),
-    encodeParamsWithType: vi.fn(),
-    decodeParamsWithType: vi.fn(),
-  };
-});
-
 describe("deepMergeContracts", () => {
   it("should merge two contract objects correctly", () => {
     const local = { contractA: { value: 1 } };
@@ -330,30 +319,3 @@ describe("parseTuple", () => {
     expect(result).toEqual(["1", "2", "3"]);
   });
 });
-
-// function tryParsingParamReturnObject(fn: (x: any) => {}, param: any) {
-//   try {
-//     return fn(param);
-//   } catch (e) {
-//     return param;
-//   }
-// }
-
-// describe("tryParsingParamReturnObject", () => {
-//   it("should return parsed object value", () => {
-//     const mockFn = vi.fn().mockReturnValue({ key: "value" });
-
-//     const result = tryParsingParamReturnObject(mockFn, "input");
-//     expect(result).toEqual({ key: "value" });
-//     expect(mockFn).toHaveBeenCalledWith("input");
-//   });
-
-//   it("should return input parameter if function throws an error", () => {
-//     const mockFn = vi.fn().mockImplementation(() => {
-//       throw new Error("Parsing error");
-//     });
-
-//     const result = tryParsingParamReturnObject(mockFn, "input");
-//     expect(result).toBe("input");
-//   });
-// })
