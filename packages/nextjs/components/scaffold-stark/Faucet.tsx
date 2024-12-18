@@ -123,7 +123,7 @@ export const Faucet = () => {
                 if (/^0x[0-9a-fA-F]+$/.test(value)) {
                   setInputAddress(value as AddressType);
                 }
-              }}              
+              }}
             />
           </div>
           <button
