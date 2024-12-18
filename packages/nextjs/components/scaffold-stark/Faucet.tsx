@@ -119,7 +119,11 @@ export const Faucet = () => {
             <EtherInput
               placeholder="Amount to send"
               value={sendValue}
-              onChange={(value) => setSendValue(value)}
+              onChange={(value) => {
+                if (/^0x[0-9a-fA-F]+$/.test(value)) {
+                  setInputAddress(value as AddressType);
+                }
+              }}              
             />
           </div>
           <button

@@ -96,10 +96,10 @@ export const Address = ({
     );
   }
 
-  if (!validateChecksumAddress(checkSumAddress)) {
-    return <span className="text-error">Wrong address</span>;
+  if (!checkSumAddress || !/^0x[0-9a-fA-F]+$/.test(checkSumAddress)) {
+    return <span className="text-error">Invalid address format</span>;
   }
-
+  
   return (
     <div className="flex items-center">
       <div className="flex-shrink-0">
