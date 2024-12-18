@@ -19,8 +19,8 @@ vi.mock("../useTargetNetwork", () => ({
 const mockGetBlock = vi.fn();
 const mockGetBlockWithTxHashes = vi.fn();
 const mockGetTransactionReceipt = vi.fn();
-const mockGetClass: any[] = []; 
-const mockGetTransaction: any[] = []; 
+const mockGetClass: any[] = [];
+const mockGetTransaction: any[] = [];
 
 vi.mock("starknet", () => ({
   RpcProvider: vi.fn().mockImplementation(() => ({
