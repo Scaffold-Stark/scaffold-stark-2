@@ -115,18 +115,18 @@ describe("Cairo Type Checks", () => {
         isStructOrEnum({
           type: "struct",
           name: "MyStruct",
-          members: [] as readonly AbiParameter[]
-        })
+          members: [] as readonly AbiParameter[],
+        }),
       ).toBe(true);
     });
-    
+
     it("should return true for enum types", () => {
       expect(
         isStructOrEnum({
           type: "enum",
           name: "MyEnum",
-          members: [] as readonly AbiParameter[]
-        })
+          members: [] as readonly AbiParameter[],
+        }),
       ).toBe(true);
     });
 
