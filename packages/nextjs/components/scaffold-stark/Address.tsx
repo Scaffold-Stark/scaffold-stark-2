@@ -60,6 +60,11 @@ export const Address = ({
     checkSumAddress || address || "",
   );
 
+  const isValidHexAddress = (value: string): boolean => {
+    const hexAddressRegex = /^0x[0-9a-fA-F]+$/;
+    return hexAddressRegex.test(value);
+  };
+
   const [displayAddress, setDisplayAddress] = useState(
     checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4),
   );
@@ -96,7 +101,7 @@ export const Address = ({
     );
   }
 
-  if (!checkSumAddress || !/^0x[0-9a-fA-F]+$/.test(checkSumAddress)) {
+  if (!checkSumAddress || !isValidHexAddress(checkSumAddress)) {
     return <span className="text-error">Invalid address format</span>;
   }
 
