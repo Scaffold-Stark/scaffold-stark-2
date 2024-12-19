@@ -21,7 +21,7 @@ import { burnerAccounts } from "~~/utils/devnetAccounts";
 import { Address } from "@starknet-react/chains";
 import { useDisconnect, useNetwork, useConnect } from "@starknet-react/core";
 import { getStarknetPFPIfExists } from "~~/utils/profile";
-import useScaffoldStarkProfile from "~~/hooks/scaffold-stark/useScaffoldStarkProfile";
+import { useScaffoldStarkProfile } from "~~/hooks/scaffold-stark/useScaffoldStarkProfile";
 import { useTheme } from "next-themes";
 import { default as NextImage } from "next/image";
 
