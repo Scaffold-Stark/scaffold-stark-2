@@ -20,7 +20,7 @@ const starknetIdApiBaseUrl =
     ? "https://api.starknet.id"
     : "https://sepolia.api.starknet.id";
 
-const fetchProfileFromApi = async (address: string) => {
+export const fetchProfileFromApi = async (address: string) => {
   try {
     const addrToDomainRes = await fetch(
       `${starknetIdApiBaseUrl}/addr_to_domain?addr=${address}`,
@@ -67,14 +67,16 @@ const fetchProfileFromApi = async (address: string) => {
 };
 
 // this hook is a workaround, basically a re-implement of the starknet react hook with conditional rendering.
-const useScaffoldStarkProfile = (address: chains.Address | undefined) => {
+export const useScaffoldStarkProfile = (
+  address: chains.Address | undefined,
+) => {
   const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState<StarkProfile | undefined>();
   const isEnabled = shouldUseProfile();
 
   useEffect(() => {
     if (!isEnabled || !address) {
-      setProfile(undefined);
+      setProfile({ name: "", profilePicture: "" });
       return;
     }
 
@@ -95,5 +97,3 @@ const useScaffoldStarkProfile = (address: chains.Address | undefined) => {
 
   return { data: profile, isLoading };
 };
-
-export default useScaffoldStarkProfile;
