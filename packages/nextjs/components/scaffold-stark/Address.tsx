@@ -145,6 +145,7 @@ export const Address = ({
           aria-hidden="true"
         />
       ) : (
+        //@ts-ignore
         <CopyToClipboard
           text={checkSumAddress}
           onCopy={() => {
