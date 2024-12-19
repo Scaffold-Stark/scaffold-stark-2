@@ -5,7 +5,7 @@ import {
   contracts,
   parseParamWithType,
   parseTuple,
-} from "../scaffold-stark/contract";
+} from "../contract";
 import { Abi } from "abi-wan-kanabi";
 
 describe("deepMergeContracts", () => {
