@@ -1,3 +1,4 @@
+"use client";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { ContractName } from "~~/utils/scaffold-stark/contract";
 import { Contract, Abi } from "starknet";
@@ -16,13 +17,17 @@ export const useScaffoldContract = <TContractName extends ContractName>({
   const { account } = useAccount();
 
   const contract = useMemo(() => {
-    if (!deployedContractData || !account) return undefined;
+    if (!deployedContractData) return undefined;
 
     const contractInstance = new Contract(
       deployedContractData.abi as Abi,
       deployedContractData.address,
-      account || publicClient,
+      publicClient,
     );
+
+    if (account) {
+      contractInstance.connect(account);
+    }
 
     const originalCall = contractInstance.call.bind(contractInstance);
     contractInstance.call = async (method: string, ...args: any[]) => {

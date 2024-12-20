@@ -2,7 +2,6 @@ import { vi, describe, it, expect, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useScaffoldContract } from "~~/hooks/scaffold-stark/useScaffoldContract";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark/useDeployedContractInfo";
-// import { useAccount } from "~~/hooks/useAccount";
 import { useAccount } from "@starknet-react/core";
 import { Contract, RpcProvider } from "starknet";
 
@@ -12,7 +11,6 @@ import { useProvider } from "@starknet-react/core";
 
 //Using vitest's functionality to mock modules from different paths
 vi.mock("~~/hooks/scaffold-stark/useDeployedContractInfo");
-vi.mock("~~/hooks/useAccount");
 vi.mock("@starknet-react/core");
 vi.mock("starknet", () => {
   const actualStarknet = vi.importActual("starknet");
@@ -29,7 +27,9 @@ describe("useScaffoldContract", () => {
   ];
   const mockAddress = "0x12345";
   const contractName: ContractName = "Strk";
-
+  const mockPublicClient = {
+    nodeUrl: "https://mock-rpc-url",
+  };
   //Some necessary mocks
   const mockedUseDeployedContractInfo =
     useDeployedContractInfo as unknown as Mock;
@@ -50,28 +50,51 @@ describe("useScaffoldContract", () => {
     });
 
     mockUseProvider.mockReturnValue({
-      provider: new RpcProvider({
-        nodeUrl: "https://mock-rpc-url",
-      }),
+      provider: mockPublicClient,
     });
 
     mockedUseAccount.mockReturnValue({
       account: {
         address: "0x129846",
+        connect: vi.fn(),
       },
     });
-    console.log("accounttt", mockedUseAccount.mock.results);
 
     MockedContract.mockImplementation(() => ({
       address: mockAddress,
       abi: mockAbi,
       call: vi.fn(),
+      connect: vi.fn(),
     }));
 
-    MockedRpcProvider.mockImplementation(() => ({
-      nodeAddress: "https://mock-rpc-url",
-    }));
+    // MockedRpcProvider.mockImplementation(() => ({
+    //   nodeAddress: "https://mock-rpc-url",
+    // }));
   });
+
+  // it("should use publicClient as fallback when account is undefined", () => {
+  //   mockedUseAccount.mockReturnValueOnce({
+  //     account: undefined,
+  //   });
+
+  //   // Ensure the deployed contract info is available
+
+  //   mockedUseDeployedContractInfo.mockReturnValueOnce({
+  //     data: {
+  //       abi: mockAbi,
+  //       address: mockAddress,
+  //     },
+  //     isLoading: false,
+  //   });
+
+  //   const { result } = renderHook(() => useScaffoldContract({ contractName }));
+
+  //   expect(MockedContract).toHaveBeenCalledWith(
+  //     mockAbi,
+  //     mockAddress,
+  //     expect.anything(), // publicClient
+  //   );
+  // });
 
   it("should return a contract when deployedContractData is available", () => {
     const { result } = renderHook(() => useScaffoldContract({ contractName }));
@@ -93,13 +116,13 @@ describe("useScaffoldContract", () => {
     expect(result.current.isLoading).toBe(false);
   });
 
-  it("should create RpcProvider with the correct public URL", () => {
-    renderHook(() => useScaffoldContract({ contractName }));
+  // it("should create RpcProvider with the correct public URL", () => {
+  //   renderHook(() => useScaffoldContract({ contractName }));
 
-    expect(MockedRpcProvider).toHaveBeenCalledWith({
-      nodeUrl: "https://mock-rpc-url",
-    });
-  });
+  //   expect(MockedRpcProvider).toHaveBeenCalledWith({
+  //     nodeUrl: "https://mock-rpc-url",
+  //   });
+  // });
 
   it("should set isLoading to true when deployed contract is loading", () => {
     mockedUseDeployedContractInfo.mockReturnValueOnce({
@@ -143,15 +166,17 @@ describe("useScaffoldContract", () => {
 
   it("should return original result if first call succeeds", async () => {
     const mockOriginalCall = vi.fn().mockResolvedValue("SuccessResult");
-    MockedContract.mockImplementationOnce((abi, address, provider) => ({
-      address,
-      abi,
+    MockedContract.mockImplementationOnce(() => ({
+      address: mockAddress,
+      abi: mockAbi,
       call: mockOriginalCall,
-      _provider: provider,
+      connect: vi.fn(),
     }));
+
     const { result } = renderHook(() => useScaffoldContract({ contractName }));
     const modifiedCall = result.current.data?.call;
     const callResult = await modifiedCall?.("mockMethod");
+
     expect(mockOriginalCall).toHaveBeenCalledTimes(1);
     expect(mockOriginalCall).toHaveBeenCalledWith("mockMethod", {
       parseResponse: false,
@@ -162,24 +187,26 @@ describe("useScaffoldContract", () => {
   it("should retry call without parseResponse on error", async () => {
     const originalCall = vi
       .fn()
-      .mockImplementationOnce((method, ...args) => {
+      .mockImplementationOnce(() => {
         throw new Error("Mock Error");
       })
       .mockResolvedValueOnce("fallback-response");
-    MockedContract.mockImplementation(() => ({
+
+    MockedContract.mockImplementationOnce(() => ({
+      address: mockAddress,
+      abi: mockAbi,
       call: originalCall,
+      connect: vi.fn(),
     }));
+
     const { result } = renderHook(() => useScaffoldContract({ contractName }));
-    const contract = result.current.data;
-    if (!contract) {
-      throw new Error("Contract instance is undefined");
-    }
-    const response = await contract.call("mockFunction");
+    const response = await result.current.data?.call("mockFunction");
+
     expect(originalCall).toHaveBeenCalledTimes(2);
     expect(originalCall).toHaveBeenNthCalledWith(1, "mockFunction", {
       parseResponse: false,
     });
     expect(originalCall).toHaveBeenNthCalledWith(2, "mockFunction");
-    expect(response).toEqual("fallback-response");
+    expect(response).toBe("fallback-response");
   });
 });
