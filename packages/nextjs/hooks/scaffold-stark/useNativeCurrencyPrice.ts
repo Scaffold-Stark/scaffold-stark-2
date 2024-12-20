@@ -4,10 +4,10 @@ import { priceService } from "~~/services/web3/PriceService";
 
 export const useNativeCurrencyPrice = () => {
   const setNativeCurrencyPrice = useGlobalState(
-    (state) => state.setNativeCurrencyPrice
+    (state) => state.setNativeCurrencyPrice,
   );
   const setStrkCurrencyPrice = useGlobalState(
-    (state) => state.setStrkCurrencyPrice
+    (state) => state.setStrkCurrencyPrice,
   );
   const ref = useRef<string>(priceService.getNextId().toString());
   useEffect(() => {

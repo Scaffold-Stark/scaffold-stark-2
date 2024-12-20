@@ -35,7 +35,7 @@ describe("useScaffoldReadContract", () => {
         contractName,
         functionName,
         args: filteredArgs, // Pass filtered args
-      })
+      }),
     );
 
     expect(mockUseReadContract).toHaveBeenCalledWith({
@@ -55,13 +55,13 @@ describe("useScaffoldReadContract", () => {
         contractName,
         functionName,
         args: [1, undefined, 3], // args with undefined
-      })
+      }),
     );
 
     expect(mockUseReadContract).toHaveBeenCalledWith(
       expect.objectContaining({
         enabled: false, // The read should be disabled if args contain undefined
-      })
+      }),
     );
   });
 
@@ -73,13 +73,13 @@ describe("useScaffoldReadContract", () => {
         contractName,
         functionName,
         args: filteredArgs,
-      })
+      }),
     );
 
     expect(mockUseReadContract).toHaveBeenCalledWith(
       expect.objectContaining({
         enabled: true, // The read should be enabled since args do not contain undefined, args was filtered
-      })
+      }),
     );
   });
 
@@ -91,13 +91,13 @@ describe("useScaffoldReadContract", () => {
         contractName,
         functionName,
         args: filteredArgs,
-      })
+      }),
     );
 
     expect(mockUseReadContract).toHaveBeenCalledWith(
       expect.objectContaining({
         blockIdentifier: "pending", // Ensure blockIdentifier is passed as 'pending'. using the default which is 'pending'
-      })
+      }),
     );
   });
 });

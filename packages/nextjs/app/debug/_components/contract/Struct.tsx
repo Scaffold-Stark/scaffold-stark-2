@@ -27,8 +27,8 @@ export const Struct = ({
 }: StructProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialTupleFormState(
-      abiMember ?? { type: "struct", name: "", members: [] }
-    )
+      abiMember ?? { type: "struct", name: "", members: [] },
+    ),
   );
 
   // select enum
@@ -87,7 +87,7 @@ export const Struct = ({
                 const key = getFunctionInputKey(
                   abiMember.name || "struct",
                   member,
-                  index
+                  index,
                 );
                 return (
                   <ContractInput
@@ -105,7 +105,7 @@ export const Struct = ({
                 const key = getFunctionInputKey(
                   abiMember.name || "tuple",
                   variant,
-                  index
+                  index,
                 );
                 return (
                   <div key={index} className="flex items-center gap-3">

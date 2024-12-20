@@ -58,12 +58,12 @@ describe("useTransactor", () => {
 
   it("should execute a transaction successfully", async () => {
     const { result } = renderHook(() =>
-      useTransactor(walletClientMock as AccountInterface)
+      useTransactor(walletClientMock as AccountInterface),
     );
 
     await act(async () => {
       const response = await result.current(() =>
-        Promise.resolve("mock-tx-hash")
+        Promise.resolve("mock-tx-hash"),
       );
       expect(response).toBe("mock-tx-hash");
     });
@@ -71,7 +71,7 @@ describe("useTransactor", () => {
     expect(notification.loading).toHaveBeenCalledWith(
       expect.objectContaining({
         props: { message: "Awaiting for user confirmation" },
-      })
+      }),
     );
 
     expect(notification.success).toHaveBeenCalledWith(expect.any(Object), {
@@ -86,7 +86,7 @@ describe("useTransactor", () => {
     // Verify message content
     const messageElement = container.querySelector("p");
     expect(messageElement?.textContent).toBe(
-      "Transaction completed successfully!"
+      "Transaction completed successfully!",
     );
 
     const linkElement = container.querySelector("a");
@@ -101,7 +101,7 @@ describe("useTransactor", () => {
 
     await act(async () => {
       const response = await result.current(() =>
-        Promise.resolve({ transaction_hash: "mock-tx-hash" })
+        Promise.resolve({ transaction_hash: "mock-tx-hash" }),
       );
       expect(response).toBeUndefined();
     });
@@ -113,7 +113,7 @@ describe("useTransactor", () => {
     const mockError = new Error("Contract mock-error");
     const mockTransaction = vi.fn().mockRejectedValue(mockError);
     const { result } = renderHook(() =>
-      useTransactor(walletClientMock as AccountInterface)
+      useTransactor(walletClientMock as AccountInterface),
     );
 
     await expect(result.current(mockTransaction)).rejects.toThrow(mockError);
@@ -123,7 +123,7 @@ describe("useTransactor", () => {
 
   it("should execute the transaction and return the transaction hash", async () => {
     const { result } = renderHook(() =>
-      useTransactor(walletClientMock as AccountInterface)
+      useTransactor(walletClientMock as AccountInterface),
     );
 
     const mockTx = vi
@@ -143,7 +143,7 @@ describe("useTransactor", () => {
     (getBlockExplorerTxLink as Mock).mockReturnValue("");
 
     const { result } = renderHook(() =>
-      useTransactor(walletClientMock as AccountInterface)
+      useTransactor(walletClientMock as AccountInterface),
     );
 
     const mockTx = vi
@@ -166,7 +166,7 @@ describe("useTransactor", () => {
   it("should handle string transaction results", async () => {
     const mockTransaction = vi.fn().mockResolvedValue("mock-tx-hash");
     const { result } = renderHook(() =>
-      useTransactor(walletClientMock as AccountInterface)
+      useTransactor(walletClientMock as AccountInterface),
     );
 
     const txHash = await result.current(mockTransaction);
@@ -176,11 +176,11 @@ describe("useTransactor", () => {
 
   it("should handle missing transaction function", async () => {
     const { result } = renderHook(() =>
-      useTransactor(walletClientMock as AccountInterface)
+      useTransactor(walletClientMock as AccountInterface),
     );
 
     await expect(result.current(undefined as any)).rejects.toThrow(
-      "Incorrect transaction passed to transactor"
+      "Incorrect transaction passed to transactor",
     );
   });
 });

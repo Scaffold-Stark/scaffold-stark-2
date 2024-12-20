@@ -17,7 +17,7 @@ describe("Common Utility Functions", () => {
   describe("isAddress", () => {
     it("should return true for valid Ethereum addresses", () => {
       expect(isAddress("0x1234567890abcdef1234567890abcdef12345678")).toBe(
-        true
+        true,
       );
     });
 
@@ -25,7 +25,7 @@ describe("Common Utility Functions", () => {
       expect(isAddress("invalid_address")).toBe(false);
       expect(isAddress("0x123")).toBe(false);
       expect(isAddress("0x1234567890abcdef1234567890abcdef123456789")).toBe(
-        false
+        false,
       );
     });
   });

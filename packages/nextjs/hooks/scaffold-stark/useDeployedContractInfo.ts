@@ -11,7 +11,7 @@ import { BlockIdentifier } from "starknet";
 import { useProvider } from "@starknet-react/core";
 
 export const useDeployedContractInfo = <TContractName extends ContractName>(
-  contractName: TContractName
+  contractName: TContractName,
 ) => {
   const isMounted = useIsMounted();
   const { targetNetwork } = useTargetNetwork();
@@ -19,7 +19,7 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
     contractName as ContractName
   ] as Contract<TContractName>;
   const [status, setStatus] = useState<ContractCodeStatus>(
-    ContractCodeStatus.LOADING
+    ContractCodeStatus.LOADING,
   );
   const { provider: publicClient } = useProvider();
 
@@ -34,12 +34,12 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
       try {
         contractClassHash = await publicClient.getClassHashAt(
           deployedContract.address,
-          "pending" as BlockIdentifier
+          "pending" as BlockIdentifier,
         );
       } catch (error) {
         console.error(
           "⚡️ ~ file: useDeployedContractInfo.ts:useEffect ~ error",
-          error
+          error,
         );
       }
 

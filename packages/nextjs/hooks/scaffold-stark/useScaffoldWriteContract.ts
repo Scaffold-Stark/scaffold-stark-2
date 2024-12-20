@@ -20,7 +20,7 @@ export const useScaffoldWriteContract = <
   TFunctionName extends ExtractAbiFunctionNamesScaffold<
     ContractAbi<TContractName>,
     "external"
-  >
+  >,
 >({
   contractName,
   functionName,
@@ -46,7 +46,7 @@ export const useScaffoldWriteContract = <
 
       if (!deployedContractData) {
         console.error(
-          "Target Contract is not deployed, did you forget to run `yarn deploy`?"
+          "Target Contract is not deployed, did you forget to run `yarn deploy`?",
         );
         return;
       }
@@ -62,7 +62,7 @@ export const useScaffoldWriteContract = <
       // we convert to starknetjs contract instance here since deployed data may be undefined if contract is not deployed
       const contractInstance = new StarknetJsContract(
         deployedContractData.abi,
-        deployedContractData.address
+        deployedContractData.address,
       );
 
       const newCalls = deployedContractData
@@ -73,7 +73,7 @@ export const useScaffoldWriteContract = <
         try {
           // setIsMining(true);
           return await sendTxnWrapper(() =>
-            sendTransactionInstance.sendAsync(newCalls as any[])
+            sendTransactionInstance.sendAsync(newCalls as any[]),
           );
         } catch (e: any) {
           throw e;
@@ -93,7 +93,7 @@ export const useScaffoldWriteContract = <
       sendTransactionInstance,
       sendTxnWrapper,
       targetNetwork.id,
-    ]
+    ],
   );
 
   return {

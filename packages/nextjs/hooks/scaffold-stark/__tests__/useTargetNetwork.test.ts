@@ -63,7 +63,7 @@ describe("useTargetNetwork", () => {
       expect.objectContaining({
         id: 2,
         name: "mainnet",
-      })
+      }),
     );
   });
 

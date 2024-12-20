@@ -16,7 +16,7 @@ describe("utilsDisplay", () => {
         abi,
         functionOutputs: [{ type: "core::integer::u8" }],
         asText: true,
-      })
+      }),
     ).toEqual("10");
     expect(
       decodeContractResponse({
@@ -24,7 +24,7 @@ describe("utilsDisplay", () => {
         abi,
         functionOutputs: [{ type: "core::integer::u16" }],
         asText: true,
-      })
+      }),
     ).toEqual("10");
     expect(
       decodeContractResponse({
@@ -32,7 +32,7 @@ describe("utilsDisplay", () => {
         abi,
         functionOutputs: [{ type: "core::integer::u32" }],
         asText: true,
-      })
+      }),
     ).toEqual("10");
     expect(
       decodeContractResponse({
@@ -40,7 +40,7 @@ describe("utilsDisplay", () => {
         abi,
         functionOutputs: [{ type: "core::integer::u64" }],
         asText: true,
-      })
+      }),
     ).toEqual("10");
     expect(
       decodeContractResponse({
@@ -48,7 +48,7 @@ describe("utilsDisplay", () => {
         abi,
         functionOutputs: [{ type: "core::integer::u128" }],
         asText: true,
-      })
+      }),
     ).toEqual("10");
     expect(
       decodeContractResponse({
@@ -56,7 +56,7 @@ describe("utilsDisplay", () => {
         abi,
         functionOutputs: [{ type: "core::integer::u256" }],
         asText: true,
-      })
+      }),
     ).toEqual("10");
     expect(
       decodeContractResponse({
@@ -64,7 +64,7 @@ describe("utilsDisplay", () => {
         abi,
         functionOutputs: [{ type: "core::integer::u256" }],
         asText: true,
-      })
+      }),
     ).toEqual("10");
     expect(
       decodeContractResponse({
@@ -72,7 +72,7 @@ describe("utilsDisplay", () => {
         abi,
         functionOutputs: [{ type: "core::integer::u256" }],
         asText: true,
-      })
+      }),
     ).toEqual("Ξ 10000000000000000.0");
   });
 
@@ -83,7 +83,7 @@ describe("utilsDisplay", () => {
         abi,
         functionOutputs: [{ type: "core::bool" }],
         asText: true,
-      })
+      }),
     ).toEqual("true");
     expect(
       decodeContractResponse({
@@ -91,7 +91,7 @@ describe("utilsDisplay", () => {
         abi,
         functionOutputs: [{ type: "core::bool" }],
         asText: true,
-      })
+      }),
     ).toEqual("false");
   });
 
@@ -106,9 +106,9 @@ describe("utilsDisplay", () => {
           },
         ],
         asText: true,
-      })
+      }),
     ).toEqual(
-      "0x0000000000000000000000000000000000000000000000000000000000000012"
+      "0x0000000000000000000000000000000000000000000000000000000000000012",
     );
   });
 
@@ -123,7 +123,7 @@ describe("utilsDisplay", () => {
           },
         ],
         asText: true,
-      })
+      }),
     ).toEqual("0xa");
   });
 
@@ -139,7 +139,7 @@ describe("utilsDisplay", () => {
         ],
         asText: true,
         showAsString: true,
-      })
+      }),
     ).toEqual("helloworld");
   });
 
@@ -154,7 +154,7 @@ describe("utilsDisplay", () => {
           },
         ],
         asText: true,
-      })
+      }),
     ).toEqual("(1,2)");
     expect(
       decodeContractResponse({
@@ -166,9 +166,9 @@ describe("utilsDisplay", () => {
           },
         ],
         asText: true,
-      })
+      }),
     ).toEqual(
-      "(1,0x0000000000000000000000000000000000000000000000000000000000000002)"
+      "(1,0x0000000000000000000000000000000000000000000000000000000000000002)",
     );
   });
 
@@ -183,7 +183,7 @@ describe("utilsDisplay", () => {
           },
         ],
         asText: true,
-      })
+      }),
     ).toEqual('["0x1","0x2"]');
   });
 
@@ -198,9 +198,9 @@ describe("utilsDisplay", () => {
           },
         ],
         asText: true,
-      })
+      }),
     ).toEqual(
-      '{"addr":"0x0000000000000000000000000000000000000000000000000000000000000012","val":128}'
+      '{"addr":"0x0000000000000000000000000000000000000000000000000000000000000012","val":128}',
     );
   });
 
@@ -225,9 +225,9 @@ describe("utilsDisplay", () => {
           },
         ],
         asText: true,
-      })
+      }),
     ).toEqual(
-      '{"val2":["(256,0x0000000000000000000000000000000000000000000000000000000000000000)","(128,0x05260a965b7152B18D953a68BAbae359E423e083650AFdA2052Eae8F4C22F279)"]}'
+      '{"val2":["(256,0x0000000000000000000000000000000000000000000000000000000000000000)","(128,0x05260a965b7152B18D953a68BAbae359E423e083650AFdA2052Eae8F4C22F279)"]}',
     );
 
     expect(
@@ -250,9 +250,9 @@ describe("utilsDisplay", () => {
           },
         ],
         asText: true,
-      })
+      }),
     ).toEqual(
-      '{"val3":[{"addr":"0x0000000000000000000000000000000000000000000000000000000000000000","val":256},{"addr":"0x05260a965b7152B18D953a68BAbae359E423e083650AFdA2052Eae8F4C22F279","val":128}]}'
+      '{"val3":[{"addr":"0x0000000000000000000000000000000000000000000000000000000000000000","val":256},{"addr":"0x05260a965b7152B18D953a68BAbae359E423e083650AFdA2052Eae8F4C22F279","val":128}]}',
     );
   });
 
@@ -267,7 +267,7 @@ describe("utilsDisplay", () => {
           },
         ],
         asText: true,
-      })
+      }),
     ).toEqual('{"Some":123}');
 
     expect(
@@ -280,7 +280,7 @@ describe("utilsDisplay", () => {
           },
         ],
         asText: true,
-      })
+      }),
     ).toEqual('{"None":true}');
   });
 
@@ -295,7 +295,7 @@ describe("utilsDisplay", () => {
           },
         ],
         asText: true,
-      })
+      }),
     ).toEqual('{"Ok":true}');
 
     expect(
@@ -308,7 +308,7 @@ describe("utilsDisplay", () => {
           },
         ],
         asText: true,
-      })
+      }),
     ).toEqual('{"Err":12}');
   });
 });

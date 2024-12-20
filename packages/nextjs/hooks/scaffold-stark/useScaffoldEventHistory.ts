@@ -37,7 +37,7 @@ export const useScaffoldEventHistory = <
   TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
   TBlockData extends boolean = false,
   TTransactionData extends boolean = false,
-  TReceiptData extends boolean = false
+  TReceiptData extends boolean = false,
 >({
   contractName,
   eventName,
@@ -83,7 +83,7 @@ export const useScaffoldEventHistory = <
       }
 
       const event = (deployedContractData.abi as Abi).find(
-        (part) => part.type === "event" && part.name === eventName
+        (part) => part.type === "event" && part.name === eventName,
       ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
 
       const blockNumber = (await publicClient.getBlockLatestAccepted())
@@ -119,13 +119,13 @@ export const useScaffoldEventHistory = <
             transaction:
               transactionData && logs[i].transaction_hash !== null
                 ? await publicClient.getTransactionByHash(
-                    logs[i].transaction_hash
+                    logs[i].transaction_hash,
                   )
                 : null,
             receipt:
               receiptData && logs[i].transaction_hash !== null
                 ? await publicClient.getTransactionReceipt(
-                    logs[i].transaction_hash
+                    logs[i].transaction_hash,
                   )
                 : null,
           });
@@ -187,7 +187,7 @@ export const useScaffoldEventHistory = <
       ? targetNetwork.id !== devnet.id
         ? scaffoldConfig.pollingInterval
         : 4_000
-      : null
+      : null,
   );
 
   const eventHistoryData = useMemo(() => {
@@ -198,7 +198,7 @@ export const useScaffoldEventHistory = <
           logs,
           starknetEvents.getAbiEvents(deployedContractData.abi),
           CallData.getAbiStruct(deployedContractData.abi),
-          CallData.getAbiEnum(deployedContractData.abi)
+          CallData.getAbiEnum(deployedContractData.abi),
         );
         const args = parsed.length ? parsed[0][eventName] : {};
         return {

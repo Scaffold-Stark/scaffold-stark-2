@@ -65,7 +65,7 @@ export const FaucetSepolia = () => {
           </>,
           {
             duration: 5000,
-          }
+          },
         );
       }
     };

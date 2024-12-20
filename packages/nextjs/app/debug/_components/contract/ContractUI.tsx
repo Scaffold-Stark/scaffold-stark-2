@@ -22,7 +22,7 @@ const ContractWriteMethods = dynamic(
     import("./ContractWriteMethods").then((mod) => mod.ContractWriteMethods),
   {
     loading: () => <p>Loading Write Methods...</p>,
-  }
+  },
 );
 
 type ContractUIProps = {
@@ -40,7 +40,7 @@ export const ContractUI = ({
   const [activeTab, setActiveTab] = useState("read");
   const [refreshDisplayVariables, triggerRefreshDisplayVariables] = useReducer(
     (value) => !value,
-    false
+    false,
   );
   const { targetNetwork } = useTargetNetwork();
   const {

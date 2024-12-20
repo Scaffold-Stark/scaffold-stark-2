@@ -4,93 +4,93 @@ import { getArgsAsStringInputFromForm } from "../utilsContract";
 describe("utilsContract", () => {
   it("should parse integer form correctly", () => {
     expect(
-      getArgsAsStringInputFromForm({ "echo_u8_input_core::integer::u8": "10" })
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::integer::u8": "10" }),
     ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({
         "echo_u8_input_core::integer::u16": "10",
-      })
+      }),
     ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({
         "echo_u8_input_core::integer::u32": "10",
-      })
+      }),
     ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({
         "echo_u8_input_core::integer::u64": "10",
-      })
+      }),
     ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({
         "echo_u8_input_core::integer::u128": "10",
-      })
+      }),
     ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({
         "echo_u8_input_core::integer::u256": "10",
-      })
+      }),
     ).toEqual([10]);
     expect(
-      getArgsAsStringInputFromForm({ "echo_u8_input_core::felt252": "10" })
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::felt252": "10" }),
     ).toEqual([10]);
 
     expect(
-      getArgsAsStringInputFromForm({ "echo_u8_input_core::integer::i8": "10" })
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::integer::i8": "10" }),
     ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({
         "echo_u8_input_core::integer::i16": "10",
-      })
+      }),
     ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({
         "echo_u8_input_core::integer::i32": "10",
-      })
+      }),
     ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({
         "echo_u8_input_core::integer::i64": "10",
-      })
+      }),
     ).toEqual([10]);
     expect(
       getArgsAsStringInputFromForm({
         "echo_u8_input_core::integer::i128": "10",
-      })
+      }),
     ).toEqual([10]);
   });
 
   it("should parse bool form correctly", () => {
     expect(
-      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "true" })
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "true" }),
     ).toEqual([true]);
     expect(
-      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "1" })
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "1" }),
     ).toEqual([true]);
     expect(
-      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0x1" })
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0x1" }),
     ).toEqual([true]);
     expect(
-      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0x01" })
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0x01" }),
     ).toEqual([true]);
     expect(
-      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0x001" })
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0x001" }),
     ).toEqual([true]);
 
     expect(
-      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "false" })
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "false" }),
     ).toEqual([false]);
     expect(
-      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0" })
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0" }),
     ).toEqual([false]);
     expect(
-      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0x0" })
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0x0" }),
     ).toEqual([false]);
     expect(
-      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0x00" })
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0x00" }),
     ).toEqual([false]);
     expect(
-      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0x000" })
+      getArgsAsStringInputFromForm({ "echo_u8_input_core::bool": "0x000" }),
     ).toEqual([false]);
   });
 

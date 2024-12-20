@@ -59,7 +59,7 @@ describe("useAutoConnect", () => {
 
   it("should not auto-connect if walletAutoConnect is disabled", () => {
     vi.spyOn(scaffoldConfig, "walletAutoConnect", "get").mockReturnValue(
-      false as true
+      false as true,
     );
     vi.mocked(useReadLocalStorage).mockReturnValue({ id: "wallet-1" });
 

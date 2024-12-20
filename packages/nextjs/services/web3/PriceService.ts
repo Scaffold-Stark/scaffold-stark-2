@@ -2,7 +2,7 @@ import scaffoldConfig from "~~/scaffold.config";
 
 export const fetchPriceFromCoingecko = async (
   symbol: string,
-  retries = 3
+  retries = 3,
 ): Promise<number> => {
   let attempt = 0;
   while (attempt < retries) {
@@ -15,7 +15,7 @@ export const fetchPriceFromCoingecko = async (
         `Attempt ${
           attempt + 1
         } - Error fetching ${symbol} price from Coingecko: `,
-        error
+        error,
       );
       attempt++;
       if (attempt === retries) {
@@ -57,7 +57,7 @@ class PriceService {
   public startPolling(
     ref: any,
     setNativeCurrencyPrice: (price: number) => void,
-    setStrkCurrencyPrice: (price: number) => void
+    setStrkCurrencyPrice: (price: number) => void,
   ) {
     if (this.listeners.has(ref)) return;
     this.listeners.set(ref, { setNativeCurrencyPrice, setStrkCurrencyPrice });
@@ -103,10 +103,10 @@ class PriceService {
       }
       this.listeners.forEach((listener) => {
         listener.setNativeCurrencyPrice(
-          ethPrice || this.currentNativeCurrencyPrice
+          ethPrice || this.currentNativeCurrencyPrice,
         );
         listener.setStrkCurrencyPrice(
-          strkPrice || this.currentStrkCurrencyPrice
+          strkPrice || this.currentStrkCurrencyPrice,
         );
       });
     } catch (error) {

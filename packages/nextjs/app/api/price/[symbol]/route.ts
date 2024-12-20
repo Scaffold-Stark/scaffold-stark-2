@@ -1,6 +1,6 @@
 export async function GET(
   _: Request,
-  { params: { symbol } }: { params: { symbol: string } }
+  { params: { symbol } }: { params: { symbol: string } },
 ) {
   let apiUrl = "";
   if (symbol === "ETH") {

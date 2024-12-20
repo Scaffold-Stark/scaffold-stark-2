@@ -31,7 +31,7 @@ global.fetch = vi.fn((url) => {
     return Promise.resolve(createMockResponse({ domain: "testuser" }));
   } else if (url.includes("domain_to_data")) {
     return Promise.resolve(
-      createMockResponse({ id: "123", domain: { domain: "Test User" } })
+      createMockResponse({ id: "123", domain: { domain: "Test User" } }),
     );
   } else if (url.includes("/uri")) {
     return Promise.resolve(createMockResponse({ image: "test.jpg" }));
@@ -67,7 +67,7 @@ vi.mock(
         ],
       },
     };
-  }
+  },
 );
 
 describe("useScaffoldStarkProfile", () => {
@@ -103,7 +103,7 @@ describe("useScaffoldStarkProfile", () => {
     // Render the hook
     const { result } = renderHook(() =>
       // @ts-ignore
-      useScaffoldStarkProfile(invalidAddress)
+      useScaffoldStarkProfile(invalidAddress),
     );
 
     // Wait for the hook to fetch and resolve the data
