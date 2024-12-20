@@ -72,14 +72,14 @@ describe("Cairo Type Checks", () => {
     it("should return true for Cairo contract address type", () => {
       expect(
         isCairoContractAddress(
-          "core::starknet::contract_address::ContractAddress",
-        ),
+          "core::starknet::contract_address::ContractAddress"
+        )
       ).toBe(true);
     });
 
     it("should return false for non-contract address types", () => {
       expect(
-        isCairoContractAddress("core::starknet::eth_address::EthAddress"),
+        isCairoContractAddress("core::starknet::eth_address::EthAddress")
       ).toBe(false);
       expect(isCairoContractAddress("")).toBe(false);
     });
@@ -116,7 +116,7 @@ describe("Cairo Type Checks", () => {
           type: "struct",
           name: "MyStruct",
           members: [] as readonly AbiParameter[],
-        }),
+        })
       ).toBe(true);
     });
 
@@ -126,7 +126,7 @@ describe("Cairo Type Checks", () => {
           type: "enum",
           name: "MyEnum",
           members: [] as readonly AbiParameter[],
-        }),
+        })
       ).toBe(true);
     });
 
@@ -160,7 +160,7 @@ describe("Cairo Type Checks", () => {
 
     it("should parse tuple types within generics", () => {
       expect(parseGenericType("Option<(felt252, u256)>")).toEqual(
-        "(felt252, u256)",
+        "(felt252, u256)"
       );
     });
 

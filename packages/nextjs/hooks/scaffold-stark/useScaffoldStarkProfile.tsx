@@ -23,7 +23,7 @@ const starknetIdApiBaseUrl =
 export const fetchProfileFromApi = async (address: string) => {
   try {
     const addrToDomainRes = await fetch(
-      `${starknetIdApiBaseUrl}/addr_to_domain?addr=${address}`,
+      `${starknetIdApiBaseUrl}/addr_to_domain?addr=${address}`
     );
 
     if (!addrToDomainRes.ok) {
@@ -35,7 +35,7 @@ export const fetchProfileFromApi = async (address: string) => {
     const domain = addrToDomainJson.domain;
 
     const profileRes = await fetch(
-      `${starknetIdApiBaseUrl}/domain_to_data?domain=${domain}`,
+      `${starknetIdApiBaseUrl}/domain_to_data?domain=${domain}`
     );
 
     if (!profileRes.ok) throw new Error(await profileRes.text());
@@ -68,7 +68,7 @@ export const fetchProfileFromApi = async (address: string) => {
 
 // this hook is a workaround, basically a re-implement of the starknet react hook with conditional rendering.
 export const useScaffoldStarkProfile = (
-  address: chains.Address | undefined,
+  address: chains.Address | undefined
 ) => {
   const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState<StarkProfile | undefined>();
