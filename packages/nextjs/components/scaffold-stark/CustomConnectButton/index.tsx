@@ -14,8 +14,6 @@ import { useEffect, useMemo, useState } from "react";
 import ConnectModal from "./ConnectModal";
 import scaffoldConfig from "~~/scaffold.config";
 
-
-
 /**
  * Custom Connect Button (watch balance + custom design)
  */
