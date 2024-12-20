@@ -21,7 +21,7 @@ export const Faucet = () => {
   const [loading, setLoading] = useState(false);
   const [inputAddress, setInputAddress] = useState<AddressType>();
   const [faucetAddress] = useState<AddressType>(
-    "0x78662e7352d062084b0010068b99288486c2d8b914f6e2a55ce945f8792c8b1",
+    "0x78662e7352d062084b0010068b99288486c2d8b914f6e2a55ce945f8792c8b1"
   );
   const [sendValue, setSendValue] = useState("");
 
@@ -59,7 +59,7 @@ export const Faucet = () => {
           </>,
           {
             duration: 5000,
-          },
+          }
         );
       }
     };

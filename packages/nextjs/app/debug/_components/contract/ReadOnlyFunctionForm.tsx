@@ -30,7 +30,7 @@ export const ReadOnlyFunctionForm = ({
   abi,
 }: ReadOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
-    getInitialFormState(abiFunction),
+    getInitialFormState(abiFunction)
   );
   const [inputValue, setInputValue] = useState<any | undefined>(undefined);
   const [formErrorMessage, setFormErrorMessage] =

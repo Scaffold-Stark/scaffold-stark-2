@@ -6,7 +6,7 @@ export const DEFAULT_NETWORK_COLOR: [string, string] = ["#666666", "#bbbbbb"];
 
 export function getNetworkColor(
   network: ChainWithAttributes,
-  isDarkMode: boolean,
+  isDarkMode: boolean
 ) {
   const colorConfig = network.color ?? DEFAULT_NETWORK_COLOR;
   return Array.isArray(colorConfig)

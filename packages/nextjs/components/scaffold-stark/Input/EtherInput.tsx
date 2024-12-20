@@ -12,7 +12,7 @@ const MAX_DECIMALS_USD = 2;
 function etherValueToDisplayValue(
   usdMode: boolean,
   etherValue: string,
-  nativeCurrencyPrice: number,
+  nativeCurrencyPrice: number
 ) {
   if (usdMode && nativeCurrencyPrice) {
     const parsedEthValue = parseFloat(etherValue);
@@ -23,7 +23,7 @@ function etherValueToDisplayValue(
       // since otherwise a user would not be able to modify the decimal value
       return (
         Math.round(
-          parsedEthValue * nativeCurrencyPrice * 10 ** MAX_DECIMALS_USD,
+          parsedEthValue * nativeCurrencyPrice * 10 ** MAX_DECIMALS_USD
         ) /
         10 ** MAX_DECIMALS_USD
       ).toString();
@@ -36,7 +36,7 @@ function etherValueToDisplayValue(
 function displayValueToEtherValue(
   usdMode: boolean,
   displayValue: string,
-  nativeCurrencyPrice: number,
+  nativeCurrencyPrice: number
 ) {
   if (usdMode && nativeCurrencyPrice) {
     const parsedDisplayValue = parseFloat(displayValue);
@@ -68,10 +68,10 @@ export const EtherInput = ({
   const [transitoryDisplayValue, setTransitoryDisplayValue] =
     useState<string>();
   const nativeCurrencyPrice = useGlobalState(
-    (state) => state.nativeCurrencyPrice,
+    (state) => state.nativeCurrencyPrice
   );
   const [internalUsdMode, setInternalUSDMode] = useState(
-    nativeCurrencyPrice > 0 ? Boolean(usdMode) : false,
+    nativeCurrencyPrice > 0 ? Boolean(usdMode) : false
   );
 
   useEffect(() => {
@@ -82,7 +82,7 @@ export const EtherInput = ({
     const newDisplayValue = etherValueToDisplayValue(
       internalUsdMode,
       value,
-      nativeCurrencyPrice,
+      nativeCurrencyPrice
     );
     if (
       transitoryDisplayValue &&
@@ -116,7 +116,7 @@ export const EtherInput = ({
     const newEthValue = displayValueToEtherValue(
       internalUsdMode,
       newValue,
-      nativeCurrencyPrice,
+      nativeCurrencyPrice
     );
     onChange(newEthValue);
   };

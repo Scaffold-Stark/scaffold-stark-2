@@ -26,7 +26,7 @@ export const isCairoU256 = (type: string): type is CairoU256 =>
   type.includes("core::integer::u256");
 
 export const isCairoContractAddress = (
-  type: string,
+  type: string
 ): type is CairoContractAddress =>
   type.includes("core::starknet::contract_address::ContractAddress");
 
@@ -52,7 +52,7 @@ export const isCairoByteArray = (type: string): type is CairoByteArray =>
   type.includes("core::byte_array::ByteArray");
 
 export const isCairoSecp256k1Point = (
-  type: string,
+  type: string
 ): type is CairoSecp256k1Point =>
   type.includes("core::starknet::secp256k1::Secp256k1Point");
 

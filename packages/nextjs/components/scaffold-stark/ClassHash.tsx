@@ -31,7 +31,7 @@ export const ClassHash = ({
 
   const blockExplorerAddressLink = getBlockExplorerClasshashLink(
     targetNetwork,
-    classHash,
+    classHash
   );
 
   let displayClasshash = classHash?.slice(0, 6) + "..." + classHash?.slice(-4);

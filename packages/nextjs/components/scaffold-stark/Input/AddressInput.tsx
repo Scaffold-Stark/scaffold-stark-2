@@ -24,7 +24,7 @@ export const AddressInput = ({
       //setEnteredEnsName(undefined);
       onChange(newValue);
     },
-    [onChange],
+    [onChange]
   );
 
   return (

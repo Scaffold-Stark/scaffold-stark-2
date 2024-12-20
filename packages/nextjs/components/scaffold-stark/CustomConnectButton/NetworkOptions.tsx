@@ -25,7 +25,7 @@ export const NetworkOptions = ({ hidden = false }: NetworkOptionsProps) => {
   // note: might need a cleaner solutiojn
   const allowedNetworksMapping = useMemo(() => {
     return Object.fromEntries(
-      allowedNetworks.map((chain) => [chain.network, chain.id.toString(16)]),
+      allowedNetworks.map((chain) => [chain.network, chain.id.toString(16)])
     );
   }, [allowedNetworks]);
 

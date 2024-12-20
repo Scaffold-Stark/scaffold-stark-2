@@ -24,11 +24,11 @@ const ConnectModal = () => {
     { id: "" },
     {
       initializeWithValue: false,
-    },
+    }
   );
   const [, setLastConnectionTime] = useLocalStorage<number>(
     LAST_CONNECTED_TIME_LOCALSTORAGE_KEY,
-    0,
+    0
   );
 
   const handleCloseModal = () => {
@@ -39,7 +39,7 @@ const ConnectModal = () => {
 
   function handleConnectWallet(
     e: React.MouseEvent<HTMLButtonElement>,
-    connector: Connector,
+    connector: Connector
   ): void {
     if (connector.id === "burner-wallet") {
       setIsBurnerWallet(true);
@@ -53,10 +53,10 @@ const ConnectModal = () => {
 
   function handleConnectBurner(
     e: React.MouseEvent<HTMLButtonElement>,
-    ix: number,
+    ix: number
   ) {
     const connector = connectors.find(
-      (it) => it.id == "burner-wallet",
+      (it) => it.id == "burner-wallet"
     ) as BurnerConnector;
     if (connector) {
       connector.burnerAccount = burnerAccounts[ix];
@@ -116,14 +116,19 @@ const ConnectModal = () => {
                         className="w-full flex flex-col"
                       >
                         <button
-                          className={`hover:bg-gradient-modal border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4 ${isDarkMode ? "border-[#385183]" : ""}`}
+                          className={`hover:bg-gradient-modal border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4 ${
+                            isDarkMode ? "border-[#385183]" : ""
+                          }`}
                           onClick={(e) => handleConnectBurner(e, ix)}
                         >
                           <BlockieAvatar
                             address={burnerAcc.accountAddress}
                             size={35}
                           />
-                          {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}
+                          {`${burnerAcc.accountAddress.slice(
+                            0,
+                            6
+                          )}...${burnerAcc.accountAddress.slice(-4)}`}
                         </button>
                       </div>
                     ))}

@@ -112,7 +112,7 @@ describe.skip("useScaffoldMultiWriteContract Hook", () => {
             args: ["arg1", 1],
           },
         ],
-      }),
+      })
     );
 
     expect(result.current.sendAsync).toBeInstanceOf(Function);
@@ -132,7 +132,7 @@ describe.skip("useScaffoldMultiWriteContract Hook", () => {
             args: ["arg1", 1],
           },
         ],
-      }),
+      })
     );
 
     await act(async () => {
@@ -140,11 +140,11 @@ describe.skip("useScaffoldMultiWriteContract Hook", () => {
     });
 
     vi.spyOn(result.current, "sendAsync").mockRejectedValue(
-      new Error("Please connect your wallet"),
+      new Error("Please connect your wallet")
     );
 
     await expect(result.current.sendAsync).rejects.toThrowError(
-      "Please connect your wallet",
+      "Please connect your wallet"
     );
   });
 
@@ -160,7 +160,7 @@ describe.skip("useScaffoldMultiWriteContract Hook", () => {
             args: ["arg1", 1],
           },
         ],
-      }),
+      })
     );
 
     await act(async () => {
@@ -168,11 +168,11 @@ describe.skip("useScaffoldMultiWriteContract Hook", () => {
     });
 
     vi.spyOn(result.current, "sendAsync").mockRejectedValue(
-      new Error("You are on the wrong network"),
+      new Error("You are on the wrong network")
     );
 
     await expect(result.current.sendAsync).rejects.toThrowError(
-      "You are on the wrong network",
+      "You are on the wrong network"
     );
   });
 
@@ -186,7 +186,7 @@ describe.skip("useScaffoldMultiWriteContract Hook", () => {
             args: ["arg1", 1],
           },
         ],
-      }),
+      })
     );
 
     await act(async () => {
@@ -194,11 +194,11 @@ describe.skip("useScaffoldMultiWriteContract Hook", () => {
     });
 
     vi.spyOn(result.current, "sendAsync").mockRejectedValue(
-      new Error("Function myFunction not found in contract ABI"),
+      new Error("Function myFunction not found in contract ABI")
     );
 
     await expect(result.current.sendAsync).rejects.toThrowError(
-      "Function myFunction not found in contract ABI",
+      "Function myFunction not found in contract ABI"
     );
   });
 
@@ -214,7 +214,7 @@ describe.skip("useScaffoldMultiWriteContract Hook", () => {
             args: ["arg1", 1],
           },
         ],
-      }),
+      })
     );
 
     await act(async () => {
@@ -236,7 +236,7 @@ describe.skip("useScaffoldMultiWriteContract Hook", () => {
             args: ["arg1", 1],
           },
         ],
-      }),
+      })
     );
 
     await act(async () => {
@@ -244,11 +244,11 @@ describe.skip("useScaffoldMultiWriteContract Hook", () => {
     });
 
     vi.spyOn(result.current, "sendAsync").mockRejectedValue(
-      new Error("Contract writer error. Try again."),
+      new Error("Contract writer error. Try again.")
     );
 
     await expect(result.current.sendAsync).rejects.toThrowError(
-      "Contract writer error. Try again.",
+      "Contract writer error. Try again."
     );
   });
 });

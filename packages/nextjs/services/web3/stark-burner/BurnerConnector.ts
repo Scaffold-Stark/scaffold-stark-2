@@ -64,8 +64,8 @@ export class BurnerConnector extends InjectedConnector {
         this.burnerAccount.accountAddress,
         this.burnerAccount.privateKey,
         "1",
-        "0x2",
-      ),
+        "0x2"
+      )
     );
   }
 
@@ -89,7 +89,7 @@ export class BurnerConnector extends InjectedConnector {
   }
 
   async request<T extends RpcMessage["type"]>(
-    call: RequestFnCall<T>,
+    call: RequestFnCall<T>
   ): Promise<RpcTypeToMessageMap[T]["result"]> {
     if (call.params && "calls" in call.params) {
       let compiledCalls = call.params.calls;

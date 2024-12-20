@@ -19,10 +19,10 @@ vi.mock("~~/scaffold.config", () => ({
 
 describe("useTargetNetwork", () => {
   const mockSetTargetNetwork = vi.fn();
-  
+
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Mock useAccount
     (useAccount as any).mockReturnValue({
       chainId: 1,

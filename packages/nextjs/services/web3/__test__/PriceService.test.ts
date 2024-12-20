@@ -77,7 +77,7 @@ describe("PriceService", () => {
       priceService.startPolling(
         ref,
         mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
+        mockSetStrkCurrencyPrice
       );
 
       expect(priceService["intervalId"]).not.toBeNull();
@@ -91,14 +91,14 @@ describe("PriceService", () => {
       priceService.startPolling(
         ref1,
         mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
+        mockSetStrkCurrencyPrice
       );
       const firstIntervalId = priceService["intervalId"];
 
       priceService.startPolling(
         ref2,
         mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
+        mockSetStrkCurrencyPrice
       );
 
       expect(priceService["intervalId"]).toBe(firstIntervalId);
@@ -110,7 +110,7 @@ describe("PriceService", () => {
       priceService.startPolling(
         ref,
         mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
+        mockSetStrkCurrencyPrice
       );
       priceService.stopPolling(ref);
 
@@ -125,12 +125,12 @@ describe("PriceService", () => {
       priceService.startPolling(
         ref1,
         mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
+        mockSetStrkCurrencyPrice
       );
       priceService.startPolling(
         ref2,
         mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
+        mockSetStrkCurrencyPrice
       );
 
       priceService.stopPolling(ref1);
@@ -167,7 +167,7 @@ describe("PriceService", () => {
       priceService.startPolling(
         ref,
         mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
+        mockSetStrkCurrencyPrice
       );
 
       await vi.advanceTimersByTimeAsync(0);
@@ -184,7 +184,7 @@ describe("PriceService", () => {
       priceService.startPolling(
         ref,
         mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
+        mockSetStrkCurrencyPrice
       );
 
       await vi.advanceTimersByTimeAsync(0);
@@ -220,14 +220,14 @@ describe("PriceService", () => {
       priceService.startPolling(
         ref,
         mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
+        mockSetStrkCurrencyPrice
       );
 
       await vi.advanceTimersByTimeAsync(0);
 
       vi.clearAllMocks();
       mockFetch.mockImplementation(() =>
-        Promise.reject(new Error("Network error")),
+        Promise.reject(new Error("Network error"))
       );
 
       await vi.advanceTimersByTimeAsync(scaffoldConfig.pollingInterval);
@@ -241,14 +241,14 @@ describe("PriceService", () => {
     it("should handle fetch errors gracefully", async () => {
       // Mock the entire function to avoid using fetch
       mockFetch.mockImplementation(() =>
-        Promise.reject(new Error("Network error")),
+        Promise.reject(new Error("Network error"))
       );
 
       const ref = priceService.getNextId();
       priceService.startPolling(
         ref,
         mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
+        mockSetStrkCurrencyPrice
       );
 
       // Should not throw error
@@ -260,7 +260,7 @@ describe("PriceService", () => {
         Promise.resolve({
           ok: true,
           json: () => Promise.resolve({ invalid: "format" }),
-        }),
+        })
       );
 
       await expect(priceService["fetchPrices"]()).resolves.not.toThrow();
@@ -295,7 +295,7 @@ describe("PriceService", () => {
           ok: false,
           status: 429,
           statusText: "Too Many Requests",
-        }),
+        })
       );
 
       await expect(priceService["fetchPrices"]()).resolves.not.toThrow();
@@ -337,7 +337,7 @@ describe("PriceService", () => {
       const ref = priceService.getNextId();
       priceService.startPolling(ref, vi.fn(), vi.fn());
       expect(() =>
-        priceService.startPolling(ref, vi.fn(), vi.fn()),
+        priceService.startPolling(ref, vi.fn(), vi.fn())
       ).not.toThrow();
     });
   });

@@ -584,7 +584,7 @@ describe("useDeployedContractInfo", () => {
   it("should initially set the status to LOADING", () => {
     const { result } = renderHook(() =>
       //@ts-ignore using ts ignore so wont error in other devices
-      useDeployedContractInfo("YourContract"),
+      useDeployedContractInfo("YourContract")
     );
 
     expect(result.current.isLoading).toBe(true);
@@ -597,7 +597,7 @@ describe("useDeployedContractInfo", () => {
 
     const { result } = renderHook(() =>
       //@ts-ignore using ts ignore so wont error in other devices
-      useDeployedContractInfo("SomeContract"),
+      useDeployedContractInfo("SomeContract")
     );
 
     // Wait for the hook to update
@@ -612,7 +612,7 @@ describe("useDeployedContractInfo", () => {
 
     const { result } = renderHook(() =>
       //@ts-ignore using ts ignore so wont error in other devices
-      useDeployedContractInfo("YourContract"),
+      useDeployedContractInfo("YourContract")
     );
 
     // Wait for the hook to update
@@ -620,7 +620,7 @@ describe("useDeployedContractInfo", () => {
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
         expect(result.current.data?.address).toEqual(
-          mockContracts.someNetwork.YourContract.address,
+          mockContracts.someNetwork.YourContract.address
         );
       });
     });
@@ -631,7 +631,7 @@ describe("useDeployedContractInfo", () => {
 
     const { result } = renderHook(() =>
       //@ts-ignore using ts ignore so wont error in other devices
-      useDeployedContractInfo("YourContract"),
+      useDeployedContractInfo("YourContract")
     );
 
     // Wait for the hook to update

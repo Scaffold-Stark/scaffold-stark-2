@@ -11,7 +11,7 @@ export const UNSIGNED_NUMBER_REGEX = /^\d*\.?\d*$/;
 
 export const isValidInteger = (
   dataType: string,
-  value: string | bigint,
+  value: string | bigint
 ): boolean => {
   const isSigned = isSignedType(dataType);
   const bitcount = extractBitCount(dataType, isSigned);
@@ -58,7 +58,7 @@ const isInvalidUnsignedValue = (value: bigint, isSigned: boolean): boolean => {
 const fitsWithinBitCount = (
   value: bigint,
   bitcount: number,
-  isSigned: boolean,
+  isSigned: boolean
 ): boolean => {
   const hexString = value.toString(16);
   const significantHexDigits = hexString.match(/.*x0*(.*)$/)?.[1] ?? "";
@@ -69,7 +69,7 @@ const fitsWithinBitCount = (
   if (isSigned && significantHexDigits.length * 4 === bitcount) {
     const mostSignificantDigit = parseInt(
       significantHexDigits.slice(-1)?.[0],
-      16,
+      16
     );
     if (mostSignificantDigit >= 8) return false;
   }

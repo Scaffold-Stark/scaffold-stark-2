@@ -11,11 +11,11 @@ import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
  */
 export const useAutoConnect = (): void => {
   const savedConnector = useReadLocalStorage<{ id: string; ix?: number }>(
-    "lastUsedConnector",
+    "lastUsedConnector"
   );
 
   const lastConnectionTime = useReadLocalStorage<number>(
-    LAST_CONNECTED_TIME_LOCALSTORAGE_KEY,
+    LAST_CONNECTED_TIME_LOCALSTORAGE_KEY
   );
 
   const { connect, connectors } = useConnect();
@@ -27,7 +27,7 @@ export const useAutoConnect = (): void => {
         currentTime - (lastConnectionTime || 0) > scaffoldConfig.autoConnectTTL;
       if (!ttlExpired) {
         const connector = connectors.find(
-          (conn) => conn.id == savedConnector?.id,
+          (conn) => conn.id == savedConnector?.id
         );
 
         if (connector) {

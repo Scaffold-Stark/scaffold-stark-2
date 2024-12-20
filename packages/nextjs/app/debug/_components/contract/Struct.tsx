@@ -27,8 +27,8 @@ export const Struct = ({
 }: StructProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialTupleFormState(
-      abiMember ?? { type: "struct", name: "", members: [] },
-    ),
+      abiMember ?? { type: "struct", name: "", members: [] }
+    )
   );
 
   // select enum
@@ -69,11 +69,15 @@ export const Struct = ({
   return (
     <div>
       <div
-        className={`collapse bg-base-200 pl-4 pt-1.5 pb-2 border-2 ${isDisabled ? "border-base-100 cursor-not-allowed" : "border-secondary"} custom-after`}
+        className={`collapse bg-base-200 pl-4 pt-1.5 pb-2 border-2 ${
+          isDisabled ? "border-base-100 cursor-not-allowed" : "border-secondary"
+        } custom-after`}
       >
         {!isDisabled && <input type="checkbox" className="min-h-fit peer" />}
         <div
-          className={`collapse-title p-0 min-h-fit peer-checked:mb-2 text-primary-content/50 ${isDisabled && "cursor-not-allowed"} `}
+          className={`collapse-title p-0 min-h-fit peer-checked:mb-2 text-primary-content/50 ${
+            isDisabled && "cursor-not-allowed"
+          } `}
         >
           <p className="m-0 p-0 text-[1rem]">{abiMember.type}</p>
         </div>
@@ -83,7 +87,7 @@ export const Struct = ({
                 const key = getFunctionInputKey(
                   abiMember.name || "struct",
                   member,
-                  index,
+                  index
                 );
                 return (
                   <ContractInput
@@ -101,7 +105,7 @@ export const Struct = ({
                 const key = getFunctionInputKey(
                   abiMember.name || "tuple",
                   variant,
-                  index,
+                  index
                 );
                 return (
                   <div key={index} className="flex items-center gap-3">

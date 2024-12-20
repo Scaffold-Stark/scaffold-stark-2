@@ -56,7 +56,7 @@ describe("useOutsideClick", () => {
 
     expect(removeEventListenerSpy).toHaveBeenCalledWith(
       "click",
-      expect.any(Function),
+      expect.any(Function)
     );
 
     removeEventListenerSpy.mockRestore();

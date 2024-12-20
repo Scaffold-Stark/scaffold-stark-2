@@ -14,7 +14,7 @@ export const TxReceipt = (
     | bigint
     | Record<string, any>
     | InvokeTransactionReceiptResponse
-    | undefined,
+    | undefined
 ) => {
   const [txResultCopied, setTxResultCopied] = useState(false);
 

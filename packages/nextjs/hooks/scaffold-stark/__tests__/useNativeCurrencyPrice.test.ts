@@ -49,7 +49,7 @@ describe("useNativeCurrencyPrice", () => {
     expect(priceService.startPolling).toHaveBeenCalledWith(
       mockIds.first.toString(),
       mockSetNativeCurrencyPrice,
-      mockSetStrkCurrencyPrice,
+      mockSetStrkCurrencyPrice
     );
   });
 
@@ -59,7 +59,7 @@ describe("useNativeCurrencyPrice", () => {
     unmount();
 
     expect(priceService.stopPolling).toHaveBeenCalledWith(
-      mockIds.first.toString(),
+      mockIds.first.toString()
     );
   });
 
@@ -82,7 +82,7 @@ describe("useNativeCurrencyPrice", () => {
     expect(priceService.startPolling).toHaveBeenCalledWith(
       mockIds.first.toString(),
       mockSetNativeCurrencyPrice,
-      mockSetStrkCurrencyPrice,
+      mockSetStrkCurrencyPrice
     );
   });
 
@@ -98,23 +98,23 @@ describe("useNativeCurrencyPrice", () => {
       1,
       mockIds.first.toString(),
       mockSetNativeCurrencyPrice,
-      mockSetStrkCurrencyPrice,
+      mockSetStrkCurrencyPrice
     );
     expect(priceService.startPolling).toHaveBeenNthCalledWith(
       2,
       mockIds.second.toString(),
       mockSetNativeCurrencyPrice,
-      mockSetStrkCurrencyPrice,
+      mockSetStrkCurrencyPrice
     );
 
     unmount1();
     expect(priceService.stopPolling).toHaveBeenCalledWith(
-      mockIds.first.toString(),
+      mockIds.first.toString()
     );
 
     unmount2();
     expect(priceService.stopPolling).toHaveBeenCalledWith(
-      mockIds.second.toString(),
+      mockIds.second.toString()
     );
   });
 

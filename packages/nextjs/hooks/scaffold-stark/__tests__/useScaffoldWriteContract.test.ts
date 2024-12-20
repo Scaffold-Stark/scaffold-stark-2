@@ -59,7 +59,7 @@ describe.skip("useScaffoldWriteContract", () => {
         contractName,
         functionName,
         args,
-      }),
+      })
     );
 
     await act(async () => {
@@ -88,7 +88,7 @@ describe.skip("useScaffoldWriteContract", () => {
         contractName,
         functionName,
         args,
-      }),
+      })
     );
 
     await act(async () => {
@@ -117,7 +117,7 @@ describe.skip("useScaffoldWriteContract", () => {
         contractName,
         functionName,
         args,
-      }),
+      })
     );
 
     await act(async () => {
@@ -139,7 +139,7 @@ describe.skip("useScaffoldWriteContract", () => {
         contractName,
         functionName,
         args,
-      }),
+      })
     );
 
     expect(useDeployedContractInfo).toHaveBeenCalledWith(contractName);

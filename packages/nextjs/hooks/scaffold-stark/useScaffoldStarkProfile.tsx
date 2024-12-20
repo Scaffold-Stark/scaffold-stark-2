@@ -19,7 +19,7 @@ const starknetIdApiBaseUrl =
 
 const fetchProfileFromApi = async (address: string) => {
   const addrToDomainRes = await fetch(
-    `${starknetIdApiBaseUrl}/addr_to_domain?addr=${address}`,
+    `${starknetIdApiBaseUrl}/addr_to_domain?addr=${address}`
   );
 
   if (!addrToDomainRes.ok) {
@@ -31,7 +31,7 @@ const fetchProfileFromApi = async (address: string) => {
   const domain = addrToDomainJson.domain;
 
   const profileRes = await fetch(
-    `${starknetIdApiBaseUrl}/domain_to_data?domain=${domain}`,
+    `${starknetIdApiBaseUrl}/domain_to_data?domain=${domain}`
   );
 
   if (!profileRes.ok) throw new Error(await profileRes.text());

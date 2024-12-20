@@ -56,11 +56,11 @@ export const Address = ({
 
   const blockExplorerAddressLink = getBlockExplorerAddressLink(
     targetNetwork,
-    checkSumAddress || address || "",
+    checkSumAddress || address || ""
   );
 
   const [displayAddress, setDisplayAddress] = useState(
-    checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4),
+    checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4)
   );
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export const Address = ({
       setDisplayAddress(addressWithFallback || "");
     } else {
       setDisplayAddress(
-        addressWithFallback.slice(0, 6) + "..." + addressWithFallback.slice(-4),
+        addressWithFallback.slice(0, 6) + "..." + addressWithFallback.slice(-4)
       );
     }
   }, [fetchedProfile, checkSumAddress, address, format]);

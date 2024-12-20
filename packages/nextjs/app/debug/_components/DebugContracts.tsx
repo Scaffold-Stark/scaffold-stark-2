@@ -14,7 +14,7 @@ export function DebugContracts() {
   const [selectedContract, setSelectedContract] = useLocalStorage<ContractName>(
     selectedContractStorageKey,
     contractNames[0],
-    { initializeWithValue: false },
+    { initializeWithValue: false }
   );
 
   useEffect(() => {
