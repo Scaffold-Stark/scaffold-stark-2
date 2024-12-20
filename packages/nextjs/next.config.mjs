@@ -11,6 +11,11 @@ const nextConfig = {
         hostname: "identicon.starknet.id",
         pathname: "/**", // Allows all paths under this domain
       },
+      {
+        protocol: "https",
+        hostname: "img.starkurabu.com",
+        pathname: "/**",
+      },
     ],
   },
   typescript: {
