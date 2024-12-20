@@ -21,7 +21,7 @@ import { burnerAccounts } from "~~/utils/devnetAccounts";
 import { Address } from "@starknet-react/chains";
 import { useDisconnect, useNetwork, useConnect } from "@starknet-react/core";
 import { getStarknetPFPIfExists } from "~~/utils/profile";
-import useScaffoldStarkProfile from "~~/hooks/scaffold-stark/useScaffoldStarkProfile";
+import { useScaffoldStarkProfile } from "~~/hooks/scaffold-stark/useScaffoldStarkProfile";
 import { useTheme } from "next-themes";
 import { default as NextImage } from "next/image";
 
@@ -54,6 +54,8 @@ export const AddressInfoDropdown = ({
     setSelectingNetwork(false);
     dropdownRef.current?.removeAttribute("open");
   };
+
+  // @ts-expect-error ref are initialized with null by default
   useOutsideClick(dropdownRef, closeDropdown);
 
   function handleConnectBurner(
@@ -122,6 +124,7 @@ export const AddressInfoDropdown = ({
                 <span className=" whitespace-nowrap">Copy address</span>
               </div>
             ) : (
+              //@ts-ignore
               <CopyToClipboard
                 text={address}
                 onCopy={() => {
