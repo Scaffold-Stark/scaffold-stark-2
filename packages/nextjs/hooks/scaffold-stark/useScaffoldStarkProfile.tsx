@@ -3,62 +3,80 @@ import scaffoldConfig from "~~/scaffold.config";
 import { useEffect, useState } from "react";
 import { StarkProfile } from "starknet";
 
+type network = "mainnet" | "sepolia" | "devnet";
+
 const shouldUseProfile = () => {
   const set = new Set(["mainnet", "sepolia"]);
   return (
     set.has(scaffoldConfig.targetNetworks[0].network) &&
-    scaffoldConfig.targetNetworks[0].network !== chains.devnet.network
+    (scaffoldConfig.targetNetworks[0].network as network) !==
+      chains.devnet.network
   );
 };
 
 const starknetIdApiBaseUrl =
-  // @ts-expect-error program thinks this is constant
-  scaffoldConfig.targetNetworks[0].network === chains.mainnet.network
+  (scaffoldConfig.targetNetworks[0].network as network) ===
+  chains.mainnet.network
     ? "https://api.starknet.id"
     : "https://sepolia.api.starknet.id";
 
-const fetchProfileFromApi = async (address: string) => {
-  const addrToDomainRes = await fetch(
-    `${starknetIdApiBaseUrl}/addr_to_domain?addr=${address}`,
-  );
+export const fetchProfileFromApi = async (address: string) => {
+  try {
+    const addrToDomainRes = await fetch(
+      `${starknetIdApiBaseUrl}/addr_to_domain?addr=${address}`,
+    );
 
-  if (!addrToDomainRes.ok) {
-    throw new Error(await addrToDomainRes.text());
+    if (!addrToDomainRes.ok) {
+      throw new Error(await addrToDomainRes.text());
+    }
+
+    const addrToDomainJson = await addrToDomainRes.json();
+
+    const domain = addrToDomainJson.domain;
+
+    const profileRes = await fetch(
+      `${starknetIdApiBaseUrl}/domain_to_data?domain=${domain}`,
+    );
+
+    if (!profileRes.ok) throw new Error(await profileRes.text());
+
+    const profileData = await profileRes.json();
+
+    const id = BigInt(profileData.id).toString();
+
+    const uriRes = await fetch(`${starknetIdApiBaseUrl}/uri?id=${id}`);
+
+    const uriData = await uriRes.json();
+
+    return {
+      name: profileData.domain.domain,
+      profilePicture: uriData.image,
+      // TODO: figure out where these go in case we have PFP, because its a bit complex to parse the data
+      // discord?: string;
+      // twitter?: string;
+      // github?: string;
+      // proofOfPersonhood?: boolean;
+    };
+  } catch (e) {
+    console.error(e);
+    return {
+      name: "",
+      profilePicture: "",
+    };
   }
-
-  const addrToDomainJson = await addrToDomainRes.json();
-
-  const domain = addrToDomainJson.domain;
-
-  const profileRes = await fetch(
-    `${starknetIdApiBaseUrl}/domain_to_data?domain=${domain}`,
-  );
-
-  if (!profileRes.ok) throw new Error(await profileRes.text());
-
-  const profileData = await profileRes.json();
-
-  return {
-    name: profileData.domain.domain,
-
-    // TODO: figure out where these go in case we have PFP, because its a bit complex to parse the data
-    // profilePicture?: string;
-    // discord?: string;
-    // twitter?: string;
-    // github?: string;
-    // proofOfPersonhood?: boolean;
-  };
 };
 
 // this hook is a workaround, basically a re-implement of the starknet react hook with conditional rendering.
-const useScaffoldStarkProfile = (address: chains.Address | undefined) => {
+export const useScaffoldStarkProfile = (
+  address: chains.Address | undefined,
+) => {
   const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState<StarkProfile | undefined>();
   const isEnabled = shouldUseProfile();
 
   useEffect(() => {
     if (!isEnabled || !address) {
-      setProfile(undefined);
+      setProfile({ name: "", profilePicture: "" });
       return;
     }
 
@@ -79,5 +97,3 @@ const useScaffoldStarkProfile = (address: chains.Address | undefined) => {
 
   return { data: profile, isLoading };
 };
-
-export default useScaffoldStarkProfile;
