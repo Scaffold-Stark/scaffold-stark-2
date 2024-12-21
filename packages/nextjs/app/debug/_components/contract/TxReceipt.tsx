@@ -5,7 +5,7 @@ import {
   CheckCircleIcon,
   DocumentDuplicateIcon,
 } from "@heroicons/react/24/outline";
-import { displayTxResult } from "~~/app/debug/_components/contract";
+import { decodeContractResponse } from "~~/app/debug/_components/contract";
 
 export const TxReceipt = (
   txResult:
@@ -27,8 +27,17 @@ export const TxReceipt = (
             aria-hidden="true"
           />
         ) : (
+          //@ts-ignore coponent works but some typing issue came up, ts-expect-error does not work
           <CopyToClipboard
-            text={displayTxResult(txResult, false) as string}
+            text={
+              decodeContractResponse({
+                resp: txResult,
+                abi: [],
+                functionOutputs: [],
+                asText: true,
+                showAsString: true,
+              }) as string
+            }
             onCopy={() => {
               setTxResultCopied(true);
               setTimeout(() => {
@@ -49,7 +58,14 @@ export const TxReceipt = (
           <strong>Transaction Receipt</strong>
         </div>
         <div className="collapse-content overflow-auto rounded-3xl rounded-t-none bg-transparent">
-          <pre className="pt-4 text-xs">{displayTxResult(txResult, false)}</pre>
+          <pre className="pt-4 text-xs">
+            {decodeContractResponse({
+              resp: txResult,
+              abi: [],
+              functionOutputs: [],
+              asText: true,
+            })}
+          </pre>
         </div>
       </div>
     </div>

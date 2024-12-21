@@ -4,6 +4,7 @@ import { AbiEnum, AbiStruct } from "~~/utils/scaffold-stark/contract";
 import { replacer } from "~~/utils/scaffold-stark/common";
 import { ContractInput } from "./ContractInput";
 import { Abi } from "abi-wan-kanabi";
+import { addError, clearError, FormErrorMessageState } from "./utilsDisplay";
 
 type StructProps = {
   abi?: Abi;
@@ -11,7 +12,7 @@ type StructProps = {
   setParentForm: (form: Record<string, any>) => void;
   parentStateObjectKey: string;
   abiMember?: AbiStruct | AbiEnum;
-  setFormErrorMessage: Dispatch<SetStateAction<string | null>>;
+  setFormErrorMessage: Dispatch<SetStateAction<FormErrorMessageState>>;
 };
 
 export const Struct = ({
@@ -51,9 +52,11 @@ export const Struct = ({
 
       // check for enum validity
       if (values.filter((item) => (item || "").length > 0).length > 1) {
-        setFormErrorMessage("Enums can only have one defined value");
+        setFormErrorMessage((prev) =>
+          addError(prev, "enumError", "Enums can only have one active value"),
+        );
       } else {
-        setFormErrorMessage(null);
+        setFormErrorMessage((prev) => clearError(prev, "enumError"));
       }
     }
 
