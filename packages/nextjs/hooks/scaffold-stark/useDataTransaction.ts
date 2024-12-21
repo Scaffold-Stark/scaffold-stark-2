@@ -84,7 +84,7 @@ export const useDataTransaction = (blockNumber: number) => {
             return data.ethereum.usd;
           } catch (error) {
             console.error("Error fetching ETH price:", error);
-            return 4000; // Valor por defecto en caso de error
+            return 4000; 
           }
         };
 
