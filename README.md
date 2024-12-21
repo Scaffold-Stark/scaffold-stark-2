@@ -63,7 +63,7 @@ snforge --version
 
 If your Starknet Foundry version is not `0.34.0`, you need to install it.
 
-- Install Starknet Foundry `0.35.1` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
+- Install Starknet Foundry `0.34.0` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
 
 ## Compatible versions
 
