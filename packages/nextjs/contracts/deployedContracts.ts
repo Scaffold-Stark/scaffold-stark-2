@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     YourContractExportName: {
       address:
-        "0x7483316d5a2787d93eebef838bcfe3ec18d5416efcdce501b6ea0cd4e7239f1",
+        "0x524f5de3369467a51f7d0288e95f45b35f4ccab871a8fa959d8bfd516020901",
       abi: [
         {
           type: "impl",
@@ -263,7 +263,7 @@ const deployedContracts = {
     },
     BetMaker: {
       address:
-        "0xf22069fcd71f7f56362e506b0c0efee4dd4da19877fcff378b27b44ab8b4f2",
+        "0x4cbaded883443f875de491ae3c1971c026a65703ff30b1b40540a03693f0cb4",
       abi: [
         {
           type: "impl",
