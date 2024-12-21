@@ -8,11 +8,12 @@ import AnimatedGradientText from "~~/app/Uikit/components/ui/animated-text";
 import { formatUnits } from "ethers";
 import Image from "next/image";
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { NimboraStrategy } from "~~/types/nimbora";
 import { BetTokenImage, BetType, PositionType } from "~~/app/constants";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -80,6 +81,7 @@ const BetStats = ({
 };
 
 function BetCard({ bet }: { bet: Bet }) {
+  const queryClient = useQueryClient();
   const { address, status, chainId, isConnecting, ...props } = useAccount();
   const [amountEth, setAmountEth] = useState<number | null>(null);
   const betToken = bet.bet_token_name as "Eth" | "Usdc";
@@ -337,25 +339,37 @@ function BetCard({ bet }: { bet: Bet }) {
                 />
               </div>
               <div className="flex gap-4">
-                <Button
-                  className="flex-1"
-                  disabled={needConnection}
-                  onClick={() => {
-                    voteYes();
-                  }}
-                >
-                  {needConnection ? "Connect Wallet" : "Vote Yes"}
-                </Button>
-                <Button
-                  variant={"destructive"}
-                  disabled={needConnection}
-                  className="flex-1"
-                  onClick={() => {
-                    voteNo();
-                  }}
-                >
-                  {needConnection ? "Connect Wallet" : "Vote No"}
-                </Button>
+                <DialogClose className="w-full flex-1">
+                  <Button
+                    className="w-full flex-1"
+                    disabled={needConnection}
+                    onClick={() => {
+                      voteYes();
+                      setAmountEth(null);
+                      setTimeout(() => {
+                        queryClient.invalidateQueries({ queryKey: ["bets"] });
+                      }, 10000);
+                    }}
+                  >
+                    {needConnection ? "Connect Wallet" : "Vote Yes"}
+                  </Button>
+                </DialogClose>
+                <DialogClose className="w-full flex-1">
+                  <Button
+                    variant={"destructive"}
+                    disabled={needConnection}
+                    className="w-full flex-1"
+                    onClick={() => {
+                      voteNo();
+                      setAmountEth(null);
+                      setTimeout(() => {
+                        queryClient.invalidateQueries({ queryKey: ["bets"] });
+                      }, 10000);
+                    }}
+                  >
+                    {needConnection ? "Connect Wallet" : "Vote No"}
+                  </Button>
+                </DialogClose>
               </div>
             </div>
           </div>
