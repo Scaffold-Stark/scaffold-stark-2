@@ -86,7 +86,7 @@ export const AddressInfoDropdown = ({
       <details ref={dropdownRef} className="dropdown dropdown-end leading-3">
         <summary
           tabIndex={0}
-          className="dropdown-toggle btn btn-sm !h-auto gap-0 border border-[#5c4fe5] bg-transparent px-2 py-[0.35rem]"
+          className="dropdown-toggle btn btn-sm !h-auto gap-0 border border-border bg-transparent px-2 py-[0.35rem]"
         >
           <div className="hidden [@media(min-width:412px)]:block">
             {getStarknetPFPIfExists(profile?.profilePicture) ? (
@@ -111,7 +111,7 @@ export const AddressInfoDropdown = ({
         </summary>
         <ul
           tabIndex={0}
-          className={`menu dropdown-content z-[2] mt-2 gap-1 rounded-[5px] border border-[#5c4fe5] bg-base-100 p-2`}
+          className={`menu dropdown-content z-[2] mt-2 gap-1 rounded-[5px] border border-border bg-background px-3 py-2`}
         >
           <NetworkOptions hidden={!selectingNetwork} />
           <li className={selectingNetwork ? "hidden" : ""}>

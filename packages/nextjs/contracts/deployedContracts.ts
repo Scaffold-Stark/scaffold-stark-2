@@ -5,9 +5,9 @@
 
 const deployedContracts = {
   devnet: {
-    YourContractExportName: {
+    YourContract: {
       address:
-        "0x524f5de3369467a51f7d0288e95f45b35f4ccab871a8fa959d8bfd516020901",
+        "0x6681510eac28dd4122dc6746585109e58a509d9d79f8171ffeac4d715352710",
       abi: [
         {
           type: "impl",
@@ -263,7 +263,7 @@ const deployedContracts = {
     },
     BetMaker: {
       address:
-        "0x4cbaded883443f875de491ae3c1971c026a65703ff30b1b40540a03693f0cb4",
+        "0x548a5e36d78472f2dec21fdae0b993faf8495c13cf8e2393fd8209103fc5649",
       abi: [
         {
           type: "impl",
@@ -1085,7 +1085,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x49352dcacaf227ccef0c4572d612f2b0a36047d0762929e8bb5da8b7ac1cfc9",
+        "0x6dceac19c5f115d9b2fc20a4b8c73603b0d7bac33124c39f72e19baa0e1594a",
     },
   },
 } as const;

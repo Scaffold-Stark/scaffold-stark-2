@@ -13,6 +13,8 @@ import { devnet } from "@starknet-react/chains";
 import { SwitchTheme } from "./SwitchTheme";
 import { useAccount, useNetwork, useProvider } from "@starknet-react/core";
 import { BlockIdentifier } from "starknet";
+import { LibraryBig, Notebook } from "lucide-react";
+import { Button } from "~~/app/Uikit/components/ui/button";
 
 type HeaderMenuLink = {
   label: string;
@@ -26,14 +28,43 @@ export const menuLinks: HeaderMenuLink[] = [
     href: "/",
   },
   {
-    label: "Debug Contracts",
-    href: "/debug",
-    icon: <BugAntIcon className="h-4 w-4" />,
+    label: "My bets",
+    href: "/bets",
+    icon: <Notebook className="h-4 w-4" />,
   },
 ];
 
-export const HeaderMenuLinks = () => {
+function MenuLinkButton({
+  label,
+  href,
+  icon,
+}: {
+  label: string;
+  href: string;
+  icon: React.ReactNode;
+}) {
   const pathname = usePathname();
+  const isActive = pathname === href;
+
+  return (
+    <li key={href}>
+      <Button asChild variant={"ghost"}>
+        <Link
+          href={href}
+          passHref
+          className={`${
+            isActive ? "rounded-none !text-white !opacity-100" : ""
+          } grid grid-flow-col gap-2 rounded-full px-3 py-1.5 text-sm opacity-65 hover:text-white`}
+        >
+          {icon}
+          <span>{label}</span>
+        </Link>
+      </Button>
+    </li>
+  );
+}
+
+export const HeaderMenuLinks = () => {
   const { theme } = useTheme();
   const [isDark, setIsDark] = useState(false);
 
@@ -42,25 +73,9 @@ export const HeaderMenuLinks = () => {
   }, [theme]);
   return (
     <>
-      {menuLinks.map(({ label, href, icon }) => {
-        const isActive = pathname === href;
-        return (
-          <li key={href}>
-            <Link
-              href={href}
-              passHref
-              className={`${
-                isActive
-                  ? "!bg-gradient-nav active:bg-gradient-nav !text-white shadow-md"
-                  : ""
-              } hover:bg-gradient-nav grid grid-flow-col gap-2 rounded-full px-3 py-1.5 text-sm hover:text-white`}
-            >
-              {icon}
-              <span>{label}</span>
-            </Link>
-          </li>
-        );
-      })}
+      {menuLinks.map(({ label, href, icon }) => (
+        <MenuLinkButton label={label} href={href} icon={icon} key={href} />
+      ))}
     </>
   );
 };
@@ -68,7 +83,7 @@ export const HeaderMenuLinks = () => {
 /**
  * Site header
  */
-export const Header = () => {
+export const CustomHeader = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const burgerMenuRef = useRef<HTMLDivElement>(null);
 
@@ -117,49 +132,17 @@ export const Header = () => {
   ]);
 
   return (
-    <div className="navbar top-0 z-20 min-h-0 flex-shrink-0 justify-between px-0 sm:px-2 lg:static">
+    <div className="navbar sticky top-0 z-30 flex h-16 min-h-0 flex-shrink-0 items-center justify-between border-b border-border bg-background px-6 shadow-md lg:static">
       <div className="navbar-start -mr-2 w-auto lg:w-1/2">
-        <div className="dropdown lg:hidden" ref={burgerMenuRef}>
-          <label
-            tabIndex={0}
-            className={`btn btn-ghost ml-1 [@media(max-width:379px)]:!h-9 [@media(max-width:379px)]:!min-h-0 [@media(max-width:379px)]:!w-10 [@media(max-width:379px)]:!px-3 [@media(max-width:379px)]:!py-1 ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"}`}
-            onClick={() => {
-              setIsDrawerOpen((prevIsOpenState) => !prevIsOpenState);
-            }}
-          >
-            <Bars3Icon className="h-1/2" />
-          </label>
-          {isDrawerOpen && (
-            <ul
-              tabIndex={0}
-              className="menu-compact menu dropdown-content mt-3 w-52 rounded-box bg-base-100 p-2 shadow"
-              onClick={() => {
-                setIsDrawerOpen(false);
-              }}
-            >
-              <HeaderMenuLinks />
-            </ul>
-          )}
-        </div>
-        <Link
-          href="/"
-          passHref
-          className="ml-4 mr-6 hidden shrink-0 items-center gap-2 lg:flex"
-        >
-          <div className="relative flex h-10 w-10">
-            <Image
-              alt="SE2 logo"
-              className="cursor-pointer"
-              fill
-              src="/logo.svg"
-            />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold leading-tight">Scaffold-Stark</span>
-            <span className="text-xs">Starknet dev stack</span>
-          </div>
+        <Link href={"/"}>
+          <Image
+            src={"/starksight-green.png"}
+            alt={"starksight"}
+            width={250}
+            height={60}
+          />
         </Link>
-        <ul className="menu menu-horizontal hidden gap-2 px-1 lg:flex lg:flex-nowrap">
+        <ul className="menu menu-horizontal flex-nowrap gap-2 px-1 lg:flex">
           <HeaderMenuLinks />
         </ul>
       </div>
@@ -171,11 +154,11 @@ export const Header = () => {
         ) : null}
         <CustomConnectButton />
         {/* <FaucetButton /> */}
-        <SwitchTheme
+        {/*   <SwitchTheme
           className={`pointer-events-auto ${
             isLocalNetwork ? "mb-1 lg:mb-0" : ""
           }`}
-        />
+        /> */}
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import { useTheme } from "next-themes";
 import { BlockieAvatar } from "../BlockieAvatar";
 import GenericModal from "./GenericModal";
 import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
+import { Button } from "~~/app/Uikit/components/ui/button";
 
 const loader = ({ src }: { src: string }) => {
   return src;
@@ -69,13 +70,14 @@ const ConnectModal = () => {
 
   return (
     <div>
-      <label
-        htmlFor="connect-modal"
-        className="bg-btn-wallet btn-sm cursor-pointer rounded-[18px] px-8 py-3 font-bold"
+      <Button
+        variant={"outline"}
+        className="border-primary text-primary hover:text-primary"
       >
-        <span>Connect</span>
-      </label>
-
+        <label htmlFor="connect-modal" className="hover:cursor-pointer">
+          <span>Connect</span>
+        </label>
+      </Button>
       <input
         ref={modalRef}
         type="checkbox"
@@ -116,7 +118,7 @@ const ConnectModal = () => {
                         className="flex w-full flex-col"
                       >
                         <button
-                          className={`hover:bg-gradient-modal flex items-center gap-4 rounded-md border py-[8px] pl-[10px] pr-16 text-neutral ${isDarkMode ? "border-[#385183]" : ""}`}
+                          className={`flex items-center gap-4 rounded-md border border-border py-[8px] pl-[10px] pr-16 text-neutral hover:bg-secondary`}
                           onClick={(e) => handleConnectBurner(e, ix)}
                         >
                           <BlockieAvatar

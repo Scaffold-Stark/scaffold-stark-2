@@ -11,6 +11,7 @@ import { appChains, connectors } from "~~/services/web3/connectors";
 import provider from "~~/services/web3/provider";
 import { useNativeCurrencyPrice } from "~~/hooks/scaffold-stark/useNativeCurrencyPrice";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { CustomHeader } from "./CustomHeader";
 
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
   /* useNativeCurrencyPrice(); */
@@ -20,7 +21,8 @@ const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <div className="bg-main relative flex min-h-screen flex-col">
-        <Header />
+        {/*  <Header /> */}
+        <CustomHeader />
         <main className="relative flex flex-1 flex-col">{children}</main>
       </div>
       <Toaster />
