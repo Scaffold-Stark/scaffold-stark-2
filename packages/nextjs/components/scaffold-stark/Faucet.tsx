@@ -27,10 +27,6 @@ export const Faucet = () => {
 
   const { chain: ConnectedChain } = useNetwork();
   const { provider: publicClient } = useProvider();
-  const isValidHexAddress = (value: string): boolean => {
-    const hexAddressRegex = /^0x[0-9a-fA-F]+$/;
-    return hexAddressRegex.test(value);
-  };
 
   useEffect(() => {
     const checkChain = async () => {
@@ -118,11 +114,7 @@ export const Faucet = () => {
             <AddressInput
               placeholder="Destination Address"
               value={inputAddress ?? ""}
-              onChange={(value) => {
-                if (isValidHexAddress(value)) {
-                  setInputAddress(value as AddressType);
-                }
-              }}
+              onChange={(value) => setInputAddress(value as AddressType)}
             />
             <EtherInput
               placeholder="Amount to send"

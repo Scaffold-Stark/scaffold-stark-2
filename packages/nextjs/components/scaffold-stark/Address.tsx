@@ -52,6 +52,11 @@ export const Address = ({
 
   const checkSumAddress = useMemo(() => {
     if (!address) return undefined;
+
+    if (address.toLowerCase() === "0x") {
+      return "0x0";
+     }  
+
     return getChecksumAddress(address);
   }, [address]);
 
@@ -61,9 +66,12 @@ export const Address = ({
   );
 
   const isValidHexAddress = (value: string): boolean => {
+    if (value.toLowerCase() === "0x") {
+        return true; // Permitir "0x" como válido después de convertirlo
+    }
     const hexAddressRegex = /^0x[0-9a-fA-F]+$/;
     return hexAddressRegex.test(value);
-  };
+   };
 
   const [displayAddress, setDisplayAddress] = useState(
     checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4),
@@ -73,15 +81,16 @@ export const Address = ({
     const addressWithFallback = checkSumAddress || address || "";
 
     if (fetchedProfile?.name) {
-      setDisplayAddress(fetchedProfile.name);
+        setDisplayAddress(fetchedProfile.name);
     } else if (format === "long") {
-      setDisplayAddress(addressWithFallback || "");
+        setDisplayAddress(addressWithFallback || "");
     } else {
-      setDisplayAddress(
-        addressWithFallback.slice(0, 6) + "..." + addressWithFallback.slice(-4),
-      );
+        setDisplayAddress(
+            addressWithFallback.slice(0, 6) + "..." + addressWithFallback.slice(-4),
+        );
     }
-  }, [fetchedProfile, checkSumAddress, address, format]);
+}, [fetchedProfile, checkSumAddress, address, format]);
+
 
   // Skeleton UI
   if (isLoading) {
@@ -101,7 +110,7 @@ export const Address = ({
     );
   }
 
-  if (!checkSumAddress || !isValidHexAddress(checkSumAddress)) {
+  if (!checkSumAddress) {
     return <span className="text-error">Invalid address format</span>;
   }
 
