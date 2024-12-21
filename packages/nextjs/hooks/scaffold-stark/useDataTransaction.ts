@@ -3,7 +3,6 @@ import { RpcProvider } from "starknet";
 import { useTargetNetwork } from "./useTargetNetwork";
 
 interface BlockData {
-  classeslength: number;
   transaction: number;
   blockStatus: string;
   blockNumber: number;
@@ -11,12 +10,12 @@ interface BlockData {
   blockVersion: string;
   blockTimestamp: number;
   blockTransactions: string[];
-  blockNewroot: string;
+  parentBlockHash: string;
   totalTransactions: number;
   tps: number | null;
   gasprice: string;
   gaspricefri: string;
-  timeDiff: number;
+  timeDiff: number | null;
   averageFeeUSD: string;
 }
 
@@ -33,22 +32,32 @@ export const useDataTransaction = (blockNumber: number) => {
   }, [targetNetwork.rpcUrls.public.http]);
 
   const getEstimatedTxTime = useCallback(
-    async (blockIdentifier: number) => {
+    async (blockIdentifier: number): Promise<number | null> => {
       try {
+        if (blockIdentifier <= 0) {
+          // No previous block exists
+          return null;
+        }
+
         const currentBlock = await publicClient.getBlock(blockIdentifier);
         const prevBlockNumber = blockIdentifier - 1;
         const prevBlock = await publicClient.getBlock(prevBlockNumber);
+
+        if (!currentBlock || !prevBlock) {
+          return null;
+        }
+
         return currentBlock.timestamp - prevBlock.timestamp;
       } catch (error) {
-        console.error("Error on geting estimated time:", error);
-        return 0;
+        console.error("Error on getting estimated time:", error);
+        return null;
       }
     },
     [publicClient],
   );
 
   const calculateAverageFee = useCallback(
-    async (blockIdentifier: number) => {
+    async (blockIdentifier: number): Promise<number> => {
       try {
         const blockTxHashes =
           await publicClient.getBlockWithTxHashes(blockIdentifier);
@@ -75,7 +84,7 @@ export const useDataTransaction = (blockNumber: number) => {
             return data.ethereum.usd;
           } catch (error) {
             console.error("Error fetching ETH price:", error);
-            return 4000;
+            return 4000; // Valor por defecto en caso de error
           }
         };
 
@@ -95,43 +104,42 @@ export const useDataTransaction = (blockNumber: number) => {
   const fetchBlockData = useCallback(async () => {
     try {
       setError(null);
-
-      const classeslength = await publicClient.getClass.length;
-      const transactionnumber = await publicClient.getTransaction.length;
       const currentBlock = await publicClient.getBlock(blockNumber);
 
       const prevBlockNumber = blockNumber - 1;
-      let tps = null;
+      let tps: number | null = null;
 
       if (prevBlockNumber >= 0) {
         const prevBlock = await publicClient.getBlock(prevBlockNumber);
-        const currentTxCount = currentBlock.transactions?.length || 0;
-        const timeDiffBetweenBlocks =
-          currentBlock.timestamp - prevBlock.timestamp;
-        tps =
-          timeDiffBetweenBlocks > 0
-            ? currentTxCount / timeDiffBetweenBlocks
-            : null;
+        if (currentBlock && prevBlock) {
+          const currentTxCount = currentBlock.transactions?.length || 0;
+          const timeDiffBetweenBlocks =
+            currentBlock.timestamp - prevBlock.timestamp;
+
+          tps =
+            timeDiffBetweenBlocks > 0
+              ? currentTxCount / timeDiffBetweenBlocks
+              : null;
+        }
       }
 
       const timeDiff = await getEstimatedTxTime(blockNumber);
       const averageFeeUSD = await calculateAverageFee(blockNumber);
 
       const data: BlockData = {
-        classeslength,
-        transaction: transactionnumber,
+        transaction: currentBlock.transactions?.length || 0,
         blockStatus: currentBlock.status,
         blockNumber: blockNumber,
         blockHash: currentBlock.sequencer_address,
         blockVersion: currentBlock.starknet_version,
         blockTimestamp: currentBlock.timestamp,
         blockTransactions: currentBlock.transactions || [],
-        blockNewroot: currentBlock.parent_hash,
+        parentBlockHash: currentBlock.parent_hash,
         totalTransactions: currentBlock.transactions?.length || 0,
         tps,
         gasprice: currentBlock.l1_gas_price.price_in_wei,
         gaspricefri: currentBlock.l1_gas_price.price_in_fri,
-        timeDiff,
+        timeDiff: timeDiff !== null ? timeDiff : null,
         averageFeeUSD: averageFeeUSD.toFixed(4),
       };
 
