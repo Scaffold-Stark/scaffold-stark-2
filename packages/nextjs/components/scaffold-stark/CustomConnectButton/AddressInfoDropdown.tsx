@@ -54,6 +54,8 @@ export const AddressInfoDropdown = ({
     setSelectingNetwork(false);
     dropdownRef.current?.removeAttribute("open");
   };
+
+  // @ts-expect-error ref are initialized with null by default
   useOutsideClick(dropdownRef, closeDropdown);
 
   function handleConnectBurner(
@@ -122,6 +124,7 @@ export const AddressInfoDropdown = ({
                 <span className=" whitespace-nowrap">Copy address</span>
               </div>
             ) : (
+              //@ts-ignore
               <CopyToClipboard
                 text={address}
                 onCopy={() => {
