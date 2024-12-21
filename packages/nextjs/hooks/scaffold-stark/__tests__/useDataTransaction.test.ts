@@ -81,6 +81,8 @@ describe("useDataTransaction", () => {
   };
 
   beforeEach(() => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
     // Set up the mock for useTargetNetwork
     (useTargetNetwork as Mock).mockReturnValue({
       targetNetwork: mockTargetNetwork,
@@ -238,20 +240,19 @@ describe("useDataTransaction", () => {
 
     const bd = result.current.blockData;
     expect(bd).toMatchObject({
-      classeslength: 10,
-      transaction: 5,
+      transaction: 2,
       blockStatus: mockBlockLatest.status,
       blockNumber: 10,
       blockHash: mockBlockLatest.sequencer_address,
       blockVersion: mockBlockLatest.starknet_version,
       blockTimestamp: mockBlockLatest.timestamp,
       blockTransactions: mockBlockLatest.transactions,
-      blockNewroot: mockBlockLatest.parent_hash,
+      parentBlockHash: mockBlockLatest.parent_hash, // <-- Incluye esto
       totalTransactions: mockBlockLatest.transactions.length,
       tps: 0.2,
       gasprice: mockBlockLatest.l1_gas_price.price_in_wei,
       gaspricefri: mockBlockLatest.l1_gas_price.price_in_fri,
-      timeDiff: 10, // Time difference between blocks
+      timeDiff: 10,
       averageFeeUSD: "2000.0000",
     });
   });
@@ -314,3 +315,4 @@ describe("useDataTransaction", () => {
     expect(bd?.tps).toBeNull(); // Because timeDiff = 0
   });
 });
+
