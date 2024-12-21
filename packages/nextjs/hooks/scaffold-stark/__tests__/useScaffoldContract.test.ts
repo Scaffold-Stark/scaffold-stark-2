@@ -66,35 +66,7 @@ describe("useScaffoldContract", () => {
       call: vi.fn(),
       connect: vi.fn(),
     }));
-
-    // MockedRpcProvider.mockImplementation(() => ({
-    //   nodeAddress: "https://mock-rpc-url",
-    // }));
   });
-
-  // it("should use publicClient as fallback when account is undefined", () => {
-  //   mockedUseAccount.mockReturnValueOnce({
-  //     account: undefined,
-  //   });
-
-  //   // Ensure the deployed contract info is available
-
-  //   mockedUseDeployedContractInfo.mockReturnValueOnce({
-  //     data: {
-  //       abi: mockAbi,
-  //       address: mockAddress,
-  //     },
-  //     isLoading: false,
-  //   });
-
-  //   const { result } = renderHook(() => useScaffoldContract({ contractName }));
-
-  //   expect(MockedContract).toHaveBeenCalledWith(
-  //     mockAbi,
-  //     mockAddress,
-  //     expect.anything(), // publicClient
-  //   );
-  // });
 
   it("should return a contract when deployedContractData is available", () => {
     const { result } = renderHook(() => useScaffoldContract({ contractName }));
@@ -115,14 +87,6 @@ describe("useScaffoldContract", () => {
     expect(result.current.data).toBeUndefined();
     expect(result.current.isLoading).toBe(false);
   });
-
-  // it("should create RpcProvider with the correct public URL", () => {
-  //   renderHook(() => useScaffoldContract({ contractName }));
-
-  //   expect(MockedRpcProvider).toHaveBeenCalledWith({
-  //     nodeUrl: "https://mock-rpc-url",
-  //   });
-  // });
 
   it("should set isLoading to true when deployed contract is loading", () => {
     mockedUseDeployedContractInfo.mockReturnValueOnce({
