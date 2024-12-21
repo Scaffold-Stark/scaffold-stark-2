@@ -10,7 +10,7 @@ import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
 import { useAccount, useNetwork } from "@starknet-react/core";
 import { Address } from "@starknet-react/chains";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ConnectModal from "./ConnectModal";
 
 /**
@@ -24,9 +24,12 @@ export const CustomConnectButton = () => {
   const [accountChainId, setAccountChainId] = useState<bigint>(0n);
   const { chain } = useNetwork();
 
-  const blockExplorerAddressLink = accountAddress
-    ? getBlockExplorerAddressLink(targetNetwork, accountAddress)
-    : undefined;
+  const blockExplorerAddressLink = useMemo(() => {
+    return (
+      accountAddress &&
+      getBlockExplorerAddressLink(targetNetwork, accountAddress)
+    );
+  }, [accountAddress, targetNetwork]);
 
   // effect to get chain id and address from account
   useEffect(() => {
@@ -41,7 +44,7 @@ export const CustomConnectButton = () => {
   }, [account]);
 
   if (status === "disconnected") return <ConnectModal />;
-
+  // TODO : add tag for fork on scaffold config and dont show wrong network dropdown if fork is true
   if (accountChainId !== targetNetwork.id) {
     return <WrongNetworkDropdown />;
   }

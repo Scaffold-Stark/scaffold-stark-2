@@ -13,6 +13,7 @@ type StructProps = {
   parentStateObjectKey: string;
   abiMember?: AbiStruct | AbiEnum;
   setFormErrorMessage: Dispatch<SetStateAction<FormErrorMessageState>>;
+  isDisabled?: boolean;
 };
 
 export const Struct = ({
@@ -22,12 +23,16 @@ export const Struct = ({
   abiMember,
   abi,
   setFormErrorMessage,
+  isDisabled = false,
 }: StructProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialTupleFormState(
       abiMember ?? { type: "struct", name: "", members: [] },
     ),
   );
+
+  // select enum
+  const [activeVariantIndex, setActiveVariantIndex] = useState(0);
 
   // side effect to transform data before setState
   useEffect(() => {
@@ -46,18 +51,9 @@ export const Struct = ({
       abiMember.variants.forEach((variant, index) => {
         argsStruct[variant.name || `input_${index}_`] = {
           type: variant.type,
-          value: values[index],
+          value: index === activeVariantIndex ? values[index] : undefined,
         };
       });
-
-      // check for enum validity
-      if (values.filter((item) => (item || "").length > 0).length > 1) {
-        setFormErrorMessage((prev) =>
-          addError(prev, "enumError", "Enums can only have one active value"),
-        );
-      } else {
-        setFormErrorMessage((prev) => clearError(prev, "enumError"));
-      }
     }
 
     setParentForm({
@@ -66,15 +62,19 @@ export const Struct = ({
         abiMember.type === "struct" ? argsStruct : { variant: argsStruct },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [abiMember, JSON.stringify(form, replacer)]);
+  }, [abiMember, JSON.stringify(form, replacer), activeVariantIndex]);
 
   if (!abiMember) return null;
 
   return (
     <div>
-      <div className="custom-after collapse border-2 border-secondary bg-base-200 pb-2 pl-4 pt-1.5">
-        <input type="checkbox" className="peer min-h-fit" />
-        <div className="collapse-title min-h-fit p-0 text-primary-content/50 peer-checked:mb-2">
+      <div
+        className={`collapse border-2 bg-base-200 pb-2 pl-4 pt-1.5 ${isDisabled ? "cursor-not-allowed border-base-100" : "border-secondary"} custom-after`}
+      >
+        {!isDisabled && <input type="checkbox" className="peer min-h-fit" />}
+        <div
+          className={`collapse-title min-h-fit p-0 text-primary-content/50 peer-checked:mb-2 ${isDisabled && "cursor-not-allowed"} `}
+        >
           <p className="m-0 p-0 text-[1rem]">{abiMember.type}</p>
         </div>
         <div className="collapse-content ml-3 flex-col space-y-4 border-l-2 border-secondary/80 pl-4">
@@ -104,15 +104,28 @@ export const Struct = ({
                   index,
                 );
                 return (
-                  <ContractInput
-                    setFormErrorMessage={setFormErrorMessage}
-                    abi={abi}
-                    setForm={setForm}
-                    form={form}
-                    key={index}
-                    stateObjectKey={key}
-                    paramType={variant}
-                  />
+                  <div key={index} className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      name={`radio-${index}`}
+                      className="radio-secondary radio radio-xs"
+                      checked={index === activeVariantIndex}
+                      onChange={() => {}}
+                      onClick={() => {
+                        setActiveVariantIndex(index);
+                      }}
+                    />
+                    <ContractInput
+                      setFormErrorMessage={setFormErrorMessage}
+                      abi={abi}
+                      setForm={setForm}
+                      form={form}
+                      key={index}
+                      stateObjectKey={key}
+                      paramType={variant}
+                      isDisabled={index !== activeVariantIndex}
+                    />
+                  </div>
                 );
               })}
         </div>

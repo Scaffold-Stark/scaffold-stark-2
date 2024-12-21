@@ -1,5 +1,5 @@
 import React from "react";
-import { ToastPosition, toast } from "react-hot-toast";
+import { type Toast, ToastPosition, toast } from "react-hot-toast";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import {
   CheckCircleIcon,
@@ -44,7 +44,7 @@ const Notification = ({
   position = DEFAULT_POSITION,
 }: NotificationProps) => {
   return toast.custom(
-    (t) => (
+    (t: Toast) => (
       <div
         className={`shadow-center relative flex max-w-sm transform-gpu flex-row items-start justify-between space-x-2 rounded-xl bg-base-200 p-4 shadow-accent transition-all duration-500 ease-in-out ${
           position.substring(0, 3) == "top"

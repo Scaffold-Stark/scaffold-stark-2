@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Address as AddressType, devnet } from "@starknet-react/chains";
 import { BanknotesIcon } from "@heroicons/react/24/outline";
 import {
@@ -9,10 +9,8 @@ import {
   Balance,
   EtherInput,
 } from "~~/components/scaffold-stark";
-import { useNetwork } from "@starknet-react/core";
+import { useNetwork, useProvider } from "@starknet-react/core";
 import { mintEth } from "~~/services/web3/faucet";
-import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
-import { RpcProvider } from "starknet";
 import { notification } from "~~/utils/scaffold-stark";
 import GenericModal from "./CustomConnectButton/GenericModal";
 
@@ -28,16 +26,7 @@ export const Faucet = () => {
   const [sendValue, setSendValue] = useState("");
 
   const { chain: ConnectedChain } = useNetwork();
-  const { targetNetwork } = useTargetNetwork();
-
-  const publicNodeUrl = targetNetwork.rpcUrls.public.http[0];
-
-  // Use useMemo to memoize the publicClient object
-  const publicClient = useMemo(() => {
-    return new RpcProvider({
-      nodeUrl: publicNodeUrl,
-    });
-  }, [publicNodeUrl]);
+  const { provider: publicClient } = useProvider();
 
   useEffect(() => {
     const checkChain = async () => {

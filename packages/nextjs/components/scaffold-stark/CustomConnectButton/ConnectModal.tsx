@@ -7,7 +7,6 @@ import { BurnerConnector } from "~~/services/web3/stark-burner/BurnerConnector";
 import { useTheme } from "next-themes";
 import { BlockieAvatar } from "../BlockieAvatar";
 import GenericModal from "./GenericModal";
-import scaffoldConfig from "~~/scaffold.config";
 import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
 
 const loader = ({ src }: { src: string }) => {

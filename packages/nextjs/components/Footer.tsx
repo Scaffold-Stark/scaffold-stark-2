@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-
 import { Cog8ToothIcon, CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { useGlobalState } from "~~/services/store/store";
@@ -34,14 +32,6 @@ export const Footer = () => {
       <div>
         <div className="pointer-events-none fixed bottom-0 left-0 z-10 flex w-full items-center justify-between p-4">
           <div className="pointer-events-auto flex flex-col gap-2 md:flex-row">
-            {nativeCurrencyPrice > 0 && (
-              <div>
-                <div className="btn btn-sm cursor-auto gap-1 border border-[#32BAC4] font-normal shadow-none">
-                  <CurrencyDollarIcon className="h-4 w-4 text-[#32BAC4]" />
-                  <span>{nativeCurrencyPrice}</span>
-                </div>
-              </div>
-            )}
             {isSepoliaNetwork && (
               <>
                 <FaucetSepolia />
@@ -66,6 +56,14 @@ export const Footer = () => {
               <Cog8ToothIcon className="h-4 w-4 text-[#32BAC4]" />
               <span>Configure Contracts</span>
             </Link>
+            {nativeCurrencyPrice > 0 && (
+              <div>
+                <div className="btn btn-sm cursor-auto gap-1 border border-[#32BAC4] font-normal shadow-none">
+                  <CurrencyDollarIcon className="h-4 w-4 text-[#32BAC4]" />
+                  <span>{nativeCurrencyPrice}</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

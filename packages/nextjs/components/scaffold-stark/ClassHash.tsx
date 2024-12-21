@@ -65,6 +65,7 @@ export const ClassHash = ({
           aria-hidden="true"
         />
       ) : (
+        // @ts-ignore
         <CopyToClipboard
           text={classHash}
           onCopy={() => {
