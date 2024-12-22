@@ -12,7 +12,9 @@ export const fetchPriceFromCoingecko = async (
       return symbol === "ETH" ? data.ethereum.usd : data.starknet.usd;
     } catch (error) {
       console.error(
-        `Attempt ${attempt + 1} - Error fetching ${symbol} price from Coingecko: `,
+        `Attempt ${
+          attempt + 1
+        } - Error fetching ${symbol} price from Coingecko: `,
         error,
       );
       attempt++;

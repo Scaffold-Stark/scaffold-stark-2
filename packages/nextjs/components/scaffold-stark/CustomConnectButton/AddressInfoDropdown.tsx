@@ -225,14 +225,21 @@ export const AddressInfoDropdown = ({
                               className="w-full flex flex-col"
                             >
                               <button
-                                className={`${isDarkMode ? "hover:bg-[#385183] border-[#385183]" : "hover:bg-gradient-light "} border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4`}
+                                className={`${
+                                  isDarkMode
+                                    ? "hover:bg-[#385183] border-[#385183]"
+                                    : "hover:bg-gradient-light "
+                                } border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4`}
                                 onClick={(e) => handleConnectBurner(e, ix)}
                               >
                                 <BlockieAvatar
                                   address={burnerAcc.accountAddress}
                                   size={35}
                                 ></BlockieAvatar>
-                                {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}
+                                {`${burnerAcc.accountAddress.slice(
+                                  0,
+                                  6,
+                                )}...${burnerAcc.accountAddress.slice(-4)}`}
                               </button>
                             </div>
                           ))}
