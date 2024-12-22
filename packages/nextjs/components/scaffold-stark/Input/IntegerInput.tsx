@@ -46,7 +46,7 @@ export const IntegerInput = ({
     <InputBase
       name={name}
       value={value}
-      placeholder={placeholder}
+      placeholder={placeholder?.replace(">", "")}
       error={inputError}
       onChange={onChange}
       disabled={disabled}

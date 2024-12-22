@@ -101,7 +101,7 @@ export const ContractInput = ({
           </span>
         )}
         <span className="block text-xs font-extralight leading-none">
-          {displayType(paramType.type)}
+          {displayType(paramType.type)?.toString().replace(">", "") ?? ""}
         </span>
       </div>
       {renderInput()}
