@@ -7,7 +7,6 @@ import { BurnerConnector } from "~~/services/web3/stark-burner/BurnerConnector";
 import { useTheme } from "next-themes";
 import { BlockieAvatar } from "../BlockieAvatar";
 import GenericModal from "./GenericModal";
-import scaffoldConfig from "~~/scaffold.config";
 import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
 
 const loader = ({ src }: { src: string }) => {
@@ -117,14 +116,19 @@ const ConnectModal = () => {
                         className="w-full flex flex-col"
                       >
                         <button
-                          className={`hover:bg-gradient-modal border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4 ${isDarkMode ? "border-[#385183]" : ""}`}
+                          className={`hover:bg-gradient-modal border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4 ${
+                            isDarkMode ? "border-[#385183]" : ""
+                          }`}
                           onClick={(e) => handleConnectBurner(e, ix)}
                         >
                           <BlockieAvatar
                             address={burnerAcc.accountAddress}
                             size={35}
                           />
-                          {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}
+                          {`${burnerAcc.accountAddress.slice(
+                            0,
+                            6,
+                          )}...${burnerAcc.accountAddress.slice(-4)}`}
                         </button>
                       </div>
                     ))}

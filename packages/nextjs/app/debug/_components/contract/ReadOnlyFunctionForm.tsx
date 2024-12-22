@@ -4,15 +4,18 @@ import { useState, useRef, useEffect } from "react";
 import { Abi } from "abi-wan-kanabi";
 import { Address } from "@starknet-react/chains";
 import {
-  displayTxResult,
   getFunctionInputKey,
   getInitialFormState,
-  getParsedContractFunctionArgs,
+  getArgsAsStringInputFromForm,
   transformAbiFunction,
+  FormErrorMessageState,
+  isError,
+  getTopErrorMessage,
+  decodeContractResponse,
 } from "~~/app/debug/_components/contract";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { BlockNumber } from "starknet";
-import { useReadContract } from "@starknet-react/core";
+import { useContract, useReadContract } from "@starknet-react/core";
 import { ContractInput } from "./ContractInput";
 
 type ReadOnlyFunctionFormProps = {
@@ -30,15 +33,21 @@ export const ReadOnlyFunctionForm = ({
     getInitialFormState(abiFunction),
   );
   const [inputValue, setInputValue] = useState<any | undefined>(undefined);
-  const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null);
+  const [formErrorMessage, setFormErrorMessage] =
+    useState<FormErrorMessageState>({});
   const lastForm = useRef(form);
+
+  const { contract: contractInstance } = useContract({
+    abi,
+    address: contractAddress,
+  });
 
   const { isFetching, data, refetch, error } = useReadContract({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
     args: inputValue || [],
-    enabled: !!inputValue,
+    enabled: !!inputValue && !!contractInstance,
     blockIdentifier: "pending" as BlockNumber,
   });
 
@@ -66,8 +75,7 @@ export const ReadOnlyFunctionForm = ({
   });
 
   const handleRead = () => {
-    const newInputValue = getParsedContractFunctionArgs(form, false, true);
-
+    const newInputValue = getArgsAsStringInputFromForm(form);
     if (JSON.stringify(form) !== JSON.stringify(lastForm.current)) {
       setInputValue(newInputValue);
       lastForm.current = form;
@@ -87,7 +95,12 @@ export const ReadOnlyFunctionForm = ({
             <div className="bg-input text-sm px-4 py-1.5 break-words">
               <p className="font-bold m-0 mb-1">Result:</p>
               <pre className="whitespace-pre-wrap break-words">
-                {displayTxResult(data, false, abiFunction?.outputs)}
+                {decodeContractResponse({
+                  resp: data,
+                  abi,
+                  functionOutputs: abiFunction?.outputs,
+                  asText: true,
+                })}
               </pre>
             </div>
           )}
@@ -95,15 +108,15 @@ export const ReadOnlyFunctionForm = ({
 
         <div
           className={`flex ${
-            formErrorMessage &&
+            isError(formErrorMessage) &&
             "tooltip before:content-[attr(data-tip)] before:right-[-10px] before:left-auto before:transform-none"
           }`}
-          data-tip={`${formErrorMessage}`}
+          data-tip={`${getTopErrorMessage(formErrorMessage)}`}
         >
           <button
             className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
             onClick={handleRead}
-            disabled={(inputValue && isFetching) || !!formErrorMessage}
+            disabled={(inputValue && isFetching) || isError(formErrorMessage)}
           >
             {inputValue && isFetching && (
               <span className="loading loading-spinner loading-xs"></span>
