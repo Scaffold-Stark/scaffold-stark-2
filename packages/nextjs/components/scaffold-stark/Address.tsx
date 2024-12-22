@@ -67,7 +67,11 @@ export const Address = ({
 
   const isValidHexAddress = (value: string): boolean => {
     if (value.toLowerCase() === "0x") {
-      return true; // Permitir "0x" como válido después de convertirlo
+      return true; // 0x0 is a valid address
+    }
+
+    if (/0x.*0x/.test(value)) {
+      return false;
     }
     const hexAddressRegex = /^0x[0-9a-fA-F]+$/;
     return hexAddressRegex.test(value);

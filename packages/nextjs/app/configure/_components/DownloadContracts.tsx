@@ -54,7 +54,9 @@ export default function DownloadContracts() {
 */`;
 
     const configExternalContracts = await prettier.format(
-      `${generatedContractComment}\n\nconst configExternalContracts = ${JSON.stringify(contractsData)} as const;\n\nexport default configExternalContracts;`,
+      `${generatedContractComment}\n\nconst configExternalContracts = ${JSON.stringify(
+        contractsData,
+      )} as const;\n\nexport default configExternalContracts;`,
       {
         parser: "typescript",
         plugins: [parserTypescript, prettierPluginEstree],
