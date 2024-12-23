@@ -52,6 +52,11 @@ export const Address = ({
 
   const checkSumAddress = useMemo(() => {
     if (!address) return undefined;
+
+    if (address.toLowerCase() === "0x") {
+      return "0x0";
+    }
+
     return getChecksumAddress(address);
   }, [address]);
 
@@ -59,6 +64,19 @@ export const Address = ({
     targetNetwork,
     checkSumAddress || address || "",
   );
+
+  const isValidHexAddress = (value: string): boolean => {
+    if (value.toLowerCase() === "0x") {
+      value = "0x0";
+    }
+
+    if (value.toLowerCase() === "0x0x0") {
+      return false;
+    }
+
+    const hexAddressRegex = /^0x[0-9a-fA-F]+$/;
+    return hexAddressRegex.test(value);
+  };
 
   const [displayAddress, setDisplayAddress] = useState(
     checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4),
@@ -96,8 +114,8 @@ export const Address = ({
     );
   }
 
-  if (!validateChecksumAddress(checkSumAddress)) {
-    return <span className="text-error">Wrong address</span>;
+  if (!checkSumAddress) {
+    return <span className="text-error">Invalid address format</span>;
   }
 
   return (
