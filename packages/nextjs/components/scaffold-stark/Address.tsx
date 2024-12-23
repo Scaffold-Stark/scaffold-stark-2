@@ -69,11 +69,11 @@ export const Address = ({
     if (value.toLowerCase() === "0x") {
       value = "0x0";
     }
-  
+
     if (value.toLowerCase() === "0x0x0") {
       return false;
     }
-    
+
     const hexAddressRegex = /^0x[0-9a-fA-F]+$/;
     return hexAddressRegex.test(value);
   };
