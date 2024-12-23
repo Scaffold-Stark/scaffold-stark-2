@@ -129,7 +129,7 @@ export const EtherInput = ({
 
   return (
     <InputBase
-      name={name?.replace(">", "")}
+      name={name}
       value={displayValue}
       placeholder={placeholder?.replace(">", "")}
       onChange={handleChangeNumber}
