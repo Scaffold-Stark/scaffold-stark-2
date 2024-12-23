@@ -67,12 +67,13 @@ export const Address = ({
 
   const isValidHexAddress = (value: string): boolean => {
     if (value.toLowerCase() === "0x") {
-      return true; // 0x0 is a valid address
+      value = "0x0";
     }
-
-    if (/0x.*0x/.test(value)) {
+  
+    if (value.toLowerCase() === "0x0x0") {
       return false;
     }
+    
     const hexAddressRegex = /^0x[0-9a-fA-F]+$/;
     return hexAddressRegex.test(value);
   };
