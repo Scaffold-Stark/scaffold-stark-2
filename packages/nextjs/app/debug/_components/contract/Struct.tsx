@@ -69,11 +69,15 @@ export const Struct = ({
   return (
     <div>
       <div
-        className={`collapse border-2 bg-base-200 pb-2 pl-4 pt-1.5 ${isDisabled ? "cursor-not-allowed border-base-100" : "border-secondary"} custom-after`}
+        className={`collapse border-2 bg-base-200 pb-2 pl-4 pt-1.5 ${
+          isDisabled ? "cursor-not-allowed border-base-100" : "border-secondary"
+        } custom-after`}
       >
         {!isDisabled && <input type="checkbox" className="peer min-h-fit" />}
         <div
-          className={`collapse-title min-h-fit p-0 text-primary-content/50 peer-checked:mb-2 ${isDisabled && "cursor-not-allowed"} `}
+          className={`collapse-title min-h-fit p-0 text-primary-content/50 peer-checked:mb-2 ${
+            isDisabled && "cursor-not-allowed"
+          } `}
         >
           <p className="m-0 p-0 text-[1rem]">{abiMember.type}</p>
         </div>

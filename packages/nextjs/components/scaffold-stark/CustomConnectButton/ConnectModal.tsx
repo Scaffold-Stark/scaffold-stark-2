@@ -118,14 +118,19 @@ const ConnectModal = () => {
                         className="flex w-full flex-col"
                       >
                         <button
-                          className={`flex items-center gap-4 rounded-md border border-border py-[8px] pl-[10px] pr-16 text-neutral hover:bg-secondary`}
+                          className={`hover:bg-gradient-modal flex items-center gap-4 rounded-md border py-[8px] pl-[10px] pr-16 text-neutral ${
+                            isDarkMode ? "border-[#385183]" : ""
+                          }`}
                           onClick={(e) => handleConnectBurner(e, ix)}
                         >
                           <BlockieAvatar
                             address={burnerAcc.accountAddress}
                             size={35}
                           />
-                          {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}
+                          {`${burnerAcc.accountAddress.slice(
+                            0,
+                            6,
+                          )}...${burnerAcc.accountAddress.slice(-4)}`}
                         </button>
                       </div>
                     ))}

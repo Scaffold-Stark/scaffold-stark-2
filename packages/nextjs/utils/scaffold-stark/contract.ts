@@ -454,7 +454,11 @@ const decodeParamsWithType = (paramType: string, param: any): unknown => {
       const option = x as CairoOption<any>;
       return option.isNone()
         ? "None"
-        : `Some(${parseParamWithType(paramType.split("<").pop()!, option.unwrap(), isRead)})`;
+        : `Some(${parseParamWithType(
+            paramType.split("<").pop()!,
+            option.unwrap(),
+            isRead,
+          )})`;
     }, param);
   } else if (isCairoResult(paramType)) {
     return tryParsingParamReturnObject((x) => {

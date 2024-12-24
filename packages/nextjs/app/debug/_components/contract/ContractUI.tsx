@@ -106,7 +106,11 @@ export const ContractUI = ({
             {tabs.map((tab) => (
               <a
                 key={tab.id}
-                className={`tab h-10 ${activeTab === tab.id ? "tab-active !rounded-[5px] !bg-[#8A45FC] !text-white" : ""}`}
+                className={`tab h-10 ${
+                  activeTab === tab.id
+                    ? "tab-active !rounded-[5px] !bg-[#8A45FC] !text-white"
+                    : ""
+                }`}
                 onClick={() => setActiveTab(tab.id)}
               >
                 {tab.label}
