@@ -36,7 +36,7 @@ const scaffoldConfig = {
    * This will prevent showing the wrong network dropdown when the chainId matches
    * but the RPC URL is different (e.g., when using a local fork of mainnet)
    */
-  isFork: false,
+  isFork: true,
 } as const satisfies ScaffoldConfig;
 
 export default scaffoldConfig;
