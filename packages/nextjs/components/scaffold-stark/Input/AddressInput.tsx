@@ -23,28 +23,23 @@ export const AddressInput = ({
     (newValue: Address) => {
       const sanitizedValue = newValue.toLowerCase();
 
-      // Convierte '0x' en '0x0'
       if (sanitizedValue === "0x") {
         onChange("0x0" as Address);
         return;
       }
 
-      // Invalida '0x0x0' o '0xabc0x'
       if (/^0x.*0x/.test(sanitizedValue.slice(2))) {
         return;
       }
 
-      // Invalida valores que no comienzan con '0x'
       if (!sanitizedValue.startsWith("0x")) {
         return;
       }
 
-      // Validación de longitud (42 caracteres para Ethereum/StarkNet)
       if (sanitizedValue.length !== 42) {
         return;
       }
 
-      // Si es válido, pasa el valor
       onChange(newValue);
     },
     [onChange],
