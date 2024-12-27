@@ -28,11 +28,10 @@ export const AddressInput = ({
         return;
       }
 
-      if (/^0x.*0x/.test(sanitizedValue.slice(2))) {
-        return;
-      }
-
-      if (!sanitizedValue.startsWith("0x")) {
+      const isValid =
+        /^(0x)([a-fA-F0-9]{40})$/.test(sanitizedValue) &&
+        !/0x.*0x/.test(sanitizedValue);
+      if (!isValid) {
         return;
       }
 
