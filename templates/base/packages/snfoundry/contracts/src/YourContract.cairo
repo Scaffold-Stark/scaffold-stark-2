@@ -29,7 +29,7 @@ mod YourContract {
     enum Event {
         #[flat]
         OwnableEvent: OwnableComponent::Event,
-        GreetingChanged: GreetingChanged
+        GreetingChanged: GreetingChanged,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -86,8 +86,8 @@ mod YourContract {
                         greeting_setter: get_caller_address(),
                         new_greeting: self.greeting.read(),
                         premium: true,
-                        value: 100
-                    }
+                        value: 100,
+                    },
                 );
         }
         fn withdraw(ref self: ContractState) {

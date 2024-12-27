@@ -2,8 +2,7 @@ import { Connector, useConnect } from "@starknet-react/core";
 import { useRef, useState } from "react";
 import Wallet from "~~/components/scaffold-stark/CustomConnectButton/Wallet";
 import { useLocalStorage } from "usehooks-ts";
-import { burnerAccounts } from "~~/utils/devnetAccounts";
-import { BurnerConnector } from "~~/services/web3/stark-burner/BurnerConnector";
+import { BurnerConnector, burnerAccounts } from "@scaffold-stark/stark-burner";
 import { useTheme } from "next-themes";
 import { BlockieAvatar } from "../BlockieAvatar";
 import GenericModal from "./GenericModal";
@@ -55,10 +54,8 @@ const ConnectModal = () => {
     e: React.MouseEvent<HTMLButtonElement>,
     ix: number,
   ) {
-    const connector = connectors.find(
-      (it) => it.id == "burner-wallet",
-    ) as BurnerConnector;
-    if (connector) {
+    const connector = connectors.find((it) => it.id == "burner-wallet");
+    if (connector && connector instanceof BurnerConnector) {
       connector.burnerAccount = burnerAccounts[ix];
       connect({ connector });
       setLastConnector({ id: connector.id, ix });
@@ -116,14 +113,19 @@ const ConnectModal = () => {
                         className="w-full flex flex-col"
                       >
                         <button
-                          className={`hover:bg-gradient-modal border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4 ${isDarkMode ? "border-[#385183]" : ""}`}
+                          className={`hover:bg-gradient-modal border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4 ${
+                            isDarkMode ? "border-[#385183]" : ""
+                          }`}
                           onClick={(e) => handleConnectBurner(e, ix)}
                         >
                           <BlockieAvatar
                             address={burnerAcc.accountAddress}
                             size={35}
                           />
-                          {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}
+                          {`${burnerAcc.accountAddress.slice(
+                            0,
+                            6,
+                          )}...${burnerAcc.accountAddress.slice(-4)}`}
                         </button>
                       </div>
                     ))}

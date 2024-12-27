@@ -59,7 +59,9 @@ export const DisplayVariable = ({
     <div className="space-y-1 pb-2">
       <div className="flex items-center">
         <h3
-          className={`font-medium text-lg mb-0 break-all ${isDarkMode ? "text-[#4DB4FF]" : "text-[#7800FF]"}`}
+          className={`font-medium text-lg mb-0 break-all ${
+            isDarkMode ? "text-[#4DB4FF]" : "text-[#7800FF]"
+          }`}
         >
           {abiFunction.name}
         </h3>

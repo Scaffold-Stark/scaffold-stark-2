@@ -68,7 +68,9 @@ export const BlockExplorerSepolia = () => {
                   <a
                     href={blockexplorer.link}
                     target="_blank"
-                    className={`h-12 flex items-center btn-sm px-6 gap-4 rounded-[4px] transition-all modal-border ${isDarkMode ? "hover:bg-[#385183]" : "hover:bg-slate-200"} border `}
+                    className={`h-12 flex items-center btn-sm px-6 gap-4 rounded-[4px] transition-all modal-border ${
+                      isDarkMode ? "hover:bg-[#385183]" : "hover:bg-slate-200"
+                    } border `}
                     key={id}
                   >
                     <div className="flex relative w-6 h-6">

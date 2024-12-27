@@ -88,15 +88,22 @@ export const deepMergeContracts = <
     new Set([...Object.keys(local), ...Object.keys(external)]),
   );
   for (const key of allKeys) {
-    if (!external[key]) {
-      result[key] = local[key];
-      continue;
+    const localValue = local[key];
+    const externalValue = external[key];
+    if (
+      typeof localValue === "object" &&
+      typeof externalValue === "object" &&
+      localValue !== null &&
+      externalValue !== null
+    ) {
+      // Recursively merge nested objects
+      result[key] = deepMergeContracts(localValue, externalValue);
+    } else {
+      // Use external value if available, otherwise fallback to local
+      result[key] = externalValue !== undefined ? externalValue : localValue;
     }
-    const amendedExternal = Object.fromEntries(
-      Object.entries(external[key] as Record<string, Record<string, unknown>>),
-    );
-    result[key] = { ...local[key], ...amendedExternal };
   }
+
   return result as MergeDeepRecord<
     AddExternalFlag<L>,
     AddExternalFlag<E>,
@@ -447,7 +454,11 @@ const decodeParamsWithType = (paramType: string, param: any): unknown => {
       const option = x as CairoOption<any>;
       return option.isNone()
         ? "None"
-        : `Some(${parseParamWithType(paramType.split("<").pop()!, option.unwrap(), isRead)})`;
+        : `Some(${parseParamWithType(
+            paramType.split("<").pop()!,
+            option.unwrap(),
+            isRead,
+          )})`;
     }, param);
   } else if (isCairoResult(paramType)) {
     return tryParsingParamReturnObject((x) => {
@@ -472,10 +483,7 @@ const decodeParamsWithType = (paramType: string, param: any): unknown => {
         ? "false"
         : "true";
   } else if (isCairoBytes31(paramType)) {
-    return tryParsingParamReturnObject(
-      (x: bigint) => `0x${x.toString(16)}`,
-      param,
-    );
+    return tryParsingParamReturnObject((x: bigint) => feltToHex(x), param);
   } else if (isCairoInt(paramType)) {
     return tryParsingParamReturnObject(
       (x) => (typeof x === "bigint" ? Number(x) : parseInt(x, 16)),
