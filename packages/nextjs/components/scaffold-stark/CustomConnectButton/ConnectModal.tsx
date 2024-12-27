@@ -2,8 +2,7 @@ import { Connector, useConnect } from "@starknet-react/core";
 import { useRef, useState } from "react";
 import Wallet from "~~/components/scaffold-stark/CustomConnectButton/Wallet";
 import { useLocalStorage } from "usehooks-ts";
-import { burnerAccounts } from "~~/utils/devnetAccounts";
-import { BurnerConnector } from "~~/services/web3/stark-burner/BurnerConnector";
+import { BurnerConnector, burnerAccounts } from "@scaffold-stark/stark-burner";
 import { useTheme } from "next-themes";
 import { BlockieAvatar } from "../BlockieAvatar";
 import GenericModal from "./GenericModal";
@@ -55,10 +54,8 @@ const ConnectModal = () => {
     e: React.MouseEvent<HTMLButtonElement>,
     ix: number,
   ) {
-    const connector = connectors.find(
-      (it) => it.id == "burner-wallet",
-    ) as BurnerConnector;
-    if (connector) {
+    const connector = connectors.find((it) => it.id == "burner-wallet");
+    if (connector && connector instanceof BurnerConnector) {
       connector.burnerAccount = burnerAccounts[ix];
       connect({ connector });
       setLastConnector({ id: connector.id, ix });
