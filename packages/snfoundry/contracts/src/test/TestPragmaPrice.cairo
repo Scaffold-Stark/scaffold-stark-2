@@ -3,7 +3,7 @@ use openzeppelin::tests::utils::constants::OWNER;
 use openzeppelin::utils::serde::SerializedAppend;
 use pragma_lib::abi::{IPragmaABIDispatcher, IPragmaABIDispatcherTrait};
 use pragma_lib::types::{AggregationMode, DataType, PragmaPricesResponse};
-use snforge_std::{declare, ContractClassTrait, prank, CheatTarget, CheatSpan};
+use snforge_std::{CheatSpan, CheatTarget, ContractClassTrait, declare, prank};
 use starknet::ContractAddress;
 use starknet::contract_address::contract_address_const;
 

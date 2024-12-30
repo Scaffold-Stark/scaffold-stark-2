@@ -117,3 +117,8 @@ export enum PositionType {
   Yes = "Yes",
   No = "No",
 }
+
+export enum NolossBetVariants {
+  NIMBORA = "Nimbora",
+  NOSTRA = "Nostra",
+}

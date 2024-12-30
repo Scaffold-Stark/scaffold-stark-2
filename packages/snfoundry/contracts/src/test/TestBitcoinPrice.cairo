@@ -5,7 +5,7 @@ use openzeppelin::tests::utils::constants::OWNER;
 use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
 use openzeppelin::utils::serde::SerializedAppend;
 use snforge_std::{
-    declare, ContractClassTrait, prank, CheatTarget, CheatSpan, start_warp, stop_warp
+    CheatSpan, CheatTarget, ContractClassTrait, declare, prank, start_warp, stop_warp,
 };
 use starknet::ContractAddress;
 use starknet::contract_address::contract_address_const;
@@ -21,7 +21,7 @@ fn deploy_contract(name: ByteArray) -> ContractAddress {
     let end_vote_bet_timestamp: u64 = 1719168900000;
     let end_bet_timestamp: u64 = 1719168900000_u64;
     let oracle_address: ContractAddress = contract_address_const::<
-        0x2a85bd616f912537c50a49a4076db02c00b29b2cdc8a197ce92ed1837fa875b
+        0x2a85bd616f912537c50a49a4076db02c00b29b2cdc8a197ce92ed1837fa875b,
     >();
     calldata.append_serde(end_vote_bet_timestamp);
     calldata.append_serde(end_bet_timestamp);
@@ -57,18 +57,20 @@ fn test_vote_yes() {
     let current_bet_id = dispatcher.get_current_bet().id;
     assert!(
         dispatcher.get_own_yes_amount(user_address, current_bet_id) == 0,
-        "User balance is suposed to be 0"
+        "User balance is suposed to be 0",
     );
 
     assert!(
-        eth_token.balanceOf(dispatcher.contract_address) == 0, "Contract balance is suposed to be 0"
+        eth_token.balanceOf(dispatcher.contract_address) == 0,
+        "Contract balance is suposed to be 0",
     );
     prank(CheatTarget::One(eth_token.contract_address), user_address, CheatSpan::TargetCalls(1));
     eth_token.approve(contract_address, 1);
     dispatcher.vote_yes(1);
 
     assert!(
-        eth_token.balanceOf(dispatcher.contract_address) == 1, "Contract balance is suposed to be 1"
+        eth_token.balanceOf(dispatcher.contract_address) == 1,
+        "Contract balance is suposed to be 1",
     );
 
     let new_state = dispatcher.get_current_bet();
@@ -79,7 +81,7 @@ fn test_vote_yes() {
     prank(CheatTarget::One(contract_address), user_address, CheatSpan::TargetCalls(1));
     assert!(
         dispatcher.get_own_yes_amount(user_address, current_bet_id) == 1,
-        "User balance is suposed to be 1"
+        "User balance is suposed to be 1",
     );
 }
 
@@ -96,28 +98,30 @@ fn test_vote_no() {
     prank(
         CheatTarget::One(contract_address),
         0x0213c67ed78bc280887234fe5ed5e77272465317978ae86c25a71531d9332a2d.try_into().unwrap(),
-        CheatSpan::TargetCalls(3)
+        CheatSpan::TargetCalls(3),
     );
     let dispatcher = IBitcoinPriceDispatcher { contract_address };
     let current_bet_id = dispatcher.get_current_bet().id;
     assert!(
         dispatcher.get_own_no_amount(user_address, current_bet_id) == 0,
-        "User balance is suposed to be 0"
+        "User balance is suposed to be 0",
     );
 
     assert!(
-        eth_token.balanceOf(dispatcher.contract_address) == 0, "Contract balance is suposed to be 0"
+        eth_token.balanceOf(dispatcher.contract_address) == 0,
+        "Contract balance is suposed to be 0",
     );
     prank(
         CheatTarget::One(eth_token.contract_address),
         0x0213c67ed78bc280887234fe5ed5e77272465317978ae86c25a71531d9332a2d.try_into().unwrap(),
-        CheatSpan::TargetCalls(1)
+        CheatSpan::TargetCalls(1),
     );
     eth_token.approve(contract_address, 1);
     dispatcher.vote_no(1);
 
     assert!(
-        eth_token.balanceOf(dispatcher.contract_address) == 1, "Contract balance is suposed to be 1"
+        eth_token.balanceOf(dispatcher.contract_address) == 1,
+        "Contract balance is suposed to be 1",
     );
 
     let new_state = dispatcher.get_current_bet();
@@ -128,11 +132,11 @@ fn test_vote_no() {
     prank(
         CheatTarget::One(contract_address),
         0x0213c67ed78bc280887234fe5ed5e77272465317978ae86c25a71531d9332a2d.try_into().unwrap(),
-        CheatSpan::TargetCalls(1)
+        CheatSpan::TargetCalls(1),
     );
     assert!(
         dispatcher.get_own_no_amount(user_address, current_bet_id) == 1,
-        "User balance is suposed to be 1"
+        "User balance is suposed to be 1",
     );
 }
 
@@ -167,7 +171,7 @@ fn test_set_bet_result_price() {
     let dispatcher = IBitcoinPriceDispatcher { contract_address };
 
     prank(
-        CheatTarget::One(contract_address), OWNER().try_into().unwrap(), CheatSpan::TargetCalls(1)
+        CheatTarget::One(contract_address), OWNER().try_into().unwrap(), CheatSpan::TargetCalls(1),
     );
     dispatcher.set_bet_result_price();
 }
@@ -186,20 +190,20 @@ fn test_claim_rewards() {
     prank(
         CheatTarget::One(eth_token.contract_address),
         0x0213c67ed78bc280887234fe5ed5e77272465317978ae86c25a71531d9332a2d.try_into().unwrap(),
-        CheatSpan::TargetCalls(2)
+        CheatSpan::TargetCalls(2),
     );
     eth_token.approve(contract_address, 100000000);
     eth_token.transfer(contract_address, 100000000);
 
     // Set bet result price
     prank(
-        CheatTarget::One(contract_address), OWNER().try_into().unwrap(), CheatSpan::TargetCalls(1)
+        CheatTarget::One(contract_address), OWNER().try_into().unwrap(), CheatSpan::TargetCalls(1),
     );
     dispatcher.set_bet_result_price();
 
     let current_bet = dispatcher.get_current_bet();
     assert!(
-        current_bet.token_price_end == 6625086109850, "Result price is not correct"
+        current_bet.token_price_end == 6625086109850, "Result price is not correct",
     ); // reference price is 6525086109850
     assert!(current_bet.is_token_price_end_set == true, "Result price is not set");
 
@@ -207,7 +211,7 @@ fn test_claim_rewards() {
     prank(
         CheatTarget::One(contract_address),
         0x0213c67ed78bc280887234fe5ed5e77272465317978ae86c25a71531d9332a2d.try_into().unwrap(),
-        CheatSpan::TargetCalls(1)
+        CheatSpan::TargetCalls(1),
     );
     let rewards = dispatcher.claimRewards(current_bet_id);
     assert!(rewards == 0, "Rewards is not 0");
@@ -217,13 +221,13 @@ fn test_claim_rewards() {
     prank(
         CheatTarget::One(eth_token.contract_address),
         0x0213c67ed78bc280887234fe5ed5e77272465317978ae86c25a71531d9332a2d.try_into().unwrap(),
-        CheatSpan::TargetCalls(1)
+        CheatSpan::TargetCalls(1),
     );
     eth_token.approve(contract_address, 1);
     prank(
         CheatTarget::One(contract_address),
         0x0213c67ed78bc280887234fe5ed5e77272465317978ae86c25a71531d9332a2d.try_into().unwrap(),
-        CheatSpan::TargetCalls(1)
+        CheatSpan::TargetCalls(1),
     );
     dispatcher.vote_yes(1);
 
@@ -231,13 +235,13 @@ fn test_claim_rewards() {
     prank(
         CheatTarget::One(eth_token.contract_address),
         0x0213c67ed78bc280887234fe5ed5e77272465317978ae86c25a71531d9332a2d.try_into().unwrap(),
-        CheatSpan::TargetCalls(1)
+        CheatSpan::TargetCalls(1),
     );
     eth_token.approve(contract_address, 1);
     prank(
         CheatTarget::One(contract_address),
         0x0213c67ed78bc280887234fe5ed5e77272465317978ae86c25a71531d9332a2d.try_into().unwrap(),
-        CheatSpan::TargetCalls(1)
+        CheatSpan::TargetCalls(1),
     );
     dispatcher.vote_no(1);
 
@@ -246,7 +250,7 @@ fn test_claim_rewards() {
     prank(
         CheatTarget::One(contract_address),
         0x0213c67ed78bc280887234fe5ed5e77272465317978ae86c25a71531d9332a2d.try_into().unwrap(),
-        CheatSpan::TargetCalls(1)
+        CheatSpan::TargetCalls(1),
     );
     let rewards = dispatcher.claimRewards(current_bet_id);
     assert!(rewards == 2, "Rewards is not 2");

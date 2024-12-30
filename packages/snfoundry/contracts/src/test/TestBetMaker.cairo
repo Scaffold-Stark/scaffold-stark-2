@@ -1,13 +1,13 @@
+use contracts::BetMaker::{
+    BetType, CreateBetOutcomesArgument, ERC20BetTokenType, PositionType, StrategyInfos,
+};
 use contracts::BetMaker::{IBetMakerDispatcher, IBetMakerDispatcherTrait};
 use contracts::BetMaker::{ITokenManagerDispatcher, ITokenManagerDispatcherTrait};
-use contracts::BetMaker::{
-    StrategyInfos, CreateBetOutcomesArgument, ERC20BetTokenType, BetType, PositionType
-};
 use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 use openzeppelin_utils::serde::SerializedAppend;
 use snforge_std::{
-    declare, ContractClassTrait, DeclareResultTrait, cheat_caller_address, CheatSpan, store,
-    map_entry_address
+    CheatSpan, ContractClassTrait, DeclareResultTrait, cheat_caller_address, declare,
+    map_entry_address, store,
 };
 use starknet::{ContractAddress, contract_address_const};
 
@@ -54,7 +54,7 @@ fn deploy_contract(name: ByteArray) -> ContractAddress {
 }
 
 fn initialize_crypto_nimbora_bet(
-    contract_address: ContractAddress, dispatcher: IBetMakerDispatcher
+    contract_address: ContractAddress, dispatcher: IBetMakerDispatcher,
 ) {
     let name = "Bitcoin above 75000 on December 1?";
     let image = "https://cdn.pixabay.com/photo/2015/08/27/11/20/bitcoin-910307_1280.png";
@@ -66,14 +66,14 @@ fn initialize_crypto_nimbora_bet(
         name: 'Nimbora Pendle EtherFi Eth',
         symbol: 'npeETH',
         address: NIMBORA_CONTRACT_ADDRESS(),
-        yield_strategy_type: 1
+        yield_strategy_type: 1,
     };
     let reference_price_key = 'BTC/USD';
     let reference_price = 7500000000000;
     let bet_condition = 1;
     let bet_token_address = ERC20BetTokenType::Eth(ETH_CONTRACT_ADDRESS());
     let outcomes = CreateBetOutcomesArgument {
-        outcome_yes: 'Bitcoin is higher', outcome_no: 'Bitcoin is lower'
+        outcome_yes: 'Bitcoin is higher', outcome_no: 'Bitcoin is lower',
     };
 
     cheat_caller_address(contract_address, OWNER(), CheatSpan::TargetCalls(1));
@@ -90,12 +90,12 @@ fn initialize_crypto_nimbora_bet(
             reference_price,
             bet_condition,
             bet_token_address,
-            outcomes
+            outcomes,
         );
 }
 
 fn initialize_crypto_classic_bet(
-    contract_address: ContractAddress, dispatcher: IBetMakerDispatcher
+    contract_address: ContractAddress, dispatcher: IBetMakerDispatcher,
 ) {
     let name = "Bitcoin above 75000 on December 1?";
     let image = "https://cdn.pixabay.com/photo/2015/08/27/11/20/bitcoin-910307_1280.png";
@@ -105,14 +105,14 @@ fn initialize_crypto_classic_bet(
     let vote_deadline = 1764547200;
     let yield_strategy_infos = StrategyInfos {
         // For type 0, name, symbol and address are useless
-        name: '', symbol: '', address: USDC_CONTRACT_ADDRESS(), yield_strategy_type: 0
+        name: '', symbol: '', address: USDC_CONTRACT_ADDRESS(), yield_strategy_type: 0,
     };
     let reference_price_key = 'BTC/USD';
     let reference_price = 7500000000000;
     let bet_condition = 1;
     let bet_token_address = ERC20BetTokenType::Eth(USDC_CONTRACT_ADDRESS());
     let outcomes = CreateBetOutcomesArgument {
-        outcome_yes: 'Bitcoin is higher', outcome_no: 'Bitcoin is lower'
+        outcome_yes: 'Bitcoin is higher', outcome_no: 'Bitcoin is lower',
     };
 
     cheat_caller_address(contract_address, OWNER(), CheatSpan::TargetCalls(1));
@@ -129,7 +129,7 @@ fn initialize_crypto_classic_bet(
             reference_price,
             bet_condition,
             bet_token_address,
-            outcomes
+            outcomes,
         );
 }
 
@@ -209,7 +209,7 @@ fn test_settle_crypto_nimbora_bet() {
     let contract_address = deploy_contract("BetMaker");
     let dispatcher = IBetMakerDispatcher { contract_address };
     let nimbora_manager_dispatcher = ITokenManagerDispatcher {
-        contract_address: NIMBORA_CONTRACT_ADDRESS()
+        contract_address: NIMBORA_CONTRACT_ADDRESS(),
     };
     let nimbora_dispatcher = IERC20Dispatcher { contract_address: NIMBORA_TOKEN_ADDRESS() };
     let eth_dispatcher = IERC20Dispatcher { contract_address: ETH_CONTRACT_ADDRESS() };
@@ -234,12 +234,12 @@ fn test_settle_crypto_nimbora_bet() {
 
     let new_epoch: u256 = nimbora_manager_dispatcher.handled_epoch_withdrawal_len() + 2;
     let handled_epoch_withdrawal_len_array_value: Array<felt252> = array![
-        new_epoch.low.into(), new_epoch.high.into()
+        new_epoch.low.into(), new_epoch.high.into(),
     ];
     store(
         NIMBORA_CONTRACT_ADDRESS(),
         selector!("handled_epoch_withdrawal_len"),
-        handled_epoch_withdrawal_len_array_value.span()
+        handled_epoch_withdrawal_len_array_value.span(),
     );
 
     let amount = nimbora_manager_dispatcher.convert_to_assets(total_shares_amount);
@@ -250,7 +250,7 @@ fn test_settle_crypto_nimbora_bet() {
     store(
         eth_dispatcher.contract_address,
         map_entry_address(selector!("ERC20_balances"), map_key_balance.span()),
-        map_value_balance.span()
+        map_value_balance.span(),
     );
     assert(eth_dispatcher.balance_of(contract_address) == 0, 'Funds are coming from Nimbora');
     nimbora_manager_dispatcher.claim_withdrawal(contract_address, 0);
@@ -263,7 +263,7 @@ fn test_claim_crypto_nimbora_bet() {
     let contract_address = deploy_contract("BetMaker");
     let dispatcher = IBetMakerDispatcher { contract_address };
     let nimbora_manager_dispatcher = ITokenManagerDispatcher {
-        contract_address: NIMBORA_CONTRACT_ADDRESS()
+        contract_address: NIMBORA_CONTRACT_ADDRESS(),
     };
     let nimbora_dispatcher = IERC20Dispatcher { contract_address: NIMBORA_TOKEN_ADDRESS() };
     let eth_dispatcher = IERC20Dispatcher { contract_address: ETH_CONTRACT_ADDRESS() };
@@ -280,7 +280,7 @@ fn test_claim_crypto_nimbora_bet() {
 
     // Other positions created
     let another_user: ContractAddress = contract_address_const::<
-        0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b
+        0x00000005dd3d2f4429af886cd1a3b08289dbcea99a294197e9eb43b0e0325b4b,
     >();
     cheat_caller_address(ETH_CONTRACT_ADDRESS(), another_user, CheatSpan::TargetCalls(1));
     eth_dispatcher.approve(contract_address, 89 * 2);
@@ -295,12 +295,12 @@ fn test_claim_crypto_nimbora_bet() {
 
     let new_epoch: u256 = nimbora_manager_dispatcher.handled_epoch_withdrawal_len() + 2;
     let handled_epoch_withdrawal_len_array_value: Array<felt252> = array![
-        new_epoch.low.into(), new_epoch.high.into()
+        new_epoch.low.into(), new_epoch.high.into(),
     ];
     store(
         NIMBORA_CONTRACT_ADDRESS(),
         selector!("handled_epoch_withdrawal_len"),
-        handled_epoch_withdrawal_len_array_value.span()
+        handled_epoch_withdrawal_len_array_value.span(),
     );
 
     let amount = nimbora_manager_dispatcher.convert_to_assets(total_shares_amount);
@@ -311,7 +311,7 @@ fn test_claim_crypto_nimbora_bet() {
     store(
         eth_dispatcher.contract_address,
         map_entry_address(selector!("ERC20_balances"), map_key_balance.span()),
-        map_value_balance.span()
+        map_value_balance.span(),
     );
     nimbora_manager_dispatcher.claim_withdrawal(contract_address, 0);
     // let rewards = dispatcher.get_position_rewards_amount(OWNER(), 1, BetType::Crypto, 1);
@@ -323,7 +323,7 @@ fn test_claim_crypto_nimbora_bet() {
     // println!("Price: {:?}", dispatcher.get_oracle_crypto_price('BTC/USD'))
 
     assert(
-        eth_dispatcher.balance_of(contract_address) == 490 + 88 + 88 - 2, ''
+        eth_dispatcher.balance_of(contract_address) == 490 + 88 + 88 - 2, '',
     ); // Amount of the three positions without contract fees and minus Nimbora fee (-2)
     cheat_caller_address(contract_address, OWNER(), CheatSpan::TargetCalls(1));
     dispatcher.claim_rewards(1, BetType::Crypto, 1);

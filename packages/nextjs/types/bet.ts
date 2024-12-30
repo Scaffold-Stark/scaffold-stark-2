@@ -1,30 +1,35 @@
-export interface Bet {
-    id: number;
-    bet_id: string;
-    bet_type: string;
-    name: string;
-    image?: string | null;
-    category?: string | null;
-    description?: string | null;
-    is_settled: boolean;
-    is_active: boolean;
-    deadline: string;
-    vote_deadline: string;
-    total_money_betted: string;
-    yield_strategy_type: number;
-    yield_strategy_name?: string | null;
-    yield_strategy_symbol?: string | null;
-    yield_strategy_address?: string | null;
-    reference_price_key?: string | null;
-    reference_price?: string | null;
-    bet_condition?: number | null;
-    bet_token_name: string;
-    bet_token_address: string;
-    outcome_yes_name: string;
-    outcome_yes_bought_amount: string;
-    outcome_yes_bought_amount_with_yield: string;
-    outcome_no_name: string;
-    outcome_no_bought_amount: string;
-    outcome_no_bought_amount_with_yield: string;
-    winner_outcome?: string | null;
-  }
+import { CairoCustomEnum, CairoOption } from "starknet";
+
+export type Bet = {
+  bet_condition: bigint;
+  bet_id: bigint;
+  bet_token: { name: string; dispatcher: { address: string } };
+  category: string;
+  deadline: bigint;
+  description: string;
+  image: string;
+  is_active: boolean;
+  is_settled: boolean;
+  name: string;
+  outcomes: {
+    outcome_yes: {
+      bought_amount: bigint;
+      bought_amount_with_yield: bigint;
+      name: bigint;
+    };
+    outcome_no: {
+      bought_amount: bigint;
+      bought_amount_with_yield: bigint;
+      name: bigint;
+    };
+  };
+  reference_price: bigint;
+  reference_price_key: bigint;
+  total_money_betted: bigint;
+  vote_deadline: bigint;
+  winner_outcome: CairoOptionType;
+  yield_strategy: CairoCustomEnumType;
+};
+
+type CairoOptionType = InstanceType<typeof CairoOption>;
+type CairoCustomEnumType = InstanceType<typeof CairoCustomEnum>;

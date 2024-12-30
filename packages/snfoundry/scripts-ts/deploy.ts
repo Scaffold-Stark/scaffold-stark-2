@@ -47,14 +47,13 @@ const deployScript = async (): Promise<void> => {
     constructorArgs: {
       owner: deployer.address,
     },
-  }); 
+  });
 
   await deployContract({
     contract: "BetMaker",
     contractName: "BetMaker",
     constructorArgs: {
-      owner:
-        deployer.address,
+      owner: deployer.address,
       pragma_address:
         "0x2a85bd616f912537c50a49a4076db02c00b29b2cdc8a197ce92ed1837fa875b",
     },

@@ -26,9 +26,12 @@ import { Input } from "~~/app/Uikit/components/ui/input";
 import ShineBorder from "~~/app/Uikit/components/ui/shine-border";
 import { Swords } from "lucide-react";
 import { Balance } from "./scaffold-stark";
-import { CairoCustomEnum } from "starknet";
+import { CairoCustomEnum, shortString } from "starknet";
 import { useScaffoldMultiWriteContract } from "~~/hooks/scaffold-stark/useScaffoldMultiWriteContract";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
+import { isNolossBetVariant } from "~~/utils/starksight";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
+import { SkeletonShort } from "~~/app/Uikit/components/ui/skeletons";
 
 const BetStats = ({
   percentageYes,
@@ -81,18 +84,27 @@ const BetStats = ({
 };
 
 function BetCard({ bet }: { bet: Bet }) {
-  const queryClient = useQueryClient();
   const { address, status, chainId, isConnecting, ...props } = useAccount();
   const [amountEth, setAmountEth] = useState<number | null>(null);
-  const betToken = bet.bet_token_name as "Eth" | "Usdc";
-  const betType = bet.bet_type as keyof typeof BetType;
+
+  const betToken = shortString.decodeShortString(bet.bet_token.name) as
+    | "Eth"
+    | "Usdc";
+  const betType = shortString.decodeShortString(bet.category).toUpperCase();
   const needConnection = !isConnecting && !address;
   const { data: betMakerInfos } = useDeployedContractInfo("BetMaker");
   const betTypeEnum = new CairoCustomEnum({
-    [BetType.CRYPTO]: betType === "CRYPTO" ? "value" : undefined,
-    [BetType.SPORTS]: betType === "SPORTS" ? "value" : undefined,
+    [BetType.CRYPTO]: betType === "CRYPTO" ? "get_crypto_bet" : undefined,
+    [BetType.SPORTS]: betType === "SPORTS" ? "get_sport_bet" : undefined,
     [BetType.OTHER]: betType === "OTHER" ? "value" : undefined,
   });
+
+  const { data: betInfos, isLoading } = useScaffoldReadContract({
+    contractName: "BetMaker",
+    functionName: betTypeEnum.unwrap(),
+    args: [Number(bet.bet_id)],
+  });
+  const isLoadingBetInfos = isLoading || !betInfos;
 
   const positionYesTypeEnum = new CairoCustomEnum({
     [PositionType.Yes]: "value",
@@ -142,12 +154,12 @@ function BetCard({ bet }: { bet: Bet }) {
       },
     ],
   });
-  const isNoLossMarket = useMemo(() => {
-    if (bet.yield_strategy_type === 0) return false;
-    return true;
-  }, [bet.yield_strategy_type]);
 
-  const { isPending, error, data } = useQuery<NimboraStrategy[], Error>({
+  const isNoLossMarket = useMemo(() => {
+    return isNolossBetVariant(bet.yield_strategy.activeVariant());
+  }, [bet.yield_strategy]);
+
+  /* const { isPending, error, data } = useQuery<NimboraStrategy[], Error>({
     queryKey: ["NimboraStrategys"],
     queryFn: () =>
       fetch("https://backend.nimbora.io/yield-dex/strategies", {}).then(
@@ -158,18 +170,18 @@ function BetCard({ bet }: { bet: Bet }) {
           return res.json();
         },
       ),
-  });
+  }); */
 
   const apr = useMemo(() => {
-    if (bet.yield_strategy_type === 1) {
+    /*  if (bet.yield_strategy_type === 1) {
       const nimboraApr = data?.find(
         (strategie) => strategie.symbol === bet.yield_strategy_symbol,
       )?.apr;
 
       return nimboraApr;
-    }
-    return 0;
-  }, [bet.yield_strategy_type]);
+    } */
+    return 22;
+  }, [bet.yield_strategy]);
 
   return (
     <div
@@ -193,7 +205,11 @@ function BetCard({ bet }: { bet: Bet }) {
               `animate-gradient flex bg-foreground bg-gradient-to-r from-primary to-primary bg-clip-text text-center text-transparent`,
             )}
           >
-            {`Prize Pool ${parseFloat(formatUnits(BigInt(bet.total_money_betted) || "0")).toFixed(4)} `}
+            {isLoadingBetInfos ? (
+              <SkeletonShort />
+            ) : (
+              `Prize Pool ${parseFloat(formatUnits(BigInt(betInfos.total_money_betted) || "0")).toFixed(4)} `
+            )}
           </span>
           <Image
             src={BetTokenImage[betToken]}
@@ -216,16 +232,24 @@ function BetCard({ bet }: { bet: Bet }) {
           </AnimatedGradientText>
         ) : null}
       </div>
-      <BetStats
-        percentageYes={calculatePercentage(
-          BigInt(bet.outcome_yes_bought_amount),
-          BigInt(bet.total_money_betted),
-        )}
-        percentageNo={calculatePercentage(
-          BigInt(bet.outcome_no_bought_amount),
-          BigInt(bet.total_money_betted),
-        )}
-      />
+      {isLoadingBetInfos ? (
+        <div className="flex h-full animate-pulse space-x-4">
+          <div className="flex w-full items-center space-y-6">
+            <div className="h-32 w-full rounded bg-slate-300"></div>
+          </div>
+        </div>
+      ) : (
+        <BetStats
+          percentageYes={calculatePercentage(
+            BigInt(betInfos.outcomes.outcome_yes.bought_amount),
+            BigInt(betInfos.total_money_betted),
+          )}
+          percentageNo={calculatePercentage(
+            BigInt(betInfos.outcomes.outcome_no.bought_amount),
+            BigInt(betInfos.total_money_betted),
+          )}
+        />
+      )}
       <div className="duration-20 w-[160%] self-center transition">
         {/*  {icon} */}
         <div className="flex w-full justify-evenly">
@@ -245,35 +269,69 @@ function BetCard({ bet }: { bet: Bet }) {
             <DialogTitle>{bet.name}</DialogTitle>
             <DialogDescription>{bet.description}</DialogDescription>
           </DialogHeader>
-          <div className="max-w-[29rem] lg:max-w-2xl">
-            <div>
-              <div className="flex items-center justify-center space-x-4 rounded-lg border p-4">
-                <div className="flex w-1/2 flex-col items-center justify-center rounded-lg p-4">
-                  <h2 className="text-sm text-white">Total Yes</h2>
-                  <p className="text-2xl font-bold text-primary">
-                    {parseFloat(
-                      formatUnits(bet.outcome_yes_bought_amount),
-                    ).toFixed(4)}
-                    &nbsp;{betToken.toUpperCase()}
-                  </p>
-                </div>
-                <div className="flex h-8 w-9 items-center justify-center">
-                  <Swords className="text-primary" />
-                </div>
-                <div className="flex w-1/2 flex-col items-center justify-center rounded-lg p-4">
-                  <h2 className="text-sm text-white">Total No</h2>
-                  <p className="text-2xl font-bold text-destructive">
-                    {parseFloat(
-                      formatUnits(bet.outcome_no_bought_amount),
-                    ).toFixed(4)}
-                    &nbsp;{betToken.toUpperCase()}
-                  </p>
-                </div>
+          {isLoadingBetInfos ? (
+            <div className="flex h-full animate-pulse space-x-4">
+              <div className="flex w-full items-center">
+                <div className="h-48 w-full rounded bg-slate-300"></div>
               </div>
             </div>
+          ) : (
+            <div className="max-w-[29rem] lg:max-w-2xl">
+              <div>
+                <div className="flex items-center justify-center space-x-4 rounded-lg border p-4">
+                  <div className="flex w-1/2 flex-col items-center justify-center rounded-lg p-4">
+                    <h2 className="text-sm text-white">Total Yes</h2>
+                    <p className="text-2xl font-bold text-primary">
+                      {parseFloat(
+                        formatUnits(
+                          betInfos.outcomes.outcome_yes.bought_amount,
+                        ),
+                      ).toFixed(4)}
+                      &nbsp;{betToken.toUpperCase()}
+                    </p>
+                  </div>
+                  <div className="flex h-8 w-9 items-center justify-center">
+                    <Swords className="text-primary" />
+                  </div>
+                  <div className="flex w-1/2 flex-col items-center justify-center rounded-lg p-4">
+                    <h2 className="text-sm text-white">Total No</h2>
+                    <p className="text-2xl font-bold text-destructive">
+                      {parseFloat(
+                        formatUnits(betInfos.outcomes.outcome_no.bought_amount),
+                      ).toFixed(4)}
+                      &nbsp;{betToken.toUpperCase()}
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-            {isNoLossMarket ? (
-              <div className="flex space-x-2">
+              {isNoLossMarket ? (
+                <div className="flex space-x-2">
+                  <ShineBorder
+                    className="mt-3 w-full !bg-transparent text-center text-2xl font-bold capitalize"
+                    color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+                  >
+                    <div className="flex flex-col items-center justify-center rounded-lg p-4">
+                      <h2 className="text-sm text-white">Prize Pool</h2>
+                      <p className="text-2xl font-bold text-primary">
+                        {parseFloat(
+                          formatUnits(betInfos.total_money_betted),
+                        ).toFixed(4)}
+                        &nbsp;{betToken.toUpperCase()}
+                      </p>
+                    </div>
+                  </ShineBorder>
+                  <ShineBorder
+                    className="mt-3 w-full !bg-transparent text-center text-2xl font-bold capitalize"
+                    color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+                  >
+                    <div className="flex flex-col items-center justify-center rounded-lg p-4">
+                      <h2 className="text-sm text-white">APR</h2>
+                      <p className="text-2xl font-bold text-primary">{"22%"}</p>
+                    </div>
+                  </ShineBorder>
+                </div>
+              ) : (
                 <ShineBorder
                   className="mt-3 w-full !bg-transparent text-center text-2xl font-bold capitalize"
                   color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
@@ -281,98 +339,70 @@ function BetCard({ bet }: { bet: Bet }) {
                   <div className="flex flex-col items-center justify-center rounded-lg p-4">
                     <h2 className="text-sm text-white">Prize Pool</h2>
                     <p className="text-2xl font-bold text-primary">
-                      {parseFloat(formatUnits(bet.total_money_betted)).toFixed(
-                        4,
-                      )}
+                      {parseFloat(
+                        formatUnits(betInfos.total_money_betted),
+                      ).toFixed(4)}
                       &nbsp;{betToken.toUpperCase()}
                     </p>
                   </div>
                 </ShineBorder>
-                <ShineBorder
-                  className="mt-3 w-full !bg-transparent text-center text-2xl font-bold capitalize"
-                  color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
-                >
-                  <div className="flex flex-col items-center justify-center rounded-lg p-4">
-                    <h2 className="text-sm text-white">APR</h2>
-                    <p className="text-2xl font-bold text-primary">{"22%"}</p>
+              )}
+              <div className="mt-6 space-y-4">
+                <div className="grid gap-2">
+                  <div className="flex justify-between">
+                    <Label htmlFor="bet-amount">Enter Bet Amount</Label>
+                    <Label
+                      htmlFor="bet-amount"
+                      className="flex text-muted-foreground"
+                    >
+                      {needConnection ? (
+                        "Please connect your wallet."
+                      ) : (
+                        <div className="flex items-center justify-center">
+                          {`Balance:`} <Balance address={address} />
+                        </div>
+                      )}
+                    </Label>
                   </div>
-                </ShineBorder>
-              </div>
-            ) : (
-              <ShineBorder
-                className="mt-3 w-full !bg-transparent text-center text-2xl font-bold capitalize"
-                color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
-              >
-                <div className="flex flex-col items-center justify-center rounded-lg p-4">
-                  <h2 className="text-sm text-white">Prize Pool</h2>
-                  <p className="text-2xl font-bold text-primary">
-                    {parseFloat(formatUnits(bet.total_money_betted)).toFixed(4)}
-                    &nbsp;{betToken.toUpperCase()}
-                  </p>
+                  <Input
+                    id="bet-amount"
+                    type="number"
+                    placeholder={`0,00 ${betToken.toUpperCase()}`}
+                    className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    value={amountEth ?? ""}
+                    onChange={(e) => setAmountEth(parseFloat(e.target.value))}
+                  />
                 </div>
-              </ShineBorder>
-            )}
-            <div className="mt-6 space-y-4">
-              <div className="grid gap-2">
-                <div className="flex justify-between">
-                  <Label htmlFor="bet-amount">Enter Bet Amount</Label>
-                  <Label
-                    htmlFor="bet-amount"
-                    className="flex text-muted-foreground"
-                  >
-                    {needConnection ? (
-                      "Please connect your wallet."
-                    ) : (
-                      <div className="flex items-center justify-center">
-                        {`Balance:`} <Balance address={address} />
-                      </div>
-                    )}
-                  </Label>
+                <div className="flex gap-4">
+                  <DialogClose className="w-full flex-1" asChild>
+                    <Button
+                      className="w-full flex-1"
+                      disabled={needConnection}
+                      onClick={() => {
+                        voteYes();
+                        setAmountEth(null);
+                      }}
+                    >
+                      {needConnection ? "Connect Wallet" : "Vote Yes"}
+                    </Button>
+                  </DialogClose>
+                  <DialogClose className="w-full flex-1" asChild>
+                    <Button
+                      variant={"destructive"}
+                      disabled={needConnection}
+                      className="w-full flex-1"
+                      onClick={() => {
+                        voteNo();
+                        setAmountEth(null);
+                      }}
+                    >
+                      {needConnection ? "Connect Wallet" : "Vote No"}
+                    </Button>
+                  </DialogClose>
                 </div>
-                <Input
-                  id="bet-amount"
-                  type="number"
-                  placeholder={`0,00 ${bet.bet_token_name.toUpperCase()}`}
-                  className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                  value={amountEth ?? undefined}
-                  onChange={(e) => setAmountEth(parseFloat(e.target.value))}
-                />
-              </div>
-              <div className="flex gap-4">
-                <DialogClose className="w-full flex-1">
-                  <Button
-                    className="w-full flex-1"
-                    disabled={needConnection}
-                    onClick={() => {
-                      voteYes();
-                      setAmountEth(null);
-                      setTimeout(() => {
-                        queryClient.invalidateQueries({ queryKey: ["bets"] });
-                      }, 10000);
-                    }}
-                  >
-                    {needConnection ? "Connect Wallet" : "Vote Yes"}
-                  </Button>
-                </DialogClose>
-                <DialogClose className="w-full flex-1">
-                  <Button
-                    variant={"destructive"}
-                    disabled={needConnection}
-                    className="w-full flex-1"
-                    onClick={() => {
-                      voteNo();
-                      setAmountEth(null);
-                      setTimeout(() => {
-                        queryClient.invalidateQueries({ queryKey: ["bets"] });
-                      }, 10000);
-                    }}
-                  >
-                    {needConnection ? "Connect Wallet" : "Vote No"}
-                  </Button>
-                </DialogClose>
               </div>
             </div>
-          </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

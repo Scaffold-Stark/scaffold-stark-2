@@ -19,7 +19,7 @@ pub mod PragmaComponent {
 
     #[storage]
     struct Storage {
-        pragma_address: ContractAddress
+        pragma_address: ContractAddress,
     }
 
     #[event]
@@ -28,7 +28,7 @@ pub mod PragmaComponent {
 
     #[embeddable_as(PragmaComponentImpl)]
     impl PragmaImpl<
-        TContractState, +HasComponent<TContractState>
+        TContractState, +HasComponent<TContractState>,
     > of super::IPragmaComponent<ComponentState<TContractState>> {
         fn initializer(ref self: ComponentState<TContractState>, pragma_address: ContractAddress) {
             self.pragma_address.write(pragma_address);
@@ -36,7 +36,7 @@ pub mod PragmaComponent {
 
         fn get_asset_price_median(self: @ComponentState<TContractState>, asset: DataType) -> u128 {
             let oracle_dispatcher = IPragmaABIDispatcher {
-                contract_address: self.pragma_address.read()
+                contract_address: self.pragma_address.read(),
             };
             let output: PragmaPricesResponse = oracle_dispatcher
                 .get_data(asset, AggregationMode::Median(()));
@@ -44,10 +44,10 @@ pub mod PragmaComponent {
         }
 
         fn set_asset_price_median_checkoint(
-            self: @ComponentState<TContractState>, asset: DataType
+            self: @ComponentState<TContractState>, asset: DataType,
         ) {
             let oracle_dispatcher = IPragmaABIDispatcher {
-                contract_address: self.pragma_address.read()
+                contract_address: self.pragma_address.read(),
             };
             let output = oracle_dispatcher.set_checkpoint(asset, AggregationMode::Median(()));
             return output;

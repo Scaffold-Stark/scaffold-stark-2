@@ -14,6 +14,7 @@ import BetsOverviewSkeletons, {
   BetOverviewSkeletons,
 } from "./skeletons/BetsOverviewSkeletons";
 import BetCard from "~~/components/BetCard";
+import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
 
 async function getBets(page: number, itemsPerPage: number = 6) {
   const res = await fetch(
@@ -27,44 +28,19 @@ async function getBets(page: number, itemsPerPage: number = 6) {
 }
 
 function BetsOverview() {
-  const { ref, inView } = useInView({
-    /* Optional options */
-    threshold: 0,
+  const { data, isLoading, error } = useScaffoldEventHistory({
+    contractName: "BetMaker",
+    eventName: "contracts::BetMaker::BetMaker::CryptoBetCreated",
+    fromBlock: BigInt(1018365),
+    blockData: true,
+    transactionData: false,
+    receiptData: false,
+    /* watch: true, */
+    enabled: true,
   });
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetching,
-    isFetchingNextPage,
-    status,
-  } = useInfiniteQuery({
-    queryKey: ["bets"],
-    initialPageParam: 1,
-    queryFn: ({ pageParam }) => getBets(pageParam),
-    getNextPageParam: (lastPage, allPages, lastPageParam) => {
-      if (!(lastPage && lastPage.length > 0)) {
-        return undefined;
-      }
-      return lastPageParam + 1;
-    },
-    getPreviousPageParam: (firstPage, allPages, firstPageParam) => {
-      if (firstPageParam <= 1) {
-        return undefined;
-      }
-      return firstPageParam - 1;
-    },
-  });
-
-  useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      void fetchNextPage();
-    }
-  }, [inView]);
-
-  if (status === "pending") return <BetsOverviewSkeletons />;
-  if (status === "error")
+  if (isLoading) return <BetsOverviewSkeletons />;
+  if (error)
     return (
       <Alert className="w-2/4">
         <TriangleAlert className="h-4 w-4" />
@@ -75,7 +51,7 @@ function BetsOverview() {
 
   return (
     <>
-      {data.pages[0].length === 0 ? (
+      {data.length === 0 ? (
         <Alert className="w-2/4">
           <Rocket className="h-4 w-4" />
           <AlertTitle>No active bets</AlertTitle>
@@ -86,22 +62,11 @@ function BetsOverview() {
       ) : null}
 
       <div className="grid w-full grid-cols-[repeat(auto-fill,_380px)] justify-center gap-8">
-        {data.pages.map((bets, i) => (
-          <React.Fragment key={i}>
-            {bets.map((bet) => (
-              <BetCard key={bet.bet_id} bet={bet} />
-            ))}
-          </React.Fragment>
-        ))}
-
-        {isFetchingNextPage ? (
-          <BetOverviewSkeletons />
-        ) : hasNextPage ? null : (
-          ""
-        )}
+        {data.map(({ args: market }, i) => {
+          const bet = market.market as Bet;
+          return <BetCard key={bet.bet_id} bet={bet} />;
+        })}
       </div>
-
-      <div ref={ref}></div>
     </>
   );
 }

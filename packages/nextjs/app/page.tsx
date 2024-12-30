@@ -9,17 +9,6 @@ import BetsOverview from "./BetsOverview";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
 
 function Home() {
-  const { data, isLoading, error } = useScaffoldEventHistory({
-    contractName: "BetMaker",
-    eventName: "contracts::BetMaker::BetMaker::CryptoBetCreated",
-    fromBlock: BigInt(0),
-    blockData: true,
-    transactionData: false,
-    receiptData: false,
-    watch: true,
-    enabled: true,
-  });
-  console.log("DATA", data);
   return (
     <>
       <InfiniteMovingCards
@@ -28,8 +17,8 @@ function Home() {
         speed="slow"
         className="!mb-20"
       />
-
-      {/* <BetsOverview /> */}
+      {/*  <HooksExample /> */}
+      <BetsOverview />
     </>
   );
 }

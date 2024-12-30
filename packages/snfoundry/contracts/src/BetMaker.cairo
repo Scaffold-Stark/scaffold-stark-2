@@ -7,7 +7,7 @@ use starknet::{ContractAddress, eth_address::EthAddress};
 struct WithdrawalInfo {
     epoch: u256,
     shares: u256,
-    claimed: bool
+    claimed: bool,
 }
 
 impl WithdrawalInfoIntoSpan of Into<WithdrawalInfo, Span<felt252>> {
@@ -24,7 +24,7 @@ struct StrategyReportL2 {
     action_id: u256,
     amount: u256,
     processed: bool,
-    new_share_price: u256
+    new_share_price: u256,
 }
 
 #[starknet::interface]
@@ -64,7 +64,7 @@ pub trait ITokenManager<TContractState> {
     fn set_dust_limit(ref self: TContractState, new_dust_limit: u256);
 
     fn deposit(
-        ref self: TContractState, assets: u256, receiver: ContractAddress, referal: ContractAddress
+        ref self: TContractState, assets: u256, receiver: ContractAddress, referal: ContractAddress,
     );
 
     fn request_withdrawal(ref self: TContractState, shares: u256);
@@ -72,7 +72,7 @@ pub trait ITokenManager<TContractState> {
     fn claim_withdrawal(ref self: TContractState, user: ContractAddress, id: u256);
 
     fn handle_report(
-        ref self: TContractState, new_l1_net_asset_value: u256, underlying_bridged_amount: u256
+        ref self: TContractState, new_l1_net_asset_value: u256, underlying_bridged_amount: u256,
     ) -> StrategyReportL2;
 }
 
@@ -90,20 +90,20 @@ pub struct NimboraStrategyInfos {
     name: felt252,
     symbol: felt252,
     address: ContractAddress,
-    shares: u256
+    shares: u256,
 }
 
 #[derive(Copy, Serde, Drop, starknet::Store, PartialEq, Hash)]
 pub enum ERC20BetTokenType {
     Eth: ContractAddress,
-    Usdc: ContractAddress
+    Usdc: ContractAddress,
 }
 
 #[derive(Copy, Serde, Drop, starknet::Store, PartialEq, Hash)]
 pub enum BetType {
     Crypto,
     Sports,
-    Other
+    Other,
 }
 
 #[derive(Copy, Serde, Drop, starknet::Store, PartialEq, Hash)]
@@ -116,13 +116,13 @@ pub enum PositionType {
 pub enum YieldStrategy {
     None, // index 0
     Nimbora: NimboraStrategyInfos, // index 1
-    Nostra: StrategyInfos
+    Nostra: StrategyInfos,
 }
 
 #[derive(Copy, Serde, Drop, starknet::Store, PartialEq, Hash)]
 pub struct CreateBetOutcomesArgument {
     pub outcome_yes: felt252,
-    pub outcome_no: felt252
+    pub outcome_no: felt252,
 }
 
 #[derive(Drop, Serde, starknet::Store)]
@@ -138,7 +138,7 @@ pub struct Outcome {
     name: felt252,
     pos_type: PositionType,
     bought_amount: u256,
-    bought_amount_with_yield: u256
+    bought_amount_with_yield: u256,
 }
 
 #[derive(Copy, Serde, Drop, starknet::Store, PartialEq, Hash)]
@@ -189,19 +189,19 @@ pub trait IBetMaker<TContractState> {
         reference_price: u256,
         bet_condition: u256, // TODO: bet_condition u256 -> u8
         bet_token_address: ERC20BetTokenType,
-        outcomes: CreateBetOutcomesArgument
+        outcomes: CreateBetOutcomesArgument,
     );
     fn create_user_position(
         ref self: TContractState,
         bet_id: u256,
         bet_type: BetType,
         position_type: PositionType,
-        amount: u256
+        amount: u256,
     );
 
     fn settle_crypto_bet(ref self: TContractState, bet_id: u256);
     fn settle_crypto_bet_manually(
-        ref self: TContractState, bet_id: u256, winner_type: PositionType
+        ref self: TContractState, bet_id: u256, winner_type: PositionType,
     );
 
     fn claim_rewards(ref self: TContractState, bet_id: u256, bet_type: BetType, position_id: u256);
@@ -211,7 +211,7 @@ pub trait IBetMaker<TContractState> {
         caller: ContractAddress,
         bet_id: u256,
         bet_type: BetType,
-        position_id: u256
+        position_id: u256,
     ) -> u256;
     fn get_crypto_bet(self: @TContractState, bet_id: u256) -> CryptoBet;
     fn get_crypto_bets_count(self: @TContractState) -> u256;
@@ -221,10 +221,10 @@ pub trait IBetMaker<TContractState> {
         caller: ContractAddress,
         bet_id: u256,
         bet_type: BetType,
-        position_id: u256
+        position_id: u256,
     ) -> UserPosition;
     fn get_user_total_positions(
-        self: @TContractState, caller: ContractAddress, bet_id: u256, bet_type: BetType
+        self: @TContractState, caller: ContractAddress, bet_id: u256, bet_type: BetType,
     ) -> u256;
     fn get_oracle_crypto_price(self: @TContractState, asset_key: felt252) -> u128;
     fn set_vault_wallet(ref self: TContractState, wallet: ContractAddress);
@@ -232,21 +232,21 @@ pub trait IBetMaker<TContractState> {
 
 #[starknet::contract]
 mod BetMaker {
-    use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
-    use pragma_lib::types::{DataType};
-    use super::{ITokenManagerDispatcher, ITokenManagerDispatcherTrait};
-    use openzeppelin_access::ownable::OwnableComponent;
     use contracts::PragmaComponent::IPragmaComponent;
     use contracts::PragmaComponent::PragmaComponent;
+    use openzeppelin_access::ownable::OwnableComponent;
+    use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
+    use pragma_lib::types::{DataType};
     // use starknet::contract_address::contract_address_const;
     use starknet::storage::Map;
     use starknet::{ContractAddress};
-    use starknet::{get_caller_address, get_contract_address, get_block_timestamp};
+    use starknet::{get_block_timestamp, get_caller_address, get_contract_address};
     use super::{
-        IBetMaker, CryptoBet, Outcome, Outcomes, CreateBetOutcomesArgument, YieldStrategy,
-        StrategyInfos, NimboraStrategyInfos, BetType, PositionType, ERC20BetTokenType,
-        ERC20BetToken, UserPosition
+        BetType, CreateBetOutcomesArgument, CryptoBet, ERC20BetToken, ERC20BetTokenType, IBetMaker,
+        NimboraStrategyInfos, Outcome, Outcomes, PositionType, StrategyInfos, UserPosition,
+        YieldStrategy,
     };
+    use super::{ITokenManagerDispatcher, ITokenManagerDispatcherTrait};
 
     const PROCESSING_FEE: u256 = 2;
 
@@ -267,12 +267,12 @@ mod BetMaker {
         PragmaComponentEvent: PragmaComponent::Event,
         CryptoBetCreated: CryptoBetCreated,
         CryptoBetPositionCreated: CryptoBetPositionCreated,
-        CryptoBetSettled: CryptoBetSettled
+        CryptoBetSettled: CryptoBetSettled,
     }
 
     #[derive(Drop, starknet::Event)]
     struct CryptoBetCreated {
-        market: CryptoBet
+        market: CryptoBet,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -285,16 +285,16 @@ mod BetMaker {
 
     #[derive(Drop, starknet::Event)]
     struct CryptoBetSettled {
-        market: CryptoBet
+        market: CryptoBet,
     }
 
     #[storage]
     struct Storage {
         user_positions: Map<
-            (ContractAddress, u256, BetType, u256), UserPosition
+            (ContractAddress, u256, BetType, u256), UserPosition,
         >, // TODO: update last u256 to u16/u32
         user_total_positions: Map<
-            (ContractAddress, u256, BetType), u256
+            (ContractAddress, u256, BetType), u256,
         >, // TODO: update last u256 to u16/u32
         crypto_bets: Map<u256, CryptoBet>,
         total_crypto_bets: u256,
@@ -307,7 +307,7 @@ mod BetMaker {
 
     #[constructor]
     fn constructor(
-        ref self: ContractState, owner: ContractAddress, pragma_address: ContractAddress
+        ref self: ContractState, owner: ContractAddress, pragma_address: ContractAddress,
     ) {
         self.pragma.initializer(pragma_address);
         self.ownable.initializer(owner);
@@ -329,17 +329,17 @@ mod BetMaker {
                     name: yield_strategy_infos.name,
                     symbol: yield_strategy_infos.symbol,
                     address: yield_strategy_infos.address,
-                    shares: 0
+                    shares: 0,
                 };
                 YieldStrategy::Nimbora(nimbora_strategy_infos)
             },
             2 => YieldStrategy::Nostra(yield_strategy_infos),
-            _ => YieldStrategy::None
+            _ => YieldStrategy::None,
         }
     }
 
     fn deposit_to_nimbora(
-        nimbora_address: ContractAddress, eth_dispatcher: IERC20Dispatcher, amount_eth: u256
+        nimbora_address: ContractAddress, eth_dispatcher: IERC20Dispatcher, amount_eth: u256,
     ) -> u256 {
         let nimbora_dispatcher = ITokenManagerDispatcher { contract_address: nimbora_address };
 
@@ -365,7 +365,7 @@ mod BetMaker {
             reference_price: u256,
             bet_condition: u256,
             bet_token_address: ERC20BetTokenType,
-            outcomes: CreateBetOutcomesArgument
+            outcomes: CreateBetOutcomesArgument,
         ) {
             self.ownable.assert_only_owner();
 
@@ -377,13 +377,13 @@ mod BetMaker {
                 name: outcome_yes_name,
                 pos_type: PositionType::Yes,
                 bought_amount: 0,
-                bought_amount_with_yield: 0
+                bought_amount_with_yield: 0,
             };
             let mut outcome_no = Outcome {
                 name: outcome_no_name,
                 pos_type: PositionType::No,
                 bought_amount: 0,
-                bought_amount_with_yield: 0
+                bought_amount_with_yield: 0,
             };
 
             let outcomes = Outcomes { outcome_yes, outcome_no };
@@ -434,7 +434,7 @@ mod BetMaker {
             bet_id: u256,
             bet_type: BetType,
             position_type: PositionType,
-            amount: u256
+            amount: u256,
         ) {
             assert!(amount > 0, "You must send some funds to place a bet.");
             match bet_type {
@@ -470,7 +470,7 @@ mod BetMaker {
                         },
                         PositionType::No => {
                             bet_data.outcomes.outcome_no.bought_amount += bought_amount;
-                        }
+                        },
                     }
                     bet_data.total_money_betted += bought_amount;
                     self.crypto_bets.write(bet_id, bet_data);
@@ -480,10 +480,10 @@ mod BetMaker {
                         .write(
                             (get_caller_address(), bet_id, bet_type),
                             self.user_total_positions.read((get_caller_address(), bet_id, bet_type))
-                                + 1
+                                + 1,
                         );
                     let user_position = UserPosition {
-                        position_type, amount, bought_amount, has_claimed: false
+                        position_type, amount, bought_amount, has_claimed: false,
                     };
                     self
                         .user_positions
@@ -494,9 +494,9 @@ mod BetMaker {
                                 bet_type,
                                 self
                                     .user_total_positions
-                                    .read((get_caller_address(), bet_id, bet_type))
+                                    .read((get_caller_address(), bet_id, bet_type)),
                             ),
-                            user_position
+                            user_position,
                         );
 
                     let mut new_bet = self.crypto_bets.read(bet_id);
@@ -505,7 +505,7 @@ mod BetMaker {
                             let earned_shares = deposit_to_nimbora(
                                 yield_strategy_infos.address,
                                 new_bet.bet_token.dispatcher,
-                                bought_amount
+                                bought_amount,
                             );
                             yield_strategy_infos.shares += earned_shares;
 
@@ -513,7 +513,7 @@ mod BetMaker {
                             new_bet.yield_strategy = YieldStrategy::Nimbora(yield_strategy_infos);
                             self.crypto_bets.write(bet_id, new_bet);
                         },
-                        _ => {}
+                        _ => {},
                     }
 
                     let mut final_bet = self.crypto_bets.read(bet_id);
@@ -523,12 +523,12 @@ mod BetMaker {
                                 user: get_caller_address(),
                                 market: final_bet,
                                 position: UserPosition {
-                                    position_type, amount, bought_amount, has_claimed: false
+                                    position_type, amount, bought_amount, has_claimed: false,
                                 },
                                 position_id: self
                                     .user_total_positions
-                                    .read((get_caller_address(), bet_id, bet_type))
-                            }
+                                    .read((get_caller_address(), bet_id, bet_type)),
+                            },
                         );
                 },
                 BetType::Sports => panic!("Type not supported yet!"),
@@ -570,7 +570,7 @@ mod BetMaker {
                 YieldStrategy::Nimbora(mut yield_strategy_infos) => {
                     if yield_strategy_infos.shares > 0 {
                         let nimbora_dispatcher = ITokenManagerDispatcher {
-                            contract_address: yield_strategy_infos.address
+                            contract_address: yield_strategy_infos.address,
                         };
                         nimbora_dispatcher.request_withdrawal(yield_strategy_infos.shares);
 
@@ -589,7 +589,7 @@ mod BetMaker {
                         bet_data.yield_strategy = YieldStrategy::Nimbora(yield_strategy_infos);
                     }
                 },
-                _ => {}
+                _ => {},
             }
             self.crypto_bets.write(bet_id, bet_data);
             let new_bet = self.crypto_bets.read(bet_id);
@@ -597,7 +597,7 @@ mod BetMaker {
         }
 
         fn settle_crypto_bet_manually(
-            ref self: ContractState, bet_id: u256, winner_type: PositionType
+            ref self: ContractState, bet_id: u256, winner_type: PositionType,
         ) {
             self.ownable.assert_only_owner();
             assert(bet_id <= self.total_crypto_bets.read(), 'Bet does not exist');
@@ -613,7 +613,7 @@ mod BetMaker {
                 },
                 PositionType::No => {
                     bet_data.winner_outcome = Option::Some(bet_data.outcomes.outcome_no);
-                }
+                },
             }
             self.crypto_bets.write(bet_id, bet_data);
             let new_bet = self.crypto_bets.read(bet_id);
@@ -621,7 +621,7 @@ mod BetMaker {
         }
 
         fn claim_rewards(
-            ref self: ContractState, bet_id: u256, bet_type: BetType, position_id: u256
+            ref self: ContractState, bet_id: u256, bet_type: BetType, position_id: u256,
         ) {
             match bet_type {
                 BetType::Crypto => {
@@ -665,19 +665,17 @@ mod BetMaker {
                                     .bet_token
                                     .dispatcher
                                     .transfer(get_caller_address(), transfer_amount);
-            
                             } else {
                                 bet_data
                                     .bet_token
                                     .dispatcher
                                     .transfer(get_caller_address(), user_postion.bought_amount);
-                        
                             }
                         },
                         _ => {
                             // TODO: Implement claim for classic bets
                             panic!("Claim not supported yet.")
-                        }
+                        },
                     }
 
                     self
@@ -688,8 +686,8 @@ mod BetMaker {
                                 position_type: user_postion.position_type,
                                 amount: user_postion.amount,
                                 bought_amount: user_postion.bought_amount,
-                                has_claimed: true
-                            }
+                                has_claimed: true,
+                            },
                         );
                     // TODO: emit event
                 },
@@ -704,7 +702,7 @@ mod BetMaker {
             caller: ContractAddress,
             bet_id: u256,
             bet_type: BetType,
-            position_id: u256
+            position_id: u256,
         ) -> u256 {
             match bet_type {
                 BetType::Crypto => {
@@ -746,7 +744,7 @@ mod BetMaker {
                         _ => {
                             // TODO: Implement get for classic bets
                             panic!("Not implemented yet!")
-                        }
+                        },
                     }
                 },
                 BetType::Sports => panic!("Type not supported yet!"),
@@ -773,13 +771,13 @@ mod BetMaker {
             caller: ContractAddress,
             bet_id: u256,
             bet_type: BetType,
-            position_id: u256
+            position_id: u256,
         ) -> UserPosition {
             self.user_positions.read((caller, bet_id, bet_type, position_id))
         }
 
         fn get_user_total_positions(
-            self: @ContractState, caller: ContractAddress, bet_id: u256, bet_type: BetType
+            self: @ContractState, caller: ContractAddress, bet_id: u256, bet_type: BetType,
         ) -> u256 {
             self.user_total_positions.read((caller, bet_id, bet_type))
         }

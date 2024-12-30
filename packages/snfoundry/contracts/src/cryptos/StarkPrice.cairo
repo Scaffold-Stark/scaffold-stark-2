@@ -22,10 +22,10 @@ pub trait IStarkPrice<TContractState> {
     fn vote_no(ref self: TContractState, amount_eth: u256);
     fn get_current_bet(self: @TContractState) -> BetInfos;
     fn get_own_yes_amount(
-        self: @TContractState, contract_address: ContractAddress, bet_id: u64
+        self: @TContractState, contract_address: ContractAddress, bet_id: u64,
     ) -> u256;
     fn get_own_no_amount(
-        self: @TContractState, contract_address: ContractAddress, bet_id: u64
+        self: @TContractState, contract_address: ContractAddress, bet_id: u64,
     ) -> u256;
     fn claimRewards(ref self: TContractState, bet_id: u64) -> u256;
     fn set_pragma_checkpoint(self: @TContractState);
@@ -44,7 +44,7 @@ pub mod StarkPrice {
     use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
     use pragma_lib::types::{AggregationMode, DataType, PragmaPricesResponse};
     use starknet::ContractAddress;
-    use starknet::{get_caller_address, get_contract_address, get_block_timestamp};
+    use starknet::{get_block_timestamp, get_caller_address, get_contract_address};
     use super::BetInfos;
     use super::IStarkPrice;
 
@@ -97,7 +97,7 @@ pub mod StarkPrice {
         vote_date_limit: u64,
         reference_token_price: u256,
         owner: ContractAddress,
-        pragmaAddress: ContractAddress
+        pragmaAddress: ContractAddress,
     ) {
         let eth_contract_address = ETH_CONTRACT_ADDRESS.try_into().unwrap();
         self.eth_token.write(IERC20CamelDispatcher { contract_address: eth_contract_address });
@@ -204,7 +204,8 @@ pub mod StarkPrice {
                     .user_bet_yes_amount
                     .write(
                         (caller_address, current_bet_id),
-                        self.user_bet_yes_amount.read((caller_address, current_bet_id)) + amount_eth
+                        self.user_bet_yes_amount.read((caller_address, current_bet_id))
+                            + amount_eth,
                     );
             }
         }
@@ -229,7 +230,7 @@ pub mod StarkPrice {
                     .user_bet_no_amount
                     .write(
                         (caller_address, current_bet_id),
-                        self.user_bet_no_amount.read((caller_address, current_bet_id)) + amount_eth
+                        self.user_bet_no_amount.read((caller_address, current_bet_id)) + amount_eth,
                     );
             }
         }
@@ -277,7 +278,7 @@ pub mod StarkPrice {
             self
                 .pragma
                 .set_asset_price_median_checkoint(
-                    self.pragma_address.read(), DataType::SpotEntry(KEY)
+                    self.pragma_address.read(), DataType::SpotEntry(KEY),
                 )
         }
 
@@ -285,12 +286,12 @@ pub mod StarkPrice {
             self.current_bet.read()
         }
         fn get_own_yes_amount(
-            self: @ContractState, contract_address: ContractAddress, bet_id: u64
+            self: @ContractState, contract_address: ContractAddress, bet_id: u64,
         ) -> u256 {
             self.user_bet_yes_amount.read((contract_address, bet_id))
         }
         fn get_own_no_amount(
-            self: @ContractState, contract_address: ContractAddress, bet_id: u64
+            self: @ContractState, contract_address: ContractAddress, bet_id: u64,
         ) -> u256 {
             self.user_bet_no_amount.read((contract_address, bet_id))
         }

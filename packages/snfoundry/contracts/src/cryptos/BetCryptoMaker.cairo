@@ -1,12 +1,12 @@
 use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
-use starknet::{ContractAddress, ClassHash, eth_address::EthAddress};
+use starknet::{ClassHash, ContractAddress, eth_address::EthAddress};
 
 
 #[derive(Copy, Drop, Serde, starknet::Store)]
 struct WithdrawalInfo {
     epoch: u256,
     shares: u256,
-    claimed: bool
+    claimed: bool,
 }
 
 impl WithdrawalInfoIntoSpan of Into<WithdrawalInfo, Span<felt252>> {
@@ -23,7 +23,7 @@ struct StrategyReportL2 {
     action_id: u256,
     amount: u256,
     processed: bool,
-    new_share_price: u256
+    new_share_price: u256,
 }
 
 #[starknet::interface]
@@ -63,7 +63,7 @@ pub trait ITokenManager<TContractState> {
     fn set_dust_limit(ref self: TContractState, new_dust_limit: u256);
 
     fn deposit(
-        ref self: TContractState, assets: u256, receiver: ContractAddress, referal: ContractAddress
+        ref self: TContractState, assets: u256, receiver: ContractAddress, referal: ContractAddress,
     );
 
     fn request_withdrawal(ref self: TContractState, shares: u256);
@@ -71,7 +71,7 @@ pub trait ITokenManager<TContractState> {
     fn claim_withdrawal(ref self: TContractState, user: ContractAddress, id: u256);
 
     fn handle_report(
-        ref self: TContractState, new_l1_net_asset_value: u256, underlying_bridged_amount: u256
+        ref self: TContractState, new_l1_net_asset_value: u256, underlying_bridged_amount: u256,
     ) -> StrategyReportL2;
 }
 
@@ -81,7 +81,7 @@ pub struct Outcome {
     pub is_yes_outcome: bool,
     pub result_token_price: u256,
     pub nimbora_total_amount_with_yield: u256,
-    pub is_settled: bool
+    pub is_settled: bool,
 }
 
 #[derive(Drop, Serde, starknet::Store)]
@@ -98,7 +98,7 @@ pub struct UserBetPositionOverview {
     is_yes: bool,
     pub amount: u256,
     pub has_claimed: bool,
-    is_bet_ended: bool
+    is_bet_ended: bool,
 }
 
 #[derive(Drop, Serde, starknet::Store)]
@@ -119,7 +119,7 @@ pub struct BetInfos {
     pub winner_result: Outcome,
     bet_token: IERC20CamelDispatcher,
     pub nimbora: ITokenManagerDispatcher,
-    token_to_fetch_from_pragma: felt252
+    token_to_fetch_from_pragma: felt252,
 }
 
 #[starknet::interface]
@@ -134,7 +134,7 @@ pub trait IBetCryptoMaker<TContractState> {
         end_bet_timestamp: u64,
         bet_token_address: ContractAddress,
         nimbora_address: ContractAddress,
-        token_to_fetch_from_pragma: felt252
+        token_to_fetch_from_pragma: felt252,
     );
 
     fn getTotalBets(self: @TContractState) -> u256;
@@ -148,15 +148,15 @@ pub trait IBetCryptoMaker<TContractState> {
     fn vote_no(ref self: TContractState, amount_eth: u256, bet_id: u256);
 
     fn get_yes_position(
-        self: @TContractState, caller_address: ContractAddress, bet_id: u256
+        self: @TContractState, caller_address: ContractAddress, bet_id: u256,
     ) -> UserBetPosition;
 
     fn get_no_position(
-        self: @TContractState, caller_address: ContractAddress, bet_id: u256
+        self: @TContractState, caller_address: ContractAddress, bet_id: u256,
     ) -> UserBetPosition;
 
     fn getAllUserPositions(
-        self: @TContractState, user: ContractAddress
+        self: @TContractState, user: ContractAddress,
     ) -> Array<UserBetPositionOverview>;
 
     fn settleBet(ref self: TContractState, bet_id: u256);
@@ -164,7 +164,7 @@ pub trait IBetCryptoMaker<TContractState> {
     fn claimNimboraShares(ref self: TContractState, bet_id: u256);
 
     fn checkHasClaimed(
-        self: @TContractState, caller_address: ContractAddress, bet_id: u256
+        self: @TContractState, caller_address: ContractAddress, bet_id: u256,
     ) -> bool;
 
     fn claimRewards(ref self: TContractState, bet_id: u256, claim_yes: bool);
@@ -182,7 +182,7 @@ pub mod BetCryptoMaker {
     use openzeppelin::token::erc20::interface::{IERC20CamelDispatcher, IERC20CamelDispatcherTrait};
     use pragma_lib::types::{AggregationMode, DataType, PragmaPricesResponse};
     use starknet::ContractAddress;
-    use starknet::{get_caller_address, get_contract_address, get_block_timestamp};
+    use starknet::{get_block_timestamp, get_caller_address, get_contract_address};
     use super::BetInfos;
     use super::IBetCryptoMaker;
     use super::Outcome;
@@ -226,7 +226,7 @@ pub mod BetCryptoMaker {
 
     #[constructor]
     fn constructor(
-        ref self: ContractState, owner: ContractAddress, pragma_address: ContractAddress
+        ref self: ContractState, owner: ContractAddress, pragma_address: ContractAddress,
     ) {
         self.ownable.initializer(owner);
         self.pragma_address.write(pragma_address);
@@ -255,7 +255,7 @@ pub mod BetCryptoMaker {
             end_bet_timestamp: u64,
             bet_token_address: ContractAddress,
             nimbora_address: ContractAddress,
-            token_to_fetch_from_pragma: felt252
+            token_to_fetch_from_pragma: felt252,
         ) {
             self.ownable.assert_only_owner();
 
@@ -267,7 +267,7 @@ pub mod BetCryptoMaker {
                 is_yes_outcome: false,
                 result_token_price: 0,
                 nimbora_total_amount_with_yield: 0,
-                is_settled: false
+                is_settled: false,
             };
 
             let bet: BetInfos = BetInfos {
@@ -287,7 +287,7 @@ pub mod BetCryptoMaker {
                 winner_result: tmp_result,
                 bet_token: IERC20CamelDispatcher { contract_address: bet_token_address },
                 nimbora: ITokenManagerDispatcher { contract_address: nimbora_address },
-                token_to_fetch_from_pragma
+                token_to_fetch_from_pragma,
             };
             self.bets.write(new_id, bet);
         }
@@ -362,19 +362,19 @@ pub mod BetCryptoMaker {
         }
 
         fn get_yes_position(
-            self: @ContractState, caller_address: ContractAddress, bet_id: u256
+            self: @ContractState, caller_address: ContractAddress, bet_id: u256,
         ) -> UserBetPosition {
             self.user_bet_yes_amount.read((caller_address, bet_id))
         }
 
         fn get_no_position(
-            self: @ContractState, caller_address: ContractAddress, bet_id: u256
+            self: @ContractState, caller_address: ContractAddress, bet_id: u256,
         ) -> UserBetPosition {
             self.user_bet_no_amount.read((caller_address, bet_id))
         }
 
         fn getAllUserPositions(
-            self: @ContractState, user: ContractAddress
+            self: @ContractState, user: ContractAddress,
         ) -> Array<UserBetPositionOverview> {
             let mut user_positions: Array<UserBetPositionOverview> = ArrayTrait::new();
             let mut i: u256 = 1;
@@ -393,7 +393,7 @@ pub mod BetCryptoMaker {
                         is_yes: true,
                         amount: user_position_yes.amount,
                         has_claimed: user_position_yes.has_claimed,
-                        is_bet_ended: bet.is_bet_ended
+                        is_bet_ended: bet.is_bet_ended,
                     };
                     user_positions.append(overview_position);
                 }
@@ -406,7 +406,7 @@ pub mod BetCryptoMaker {
                         is_yes: false,
                         amount: user_position_no.amount,
                         has_claimed: user_position_no.has_claimed,
-                        is_bet_ended: bet.is_bet_ended
+                        is_bet_ended: bet.is_bet_ended,
                     };
                     user_positions.append(overview_position);
                 }
@@ -425,7 +425,7 @@ pub mod BetCryptoMaker {
             let result_price = self
                 .pragma
                 .get_asset_price_median(
-                    self.pragma_address.read(), DataType::SpotEntry(bet.token_to_fetch_from_pragma)
+                    self.pragma_address.read(), DataType::SpotEntry(bet.token_to_fetch_from_pragma),
                 );
 
             let mut bet = self.bets.read(bet_id);
@@ -438,7 +438,7 @@ pub mod BetCryptoMaker {
                     is_yes_outcome: true,
                     result_token_price: result_price.into(),
                     is_settled: true,
-                    nimbora_total_amount_with_yield: total_amount_from_nimbora_shares
+                    nimbora_total_amount_with_yield: total_amount_from_nimbora_shares,
                 }
             } else {
                 Outcome {
@@ -446,7 +446,7 @@ pub mod BetCryptoMaker {
                     is_yes_outcome: false,
                     result_token_price: result_price.into(),
                     is_settled: true,
-                    nimbora_total_amount_with_yield: total_amount_from_nimbora_shares
+                    nimbora_total_amount_with_yield: total_amount_from_nimbora_shares,
                 }
             };
             bet.is_bet_ended = true;
@@ -468,7 +468,7 @@ pub mod BetCryptoMaker {
         }
 
         fn checkHasClaimed(
-            self: @ContractState, caller_address: ContractAddress, bet_id: u256
+            self: @ContractState, caller_address: ContractAddress, bet_id: u256,
         ) -> bool {
             assert(self.bets.read(bet_id).winner_result.is_settled, 'There is no winner bet');
             assert(self.bets.read(bet_id).is_bet_ended, 'Bet is not over yet');
