@@ -53,7 +53,7 @@ function MenuLinkButton({
           href={href}
           passHref
           className={`${
-            isActive ? "rounded-none !text-white !opacity-100" : ""
+            isActive ? "!text-white !opacity-100" : ""
           } grid grid-flow-col gap-2 rounded-full px-3 py-1.5 text-sm opacity-65 hover:text-white`}
         >
           {icon}
