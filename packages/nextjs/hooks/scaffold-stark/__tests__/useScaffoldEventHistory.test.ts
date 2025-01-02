@@ -187,6 +187,142 @@ describe("useScaffoldEventHistory", () => {
           },
           u256_val: 1024n,
         },
+        parsedArgs: {
+          arr_val: [10n, 20n],
+          bool_val: true,
+          message: "hello world",
+          sender:
+            "0x064b48806902a367c8598f4F95C305e8c1a1aCbA5f082D294a43793113115691",
+          tuple_val: {
+            0: 1n,
+            1: 2n,
+            2: 3n,
+            3: 4n,
+            4: 5n,
+          },
+          u256_val: 1024n,
+        },
+        type: [
+          {
+            kind: "key",
+            name: "sender",
+            type: "core::starknet::contract_address::ContractAddress",
+          },
+          {
+            kind: "key",
+            name: "message",
+            type: "core::byte_array::ByteArray",
+          },
+          {
+            kind: "data",
+            name: "bool_val",
+            type: "core::bool",
+          },
+          {
+            kind: "data",
+            name: "u256_val",
+            type: "core::integer::u256",
+          },
+          {
+            kind: "data",
+            name: "tuple_val",
+            type: "(core::integer::u8, core::integer::u16, core::integer::u32, core::integer::u64, core::integer::u128)",
+          },
+          {
+            kind: "data",
+            name: "arr_val",
+            type: "core::array::Array::<core::integer::u128>",
+          },
+        ],
+      },
+    ]);
+    expect(result.current.error).toBeUndefined();
+  });
+
+  it("should fetch and return events without formatting from the contract after mimicking a transaction", async () => {
+    const { result } = renderHook(() =>
+      useScaffoldEventHistory({
+        contractName: mockContractName as any,
+        eventName: mockEventName as never,
+        fromBlock: BigInt(1),
+        filters: {},
+        blockData: true,
+        transactionData: true,
+        receiptData: true,
+        watch: false,
+        enabled: true,
+        format: false,
+      }),
+    );
+
+    // Initially, data should be loading
+    expect(result.current.isLoading).toBe(true);
+
+    // Simulate the completion of a transaction that triggers an event
+    await act(async () => {
+      RpcProvider.prototype.getEvents = vi.fn().mockResolvedValueOnce({
+        events: mockEvents,
+      });
+      // Wait for the hook to stop loading and return the event data
+      await waitFor(() => expect(result.current.isLoading).toBe(true));
+    });
+
+    // Check that loading is false and events are fetched
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.data).toEqual([
+      {
+        log: mockEvents[0],
+        block: { block_hash: "0xabc" },
+        transaction: { transaction_hash: "0xdef" },
+        receipt: { transaction_hash: "0xdef" },
+        args: {
+          arr_val: [10n, 20n],
+          bool_val: true,
+          message: "hello world",
+          sender:
+            2846891009026995430665703316224827616914889274105712248413538305735679628945n,
+          tuple_val: {
+            0: 1n,
+            1: 2n,
+            2: 3n,
+            3: 4n,
+            4: 5n,
+          },
+          u256_val: 1024n,
+        },
+        parsedArgs: null,
+        type: [
+          {
+            kind: "key",
+            name: "sender",
+            type: "core::starknet::contract_address::ContractAddress",
+          },
+          {
+            kind: "key",
+            name: "message",
+            type: "core::byte_array::ByteArray",
+          },
+          {
+            kind: "data",
+            name: "bool_val",
+            type: "core::bool",
+          },
+          {
+            kind: "data",
+            name: "u256_val",
+            type: "core::integer::u256",
+          },
+          {
+            kind: "data",
+            name: "tuple_val",
+            type: "(core::integer::u8, core::integer::u16, core::integer::u32, core::integer::u64, core::integer::u128)",
+          },
+          {
+            kind: "data",
+            name: "arr_val",
+            type: "core::array::Array::<core::integer::u128>",
+          },
+        ],
       },
     ]);
     expect(result.current.error).toBeUndefined();
