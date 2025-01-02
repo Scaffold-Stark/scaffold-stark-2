@@ -38,12 +38,6 @@ export const Footer = () => {
                 <BlockExplorerSepolia />
               </>
             )}
-            {isSepoliaNetwork && (
-              <>
-                <FaucetSepolia />
-                <BlockExplorerSepolia />
-              </>
-            )}
             {isLocalNetwork && (
               <>
                 <Faucet />

@@ -72,10 +72,13 @@ export const HeaderMenuLinks = () => {
 export const Header = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const burgerMenuRef = useRef<HTMLDivElement>(null);
+
   useOutsideClick(
+    //@ts-expect-error refs are supposed to be null by default
     burgerMenuRef,
     useCallback(() => setIsDrawerOpen(false), []),
   );
+
   const { targetNetwork } = useTargetNetwork();
   const isLocalNetwork = targetNetwork.network === devnet.network;
 

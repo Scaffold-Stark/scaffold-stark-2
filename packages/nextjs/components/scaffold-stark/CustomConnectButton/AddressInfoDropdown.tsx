@@ -15,13 +15,12 @@ import {
 import { useLocalStorage } from "usehooks-ts";
 import { BlockieAvatar, isENS } from "~~/components/scaffold-stark";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
-import { BurnerConnector } from "~~/services/web3/stark-burner/BurnerConnector";
+import { BurnerConnector, burnerAccounts } from "@scaffold-stark/stark-burner";
 import { getTargetNetworks } from "~~/utils/scaffold-stark";
-import { burnerAccounts } from "~~/utils/devnetAccounts";
 import { Address } from "@starknet-react/chains";
 import { useDisconnect, useNetwork, useConnect } from "@starknet-react/core";
 import { getStarknetPFPIfExists } from "~~/utils/profile";
-import useScaffoldStarkProfile from "~~/hooks/scaffold-stark/useScaffoldStarkProfile";
+import { useScaffoldStarkProfile } from "~~/hooks/scaffold-stark/useScaffoldStarkProfile";
 import { useTheme } from "next-themes";
 import { default as NextImage } from "next/image";
 
@@ -54,16 +53,16 @@ export const AddressInfoDropdown = ({
     setSelectingNetwork(false);
     dropdownRef.current?.removeAttribute("open");
   };
+
+  // @ts-expect-error ref are initialized with null by default
   useOutsideClick(dropdownRef, closeDropdown);
 
   function handleConnectBurner(
     e: React.MouseEvent<HTMLButtonElement>,
     ix: number,
   ) {
-    const connector = connectors.find(
-      (it) => it.id == "burner-wallet",
-    ) as BurnerConnector;
-    if (connector) {
+    const connector = connectors.find((it) => it.id == "burner-wallet");
+    if (connector && connector instanceof BurnerConnector) {
       connector.burnerAccount = burnerAccounts[ix];
       connect({ connector });
       setLastConnector({ id: connector.id, ix });
@@ -122,6 +121,7 @@ export const AddressInfoDropdown = ({
                 <span className=" whitespace-nowrap">Copy address</span>
               </div>
             ) : (
+              //@ts-ignore
               <CopyToClipboard
                 text={address}
                 onCopy={() => {
@@ -222,14 +222,21 @@ export const AddressInfoDropdown = ({
                               className="w-full flex flex-col"
                             >
                               <button
-                                className={`${isDarkMode ? "hover:bg-[#385183] border-[#385183]" : "hover:bg-gradient-light "} border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4`}
+                                className={`${
+                                  isDarkMode
+                                    ? "hover:bg-[#385183] border-[#385183]"
+                                    : "hover:bg-gradient-light "
+                                } border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4`}
                                 onClick={(e) => handleConnectBurner(e, ix)}
                               >
                                 <BlockieAvatar
                                   address={burnerAcc.accountAddress}
                                   size={35}
                                 ></BlockieAvatar>
-                                {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}
+                                {`${burnerAcc.accountAddress.slice(
+                                  0,
+                                  6,
+                                )}...${burnerAcc.accountAddress.slice(-4)}`}
                               </button>
                             </div>
                           ))}
