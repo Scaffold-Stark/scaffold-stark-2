@@ -1,5 +1,6 @@
 import * as chains from "@starknet-react/chains";
 
+// devnet with mainnet network ID
 const mainnetFork = {
   id: BigInt("0x534e5f4d41494e"),
   network: "devnet",
