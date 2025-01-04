@@ -7,7 +7,9 @@ import {
 import * as chains from "@starknet-react/chains";
 
 const containsDevnet = (networks: readonly chains.Chain[]) => {
-  return networks.filter((it) => it.id == chains.devnet.id).length > 0;
+  return (
+    networks.filter((it) => it.network == chains.devnet.network).length > 0
+  );
 };
 
 const provider =
