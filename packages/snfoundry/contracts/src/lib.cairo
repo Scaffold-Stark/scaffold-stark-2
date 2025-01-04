@@ -1,5 +1,3 @@
-mod YourContract;
-#[cfg(test)]
-mod test {
-    mod TestContract;
-}
+mod CardCollection;
+mod CardCollectionFactory;
+mod PackAtemu;
