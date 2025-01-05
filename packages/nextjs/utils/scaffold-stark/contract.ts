@@ -402,8 +402,8 @@ export function getFunctionsByStateMutability(
     });
 }
 
-// TODO: in the future when param decoding is standarized in wallets argent and braavos we can return the object
-// new starknet react hooks (v3) doesnt use raw parse
+// TODO: in the future when param decoding is standardized in wallets argent and braavos we can return the object
+// new starknet react hooks (v3) doesn't use raw parse
 function tryParsingParamReturnValues(
   fn: (x: any) => {},
   param: any,
