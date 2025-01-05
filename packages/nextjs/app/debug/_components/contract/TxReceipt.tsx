@@ -27,7 +27,7 @@ export const TxReceipt = (
             aria-hidden="true"
           />
         ) : (
-          //@ts-ignore coponent works but some typing issue came up, ts-expect-error does not work
+          //@ts-ignore component works but some typing issue came up, ts-expect-error does not work
           <CopyToClipboard
             text={
               decodeContractResponse({
