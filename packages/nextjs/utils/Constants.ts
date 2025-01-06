@@ -242,12 +242,12 @@ const universalErc20Abi = [
     type: "event",
     members: [
       {
-        kind: "data",
+        kind: "key",
         name: "from",
         type: "core::starknet::contract_address::ContractAddress",
       },
       {
-        kind: "data",
+        kind: "key",
         name: "to",
         type: "core::starknet::contract_address::ContractAddress",
       },
