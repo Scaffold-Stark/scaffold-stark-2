@@ -19,10 +19,10 @@ export async function createProject(options: Options) {
 
   const templateDirectory = path.resolve(
     decodeURI(fileURLToPath(currentFileUrl)),
-    "../../templates"
+    "../../templates",
   );
 
-  const targetDirectory = path.resolve(process.cwd(), options.project);
+  const targetDirectory = path.resolve(process.cwd(), options.directory);
 
   const tasks = new Listr([
     {
@@ -31,7 +31,7 @@ export async function createProject(options: Options) {
     },
     {
       title: `🚀 Creating a new Scaffold-Stark 2 app in ${chalk.green.bold(
-        options.project
+        options.project,
       )}`,
       task: () =>
         copyTemplateFiles(options, templateDirectory, targetDirectory),
