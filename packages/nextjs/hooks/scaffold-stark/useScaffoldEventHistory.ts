@@ -205,13 +205,10 @@ export const useScaffoldEventHistory = <
         );
         const args = parsed.length ? parsed[0][eventName] : {};
         const { event: rawEvent, ...rest } = event;
-        const parsedArgs = format
-          ? parseEventData(args, rawEvent.members)
-          : null;
         return {
           type: rawEvent.members,
           args,
-          parsedArgs,
+          parsedArgs: format ? parseEventData(args, rawEvent.members) : null,
           ...rest,
         };
       });
