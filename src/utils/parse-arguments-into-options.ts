@@ -13,10 +13,12 @@ export function parseArgumentsIntoOptions(rawArgs: Args): RawOptions {
       "-s": "--skip-install",
 
       "--dev": Boolean,
+      "--dir": String,
+      "-d": "--dir",
     },
     {
       argv: rawArgs.slice(2).map((a) => a.toLowerCase()),
-    }
+    },
   );
 
   const install = args["--install"] ?? null;
@@ -27,8 +29,11 @@ export function parseArgumentsIntoOptions(rawArgs: Args): RawOptions {
 
   const project = args._[0] ?? null;
 
+  const directory = args["--dir"] ?? null;
+
   return {
     project,
+    directory,
     install: hasInstallRelatedFlag ? install || !skipInstall : null,
     dev,
     extensions: null, // TODO add extensions flags

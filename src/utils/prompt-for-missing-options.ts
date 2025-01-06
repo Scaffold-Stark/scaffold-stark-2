@@ -6,7 +6,7 @@ import {
   RawOptions,
   extensionWithSubextensions,
   isDefined,
-  isExtension
+  isExtension,
 } from "../types";
 import inquirer, { Answers } from "inquirer";
 import { extensionDict } from "./extensions-tree";
@@ -14,6 +14,7 @@ import { extensionDict } from "./extensions-tree";
 // default values for unspecified args
 const defaultOptions: RawOptions = {
   project: "my-dapp-example",
+  directory: "./my-dapp-example",
   install: true,
   dev: false,
   extensions: [],
@@ -21,16 +22,17 @@ const defaultOptions: RawOptions = {
 
 const invalidQuestionNames = ["project", "install"];
 const nullExtensionChoice = {
-  name: 'None',
-  value: null
-}
+  name: "None",
+  value: null,
+};
 
 export async function promptForMissingOptions(
-  options: RawOptions
+  options: RawOptions,
 ): Promise<Options> {
   const cliAnswers = Object.fromEntries(
-    Object.entries(options).filter(([key, value]) => value !== null)
+    Object.entries(options).filter(([key, value]) => value !== null),
   );
+
   const questions = [];
 
   questions.push({
@@ -41,13 +43,21 @@ export async function promptForMissingOptions(
     validate: (value: string) => value.length > 0,
   });
 
+  questions.push({
+    type: "input",
+    name: "directory",
+    message: "Directory to be installed in:",
+    default: (answers: RawOptions) => `./${answers.project}`,
+    validate: (value: string) => value.length > 0,
+  });
+
   const recurringAddFollowUps = (
     extensions: ExtensionDescriptor[],
-    relatedQuestion: string
+    relatedQuestion: string,
   ) => {
     extensions.filter(extensionWithSubextensions).forEach((ext) => {
       const nestedExtensions = ext.extensions.map(
-        (nestedExt) => extensionDict[nestedExt]
+        (nestedExt) => extensionDict[nestedExt],
       );
       questions.push({
         // INFO: assuming nested extensions are all optional. To change this,
@@ -75,7 +85,7 @@ export async function promptForMissingOptions(
           question.name
         }". The invalid names are: ${invalidQuestionNames
           .map((w) => `"${w}"`)
-          .join(", ")}`
+          .join(", ")}`,
       );
     }
     const extensions = question.extensions
@@ -83,13 +93,15 @@ export async function promptForMissingOptions(
       .map((ext) => extensionDict[ext])
       .filter(isDefined);
 
-    const hasNoneOption = question.extensions.includes(null)
+    const hasNoneOption = question.extensions.includes(null);
 
     questions.push({
       type: question.type === "multi-select" ? "checkbox" : "list",
       name: question.name,
       message: question.message,
-      choices: hasNoneOption ? [...extensions, nullExtensionChoice] : extensions,
+      choices: hasNoneOption
+        ? [...extensions, nullExtensionChoice]
+        : extensions,
     });
 
     recurringAddFollowUps(extensions, question.name);
@@ -106,6 +118,7 @@ export async function promptForMissingOptions(
 
   const mergedOptions: Options = {
     project: options.project ?? answers.project,
+    directory: options.directory ?? answers.directory,
     install: options.install ?? answers.install,
     dev: options.dev ?? defaultOptions.dev,
     extensions: [],
