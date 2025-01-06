@@ -49,6 +49,10 @@ mod PackAtemu {
         self.erc721.initializer("PackAtemu", "PA", "");
         self.ownable.initializer(owner);
         self.safe_mint(owner, 1);
+        self.safe_mint(owner, 2);
+        self.safe_mint(owner, 3);
+        self.safe_mint(owner, 4);
+        self.safe_mint(owner, 5);
     }
 
     #[generate_trait]

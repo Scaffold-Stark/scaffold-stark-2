@@ -329,5 +329,5 @@ export {
   loadExistingDeployments,
   exportDeployments,
   executeDeployCalls,
-  resetDeployments,
+  resetDeployments, deployContract_NotWait,
 };

@@ -5,16 +5,189 @@
 
 const configExternalContracts = {
   sepolia: {
-    CardCollection: {
+    RandomContract: {
       address:
-        "0x05D2C06054e12b227068189b8c59fCa05664b906B20f5Af9877f6E8b4bB30323",
+        "0x02da9c98a2e5b60ea441c14371d062395cfb3864f1b6fead23ce8bc47b3d2ecd",
       classHash:
-        "0x68f26bed9f5fe2eebc28ce574660695781f623632ac426032d1806f0919e355",
+        "0x7ddaaa4b8dc38c67481ae52968381f17b895f685cd976e10ab22be1572f72dd",
       abi: [
         {
+          interface_name: "random::interface::IRandom",
+          name: "IRandomImpl",
           type: "impl",
-          name: "CardsImpl",
-          interface_name: "contracts::CardCollection::ICardCollection",
+        },
+        {
+          name: "core::bool",
+          type: "enum",
+          variants: [
+            { name: "False", type: "()" },
+            { name: "True", type: "()" },
+          ],
+        },
+        {
+          members: [
+            { name: "low", type: "core::integer::u128" },
+            { name: "high", type: "core::integer::u128" },
+          ],
+          name: "core::integer::u256",
+          type: "struct",
+        },
+        {
+          items: [
+            {
+              inputs: [{ name: "seed", type: "core::felt252" }],
+              name: "felt252",
+              outputs: [{ type: "core::felt252" }],
+              state_mutability: "external",
+              type: "function",
+            },
+            {
+              inputs: [{ name: "seed", type: "core::felt252" }],
+              name: "bool",
+              outputs: [{ type: "core::bool" }],
+              state_mutability: "external",
+              type: "function",
+            },
+            {
+              inputs: [{ name: "seed", type: "core::felt252" }],
+              name: "u8",
+              outputs: [{ type: "core::integer::u8" }],
+              state_mutability: "external",
+              type: "function",
+            },
+            {
+              inputs: [{ name: "seed", type: "core::felt252" }],
+              name: "u16",
+              outputs: [{ type: "core::integer::u16" }],
+              state_mutability: "external",
+              type: "function",
+            },
+            {
+              inputs: [{ name: "seed", type: "core::felt252" }],
+              name: "u32",
+              outputs: [{ type: "core::integer::u32" }],
+              state_mutability: "external",
+              type: "function",
+            },
+            {
+              inputs: [{ name: "seed", type: "core::felt252" }],
+              name: "u64",
+              outputs: [{ type: "core::integer::u64" }],
+              state_mutability: "external",
+              type: "function",
+            },
+            {
+              inputs: [{ name: "seed", type: "core::felt252" }],
+              name: "u128",
+              outputs: [{ type: "core::integer::u128" }],
+              state_mutability: "external",
+              type: "function",
+            },
+            {
+              inputs: [{ name: "seed", type: "core::felt252" }],
+              name: "u256",
+              outputs: [{ type: "core::integer::u256" }],
+              state_mutability: "external",
+              type: "function",
+            },
+            {
+              inputs: [
+                { name: "seed", type: "core::felt252" },
+                { name: "cap", type: "core::integer::u8" },
+              ],
+              name: "u8_capped",
+              outputs: [{ type: "core::integer::u8" }],
+              state_mutability: "external",
+              type: "function",
+            },
+            {
+              inputs: [
+                { name: "seed", type: "core::felt252" },
+                { name: "cap", type: "core::integer::u16" },
+              ],
+              name: "u16_capped",
+              outputs: [{ type: "core::integer::u16" }],
+              state_mutability: "external",
+              type: "function",
+            },
+            {
+              inputs: [
+                { name: "seed", type: "core::felt252" },
+                { name: "cap", type: "core::integer::u32" },
+              ],
+              name: "u32_capped",
+              outputs: [{ type: "core::integer::u32" }],
+              state_mutability: "external",
+              type: "function",
+            },
+            {
+              inputs: [
+                { name: "seed", type: "core::felt252" },
+                { name: "cap", type: "core::integer::u64" },
+              ],
+              name: "u64_capped",
+              outputs: [{ type: "core::integer::u64" }],
+              state_mutability: "external",
+              type: "function",
+            },
+            {
+              inputs: [
+                { name: "seed", type: "core::felt252" },
+                { name: "cap", type: "core::integer::u128" },
+              ],
+              name: "u128_capped",
+              outputs: [{ type: "core::integer::u128" }],
+              state_mutability: "external",
+              type: "function",
+            },
+            {
+              inputs: [
+                { name: "seed", type: "core::felt252" },
+                { name: "cap", type: "core::integer::u256" },
+              ],
+              name: "u256_capped",
+              outputs: [{ type: "core::integer::u256" }],
+              state_mutability: "external",
+              type: "function",
+            },
+            {
+              inputs: [{ name: "salt", type: "core::felt252" }],
+              name: "salt",
+              outputs: [],
+              state_mutability: "external",
+              type: "function",
+            },
+          ],
+          name: "random::interface::IRandom",
+          type: "interface",
+        },
+        {
+          kind: "enum",
+          name: "random::contract::arcade_blobert_actions::Event",
+          type: "event",
+          variants: [],
+        },
+      ],
+    },
+    CardCollection: {
+      address:
+        "0x036f9b45bdc1c82cb874d71ac95e42a4eab89063e0f2f7adc8906a20bdc6cc8c",
+      classHash:
+        "0x7b2323590bdef4d4cd25e081eff3902a819b4798bd596dc9e5c62cdce688b9d",
+      abi: [
+        {
+          type: "function",
+          name: "pause",
+          inputs: [],
+          outputs: [],
+          state_mutability: "external",
+        },
+        {
+          type: "function",
+          name: "unpause",
+          inputs: [],
+          outputs: [],
+          state_mutability: "external",
         },
         {
           type: "struct",
@@ -25,12 +198,18 @@ const configExternalContracts = {
           ],
         },
         {
-          type: "enum",
-          name: "core::bool",
-          variants: [
-            { name: "False", type: "()" },
-            { name: "True", type: "()" },
+          type: "function",
+          name: "burn",
+          inputs: [
+            {
+              name: "account",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            { name: "token_id", type: "core::integer::u256" },
+            { name: "value", type: "core::integer::u256" },
           ],
+          outputs: [],
+          state_mutability: "external",
         },
         {
           type: "struct",
@@ -41,6 +220,100 @@ const configExternalContracts = {
               type: "@core::array::Array::<core::integer::u256>",
             },
           ],
+        },
+        {
+          type: "function",
+          name: "batch_burn",
+          inputs: [
+            {
+              name: "account",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "token_ids",
+              type: "core::array::Span::<core::integer::u256>",
+            },
+            {
+              name: "values",
+              type: "core::array::Span::<core::integer::u256>",
+            },
+          ],
+          outputs: [],
+          state_mutability: "external",
+        },
+        {
+          type: "function",
+          name: "batchBurn",
+          inputs: [
+            {
+              name: "account",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "tokenIds",
+              type: "core::array::Span::<core::integer::u256>",
+            },
+            {
+              name: "values",
+              type: "core::array::Span::<core::integer::u256>",
+            },
+          ],
+          outputs: [],
+          state_mutability: "external",
+        },
+        {
+          type: "function",
+          name: "mint",
+          inputs: [
+            {
+              name: "account",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            { name: "token_id", type: "core::integer::u256" },
+            { name: "value", type: "core::integer::u256" },
+          ],
+          outputs: [],
+          state_mutability: "external",
+        },
+        {
+          type: "function",
+          name: "batch_mint",
+          inputs: [
+            {
+              name: "account",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "token_ids",
+              type: "core::array::Span::<core::integer::u256>",
+            },
+            {
+              name: "values",
+              type: "core::array::Span::<core::integer::u256>",
+            },
+          ],
+          outputs: [],
+          state_mutability: "external",
+        },
+        {
+          type: "function",
+          name: "batchMint",
+          inputs: [
+            {
+              name: "account",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            {
+              name: "tokenIds",
+              type: "core::array::Span::<core::integer::u256>",
+            },
+            {
+              name: "values",
+              type: "core::array::Span::<core::integer::u256>",
+            },
+          ],
+          outputs: [],
+          state_mutability: "external",
         },
         {
           type: "struct",
@@ -55,77 +328,93 @@ const configExternalContracts = {
           ],
         },
         {
+          type: "function",
+          name: "set_base_uri",
+          inputs: [{ name: "base_uri", type: "core::byte_array::ByteArray" }],
+          outputs: [],
+          state_mutability: "external",
+        },
+        {
+          type: "function",
+          name: "setBaseUri",
+          inputs: [{ name: "baseUri", type: "core::byte_array::ByteArray" }],
+          outputs: [],
+          state_mutability: "external",
+        },
+        {
+          type: "enum",
+          name: "core::bool",
+          variants: [
+            { name: "False", type: "()" },
+            { name: "True", type: "()" },
+          ],
+        },
+        {
+          type: "function",
+          name: "set_allowed_caller",
+          inputs: [
+            {
+              name: "contract",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            { name: "is_allowed", type: "core::bool" },
+          ],
+          outputs: [],
+          state_mutability: "external",
+        },
+        {
+          type: "function",
+          name: "setAllowedCaller",
+          inputs: [
+            {
+              name: "contract",
+              type: "core::starknet::contract_address::ContractAddress",
+            },
+            { name: "isAllowed", type: "core::bool" },
+          ],
+          outputs: [],
+          state_mutability: "external",
+        },
+        {
+          type: "function",
+          name: "token_uri",
+          inputs: [{ name: "token_id", type: "core::integer::u256" }],
+          outputs: [{ type: "core::byte_array::ByteArray" }],
+          state_mutability: "view",
+        },
+        {
+          type: "function",
+          name: "tokenURI",
+          inputs: [{ name: "tokenId", type: "core::integer::u256" }],
+          outputs: [{ type: "core::byte_array::ByteArray" }],
+          state_mutability: "view",
+        },
+        {
+          type: "impl",
+          name: "UpgradeableImpl",
+          interface_name: "openzeppelin_upgrades::interface::IUpgradeable",
+        },
+        {
           type: "interface",
-          name: "contracts::CardCollection::ICardCollection",
+          name: "openzeppelin_upgrades::interface::IUpgradeable",
           items: [
             {
               type: "function",
-              name: "claim_single_card",
+              name: "upgrade",
               inputs: [
                 {
-                  name: "minter",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                { name: "tokenId", type: "core::integer::u256" },
-                { name: "amount", type: "core::integer::u256" },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "set_allowed_caller",
-              inputs: [
-                {
-                  name: "contract",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                { name: "allowed", type: "core::bool" },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "claim_batch_cards",
-              inputs: [
-                {
-                  name: "minter",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-                {
-                  name: "token_ids",
-                  type: "core::array::Span::<core::integer::u256>",
-                },
-                {
-                  name: "amounts",
-                  type: "core::array::Span::<core::integer::u256>",
+                  name: "new_class_hash",
+                  type: "core::starknet::class_hash::ClassHash",
                 },
               ],
               outputs: [],
               state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "set_base_uri",
-              inputs: [
-                { name: "base_uri", type: "core::byte_array::ByteArray" },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "token_uri",
-              inputs: [{ name: "token_id", type: "core::integer::u256" }],
-              outputs: [{ type: "core::byte_array::ByteArray" }],
-              state_mutability: "view",
             },
           ],
         },
         {
           type: "impl",
-          name: "ERC1155Impl",
+          name: "ERC1155MixinImpl",
           interface_name: "openzeppelin_token::erc1155::interface::ERC1155ABI",
         },
         {
@@ -371,12 +660,30 @@ const configExternalContracts = {
         },
         {
           type: "impl",
-          name: "OwnableImpl",
-          interface_name: "openzeppelin_access::ownable::interface::IOwnable",
+          name: "PausableImpl",
+          interface_name: "openzeppelin_security::interface::IPausable",
         },
         {
           type: "interface",
-          name: "openzeppelin_access::ownable::interface::IOwnable",
+          name: "openzeppelin_security::interface::IPausable",
+          items: [
+            {
+              type: "function",
+              name: "is_paused",
+              inputs: [],
+              outputs: [{ type: "core::bool" }],
+              state_mutability: "view",
+            },
+          ],
+        },
+        {
+          type: "impl",
+          name: "OwnableMixinImpl",
+          interface_name: "openzeppelin_access::ownable::interface::OwnableABI",
+        },
+        {
+          type: "interface",
+          name: "openzeppelin_access::ownable::interface::OwnableABI",
           items: [
             {
               type: "function",
@@ -406,23 +713,24 @@ const configExternalContracts = {
               outputs: [],
               state_mutability: "external",
             },
-          ],
-        },
-        {
-          type: "impl",
-          name: "PausableImpl",
-          interface_name: "openzeppelin_security::interface::IPausable",
-        },
-        {
-          type: "interface",
-          name: "openzeppelin_security::interface::IPausable",
-          items: [
             {
               type: "function",
-              name: "is_paused",
+              name: "transferOwnership",
+              inputs: [
+                {
+                  name: "newOwner",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "renounceOwnership",
               inputs: [],
-              outputs: [{ type: "core::bool" }],
-              state_mutability: "view",
+              outputs: [],
+              state_mutability: "external",
             },
           ],
         },
@@ -563,6 +871,47 @@ const configExternalContracts = {
         },
         {
           type: "event",
+          name: "openzeppelin_security::pausable::PausableComponent::Paused",
+          kind: "struct",
+          members: [
+            {
+              name: "account",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "openzeppelin_security::pausable::PausableComponent::Unpaused",
+          kind: "struct",
+          members: [
+            {
+              name: "account",
+              type: "core::starknet::contract_address::ContractAddress",
+              kind: "data",
+            },
+          ],
+        },
+        {
+          type: "event",
+          name: "openzeppelin_security::pausable::PausableComponent::Event",
+          kind: "enum",
+          variants: [
+            {
+              name: "Paused",
+              type: "openzeppelin_security::pausable::PausableComponent::Paused",
+              kind: "nested",
+            },
+            {
+              name: "Unpaused",
+              type: "openzeppelin_security::pausable::PausableComponent::Unpaused",
+              kind: "nested",
+            },
+          ],
+        },
+        {
+          type: "event",
           name: "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferred",
           kind: "struct",
           members: [
@@ -614,47 +963,24 @@ const configExternalContracts = {
         },
         {
           type: "event",
-          name: "openzeppelin_security::reentrancyguard::ReentrancyGuardComponent::Event",
-          kind: "enum",
-          variants: [],
-        },
-        {
-          type: "event",
-          name: "openzeppelin_security::pausable::PausableComponent::Paused",
+          name: "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Upgraded",
           kind: "struct",
           members: [
             {
-              name: "account",
-              type: "core::starknet::contract_address::ContractAddress",
+              name: "class_hash",
+              type: "core::starknet::class_hash::ClassHash",
               kind: "data",
             },
           ],
         },
         {
           type: "event",
-          name: "openzeppelin_security::pausable::PausableComponent::Unpaused",
-          kind: "struct",
-          members: [
-            {
-              name: "account",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "data",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin_security::pausable::PausableComponent::Event",
+          name: "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Event",
           kind: "enum",
           variants: [
             {
-              name: "Paused",
-              type: "openzeppelin_security::pausable::PausableComponent::Paused",
-              kind: "nested",
-            },
-            {
-              name: "Unpaused",
-              type: "openzeppelin_security::pausable::PausableComponent::Unpaused",
+              name: "Upgraded",
+              type: "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Upgraded",
               kind: "nested",
             },
           ],
@@ -665,7 +991,7 @@ const configExternalContracts = {
           kind: "enum",
           variants: [
             {
-              name: "erc1155Event",
+              name: "ERC1155Event",
               type: "openzeppelin_token::erc1155::erc1155::ERC1155Component::Event",
               kind: "flat",
             },
@@ -675,18 +1001,18 @@ const configExternalContracts = {
               kind: "flat",
             },
             {
-              name: "ownableEvent",
+              name: "PausableEvent",
+              type: "openzeppelin_security::pausable::PausableComponent::Event",
+              kind: "flat",
+            },
+            {
+              name: "OwnableEvent",
               type: "openzeppelin_access::ownable::ownable::OwnableComponent::Event",
               kind: "flat",
             },
             {
-              name: "reentrancyEvent",
-              type: "openzeppelin_security::reentrancyguard::ReentrancyGuardComponent::Event",
-              kind: "flat",
-            },
-            {
-              name: "pausableEvent",
-              type: "openzeppelin_security::pausable::PausableComponent::Event",
+              name: "UpgradeableEvent",
+              type: "openzeppelin_upgrades::upgradeable::UpgradeableComponent::Event",
               kind: "flat",
             },
           ],

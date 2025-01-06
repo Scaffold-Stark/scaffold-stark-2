@@ -34,12 +34,6 @@ trait ICardCollectionFactory<TContractState> {
     );
     fn open_pack(ref self: TContractState, collection: ContractAddress, token_id: u256);
     fn set_collection_class_hash(ref self: TContractState, new_class_hash: ClassHash);
-    fn set_random_oracle_callback_fee_limit(
-        ref self: TContractState, random_oracle_callback_fee_limit: u128,
-    );
-    fn set_max_random_oracle_callback_fee_deposit(
-        ref self: TContractState, max_random_oracle_callback_fee_deposit: u256,
-    );
     fn update_collection(
         ref self: TContractState,
         collection: ContractAddress,
@@ -52,13 +46,10 @@ trait ICardCollectionFactory<TContractState> {
     fn update_collection_distributions(
         ref self: TContractState, collection: ContractAddress, cards: Array<CollectionDistribution>,
     );
-    fn generate_random(self: @TContractState, seed: felt252, upper_bound: felt252) -> felt252;
     fn get_collection(
         self: @TContractState, collection: ContractAddress,
     ) -> PackCollectionInformation;
     fn get_collection_class_hash(self: @TContractState) -> ClassHash;
-    fn get_random_oracle_callback_fee_limit(self: @TContractState) -> u128;
-    fn get_max_random_oracle_callback_fee_deposit(self: @TContractState) -> u256;
     fn get_all_collection_addresses(self: @TContractState) -> Array<ContractAddress>;
     fn get_collection_distribution(
         self: @TContractState, collection: ContractAddress,
@@ -66,18 +57,28 @@ trait ICardCollectionFactory<TContractState> {
 }
 
 #[starknet::interface]
-pub trait IPragmaVRF<TContractState> {
-    fn receive_random_words(
-        ref self: TContractState,
-        requestor_address: ContractAddress,
-        request_id: u64,
-        random_words: Span<felt252>,
-        calldata: Array<felt252>,
-    );
+trait IRandom<TContractState> {
+    fn felt252(ref self: TContractState, seed: felt252) -> felt252;
+    fn bool(ref self: TContractState, seed: felt252) -> bool;
+    fn u8(ref self: TContractState, seed: felt252) -> u8;
+    fn u16(ref self: TContractState, seed: felt252) -> u16;
+    fn u32(ref self: TContractState, seed: felt252) -> u32;
+    fn u64(ref self: TContractState, seed: felt252) -> u64;
+    fn u128(ref self: TContractState, seed: felt252) -> u128;
+    fn u256(ref self: TContractState, seed: felt252) -> u256;
+    fn u8_capped(ref self: TContractState, seed: felt252, cap: u8) -> u8;
+    fn u16_capped(ref self: TContractState, seed: felt252, cap: u16) -> u16;
+    fn u32_capped(ref self: TContractState, seed: felt252, cap: u32) -> u32;
+    fn u64_capped(ref self: TContractState, seed: felt252, cap: u64) -> u64;
+    fn u128_capped(ref self: TContractState, seed: felt252, cap: u128) -> u128;
+    fn u256_capped(ref self: TContractState, seed: felt252, cap: u256) -> u256;
+    fn salt(ref self: TContractState, salt: felt252);
 }
+
 
 #[starknet::contract]
 mod CardCollectionFactory {
+    use super::IRandomDispatcherTrait;
     use super::super::CardCollection::ICardCollectionDispatcherTrait;
     use super::{PackInformation, CollectionDistribution, PackCollectionInformation};
 
@@ -91,7 +92,6 @@ mod CardCollectionFactory {
         MutableVecTrait,
     };
 
-    use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     use openzeppelin::token::erc721::interface::{IERC721Dispatcher, IERC721DispatcherTrait};
     use openzeppelin::access::ownable::{OwnableComponent};
     use openzeppelin::security::reentrancyguard::ReentrancyGuardComponent;
@@ -115,19 +115,16 @@ mod CardCollectionFactory {
 
     #[storage]
     struct Storage {
+        nonce: u64,
+        collection_salt: u256,
+        card_collection_class_hash: ClassHash,
+        random_oracleless_contract_address: ContractAddress,
         is_card_collection: Map<ContractAddress, bool>,
         all_card_collections: Vec<ContractAddress>,
-        eth_dispatcher: IERC20Dispatcher,
-        nonce: u64,
-        random_oracle_contract_address: ContractAddress,
         mapping_request_pack: Map<u64, PackInformation>,
-        card_collection_class_hash: ClassHash,
-        collection_salt: u256,
         mapping_card_distribution: Map<ContractAddress, Vec<CollectionDistribution>>,
         mapping_card_all_phase: Map<ContractAddress, Vec<PackCollectionInformation>>,
         mapping_card_pack_details: Map<ContractAddress, PackCollectionInformation>,
-        random_oracle_callback_fee_limit: u128,
-        max_random_oracle_callback_fee_deposit: u256,
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
         #[substorage(v0)]
@@ -181,16 +178,12 @@ mod CardCollectionFactory {
     }
 
     mod Errors {
-        pub const CALLER_NOT_VRF_ORACLE: felt252 = 'Caller not VRF oracle';
         pub const INVALID_CONTRACT_ADDRESS: felt252 = 'Invalid contract address';
         pub const REQUESTOR_NOT_SELF: felt252 = 'Requestor is not self';
         pub const INVALID_PACK_OWNER: felt252 = 'Caller does not own the pack';
         pub const INVALID_COLLECTION: felt252 = 'Invalid Card Collection';
         pub const INVALID_FEE: felt252 = 'Invalid callback fee/limit';
     }
-
-    pub const PUBLISH_DELAY: u64 = 1; // return the random value asap
-    pub const NUM_OF_WORDS: u64 = 1; // 1 numbers
 
     const TWO_TO_THE_50: u256 = 1125899906842624; // This is 2^50 in decimal
 
@@ -202,29 +195,11 @@ mod CardCollectionFactory {
         ref self: ContractState,
         owner: ContractAddress,
         card_collection_class_hash: ClassHash,
-        random_oracle_contract_address: ContractAddress,
-        eth_address: ContractAddress,
-        random_oracle_callback_fee_limit: u128,
-        max_random_oracle_callback_fee_deposit: u256,
+        random_oracleless_contract_address: ContractAddress,
     ) {
-        assert(
-            Zero::is_non_zero(@owner)
-                && Zero::is_non_zero(@card_collection_class_hash)
-                && Zero::is_non_zero(@random_oracle_contract_address)
-                && Zero::is_non_zero(@eth_address),
-            Errors::INVALID_CONTRACT_ADDRESS,
-        );
-        assert(
-            random_oracle_callback_fee_limit != 0 && max_random_oracle_callback_fee_deposit != 0,
-            Errors::INVALID_FEE,
-        );
-
         self.ownable.initializer(owner);
-        self.random_oracle_callback_fee_limit.write(random_oracle_callback_fee_limit);
-        self.max_random_oracle_callback_fee_deposit.write(max_random_oracle_callback_fee_deposit);
         self.card_collection_class_hash.write(card_collection_class_hash);
-        self.random_oracle_contract_address.write(random_oracle_contract_address);
-        self.eth_dispatcher.write(IERC20Dispatcher { contract_address: eth_address });
+        self.random_oracleless_contract_address.write(random_oracleless_contract_address);
     }
 
     #[abi(embed_v0)]
@@ -291,11 +266,19 @@ mod CardCollectionFactory {
             >();
             pack_dispatcher.transfer_from(caller, DEAD_ADDRESS, token_id);
 
-            let mut random_number = self
-                .generate_random(
-                    caller.into(), caller.into(),
-                ); // TODO randomizer words 0x351c9a2173a1e93c2b689a65f99ad21ccf8f00558c738b14599c64d2ba024b
-            let request_id : u64 = 1;
+            // let block_info = get_block_info().unbox();
+            // let block_number = block_info.block_number;
+
+            // From random contract:
+            // Mainnet: 0x0000000000000000000000000000000000000000000000000000000000000000
+            // SEPOLIA: 0x02da9C98a2E5B60EA441C14371d062395cFB3864f1b6Fead23CE8Bc47b3d2ECD
+            let random_contract_address = self.random_oracleless_contract_address.read();
+            let random_contract_dispatcher = contracts::CardCollectionFactory::IRandomDispatcher {
+                contract_address: random_contract_address,
+            };
+            let mut random_number = random_contract_dispatcher.felt252(caller.into());
+
+            let request_id: u64 = 1; // TODO resolve 
 
             let pack_token_detail = PackInformation {
                 pack_address, card_collection: collection, token_id, minter: caller,
@@ -333,22 +316,6 @@ mod CardCollectionFactory {
         fn set_collection_class_hash(ref self: ContractState, new_class_hash: ClassHash) {
             self.ownable.assert_only_owner();
             self.card_collection_class_hash.write(new_class_hash);
-        }
-
-        fn set_random_oracle_callback_fee_limit(
-            ref self: ContractState, random_oracle_callback_fee_limit: u128,
-        ) {
-            self.ownable.assert_only_owner();
-            self.random_oracle_callback_fee_limit.write(random_oracle_callback_fee_limit);
-        }
-
-        fn set_max_random_oracle_callback_fee_deposit(
-            ref self: ContractState, max_random_oracle_callback_fee_deposit: u256,
-        ) {
-            self.ownable.assert_only_owner();
-            self
-                .max_random_oracle_callback_fee_deposit
-                .write(max_random_oracle_callback_fee_deposit);
         }
 
         fn add_collection_distributions(
@@ -424,13 +391,6 @@ mod CardCollectionFactory {
             self.card_collection_class_hash.read()
         }
 
-        fn get_random_oracle_callback_fee_limit(self: @ContractState) -> u128 {
-            self.random_oracle_callback_fee_limit.read()
-        }
-
-        fn get_max_random_oracle_callback_fee_deposit(self: @ContractState) -> u256 {
-            self.max_random_oracle_callback_fee_deposit.read()
-        }
 
         fn get_all_collection_addresses(self: @ContractState) -> Array<ContractAddress> {
             let mut collections = ArrayTrait::new();
@@ -454,16 +414,6 @@ mod CardCollectionFactory {
                 card_distributions.append(distributions.at(i).read());
             };
             card_distributions
-        }
-
-        fn generate_random(self: @ContractState, seed: felt252, upper_bound: felt252) -> felt252 {
-            // let hash_value = PedersenTrait::new(seed).update(0).finalize();
-            // let hash_u256 = u256_from_felt252(hash_value);
-            // let upper_bound_u256 = u256_from_felt252(upper_bound);
-            // let random_number = hash_u256 % upper_bound_u256;
-
-            // random_number.try_into().unwrap()
-            seed
         }
     }
 
@@ -494,17 +444,19 @@ mod CardCollectionFactory {
 
             for i in 0..selected_cards.len() {
                 let token_id: u256 = selected_cards[i].token_id.clone();
-                token_ids_array.append(token_id);
-
                 let amount: u256 = u256 { low: 1, high: 0 };
+
+                token_ids_array.append(token_id);
                 amounts_array.append(amount);
+
+                card_dispatcher.mint(minter, token_id, amount);
             };
 
             // Mint the selected cards using claim_batch_cards
             let token_ids_span = token_ids_array.span();
-            let amounts_span = amounts_array.span();
+            // let amounts_span = amounts_array.span();
 
-            card_dispatcher.claim_batch_cards(minter, token_ids_span, amounts_span);
+            // card_dispatcher.batch_mint(minter, token_ids_span, amounts_span);
 
             self
                 .emit(

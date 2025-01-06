@@ -7,7 +7,7 @@ const deployedContracts = {
   sepolia: {
     PackAtemu: {
       address:
-        "0x115773e8a579b01fedaf25871d401be18a78881b57b8318e47ceb201219accc",
+        "0x506c81745384a42161da61b65c20cf73ad91e8004a843fc67cd7b6c264613",
       abi: [
         {
           type: "struct",
@@ -701,11 +701,11 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x2bb3ca82cb5fe0d4f5072c4089c232f411de6968db12cb47ee5000c3dea6121",
+        "0x36bd652c9fd343b055723d0af9249f12d54ca2556c7e0563675342547d473d2",
     },
     CardCollectionFactory: {
       address:
-        "0x342aa0ca46170476105c38486438dae5bb8ac97b9dc86f5e253fa8257a4a4d7",
+        "0x56f808b6522f5b865710f3173fd8d917fdffe6e0b5cb462b67f222f2b569ce5",
       abi: [
         {
           type: "impl",
@@ -843,30 +843,6 @@ const deployedContracts = {
             },
             {
               type: "function",
-              name: "set_random_oracle_callback_fee_limit",
-              inputs: [
-                {
-                  name: "random_oracle_callback_fee_limit",
-                  type: "core::integer::u128",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "set_max_random_oracle_callback_fee_deposit",
-              inputs: [
-                {
-                  name: "max_random_oracle_callback_fee_deposit",
-                  type: "core::integer::u256",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
               name: "update_collection",
               inputs: [
                 {
@@ -919,26 +895,6 @@ const deployedContracts = {
             },
             {
               type: "function",
-              name: "generate_random",
-              inputs: [
-                {
-                  name: "seed",
-                  type: "core::felt252",
-                },
-                {
-                  name: "upper_bound",
-                  type: "core::felt252",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::felt252",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
               name: "get_collection",
               inputs: [
                 {
@@ -960,28 +916,6 @@ const deployedContracts = {
               outputs: [
                 {
                   type: "core::starknet::class_hash::ClassHash",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "get_random_oracle_callback_fee_limit",
-              inputs: [],
-              outputs: [
-                {
-                  type: "core::integer::u128",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "get_max_random_oracle_callback_fee_deposit",
-              inputs: [],
-              outputs: [
-                {
-                  type: "core::integer::u256",
                 },
               ],
               state_mutability: "view",
@@ -1088,20 +1022,8 @@ const deployedContracts = {
               type: "core::starknet::class_hash::ClassHash",
             },
             {
-              name: "random_oracle_contract_address",
+              name: "random_oracleless_contract_address",
               type: "core::starknet::contract_address::ContractAddress",
-            },
-            {
-              name: "eth_address",
-              type: "core::starknet::contract_address::ContractAddress",
-            },
-            {
-              name: "random_oracle_callback_fee_limit",
-              type: "core::integer::u128",
-            },
-            {
-              name: "max_random_oracle_callback_fee_deposit",
-              type: "core::integer::u256",
             },
           ],
         },
@@ -1314,7 +1236,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x5758e0e5b3b2f27dd4a4d6b51fd3b56cd1b031165e0f2890ec06f2d546eb2ec",
+        "0xd0e6988341771b0d65491b6b638265a3e058c4814b9e84cbdad92998400a62",
     },
   },
 } as const;
