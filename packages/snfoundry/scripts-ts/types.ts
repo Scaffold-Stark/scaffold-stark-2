@@ -8,9 +8,9 @@ export type Network = {
   feeToken: { name: string; address: string }[];
 };
 
-export type DeployContractParams = {
+export interface DeployContractParams {
   contract: string;
+  constructorArgs?: any;
   contractName?: string;
-  constructorArgs?: RawArgs;
-  options?: UniversalDetails;
-};
+  options?: any;
+}
