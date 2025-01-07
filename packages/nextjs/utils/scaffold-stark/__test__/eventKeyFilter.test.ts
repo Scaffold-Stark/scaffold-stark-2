@@ -190,6 +190,8 @@ describe("composeEventFilterKeys", () => {
     expect(
       composeEventFilterKeys(
         {
+          greeting_setter:
+            "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
           new_greeting: "hello world",
           event_type: 9987n,
           addresses: [
@@ -217,29 +219,132 @@ describe("composeEventFilterKeys", () => {
           bool_val: true,
         },
         event as any,
-        abiStruct,
-        abiEnum,
+        mockDeployedContractAbi.abi,
       ),
     ).toEqual([
-      "0x0",
-      "0x68656c6c6f20776f726c64",
-      "0xb",
-      "0x2703",
-      "0x0",
-      "0x2",
-      "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
-      "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b3",
-      "0x1",
-      "0x2",
-      "0x1",
-      "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
-      "0x0",
-      "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
-      "0x1",
-      "0x0",
-      "0x0",
-      "0xc",
-      "0x1",
+      ["0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"],
+      ["0x0"],
+      ["0x68656c6c6f20776f726c64"],
+      ["0xb"],
+      ["0x2703"],
+      ["0x0"],
+      ["0x2"],
+      ["0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"],
+      ["0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b3"],
+      ["0x1"],
+      ["0x2"],
+      ["0x1"],
+      ["0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"],
+      ["0x0"],
+      ["0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"],
+      ["0x1"],
+      ["0x0"],
+      ["0x0"],
+      ["0xc"],
+      ["0x1"],
+    ]);
+  });
+
+  it("should compose event filter keys with any filter correctly", () => {
+    expect(
+      composeEventFilterKeys(
+        {
+          greeting_setter:
+            "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+          new_greeting: "hello world",
+          addresses: [
+            "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+            "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b3",
+          ],
+          tup: {
+            0: 1n,
+            1: 2n,
+            2: true,
+            3: "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+          },
+          st: {
+            addr: new CairoOption(
+              CairoOptionVariant.Some,
+              "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+            ),
+            val: new CairoOption(CairoOptionVariant.None),
+          },
+          enum_val: new CairoCustomEnum({
+            val1: new CairoCustomEnum({
+              val1: 12,
+            }),
+          }),
+          bool_val: true,
+        },
+        event as any,
+        mockDeployedContractAbi.abi,
+      ),
+    ).toEqual([
+      ["0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"],
+      ["0x0"],
+      ["0x68656c6c6f20776f726c64"],
+      ["0xb"],
+      [],
+      [],
+      ["0x2"],
+      ["0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"],
+      ["0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b3"],
+      ["0x1"],
+      ["0x2"],
+      ["0x1"],
+      ["0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"],
+      ["0x0"],
+      ["0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"],
+      ["0x1"],
+      ["0x0"],
+      ["0x0"],
+      ["0xc"],
+      ["0x1"],
+    ]);
+  });
+
+  it("should compose event filter keys break when include any for uncertain length type", () => {
+    expect(
+      composeEventFilterKeys(
+        {
+          greeting_setter:
+            "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+          new_greeting: "hello world",
+          event_type: 9987n,
+          addresses: [
+            "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+            "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b3",
+          ],
+          tup: {
+            0: 1n,
+            1: 2n,
+            2: true,
+            3: "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+          },
+          enum_val: new CairoCustomEnum({
+            val1: new CairoCustomEnum({
+              val1: 12,
+            }),
+          }),
+          bool_val: true,
+        },
+        event as any,
+        mockDeployedContractAbi.abi,
+      ),
+    ).toEqual([
+      ["0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"],
+      ["0x0"],
+      ["0x68656c6c6f20776f726c64"],
+      ["0xb"],
+      ["0x2703"],
+      ["0x0"],
+      ["0x2"],
+      ["0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"],
+      ["0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b3"],
+      ["0x1"],
+      ["0x2"],
+      ["0x1"],
+      ["0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"],
     ]);
   });
 });

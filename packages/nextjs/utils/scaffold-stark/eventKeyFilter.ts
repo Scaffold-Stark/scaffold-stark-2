@@ -2,7 +2,14 @@ import {
   ExtractAbiEvent,
   ExtractAbiEventNames,
 } from "abi-wan-kanabi/dist/kanabi";
-import { AbiEntry, AbiEnums, AbiStructs, parseCalldataField } from "starknet";
+import {
+  Abi,
+  AbiEntry,
+  AbiEnums,
+  AbiStructs,
+  CallData,
+  parseCalldataField,
+} from "starknet";
 import { ContractAbi, ContractName } from "./contract";
 
 const stringToHexString = (numStr: string) => {
@@ -52,24 +59,59 @@ export const serializeEventKey = (
   return parsed.map((item: string) => stringToHexString(item));
 };
 
+const certainLengthTypeMap: { [key: string]: string[][] } = {
+  "core::starknet::contract_address::ContractAddress": [[]],
+  "core::starknet::eth_address::EthAddress": [[]],
+  "core::starknet::class_hash::ClassHash": [[]],
+  "core::starknet::storage_access::StorageAddress": [[]],
+  "core::bool": [[]],
+  "core::integer::u8": [[]],
+  "core::integer::u16": [[]],
+  "core::integer::u32": [[]],
+  "core::integer::u64": [[]],
+  "core::integer::u128": [[]],
+  "core::integer::u256": [[], []],
+  "core::integer::u512": [[], [], [], []],
+  "core::bytes_31::bytes31": [[]],
+  "core::felt252": [[]],
+};
+
 export const composeEventFilterKeys = (
   input: { [key: string]: any },
   event: ExtractAbiEvent<
     ContractAbi<ContractName>,
     ExtractAbiEventNames<ContractAbi<ContractName>>
   >,
-  structs: AbiStructs,
-  enums: AbiEnums,
-): string[] => {
+  abi: Abi,
+): string[][] => {
   if (!("members" in event)) {
     return [];
   }
-  let keys: string[] = [];
-  for (const member of event.members) {
-    if (member.kind === "key" && member.name in input) {
+  const enums = CallData.getAbiEnum(abi);
+  const structs = CallData.getAbiStruct(abi);
+  let keys: string[][] = [];
+  const keyMembers = event.members.filter(
+    (member) => member.kind === "key",
+  ) as { name: string; type: string; kind: "key" | "data"; value: any }[];
+  const clonedKeyMembers = JSON.parse(JSON.stringify(keyMembers));
+  for (const member of clonedKeyMembers) {
+    if (member.name in input) {
+      member.value = input[member.name];
+    }
+  }
+  for (const member of clonedKeyMembers) {
+    if (member.value !== undefined) {
       keys = keys.concat(
-        serializeEventKey(input[member.name], member, structs, enums),
+        serializeEventKey(member.value, member, structs, enums).map((item) => [
+          item,
+        ]),
       );
+    } else {
+      if (member.type in certainLengthTypeMap) {
+        keys = keys.concat(certainLengthTypeMap[member.type]);
+      } else {
+        break;
+      }
     }
   }
   return keys;
