@@ -19,6 +19,7 @@ import { useProvider } from "@starknet-react/core";
 import { hash, RpcProvider } from "starknet";
 import { events as starknetEvents, CallData } from "starknet";
 import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
+import { composeEventFilterKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
 
 /**
  * Reads events from a deployed contract
@@ -85,7 +86,7 @@ export const useScaffoldEventHistory = <
       }
 
       const event = (deployedContractData.abi as Abi).find(
-        (part) => part.type === "event" && part.name === eventName,
+        (part) => part.type === "event" && part.name === eventName
       ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
 
       const blockNumber = (await publicClient.getBlockLatestAccepted())
@@ -95,11 +96,17 @@ export const useScaffoldEventHistory = <
         (fromBlock && blockNumber >= fromBlock) ||
         blockNumber >= fromBlockUpdated
       ) {
+        let keys: string[][] = [
+          [hash.getSelectorFromName(event.name.split("::").slice(-1)[0])],
+        ];
+        if (filters) {
+          keys = keys.concat(
+            composeEventFilterKeys(filters, event, deployedContractData.abi)
+          );
+        }
         const rawEventResp = await publicClient.getEvents({
           chunk_size: 100,
-          keys: [
-            [hash.getSelectorFromName(event.name.split("::").slice(-1)[0])],
-          ],
+          keys,
           address: deployedContractData?.address,
           from_block: { block_number: Number(fromBlock || fromBlockUpdated) },
           to_block: { block_number: blockNumber },
@@ -122,13 +129,13 @@ export const useScaffoldEventHistory = <
             transaction:
               transactionData && logs[i].transaction_hash !== null
                 ? await publicClient.getTransactionByHash(
-                    logs[i].transaction_hash,
+                    logs[i].transaction_hash
                   )
                 : null,
             receipt:
               receiptData && logs[i].transaction_hash !== null
                 ? await publicClient.getTransactionReceipt(
-                    logs[i].transaction_hash,
+                    logs[i].transaction_hash
                   )
                 : null,
           });
@@ -190,7 +197,7 @@ export const useScaffoldEventHistory = <
       ? targetNetwork.id !== devnet.id
         ? scaffoldConfig.pollingInterval
         : 4_000
-      : null,
+      : null
   );
 
   const eventHistoryData = useMemo(() => {
@@ -201,7 +208,7 @@ export const useScaffoldEventHistory = <
           logs,
           starknetEvents.getAbiEvents(deployedContractData.abi),
           CallData.getAbiStruct(deployedContractData.abi),
-          CallData.getAbiEnum(deployedContractData.abi),
+          CallData.getAbiEnum(deployedContractData.abi)
         );
         const args = parsed.length ? parsed[0][eventName] : {};
         const { event: rawEvent, ...rest } = event;
