@@ -17,6 +17,7 @@ const argv = yargs(process.argv.slice(2))
     type: "string",
     description: "Specify the network",
     demandOption: true,
+    choices: ["devnet", "sepolia", "mainnet"],
   })
   .option("fee", {
     type: "string",
@@ -48,7 +49,11 @@ const declareIfNot_NotWait = async (
         ...options,
         version: txVersion,
       });
-      if (networkName === "sepolia" || networkName === "mainnet") {
+      if (
+        networkName === "sepolia" ||
+        networkName === "mainnet" ||
+        networkName === "devnet"
+      ) {
         await provider.waitForTransaction(transaction_hash);
       }
     } catch (e) {
