@@ -180,7 +180,6 @@ pub trait IBetMaker<TContractState> {
         ref self: TContractState,
         name: ByteArray,
         image: ByteArray,
-        category: felt252,
         description: ByteArray,
         deadline: u256, // TODO: u256 -> u64
         vote_deadline: u256, // TODO: u256 -> u64   
@@ -356,7 +355,6 @@ mod BetMaker {
             ref self: ContractState,
             name: ByteArray,
             image: ByteArray,
-            category: felt252,
             description: ByteArray,
             deadline: u256,
             vote_deadline: u256,
@@ -406,7 +404,7 @@ mod BetMaker {
                 bet_id: self.total_crypto_bets.read() + 1,
                 name,
                 image,
-                category,
+                category: 'CRYPTO',
                 description,
                 is_settled: false,
                 is_active: true,

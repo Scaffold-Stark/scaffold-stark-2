@@ -21,11 +21,10 @@ function UserPositions() {
     blockData: true,
     transactionData: false,
     receiptData: false,
-    filters: { user: "value" },
+    /* filters: { user: "value" }, */
     /* watch: true, */
     enabled: true,
   });
-  //if (isLoading || !data) return "loading...";
 
   const loggedUserPositions = useMemo(() => {
     return positions.filter((position) => {
@@ -34,11 +33,15 @@ function UserPositions() {
         num.cleanHex(address ?? "")
       );
     });
-  }, [positions, address]);
+  }, [positions.length, address]);
 
   return (
     <div>
-      <DataTable columns={columns} data={loggedUserPositions} />
+      <DataTable
+        columns={columns}
+        data={loggedUserPositions}
+        isLoading={!positions || isLoading}
+      />
     </div>
   );
 }

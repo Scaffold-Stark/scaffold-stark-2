@@ -184,129 +184,169 @@ function BetCard({ bet }: { bet: Bet }) {
   }, [bet.yield_strategy]);
 
   return (
-    <div
-      className={cn(
-        "group/bento relative row-span-1 flex flex-col justify-between space-y-4 rounded-xl border border-border bg-card p-6 shadow-input transition duration-200 hover:shadow-xl",
-      )}
-    >
-      <div className="space-y-2">
-        <div className="font-sans text-xl font-bold text-foreground">
-          {bet.name}
-        </div>
-        <div className="!mb-6 font-sans text-xs font-normal text-muted-foreground">
-          {bet.description}
-        </div>
-      </div>
-      <div className="flex space-x-2">
-        <AnimatedGradientText className="flex-1">
-          🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
-          <span
-            className={cn(
-              `animate-gradient flex bg-foreground bg-gradient-to-r from-primary to-primary bg-clip-text text-center text-transparent`,
-            )}
-          >
-            {isLoadingBetInfos ? (
-              <SkeletonShort />
-            ) : (
-              `Prize Pool ${parseFloat(formatUnits(BigInt(betInfos.total_money_betted) || "0")).toFixed(4)} `
-            )}
+    <div className="relative h-full w-full">
+      {betInfos && !betInfos.is_active && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center blur-none">
+          <span className="rounded-full bg-black bg-opacity-50 px-4 py-2 font-semibold text-white">
+            Closed
           </span>
-          <Image
-            src={BetTokenImage[betToken]}
-            alt={"starksight"}
-            className="ml-1"
-            width={20}
-            height={20}
-          />
-        </AnimatedGradientText>
-        {isNoLossMarket ? (
-          <AnimatedGradientText className="flex-1">
-            ✨ <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
-            <span
-              className={cn(
-                `animate-gradient inline bg-foreground bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent`,
-              )}
-            >
-              {`APR ${apr}%`}
-            </span>
-          </AnimatedGradientText>
-        ) : null}
-      </div>
-      {isLoadingBetInfos ? (
-        <div className="flex h-full animate-pulse space-x-4">
-          <div className="flex w-full items-center space-y-6">
-            <div className="h-32 w-full rounded bg-slate-300"></div>
+        </div>
+      )}
+      <div
+        className={cn(
+          "group/bento relative row-span-1 flex h-full w-full flex-col justify-between space-y-4 rounded-xl border border-border bg-card p-6 shadow-input transition duration-200 hover:shadow-xl",
+          betInfos && !betInfos.is_active
+            ? "pointer-events-none blur-sm"
+            : null,
+        )}
+      >
+        <div className="space-y-2">
+          <div className="font-sans text-xl font-bold text-foreground">
+            {bet.name}
+          </div>
+          <div className="!mb-6 font-sans text-xs font-normal text-muted-foreground">
+            {bet.description}
           </div>
         </div>
-      ) : (
-        <BetStats
-          percentageYes={calculatePercentage(
-            BigInt(betInfos.outcomes.outcome_yes.bought_amount),
-            BigInt(betInfos.total_money_betted),
-          )}
-          percentageNo={calculatePercentage(
-            BigInt(betInfos.outcomes.outcome_no.bought_amount),
-            BigInt(betInfos.total_money_betted),
-          )}
-        />
-      )}
-      <div className="duration-20 w-[160%] self-center transition">
-        {/*  {icon} */}
-        <div className="flex w-full justify-evenly">
-          <span className="font-bold">Yes</span>
-          <span className="font-bold">No</span>
+        <div className="flex space-x-2">
+          <AnimatedGradientText className="flex-1">
+            🎉 <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
+            <span
+              className={cn(
+                `animate-gradient flex bg-foreground bg-gradient-to-r from-primary to-primary bg-clip-text text-center text-transparent`,
+              )}
+            >
+              {isLoadingBetInfos ? (
+                <SkeletonShort />
+              ) : (
+                `Prize Pool ${parseFloat(formatUnits(BigInt(betInfos.total_money_betted) || "0")).toFixed(4)} `
+              )}
+            </span>
+            <Image
+              src={BetTokenImage[betToken]}
+              alt={"starksight"}
+              className="ml-1"
+              width={20}
+              height={20}
+            />
+          </AnimatedGradientText>
+          {isNoLossMarket ? (
+            <AnimatedGradientText className="flex-1">
+              ✨ <hr className="mx-2 h-4 w-[1px] shrink-0 bg-border" />{" "}
+              <span
+                className={cn(
+                  `animate-gradient inline bg-foreground bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent`,
+                )}
+              >
+                {`APR ${apr}%`}
+              </span>
+            </AnimatedGradientText>
+          ) : null}
         </div>
-      </div>
-
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant={"secondary"} className="cursor-pointer">
-            Make Your Move
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="lg:max-w-2xl">
-          <DialogHeader className="max-w-[29rem] lg:max-w-2xl">
-            <DialogTitle>{bet.name}</DialogTitle>
-            <DialogDescription>{bet.description}</DialogDescription>
-          </DialogHeader>
-          {isLoadingBetInfos ? (
-            <div className="flex h-full animate-pulse space-x-4">
-              <div className="flex w-full items-center">
-                <div className="h-48 w-full rounded bg-slate-300"></div>
-              </div>
+        {isLoadingBetInfos ? (
+          <div className="flex h-full animate-pulse space-x-4">
+            <div className="flex w-full items-center space-y-6">
+              <div className="h-32 w-full rounded bg-slate-300"></div>
             </div>
-          ) : (
-            <div className="max-w-[29rem] lg:max-w-2xl">
-              <div>
-                <div className="flex items-center justify-center space-x-4 rounded-lg border p-4">
-                  <div className="flex w-1/2 flex-col items-center justify-center rounded-lg p-4">
-                    <h2 className="text-sm text-white">Total Yes</h2>
-                    <p className="text-2xl font-bold text-primary">
-                      {parseFloat(
-                        formatUnits(
-                          betInfos.outcomes.outcome_yes.bought_amount,
-                        ),
-                      ).toFixed(4)}
-                      &nbsp;{betToken.toUpperCase()}
-                    </p>
-                  </div>
-                  <div className="flex h-8 w-9 items-center justify-center">
-                    <Swords className="text-primary" />
-                  </div>
-                  <div className="flex w-1/2 flex-col items-center justify-center rounded-lg p-4">
-                    <h2 className="text-sm text-white">Total No</h2>
-                    <p className="text-2xl font-bold text-destructive">
-                      {parseFloat(
-                        formatUnits(betInfos.outcomes.outcome_no.bought_amount),
-                      ).toFixed(4)}
-                      &nbsp;{betToken.toUpperCase()}
-                    </p>
-                  </div>
+          </div>
+        ) : (
+          <BetStats
+            percentageYes={calculatePercentage(
+              BigInt(betInfos.outcomes.outcome_yes.bought_amount),
+              BigInt(betInfos.total_money_betted),
+            )}
+            percentageNo={calculatePercentage(
+              BigInt(betInfos.outcomes.outcome_no.bought_amount),
+              BigInt(betInfos.total_money_betted),
+            )}
+          />
+        )}
+        <div className="duration-20 w-[160%] self-center transition">
+          {/*  {icon} */}
+          <div className="flex w-full justify-evenly">
+            <span className="font-bold">Yes</span>
+            <span className="font-bold">No</span>
+          </div>
+        </div>
+
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant={"secondary"} className="cursor-pointer">
+              Make Your Move
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="lg:max-w-2xl">
+            <DialogHeader className="max-w-[29rem] lg:max-w-2xl">
+              <DialogTitle>{bet.name}</DialogTitle>
+              <DialogDescription>{bet.description}</DialogDescription>
+            </DialogHeader>
+            {isLoadingBetInfos ? (
+              <div className="flex h-full animate-pulse space-x-4">
+                <div className="flex w-full items-center">
+                  <div className="h-48 w-full rounded bg-slate-300"></div>
                 </div>
               </div>
+            ) : (
+              <div className="max-w-[29rem] lg:max-w-2xl">
+                <div>
+                  <div className="flex items-center justify-center space-x-4 rounded-lg border p-4">
+                    <div className="flex w-1/2 flex-col items-center justify-center rounded-lg p-4">
+                      <h2 className="text-sm text-white">Total Yes</h2>
+                      <p className="text-2xl font-bold text-primary">
+                        {parseFloat(
+                          formatUnits(
+                            betInfos.outcomes.outcome_yes.bought_amount,
+                          ),
+                        ).toFixed(4)}
+                        &nbsp;{betToken.toUpperCase()}
+                      </p>
+                    </div>
+                    <div className="flex h-8 w-9 items-center justify-center">
+                      <Swords className="text-primary" />
+                    </div>
+                    <div className="flex w-1/2 flex-col items-center justify-center rounded-lg p-4">
+                      <h2 className="text-sm text-white">Total No</h2>
+                      <p className="text-2xl font-bold text-destructive">
+                        {parseFloat(
+                          formatUnits(
+                            betInfos.outcomes.outcome_no.bought_amount,
+                          ),
+                        ).toFixed(4)}
+                        &nbsp;{betToken.toUpperCase()}
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-              {isNoLossMarket ? (
-                <div className="flex space-x-2">
+                {isNoLossMarket ? (
+                  <div className="flex space-x-2">
+                    <ShineBorder
+                      className="mt-3 w-full !bg-transparent text-center text-2xl font-bold capitalize"
+                      color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+                    >
+                      <div className="flex flex-col items-center justify-center rounded-lg p-4">
+                        <h2 className="text-sm text-white">Prize Pool</h2>
+                        <p className="text-2xl font-bold text-primary">
+                          {parseFloat(
+                            formatUnits(betInfos.total_money_betted),
+                          ).toFixed(4)}
+                          &nbsp;{betToken.toUpperCase()}
+                        </p>
+                      </div>
+                    </ShineBorder>
+                    <ShineBorder
+                      className="mt-3 w-full !bg-transparent text-center text-2xl font-bold capitalize"
+                      color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+                    >
+                      <div className="flex flex-col items-center justify-center rounded-lg p-4">
+                        <h2 className="text-sm text-white">APR</h2>
+                        <p className="text-2xl font-bold text-primary">
+                          {"22%"}
+                        </p>
+                      </div>
+                    </ShineBorder>
+                  </div>
+                ) : (
                   <ShineBorder
                     className="mt-3 w-full !bg-transparent text-center text-2xl font-bold capitalize"
                     color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
@@ -321,90 +361,66 @@ function BetCard({ bet }: { bet: Bet }) {
                       </p>
                     </div>
                   </ShineBorder>
-                  <ShineBorder
-                    className="mt-3 w-full !bg-transparent text-center text-2xl font-bold capitalize"
-                    color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
-                  >
-                    <div className="flex flex-col items-center justify-center rounded-lg p-4">
-                      <h2 className="text-sm text-white">APR</h2>
-                      <p className="text-2xl font-bold text-primary">{"22%"}</p>
+                )}
+                <div className="mt-6 space-y-4">
+                  <div className="grid gap-2">
+                    <div className="flex justify-between">
+                      <Label htmlFor="bet-amount">Enter Bet Amount</Label>
+                      <Label
+                        htmlFor="bet-amount"
+                        className="flex text-muted-foreground"
+                      >
+                        {needConnection ? (
+                          "Please connect your wallet."
+                        ) : (
+                          <div className="flex items-center justify-center">
+                            {`Balance:`} <Balance address={address} />
+                          </div>
+                        )}
+                      </Label>
                     </div>
-                  </ShineBorder>
-                </div>
-              ) : (
-                <ShineBorder
-                  className="mt-3 w-full !bg-transparent text-center text-2xl font-bold capitalize"
-                  color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
-                >
-                  <div className="flex flex-col items-center justify-center rounded-lg p-4">
-                    <h2 className="text-sm text-white">Prize Pool</h2>
-                    <p className="text-2xl font-bold text-primary">
-                      {parseFloat(
-                        formatUnits(betInfos.total_money_betted),
-                      ).toFixed(4)}
-                      &nbsp;{betToken.toUpperCase()}
-                    </p>
+                    <Input
+                      id="bet-amount"
+                      type="number"
+                      placeholder={`0,00 ${betToken.toUpperCase()}`}
+                      className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      value={amountEth ?? ""}
+                      onChange={(e) => setAmountEth(parseFloat(e.target.value))}
+                    />
                   </div>
-                </ShineBorder>
-              )}
-              <div className="mt-6 space-y-4">
-                <div className="grid gap-2">
-                  <div className="flex justify-between">
-                    <Label htmlFor="bet-amount">Enter Bet Amount</Label>
-                    <Label
-                      htmlFor="bet-amount"
-                      className="flex text-muted-foreground"
-                    >
-                      {needConnection ? (
-                        "Please connect your wallet."
-                      ) : (
-                        <div className="flex items-center justify-center">
-                          {`Balance:`} <Balance address={address} />
-                        </div>
-                      )}
-                    </Label>
+                  <div className="flex gap-4">
+                    <DialogClose className="w-full flex-1" asChild>
+                      <Button
+                        className="w-full flex-1"
+                        disabled={needConnection}
+                        onClick={() => {
+                          voteYes();
+                          setAmountEth(null);
+                        }}
+                      >
+                        {needConnection ? "Connect Wallet" : "Vote Yes"}
+                      </Button>
+                    </DialogClose>
+                    <DialogClose className="w-full flex-1" asChild>
+                      <Button
+                        variant={"destructive"}
+                        disabled={needConnection}
+                        className="w-full flex-1"
+                        onClick={() => {
+                          voteNo();
+                          setAmountEth(null);
+                        }}
+                      >
+                        {needConnection ? "Connect Wallet" : "Vote No"}
+                      </Button>
+                    </DialogClose>
                   </div>
-                  <Input
-                    id="bet-amount"
-                    type="number"
-                    placeholder={`0,00 ${betToken.toUpperCase()}`}
-                    className="[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                    value={amountEth ?? ""}
-                    onChange={(e) => setAmountEth(parseFloat(e.target.value))}
-                  />
-                </div>
-                <div className="flex gap-4">
-                  <DialogClose className="w-full flex-1" asChild>
-                    <Button
-                      className="w-full flex-1"
-                      disabled={needConnection}
-                      onClick={() => {
-                        voteYes();
-                        setAmountEth(null);
-                      }}
-                    >
-                      {needConnection ? "Connect Wallet" : "Vote Yes"}
-                    </Button>
-                  </DialogClose>
-                  <DialogClose className="w-full flex-1" asChild>
-                    <Button
-                      variant={"destructive"}
-                      disabled={needConnection}
-                      className="w-full flex-1"
-                      onClick={() => {
-                        voteNo();
-                        setAmountEth(null);
-                      }}
-                    >
-                      {needConnection ? "Connect Wallet" : "Vote No"}
-                    </Button>
-                  </DialogClose>
                 </div>
               </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+            )}
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }

@@ -58,7 +58,6 @@ fn initialize_crypto_nimbora_bet(
 ) {
     let name = "Bitcoin above 75000 on December 1?";
     let image = "https://cdn.pixabay.com/photo/2015/08/27/11/20/bitcoin-910307_1280.png";
-    let category = 'Crypto';
     let description = "";
     let deadline = 1764547200; // December 2025
     let vote_deadline = 1764547200;
@@ -81,7 +80,6 @@ fn initialize_crypto_nimbora_bet(
         .create_crypto_bet(
             name,
             image,
-            category,
             description,
             deadline,
             vote_deadline,
@@ -99,7 +97,6 @@ fn initialize_crypto_classic_bet(
 ) {
     let name = "Bitcoin above 75000 on December 1?";
     let image = "https://cdn.pixabay.com/photo/2015/08/27/11/20/bitcoin-910307_1280.png";
-    let category = 'Crypto';
     let description = "";
     let deadline = 1764547200;
     let vote_deadline = 1764547200;
@@ -120,7 +117,6 @@ fn initialize_crypto_classic_bet(
         .create_crypto_bet(
             name,
             image,
-            category,
             description,
             deadline,
             vote_deadline,

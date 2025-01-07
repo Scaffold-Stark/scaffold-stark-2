@@ -1,5 +1,6 @@
 "use client";
 
+import { MouseEventHandler } from "react";
 import { cn } from "../../lib/utils";
 
 type TColorProp = `#${string}` | `#${string}`[];
@@ -9,6 +10,7 @@ interface ShineBorderProps {
   duration?: number;
   color?: TColorProp;
   className?: string;
+  onClick?: MouseEventHandler<HTMLDivElement> | undefined;
   children: React.ReactNode;
 }
 
@@ -28,10 +30,12 @@ export default function ShineBorder({
   duration = 14,
   color = "#fff",
   className,
+  onClick,
   children,
 }: ShineBorderProps) {
   return (
     <div
+      onClick={onClick}
       style={
         {
           "--border-radius": `${borderRadius}px`,

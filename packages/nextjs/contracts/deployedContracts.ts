@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     YourContract: {
       address:
-        "0x3f422d9b38ad24ffdc8cf888e68dfdbf58b5b85dbd51c844d6df7ce508c49ed",
+        "0x42fb7a5b4242c68fdc92e399f9701543198efb80f24f6a09abe83dab97d9af5",
       abi: [
         {
           type: "impl",
@@ -263,7 +263,7 @@ const deployedContracts = {
     },
     BetMaker: {
       address:
-        "0x1b5001c2d3a018c3765f5e933a7184b93dc832eb20d68d957768d14d9d3cac",
+        "0x5c12fd55da4472a6b150da333f94e9d1282cd3334e438db0d8000f9fec5e40c",
       abi: [
         {
           type: "impl",
@@ -623,10 +623,6 @@ const deployedContracts = {
                 {
                   name: "image",
                   type: "core::byte_array::ByteArray",
-                },
-                {
-                  name: "category",
-                  type: "core::felt252",
                 },
                 {
                   name: "description",
@@ -1085,7 +1081,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x6dceac19c5f115d9b2fc20a4b8c73603b0d7bac33124c39f72e19baa0e1594a",
+        "0x242fc0c634f0101138961bd715de3546492badfea2b2f7f23a48076d5942ce7",
     },
   },
 } as const;
