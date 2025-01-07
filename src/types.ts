@@ -4,6 +4,7 @@ export type Args = string[];
 
 export type RawOptions = {
   project: string | null;
+  directory: string | null;
   install: boolean | null;
   dev: boolean;
   extensions: Extension[] | null;
@@ -44,7 +45,7 @@ export const isExtension = (item: ExtensionOrNull): item is Extension =>
  * but `default` type will be any valid Extension.
  */
 export const typedQuestion = <T extends ExtensionOrNull[]>(
-  question: ExtensionQuestion<T>
+  question: ExtensionQuestion<T>,
 ) => question;
 export type Config = {
   questions: ExtensionQuestion[];
@@ -69,7 +70,7 @@ export type ExtensionDict = {
 };
 
 export const extensionWithSubextensions = (
-  extension: ExtensionDescriptor | undefined
+  extension: ExtensionDescriptor | undefined,
 ): extension is ExtensionBranch => {
   return Object.prototype.hasOwnProperty.call(extension, "extensions");
 };
