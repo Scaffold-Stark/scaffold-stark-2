@@ -18,6 +18,7 @@ import { devnet } from "@starknet-react/chains";
 import { useProvider } from "@starknet-react/core";
 import { hash, RpcProvider } from "starknet";
 import { events as starknetEvents, CallData } from "starknet";
+import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
 
 /**
  * Reads events from a deployed contract
@@ -47,6 +48,7 @@ export const useScaffoldEventHistory = <
   transactionData,
   receiptData,
   watch,
+  format = true,
   enabled = true,
 }: UseScaffoldEventHistoryConfig<
   TContractName,
@@ -111,6 +113,7 @@ export const useScaffoldEventHistory = <
         const newEvents = [];
         for (let i = logs.length - 1; i >= 0; i--) {
           newEvents.push({
+            event,
             log: logs[i],
             block:
               blockData && logs[i].block_hash === null
@@ -201,14 +204,17 @@ export const useScaffoldEventHistory = <
           CallData.getAbiEnum(deployedContractData.abi),
         );
         const args = parsed.length ? parsed[0][eventName] : {};
+        const { event: rawEvent, ...rest } = event;
         return {
+          type: rawEvent.members,
           args,
-          ...event,
+          parsedArgs: format ? parseEventData(args, rawEvent.members) : null,
+          ...rest,
         };
       });
     }
     return [];
-  }, [deployedContractData, events, eventName]);
+  }, [deployedContractData, events, eventName, format]);
 
   return {
     data: eventHistoryData,
