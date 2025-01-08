@@ -13,7 +13,7 @@ import {
   isSierra,
   TransactionReceipt,
 } from "starknet";
-import { DeployContractParams, Network } from "./types";
+import { DeclareContractParams, DeployContractParams, Network } from "./types";
 import { green, red, yellow } from "./helpers/colorize-log";
 import { getTxVersion } from "./helpers/fees";
 
@@ -131,10 +131,9 @@ const findContractFile = (
   return path.join(targetDir, matchingFile);
 };
 
-const declareContract = async (params: {
-  contract: string;
-  options?: UniversalDetails;
-}): Promise<{
+const declareContract = async (
+  params: DeclareContractParams
+): Promise<{
   classHash: string;
 }> => {
   const { contract, options } = params;

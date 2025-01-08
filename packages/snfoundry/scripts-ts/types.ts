@@ -14,3 +14,8 @@ export interface DeployContractParams {
   contractName?: string;
   options?: any;
 }
+
+export interface DeclareContractParams {
+  contract: string;
+  options?: any;
+}
