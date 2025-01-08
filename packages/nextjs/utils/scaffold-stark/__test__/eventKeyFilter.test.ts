@@ -347,4 +347,106 @@ describe("composeEventFilterKeys", () => {
       ["0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"],
     ]);
   });
+
+  it("should compose event filter keys with multiple matching keys correctly", () => {
+    expect(
+      composeEventFilterKeys(
+        {
+          greeting_setter: [
+            "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+            "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b3",
+            "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b4",
+          ],
+          new_greeting: "hello world",
+          event_type: [9987n, 9988n, 9989n],
+          addresses: [
+            [
+              "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+              "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b3",
+            ],
+            [
+              "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b3",
+              "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+            ],
+            [
+              "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b4",
+              "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115695",
+            ],
+          ],
+        },
+        event as any,
+        mockDeployedContractAbi.abi,
+      ),
+    ).toEqual([
+      [
+        "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+        "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b3",
+        "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b4",
+      ],
+      ["0x0"],
+      ["0x68656c6c6f20776f726c64"],
+      ["0xb"],
+      ["0x2703", "0x2704", "0x2705"],
+      ["0x0", "0x0", "0x0"],
+      ["0x2", "0x2", "0x2"],
+      [
+        "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+        "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b3",
+        "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b4",
+      ],
+      [
+        "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b3",
+        "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+        "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115695",
+      ],
+    ]);
+  });
+
+  it("should compose event filter keys with multiple matching keys when 2d array is not uniform length", () => {
+    expect(
+      composeEventFilterKeys(
+        {
+          greeting_setter: [
+            "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+            "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b3",
+            "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b4",
+          ],
+          new_greeting: "hello world",
+          event_type: [9987n, 9988n, 9989n],
+          addresses: [
+            [
+              "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+              "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b3",
+            ],
+            [
+              "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b3",
+              "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+            ],
+            [
+              "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b4",
+            ],
+          ],
+          tup: {
+            0: 1n,
+            1: 2n,
+            2: true,
+            3: "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+          },
+        },
+        event as any,
+        mockDeployedContractAbi.abi,
+      ),
+    ).toEqual([
+      [
+        "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+        "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b3",
+        "0x6a1991c289bda4d029f9acee45b37c0f4ed86d0c35d977ed320f8594afaa0b4",
+      ],
+      ["0x0"],
+      ["0x68656c6c6f20776f726c64"],
+      ["0xb"],
+      ["0x2703", "0x2704", "0x2705"],
+      ["0x0", "0x0", "0x0"],
+    ]);
+  });
 });

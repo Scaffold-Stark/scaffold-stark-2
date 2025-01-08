@@ -59,6 +59,21 @@ export const serializeEventKey = (
   return parsed.map((item: string) => stringToHexString(item));
 };
 
+const is2DArray = (arr: any) => {
+  return Array.isArray(arr) && arr.every((item) => Array.isArray(item));
+};
+
+const isUniformLength = (arr: any[][]) => {
+  if (!Array.isArray(arr) || arr.length === 0) return false;
+
+  const firstLength = arr[0].length;
+  return arr.every((subArray) => subArray.length === firstLength);
+};
+
+const mergeArrays = (arrays: any[][]) => {
+  return arrays[0].map((_, index) => arrays.map((array) => array[index][0]));
+};
+
 const certainLengthTypeMap: { [key: string]: string[][] } = {
   "core::starknet::contract_address::ContractAddress": [[]],
   "core::starknet::eth_address::EthAddress": [[]],
@@ -89,10 +104,14 @@ export const composeEventFilterKeys = (
   }
   const enums = CallData.getAbiEnum(abi);
   const structs = CallData.getAbiStruct(abi);
+  const members = event.members as unknown as {
+    name: string;
+    type: string;
+    kind: "key" | "data";
+    value: any;
+  }[];
   let keys: string[][] = [];
-  const keyMembers = event.members.filter(
-    (member) => member.kind === "key",
-  ) as { name: string; type: string; kind: "key" | "data"; value: any }[];
+  const keyMembers = members.filter((member) => member.kind === "key");
   const clonedKeyMembers = JSON.parse(JSON.stringify(keyMembers));
   for (const member of clonedKeyMembers) {
     if (member.name in input) {
@@ -101,11 +120,44 @@ export const composeEventFilterKeys = (
   }
   for (const member of clonedKeyMembers) {
     if (member.value !== undefined) {
-      keys = keys.concat(
-        serializeEventKey(member.value, member, structs, enums).map((item) => [
-          item,
-        ]),
-      );
+      if (
+        !member.type.startsWith("core::array::Array::") &&
+        Array.isArray(member.value)
+      ) {
+        keys = keys.concat(
+          mergeArrays(
+            member.value.map((matchingItem: any) =>
+              serializeEventKey(matchingItem, member, structs, enums).map(
+                (item) => [item],
+              ),
+            ),
+          ),
+        );
+      } else if (
+        member.type.startsWith("core::array::Array::") &&
+        is2DArray(member.value)
+      ) {
+        if (!isUniformLength(member.value)) {
+          break;
+        }
+        keys = keys.concat(
+          mergeArrays(
+            member.value.map((matchingItem: any) =>
+              serializeEventKey(matchingItem, member, structs, enums).map(
+                (item) => [item],
+              ),
+            ),
+          ),
+        );
+      } else {
+        const serializedKeys = serializeEventKey(
+          member.value,
+          member,
+          structs,
+          enums,
+        ).map((item) => [item]);
+        keys = keys.concat(serializedKeys);
+      }
     } else {
       if (member.type in certainLengthTypeMap) {
         keys = keys.concat(certainLengthTypeMap[member.type]);
