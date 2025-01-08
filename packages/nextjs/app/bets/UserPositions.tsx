@@ -17,7 +17,7 @@ function UserPositions() {
   } = useScaffoldEventHistory({
     contractName: "BetMaker",
     eventName: "contracts::BetMaker::BetMaker::CryptoBetPositionCreated",
-    fromBlock: BigInt(1018365),
+    fromBlock: BigInt(process.env.NEXT_PUBLIC_EVENT_STARTING_BLOCK || "0"),
     blockData: true,
     transactionData: false,
     receiptData: false,
@@ -33,7 +33,7 @@ function UserPositions() {
         num.cleanHex(address ?? "")
       );
     });
-  }, [positions.length, address]);
+  }, [positions, address]);
 
   return (
     <div>

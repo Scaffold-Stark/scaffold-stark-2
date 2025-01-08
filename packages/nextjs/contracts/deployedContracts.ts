@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     YourContract: {
       address:
-        "0x42fb7a5b4242c68fdc92e399f9701543198efb80f24f6a09abe83dab97d9af5",
+        "0x45cd6c5b283519c9d296d3c77a04aca776d9af9e8b383de928271a048f81280",
       abi: [
         {
           type: "impl",
@@ -263,7 +263,7 @@ const deployedContracts = {
     },
     BetMaker: {
       address:
-        "0x5c12fd55da4472a6b150da333f94e9d1282cd3334e438db0d8000f9fec5e40c",
+        "0x71bd687b897c6cce47a2b1c91eca3e65a40b65c29457a30d78e25de62bc0354",
       abi: [
         {
           type: "impl",
@@ -718,6 +718,22 @@ const deployedContracts = {
             },
             {
               type: "function",
+              name: "claim_assets_from_yield_strategy",
+              inputs: [
+                {
+                  name: "bet_id",
+                  type: "core::integer::u256",
+                },
+                {
+                  name: "bet_type",
+                  type: "contracts::BetMaker::BetType",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
               name: "claim_rewards",
               inputs: [
                 {
@@ -877,6 +893,22 @@ const deployedContracts = {
                 {
                   name: "wallet",
                   type: "core::starknet::contract_address::ContractAddress",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+            {
+              type: "function",
+              name: "retreive_contract_assets",
+              inputs: [
+                {
+                  name: "amount",
+                  type: "core::integer::u256",
+                },
+                {
+                  name: "token",
+                  type: "contracts::BetMaker::ERC20BetTokenType",
                 },
               ],
               outputs: [],
@@ -1081,7 +1113,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x242fc0c634f0101138961bd715de3546492badfea2b2f7f23a48076d5942ce7",
+        "0x5fa3640406c16a5ce6b7224612f6f5f5d449cbdf0c6f368e190a908073cee37",
     },
   },
 } as const;

@@ -31,7 +31,7 @@ function BetsOverview() {
   const { data, isLoading, error } = useScaffoldEventHistory({
     contractName: "BetMaker",
     eventName: "contracts::BetMaker::BetMaker::CryptoBetCreated",
-    fromBlock: BigInt(1018365),
+    fromBlock: BigInt(process.env.NEXT_PUBLIC_EVENT_STARTING_BLOCK || "0"),
     blockData: true,
     transactionData: false,
     receiptData: false,

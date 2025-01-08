@@ -2,12 +2,22 @@
 
 import {
   ColumnDef,
+  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { useState } from "react";
 import { Button } from "~~/app/Uikit/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "~~/app/Uikit/components/ui/dropdown-menu";
+import { Input } from "~~/app/Uikit/components/ui/input";
 import { Skeleton } from "~~/app/Uikit/components/ui/skeleton";
 import { SkeletonHeader } from "~~/app/Uikit/components/ui/skeletons";
 
@@ -31,15 +41,53 @@ export function DataTable<TData, TValue>({
   data,
   isLoading,
 }: DataTableProps<TData, TValue>) {
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      columnFilters,
+    },
   });
 
   return (
     <div>
+      <div className="flex items-center py-4">
+        <Input
+          placeholder="Filter names..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          onChange={(event) => {
+            table.getColumn("name")?.setFilterValue(event.target.value);
+          }}
+          className="max-w-sm"
+        />
+        {/* <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              Include
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuCheckboxItem
+              className="capitalize"
+              checked={table.getColumn("status")?.getFilterValue() !== true}
+              onCheckedChange={(value) => {
+                if (value === false)
+                  table.getColumn("status")?.setFilterValue(true);
+                else table.getColumn("status")?.setFilterValue(undefined);
+              }}
+            >
+              {"Past bets"}
+            </DropdownMenuCheckboxItem>
+          </DropdownMenuContent>
+        </DropdownMenu> */}
+      </div>
+
       <div className="rounded-md border">
         <Table>
           {isLoading ? (
@@ -140,7 +188,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  No positions yet.
                 </TableCell>
               </TableRow>
             )}
@@ -148,7 +196,7 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       <div className="flex items-center justify-between">
-        <div>{`Page ${table.getState().pagination.pageIndex + 1} of ${table.getPageCount()}`}</div>
+        <div>{`Page ${table.getPageCount() === 0 ? 0 : table.getState().pagination.pageIndex + 1} of ${table.getPageCount()}`}</div>
         <div className="flex items-center justify-end space-x-2 py-4">
           <Button
             variant="outline"

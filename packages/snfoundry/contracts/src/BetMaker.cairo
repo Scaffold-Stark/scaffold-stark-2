@@ -227,6 +227,10 @@ pub trait IBetMaker<TContractState> {
     ) -> u256;
     fn get_oracle_crypto_price(self: @TContractState, asset_key: felt252) -> u128;
     fn set_vault_wallet(ref self: TContractState, wallet: ContractAddress);
+
+    fn retreive_contract_assets(
+        ref self: TContractState, amount: u256, token: ERC20BetTokenType,
+    ); // For tests in mainnet
 }
 
 #[starknet::contract]
@@ -600,7 +604,6 @@ mod BetMaker {
             self.ownable.assert_only_owner();
             assert(bet_id <= self.total_crypto_bets.read(), 'Bet does not exist');
             let mut bet_data = self.crypto_bets.read(bet_id);
-            assert(bet_data.is_settled == false, 'Bet is already settled');
 
             bet_data.is_settled = true;
             bet_data.is_active = false;
@@ -787,6 +790,22 @@ mod BetMaker {
         fn set_vault_wallet(ref self: ContractState, wallet: ContractAddress) {
             self.ownable.assert_only_owner();
             self.vault_wallet.write(wallet);
+        }
+
+        fn retreive_contract_assets(
+            ref self: ContractState, amount: u256, token: ERC20BetTokenType,
+        ) {
+            self.ownable.assert_only_owner();
+            let bet_token = match token {
+                ERC20BetTokenType::Eth(address) => ERC20BetToken {
+                    name: 'Eth', dispatcher: IERC20Dispatcher { contract_address: address },
+                },
+                ERC20BetTokenType::Usdc(address) => ERC20BetToken {
+                    name: 'Usdc', dispatcher: IERC20Dispatcher { contract_address: address },
+                },
+            };
+
+            bet_token.dispatcher.transfer(get_caller_address(), amount);
         }
     }
 }

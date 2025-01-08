@@ -16,14 +16,16 @@ import { isTwoDaysAfterUTC } from "~~/utils/starksight";
 
 export const columns: ColumnDef<{ args: UserPostion }>[] = [
   {
-    id: "name",
+    accessorKey: "name",
+    accessorFn: (row) => row.args.market.name,
     header: "Name",
     cell: ({ row }) => {
       return <div className="font-medium">{row.original.args.market.name}</div>;
     },
   },
   {
-    id: "status",
+    accessorKey: "status",
+    accessorFn: (row) => row.args.market.is_active,
     header: () => <div className="text-right">Bet Status</div>,
     cell: ({ row }) => {
       const betType = shortString
@@ -155,13 +157,13 @@ export const columns: ColumnDef<{ args: UserPostion }>[] = [
         ],
       });
 
-      if (!betInfos || !userPosition || !claimValue)
+      if (!betInfos || !userPosition)
         return <Skeleton className="h-8 w-full" />;
       if (!betInfos.is_settled)
         return (
           <div className="flex justify-end font-medium">
             <Button variant={"outline"} disabled>
-              wait for results
+              bet still active
             </Button>
           </div>
         );
@@ -193,7 +195,7 @@ export const columns: ColumnDef<{ args: UserPostion }>[] = [
             color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
           >
             Claim{" "}
-            {parseFloat(formatUnits(BigInt(claimValue) || "0")).toFixed(4)}
+            {parseFloat(formatUnits(BigInt(claimValue || 0) || "0")).toFixed(4)}
           </ShineBorder>
         </div>
       );
