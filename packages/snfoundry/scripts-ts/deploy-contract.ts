@@ -31,7 +31,6 @@ const argv = yargs(process.argv.slice(2))
     type: "string",
     description: "Specify the network",
     demandOption: true,
-    choices: ["devnet", "sepolia", "mainnet"],
   })
   .option("reset", {
     alias: "nr",
@@ -54,30 +53,10 @@ const resetDeployments: boolean = argv.reset;
 const feeToken: string = argv.fee;
 
 let deployments = {};
+let declarations = {};
 let deployCalls = [];
 
 const { provider, deployer }: Network = networks[networkName];
-
-const findContractFile = (
-  contract: string,
-  fileType: "compiled_contract_class" | "contract_class"
-): string => {
-  const targetDir = path.resolve(__dirname, "../contracts/target/dev");
-  const files = fs.readdirSync(targetDir);
-
-  // Look for files that end with the contract name and file type
-  const pattern = new RegExp(`.*${contract}\\.${fileType}\\.json$`);
-  const matchingFile = files.find((file) => pattern.test(file));
-
-  if (!matchingFile) {
-    throw new Error(
-      `Could not find ${fileType} file for contract "${contract}". ` +
-        `Try removing snfoundry/contracts/target, then run 'yarn compile' and check if your contract name is correct inside the contracts/target/dev directory.`
-    );
-  }
-
-  return path.join(targetDir, matchingFile);
-};
 
 const declareIfNot_NotWait = async (
   payload: DeclareContractPayload,
@@ -111,37 +90,6 @@ const declareIfNot_NotWait = async (
   };
 };
 
-const declareContract = async (): Promise<void> => {
-  try {
-    const contract = "YourContract";
-
-    const compiledContractSierra = JSON.parse(
-      fs
-        .readFileSync(findContractFile(contract, "contract_class"))
-        .toString("ascii")
-    );
-
-    const compiledContractCasm = JSON.parse(
-      fs
-        .readFileSync(findContractFile(contract, "compiled_contract_class"))
-        .toString("ascii")
-    );
-
-    console.log(yellow("Declaring Contract..."));
-
-    const { classHash } = await declareIfNot_NotWait({
-      contract: compiledContractSierra,
-      casm: compiledContractCasm,
-    });
-
-    console.log(green("Contract Declared Successfully"));
-    console.log("Class Hash:", classHash);
-  } catch (error) {
-    console.error(red("Error declaring contract:"), error);
-    process.exit(1);
-  }
-};
-
 const deployContract_NotWait = async (payload: {
   salt: string;
   classHash: string;
@@ -160,6 +108,86 @@ const deployContract_NotWait = async (payload: {
     console.error(red("Error building UDC call:"), error);
     throw error;
   }
+};
+
+const findContractFile = (
+  contract: string,
+  fileType: "compiled_contract_class" | "contract_class"
+): string => {
+  const targetDir = path.resolve(__dirname, "../contracts/target/dev");
+  const files = fs.readdirSync(targetDir);
+
+  // Look for files that end with the contract name and file type
+  const pattern = new RegExp(`.*${contract}\\.${fileType}\\.json$`);
+  const matchingFile = files.find((file) => pattern.test(file));
+
+  if (!matchingFile) {
+    throw new Error(
+      `Could not find ${fileType} file for contract "${contract}". ` +
+        `Try removing snfoundry/contracts/target, then run 'yarn compile' and check if your contract name is correct inside the contracts/target/dev directory.`
+    );
+  }
+
+  return path.join(targetDir, matchingFile);
+};
+
+const declareContract = async (params: {
+  contract: string;
+  options?: UniversalDetails;
+}): Promise<{
+  classHash: string;
+}> => {
+  const { contract, options } = params;
+
+  let compiledContractCasm;
+  let compiledContractSierra;
+
+  try {
+    compiledContractCasm = JSON.parse(
+      fs
+        .readFileSync(findContractFile(contract, "compiled_contract_class"))
+        .toString("ascii")
+    );
+  } catch (error) {
+    console.error(red("Error reading compiled contract class file: "), error);
+    return {
+      classHash: "",
+    };
+  }
+
+  try {
+    compiledContractSierra = JSON.parse(
+      fs
+        .readFileSync(findContractFile(contract, "contract_class"))
+        .toString("ascii")
+    );
+  } catch (error) {
+    console.error(red("Error reading contract class file: "), error);
+    return {
+      classHash: "",
+    };
+  }
+
+  console.log(yellow("Declaring Contract"), contract);
+
+  const { classHash } = await declareIfNot_NotWait(
+    {
+      contract: compiledContractSierra,
+      casm: compiledContractCasm,
+    },
+    options
+  );
+
+  declarations[contract] = {
+    classHash: classHash,
+    contract: contract,
+  };
+
+  console.log(green("Contract Declared at"), classHash);
+
+  return {
+    classHash: classHash,
+  };
 };
 
 /**
@@ -355,8 +383,8 @@ const exportDeployments = () => {
 };
 
 export {
-  declareContract,
   deployContract,
+  declareContract,
   provider,
   deployer,
   loadExistingDeployments,

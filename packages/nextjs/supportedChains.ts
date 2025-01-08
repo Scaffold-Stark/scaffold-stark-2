@@ -2,7 +2,7 @@ import * as chains from "@starknet-react/chains";
 
 // devnet with mainnet network ID
 const mainnetFork = {
-  id: BigInt("393402133025997798000961"), //devnet id
+  id: BigInt("0x534e5f4d41494e"),
   network: "devnet",
   name: "Starknet Devnet",
   nativeCurrency: {
