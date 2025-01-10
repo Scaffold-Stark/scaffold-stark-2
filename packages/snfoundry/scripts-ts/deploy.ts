@@ -13,6 +13,7 @@ import { green } from "./helpers/colorize-log";
  *     contract: "YourContract",
  *     options: {}
  *   });
+ * };
  *
  **/
 
