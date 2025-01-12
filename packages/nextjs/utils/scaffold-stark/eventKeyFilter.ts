@@ -11,12 +11,7 @@ import {
   parseCalldataField,
 } from "starknet";
 import { ContractAbi, ContractName } from "./contract";
-
-const stringToHexString = (numStr: string) => {
-  const bigIntValue = BigInt(numStr);
-  const hexString = bigIntValue.toString(16);
-  return `0x${hexString}`;
-};
+import { feltToHex } from "./common";
 
 const stringToByteArrayFelt = (str: string): string[] => {
   const bytes = new TextEncoder().encode(str);
@@ -49,14 +44,14 @@ export const serializeEventKey = (
   enums: AbiEnums,
 ): string[] => {
   if (abiEntry.type === "core::byte_array::ByteArray") {
-    return stringToByteArrayFelt(input).map((item) => stringToHexString(item));
+    return stringToByteArrayFelt(input).map((item) => feltToHex(BigInt(item)));
   }
   const args = [input][Symbol.iterator]();
   const parsed = parseCalldataField(args, abiEntry, structs, enums);
   if (typeof parsed === "string") {
-    return [stringToHexString(parsed)];
+    return [feltToHex(BigInt(parsed))];
   }
-  return parsed.map((item: string) => stringToHexString(item));
+  return parsed.map((item: string) => feltToHex(BigInt(item)));
 };
 
 const is2DArray = (arr: any) => {
