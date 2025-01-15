@@ -7,7 +7,8 @@
   "workspaces": {
     "packages": [
       "packages/snfoundry",
-      "packages/nextjs"
+      "packages/nextjs",
+      "packages/ai-agent"
     ]
   },
   "scripts": {
@@ -25,7 +26,9 @@
     "format": "yarn workspace @ss-2/nextjs format && yarn workspace @ss-2/snfoundry format",
     "format:check": "yarn workspace @ss-2/nextjs format:check && yarn workspace @ss-2/snfoundry format:check",
     "prepare": "husky",
-    "verify": "yarn workspace @ss-2/snfoundry verify"
+    "verify": "yarn workspace @ss-2/snfoundry verify",
+    "start-agent": "yarn workspace @ss-2/ai-agent dev",
+    "dev-agent": "yarn workspace @ss-2/ai-agent dev"
   },
   "packageManager": "yarn@3.2.3",
   "devDependencies": {
