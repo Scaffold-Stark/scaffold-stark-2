@@ -370,7 +370,7 @@ export type UseScaffoldEventHistoryConfig<
   contractName: TContractName;
   eventName: IsContractDeclarationMissing<string, TEventName>;
   fromBlock: bigint;
-  filters?: any;
+  filters?: { [key: string]: any };
   blockData?: TBlockData;
   transactionData?: TTransactionData;
   receiptData?: TReceiptData;
