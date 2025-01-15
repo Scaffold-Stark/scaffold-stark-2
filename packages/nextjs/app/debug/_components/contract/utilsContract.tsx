@@ -110,11 +110,7 @@ export const getArgsAsStringInputFromForm = (form: Record<string, any>) => {
     }
 
     // enum & struct
-    if (
-      key.includes("contracts::") ||
-      isCairoResult(key) ||
-      isCairoOption(key)
-    ) {
+    if (!key.includes("core::") || isCairoResult(key) || isCairoOption(key)) {
       type FormStructValue = {
         type: string;
         value: any;
