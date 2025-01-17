@@ -12,14 +12,12 @@ interface CommandLineOptions {
 
 function main() {
   const argv = yargs(process.argv.slice(2))
-    .options({
-      network: { type: "string", default: "devnet" },
-      fee: { type: "string", choices: ["eth", "strk"], default: "eth" },
-      reset: {
-        type: "boolean",
-        description: "Do not reset deployments (keep existing deployments)",
-        default: true,
-      },
+    .option("network", { type: "string", default: "devnet" })
+    .option("fee", { type: "string", choices: ["eth", "strk"], default: "eth" })
+    .option("reset", {
+      type: "boolean",
+      description: "Do not reset deployments (keep existing deployments)",
+      default: true,
     })
     .demandOption(["network", "fee", "reset"])
     .parseSync() as CommandLineOptions;
@@ -31,20 +29,13 @@ function main() {
     return;
   }
 
-  // Set the NETWORK environment variable based on the --network argument
-  process.env.NETWORK = argv.network || "devnet";
-  process.env.FEE_TOKEN = argv.fee || "eth";
-  process.env.RESET = argv.reset ? "true" : "false";
-
-  console.log(process.env.NETWORK, process.env.FEE_TOKEN, process.env.NO_RESET);
-
   // Execute the deploy script without the reset option
   try {
     execSync(
       `cd contracts && scarb build && ts-node ../scripts-ts/deploy.ts` +
-        ` --network ${process.env.NETWORK}` +
-        ` --fee ${process.env.FEE_TOKEN}` +
-        ` --reset ${process.env.RESET}` +
+        ` --network ${argv.network || "devnet"}` +
+        ` --fee ${argv.fee || "eth"}` +
+        ` ${!argv.reset && "--no-reset "}` +
         ` && ts-node ../scripts-ts/helpers/parse-deployments.ts && cd ..`,
       { stdio: "inherit" },
     );
