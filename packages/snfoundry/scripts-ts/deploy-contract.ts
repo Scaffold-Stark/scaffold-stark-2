@@ -305,7 +305,7 @@ const exportDeployments = () => {
     `../deployments/${networkName}_latest.json`,
   );
 
-  const resetDeployments: boolean = argv.reset;
+  const resetDeployments: boolean = argv.reset ?? true;
 
   if (!resetDeployments && fs.existsSync(networkPath)) {
     const currentTimestamp = new Date().getTime();
