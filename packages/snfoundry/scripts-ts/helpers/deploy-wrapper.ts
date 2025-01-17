@@ -12,7 +12,7 @@ interface CommandLineOptions {
 
 const argv = yargs(process.argv.slice(2))
   .options({
-    network: { type: "string" },
+    network: { type: "string", default: "devnet" },
     fee: { type: "string", choices: ["eth", "strk"], default: "eth" },
     reset: {
       type: "boolean",
@@ -20,6 +20,7 @@ const argv = yargs(process.argv.slice(2))
       default: true,
     },
   })
+  .demandOption(["network", "fee", "reset"])
   .parseSync() as CommandLineOptions;
 
 // Set the NETWORK environment variable based on the --network argument
@@ -35,7 +36,7 @@ try {
       ` --fee ${process.env.FEE_TOKEN}` +
       ` --no-reset ${process.env.NO_RESET}` +
       ` && ts-node ../scripts-ts/helpers/parse-deployments.ts && cd ..`,
-    { stdio: "inherit" }
+    { stdio: "inherit" },
   );
 } catch (error) {
   console.error("Error during deployment:", error);
