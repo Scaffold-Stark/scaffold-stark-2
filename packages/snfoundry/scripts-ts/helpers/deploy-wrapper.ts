@@ -24,7 +24,7 @@ function main() {
 
   if (argv._.length > 0) {
     console.error(
-      `❌ Invalid arguments, only --network, --fee, or --reset/--no-reset can be passed in`,
+      `❌ Invalid arguments, only --network, --fee, or --reset/--no-reset can be passed in`
     );
     return;
   }
@@ -37,7 +37,7 @@ function main() {
         ` --fee ${argv.fee || "eth"}` +
         ` ${!argv.reset && "--no-reset "}` +
         ` && ts-node ../scripts-ts/helpers/parse-deployments.ts && cd ..`,
-      { stdio: "inherit" },
+      { stdio: "inherit" }
     );
   } catch (error) {
     console.error("Error during deployment:", error);
