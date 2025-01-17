@@ -18,7 +18,10 @@ import { devnet } from "@starknet-react/chains";
 import { useProvider } from "@starknet-react/core";
 import { hash, RpcProvider } from "starknet";
 import { events as starknetEvents, CallData } from "starknet";
+import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
+import { composeEventFilterKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
 
+const MAX_KEYS_COUNT = 16;
 /**
  * Reads events from a deployed contract
  * @param config - The config settings
@@ -47,6 +50,7 @@ export const useScaffoldEventHistory = <
   transactionData,
   receiptData,
   watch,
+  format = true,
   enabled = true,
 }: UseScaffoldEventHistoryConfig<
   TContractName,
@@ -93,11 +97,18 @@ export const useScaffoldEventHistory = <
         (fromBlock && blockNumber >= fromBlock) ||
         blockNumber >= fromBlockUpdated
       ) {
+        let keys: string[][] = [
+          [hash.getSelectorFromName(event.name.split("::").slice(-1)[0])],
+        ];
+        if (filters) {
+          keys = keys.concat(
+            composeEventFilterKeys(filters, event, deployedContractData.abi),
+          );
+        }
+        keys = keys.slice(0, MAX_KEYS_COUNT);
         const rawEventResp = await publicClient.getEvents({
           chunk_size: 100,
-          keys: [
-            [hash.getSelectorFromName(event.name.split("::").slice(-1)[0])],
-          ],
+          keys,
           address: deployedContractData?.address,
           from_block: { block_number: Number(fromBlock || fromBlockUpdated) },
           to_block: { block_number: blockNumber },
@@ -111,6 +122,7 @@ export const useScaffoldEventHistory = <
         const newEvents = [];
         for (let i = logs.length - 1; i >= 0; i--) {
           newEvents.push({
+            event,
             log: logs[i],
             block:
               blockData && logs[i].block_hash === null
@@ -201,14 +213,17 @@ export const useScaffoldEventHistory = <
           CallData.getAbiEnum(deployedContractData.abi),
         );
         const args = parsed.length ? parsed[0][eventName] : {};
+        const { event: rawEvent, ...rest } = event;
         return {
+          type: rawEvent.members,
           args,
-          ...event,
+          parsedArgs: format ? parseEventData(args, rawEvent.members) : null,
+          ...rest,
         };
       });
     }
     return [];
-  }, [deployedContractData, events, eventName]);
+  }, [deployedContractData, events, eventName, format]);
 
   return {
     data: eventHistoryData,

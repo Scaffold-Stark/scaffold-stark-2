@@ -88,15 +88,22 @@ export const deepMergeContracts = <
     new Set([...Object.keys(local), ...Object.keys(external)]),
   );
   for (const key of allKeys) {
-    if (!external[key]) {
-      result[key] = local[key];
-      continue;
+    const localValue = local[key];
+    const externalValue = external[key];
+    if (
+      typeof localValue === "object" &&
+      typeof externalValue === "object" &&
+      localValue !== null &&
+      externalValue !== null
+    ) {
+      // Recursively merge nested objects
+      result[key] = deepMergeContracts(localValue, externalValue);
+    } else {
+      // Use external value if available, otherwise fallback to local
+      result[key] = externalValue !== undefined ? externalValue : localValue;
     }
-    const amendedExternal = Object.fromEntries(
-      Object.entries(external[key] as Record<string, Record<string, unknown>>),
-    );
-    result[key] = { ...local[key], ...amendedExternal };
   }
+
   return result as MergeDeepRecord<
     AddExternalFlag<L>,
     AddExternalFlag<E>,
@@ -363,11 +370,12 @@ export type UseScaffoldEventHistoryConfig<
   contractName: TContractName;
   eventName: IsContractDeclarationMissing<string, TEventName>;
   fromBlock: bigint;
-  filters?: any;
+  filters?: { [key: string]: any };
   blockData?: TBlockData;
   transactionData?: TTransactionData;
   receiptData?: TReceiptData;
   watch?: boolean;
+  format?: boolean;
   enabled?: boolean;
 };
 
@@ -395,8 +403,8 @@ export function getFunctionsByStateMutability(
     });
 }
 
-// TODO: in the future when param decoding is standarized in wallets argent and braavos we can return the object
-// new starknet react hooks (v3) doesnt use raw parse
+// TODO: in the future when param decoding is standardized in wallets argent and braavos we can return the object
+// new starknet react hooks (v3) doesn't use raw parse
 function tryParsingParamReturnValues(
   fn: (x: any) => {},
   param: any,
@@ -447,7 +455,11 @@ const decodeParamsWithType = (paramType: string, param: any): unknown => {
       const option = x as CairoOption<any>;
       return option.isNone()
         ? "None"
-        : `Some(${parseParamWithType(paramType.split("<").pop()!, option.unwrap(), isRead)})`;
+        : `Some(${parseParamWithType(
+            paramType.split("<").pop()!,
+            option.unwrap(),
+            isRead,
+          )})`;
     }, param);
   } else if (isCairoResult(paramType)) {
     return tryParsingParamReturnObject((x) => {
