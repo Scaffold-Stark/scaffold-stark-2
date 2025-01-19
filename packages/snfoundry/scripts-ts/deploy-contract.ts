@@ -49,7 +49,7 @@ const argv = yargs(process.argv.slice(2))
   .parseSync() as Arguments;
 
 const networkName: string = argv.network;
-const resetDeployments: boolean = argv.reset;
+const resetDeployments: boolean = argv.reset ?? true;
 const feeToken: string = argv.fee;
 
 let deployments = {};
@@ -305,7 +305,7 @@ const exportDeployments = () => {
     `../deployments/${networkName}_latest.json`
   );
 
-  const resetDeployments: boolean = argv.reset;
+  const resetDeployments: boolean = argv.reset ?? true;
 
   if (!resetDeployments && fs.existsSync(networkPath)) {
     const currentTimestamp = new Date().getTime();

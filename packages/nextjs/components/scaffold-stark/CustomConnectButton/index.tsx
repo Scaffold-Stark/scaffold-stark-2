@@ -45,7 +45,7 @@ export const CustomConnectButton = () => {
   }, [account]);
 
   if (status === "disconnected") return <ConnectModal />;
-  // Skip wrong network check if using a fork
+
   if (accountChainId !== targetNetwork.id) {
     return <WrongNetworkDropdown />;
   }
