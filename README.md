@@ -73,6 +73,27 @@ If your Starknet Foundry version is not `0.35.1`, you need to install it.
 - Cairo - v2.9.2
 - Rpc - v0.7.1
 
+## Requirements (Alternative Option with Docker)
+
+As an alternative to installing the tools locally, you can use Docker. Here's what you need to do:
+
+1. Install [Docker](https://www.docker.com/get-started/)
+2. Install [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+3. Use the provided `devcontainer.json` file to set up the environment:
+   - The configuration uses the `starknetfoundation/starknet-dev:2.9.2` image.
+   - This includes all required tools pre-installed, such as Scarb, Starknet Foundry, Starknet Devnet and other dependencies.
+
+### Getting Started with Docker Setup
+
+To start using the Docker-based setup:
+
+1. Open the project in **Visual Studio Code**.
+2. Select **"Reopen in Container"**.
+3. If you need to rebuild the container, open the Command Palette (**View -> Command Palette**) and choose:
+   - **Dev Containers: Rebuild and Reopen in Container**
+
+> Once inside the container, you can start working with all the tools and dependencies pre-configured.
+
 ## Quickstart with Starknet-Devnet
 
 To get started with Scaffold-Stark, follow the steps below:
