@@ -32,7 +32,7 @@ jobs:
         run: curl -L https://raw.githubusercontent.com/foundry-rs/starknet-foundry/master/scripts/install.sh | sh
 
       - name: Install snforge
-        run: snfoundryup -v 0.34.0
+        run: snfoundryup -v 0.35.1
 
       - name: Run snforge tests
         run: snforge test
