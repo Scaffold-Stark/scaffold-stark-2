@@ -10,33 +10,44 @@ interface CommandLineOptions {
   fee?: string;
 }
 
-const argv = yargs(process.argv.slice(2))
-  .options({
-    network: { type: "string" },
-    fee: { type: "string", choices: ["eth", "strk"], default: "eth" },
-    reset: {
+function main() {
+  const argv = yargs(process.argv.slice(2))
+    .option("network", {
+      type: "string",
+      choices: ["devnet", "sepolia", "mainnet"],
+      default: "devnet",
+    })
+    .option("fee", { type: "string", choices: ["eth", "strk"], default: "eth" })
+    .option("reset", {
       type: "boolean",
       description: "Do not reset deployments (keep existing deployments)",
       default: true,
-    },
-  })
-  .parseSync() as CommandLineOptions;
+    })
+    .demandOption(["network", "fee", "reset"])
+    .parseSync() as CommandLineOptions;
 
-// Set the NETWORK environment variable based on the --network argument
-process.env.NETWORK = argv.network || "devnet";
-process.env.FEE_TOKEN = argv.fee || "eth";
-process.env.NO_RESET = !argv.reset ? "true" : "false";
+  if (argv._.length > 0) {
+    console.error(
+      `❌ Invalid arguments, only --network, --fee, or --reset/--no-reset can be passed in`
+    );
+    return;
+  }
 
-// Execute the deploy script without the reset option
-try {
-  execSync(
-    `cd contracts && scarb build && ts-node ../scripts-ts/deploy.ts` +
-      ` --network ${process.env.NETWORK}` +
-      ` --fee ${process.env.FEE_TOKEN}` +
-      ` --no-reset ${process.env.NO_RESET}` +
-      ` && ts-node ../scripts-ts/helpers/parse-deployments.ts && cd ..`,
-    { stdio: "inherit" }
-  );
-} catch (error) {
-  console.error("Error during deployment:", error);
+  // Execute the deploy script without the reset option
+  try {
+    execSync(
+      `cd contracts && scarb build && ts-node ../scripts-ts/deploy.ts` +
+        ` --network ${argv.network || "devnet"}` +
+        ` --fee ${argv.fee || "eth"}` +
+        ` ${!argv.reset && "--no-reset "}` +
+        ` && ts-node ../scripts-ts/helpers/parse-deployments.ts && cd ..`,
+      { stdio: "inherit" }
+    );
+  } catch (error) {
+    console.error("Error during deployment:", error);
+  }
+}
+
+if (require.main === module) {
+  main();
 }

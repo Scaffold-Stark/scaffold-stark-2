@@ -28,14 +28,8 @@ export const AddressInput = ({
         return;
       }
 
-      const isValid =
-        /^(0x)([a-fA-F0-9]{40})$/.test(sanitizedValue) &&
-        !/0x.*0x/.test(sanitizedValue);
+      const isValid = /^0x[a-f0-9]{1,64}$/.test(sanitizedValue);
       if (!isValid) {
-        return;
-      }
-
-      if (sanitizedValue.length !== 42) {
         return;
       }
 
