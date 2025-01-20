@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "transactions": {
+    "transactions": {
+      "196d86c22d6bd216c4c0497de3f9aa008a298f36478e25b7225a84ddc84c6643": {
+        "name": "declare",
+        "output": {
+          "type": "ErrorResponse",
+          "message": "Failed to find MapContract artifact in starknet_artifacts.json file. Please make sure you have specified correct package using `--package` flag and that you have enabled sierra and casm code generation in Scarb.toml."
+        },
+        "status": "Error",
+        "timestamp": 1737355530,
+        "misc": null
+      }
+    }
+  }
+}
