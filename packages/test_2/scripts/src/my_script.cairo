@@ -18,20 +18,22 @@ fn main() {
         "MapContract",
         FeeSettings::Eth(EthFeeSettings { max_fee: Option::Some(max_fee) }),
         Option::Some(declare_nonce)
-    ).expect('map declare failed');
+    );
 
-    let class_hash = declare_result.class_hash();
-    let deploy_nonce = get_nonce('pending');
+    println!("{:?}", declare_result);
 
-    let deploy_result = deploy(
-        *class_hash,
-        ArrayTrait::new(),
-        Option::Some(salt),
-        true,
-        FeeSettings::Eth(EthFeeSettings { max_fee: Option::Some(max_fee) }),
-        Option::Some(deploy_nonce)
-    )
-        .expect('map deploy failed');
+    // let class_hash = declare_result.class_hash();
+    // let deploy_nonce = get_nonce('pending');
 
-    assert(deploy_result.transaction_hash != 0, deploy_result.transaction_hash);
+    // let deploy_result = deploy(
+    //     *class_hash,
+    //     ArrayTrait::new(),
+    //     Option::Some(salt),
+    //     true,
+    //     FeeSettings::Eth(EthFeeSettings { max_fee: Option::Some(max_fee) }),
+    //     Option::Some(deploy_nonce)
+    // )
+    //     .expect('map deploy failed');
+
+    // assert(deploy_result.transaction_hash != 0, deploy_result.transaction_hash);
 }

@@ -2,26 +2,14 @@
   "version": 1,
   "transactions": {
     "transactions": {
-      "904f5e37e82cebd8e3573691c513ab2d04bd328e0e4149517aa575e26e0102a3": {
-        "name": "deploy",
-        "output": {
-          "type": "DeployResponse",
-          "contract_address": "0x04801752eb930eadd81ad4b20b60173f79cf25e045ca691a3d1dd2e8eb055ab1",
-          "transaction_hash": "0x003d17b6dfce754207f902d33af0914893ce4e8390ced92c5658bb987d7eb0f6"
-        },
-        "status": "Success",
-        "timestamp": 1737380920,
-        "misc": null
-      },
       "196d86c22d6bd216c4c0497de3f9aa008a298f36478e25b7225a84ddc84c6643": {
         "name": "declare",
         "output": {
-          "type": "DeclareResponse",
-          "class_hash": "0x06b8ceca5a3feb0b24dcbc5dec91c3c123e71064356743371d6be0bbe74e5968",
-          "transaction_hash": "0x06e15f69084995a96af4ed9a5a9e5f22cee1cef26edfb2bbbd199ece9a9e0a77"
+          "type": "ErrorResponse",
+          "message": "Transaction has been rejected"
         },
-        "status": "Success",
-        "timestamp": 1737380830,
+        "status": "Fail",
+        "timestamp": 1737452344,
         "misc": null
       }
     }
