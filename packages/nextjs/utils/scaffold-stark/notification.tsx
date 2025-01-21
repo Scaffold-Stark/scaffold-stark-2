@@ -97,16 +97,16 @@ const ToastContent = ({
         </div>
       </div>
 
-      <div className="flex items-center justify-center mt-2">
-        {needsExpand && (
+      {needsExpand && (
+        <div className="flex items-center justify-center mt-2">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             className="text-blue-500 hover:text-blue-700 text-sm"
           >
             {!isExpanded ? "View Details" : "Close Details"}
           </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
