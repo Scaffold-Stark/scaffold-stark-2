@@ -20,35 +20,28 @@ function loadEnvVariables(filePath: string): void {
   }
 }
 
-function generateNameString(length: number): string {
-  return crypto.randomBytes(length / 2).toString("hex");
-}
-
 function deploy(network: string = "devnet"): void {
-  const deployerName = generateNameString(8);
-  //const deployerName = "my_account_2";
-  console.log(`Deployer name: ${deployerName}`);
 
   let command: string;
   if (network === "sepolia") {
     console.log("sepolia network specified. Running...");
     command = `
-      sncast account import --url ${process.env.RPC_URL_SEPOLIA} --name "${deployerName}" --address ${process.env.ACCOUNT_ADDRESS_SEPOLIA} --private-key ${process.env.PRIVATE_KEY_SEPOLIA} --type argent --add-profile "${deployerName}" && 
-      pwd && cd scripts && sncast --account ${deployerName} script run deploy_script --url ${process.env.RPC_URL_SEPOLIA}
+      sncast account import --url ${process.env.RPC_URL_SEPOLIA} --name "scaffold-sepolia-account-1" --address ${process.env.ACCOUNT_ADDRESS_SEPOLIA} --private-key ${process.env.PRIVATE_KEY_SEPOLIA} --type argent --add-profile "scaffold-sepolia-account-1" && 
+      pwd && cd scripts && sncast --account scaffold-sepolia-account-1 script run deploy_script --url ${process.env.RPC_URL_SEPOLIA}
     `;
   } else if (network === "devnet") {
     console.log(
       "No network specified. Running deployment on Devnet by default..."
     );
     command = `
-      sncast account import --url ${process.env.RPC_URL_DEVNET} --name "${deployerName}" --address ${process.env.ACCOUNT_ADDRESS_DEVNET} --private-key ${process.env.PRIVATE_KEY_DEVNET} --type oz --add-profile "${deployerName}" && 
-      pwd && cd scripts && sncast --account ${deployerName} script run deploy_scripts --url ${process.env.RPC_URL_DEVNET}
+      sncast account import --url ${process.env.RPC_URL_DEVNET} --name "scaffold-devnet-account-1" --address ${process.env.ACCOUNT_ADDRESS_DEVNET} --private-key ${process.env.PRIVATE_KEY_DEVNET} --type oz --add-profile "scaffold-devnet-account-1" && 
+      pwd && cd scripts && sncast --account scaffold-devnet-account-1 script run deploy_scripts --url ${process.env.RPC_URL_DEVNET}
     `;
   } else if (network === "mainnet") {
     console.log("mainnet specified. Running...");
     command = `
-      sncast account import --url ${process.env.RPC_URL_MAINNET}  --name "${deployerName}" --address ${process.env.ACCOUNT_ADDRESS_MAINNET} --private-key ${process.env.PRIVATE_KEY_MAINNET} --type oz --add-profile "${deployerName}" && 
-      sncast --account "${deployerName}" script run scripts --url ${process.env.RPC_URL_MAINNET} && 
+      sncast account import --url ${process.env.RPC_URL_MAINNET}  --name "scaffold-mainnet-account-1" --address ${process.env.ACCOUNT_ADDRESS_MAINNET} --private-key ${process.env.PRIVATE_KEY_MAINNET} --type oz --add-profile "scaffold-mainnet-account-1" && 
+      sncast --account "scaffold-mainnet-account-1" script run scripts --url ${process.env.RPC_URL_MAINNET} && 
       ts-node ./scripts-ts/helpers/parse-deployments.ts --network mainnet
     `;
   } else {

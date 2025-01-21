@@ -10,7 +10,7 @@ fn main() {
     let salt = 0x3;
     let declare_nonce = get_nonce('latest');
     //owner address argument goes here as an argument
-    let owner = 0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691;
+    //let owner = 0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691;
 
     let declare_result = declare(
         "YourContract",
@@ -24,15 +24,15 @@ fn main() {
     // COMMENT OUT THE DECLARE PROCESS AND, UNCOMMENT THE BELOW, THEN PASS IN THE ALREADY DECLARED HASH (ONLY FOR SEPOLIA DEPLOYMENT)
     // let class_hash = ;
 
-    let deploy_nonce = get_nonce('pending');
-    let deploy_result = deploy(
-        *class_hash,
-        array![owner.into()],
-        Option::Some(salt),
-        true,
-        FeeSettings::Eth(EthFeeSettings { max_fee: Option::Some(max_fee) }),
-        Option::Some(deploy_nonce)
-    ).expect('contract deploy failed');
+    // let deploy_nonce = get_nonce('pending');
+    // let deploy_result = deploy(
+    //     *class_hash,
+    //     array![owner.into()],
+    //     Option::Some(salt),
+    //     true,
+    //     FeeSettings::Eth(EthFeeSettings { max_fee: Option::Some(max_fee) }),
+    //     Option::Some(deploy_nonce)
+    // ).expect('contract deploy failed');
 
-    println!("Deployed the contract to address: {}", deploy_result);
+    // println!("Deployed the contract to address: {}", deploy_result);
 }

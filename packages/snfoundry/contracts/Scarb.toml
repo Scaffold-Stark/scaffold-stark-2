@@ -31,6 +31,3 @@ block_id.tag = "latest"
 [lib]
 sierra = true
 casm = true
-
-[cairo]
-sierra-replace-ids = true
