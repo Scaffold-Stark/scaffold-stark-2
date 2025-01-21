@@ -14,10 +14,11 @@ contracts = { path = "/Users/zhengpeng/Source/Code/Rust-Code/Github/scaffold-sta
 sierra = true
 casm = true
 
+[cairo]
+sierra-replace-ids = true
+
 [[target.starknet-contract]]
 build-external-contracts = [
     "contracts::*"
 ]
-casm = true
-sierra = true
 

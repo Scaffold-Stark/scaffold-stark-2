@@ -2,6 +2,8 @@
 pub trait IYourContract<TContractState> {
     fn greeting(self: @TContractState) -> ByteArray;
     fn greeting_1(self: @TContractState) -> ByteArray;
+    fn greeting_2(self: @TContractState) -> ByteArray;
+    fn greeting_3(self: @TContractState) -> ByteArray;
     fn set_greeting(ref self: TContractState, new_greeting: ByteArray, amount_eth: u256);
     fn withdraw(ref self: TContractState);
     fn premium(self: @TContractState) -> bool;
@@ -65,6 +67,12 @@ mod YourContract {
             self.greeting.read()
         }
         fn greeting_1(self: @ContractState) -> ByteArray {
+            self.greeting.read()
+        }
+        fn greeting_2(self: @ContractState) -> ByteArray {
+            self.greeting.read()
+        }
+        fn greeting_3(self: @ContractState) -> ByteArray {
             self.greeting.read()
         }
         fn set_greeting(ref self: ContractState, new_greeting: ByteArray, amount_eth: u256) {
