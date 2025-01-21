@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "transactions": {
+    "transactions": {
+      "119e38dd22c854b2f699a67297477f5c7bdfdd19bb26baa3be2666de1b6d92cc": {
+        "name": "declare",
+        "output": {
+          "type": "DeclareResponse",
+          "class_hash": "0x0001c6a44df1407866123caf1891ef66ac558b21366b1c4e24d5171b1aaa3187",
+          "transaction_hash": "0x0417db0a8c7d747cef824cef392da8a4bbab72a08b3394ed2fb382865b4892e1"
+        },
+        "status": "Success",
+        "timestamp": 1737469993,
+        "misc": null
+      }
+    }
+  }
+}

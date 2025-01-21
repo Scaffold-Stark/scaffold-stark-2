@@ -17,7 +17,7 @@ fn main() {
         FeeSettings::Eth(EthFeeSettings { max_fee: Option::Some(max_fee) }),
         Option::Some(declare_nonce)
     ).expect('declare failed'); 
-    let class_hash = declare_result.class_hash();
+    //let class_hash = declare_result.class_hash();
     println!("declare result: {}", declare_result);
 
     //FOR SEPOLIA DEPLOYMENT, IF DECLARE FAILED WITH ERROR "TRANSACTION REJECTED, Class with hash 0X123... IS ALREADY DECLARED",
