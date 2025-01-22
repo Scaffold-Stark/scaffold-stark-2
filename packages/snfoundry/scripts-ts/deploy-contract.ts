@@ -13,7 +13,7 @@ import {
   isSierra,
   TransactionReceipt,
 } from "starknet";
-import { DeployContractParams, Network } from "./types";
+import { DeclareContractParams, DeployContractParams, Network } from "./types";
 import { green, red, yellow } from "./helpers/colorize-log";
 import { getTxVersion } from "./helpers/fees";
 
@@ -53,6 +53,7 @@ const resetDeployments: boolean = argv.reset ?? true;
 const feeToken: string = argv.fee;
 
 let deployments = {};
+let declarations = {};
 let deployCalls = [];
 
 const { provider, deployer }: Network = networks[networkName];
@@ -128,6 +129,64 @@ const findContractFile = (
   }
 
   return path.join(targetDir, matchingFile);
+};
+
+const declareContract = async (
+  params: DeclareContractParams
+): Promise<{
+  classHash: string;
+}> => {
+  const { contract, options } = params;
+
+  let compiledContractCasm;
+  let compiledContractSierra;
+
+  try {
+    compiledContractCasm = JSON.parse(
+      fs
+        .readFileSync(findContractFile(contract, "compiled_contract_class"))
+        .toString("ascii")
+    );
+  } catch (error) {
+    console.error(red("Error reading compiled contract class file: "), error);
+    return {
+      classHash: "",
+    };
+  }
+
+  try {
+    compiledContractSierra = JSON.parse(
+      fs
+        .readFileSync(findContractFile(contract, "contract_class"))
+        .toString("ascii")
+    );
+  } catch (error) {
+    console.error(red("Error reading contract class file: "), error);
+    return {
+      classHash: "",
+    };
+  }
+
+  console.log(yellow("Declaring Contract"), contract);
+
+  const { classHash } = await declareIfNot_NotWait(
+    {
+      contract: compiledContractSierra,
+      casm: compiledContractCasm,
+    },
+    options
+  );
+
+  declarations[contract] = {
+    classHash: classHash,
+    contract: contract,
+  };
+
+  console.log(green("Contract Declared at"), classHash);
+
+  return {
+    classHash: classHash,
+  };
 };
 
 /**
@@ -324,6 +383,7 @@ const exportDeployments = () => {
 
 export {
   deployContract,
+  declareContract,
   provider,
   deployer,
   loadExistingDeployments,

@@ -21,6 +21,6 @@ const mainnetFork = {
       http: ["http://localhost:5050/rpc"],
     },
   },
-} as chains.Chain;
+} as const;
 
 export const supportedChains = { ...chains, mainnetFork };

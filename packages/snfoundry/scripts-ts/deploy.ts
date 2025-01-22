@@ -7,6 +7,17 @@ import {
 import { green } from "./helpers/colorize-log";
 
 /**
+ * @example (declare contract)
+ * const declareScript = async (): Promise<void> => {
+ *   await declareContract({
+ *     contract: "YourContract",
+ *     options: {}
+ *   });
+ * };
+ *
+ **/
+
+/**
  * Deploy a contract using the specified parameters.
  *
  * @example (deploy contract with contructorArgs)
