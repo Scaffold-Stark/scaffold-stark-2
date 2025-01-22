@@ -35,7 +35,7 @@ function deploy(network: string = "devnet"): void {
     );
     command = `
       sncast account import --url ${process.env.RPC_URL_DEVNET} --name "scaffold-devnet-account-1" --address ${process.env.ACCOUNT_ADDRESS_DEVNET} --private-key ${process.env.PRIVATE_KEY_DEVNET} --type oz --add-profile "scaffold-devnet-account-1" && 
-      pwd && cd scripts && sncast --account scaffold-devnet-account-1 script run deploy_scripts --url ${process.env.RPC_URL_DEVNET}
+      pwd && cd scripts && sncast --account scaffold-devnet-account-1 script run deploy_script --url ${process.env.RPC_URL_DEVNET}
     `;
   } else if (network === "mainnet") {
     console.log("mainnet specified. Running...");

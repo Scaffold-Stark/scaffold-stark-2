@@ -6,10 +6,10 @@
         "name": "declare",
         "output": {
           "type": "ErrorResponse",
-          "message": "Transaction already exists"
+          "message": "Transaction has been rejected"
         },
-        "status": "Error",
-        "timestamp": 1737470108,
+        "status": "Fail",
+        "timestamp": 1737514598,
         "misc": null
       }
     }
