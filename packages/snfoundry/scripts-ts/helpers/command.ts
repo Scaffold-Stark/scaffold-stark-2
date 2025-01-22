@@ -21,7 +21,6 @@ function loadEnvVariables(filePath: string): void {
 }
 
 function deploy(network: string = "devnet"): void {
-
   let command: string;
   if (network === "sepolia") {
     console.log("sepolia network specified. Running...");
