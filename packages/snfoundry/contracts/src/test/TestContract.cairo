@@ -31,7 +31,7 @@ fn test_set_greetings() {
     assert(current_greeting == expected_greeting, 'Should have the right message');
 
     let new_greeting: ByteArray = "Learn Scaffold-Stark 2! :)";
-    dispatcher.set_greeting(new_greeting.clone(), 0); // we transfer 0 eth
+    dispatcher.set_greeting(new_greeting.clone(), Option::None); // we transfer 0 eth
     assert(dispatcher.greeting() == new_greeting, 'Should allow set new message');
 }
 
@@ -55,7 +55,8 @@ fn test_transfer() {
     let new_greeting: ByteArray = "Learn Scaffold-Stark 2! :)";
 
     cheat_caller_address(your_contract_address, user, CheatSpan::TargetCalls(1));
-    your_contract_dispatcher.set_greeting(new_greeting.clone(), 500); // we transfer 0 eth
+    your_contract_dispatcher
+        .set_greeting(new_greeting.clone(), Option::Some(amount_to_transfer)); // we transfer 0 eth
     assert(your_contract_dispatcher.greeting() == new_greeting, 'Should allow set new message');
 }
 
