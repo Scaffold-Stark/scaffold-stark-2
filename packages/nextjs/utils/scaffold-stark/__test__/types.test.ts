@@ -66,6 +66,12 @@ describe("Cairo Type Checks", () => {
       expect(isCairoU256("core::integer::u128")).toBe(false);
       expect(isCairoU256("")).toBe(false);
     });
+
+    it("should return false for option u256 types", () => {
+      expect(isCairoU256("core::option::Option::<core::integer::u256>")).toBe(
+        false,
+      );
+    });
   });
 
   describe("isCairoContractAddress", () => {
