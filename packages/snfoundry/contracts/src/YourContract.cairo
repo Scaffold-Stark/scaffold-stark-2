@@ -1,19 +1,10 @@
-#[starknet::interface]
-pub trait IYourContract<TContractState> {
-    fn greeting(self: @TContractState) -> ByteArray;
-    fn set_greeting(ref self: TContractState, new_greeting: ByteArray, amount_eth: u256);
-    fn withdraw(ref self: TContractState);
-    fn premium(self: @TContractState) -> bool;
-}
-
 #[starknet::contract]
-mod YourContract {
+pub mod IYourContract {
     use openzeppelin_access::ownable::OwnableComponent;
     use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     use starknet::storage::Map;
     use starknet::{ContractAddress, contract_address_const};
     use starknet::{get_caller_address, get_contract_address};
-    use super::{IYourContract};
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
 
@@ -58,11 +49,14 @@ mod YourContract {
         self.ownable.initializer(owner);
     }
 
-    #[abi(embed_v0)]
-    impl YourContractImpl of IYourContract<ContractState> {
+    #[abi(per_item)]
+    #[generate_trait]
+    pub impl YourContractImpl of IYourContract {
+        #[external(v0)]
         fn greeting(self: @ContractState) -> ByteArray {
             self.greeting.read()
         }
+        #[external(v0)]
         fn set_greeting(ref self: ContractState, new_greeting: ByteArray, amount_eth: u256) {
             self.greeting.write(new_greeting);
             self.total_counter.write(self.total_counter.read() + 1);
@@ -90,6 +84,7 @@ mod YourContract {
                     },
                 );
         }
+        #[external(v0)]
         fn withdraw(ref self: ContractState) {
             self.ownable.assert_only_owner();
             let eth_contract_address = contract_address_const::<ETH_CONTRACT_ADDRESS>();
@@ -97,6 +92,7 @@ mod YourContract {
             let balance = eth_dispatcher.balance_of(get_contract_address());
             eth_dispatcher.transfer(self.ownable.owner(), balance);
         }
+        #[external(v0)]
         fn premium(self: @ContractState) -> bool {
             self.premium.read()
         }
