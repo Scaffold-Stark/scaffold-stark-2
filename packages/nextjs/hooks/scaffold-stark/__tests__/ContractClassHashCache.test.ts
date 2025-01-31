@@ -11,7 +11,6 @@ describe("ContractClassHashCache", () => {
   };
 
   beforeEach(() => {
-    // 重置单例
     cache = ContractClassHashCache.getInstance();
     cache.clear();
     vi.clearAllMocks();
