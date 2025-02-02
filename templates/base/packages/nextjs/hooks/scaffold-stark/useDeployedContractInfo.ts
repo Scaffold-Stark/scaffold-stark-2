@@ -9,6 +9,7 @@ import {
 } from "~~/utils/scaffold-stark/contract";
 import { BlockIdentifier } from "starknet";
 import { useProvider } from "@starknet-react/core";
+import { ContractClassHashCache } from "./ContractClassHashCache";
 
 export const useDeployedContractInfo = <TContractName extends ContractName>(
   contractName: TContractName,
@@ -30,18 +31,12 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
         return;
       }
 
-      let contractClassHash: string | undefined = undefined;
-      try {
-        contractClassHash = await publicClient.getClassHashAt(
-          deployedContract.address,
-          "pending" as BlockIdentifier,
-        );
-      } catch (error) {
-        console.error(
-          "⚡️ ~ file: useDeployedContractInfo.ts:useEffect ~ error",
-          error,
-        );
-      }
+      const classHashCache = ContractClassHashCache.getInstance();
+      const contractClassHash = await classHashCache.getClassHash(
+        publicClient,
+        deployedContract.address,
+        "pending" as BlockIdentifier,
+      );
 
       if (!isMounted()) {
         return;

@@ -5,10 +5,8 @@ import { useTargetNetwork } from "../useTargetNetwork";
 import { useIsMounted } from "usehooks-ts";
 import { useProvider } from "@starknet-react/core";
 import { RpcProvider } from "starknet";
-
-const mockGetClassHashAt = vi
-  .fn()
-  .mockImplementation(async (): Promise<string | undefined> => "0x1234567");
+import { ContractClassHashCache } from "../ContractClassHashCache";
+import { ContractCodeStatus } from "~~/utils/scaffold-stark/contract";
 
 // Mock the dependencies
 vi.mock("../useTargetNetwork", () => ({
@@ -17,12 +15,6 @@ vi.mock("../useTargetNetwork", () => ({
 
 vi.mock("usehooks-ts", () => ({
   useIsMounted: vi.fn(),
-}));
-
-vi.mock("starknet", () => ({
-  RpcProvider: vi.fn().mockImplementation(() => ({
-    getClassHashAt: mockGetClassHashAt,
-  })),
 }));
 
 vi.mock("@starknet-react/core");
@@ -559,26 +551,19 @@ describe("useDeployedContractInfo", () => {
   };
 
   const mockIsMounted = vi.fn();
-  const mockUseTargetNetwork = {
-    targetNetwork: {
-      network: "someNetwork",
-      rpcUrls: {
-        public: {
-          http: ["http://public-node-url"],
-        },
-      },
-    },
+  const mockPublicClient = {
+    getClassHashAt: vi.fn(),
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useTargetNetwork as Mock).mockReturnValue(mockUseTargetNetwork);
-    (useIsMounted as Mock).mockReturnValue(mockIsMounted);
-    (useProvider as Mock).mockReturnValue({
-      provider: new RpcProvider({
-        nodeUrl: "https://mock-rpc-url",
-      }),
+    (useTargetNetwork as Mock).mockReturnValue({
+      targetNetwork: { network: "someNetwork" },
     });
+    (useIsMounted as Mock).mockReturnValue(mockIsMounted);
+    (useProvider as Mock).mockReturnValue({ provider: mockPublicClient });
+
+    ContractClassHashCache.getInstance().clear();
   });
 
   it("should initially set the status to LOADING", () => {
@@ -592,7 +577,7 @@ describe("useDeployedContractInfo", () => {
   });
 
   it("should set the status to NOT_FOUND if no deployed contract is found", async () => {
-    mockGetClassHashAt.mockImplementationOnce(async () => undefined);
+    mockPublicClient.getClassHashAt.mockResolvedValue(undefined);
     mockIsMounted.mockReturnValue(true);
 
     const { result } = renderHook(() =>
@@ -607,23 +592,21 @@ describe("useDeployedContractInfo", () => {
     });
   });
 
-  it("should set the status to DEPLOYED if the contract is found", async () => {
+  it("should set the status to DEPLOYED if contract is found", async () => {
     mockIsMounted.mockReturnValue(true);
+    mockPublicClient.getClassHashAt.mockResolvedValue("0x1234567");
 
     const { result } = renderHook(() =>
       //@ts-ignore using ts ignore so wont error in other devices
       useDeployedContractInfo("YourContract"),
     );
 
-    // Wait for the hook to update
-    act(async () => {
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-        expect(result.current.data?.address).toEqual(
-          mockContracts.someNetwork.YourContract.address,
-        );
-      });
+    await waitFor(() => {
+      expect(result.current.status).toBe(ContractCodeStatus.DEPLOYED);
+      expect(result.current.data).toBeDefined();
     });
+
+    expect(mockPublicClient.getClassHashAt).toHaveBeenCalledTimes(1);
   });
 
   it("should not update status if component is unmounted", async () => {
