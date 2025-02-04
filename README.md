@@ -55,23 +55,44 @@ If your local Scarb version is not `2.9.2`, you need to install it.
 
 ### Starknet Foundry version
 
-To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.31.0. To accomplish this, first check your Starknet Foundry version:
+To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.35.1. To accomplish this, first check your Starknet Foundry version:
 
 ```sh
 snforge --version
 ```
 
-If your Starknet Foundry version is not `0.34.0`, you need to install it.
+If your Starknet Foundry version is not `0.35.1`, you need to install it.
 
-- Install Starknet Foundry `0.34.0` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
+- Install Starknet Foundry `0.35.1` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
 
 ## Compatible versions
 
 - Starknet-devnet - v0.2.3
 - Scarb - v2.9.2
-- Snforge - v0.34.0
+- Snforge - v0.35.1
 - Cairo - v2.9.2
 - Rpc - v0.7.1
+
+## Requirements (Alternative Option with Docker)
+
+As an alternative to installing the tools locally, you can use Docker. Here's what you need to do:
+
+1. Install [Docker](https://www.docker.com/get-started/)
+2. Install [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+3. Use the provided `devcontainer.json` file to set up the environment:
+   - The configuration uses the `starknetfoundation/starknet-dev:2.9.2` image.
+   - This includes all required tools pre-installed, such as Scarb, Starknet Foundry, Starknet Devnet and other dependencies.
+
+### Getting Started with Docker Setup
+
+To start using the Docker-based setup:
+
+1. Open the project in **Visual Studio Code**.
+2. Select **"Reopen in Container"**.
+3. If you need to rebuild the container, open the Command Palette (**View -> Command Palette**) and choose:
+   - **Dev Containers: Rebuild and Reopen in Container**
+
+> Once inside the container, you can start working with all the tools and dependencies pre-configured.
 
 ## Quickstart with Starknet-Devnet
 
