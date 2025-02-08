@@ -140,7 +140,7 @@ Visit your app on: `http://localhost:3000`. You can interact with your smart con
 
 <details>
 
-1. Make sure you alredy cloned this repo and installed dependencies.
+1. Make sure you already cloned this repo and installed dependencies.
 
 2. Prepare your environment variables.
 
