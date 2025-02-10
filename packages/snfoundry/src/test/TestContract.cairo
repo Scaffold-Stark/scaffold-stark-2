@@ -1,6 +1,6 @@
 use contracts::YourContract::{IYourContractDispatcher, IYourContractDispatcherTrait};
 use openzeppelin_utils::serde::SerializedAppend;
-use snforge_std::{declare, ContractClassTrait, DeclareResultTrait};
+use snforge_std::{ContractClassTrait, DeclareResultTrait, declare};
 use starknet::{ContractAddress, contract_address_const};
 
 fn OWNER() -> ContractAddress {
