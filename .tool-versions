@@ -1,2 +1,3 @@
-scarb 2.8.2
-starknet-foundry 0.30.0
+scarb 2.9.2
+starknet-foundry 0.35.1
+starknet-devnet 0.2.3

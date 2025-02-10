@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Address as AddressType } from "@starknet-react/chains";
@@ -13,8 +13,10 @@ import {
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
 import { BlockieAvatar } from "~~/components/scaffold-stark/BlockieAvatar";
+import { useScaffoldStarkProfile } from "~~/hooks/scaffold-stark/useScaffoldStarkProfile";
 import { getStarknetPFPIfExists } from "~~/utils/profile";
-import useConditionalStarkProfile from "~~/hooks/useConditionalStarkProfile";
+import { default as NextImage } from "next/image";
+import ConnectModal from "./CustomConnectButton/ConnectModal";
 
 type AddressProps = {
   address?: AddressType;
@@ -42,28 +44,60 @@ export const Address = ({
   format,
   size = "base",
 }: AddressProps) => {
-  const [ens, setEns] = useState<string | null>();
   const [ensAvatar, setEnsAvatar] = useState<string | null>();
   const [addressCopied, setAddressCopied] = useState(false);
-  const checkSumAddress = address ? getChecksumAddress(address) : undefined;
+
   const { targetNetwork } = useTargetNetwork();
-  const { data: profile } = useConditionalStarkProfile(address);
+  const { data: fetchedProfile, isLoading } = useScaffoldStarkProfile(address);
 
-  //   const checkSumAddress = address ? address : undefined;
+  const checkSumAddress = useMemo(() => {
+    if (!address) return undefined;
 
-  // TODO add starkprofile | not working on devnet now
-  //const { data: fetchedProfile } = useStarkProfile({ address });
+    if (address.toLowerCase() === "0x") {
+      return "0x0";
+    }
 
-  // We need to apply this pattern to avoid Hydration errors.
-  // useEffect(() => {
-  //   if (fetchedProfile) {
-  //     setEns(fetchedProfile.name);
-  //     setEnsAvatar(fetchedProfile.profilePicture);
-  //   }
-  // }, [fetchedProfile]);
+    return getChecksumAddress(address);
+  }, [address]);
+
+  const blockExplorerAddressLink = getBlockExplorerAddressLink(
+    targetNetwork,
+    checkSumAddress || address || "",
+  );
+
+  const isValidHexAddress = (value: string): boolean => {
+    if (value.toLowerCase() === "0x") {
+      value = "0x0";
+    }
+
+    if (value.toLowerCase() === "0x0x0") {
+      return false;
+    }
+
+    const hexAddressRegex = /^0x[0-9a-fA-F]+$/;
+    return hexAddressRegex.test(value);
+  };
+
+  const [displayAddress, setDisplayAddress] = useState(
+    checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4),
+  );
+
+  useEffect(() => {
+    const addressWithFallback = checkSumAddress || address || "";
+
+    if (fetchedProfile?.name) {
+      setDisplayAddress(fetchedProfile.name);
+    } else if (format === "long") {
+      setDisplayAddress(addressWithFallback || "");
+    } else {
+      setDisplayAddress(
+        addressWithFallback.slice(0, 6) + "..." + addressWithFallback.slice(-4),
+      );
+    }
+  }, [fetchedProfile, checkSumAddress, address, format]);
 
   // Skeleton UI
-  if (!checkSumAddress) {
+  if (isLoading) {
     return (
       <div className="animate-pulse flex space-x-4">
         <div className="rounded-md bg-slate-300 h-6 w-6"></div>
@@ -74,51 +108,43 @@ export const Address = ({
     );
   }
 
-  if (!validateChecksumAddress(checkSumAddress)) {
-    return <span className="text-error">Wrong address</span>;
+  if (!checkSumAddress) {
+    return (
+      <div className="italic text-base font-bold ">Wallet not connected</div>
+    );
   }
 
-  const blockExplorerAddressLink = getBlockExplorerAddressLink(
-    targetNetwork,
-    checkSumAddress,
-  );
-  let displayAddress =
-    checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4);
-
-  if (ens) {
-    displayAddress = ens;
-  } else if (format === "long") {
-    displayAddress = checkSumAddress;
+  if (!checkSumAddress) {
+    return <span className="text-error">Invalid address format</span>;
   }
 
   return (
     <div className="flex items-center">
       <div className="flex-shrink-0">
-        {getStarknetPFPIfExists(profile?.profilePicture) ? (
-          //eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={profile?.profilePicture}
+        {getStarknetPFPIfExists(fetchedProfile?.profilePicture) ? (
+          <NextImage
+            src={fetchedProfile?.profilePicture || ""}
             alt="Profile Picture"
-            className="rounded-full h-6 w-6"
+            className="rounded-full"
             width={24}
             height={24}
           />
         ) : (
           <BlockieAvatar
             address={checkSumAddress}
-            ensImage={ensAvatar}
             size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
+            ensImage={ensAvatar}
           />
         )}
       </div>
       {disableAddressLink ? (
         <span className={`ml-1.5 text-${size} font-normal`}>
-          {profile?.name || displayAddress}
+          {fetchedProfile?.name || displayAddress}
         </span>
       ) : targetNetwork.network === devnet.network ? (
         <span className={`ml-1.5 text-${size} font-normal`}>
           <Link href={blockExplorerAddressLink}>
-            {profile?.name || displayAddress}
+            {fetchedProfile?.name || displayAddress}
           </Link>
         </span>
       ) : (
@@ -128,7 +154,7 @@ export const Address = ({
           href={blockExplorerAddressLink}
           rel="noopener noreferrer"
         >
-          {profile?.name || displayAddress}
+          {fetchedProfile?.name || displayAddress}
         </a>
       )}
       {addressCopied ? (
@@ -137,6 +163,7 @@ export const Address = ({
           aria-hidden="true"
         />
       ) : (
+        //@ts-ignore
         <CopyToClipboard
           text={checkSumAddress}
           onCopy={() => {
