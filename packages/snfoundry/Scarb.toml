@@ -28,3 +28,6 @@ block_id.tag = "latest"
 
 [lib]
 casm = true
+
+[workspace]
+members = ["scripts"]
