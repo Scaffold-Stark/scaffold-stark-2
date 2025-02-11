@@ -55,7 +55,7 @@ If your local Scarb version is not `2.9.2`, you need to install it.
 
 ### Starknet Foundry version
 
-To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.31.0. To accomplish this, first check your Starknet Foundry version:
+To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.35.1. To accomplish this, first check your Starknet Foundry version:
 
 ```sh
 snforge --version
@@ -140,7 +140,7 @@ Visit your app on: `http://localhost:3000`. You can interact with your smart con
 
 <details>
 
-1. Make sure you alredy cloned this repo and installed dependencies.
+1. Make sure you already cloned this repo and installed dependencies.
 
 2. Prepare your environment variables.
 
