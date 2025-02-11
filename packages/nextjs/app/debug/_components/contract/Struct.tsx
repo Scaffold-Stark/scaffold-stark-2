@@ -127,7 +127,10 @@ export const Struct = ({
                       key={index}
                       stateObjectKey={key}
                       paramType={variant}
-                      isDisabled={index !== activeVariantIndex}
+                      isDisabled={
+                        // this will disable the input box if the variant is None
+                        index !== activeVariantIndex || variant.name === "None"
+                      }
                     />
                   </div>
                 );
