@@ -35,6 +35,7 @@
     "prettier": "^3.2.5"
   },
   "dependencies": {
+    "dotenv-cli": "^7.4.2",
     "postcss": "^8.4.38"
   }
 }
