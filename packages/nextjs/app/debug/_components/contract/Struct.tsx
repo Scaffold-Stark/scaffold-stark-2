@@ -5,6 +5,7 @@ import { replacer } from "~~/utils/scaffold-stark/common";
 import { ContractInput } from "./ContractInput";
 import { Abi } from "abi-wan-kanabi";
 import { addError, clearError, FormErrorMessageState } from "./utilsDisplay";
+import { isCairoOption } from "~~/utils/scaffold-stark/types";
 
 type StructProps = {
   abi?: Abi;
@@ -107,6 +108,7 @@ export const Struct = ({
                   variant,
                   index,
                 );
+
                 return (
                   <div key={index} className="flex items-center gap-3">
                     <input
@@ -128,8 +130,11 @@ export const Struct = ({
                       stateObjectKey={key}
                       paramType={variant}
                       isDisabled={
+                        index !== activeVariantIndex ||
                         // this will disable the input box if the variant is None
-                        index !== activeVariantIndex || variant.name === "None"
+                        // added option type check for safety
+                        (isCairoOption(abiMember.name) &&
+                          variant.name === "None")
                       }
                     />
                   </div>
