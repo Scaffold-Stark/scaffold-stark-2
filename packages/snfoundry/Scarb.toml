@@ -31,3 +31,6 @@ block_id.tag = "latest"
 [lib]
 sierra = true
 casm = true
+
+[workspace]
+members = ["scripts"]
