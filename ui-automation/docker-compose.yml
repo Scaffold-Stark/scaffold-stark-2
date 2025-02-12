@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  starknet-devnet:
+    image: shardlabs/starknet-devnet-rs:latest
+    command: --seed 0 --account-class cairo1
+    ports:
+      - "5050:5050"
+    networks:
+      - scaffold-stark-network
+
+  nextjs:
+    build:
+      context: ..
+      dockerfile: ui-automation/Dockerfile.nextjs
+    ports:
+      - "3000:3000"
+    depends_on:
+      - starknet-devnet
+    networks:
+      - scaffold-stark-network
+
+networks:
+  scaffold-stark-network:
+    driver: bridge
