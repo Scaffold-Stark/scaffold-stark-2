@@ -1,0 +1,21 @@
+# Get the base image of Node version 16
+FROM node:16
+# Get the latest version of Playwright
+FROM mcr.microsoft.com/playwright:focal
+
+# Set the work directory
+WORKDIR /app
+
+# Set the environment path to node_modules/.bin
+ENV PATH /app/node_modules/.bin:$PATH
+
+# Copy package files
+COPY ui-automation/package.json /app/
+COPY ui-automation/tests/ /app/tests/
+COPY ui-automation/tsconfig.json /app/
+
+# Install dependencies
+RUN apt-get update && apt-get -y install libnss3 libatk-bridge2.0-0 libdrm-dev libxkbcommon-dev libgbm-dev libasound-dev libatspi2.0-0 libxshmfence-dev
+
+# Install Node dependencies
+RUN npm install

@@ -19,6 +19,18 @@ services:
     networks:
       - scaffold-stark-network
 
+  playwright:
+    build:
+      context: ..
+      dockerfile: ui-automation/Dockerfile.playwright
+    depends_on:
+      - nextjs
+    environment:
+      - BASE_URL=http://nextjs:3000
+    command: tail -f /dev/null
+    networks:
+      - scaffold-stark-network
+
 networks:
   scaffold-stark-network:
     driver: bridge
