@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   starknet-devnet:
     image: shardlabs/starknet-devnet-rs:latest
@@ -16,6 +15,8 @@ services:
       - "3000:3000"
     depends_on:
       - starknet-devnet
+    environment:
+      - NEXT_PUBLIC_RPC_URL_DEVNET=http://starknet-devnet:5050
     networks:
       - scaffold-stark-network
 
@@ -23,6 +24,7 @@ services:
     build:
       context: ..
       dockerfile: ui-automation/Dockerfile.playwright
+      no_cache: true
     depends_on:
       - nextjs
     environment:
