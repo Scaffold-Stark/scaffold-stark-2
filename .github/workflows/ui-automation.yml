@@ -1,0 +1,53 @@
+name: Docker Compose Action
+
+on:
+  push:
+    branches: [ui-automation]
+  pull_request:
+    branches: [ui-automation]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run docker compose
+        uses: hoverkraft-tech/compose-action@v2.0.1
+        with:
+          compose-file: "./ui-automation/docker-compose.yml"
+          up-flags: "--build -d"
+
+      - name: Wait for services and run tests
+        run: |
+          MAX_WAIT=300
+          start_time=$(date +%s)
+          
+          echo "Waiting for starknet-devnet to start..."
+          while ! curl -s http://localhost:5050 > /dev/null; do
+              current_time=$(date +%s)
+              elapsed=$((current_time - start_time))
+              if [ $elapsed -gt $MAX_WAIT ]; then
+                  echo "Timeout waiting for starknet-devnet"
+                  exit 1
+              fi
+              sleep 1
+          done
+          
+          echo "Waiting for next js to start..."
+          while ! curl -s http://localhost:3000 > /dev/null; do
+              current_time=$(date +%s)
+              elapsed=$((current_time - start_time))
+              if [ $elapsed -gt $MAX_WAIT ]; then
+                  echo "Timeout waiting for nextjs"
+                  exit 1
+              fi
+              sleep 1
+          done
+          
+          echo "Services are ready, running tests..."
+          docker compose -f ./ui-automation/docker-compose.yml exec -T playwright npm run test
