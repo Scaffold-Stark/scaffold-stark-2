@@ -1,1 +1,0 @@
-mod my_script;
