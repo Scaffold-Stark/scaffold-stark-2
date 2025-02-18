@@ -7,6 +7,18 @@ services:
     networks:
       - scaffold-stark-network
 
+  snfoundry:
+    build:
+      context: ..
+      dockerfile: ui-automation/Dockerfile.snfoundry
+    environment:
+      - RPC_URL_DEVNET=http://starknet-devnet:5050
+    command: tail -f /dev/null
+    depends_on:
+      - starknet-devnet
+    networks:
+      - scaffold-stark-network
+
   nextjs:
     build:
       context: ..

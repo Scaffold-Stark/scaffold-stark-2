@@ -6,7 +6,6 @@ COPY . .
 
 RUN yarn install
 
-COPY . .
 
 WORKDIR /app/packages/nextjs
 
