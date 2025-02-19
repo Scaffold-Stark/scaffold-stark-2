@@ -1,6 +1,6 @@
 import endpoint from "./configTypes";
 import { test, expect } from "@playwright/test";
-import { HomePage } from "./HomePage";
+import { HomePage } from "./pages/HomePage";
 
 test("Expect to connect to devnet with Burner Wallet", async ({ page }) => {
   // Go to the Droplets product page of DigitalOcean web page
