@@ -17,6 +17,7 @@ snforge_std = "0.35.1"
 
 [[target.starknet-contract]]
 casm = true
+sierra = true
 
 [tool.fmt]
 sort-module-level-items = true
@@ -26,8 +27,7 @@ name = "SEPOLIA_LATEST"
 url = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
 block_id.tag = "latest"
 
-[lib]
-casm = true
 
-[workspace]
-members = ["scripts"]
+[lib]
+sierra = true
+casm = true

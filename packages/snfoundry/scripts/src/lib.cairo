@@ -1,1 +1,1 @@
-mod scripts;
+mod deploy_script;
