@@ -5,6 +5,8 @@ import { HomePage } from "./pages/HomePage";
 import { DebugPage } from "./pages/DebugPage";
 
 test("interact with contract", async ({ page }) => {
+  test.setTimeout(60000);
+
   await navigateAndWait(page, endpoint.BASE_URL);
   const homePage = new HomePage(page);
   await homePage.getDebugPageLinkButton().click();

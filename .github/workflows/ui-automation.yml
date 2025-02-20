@@ -26,7 +26,7 @@ jobs:
         run: |
           MAX_WAIT=300
           start_time=$(date +%s)
-          
+
           echo "Waiting for starknet-devnet to start..."
           while ! curl -s http://localhost:5050 > /dev/null; do
               current_time=$(date +%s)
@@ -37,7 +37,7 @@ jobs:
               fi
               sleep 1
           done
-          
+
           echo "Waiting for next js to start..."
           while ! curl -s http://localhost:3000 > /dev/null; do
               current_time=$(date +%s)
@@ -46,8 +46,8 @@ jobs:
                   echo "Timeout waiting for nextjs"
                   exit 1
               fi
-              sleep 1
+              sleep 5
           done
-          
+
           echo "Services are ready, running tests..."
           docker compose -f ./ui-automation/docker-compose.yml exec -T playwright npm run test

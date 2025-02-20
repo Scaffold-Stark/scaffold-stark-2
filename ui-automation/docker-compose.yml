@@ -1,21 +1,10 @@
 services:
   starknet-devnet:
     image: shardlabs/starknet-devnet-rs:latest
+    pull_policy: missing
     command: --seed 0 --account-class cairo1
     ports:
       - "5050:5050"
-    networks:
-      - scaffold-stark-network
-
-  snfoundry:
-    build:
-      context: ..
-      dockerfile: ui-automation/Dockerfile.snfoundry
-    environment:
-      - RPC_URL_DEVNET=http://starknet-devnet:5050
-    command: tail -f /dev/null
-    depends_on:
-      - starknet-devnet
     networks:
       - scaffold-stark-network
 
@@ -23,20 +12,31 @@ services:
     build:
       context: ..
       dockerfile: ui-automation/Dockerfile.nextjs
-    ports:
-      - "3000:3000"
+      args:
+        - RPC_URL_DEVNET=http://starknet-devnet:5050
+        - NEXT_PUBLIC_RPC_URL_DEVNET=http://starknet-devnet:5050
+    pull_policy: missing
     depends_on:
       - starknet-devnet
+    ports:
+      - "3000:3000"
     environment:
+      - RPC_URL_DEVNET=http://starknet-devnet:5050
       - NEXT_PUBLIC_RPC_URL_DEVNET=http://starknet-devnet:5050
     networks:
       - scaffold-stark-network
+    entrypoint: ["/docker-entrypoint.sh"]
 
   playwright:
     build:
       context: ..
       dockerfile: ui-automation/Dockerfile.playwright
       no_cache: true
+    pull_policy: always
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: none
     depends_on:
       - nextjs
     environment:

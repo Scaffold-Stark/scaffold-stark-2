@@ -1,4 +1,3 @@
-FROM node:20.10.0
 # Get the latest version of Playwright
 FROM mcr.microsoft.com/playwright:focal
 
@@ -12,9 +11,6 @@ ENV PATH /app/node_modules/.bin:$PATH
 COPY ui-automation/package.json /app/
 COPY ui-automation/tests/ /app/tests/
 COPY ui-automation/tsconfig.json /app/
-
-# Install dependencies
-RUN apt-get update && apt-get -y install libnss3 libatk-bridge2.0-0 libdrm-dev libxkbcommon-dev libgbm-dev libasound-dev libatspi2.0-0 libxshmfence-dev
 
 # Install Node dependencies
 RUN npm install
