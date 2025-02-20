@@ -1,0 +1,37 @@
+Scaffold-stark-2 is the provides a full DApp development template,
+offering seamless integration of Starket smart contracts with web applications.
+
+Depending on your package manager, substitute the work COMMAND with the appropiate one from the list.
+
+   $ yarn COMMAND
+   $ npm run COMMAND
+
+Commands:
+
+format:check     	(Read only) Batch checks for format inconsistencies for the nextjs and snfoundry codebase
+next:check-types 	Compile  typscript project
+next:lint        	Runs next lint
+prepare          	Install husky's git hooks
+help             	Show this text
+
+== Smart Contracts
+
+compile          	Compiles contracts.
+test             	Runs snfoundry tests
+chain            	Starts the local blockchain network.
+deploy           	Deploys contract to the configured network discarding previous deployments.
+deploy:no-reset  	Deploys contract to the configured network without discarding previous deployments.
+verify           	Verify Smart Contracts with Walnut
+
+== Frontend
+
+start            	Starts the frontend server
+test:nextjs      	Runs the nextjs tests
+vercel           	Deploys app to vercel
+vercel:yolo      	Force deploy app to vercel (ignoring errors)
+
+This tool is desinged to fasttrack the process to build and launch applications
+as well as to learn and practice the skills necesry skills to be come StarkNet developers.
+
+Scaffold Stark: https://scaffoldstark.com/
+Github: https://github.com/Scaffold-Stark/scaffold-stark-2
