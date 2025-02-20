@@ -24,7 +24,7 @@ jobs:
 
       - name: Wait for services and run tests
         run: |
-          MAX_WAIT=300
+          MAX_WAIT=500
           start_time=$(date +%s)
 
           echo "Waiting for starknet-devnet to start..."
