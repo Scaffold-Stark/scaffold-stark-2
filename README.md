@@ -202,7 +202,7 @@ format:check     	(Read only) Batch checks for format inconsistencies for the ne
 next:check-types 	Compile  typscript project
 next:lint        	Runs next lint
 prepare          	Install husky's git hooks
-help             	Show this text
+usage             	Show this text
 
 == Smart Contracts
 
