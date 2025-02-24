@@ -8,6 +8,11 @@ export type ScaffoldConfig = {
   rpcProviderUrl: string;
   walletAutoConnect: boolean;
   autoConnectTTL: number;
+    walletConfig: {
+    enabled: boolean;
+    onlyLocal: boolean;
+    excludeKeplerOnDevnet: boolean;
+  };
 };
 
 const scaffoldConfig = {
@@ -25,6 +30,11 @@ const scaffoldConfig = {
    */
   autoConnectTTL: 60000,
   walletAutoConnect: true,
+    walletConfig: {
+    enabled: true,
+    onlyLocal: false,
+    excludeKeplerOnDevnet: true, // Disable Kepler when the network is devnet
+  },
 } as const satisfies ScaffoldConfig;
 
 export default scaffoldConfig;
