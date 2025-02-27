@@ -1,17 +1,28 @@
 /** @type {import('next').NextConfig} */
 import webpack from "webpack";
 
+let withPWA = (config) => config;
+try {
+  withPWA = require('next-pwa')({
+    dest: 'public',
+    disable: process.env.NODE_ENV === 'development', 
+    workboxOpts: {
+      debug: false,
+    },
+  });
+} catch (err) {
+  console.log("next-pwa no está instalado. Continuando sin PWA...");
+}
+
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    // make sure no one injects anything funny in svg
     dangerouslyAllowSVG: true,
     remotePatterns: [
-      // we might need to add more links. this is just from the starknet ID identicon
       {
         protocol: "https",
         hostname: "identicon.starknet.id",
-        pathname: "/**", // Allows all paths under this domain
+        pathname: "/**",
       },
       {
         protocol: "https",
@@ -26,7 +37,7 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: process.env.NEXT_PUBLIC_IGNORE_BUILD_ERROR === "true",
   },
-  webpack: (config) => {
+  webpack: (config, { dev, isServer }) => {
     config.resolve.fallback = { fs: false, net: false, tls: false };
     config.externals.push("pino-pretty", "lokijs", "encoding");
     config.plugins.push(
@@ -34,8 +45,16 @@ const nextConfig = {
         resource.request = resource.request.replace(/^node:/, "");
       }),
     );
+
+   
+    if (dev && !isServer) {
+      config.infrastructureLogging = {
+        level: 'error', 
+      };
+    }
+
     return config;
   },
 };
 
-export default nextConfig;
+export default withPWA(nextConfig);
