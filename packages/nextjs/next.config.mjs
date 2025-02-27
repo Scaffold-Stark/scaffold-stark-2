@@ -3,9 +3,9 @@ import webpack from "webpack";
 
 let withPWA = (config) => config;
 try {
-  withPWA = require('next-pwa')({
-    dest: 'public',
-    disable: process.env.NODE_ENV === 'development', 
+  withPWA = require("next-pwa")({
+    dest: "public",
+    disable: process.env.NODE_ENV === "development",
     workboxOpts: {
       debug: false,
     },
@@ -46,10 +46,9 @@ const nextConfig = {
       }),
     );
 
-   
     if (dev && !isServer) {
       config.infrastructureLogging = {
-        level: 'error', 
+        level: "error",
       };
     }
 
