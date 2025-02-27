@@ -34,7 +34,7 @@ function getConnectors() {
     connectors.push(new KeplrConnector());
   }
 
-  if (isDevnet) {
+  else{
     const burnerConnector = new BurnerConnector();
     burnerConnector.chain = supportedChains.devnet;
     connectors.push(burnerConnector as unknown as InjectedConnector);
