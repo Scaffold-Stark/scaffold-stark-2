@@ -1,12 +1,14 @@
 import { Chain } from "@starknet-react/chains";
 import { supportedChains } from "./supportedChains";
 
+// Define the type for each network configuration.
 export type NetworkConfig = {
   id: bigint;
   chain: Chain;
   rpcUrl: string;
 };
 
+// Define the overall scaffold configuration type.
 export type ScaffoldConfig = {
   networks: Record<string, NetworkConfig>;
   defaultNetwork: bigint;
@@ -14,111 +16,77 @@ export type ScaffoldConfig = {
   onlyLocalBurnerWallet: boolean;
   walletAutoConnect: boolean;
   autoConnectTTL: number;
-  targetNetworks?: Chain[];
-  rpcProviderUrl?: string;
+  targetNetworks: Chain[];
+  rpcProviderUrl: string;
 };
 
-const buildNetworkConfigs = (): Record<string, NetworkConfig> => {
-  const networkConfigs: Record<string, NetworkConfig> = {};
-  const legacyRpcUrl = process.env.NEXT_PUBLIC_RPC_URL || process.env.NEXT_PUBLIC_PROVIDER_URL;
+/*
+  Create a static networks object.
+  Note: Since scaffold config is not expected to change frequently,
+  the networks are defined explicitly here.
+  If you need to update RPC URLs, change them in this file.
+  Environment variables can still override these defaults at startup.
+*/
+const networks: Record<string, NetworkConfig> = {
+  devnet: {
+    id: supportedChains.devnet.id,
+    chain: supportedChains.devnet,
+    rpcUrl: process.env.NEXT_PUBLIC_DEVNET_RPC_URL || "http://localhost:5050/rpc",
+  },
+  mainnet: {
+    id: supportedChains.mainnet.id,
+    chain: supportedChains.mainnet,
+    rpcUrl: process.env.NEXT_PUBLIC_MAINNET_RPC_URL || "https://alpha-mainnet.starknet.io",
+  },
+  mainnetFork: {
+    id: supportedChains.mainnetFork.id,
+    chain: supportedChains.mainnetFork,
+    rpcUrl: process.env.NEXT_PUBLIC_MAINNET_FORK_RPC_URL || "https://mainnetfork.starknet.io",
+  },
+  // Add additional networks as needed.
+};
 
-  Object.entries(supportedChains).forEach(([networkName, chain]) => {
-    // Skip non-chain entries
-    if (typeof chain !== 'object' || !('id' in chain)) return;
+// Compute the default network from env (if provided) or fall back to devnet.
+const defaultNetwork: bigint = process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID
+  ? BigInt(process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID)
+  : networks.devnet.id;
 
-    const envNetworkName = networkName.toUpperCase();
-    let rpcUrl = 
-      process.env[`NEXT_PUBLIC_${envNetworkName}_RPC_URL`] || 
-      chain.rpcUrls?.public?.http?.[0] ||
-      chain.rpcUrls?.default?.http?.[0] ||
-      "";
+// Determine the centralized RPC URL by taking the rpcUrl of the default network.
+const rpcProviderUrl = (() => {
+  const key = Object.keys(networks).find((k) => networks[k].id === defaultNetwork);
+  return key ? networks[key].rpcUrl : networks.devnet.rpcUrl;
+})();
 
-    if (chain.id === getDefaultChainId() && legacyRpcUrl) {
-      rpcUrl = legacyRpcUrl;
-    }
+// Assemble the complete scaffold configuration.
+const config: ScaffoldConfig = {
+  networks,
+  defaultNetwork,
+  pollingInterval: process.env.NEXT_PUBLIC_POLLING_INTERVAL
+    ? Number(process.env.NEXT_PUBLIC_POLLING_INTERVAL)
+    : 30000,
+  onlyLocalBurnerWallet: process.env.NEXT_PUBLIC_ONLY_LOCAL_BURNER === "true",
+  walletAutoConnect: process.env.NEXT_PUBLIC_WALLET_AUTO_CONNECT !== "false",
+  autoConnectTTL: process.env.NEXT_PUBLIC_AUTO_CONNECT_TTL
+    ? Number(process.env.NEXT_PUBLIC_AUTO_CONNECT_TTL)
+    : 60000,
+  // Explicitly list the target chains (feel free to adjust as needed)
+  targetNetworks: [networks.devnet.chain, networks.mainnet.chain],
+  // This is the single source of truth for the RPC URL.
+  rpcProviderUrl,
+};
 
-    networkConfigs[networkName] = {
-      id: chain.id,
-      chain: chain as Chain,
-      rpcUrl,
-    };
+// Export the configuration object.
+// All functions in the repo should reference config.rpcProviderUrl (or other config values) only.
+export default config;
+
+// ----- Optional: Inline Test Code -----
+// When running this file directly, it will print the initialized configuration.
+if (require.main === module) {
+  const defaultKey = Object.keys(networks).find((k) => networks[k].id === config.defaultNetwork) || "unknown";
+  console.log("[CONFIG] Initialized with:", {
+    defaultNetwork: config.defaultNetwork,
+    defaultNetworkName: defaultKey,
+    rpcUrl: config.rpcProviderUrl,
+    networks: Object.keys(config.networks).length,
   });
-
-  return networkConfigs;
-};
-
-const getDefaultChainId = (): bigint => {
-  const envChainId = process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID || process.env.NEXT_PUBLIC_CHAIN_ID;
-  return envChainId ? BigInt(envChainId) : supportedChains.devnet.id;
-};
-
-const initScaffoldConfig = (): ScaffoldConfig => {
-  return {
-    networks: buildNetworkConfigs(),
-    defaultNetwork: getDefaultChainId(),
-    pollingInterval: Number(process.env.NEXT_PUBLIC_POLLING_INTERVAL || "30000"),
-    onlyLocalBurnerWallet: process.env.NEXT_PUBLIC_ONLY_LOCAL_BURNER === "true",
-    autoConnectTTL: Number(process.env.NEXT_PUBLIC_AUTO_CONNECT_TTL || "60000"),
-    walletAutoConnect: process.env.NEXT_PUBLIC_WALLET_AUTO_CONNECT !== "false",
-  };
-};
-
-const scaffoldConfig = initScaffoldConfig();
-
-export const getCurrentNetworkConfig = (): NetworkConfig => {
-  const defaultNetworkId = scaffoldConfig.defaultNetwork;
-
-  for (const networkName in scaffoldConfig.networks) {
-    if (scaffoldConfig.networks[networkName].id === defaultNetworkId) {
-      return scaffoldConfig.networks[networkName];
-    }
-  }
-
-  return scaffoldConfig.networks.devnet;
-};
-
-export const getTargetNetworks = (): Chain[] => {
-  return [getCurrentNetworkConfig().chain];
-};
-
-export const getRpcUrl = (): string => {
-  return getCurrentNetworkConfig().rpcUrl;
-};
-
-Object.defineProperties(scaffoldConfig, {
-  targetNetworks: {
-    get: () => getTargetNetworks(),
-    enumerable: true,
-  },
-  rpcProviderUrl: {
-    get: () => getRpcUrl(),
-    enumerable: true,
-  },
-});
-
-console.log("[CONFIG] Initialized with:", {
-  defaultNetwork: scaffoldConfig.defaultNetwork,
-  defaultNetworkName: getCurrentNetworkConfig().chain.name,
-  rpcUrl: getRpcUrl(),
-  networks: Object.keys(scaffoldConfig.networks).length,
-});
-
-export default scaffoldConfig;
-
-// Test code
-// if (typeof require !== "undefined" && require.main === module) {
-//   console.log("=== RPC Configuration Test ===");
-//   console.log("Direct from env:", process.env.NEXT_PUBLIC_RPC_URL || "not set");
-//   console.log("From scaffoldConfig.rpcProviderUrl:", scaffoldConfig.rpcProviderUrl);
-//   console.log("From getRpcUrl() helper:", getRpcUrl());
-//   console.log("Default network ID:", scaffoldConfig.defaultNetwork);
-//   console.log("Available networks:", Object.keys(scaffoldConfig.networks));
-//   console.log("===============================");
-
-//   const isConsistent =
-//     (!process.env.NEXT_PUBLIC_RPC_URL ||
-//       process.env.NEXT_PUBLIC_RPC_URL === scaffoldConfig.rpcProviderUrl) &&
-//     scaffoldConfig.rpcProviderUrl === getRpcUrl();
-
-//   console.log("Is configuration centralized?", isConsistent ? "✅ YES" : "❌ NO");
-// }
+}
