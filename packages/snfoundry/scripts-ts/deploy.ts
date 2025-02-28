@@ -50,7 +50,7 @@ const deployScript = async (): Promise<void> => {
   });
 };
 
-(async (): Promise<void> => {
+const main = async (): Promise<void> => {
   try {
     await deployScript();
     await executeDeployCalls();
@@ -61,4 +61,6 @@ const deployScript = async (): Promise<void> => {
     console.log(err);
     process.exit(1); //exit with error so that non subsequent scripts are run
   }
-})();
+};
+
+main();
