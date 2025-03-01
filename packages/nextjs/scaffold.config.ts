@@ -1,74 +1,41 @@
 import { Chain } from "@starknet-react/chains";
-import { supportedChains } from "./supportedChains";
-
-export type NetworkConfig = {
-  id: bigint;
-  chain: Chain;
-  rpcUrl: string;
-};
+import { supportedChains as chains } from "./supportedChains";
 
 export type ScaffoldConfig = {
-  networks: Record<string, NetworkConfig>;
-  defaultNetwork: bigint;
+  targetNetworks: readonly Chain[];
   pollingInterval: number;
   onlyLocalBurnerWallet: boolean;
+  rpcProviderUrl: {
+    [key: string]: string;
+  };
   walletAutoConnect: boolean;
   autoConnectTTL: number;
-  targetNetworks: Chain[];
-  rpcProviderUrl: string;
 };
 
-const networks: Record<string, NetworkConfig> = {
-  devnet: {
-    id: supportedChains.devnet.id,
-    chain: supportedChains.devnet,
-    rpcUrl: process.env.NEXT_PUBLIC_DEVNET_RPC_URL || "http://localhost:5050/rpc",
+// Convert BigInt chain IDs to strings for object keys
+const devnetId = String(chains.devnet.id);
+const sepoliaId = String(chains.sepolia.id);
+const mainnetId = String(chains.mainnet.id);
+
+const scaffoldConfig = {
+  targetNetworks: [chains.devnet],
+  // Only show the Burner Wallet when running on devnet
+  onlyLocalBurnerWallet: false,
+  rpcProviderUrl: {
+    [devnetId]: process.env.NEXT_PUBLIC_DEVNET_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || "",
+    [sepoliaId]: process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || "",
+    [mainnetId]: process.env.NEXT_PUBLIC_MAINNET_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || ""
   },
-  mainnet: {
-    id: supportedChains.mainnet.id,
-    chain: supportedChains.mainnet,
-    rpcUrl: process.env.NEXT_PUBLIC_MAINNET_RPC_URL || "https://alpha-mainnet.starknet.io",
-  },
-  mainnetFork: {
-    id: supportedChains.mainnetFork.id,
-    chain: supportedChains.mainnetFork,
-    rpcUrl: process.env.NEXT_PUBLIC_MAINNET_FORK_RPC_URL || "https://mainnetfork.starknet.io",
-  },
-};
+  // The interval at which your front-end polls the RPC servers for new data
+  // it has no effect if you only target the local network (default is 30_000)
+  pollingInterval: 30_000,
+  /**
+   * Auto connect:
+   * 1. If the user was connected into a wallet before, on page reload reconnect automatically
+   * 2. If user is not connected to any wallet:  On reload, connect to burner wallet if burnerWallet.enabled is true && burnerWallet.onlyLocal is false
+   */
+  autoConnectTTL: 60000,
+  walletAutoConnect: true,
+} as const satisfies ScaffoldConfig;
 
-const defaultNetwork: bigint = process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID
-  ? BigInt(process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID)
-  : networks.devnet.id;
-
-const rpcProviderUrl = (() => {
-  const key = Object.keys(networks).find((k) => networks[k].id === defaultNetwork);
-  return key ? networks[key].rpcUrl : networks.devnet.rpcUrl;
-})();
-
-const config: ScaffoldConfig = {
-  networks,
-  defaultNetwork,
-  pollingInterval: process.env.NEXT_PUBLIC_POLLING_INTERVAL
-    ? Number(process.env.NEXT_PUBLIC_POLLING_INTERVAL)
-    : 30000,
-  onlyLocalBurnerWallet: process.env.NEXT_PUBLIC_ONLY_LOCAL_BURNER === "true",
-  walletAutoConnect: process.env.NEXT_PUBLIC_WALLET_AUTO_CONNECT !== "false",
-  autoConnectTTL: process.env.NEXT_PUBLIC_AUTO_CONNECT_TTL
-    ? Number(process.env.NEXT_PUBLIC_AUTO_CONNECT_TTL)
-    : 60000,
-  targetNetworks: [networks.devnet.chain, networks.mainnet.chain],
-  rpcProviderUrl,
-};
-
-export default config;
-
-// -----  Inline Test Code -----
-// if (require.main === module) {
-//   const defaultKey = Object.keys(networks).find((k) => networks[k].id === config.defaultNetwork) || "unknown";
-//   console.log("[CONFIG] Initialized with:", {
-//     defaultNetwork: config.defaultNetwork,
-//     defaultNetworkName: defaultKey,
-//     rpcUrl: config.rpcProviderUrl,
-//     networks: Object.keys(config.networks).length,
-//   });
-// }
+export default scaffoldConfig;
