@@ -26,17 +26,21 @@ jobs:
         uses: actions/checkout@master
 
       - name: Install scarb
-        run: curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh -s -- -v 2.9.2
+        uses: software-mansion/setup-scarb@v2
+        with:
+          tool-versions: ./packages/snfoundry/contracts/.tool-versions
+          scarb-lock: ./packages/snfoundry/contracts/Scarb.lock
 
       - name: Install snfoundryup
-        run: curl -L https://raw.githubusercontent.com/foundry-rs/starknet-foundry/master/scripts/install.sh | sh
+        uses: foundry-rs/setup-snfoundry@v3
+        with:
+          tool-versions: ./packages/snfoundry/contracts/.tool-versions
 
-      - name: Install snforge
-        run: snfoundryup -v 0.35.1
+      - name: Build Contracts
+        run: yarn compile
 
-      - name: Run snforge tests
-        run: snforge test
-        working-directory: ./packages/snfoundry/contracts
+      - name: Run smart contract tests
+        run: yarn test
 
       - name: Setup node env
         uses: actions/setup-node@v3
