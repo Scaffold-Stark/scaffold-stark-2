@@ -12,14 +12,20 @@ const containsDevnet = (networks: readonly chains.Chain[]) => {
   );
 };
 
+// Get the current target network (first one in the array)
+const currentNetwork = scaffoldConfig.targetNetworks[0];
+const currentNetworkId = String(currentNetwork.id);
+
+// Get RPC URL for the current network
+const rpcUrl = scaffoldConfig.rpcProviderUrl[currentNetworkId] || "";
+
 const provider =
-  scaffoldConfig.rpcProviderUrl == "" ||
-  containsDevnet(scaffoldConfig.targetNetworks)
+  rpcUrl === "" || containsDevnet(scaffoldConfig.targetNetworks)
     ? publicProvider()
     : jsonRpcProvider({
         rpc: () => ({
-          nodeUrl: scaffoldConfig.rpcProviderUrl,
-          chainId: starknetChainId(scaffoldConfig.targetNetworks[0].id),
+          nodeUrl: rpcUrl,
+          chainId: starknetChainId(currentNetwork.id),
         }),
       });
 
