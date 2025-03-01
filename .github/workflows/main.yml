@@ -28,14 +28,13 @@ jobs:
       - name: Install scarb
         uses: software-mansion/setup-scarb@v1
         with:
-          tool-versions: ./packages/snfoundry/contracts/.tool-versions
+          tool-versions: ./.tool-versions
           scarb-lock: ./packages/snfoundry/contracts/Scarb.lock
 
       - name: Install snfoundryup
         uses: foundry-rs/setup-snfoundry@v3
         with:
-          tool-versions: ./packages/snfoundry/contracts/.tool-versions
-
+          tool-versions: ./.tool-versions
       - name: Build Contracts
         run: yarn compile
 
