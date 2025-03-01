@@ -25,6 +25,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
+      - name: Setup node env
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          cache: "yarn"
+          #cache-dependency-path: packages/nextjs/yarn.lock
+
+      - name: Install dependencies (Next.js)
+        run: yarn install --immutable
+        working-directory: ./packages/nextjs
+
       - name: Install scarb
         uses: software-mansion/setup-scarb@v1
         with:
@@ -41,17 +52,6 @@ jobs:
 
       - name: Run smart contract tests
         run: yarn test
-
-      - name: Setup node env
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-          cache: "yarn"
-          #cache-dependency-path: packages/nextjs/yarn.lock
-
-      - name: Install dependencies (Next.js)
-        run: yarn install --immutable
-        working-directory: ./packages/nextjs
 
       - name: Check Code Format
         run: yarn format:check
