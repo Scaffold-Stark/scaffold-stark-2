@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: Install scarb
-        uses: software-mansion/setup-scarb@v2
+        uses: software-mansion/setup-scarb@v1
         with:
           tool-versions: ./packages/snfoundry/contracts/.tool-versions
           scarb-lock: ./packages/snfoundry/contracts/Scarb.lock
