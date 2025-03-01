@@ -35,6 +35,7 @@ jobs:
         uses: foundry-rs/setup-snfoundry@v3
         with:
           tool-versions: ./.tool-versions
+
       - name: Build Contracts
         run: yarn compile
 
