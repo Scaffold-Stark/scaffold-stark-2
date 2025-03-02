@@ -14,10 +14,10 @@ const containsDevnet = (networks: readonly chains.Chain[]) => {
 
 // Get the current target network (first one in the array)
 const currentNetwork = scaffoldConfig.targetNetworks[0];
-const currentNetworkId = String(currentNetwork.id);
+const currentNetworkName = currentNetwork.network;
 
 // Get RPC URL for the current network
-const rpcUrl = scaffoldConfig.rpcProviderUrl[currentNetworkId] || "";
+const rpcUrl = scaffoldConfig.rpcProviderUrl[currentNetworkName] || "";
 
 const provider =
   rpcUrl === "" || containsDevnet(scaffoldConfig.targetNetworks)
