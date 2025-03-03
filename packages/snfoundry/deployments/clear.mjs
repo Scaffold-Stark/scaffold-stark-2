@@ -1,13 +1,23 @@
 import fs from 'fs';
 import path from 'path';
 
-const sufix = '_latest.json';
-const files = [`devnet${sufix}`, `sepolia${sufix}`, `mainnet${sufix}`];
+const k = ['devnet', 'sepolia', 'mainnet'];
+const args = process.argv.slice(2);
 
-for (let i = 0; i < files.length; i++) {
-  const f = path.join(files[i]);
+const match = k.some((x) => args[0]?.includes(x) ?? false);
 
-  fs.unlink(f, (err) => {});
-}
+fs.readdir('.', (e, f) => {
+  if (e) console.error('Error reading directory:', e);
 
-console.log('\x1b[32m', 'temporary files deleted');
+  let mf;
+  if (!match) mf = f.filter((x) => k.some((w) => x.startsWith(w)));
+  else mf = f.filter((x) => x.startsWith(args[0].substring(2)));
+
+  for (let i = 0; i < mf.length; i++) {
+    const f = path.join('.', mf[i]);
+
+    fs.unlink(f, (e) => {});
+  }
+
+  console.log('\x1b[32m', 'temporary files deleted.');
+});
