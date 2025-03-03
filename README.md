@@ -189,6 +189,44 @@ You have to paste the endpoint and body in the API platform and click on the `Se
 ![rpc-version](./packages/nextjs/public/rpc-version.png)
 </details>
 
+## CLI Usage
+
+Depending on your package manager, substitute the work COMMAND with the appropiate one from the list.
+
+   $ yarn COMMAND
+   $ npm run COMMAND
+
+Commands:
+
+| Command     | Description |
+| --- | --- |
+| format:check     | (Read only) Batch checks for format inconsistencies for the nextjs and snfoundry codebase |
+| next:check-types | Compile  typscript project                                                                |
+| next:lint        | Runs next lint                                                                            |
+| prepare          | Install husky's git hooks                                                                 |
+| usage            | Show this text                                                                            |
+
+### CLI Smart Contracts
+
+| Command     | Description |
+| --- | --- |
+| compile         | Compiles contracts.                                                                 |
+| test            | Runs snfoundry tests                                                                |
+| chain           | Starts the local blockchain network.                                                |
+| deploy          | Deploys contract to the configured network discarding previous deployments.         |
+| deploy:no-reset | Deploys contract to the configured network without discarding previous deployments. |
+| verify          | Verify Smart Contracts with Walnut                                                  |
+
+### CLI Frontend
+
+| Command     | Description |
+| --- | --- |
+| start       | Starts the frontend server                   |
+| test:nextjs | Runs the nextjs tests                        |
+| vercel      | Deploys app to vercel                        |
+| vercel:yolo | Force deploy app to vercel (ignoring errors) |
+
+
 ## **What's next**
 
 - Edit your smart contract `YourContract.cairo` in `packages/snfoundry/contracts/src`
