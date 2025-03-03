@@ -1,18 +1,14 @@
 /** @type {import('next').NextConfig} */
 import webpack from "webpack";
+import nextPWA from "next-pwa";
 
-let withPWA = (config) => config;
-try {
-  withPWA = require("next-pwa")({
-    dest: "public",
-    disable: process.env.NODE_ENV === "development",
-    workboxOpts: {
-      debug: false,
-    },
-  });
-} catch (err) {
-  console.log("next-pwa no está instalado. Continuando sin PWA...");
-}
+const withPWA = nextPWA({
+  dest: "public",
+  disable: process.env.NODE_ENV === "development",
+  register: true,
+  skipWaiting: true,
+  debug: false,
+});
 
 const nextConfig = {
   reactStrictMode: true,
