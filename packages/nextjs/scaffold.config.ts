@@ -12,11 +12,6 @@ export type ScaffoldConfig = {
   autoConnectTTL: number;
 };
 
-// Convert BigInt chain IDs to strings for object keys
-const devnetId = String(chains.devnet.id);
-const sepoliaId = String(chains.sepolia.id);
-const mainnetId = String(chains.mainnet.id);
-
 const scaffoldConfig = {
   targetNetworks: [chains.devnet],
   // Only show the Burner Wallet when running on devnet
