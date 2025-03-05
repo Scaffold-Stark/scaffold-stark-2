@@ -50,16 +50,17 @@ const deployScript = async (): Promise<void> => {
   });
 };
 
-deployScript()
-  .then(async () => {
-    executeDeployCalls()
-      .then(() => {
-        exportDeployments();
-        console.log(green("All Setup Done"));
-      })
-      .catch((e) => {
-        console.error(e);
-        process.exit(1); // exit with error so that non subsequent scripts are run
-      });
-  })
-  .catch(console.error);
+const main = async (): Promise<void> => {
+  try {
+    await deployScript();
+    await executeDeployCalls();
+    exportDeployments();
+
+    console.log(green("All Setup Done!"));
+  } catch (err) {
+    console.log(err);
+    process.exit(1); //exit with error so that non subsequent scripts are run
+  }
+};
+
+main();
