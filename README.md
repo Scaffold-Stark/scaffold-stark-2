@@ -198,11 +198,21 @@ We've streamlined RPC provider configuration by centralizing network settings in
 - The first network in this array is used as the primary target.
 - Ensure each network has a corresponding RPC URL specified in the `rpcProviderUrl` object.
 
-**Environment Variable Setup:**
-The following environment variables must be set in your `.env` file to properly configure RPC URLs:
+
+### Required Environment Variables
+
+For the network configuration to work correctly, you must set the following environment variables in your `.env` file:
+
 - `NEXT_PUBLIC_DEVNET_PROVIDER_URL`
 - `NEXT_PUBLIC_SEPOLIA_PROVIDER_URL`
 - `NEXT_PUBLIC_MAINNET_PROVIDER_URL`
+
+These variables are used in the configuration to assign the correct RPC URLs:
+
+```typescript
+"devnet": process.env.NEXT_PUBLIC_DEVNET_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || "",
+"sepolia": process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || "",
+"mainnet": process.env.NEXT_PUBLIC_MAINNET_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || ""
 
 ### RPC specific version
 
