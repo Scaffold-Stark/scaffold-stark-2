@@ -198,6 +198,12 @@ We've streamlined RPC provider configuration by centralizing network settings in
 - The first network in this array is used as the primary target.
 - Ensure each network has a corresponding RPC URL specified in the `rpcProviderUrl` object.
 
+**Environment Variable Setup:**
+The following environment variables must be set in your `.env` file to properly configure RPC URLs:
+- `NEXT_PUBLIC_DEVNET_PROVIDER_URL`
+- `NEXT_PUBLIC_SEPOLIA_PROVIDER_URL`
+- `NEXT_PUBLIC_MAINNET_PROVIDER_URL`
+
 ### RPC specific version
 
 To ensure the proper functioning of Scaffold-Stark with Testnet or Mainnet, your RPC version must be `0.7.1`. This repository contains a `.env.example` file with the default RPC URL for Starknet Testnet:
