@@ -55,21 +55,21 @@ If your local Scarb version is not `2.9.4`, you need to install it.
 
 ### Starknet Foundry version
 
-To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.37.0. To accomplish this, first check your Starknet Foundry version:
+To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.38.2. To accomplish this, first check your Starknet Foundry version:
 
 ```sh
 snforge --version
 ```
 
-If your Starknet Foundry version is not `0.37.0`, you need to install it.
+If your Starknet Foundry version is not `0.38.2`, you need to install it.
 
-- Install Starknet Foundry `0.37.0` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
+- Install Starknet Foundry `0.38.2` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
 
 ## Compatible versions
 
 - Starknet-devnet - v0.2.3
 - Scarb - v2.9.4
-- Snforge - v0.37.0
+- Snforge - v0.38.2
 - Cairo - v2.9.4
 - Rpc - v0.7.1
 
