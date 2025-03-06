@@ -189,6 +189,37 @@ You have to paste the endpoint and body in the API platform and click on the `Se
 ![rpc-version](./packages/nextjs/public/rpc-version.png)
 </details>
 
+## Network Configuration Centralization
+
+We've streamlined RPC provider configuration by centralizing network settings in `scaffold.config.ts`. All RPC URLs are now defined in the `rpcProviderUrl` object, and functions reference this centralized configuration instead of using environment variables directly.
+
+**How to Change Networks:**
+- Update the `targetNetworks` array in `scaffold.config.ts`.
+- The first network in this array is used as the primary target.
+- Ensure each network has a corresponding RPC URL specified in the `rpcProviderUrl` object.
+
+
+### Required Environment Variables
+
+For the network configuration to work correctly, you must set the following environment variables in your `.env` file:
+
+- `NEXT_PUBLIC_DEVNET_PROVIDER_URL`
+- `NEXT_PUBLIC_SEPOLIA_PROVIDER_URL`
+- `NEXT_PUBLIC_MAINNET_PROVIDER_URL`
+
+These variables are used in the configuration to assign the correct RPC URLs:
+
+```typescript
+"devnet": process.env.NEXT_PUBLIC_DEVNET_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || "",
+"sepolia": process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || "",
+"mainnet": process.env.NEXT_PUBLIC_MAINNET_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || ""
+
+### RPC specific version
+
+To ensure the proper functioning of Scaffold-Stark with Testnet or Mainnet, your RPC version must be `0.7.1`. This repository contains a `.env.example` file with the default RPC URL for Starknet Testnet:
+
+
+
 ## **What's next**
 
 - Edit your smart contract `YourContract.cairo` in `packages/snfoundry/contracts/src`
