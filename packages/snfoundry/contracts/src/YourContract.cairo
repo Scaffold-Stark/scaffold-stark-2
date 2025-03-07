@@ -10,7 +10,8 @@ pub trait IYourContract<TContractState> {
 mod YourContract {
     use openzeppelin_access::ownable::OwnableComponent;
     use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
-    use starknet::storage::Map;
+    use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
+    use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
     use starknet::{ContractAddress, contract_address_const};
     use starknet::{get_caller_address, get_contract_address};
     use super::{IYourContract};
@@ -73,8 +74,8 @@ mod YourContract {
 
             match amount_eth {
                 Option::Some(amount_eth) => {
-                    // In `Debug Contract` or UI implementation call `approve` on ETH contract
-                    // before invoke fn set_greeting()
+                    // In `Debug Contract` or UI implementation, call `approve` on ETH contract
+                    // before invoking fn set_greeting()
                     let eth_contract_address = contract_address_const::<ETH_CONTRACT_ADDRESS>();
                     let eth_dispatcher = IERC20Dispatcher {
                         contract_address: eth_contract_address,
