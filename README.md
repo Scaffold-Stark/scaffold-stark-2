@@ -43,34 +43,34 @@ If your local starknet-devnet version is not `0.2.3`, you need to install it.
 
 ### Scarb version
 
-To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.9.2`. To accomplish this, first check your local Scarb version:
+To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.9.4`. To accomplish this, first check your local Scarb version:
 
 ```sh
 scarb --version
 ```
 
-If your local Scarb version is not `2.9.2`, you need to install it.
+If your local Scarb version is not `2.9.4`, you need to install it.
 
-- Install Scarb `2.9.2` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
+- Install Scarb `2.9.4` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
 
 ### Starknet Foundry version
 
-To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.35.1. To accomplish this, first check your Starknet Foundry version:
+To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.38.2. To accomplish this, first check your Starknet Foundry version:
 
 ```sh
 snforge --version
 ```
 
-If your Starknet Foundry version is not `0.35.1`, you need to install it.
+If your Starknet Foundry version is not `0.38.2`, you need to install it.
 
-- Install Starknet Foundry `0.35.1` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
+- Install Starknet Foundry `0.38.2` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
 
 ## Compatible versions
 
 - Starknet-devnet - v0.2.3
-- Scarb - v2.9.2
-- Snforge - v0.35.1
-- Cairo - v2.9.2
+- Scarb - v2.9.4
+- Snforge - v0.38.2
+- Cairo - v2.9.4
 - Rpc - v0.7.1
 
 ## Requirements (Alternative Option with Docker)
@@ -194,10 +194,10 @@ You have to paste the endpoint and body in the API platform and click on the `Se
 We've streamlined RPC provider configuration by centralizing network settings in `scaffold.config.ts`. All RPC URLs are now defined in the `rpcProviderUrl` object, and functions reference this centralized configuration instead of using environment variables directly.
 
 **How to Change Networks:**
+
 - Update the `targetNetworks` array in `scaffold.config.ts`.
 - The first network in this array is used as the primary target.
 - Ensure each network has a corresponding RPC URL specified in the `rpcProviderUrl` object.
-
 
 ### Required Environment Variables
 
@@ -213,12 +213,11 @@ These variables are used in the configuration to assign the correct RPC URLs:
 "devnet": process.env.NEXT_PUBLIC_DEVNET_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || "",
 "sepolia": process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || "",
 "mainnet": process.env.NEXT_PUBLIC_MAINNET_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || ""
+```
 
 ### RPC specific version
 
 To ensure the proper functioning of Scaffold-Stark with Testnet or Mainnet, your RPC version must be `0.7.1`. This repository contains a `.env.example` file with the default RPC URL for Starknet Testnet:
-
-
 
 ## **What's next**
 
