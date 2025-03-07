@@ -1,7 +1,7 @@
 #[starknet::interface]
 pub trait IYourContract<TContractState> {
     fn greeting(self: @TContractState) -> ByteArray;
-    fn set_greeting(ref self: TContractState, new_greeting: ByteArray, amount_eth: u256);
+    fn set_greeting(ref self: TContractState, new_greeting: ByteArray, amount_eth: Option<u256>);
     fn withdraw(ref self: TContractState);
     fn premium(self: @TContractState) -> bool;
 }
@@ -10,7 +10,8 @@ pub trait IYourContract<TContractState> {
 mod YourContract {
     use openzeppelin_access::ownable::OwnableComponent;
     use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
-    use starknet::storage::Map;
+    use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
+    use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
     use starknet::{ContractAddress, contract_address_const};
     use starknet::{get_caller_address, get_contract_address};
     use super::{IYourContract};
@@ -39,7 +40,7 @@ mod YourContract {
         #[key]
         new_greeting: ByteArray,
         premium: bool,
-        value: u256,
+        value: Option<u256>,
     }
 
     #[storage]
@@ -63,22 +64,27 @@ mod YourContract {
         fn greeting(self: @ContractState) -> ByteArray {
             self.greeting.read()
         }
-        fn set_greeting(ref self: ContractState, new_greeting: ByteArray, amount_eth: u256) {
+        fn set_greeting(
+            ref self: ContractState, new_greeting: ByteArray, amount_eth: Option<u256>,
+        ) {
             self.greeting.write(new_greeting);
             self.total_counter.write(self.total_counter.read() + 1);
             let user_counter = self.user_greeting_counter.read(get_caller_address());
             self.user_greeting_counter.write(get_caller_address(), user_counter + 1);
 
-            if amount_eth > 0 {
-                // In `Debug Contract` or UI implementation call `approve` on ETH contract before
-                // invoke fn set_greeting()
-                let eth_contract_address = contract_address_const::<ETH_CONTRACT_ADDRESS>();
-                let eth_dispatcher = IERC20Dispatcher { contract_address: eth_contract_address };
-                eth_dispatcher
-                    .transfer_from(get_caller_address(), get_contract_address(), amount_eth);
-                self.premium.write(true);
-            } else {
-                self.premium.write(false);
+            match amount_eth {
+                Option::Some(amount_eth) => {
+                    // In `Debug Contract` or UI implementation, call `approve` on ETH contract
+                    // before invoking fn set_greeting()
+                    let eth_contract_address = contract_address_const::<ETH_CONTRACT_ADDRESS>();
+                    let eth_dispatcher = IERC20Dispatcher {
+                        contract_address: eth_contract_address,
+                    };
+                    eth_dispatcher
+                        .transfer_from(get_caller_address(), get_contract_address(), amount_eth);
+                    self.premium.write(true);
+                },
+                Option::None => { self.premium.write(false); },
             }
             self
                 .emit(
@@ -86,7 +92,7 @@ mod YourContract {
                         greeting_setter: get_caller_address(),
                         new_greeting: self.greeting.read(),
                         premium: true,
-                        value: 100,
+                        value: amount_eth,
                     },
                 );
         }
