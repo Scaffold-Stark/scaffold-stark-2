@@ -1,6 +1,6 @@
 {
     "name": "Scaffold Stark",
-    "image": "starknetfoundation/starknet-dev:2.9.2",
+    "image": "starknetfoundation/starknet-dev:2.9.4",
     "customizations": {
         "vscode": {
             "extensions": [
