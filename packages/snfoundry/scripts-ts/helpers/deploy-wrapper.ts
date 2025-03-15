@@ -8,6 +8,7 @@ interface CommandLineOptions {
   network?: string; // The --network option
   reset?: boolean;
   fee?: string;
+  "no-reset"?: boolean;
 }
 
 function main() {
@@ -18,12 +19,12 @@ function main() {
       default: "devnet",
     })
     .option("fee", { type: "string", choices: ["eth", "strk"], default: "eth" })
-    .option("reset", {
+    .option("no-reset", {
       type: "boolean",
       description: "Do not reset deployments (keep existing deployments)",
-      default: true,
+      default: false,
     })
-    .demandOption(["network", "fee", "reset"])
+    .demandOption(["network", "fee"])
     .parseSync() as CommandLineOptions;
 
   if (argv._.length > 0) {
@@ -39,7 +40,7 @@ function main() {
       `cd contracts && scarb build && ts-node ../scripts-ts/deploy.ts` +
         ` --network ${argv.network || "devnet"}` +
         ` --fee ${argv.fee || "eth"}` +
-        ` ${!argv.reset && "--no-reset "}` +
+        ` ${argv["no-reset"] ? "--no-reset" : ""}` +
         ` && ts-node ../scripts-ts/helpers/parse-deployments.ts && cd ..`,
       { stdio: "inherit" }
     );
