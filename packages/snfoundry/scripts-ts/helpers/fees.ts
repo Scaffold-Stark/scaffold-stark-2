@@ -42,7 +42,7 @@ export async function getTxVersion(
     );
     if (balance > 0n) {
       console.log(yellow(`Using ${feeToken.toUpperCase()} as fee token`));
-      return getTxVersionFromFeeToken(feeToken, isSierra);
+      return TransactionVersion.V3;
     }
     console.log(
       red(`${feeToken.toUpperCase()} balance is zero, trying other options`)
@@ -59,7 +59,7 @@ export async function getTxVersion(
       );
       if (balance > 0n) {
         console.log(yellow(`Using ${token.name.toUpperCase()} as fee token`));
-        return getTxVersionFromFeeToken(token.name, isSierra);
+        return TransactionVersion.V3;
       }
       console.log(
         red(`${token.name.toUpperCase()} balance is zero, trying next option`)
@@ -88,14 +88,6 @@ export async function getBalance(
     console.error("Error fetching balance:", error);
     return 0n;
   }
-}
-
-function getTxVersionFromFeeToken(feeToken: string, isSierra?: boolean) {
-  return feeToken === "strk"
-    ? TransactionVersion.V3
-    : isSierra
-    ? TransactionVersion.V2
-    : TransactionVersion.V1;
 }
 
 /**
