@@ -31,15 +31,15 @@ Before you begin, you need to install the following tools:
 
 ### Starknet-devnet version
 
-To ensure the proper functioning of scaffold-stark, your local `starknet-devnet` version must be `0.2.3`. To accomplish this, first check your local starknet-devnet version:
+To ensure the proper functioning of scaffold-stark, your local `starknet-devnet` version must be `0.2.4`. To accomplish this, first check your local starknet-devnet version:
 
 ```sh
 starknet-devnet --version
 ```
 
-If your local starknet-devnet version is not `0.2.3`, you need to install it.
+If your local starknet-devnet version is not `0.2.4`, you need to install it.
 
-- Install Starknet-devnet `0.2.3` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
+- Install Starknet-devnet `0.2.4` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
 
 ### Scarb version
 
@@ -67,7 +67,7 @@ If your Starknet Foundry version is not `0.38.2`, you need to install it.
 
 ## Compatible versions
 
-- Starknet-devnet - v0.2.3
+- Starknet-devnet - v0.2.4
 - Scarb - v2.9.4
 - Snforge - v0.38.2
 - Cairo - v2.9.4
