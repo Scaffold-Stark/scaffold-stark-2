@@ -19,10 +19,10 @@ function main() {
       default: "devnet",
     })
     .option("fee", { type: "string", choices: ["eth", "strk"], default: "eth" })
-    .option("no-reset", {
+    .option("reset", {
       type: "boolean",
-      description: "Do not reset deployments (keep existing deployments)",
-      default: false,
+      description: "Reset deployments (clear existing deployments)",
+      default: true,
     })
     .demandOption(["network", "fee"])
     .parseSync() as CommandLineOptions;
@@ -40,7 +40,7 @@ function main() {
       `cd contracts && scarb build && ts-node ../scripts-ts/deploy.ts` +
         ` --network ${argv.network || "devnet"}` +
         ` --fee ${argv.fee || "eth"}` +
-        ` ${argv["no-reset"] ? "--no-reset" : ""}` +
+        ` ${!argv.reset ? "--no-reset" : ""}` +
         ` && ts-node ../scripts-ts/helpers/parse-deployments.ts && cd ..`,
       { stdio: "inherit" }
     );
