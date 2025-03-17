@@ -1,16 +1,10 @@
 import endpoint from "./configTypes";
 import { test, expect } from "@playwright/test";
 import { HomePage } from "./pages/HomePage";
+import { navigateAndWait } from "./utils/navigate";
 
 test("Expect to connect to devnet with Burner Wallet", async ({ page }) => {
-  // Go to the Droplets product page of DigitalOcean web page
-  await page.goto(endpoint.BASE_URL);
-
-  // Wait for the page to load
-  await Promise.all([
-    page.waitForLoadState("domcontentloaded"),
-    page.waitForLoadState("networkidle"),
-  ]);
+  await navigateAndWait(page, endpoint.BASE_URL);
   await expect(
     page.getByRole("link", { name: "Home", exact: true })
   ).toBeVisible();
