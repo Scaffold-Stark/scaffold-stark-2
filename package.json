@@ -1,6 +1,6 @@
 {
   "name": "ss-2",
-  "version": "0.3.25",
+  "version": "0.3.29",
   "author": "Q3 Labs",
   "license": "MIT",
   "private": true,
@@ -13,6 +13,7 @@
   "scripts": {
     "chain": "yarn workspace @ss-2/snfoundry chain",
     "deploy": "yarn workspace @ss-2/snfoundry deploy",
+    "deploy:clear": "yarn workspace @ss-2/snfoundry deploy:clear",
     "deploy:no-reset": "yarn workspace @ss-2/snfoundry deploy --no-reset",
     "test": "yarn workspace @ss-2/snfoundry test",
     "compile": "yarn workspace @ss-2/snfoundry compile",
@@ -29,12 +30,14 @@
   },
   "packageManager": "yarn@3.2.3",
   "devDependencies": {
+    "@types/next-pwa": "^5",
     "daisyui": "^4.7.3",
     "husky": "^9.0.11",
     "pinst": "^3.0.0",
     "prettier": "^3.2.5"
   },
   "dependencies": {
+    "next-pwa": "^5.6.0",
     "postcss": "^8.4.38"
   }
 }
