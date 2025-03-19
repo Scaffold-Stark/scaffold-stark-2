@@ -3611,10 +3611,10 @@ __metadata:
     "@radix-ui/react-icons": 1.3.0
     "@radix-ui/themes": 2.0.3
     "@scaffold-stark/stark-burner": 0.1.8
-    "@starknet-io/types-js": ^0.7.7
-    "@starknet-react/chains": ^3.1.0
-    "@starknet-react/core": ^3.6.0
-    "@starknet-react/typescript-config": 0.0.0
+    "@starknet-io/types-js": ^0.7.10
+    "@starknet-react/chains": ^3.1.2
+    "@starknet-react/core": ^3.7.2
+    "@starknet-react/typescript-config": 0.0.2
     "@testing-library/dom": ^10.4.0
     "@testing-library/react": ^16.0.1
     "@types/next-pwa": ^5
@@ -3682,21 +3682,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@starknet-io/types-js@npm:^0.7.7, starknet-types-07@npm:@starknet-io/types-js@^0.7.7":
+"@starknet-io/types-js@npm:^0.7.10, @starknet-io/types-js@npm:^0.7.7, starknet-types-07@npm:@starknet-io/types-js@^0.7.7":
   version: 0.7.10
   resolution: "@starknet-io/types-js@npm:0.7.10"
   checksum: 8f71c57d0f101ebbde91e3016b73ab70ce3329ccb7463764a27a61db42b9ea14b690bd620a6b2dd4303e890b4a9212bdd40626962e0320e82e0c600fd3be5abf
   languageName: node
   linkType: hard
 
-"@starknet-react/chains@npm:^3.1.0, @starknet-react/chains@npm:^3.1.2":
+"@starknet-react/chains@npm:^3.1.2":
   version: 3.1.2
   resolution: "@starknet-react/chains@npm:3.1.2"
   checksum: 681af7b1db76e856cab1e2727fb941428807750218d0a7f7884e8fba3a19883e0093874e44e0994303ec294bda5f5bf3729d34cb9cf749e09ae4dba4746b5204
   languageName: node
   linkType: hard
 
-"@starknet-react/core@npm:^3.6.0":
+"@starknet-react/core@npm:^3.7.2":
   version: 3.7.2
   resolution: "@starknet-react/core@npm:3.7.2"
   dependencies:
@@ -3715,10 +3715,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@starknet-react/typescript-config@npm:0.0.0":
-  version: 0.0.0
-  resolution: "@starknet-react/typescript-config@npm:0.0.0"
-  checksum: d56a63d1c5529fda9fa4f892b160a49ebc6c7616a1f719e9992638c98af959c2c30f58912c01f311eba28f5bac36f7aa19bb6c6e11ac1e645ba4e9ec66a801ab
+"@starknet-react/typescript-config@npm:0.0.2":
+  version: 0.0.2
+  resolution: "@starknet-react/typescript-config@npm:0.0.2"
+  checksum: 0ac12d89aefc5c3e1ef5352f9867a61d6aa289587eb55286169e340a6b9340ca6deb775aa32cda4d1c8b4831d7d406184abd445607f23cb1da4b1d1568ba4368
   languageName: node
   linkType: hard
 
