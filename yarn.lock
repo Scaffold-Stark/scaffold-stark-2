@@ -3617,6 +3617,7 @@ __metadata:
     "@starknet-react/typescript-config": 0.0.0
     "@testing-library/dom": ^10.4.0
     "@testing-library/react": ^16.0.1
+    "@types/next-pwa": ^5
     "@types/node": ^20
     "@types/nprogress": ^0
     "@types/react": latest
@@ -11712,10 +11713,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "ss-2@workspace:."
   dependencies:
-    "@types/next-pwa": ^5
     daisyui: ^4.7.3
     husky: ^9.0.11
-    next-pwa: ^5.6.0
     pinst: ^3.0.0
     postcss: ^8.4.38
     prettier: ^3.2.5

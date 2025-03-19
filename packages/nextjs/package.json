@@ -53,6 +53,7 @@
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.0.1",
+    "@types/next-pwa": "^5",
     "@types/node": "^20",
     "@types/nprogress": "^0",
     "@types/react": "latest",
