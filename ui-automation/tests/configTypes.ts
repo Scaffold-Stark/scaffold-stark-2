@@ -6,6 +6,6 @@ declare global {
   const browserName: string;
 }
 
-export default {
+export const endpoint = {
   BASE_URL: process.env.BASE_URL || "http://localhost:3000",
 };
