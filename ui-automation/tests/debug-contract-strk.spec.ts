@@ -1,19 +1,19 @@
 import { test, expect } from "@playwright/test";
 import { navigateAndWait } from "./utils/navigate";
 import { HomePage } from "./pages/HomePage";
-import { DebugPage } from "./pages/EthDebugPage";
+import { StrkDebugPage } from "./pages/StrkDebugPage";
 import { endpoint } from "./configTypes";
 
 const BURNER_WALLET_ACCOUNT = "0x064b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691";
 const BURNER_WALLET_SHORT = "0x64b4...5691";
 
-test("Check Balance of Connected Burner Wallet on Eth Tab", async ({ page }) => {
+test("Check Balance of Connected Burner Wallet on Strk Tab", async ({ page }) => {
   test.setTimeout(30000);
 
   await navigateAndWait(page, endpoint.BASE_URL);
 
   const homePage = new HomePage(page);
-
+  
   const connectButton = await homePage.getConnectButton();
   await connectButton.click();
 
@@ -29,9 +29,9 @@ test("Check Balance of Connected Burner Wallet on Eth Tab", async ({ page }) => 
   await homePage.getDebugPageLinkButton().click();
   await page.waitForTimeout(2000);
 
-  const debugPage = new DebugPage(page);
+  const debugPage = new StrkDebugPage(page);
 
-  await debugPage.switchToEthTab();
+  await debugPage.switchToStrkTab();
 
   await debugPage.fillBalanceOfInput(BURNER_WALLET_ACCOUNT);
 
@@ -45,7 +45,7 @@ test("Check Balance of Connected Burner Wallet on Eth Tab", async ({ page }) => 
   expect(resultText).toContain("Ξ");
 });
 
-test("Transfer ETH from Write tab", async ({ page }) => {
+test("Transfer STRK from Write tab", async ({ page }) => {
   test.setTimeout(30000);
 
   await navigateAndWait(page, endpoint.BASE_URL);
@@ -65,17 +65,18 @@ test("Transfer ETH from Write tab", async ({ page }) => {
   await homePage.getDebugPageLinkButton().click();
   await page.waitForTimeout(2000);
 
-  const debugPage = new DebugPage(page);
+  const debugPage = new StrkDebugPage(page);
   
-  // Hardcoded Eth contract address
-  const recipientAddress = "0x049D36570D4e46f48e99674bd3fcc84644DdD6b96F7C741B1562B82f9e004dC7";
+  await debugPage.switchToStrkTab();
+  
+  const recipientAddress = "0x047147e40fbd5c4ad2170d69e3b7a695f29df47ac04485781e62088c099308d";
   const transferAmount = "10";
   
-  console.log(`Transferring ${transferAmount} ETH to contract address: ${recipientAddress}`);
+  console.log(`Transferring ${transferAmount} STRK to contract address: ${recipientAddress}`);
   
   await debugPage.performTransfer(recipientAddress, transferAmount);
   
-  console.log(`Transfer completed: ${transferAmount} ETH sent to ${recipientAddress}`);
+  console.log(`Transfer completed: ${transferAmount} STRK sent to ${recipientAddress}`);
   
   await page.waitForTimeout(3000);
 });
