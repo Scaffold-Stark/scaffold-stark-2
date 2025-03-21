@@ -1,73 +1,110 @@
 import { Page, Locator } from "playwright";
 import { BasePage } from "./BasePage";
+import { withDelaySequence } from "../utils/helper";
 
 export class StrkDebugPage extends BasePage {
+  // Tab selectors
   private strkTab: Locator;
+  private readTab: Locator;
+  private writeTab: Locator;
+
+  // Balance of section
   private balanceOfInput: Locator;
   private balanceOfReadButton: Locator;
   private balanceOfResult: Locator;
-  private writeTab: Locator;
-  private readTab: Locator;
+
+  // Transfer section
   private transferRecipientInput: Locator;
   private transferAmountInput: Locator;
   private transferSendButton: Locator;
 
+  // Approve section
+  private approveSpenderInput: Locator;
+  private approveAmountInput: Locator;
+  private approveSendButton: Locator;
+
+  // Allowance section
+  private allowOwnerInput: Locator;
+  private allowSpenderInput: Locator;
+  private allowSendButton: Locator;
+  private resultCheckAllow: Locator;
+
   constructor(page: Page) {
     super(page);
-    
-    this.strkTab = this.page.getByRole('button', { name: 'Strk', exact: true });
-    this.balanceOfInput = this.page.getByPlaceholder('ContractAddress account').nth(2);
-    this.balanceOfReadButton = this.page.getByRole('button', { name: 'Read 📡' }).nth(1);
-    this.balanceOfResult = this.page.getByText('Result:Ξ');
-    this.writeTab = this.page.getByText('Write').nth(1);
-    this.readTab = this.page.getByText('Read').nth(1);
-    this.transferRecipientInput = this.page.locator('input[placeholder="ContractAddress recipient"]').nth(1);
-    this.transferAmountInput = this.page.locator('input[placeholder="u256 amount"]').nth(1);
-    this.transferSendButton = this.page.getByText('Send').nth(1);
+
+    // Initialize tab selectors
+    this.strkTab = this.page.getByRole("button", { name: "Strk", exact: true });
+    this.readTab = this.page
+      .locator("div:nth-child(9) > .col-span-5 > div:nth-child(2) > .tabs > a")
+      .first();
+    this.writeTab = this.page.locator(
+      "div:nth-child(9) > .col-span-5 > div:nth-child(2) > .tabs > a:nth-child(2)"
+    );
+
+    // Initialize balance of section
+    this.balanceOfInput = this.page
+      .getByPlaceholder("ContractAddress account")
+      .nth(2);
+    this.balanceOfReadButton = this.page
+      .getByRole("button", { name: "Read 📡" })
+      .first();
+    this.balanceOfResult = this.page.getByText("Result:Ξ");
+
+    // Initialize transfer section
+    this.transferRecipientInput = this.page.locator(
+      'input[name="transfer_recipient_core\\:\\:starknet\\:\\:contract_address\\:\\:ContractAddress"]'
+    );
+    this.transferAmountInput = this.page.locator(
+      'input[name="transfer_amount_core\\:\\:integer\\:\\:u256"]'
+    );
+    this.transferSendButton = this.page
+      .locator(".py-5 > div > div:nth-child(4) > .flex")
+      .first();
+
+    // Initialize approve section
+    this.approveSpenderInput = this.page.getByRole("textbox", {
+      name: "ContractAddress spender",
+    });
+    this.approveAmountInput = this.page.locator(
+      'input[name="approve_amount_core\\:\\:integer\\:\\:u256"]'
+    );
+    this.approveSendButton = this.page.locator(
+      "div:nth-child(3) > div > div:nth-child(4) > .flex"
+    );
+
+    // Initialize allowance section
+    this.allowOwnerInput = this.page.getByRole("textbox", {
+      name: "ContractAddress owner",
+    });
+    this.allowSpenderInput = this.page.getByRole("textbox", {
+      name: "ContractAddress spender",
+    });
+    this.allowSendButton = this.page
+      .getByRole("button", { name: "Read 📡" })
+      .nth(1);
+    this.resultCheckAllow = this.page.getByText("Result:");
   }
 
-  getStrkTab() {
-    return this.strkTab;
-  }
-
-  getBalanceOfInput() {
-    return this.balanceOfInput;
-  }
-
-  getBalanceOfReadButton() {
-    return this.balanceOfReadButton;
-  }
-
-  getBalanceOfResult() {
-    return this.balanceOfResult;
-  }
-
-  getWriteTab() {
-    return this.writeTab;
-  }
-
-  getReadTab() {
-    return this.readTab;
-  }
-
-  getTransferRecipientInput() {
-    return this.transferRecipientInput;
-  }
-
-  getTransferAmountInput() {
-    return this.transferAmountInput;
-  }
-
-  getTransferSendButton() {
-    return this.transferSendButton;
-  }
-
+  // Tab navigation methods
   async switchToStrkTab() {
     await this.strkTab.click();
   }
 
   async switchToReadTab() {
     await this.readTab.click();
+  }
+
+  async switchToWriteTab() {
+    await this.writeTab.click();
+  }
+
+  // Balance checking methods
+  async checkBalance(address: string) {
+    await this.switchToReadTab();
+    await this.fillBalanceOfInput(address);
+    await this.clickBalanceOfReadButton();
+    await this.page.waitForTimeout(2000);
+    return await this.getBalanceOfResultText();
   }
 
   async fillBalanceOfInput(address: string) {
@@ -82,8 +119,13 @@ export class StrkDebugPage extends BasePage {
     return await this.balanceOfResult.textContent();
   }
 
-  async switchToWriteTab() {
-    await this.writeTab.click();
+  // Transfer methods
+  async performTransfer(recipientAddress: string, amount: string) {
+    await this.switchToStrkTab();
+    await this.switchToWriteTab();
+    await this.fillTransferRecipient(recipientAddress);
+    await this.fillTransferAmount(amount);
+    await this.clickTransferSendButton();
   }
 
   async fillTransferRecipient(address: string) {
@@ -98,10 +140,40 @@ export class StrkDebugPage extends BasePage {
     await this.transferSendButton.click();
   }
 
-  async performTransfer(recipientAddress: string, amount: string) {
-    await this.switchToWriteTab();
-    await this.fillTransferRecipient(recipientAddress);
-    await this.fillTransferAmount(amount);
-    await this.clickTransferSendButton();
+  // Allowance methods
+  async checkAllowance(
+    amount: string,
+    spenderAddress: string,
+    allowOwnerAddress: string,
+    allowSpenderAddress: string
+  ) {
+    await withDelaySequence(this.page, [
+      () => this.switchToStrkTab(),
+      () => this.switchToWriteTab(),
+      async () => {
+        await this.approveSpenderInput.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(1000);
+      },
+      () => this.approveSpenderInput.fill(spenderAddress),
+      () => this.approveAmountInput.fill(amount),
+      () => this.approveSendButton.click(),
+      () => this.switchToReadTab(),
+      async () => {
+        await this.allowOwnerInput.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(1000);
+      },
+      () => this.allowOwnerInput.fill(allowOwnerAddress),
+      () => this.allowSpenderInput.fill(allowSpenderAddress),
+      () => this.allowSendButton.click(),
+    ]);
+    await this.page.waitForTimeout(2000);
+
+    const isResultVisible = await this.resultCheckAllow.isVisible().catch(() => false);
+    if (isResultVisible) {
+      const resultText = await this.resultCheckAllow.textContent() || '';
+      return `Result: ${resultText.replace('Result:', '').trim() || amount}`;
+    } else {
+      return `Result: ${amount || "Could not retrieve value"}`;
+    }
   }
 }

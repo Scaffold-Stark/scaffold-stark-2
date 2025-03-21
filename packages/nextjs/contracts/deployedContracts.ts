@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     Vars: {
       address:
-        "0x58ae0f3adb15bcf54e8c8195dac583e4201e9c220e626ab6551b2ef17781e3d",
+        "0x2e165bccc5457d44b2c6f377c200a9e313dd9a19d7135404ee4cfc2927e8d6e",
       abi: [
         {
           type: "impl",
@@ -1086,7 +1086,7 @@ const deployedContracts = {
     },
     Structs: {
       address:
-        "0x6b983c4646f873d851807e52a52b0725e5c5f09d88a0923804a66582ca00cbf",
+        "0x57374099de833f6045636ff5a59afebf9676dd005eacaf00902f7982db22cd9",
       abi: [
         {
           type: "impl",
@@ -1674,7 +1674,7 @@ const deployedContracts = {
     },
     Complex: {
       address:
-        "0x60731a7fc681e21dab2d90ad7dc0f2872d58cf4a8c4a4ff1bf5b5ad71d22548",
+        "0x13166cee32c53ecc1cd814685302e2b1f5ae66d87889e8335cebfb4d785b67b",
       abi: [
         {
           type: "impl",
@@ -2032,7 +2032,7 @@ const deployedContracts = {
     },
     ArraysSpans: {
       address:
-        "0x57c8b490faf04c6f7e26cc2b133b9b02b6205b90bc0341be0f0464c7f6fac72",
+        "0x66bf125bfc30bc574771d4a1b62adcfc56ea636c42260368eeb85857c83e77c",
       abi: [
         {
           type: "impl",
@@ -2774,7 +2774,7 @@ const deployedContracts = {
     },
     Tuples: {
       address:
-        "0x2545e4b72521fd58342a5f120eac4eceea138eada1b99477bd0de9261b08acb",
+        "0x23e824e5025f47889add404726f06cd9fcfab9e46a549ad66f4efb0e68c3f73",
       abi: [
         {
           type: "impl",
@@ -3086,7 +3086,7 @@ const deployedContracts = {
     },
     Events: {
       address:
-        "0x15e7a0f11ac1876365d293dc1d18a18c0fa4fd0b1da64a598ab193a35e8b016",
+        "0x30c4a8764d418e29255e6eaa212b3ddad5d41d13f9deab18f50e354b977efb0",
       abi: [
         {
           type: "impl",
