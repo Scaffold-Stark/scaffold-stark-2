@@ -3845,7 +3845,7 @@ __metadata:
     react-copy-to-clipboard: ^5.1.0
     react-dom: 19.0.0
     react-hot-toast: ^2.4.1
-    starknet: 6.24.0
+    starknet: ^6.24.0
     tailwindcss: ^3.3.0
     type-fest: ^4.6.0
     typescript: ^5
@@ -3870,7 +3870,7 @@ __metadata:
     globals: ^15.8.0
     prettier: ^2.8.8
     shx: ^0.3.4
-    starknet: 6.24.0
+    starknet: ^6.24.0
     toml: ^3.0.0
     ts-node: ^10.9.2
     tslib: ^2.6.2
@@ -12260,9 +12260,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"starknet@npm:6.24.0":
-  version: 6.24.0
-  resolution: "starknet@npm:6.24.0"
+"starknet@npm:^6.24.0":
+  version: 6.24.1
+  resolution: "starknet@npm:6.24.1"
   dependencies:
     "@noble/curves": 1.7.0
     "@noble/hashes": 1.6.0
@@ -12275,7 +12275,7 @@ __metadata:
     pako: ^2.0.4
     starknet-types-07: "npm:@starknet-io/types-js@^0.7.10"
     ts-mixer: ^6.0.3
-  checksum: b7ff3fc708981038c896e08e708095397497a413018ed717a40b9548aac760df15f89a0e7c0cc6339cbfb2a63fdd0e1420e00a89bc5f206e31a8f55487cf5cdd
+  checksum: c97252779e5288c773c9c639bde8d778375fd3bcc0cc214ee8154a6a31de0ac86e9d0cc6cfb2ba677559e09306742cb89089aa2592dc3d5f9d9d9afd4554a6a6
   languageName: node
   linkType: hard
 
