@@ -12,15 +12,14 @@ import {
   UniversalDetails,
   isSierra,
   TransactionReceipt,
+  constants,
 } from "starknet";
 import { DeployContractParams, Network } from "./types";
 import { green, red, yellow } from "./helpers/colorize-log";
-import { getTxVersion } from "./helpers/fees";
 
 interface Arguments {
   network: string;
   reset: boolean;
-  fee?: string;
   [x: string]: unknown;
   _: (string | number)[];
   $0: string;
@@ -39,18 +38,10 @@ const argv = yargs(process.argv.slice(2))
       "(--no-reset) Do not reset deployments (keep existing deployments)",
     default: true,
   })
-  .option("fee", {
-    type: "string",
-    description: "Specify the fee token",
-    demandOption: false,
-    choices: ["eth", "strk"],
-    default: "eth",
-  })
   .parseSync() as Arguments;
 
 const networkName: string = argv.network;
 const resetDeployments: boolean = argv.reset ?? true;
-const feeToken: string = argv.fee;
 
 let deployments = {};
 let deployCalls = [];
@@ -66,15 +57,9 @@ const declareIfNot_NotWait = async (
     await provider.getClassByHash(declareContractPayload.classHash);
   } catch (error) {
     try {
-      const isSierraContract = isSierra(payload.contract);
-      const txVersion = await getTxVersion(
-        networks[networkName],
-        feeToken,
-        isSierraContract
-      );
       const { transaction_hash } = await deployer.declare(payload, {
         ...options,
-        version: txVersion,
+        version: constants.TRANSACTION_VERSION.V3,
       });
       if (networkName === "sepolia" || networkName === "mainnet") {
         await provider.waitForTransaction(transaction_hash);
@@ -257,10 +242,9 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
   }
 
   try {
-    const txVersion = await getTxVersion(networks[networkName], feeToken);
     let { transaction_hash } = await deployer.execute(deployCalls, {
       ...options,
-      version: txVersion,
+      version: constants.TRANSACTION_VERSION.V3,
     });
     if (networkName === "sepolia" || networkName === "mainnet") {
       const receipt = (await provider.waitForTransaction(
