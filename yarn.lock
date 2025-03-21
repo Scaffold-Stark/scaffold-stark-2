@@ -2003,42 +2003,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/curves@npm:~1.3.0":
-  version: 1.3.0
-  resolution: "@noble/curves@npm:1.3.0"
-  dependencies:
-    "@noble/hashes": 1.3.3
-  checksum: b65342ee66c4a440eee2978524412eabba9a9efdd16d6370e15218c6a7d80bddf35e66bb57ed52c0dfd32cb9a717b439ab3a72db618f1a0066dfebe3fd12a421
-  languageName: node
-  linkType: hard
-
-"@noble/curves@npm:~1.4.0":
-  version: 1.4.2
-  resolution: "@noble/curves@npm:1.4.2"
-  dependencies:
-    "@noble/hashes": 1.4.0
-  checksum: c475a83c4263e2c970eaba728895b9b5d67e0ca880651e9c6e3efdc5f6a4f07ceb5b043bf71c399fc80fada0b8706e69d0772bffdd7b9de2483b988973a34cba
-  languageName: node
-  linkType: hard
-
 "@noble/hashes@npm:1.3.2":
   version: 1.3.2
   resolution: "@noble/hashes@npm:1.3.2"
   checksum: fe23536b436539d13f90e4b9be843cc63b1b17666a07634a2b1259dded6f490be3d050249e6af98076ea8f2ea0d56f578773c2197f2aa0eeaa5fba5bc18ba474
-  languageName: node
-  linkType: hard
-
-"@noble/hashes@npm:1.3.3, @noble/hashes@npm:~1.3.3":
-  version: 1.3.3
-  resolution: "@noble/hashes@npm:1.3.3"
-  checksum: 8a6496d1c0c64797339bc694ad06cdfaa0f9e56cd0c3f68ae3666cfb153a791a55deb0af9c653c7ed2db64d537aa3e3054629740d2f2338bb1dcb7ab60cd205b
-  languageName: node
-  linkType: hard
-
-"@noble/hashes@npm:1.4.0":
-  version: 1.4.0
-  resolution: "@noble/hashes@npm:1.4.0"
-  checksum: 8ba816ae26c90764b8c42493eea383716396096c5f7ba6bea559993194f49d80a73c081f315f4c367e51bd2d5891700bcdfa816b421d24ab45b41cb03e4f3342
   languageName: node
   linkType: hard
 
@@ -3576,13 +3544,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@scure/base@npm:~1.1.3":
-  version: 1.1.9
-  resolution: "@scure/base@npm:1.1.9"
-  checksum: 120820a37dfe9dfe4cab2b7b7460552d08e67dee8057ed5354eb68d8e3440890ae983ce3bee957d2b45684950b454a2b6d71d5ee77c1fd3fddc022e2a510337f
-  languageName: node
-  linkType: hard
-
 "@scure/base@npm:~1.2.2, @scure/base@npm:~1.2.4":
   version: 1.2.4
   resolution: "@scure/base@npm:1.2.4"
@@ -3618,16 +3579,6 @@ __metadata:
     "@noble/curves": ~1.7.0
     "@noble/hashes": ~1.6.0
   checksum: 7aa08f272c16e2ad6ef6d79e8d8e133fa56876a1e1dd276e9103bc7f6ac2bcff1974594be7e56b08203dbaed1b40353c1633b5673cd349969bb1769e6f0be8a0
-  languageName: node
-  linkType: hard
-
-"@scure/starknet@npm:~1.0.0":
-  version: 1.0.0
-  resolution: "@scure/starknet@npm:1.0.0"
-  dependencies:
-    "@noble/curves": ~1.3.0
-    "@noble/hashes": ~1.3.3
-  checksum: 2df4234ff7ae025b72c0e7eb5af81e35bb5790d72f9dc7746bd91183527081df3e637579616fa7717d4227abf67e11380cf266bea43144231325503f52644087
   languageName: node
   linkType: hard
 
@@ -3712,7 +3663,7 @@ __metadata:
     globals: ^15.8.0
     prettier: ^2.8.8
     shx: ^0.3.4
-    starknet: 6.12.1
+    starknet: ^6.23.1
     toml: ^3.0.0
     ts-node: ^10.9.2
     tslib: ^2.6.2
@@ -3722,7 +3673,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@starknet-io/types-js@npm:^0.7.10, @starknet-io/types-js@npm:^0.7.7, starknet-types-07@npm:@starknet-io/types-js@^0.7.10, starknet-types-07@npm:@starknet-io/types-js@^0.7.7":
+"@starknet-io/types-js@npm:^0.7.10, @starknet-io/types-js@npm:^0.7.7, starknet-types-07@npm:@starknet-io/types-js@^0.7.10":
   version: 0.7.10
   resolution: "@starknet-io/types-js@npm:0.7.10"
   checksum: 8f71c57d0f101ebbde91e3016b73ab70ce3329ccb7463764a27a61db42b9ea14b690bd620a6b2dd4303e890b4a9212bdd40626962e0320e82e0c600fd3be5abf
@@ -7541,16 +7492,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fetch-cookie@npm:^3.0.0":
-  version: 3.1.0
-  resolution: "fetch-cookie@npm:3.1.0"
-  dependencies:
-    set-cookie-parser: ^2.4.8
-    tough-cookie: ^5.0.0
-  checksum: 9721f20de6cea8551920f95c5f0d0bc53ecc644d8ddad8bd7837e15b74d108f5f7ab756f06ab2231592d4106f8e2d909f874bf49f6aebfe22868ce1732aadc07
-  languageName: node
-  linkType: hard
-
 "fetch-cookie@npm:~3.0.0":
   version: 3.0.1
   resolution: "fetch-cookie@npm:3.0.1"
@@ -8790,7 +8731,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"isomorphic-fetch@npm:^3.0.0, isomorphic-fetch@npm:~3.0.0":
+"isomorphic-fetch@npm:~3.0.0":
   version: 3.0.0
   resolution: "isomorphic-fetch@npm:3.0.0"
   dependencies:
@@ -11817,26 +11758,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"starknet@npm:6.12.1":
-  version: 6.12.1
-  resolution: "starknet@npm:6.12.1"
-  dependencies:
-    "@noble/curves": ~1.4.0
-    "@noble/hashes": ^1.4.0
-    "@scure/base": ~1.1.3
-    "@scure/starknet": ~1.0.0
-    abi-wan-kanabi: ^2.2.2
-    fetch-cookie: ^3.0.0
-    isomorphic-fetch: ^3.0.0
-    lossless-json: ^4.0.1
-    pako: ^2.0.4
-    starknet-types-07: "npm:@starknet-io/types-js@^0.7.7"
-    ts-mixer: ^6.0.3
-    url-join: ^4.0.1
-  checksum: 58afeddde1e2fb0d8caae0cb615bd0b3d0aed04d27465af0607f77247731bbf7d1e4b2f0a99ff596e53175abfadf5d08353f4b838f96038f7a88b706c6bd0bb6
-  languageName: node
-  linkType: hard
-
 "starknet@npm:^6.23.1":
   version: 6.24.0
   resolution: "starknet@npm:6.24.0"
@@ -12926,13 +12847,6 @@ __metadata:
   dependencies:
     punycode: ^2.1.0
   checksum: 7167432de6817fe8e9e0c9684f1d2de2bb688c94388f7569f7dbdb1587c9f4ca2a77962f134ec90be0cc4d004c939ff0d05acc9f34a0db39a3c797dada262633
-  languageName: node
-  linkType: hard
-
-"url-join@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "url-join@npm:4.0.1"
-  checksum: f74e868bf25dbc8be6a8d7237d4c36bb5b6c62c72e594d5ab1347fe91d6af7ccd9eb5d621e30152e4da45c2e9a26bec21390e911ab54a62d4d82e76028374ee5
   languageName: node
   linkType: hard
 
