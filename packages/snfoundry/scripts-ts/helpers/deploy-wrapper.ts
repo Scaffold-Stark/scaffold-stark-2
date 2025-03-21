@@ -7,7 +7,6 @@ interface CommandLineOptions {
   $0: string; // The script name or path is under the `$0` key
   network?: string; // The --network option
   reset?: boolean;
-  fee?: string;
 }
 
 function main() {
@@ -17,18 +16,17 @@ function main() {
       choices: ["devnet", "sepolia", "mainnet"],
       default: "devnet",
     })
-    .option("fee", { type: "string", choices: ["eth", "strk"], default: "eth" })
     .option("reset", {
       type: "boolean",
       description: "Do not reset deployments (keep existing deployments)",
       default: true,
     })
-    .demandOption(["network", "fee", "reset"])
+    .demandOption(["network", "reset"])
     .parseSync() as CommandLineOptions;
 
   if (argv._.length > 0) {
     console.error(
-      `❌ Invalid arguments, only --network, --fee, or --reset/--no-reset can be passed in`
+      `❌ Invalid arguments, only --network or --reset/--no-reset can be passed in`
     );
     return;
   }
@@ -38,7 +36,6 @@ function main() {
     execSync(
       `cd contracts && scarb build && ts-node ../scripts-ts/deploy.ts` +
         ` --network ${argv.network || "devnet"}` +
-        ` --fee ${argv.fee || "eth"}` +
         ` ${!argv.reset && "--no-reset "}` +
         ` && ts-node ../scripts-ts/helpers/parse-deployments.ts && cd ..`,
       { stdio: "inherit" }

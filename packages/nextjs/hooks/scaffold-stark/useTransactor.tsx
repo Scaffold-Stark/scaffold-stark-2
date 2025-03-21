@@ -1,9 +1,5 @@
 import { useAccount } from "~~/hooks/useAccount";
-import {
-  AccountInterface,
-  InvokeFunctionResponse,
-  RpcProvider,
-} from "starknet";
+import { AccountInterface, InvokeFunctionResponse, constants } from "starknet";
 import { getBlockExplorerTxLink, notification } from "~~/utils/scaffold-stark";
 import { useTargetNetwork } from "./useTargetNetwork";
 
@@ -79,7 +75,11 @@ export const useTransactor = (
           transactionHash = result.transaction_hash;
         }
       } else if (tx != null) {
-        transactionHash = (await walletClient.execute(tx)).transaction_hash;
+        transactionHash = (
+          await walletClient.execute(tx, {
+            version: constants.TRANSACTION_VERSION.V3,
+          })
+        ).transaction_hash;
       } else {
         throw new Error("Incorrect transaction passed to transactor");
       }
