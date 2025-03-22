@@ -1,7 +1,11 @@
 export async function GET(
   _: Request,
-  { params: { symbol } }: { params: { symbol: string } },
+  props: { params: Promise<{ symbol: string }> },
 ) {
+  const params = await props.params;
+
+  const { symbol } = params;
+
   let apiUrl = "";
   if (symbol === "ETH") {
     apiUrl =
