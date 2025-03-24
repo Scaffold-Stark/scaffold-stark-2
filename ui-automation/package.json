@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A project for using playwright for end-to-end testing purpose with docker for deployment",
   "scripts": {
+    "test" : "playwright test",
     "test:ui:eth": "playwright test debug-contract-eth.spec.ts --headed",
     "test:ui:strk": "playwright test debug-contract-strk.spec.ts --headed",
     "test:eth": "playwright test debug-contract-eth.spec.ts",
