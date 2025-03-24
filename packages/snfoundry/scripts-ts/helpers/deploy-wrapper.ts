@@ -8,7 +8,6 @@ interface CommandLineOptions {
   network?: string; // The --network option
   reset?: boolean;
   fee?: string;
-  "no-reset"?: boolean;
 }
 
 function main() {
@@ -29,18 +28,17 @@ function main() {
 
   if (argv._.length > 0) {
     console.error(
-      `❌ Invalid arguments, only --network, --fee, or --reset/--no-reset can be passed in`
+      `❌ Invalid arguments, only --network, --fee, or --reset can be passed in`
     );
     return;
   }
 
-  // Execute the deploy script without the reset option
+  // Execute the deploy script - yargs will automatically handle --no-reset
   try {
     execSync(
       `cd contracts && scarb build && ts-node ../scripts-ts/deploy.ts` +
         ` --network ${argv.network || "devnet"}` +
         ` --fee ${argv.fee || "eth"}` +
-        ` ${!argv.reset ? "--no-reset" : ""}` +
         ` && ts-node ../scripts-ts/helpers/parse-deployments.ts && cd ..`,
       { stdio: "inherit" }
     );
