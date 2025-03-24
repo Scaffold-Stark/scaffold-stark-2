@@ -22,6 +22,7 @@ type ContractInputProps = {
   stateObjectKey: string;
   paramType: AbiParameter;
   setFormErrorMessage: Dispatch<SetStateAction<string | null>>;
+  testInputId?: string;
 };
 
 export const ContractInput = ({
@@ -35,6 +36,7 @@ export const ContractInput = ({
   const inputProps = {
     name: stateObjectKey,
     value: form?.[stateObjectKey],
+    testInputId: `input-${paramType.name}`,
     placeholder: paramType.name
       ? `${displayType(paramType.type)} ${paramType.name}`
       : displayType(paramType.type),
@@ -85,7 +87,7 @@ export const ContractInput = ({
           // @ts-ignore
           abiMember={abi?.find(
             // @ts-ignore
-            (member) => member.name === paramType.type,
+            (member) => member.name === paramType.type
           )}
         />
       );

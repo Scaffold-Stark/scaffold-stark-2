@@ -17,7 +17,7 @@ export const ContractReadMethods = ({
 
   const functionsToDisplay = getFunctionsByStateMutability(
     (deployedContractData.abi || []) as Abi,
-    "view",
+    "view"
   )
     .filter((fn) => {
       const isQueryableWithParams = fn.inputs.length > 0;
@@ -39,6 +39,8 @@ export const ContractReadMethods = ({
           contractAddress={deployedContractData.address}
           abiFunction={fn}
           key={fn.name}
+          testBtnId={`btn-${fn.name}`}
+          testResultId={`result-${fn.name}`}
         />
       ))}
     </>
