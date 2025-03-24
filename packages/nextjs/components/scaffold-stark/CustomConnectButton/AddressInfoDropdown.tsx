@@ -54,7 +54,6 @@ export const AddressInfoDropdown = ({
     dropdownRef.current?.removeAttribute("open");
   };
 
-  // @ts-expect-error ref are initialized with null by default
   useOutsideClick(dropdownRef, closeDropdown);
 
   function handleConnectBurner(
