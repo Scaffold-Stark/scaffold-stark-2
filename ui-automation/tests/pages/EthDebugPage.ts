@@ -35,13 +35,9 @@ export class EthDebugPage extends BasePage {
     this.balanceOfReadButton = this.page
       .getByRole("button", { name: "Read 📡" })
       .first();
-    this.balanceOfResult = this.page.getByText("Result:Ξ");
-    this.writeTab = this.page.locator(
-      "div:nth-child(8) > .col-span-5 > div:nth-child(2) > .tabs > a:nth-child(2)"
-    );
-    this.readTab = this.page
-      .locator("div:nth-child(8) > .col-span-5 > div:nth-child(2) > .tabs > a")
-      .first();
+    this.balanceOfResult = this.page.getByTestId('result-balance_of')
+    this.writeTab = this.page.getByTestId('Eth-write')
+    this.readTab = this.page.getByTestId('Eth-read')
     this.transferRecipientInput = this.page.locator(
       'input[name="transfer_recipient_core\\:\\:starknet\\:\\:contract_address\\:\\:ContractAddress"]'
     );

@@ -6,7 +6,7 @@
     "test:ui:eth": "playwright test debug-contract-eth.spec.ts --headed",
     "test:ui:strk": "playwright test debug-contract-strk.spec.ts --headed",
     "test:eth": "playwright test debug-contract-eth.spec.ts",
-    "test:stk": "playwright test debug-contract-stk.spec.ts",
+    "test:strk": "playwright test debug-contract-strk.spec.ts",
     "test:connect": "playwright test connect-wallet.spec.ts",
     "test-html-report": "playwright test --browser=all --reporter=html",
     "test-json-report": "PLAYWRIGHT_JSON_OUTPUT_NAME=results.json playwright test --browser=chromium --reporter=json"

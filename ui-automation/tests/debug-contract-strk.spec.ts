@@ -44,14 +44,7 @@ test("STRK Token Complete Interaction Flow", async ({ page }) => {
   expect(initialBalanceText).toContain("Ξ");
   console.log("✓ Balance check completed successfully");
   
-  console.log("\n===== TEST 2: Transfer STRK Tokens =====");
-  const transferAmount = "1";
-  console.log(`Transferring ${transferAmount} STRK to contract address: ${CONTRACT_ADDRESS}`);
-  await debugPage.performTransfer(CONTRACT_ADDRESS, transferAmount);
-  await page.waitForTimeout(1000);
-  console.log(`✓ Transfer completed: ${transferAmount} STRK sent to ${CONTRACT_ADDRESS}`);
-  
-  console.log("\n===== TEST 3: Test Allowance =====");
+  console.log("\n===== TEST 2: Test Allowance =====");
   const amountToAllow = "10";
   console.log(`Setting allowance of ${amountToAllow} STRK for contract: ${CONTRACT_ADDRESS}`);
   
@@ -73,6 +66,13 @@ test("STRK Token Complete Interaction Flow", async ({ page }) => {
   console.log(`Allowance result: ${allowanceValue}`);
   expect(allowanceValue).not.toBe("unknown");
   expect(allowanceValue).not.toBe("");
+  
+  console.log("\n===== TEST 3: Transfer STRK Tokens =====");
+  const transferAmount = "1";
+  console.log(`Transferring ${transferAmount} STRK to contract address: ${CONTRACT_ADDRESS}`);
+  await debugPage.performTransfer(CONTRACT_ADDRESS, transferAmount);
+  await page.waitForTimeout(1000);
+  console.log(`✓ Transfer completed: ${transferAmount} STRK sent to ${CONTRACT_ADDRESS}`);
   
   try {
     console.log("\n===== FINAL VERIFICATION =====");

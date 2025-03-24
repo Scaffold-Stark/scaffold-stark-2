@@ -34,21 +34,13 @@ export class StrkDebugPage extends BasePage {
 
     // Initialize tab selectors
     this.strkTab = this.page.getByRole("button", { name: "Strk", exact: true });
-    this.readTab = this.page
-      .locator("div:nth-child(9) > .col-span-5 > div:nth-child(2) > .tabs > a")
-      .first();
-    this.writeTab = this.page.locator(
-      "div:nth-child(9) > .col-span-5 > div:nth-child(2) > .tabs > a:nth-child(2)"
-    );
+    this.readTab = this.page.getByTestId("Strk-read");
+    this.writeTab = this.page.getByTestId("Strk-write");
 
     // Initialize balance of section
-    this.balanceOfInput = this.page
-      .getByPlaceholder("ContractAddress account")
-      .nth(2);
-    this.balanceOfReadButton = this.page
-      .getByRole("button", { name: "Read 📡" })
-      .first();
-    this.balanceOfResult = this.page.getByText("Result:Ξ");
+    this.balanceOfInput = this.page.getByTestId("input-account").nth(2);
+    this.balanceOfReadButton = this.page.getByTestId("btn-balance_of").nth(1);
+    this.balanceOfResult = this.page.getByTestId("result-balance_of");
 
     // Initialize transfer section
     this.transferRecipientInput = this.page.locator(
@@ -58,7 +50,7 @@ export class StrkDebugPage extends BasePage {
       'input[name="transfer_amount_core\\:\\:integer\\:\\:u256"]'
     );
     this.transferSendButton = this.page
-      .locator(".py-5 > div > div:nth-child(4) > .flex")
+      .getByRole("button", { name: "Send 💸" })
       .first();
 
     // Initialize approve section
@@ -68,9 +60,9 @@ export class StrkDebugPage extends BasePage {
     this.approveAmountInput = this.page.locator(
       'input[name="approve_amount_core\\:\\:integer\\:\\:u256"]'
     );
-    this.approveSendButton = this.page.locator(
-      "div:nth-child(3) > div > div:nth-child(4) > .flex"
-    );
+    this.approveSendButton = this.page
+      .getByRole("button", { name: "Send 💸" })
+      .nth(2);
 
     // Initialize allowance section
     this.allowOwnerInput = this.page.getByRole("textbox", {
@@ -79,9 +71,7 @@ export class StrkDebugPage extends BasePage {
     this.allowSpenderInput = this.page.getByRole("textbox", {
       name: "ContractAddress spender",
     });
-    this.allowSendButton = this.page
-      .getByRole("button", { name: "Read 📡" })
-      .nth(1);
+    this.allowSendButton = this.page.getByTestId("btn-allowance").nth(1);
     this.resultCheckAllow = this.page.getByText("Result:");
   }
 
@@ -168,10 +158,12 @@ export class StrkDebugPage extends BasePage {
     ]);
     await this.page.waitForTimeout(2000);
 
-    const isResultVisible = await this.resultCheckAllow.isVisible().catch(() => false);
+    const isResultVisible = await this.resultCheckAllow
+      .isVisible()
+      .catch(() => false);
     if (isResultVisible) {
-      const resultText = await this.resultCheckAllow.textContent() || '';
-      return `Result: ${resultText.replace('Result:', '').trim() || amount}`;
+      const resultText = (await this.resultCheckAllow.textContent()) || "";
+      return `Result: ${resultText.replace("Result:", "").trim() || amount}`;
     } else {
       return `Result: ${amount || "Could not retrieve value"}`;
     }
