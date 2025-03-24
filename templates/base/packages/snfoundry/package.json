@@ -29,7 +29,7 @@
     "dotenv": "^16.3.1",
     "envfile": "^6.18.0",
     "prettier": "^2.8.8",
-    "starknet": "6.12.1",
+    "starknet": "^6.24.0",
     "toml": "^3.0.0",
     "tslib": "^2.6.2"
   }

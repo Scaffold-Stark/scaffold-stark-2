@@ -31,15 +31,15 @@ Before you begin, you need to install the following tools:
 
 ### Starknet-devnet version
 
-To ensure the proper functioning of scaffold-stark, your local `starknet-devnet` version must be `0.2.3`. To accomplish this, first check your local starknet-devnet version:
+To ensure the proper functioning of scaffold-stark, your local `starknet-devnet` version must be `0.2.4`. To accomplish this, first check your local starknet-devnet version:
 
 ```sh
 starknet-devnet --version
 ```
 
-If your local starknet-devnet version is not `0.2.3`, you need to install it.
+If your local starknet-devnet version is not `0.2.4`, you need to install it.
 
-- Install Starknet-devnet `0.2.3` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
+- Install Starknet-devnet `0.2.4` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
 
 ### Scarb version
 
@@ -67,7 +67,7 @@ If your Starknet Foundry version is not `0.38.2`, you need to install it.
 
 ## Compatible versions
 
-- Starknet-devnet - v0.2.3
+- Starknet-devnet - v0.2.4
 - Scarb - v2.9.4
 - Snforge - v0.38.2
 - Cairo - v2.9.4
@@ -218,6 +218,44 @@ These variables are used in the configuration to assign the correct RPC URLs:
 ### RPC specific version
 
 To ensure the proper functioning of Scaffold-Stark with Testnet or Mainnet, your RPC version must be `0.7.1`. This repository contains a `.env.example` file with the default RPC URL for Starknet Testnet:
+
+## CLI Usage
+
+Depending on your package manager, substitute the work COMMAND with the appropiate one from the list.
+
+   $ yarn COMMAND
+   $ npm run COMMAND
+
+Commands:
+
+| Command     | Description |
+| --- | --- |
+| format:check     | (Read only) Batch checks for format inconsistencies for the nextjs and snfoundry codebase |
+| next:check-types | Compile  typscript project                                                                |
+| next:lint        | Runs next lint                                                                            |
+| prepare          | Install husky's git hooks                                                                 |
+| usage            | Show this text                                                                            |
+
+### CLI Smart Contracts
+
+| Command     | Description |
+| --- | --- |
+| compile         | Compiles contracts.                                                                 |
+| test            | Runs snfoundry tests                                                                |
+| chain           | Starts the local blockchain network.                                                |
+| deploy          | Deploys contract to the configured network discarding previous deployments.         |
+| deploy:no-reset | Deploys contract to the configured network without discarding previous deployments. |
+| verify          | Verify Smart Contracts with Walnut                                                  |
+
+### CLI Frontend
+
+| Command     | Description |
+| --- | --- |
+| start       | Starts the frontend server                   |
+| test:nextjs | Runs the nextjs tests                        |
+| vercel      | Deploys app to vercel                        |
+| vercel:yolo | Force deploy app to vercel (ignoring errors) |
+
 
 ## **What's next**
 
