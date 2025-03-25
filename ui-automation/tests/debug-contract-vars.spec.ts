@@ -45,33 +45,79 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
   await varsDebugPage.switchToVarsTab();
   await page.waitForTimeout(1000);
 
+  const testResults = [];
+
+  // Test Felt252
   const felt252Result = await varsDebugPage.testFelt252(
     SET_U256_FELT_WITH_KEY,
     SET_U256_FELT_WITH_VALUE
   );
   console.log("Felt252 test result:", felt252Result);
+  testResults.push({
+    name: "Felt252",
+    success: felt252Result.success,
+    details: felt252Result
+  });
 
+  // Test Felt
   const feltResult = await varsDebugPage.testFelt(
     SET_FELT_WITH_KEY,
     SET_FELT_VALUE
   );
   console.log("Felt test result:", feltResult);
+  testResults.push({
+    name: "Felt",
+    success: feltResult.success,
+    details: feltResult
+  });
 
+  // Test ByteArray
   const byteArrayResult = await varsDebugPage.testByteArray(
     SET_BYTE_ARRAY_KEY,
     SET_BYTE_ARRAY_VALUE
   );
   console.log("ByteArray test result:", byteArrayResult);
+  testResults.push({
+    name: "ByteArray",
+    success: byteArrayResult.success,
+    details: byteArrayResult
+  });
 
+  // Test ContractAddress
   const contractAddressResult = await varsDebugPage.testContractAddress(
     SET_CONTRACT_ADDRESS_KEY,
     SET_CONTRACT_ADDRESS_VALUE
   );
   console.log("ContractAddress test result:", contractAddressResult);
+  testResults.push({
+    name: "ContractAddress",
+    success: contractAddressResult.success,
+    details: contractAddressResult
+  });
 
+  // Test Bool
   const boolResult = await varsDebugPage.testBool(
     SET_BOOL_KEY,
     SET_BOOL_VALUE
   );
   console.log("Bool test result:", boolResult);
+  testResults.push({
+    name: "Bool",
+    success: boolResult.success,
+    details: boolResult
+  });
+
+  const failedTests = testResults.filter(test => !test.success);
+  
+  if (failedTests.length > 0) {
+    const failedTestNames = failedTests.map(test => test.name).join(", ");
+    const errorMessage = `Failure case: ${failedTestNames}`;
+    
+    const details = failedTests.map(test => 
+      `${test.name}: ${JSON.stringify(test.details)}`
+    ).join("\n");
+    
+    console.error(`${errorMessage}\n${details}`);
+    test.fail(true, errorMessage);
+  }
 });

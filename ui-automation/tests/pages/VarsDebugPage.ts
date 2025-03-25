@@ -87,13 +87,9 @@ export class VarsDebugPage extends BasePage {
         ),
       },
       bool: {
-        keyInput: this.page.locator(
-          'input[name="set_bool_with_key_key_core\\:\\:felt252"]'
-        ),
-        valueInput: this.page.getByPlaceholder("bool value"),
-        sendButton: this.page.locator(
-          "div:nth-child(6) > div > div:nth-child(4) > .flex > .btn"
-        ),
+        keyInput: this.page.locator('input[name="set_bool_with_key_key_core\\:\\:felt252"]'),
+        valueInput: this.page.getByPlaceholder('bool value'),
+        sendButton: this.page.locator('div:nth-child(5) > div > div:nth-child(4) > .flex'),
         readValueInput: this.page.locator(
           'input[name="get_bool_with_key_key_core\\:\\:felt252"]'
         ),
