@@ -1,4 +1,5 @@
-.vscode/**
+const contents = () => 
+`.vscode/**
 node_modules
 local-devnet
 package-lock.json
@@ -13,4 +14,6 @@ package-lock.json
 !.yarn/versions
 .eslintcache
 .DS_Store
-.vercel
+.vercel`
+
+export default contents;
