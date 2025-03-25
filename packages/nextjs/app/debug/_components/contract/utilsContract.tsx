@@ -5,6 +5,8 @@ import {
   CairoOptionVariant,
   CairoResult,
   CairoResultVariant,
+  num,
+  BigNumberish,
 } from "starknet";
 import {
   isCairoArray,
@@ -230,7 +232,7 @@ export const getArgsAsStringInputFromForm = (form: Record<string, any>) => {
         isCairoFelt(key) ||
         isCairoU256(key))
     ) {
-      return parseInt(value, 16);
+      return num.toBigInt(value);
     }
 
     if (
@@ -240,7 +242,7 @@ export const getArgsAsStringInputFromForm = (form: Record<string, any>) => {
         isCairoFelt(key) ||
         isCairoU256(key))
     ) {
-      return parseInt(value, 10);
+      return num.toBigInt(value);
     }
 
     return value;
