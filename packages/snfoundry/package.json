@@ -32,5 +32,8 @@
     "starknet": "^6.24.0",
     "toml": "^3.0.0",
     "tslib": "^2.6.2"
+  },
+  "peerDependencies": {
+    "eslint": "^8.0.0"
   }
 }
