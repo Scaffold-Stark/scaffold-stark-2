@@ -55,9 +55,7 @@ describe("useTargetNetwork", () => {
       .mockReturnValueOnce({ id: 1, name: "sepolia" })
       .mockReturnValueOnce(mockSetTargetNetwork);
 
-    act(() => {
-      rerender();
-    });
+    rerender();
 
     expect(mockSetTargetNetwork).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -74,9 +72,7 @@ describe("useTargetNetwork", () => {
       .mockReturnValueOnce({ id: 1, name: "sepolia" })
       .mockReturnValueOnce(mockSetTargetNetwork);
 
-    act(() => {
-      rerender();
-    });
+    rerender();
 
     expect(mockSetTargetNetwork).not.toHaveBeenCalled();
   });
@@ -92,9 +88,7 @@ describe("useTargetNetwork", () => {
       .mockReturnValueOnce({ id: 1, name: "sepolia" })
       .mockReturnValueOnce(mockSetTargetNetwork);
 
-    act(() => {
-      rerender();
-    });
+    rerender();
 
     expect(mockSetTargetNetwork).not.toHaveBeenCalled();
   });

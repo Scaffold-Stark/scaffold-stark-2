@@ -11,6 +11,9 @@ const withPWA = nextPWA({
 
 const nextConfig = {
   reactStrictMode: true,
+  logging: {
+    incomingRequests: false,
+  },
   images: {
     dangerouslyAllowSVG: true,
     remotePatterns: [
