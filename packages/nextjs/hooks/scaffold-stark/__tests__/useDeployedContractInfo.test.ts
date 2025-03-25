@@ -618,11 +618,9 @@ describe("useDeployedContractInfo", () => {
     );
 
     // Wait for the hook to update
-    act(async () => {
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(true);
-        expect(result.current.data).toBeUndefined(); // Should not update the data
-      });
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.data).toBeUndefined(); // Should not update the data
     });
   });
 });
