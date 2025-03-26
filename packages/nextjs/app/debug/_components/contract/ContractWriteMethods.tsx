@@ -19,7 +19,7 @@ export const ContractWriteMethods = ({
 
   const functionsToDisplay = getFunctionsByStateMutability(
     (deployedContractData.abi || []) as Abi,
-    "external"
+    "external",
   ).map((fn) => {
     return {
       fn,

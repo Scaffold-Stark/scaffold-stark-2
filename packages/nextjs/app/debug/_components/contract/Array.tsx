@@ -44,7 +44,7 @@ export const ArrayInput = ({
     setParentForm({
       ...parentForm,
       [parentStateObjectKey]: Object.values(inputArr).filter(
-        (item) => item !== null
+        (item) => item !== null,
       ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,7 +52,10 @@ export const ArrayInput = ({
 
   return (
     <div>
-      <div  data-testid={`click-${testId}-field`} className="collapse bg-base-200 pl-4 pt-1.5 pb-2 border-2 border-secondary custom-after">
+      <div
+        data-testid={`click-${testId}-field`}
+        className="collapse bg-base-200 pl-4 pt-1.5 pb-2 border-2 border-secondary custom-after"
+      >
         <input type="checkbox" className="min-h-fit peer" />
         <div className="collapse-title p-0 min-h-fit peer-checked:mb-2 text-primary-content/50">
           <p className="m-0 p-0 text-[1rem]">array (length: {arrLength + 1})</p>
@@ -67,7 +70,7 @@ export const ArrayInput = ({
                 setForm={(
                   nextInputRecipe:
                     | Record<string, any>
-                    | ((arg: Record<string, any>) => void)
+                    | ((arg: Record<string, any>) => void),
                 ) => {
                   let nextInputObject: Record<string, any> = nextInputRecipe;
 
