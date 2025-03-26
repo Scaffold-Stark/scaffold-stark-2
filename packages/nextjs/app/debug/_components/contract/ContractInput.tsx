@@ -22,7 +22,6 @@ type ContractInputProps = {
   stateObjectKey: string;
   paramType: AbiParameter;
   setFormErrorMessage: Dispatch<SetStateAction<string | null>>;
-  testInputId?: string;
 };
 
 export const ContractInput = ({
@@ -58,6 +57,7 @@ export const ContractInput = ({
           parentForm={form}
           setParentForm={setForm}
           setFormErrorMessage={setFormErrorMessage}
+          testId={paramType.type}
         />
       );
     } else if (
@@ -89,6 +89,7 @@ export const ContractInput = ({
             // @ts-ignore
             (member) => member.name === paramType.type,
           )}
+          testId={paramType.type}
         />
       );
     }

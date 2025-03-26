@@ -45,28 +45,87 @@ test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
     details: getArrayFelt252Result.actualValue,
   });
 
-//   const getArrayContractAddressResult =
-//     await arraysSpanDebugPage.testGetArrayContractAddress();
-//   console.log(
-//     "Array Contract Address test result : ",
-//     JSON.parse(getArrayContractAddressResult.actualValue)
-//   );
-//   testResults.push({
-//     name: "ArrayContractAddress",
-//     success: getArrayContractAddressResult.success,
-//     details: getArrayContractAddressResult.actualValue,
-//   });
+  const getArrayContractAddressResult =
+    await arraysSpanDebugPage.testGetArrayContractAddress();
+  console.log(
+    "Array Contract Address test result : ",
+    JSON.parse(getArrayContractAddressResult.actualValue)
+  );
+  testResults.push({
+    name: "ArrayContractAddress",
+    success: getArrayContractAddressResult.success,
+    details: getArrayContractAddressResult.actualValue,
+  });
 
-//   const getArrayStructResult = await arraysSpanDebugPage.testGetArrayStruct();
-//   console.log(
-//     "Array Struct test result : ",
-//     JSON.parse(getArrayStructResult.actualValue)
-//   );
-//   testResults.push({
-//     name: "ArrayStruct",
-//     success: getArrayStructResult.success,
-//     details: getArrayStructResult.actualValue,
-//   });
+  const getArrayStructResult = await arraysSpanDebugPage.testGetArrayStruct();
+  console.log(
+    "Array Struct test result : ",
+    JSON.parse(getArrayStructResult.actualValue)
+  );
+  testResults.push({
+    name: "ArrayStruct",
+    success: getArrayStructResult.success,
+    details: getArrayStructResult.actualValue,
+  });
+
+  const getArrayNestedStruct =
+    await arraysSpanDebugPage.testGetArrayNestedStruct();
+  console.log(
+    "Array NestedStruct test result : ",
+    JSON.parse(getArrayNestedStruct.actualValue)
+  );
+  testResults.push({
+    name: "ArrayNestedStruct",
+    success: getArrayNestedStruct.success,
+    details: getArrayNestedStruct.actualValue,
+  });
+
+  const getArrayStructFiveElement =
+    await arraysSpanDebugPage.testGetArrayStructFiveElement();
+  console.log(
+    "Array Struct Five Element test result : ",
+    JSON.parse(getArrayStructFiveElement.actualValue)
+  );
+  testResults.push({
+    name: "ArrayStructFiveElement",
+    success: getArrayStructFiveElement.success,
+    details: getArrayStructFiveElement.actualValue,
+  });
+
+  const getArrayStructFourLayer =
+    await arraysSpanDebugPage.testGetArrayStructFourLayer();
+  console.log(
+    "Array Struct Four Layer test result : ",
+    JSON.parse(getArrayStructFourLayer.actualValue)
+  );
+  testResults.push({
+    name: "ArrayStructFourLayer",
+    success: getArrayStructFourLayer.success,
+    details: getArrayStructFourLayer.actualValue,
+  });
+
+  const getSpanFelt252 = await arraysSpanDebugPage.testGetSpanFelt252();
+  console.log(
+    "Span Felt252 test result : ",
+    JSON.parse(getSpanFelt252.actualValue)
+  );
+  testResults.push({
+    name: "SpanFelt252",
+    success: getSpanFelt252.success,
+    details: getSpanFelt252.actualValue,
+  });
+
+  const getSpanContractAddress =
+    await arraysSpanDebugPage.testGetSpanAddressContract();
+  console.log(
+    "Span ContractAddress test result : ",
+    JSON.parse(getSpanContractAddress.actualValue)
+  );
+  testResults.push({
+    name: "SpanContractAddress",
+    success: getSpanContractAddress.success,
+    details: getSpanContractAddress.actualValue,
+  });
 
   const failedTests = testResults.filter((test) => !test.success);
 

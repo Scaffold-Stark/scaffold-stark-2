@@ -12,6 +12,7 @@ type StructProps = {
   parentStateObjectKey: string;
   abiMember?: AbiStruct | AbiEnum;
   setFormErrorMessage: Dispatch<SetStateAction<string | null>>;
+  testId : string;
 };
 
 export const Struct = ({
@@ -21,6 +22,7 @@ export const Struct = ({
   abiMember,
   abi,
   setFormErrorMessage,
+  testId,
 }: StructProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialTupleFormState(
@@ -69,7 +71,7 @@ export const Struct = ({
 
   return (
     <div>
-      <div className="collapse bg-base-200 pl-4 pt-1.5 pb-2 border-2 border-secondary custom-after">
+      <div data-testid={`click-${testId}-field`} className="collapse bg-base-200 pl-4 pt-1.5 pb-2 border-2 border-secondary custom-after">
         <input type="checkbox" className="min-h-fit peer" />
         <div className="collapse-title p-0 min-h-fit peer-checked:mb-2 text-primary-content/50">
           <p className="m-0 p-0 text-[1rem]">{abiMember.type}</p>
