@@ -35,18 +35,16 @@ export class EthDebugPage extends BasePage {
     this.balanceOfReadButton = this.page
       .getByRole("button", { name: "Read 📡" })
       .first();
-    this.balanceOfResult = this.page.getByTestId('result-balance_of')
-    this.writeTab = this.page.getByTestId('Eth-write')
-    this.readTab = this.page.getByTestId('Eth-read')
+    this.balanceOfResult = this.page.getByTestId("result-balance_of");
+    this.writeTab = this.page.getByTestId("Eth-write");
+    this.readTab = this.page.getByTestId("Eth-read");
     this.transferRecipientInput = this.page.locator(
       'input[name="transfer_recipient_core\\:\\:starknet\\:\\:contract_address\\:\\:ContractAddress"]'
     );
     this.transferAmountInput = this.page.locator(
       'input[name="transfer_amount_core\\:\\:integer\\:\\:u256"]'
     );
-    this.transferSendButton = this.page
-      .locator(".py-5 > div > div:nth-child(4) > .flex")
-      .first();
+    this.transferSendButton = this.page.getByTestId("btn-transfer");
 
     // Initialize approve section
     this.approveSpenderInput = this.page.getByRole("textbox", {
@@ -55,9 +53,7 @@ export class EthDebugPage extends BasePage {
     this.approveAmountInput = this.page.locator(
       'input[name="approve_amount_core\\:\\:integer\\:\\:u256"]'
     );
-    this.approveSendButton = this.page.locator(
-      "div:nth-child(3) > div > div:nth-child(4) > .flex"
-    );
+    this.approveSendButton = this.page.getByTestId("btn-approve");
 
     // Initialize allowance section
     this.allowOwnerInput = this.page.getByRole("textbox", {

@@ -31,11 +31,7 @@ export class StructsDebugPage extends BasePage {
         structStatusEnum1: this.page.getByRole("textbox", {
           name: "u256 enum1",
         }),
-        sendButton: this.page
-          .locator(
-            "div:nth-child(3) > .col-span-5 > div:nth-child(2) > .z-10 > .rounded-\\[5px\\] > .p-5 > div > div > div:nth-child(4) > .flex > .btn"
-          )
-          .first(),
+        sendButton: this.page.getByTestId("btn-set_sample_struct_with_key"),
         readValueInput: this.page.locator(
           'input[name="get_sample_struct_with_key_key_core\\:\\:felt252"]'
         ),
@@ -67,8 +63,8 @@ export class StructsDebugPage extends BasePage {
         },
         structStatus: this.page.getByText("enumenum1u256∗enum2u256∗").nth(2),
         structStatusEnum1: this.page.getByPlaceholder("u256 enum1").nth(2),
-        sendButton: this.page.locator(
-          "div:nth-child(3) > .col-span-5 > div:nth-child(2) > .z-10 > .rounded-\\[5px\\] > .p-5 > div:nth-child(2) > div > div:nth-child(4) > .flex"
+        sendButton: this.page.getByTestId(
+          "btn-set_sample_nested_struct_with_key"
         ),
         readValueInput: this.page.locator(
           'input[name="get_sample_nested_struct_with_key_key_core\\:\\:felt252"]'
@@ -86,9 +82,7 @@ export class StructsDebugPage extends BasePage {
         ),
         valueInput: this.page.getByText("enumenum1u256∗enum2u256∗").nth(3),
         valueEnum1Input: this.page.getByRole("textbox", { name: "u256 enum1" }),
-        sendButton: this.page.locator(
-          "div:nth-child(3) > .col-span-5 > div:nth-child(2) > .z-10 > .rounded-\\[5px\\] > .p-5 > div:nth-child(3) > div > div:nth-child(4) > .flex"
-        ),
+        sendButton: this.page.getByTestId('btn-set_sample_enum_with_key'),
         readValueInput: this.page.locator(
           'input[name="get_sample_enum_with_key_key_core\\:\\:felt252"]'
         ),
@@ -115,9 +109,7 @@ export class StructsDebugPage extends BasePage {
           }),
           element5: this.page.getByRole("textbox", { name: "bool element5" }),
         },
-        sendButton: this.page.locator(
-          "div:nth-child(3) > .col-span-5 > div:nth-child(2) > .z-10 > .rounded-\\[5px\\] > .p-5 > div:nth-child(4) > div > div:nth-child(4) > .flex"
-        ),
+        sendButton: this.page.getByTestId('btn-set_struct_with_five_elements_with_key'),
         readValueInput: this.page.locator(
           'input[name="get_struct_with_five_elements_with_key_key_core\\:\\:felt252"]'
         ),
@@ -149,9 +141,7 @@ export class StructsDebugPage extends BasePage {
         sendValueInput: this.page.getByRole("textbox", {
           name: "u256 layer1_element",
         }),
-        sendButton: this.page.locator(
-          "div:nth-child(6) > div > div:nth-child(4) > .flex"
-        ),
+        sendButton: this.page.getByTestId('btn-set_struct_with_4_layers_with_key'),
         readButton: this.page.getByTestId(
           "btn-get_struct_with_4_layers_with_key"
         ),

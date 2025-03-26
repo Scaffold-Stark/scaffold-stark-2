@@ -33,7 +33,7 @@ export class VarsDebugPage extends BasePage {
           'input[name="set_u256_with_key_key_core\\:\\:felt252"]'
         ),
         valueInput: this.page.getByPlaceholder("u256 value"),
-        sendButton: this.page.locator("div:nth-child(2) > .btn").first(),
+        sendButton: this.page.getByTestId('btn-set_u256_with_key'),
         readValueInput: this.page.locator(
           'input[name="get_u256_with_key_key_core\\:\\:felt252"]'
         ),
@@ -45,9 +45,7 @@ export class VarsDebugPage extends BasePage {
           'input[name="set_felt_with_key_key_core\\:\\:felt252"]'
         ),
         valueInput: this.page.getByPlaceholder("felt252 value"),
-        sendButton: this.page.locator(
-          "div:nth-child(2) > div > div:nth-child(4) > .flex > .btn"
-        ),
+        sendButton: this.page.getByTestId('btn-set_felt_with_key'),
         readValueInput: this.page.locator(
           'input[name="get_felt_with_key_key_core\\:\\:felt252"]'
         ),
@@ -59,9 +57,7 @@ export class VarsDebugPage extends BasePage {
           'input[name="set_byte_array_with_key_key_core\\:\\:felt252"]'
         ),
         valueInput: this.page.getByPlaceholder("ByteArray value"),
-        sendButton: this.page.locator(
-          "div:nth-child(3) > div > div:nth-child(4) > .flex > .btn"
-        ),
+        sendButton: this.page.getByTestId('btn-set_byte_array_with_key'),
         readValueInput: this.page.locator(
           'input[name="get_byte_array_with_key_key_core\\:\\:felt252"]'
         ),
@@ -75,9 +71,7 @@ export class VarsDebugPage extends BasePage {
           'input[name="set_contract_address_with_key_key_core\\:\\:felt252"]'
         ),
         valueInput: this.page.getByPlaceholder("ContractAddress value"),
-        sendButton: this.page.locator(
-          "div:nth-child(4) > div > div:nth-child(4) > .flex > .btn"
-        ),
+        sendButton: this.page.getByTestId('btn-set_contract_address_with_key'),
         readValueInput: this.page.locator(
           'input[name="get_contract_address_with_key_key_core\\:\\:felt252"]'
         ),
@@ -89,7 +83,7 @@ export class VarsDebugPage extends BasePage {
       bool: {
         keyInput: this.page.locator('input[name="set_bool_with_key_key_core\\:\\:felt252"]'),
         valueInput: this.page.getByPlaceholder('bool value'),
-        sendButton: this.page.locator('div:nth-child(5) > div > div:nth-child(4) > .flex'),
+        sendButton: this.page.getByTestId('btn-set_bool_with_key'),
         readValueInput: this.page.locator(
           'input[name="get_bool_with_key_key_core\\:\\:felt252"]'
         ),

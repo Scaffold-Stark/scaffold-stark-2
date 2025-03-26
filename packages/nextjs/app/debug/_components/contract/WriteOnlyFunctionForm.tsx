@@ -33,6 +33,7 @@ type WriteOnlyFunctionFormProps = {
   abiFunction: AbiFunction;
   onChange: () => void;
   contractAddress: Address;
+  testBtnId? : string;
   //   inheritedFrom?: string;
 };
 
@@ -41,9 +42,10 @@ export const WriteOnlyFunctionForm = ({
   abiFunction,
   onChange,
   contractAddress,
+  testBtnId,
 }: WriteOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
-    getInitialFormState(abiFunction),
+    getInitialFormState(abiFunction)
   );
   const [formErrorMessage, setFormErrorMessage] = useState<string | null>(null);
   const { status: walletStatus, isConnected, account, chainId } = useAccount();
@@ -56,7 +58,7 @@ export const WriteOnlyFunctionForm = ({
       !chain ||
       chain?.network !== targetNetwork.network ||
       walletStatus === "disconnected",
-    [chain, targetNetwork.network, walletStatus],
+    [chain, targetNetwork.network, walletStatus]
   );
 
   const {
@@ -98,7 +100,7 @@ export const WriteOnlyFunctionForm = ({
 
         console.error(
           "⚡️ ~ file: WriteOnlyFunctionForm.tsx:handleWrite ~ error",
-          message,
+          message
         );
       }
     }
@@ -167,6 +169,7 @@ export const WriteOnlyFunctionForm = ({
             data-tip={`${errorMsg}`}
           >
             <button
+              data-testid={testBtnId}
               className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
               disabled={writeDisabled || !!formErrorMessage || isLoading}
               onClick={handleWrite}

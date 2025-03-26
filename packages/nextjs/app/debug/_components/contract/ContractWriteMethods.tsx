@@ -19,7 +19,7 @@ export const ContractWriteMethods = ({
 
   const functionsToDisplay = getFunctionsByStateMutability(
     (deployedContractData.abi || []) as Abi,
-    "external",
+    "external"
   ).map((fn) => {
     return {
       fn,
@@ -39,6 +39,7 @@ export const ContractWriteMethods = ({
           abiFunction={fn}
           onChange={onChange}
           contractAddress={deployedContractData.address}
+          testBtnId={`btn-${fn.name}`}
           //   inheritedFrom={inheritedFrom}
         />
       ))}
