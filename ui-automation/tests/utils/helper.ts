@@ -1,35 +1,82 @@
 import { Page } from "playwright";
+import { captureError, TestError } from "./error-handler";
 
-/**
- * Executes an action with a delay before execution
- * @param page Playwright Page object
- * @param action The function to execute after the delay
- * @param delayMs The delay in milliseconds (default: 2000ms)
- * @returns The result of the action
- */
-export async function withDelay<T>(page: Page, action: () => Promise<T> | T, delayMs = 2000): Promise<T> {
-  await page.waitForTimeout(delayMs);
-  return await action();
+export async function withDelay<T>(
+  page: Page, 
+  action: () => Promise<T> | T, 
+  delayMs = 2000,
+  context = "delayed action"
+): Promise<T> {
+  try {
+    await page.waitForTimeout(delayMs);
+    return await action();
+  } catch (error) {
+    const testError = await captureError(page, error, context);
+    console.error(`Action failed after delay of ${delayMs}ms:`, testError.message);
+    throw error;
+  }
 }
 
-/**
- * Executes a sequence of actions with delays between them
- * @param page Playwright Page object
- * @param actions Array of functions to execute in sequence
- * @param delayMs The delay in milliseconds between actions (default: 2000ms)
- * @returns The result of the last action
- */
 export async function withDelaySequence<T>(
   page: Page, 
   actions: Array<() => Promise<any> | any>, 
-  delayMs = 1000
+  delayMs = 1000,
+  contexts: string[] = []
 ): Promise<T> {
   let result: any;
+  const errors: TestError[] = [];
   
-  for (const action of actions) {
-    await page.waitForTimeout(delayMs);
-    result = await action();
+  for (let i = 0; i < actions.length; i++) {
+    const actionContext = contexts[i] || `action_${i+1}`;
+    
+    try {
+      await page.waitForTimeout(delayMs);
+      result = await actions[i]();
+    } catch (error) {
+      const testError = await captureError(
+        page, 
+        error, 
+        `Action ${i+1}/${actions.length} (${actionContext})`
+      );
+      
+      errors.push(testError);
+      console.error(`Action ${i+1}/${actions.length} failed in sequence:`, testError.message);
+      throw error;
+    }
   }
   
   return result as T;
+}
+
+export async function withRetry<T>(
+  page: Page,
+  action: () => Promise<T>,
+  maxAttempts = 3,
+  delayMs = 1000,
+  context = "retried action"
+): Promise<T> {
+  let lastError: any;
+  
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      if (attempt > 1) {
+        await page.waitForTimeout(delayMs);
+        console.log(`Retry attempt ${attempt}/${maxAttempts} for ${context}`);
+      }
+      
+      return await action();
+    } catch (error) {
+      lastError = error;
+      console.warn(`Attempt ${attempt}/${maxAttempts} failed for ${context}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+  
+  const finalError = await captureError(
+    page, 
+    lastError, 
+    `Failed after ${maxAttempts} attempts: ${context}`
+  );
+  
+  console.error(`All ${maxAttempts} attempts failed for ${context}:`, finalError.message);
+  throw lastError;
 }

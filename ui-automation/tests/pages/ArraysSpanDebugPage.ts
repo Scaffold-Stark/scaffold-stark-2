@@ -1,7 +1,14 @@
 import { Page, Locator } from "playwright";
 import { BasePage } from "./BasePage";
+import { captureError } from "../utils/error-handler";
 
-type TestResult = { success: boolean; actualValue: string };
+type TestResult = { 
+  success: boolean; 
+  actualValue: string; 
+  error?: string; 
+  details?: any;
+  name?: string;
+};
 
 interface ArrayFieldConfig {
   clickField: Locator;
@@ -67,7 +74,6 @@ export class ArraysSpansDebugPage extends BasePage {
   private arraysSpanTab: Locator;
   private readTab: Locator;
   private writeTab: Locator;
-
   private inputConfigs: InputConfigs;
 
   constructor(page: Page) {
@@ -180,7 +186,6 @@ export class ArraysSpansDebugPage extends BasePage {
           )
           .getByTestId("click-contracts::arrays_spans::SampleStruct-field")
           .getByPlaceholder("u256 enum1"),
-
         structStatusClick: this.page
           .getByTestId("click-contracts::arrays_spans::SampleEnum-field")
           .nth(2),
@@ -249,7 +254,6 @@ export class ArraysSpansDebugPage extends BasePage {
             "click-core::array::Array::<contracts::arrays_spans::StructWith4Layers>-field"
           )
           .first(),
-
         structClick: this.page.getByTestId(
           "click-contracts::arrays_spans::StructWith4Layers-field"
         ),
@@ -312,188 +316,346 @@ export class ArraysSpansDebugPage extends BasePage {
   }
 
   async switchToArraysSpanTab() {
-    await this.arraysSpanTab.click();
+    try {
+      await this.safeClick(this.arraysSpanTab, "Arrays Spans tab");
+    } catch (error) {
+      await captureError(this.page, error, "Switch to ArraysSpans tab");
+      throw error;
+    }
   }
 
   async switchToReadTab() {
-    await this.readTab.click();
+    try {
+      await this.safeClick(this.readTab, "Read tab");
+    } catch (error) {
+      await captureError(this.page, error, "Switch to Read tab");
+      throw error;
+    }
   }
 
   async switchToWriteTab() {
-    await this.writeTab.click();
+    try {
+      await this.safeClick(this.writeTab, "Write tab");
+    } catch (error) {
+      await captureError(this.page, error, "Switch to Write tab");
+      throw error;
+    }
   }
 
   async testGetArrayFelt252(): Promise<TestResult> {
-    const config = this.inputConfigs.getArrayFelt252;
-    await config.clickField.click();
-
-    await config.addButton.click();
-    await config.arrayInputs[0].fill("1");
-
-    await config.addButton.click();
-    await config.arrayInputs[1].fill("2");
-
-    await config.readButton.click();
-    await this.page.waitForTimeout(1000);
-    const resultText = (await config.resultValue.textContent()) || "";
-    return { success: resultText ? true : false, actualValue: resultText };
+    try {
+      const config = this.inputConfigs.getArrayFelt252;
+      
+      await this.safeClick(config.clickField, "Array Felt252 field");
+      await this.safeClick(config.addButton, "Add button for Array Felt252");
+      await this.safeFill(config.arrayInputs[0], "1", "Array Felt252 first element");
+      
+      await this.safeClick(config.addButton, "Add button for Array Felt252 second element");
+      await this.safeFill(config.arrayInputs[1], "2", "Array Felt252 second element");
+      
+      await this.safeClick(config.readButton, "Read button for Array Felt252");
+      await this.page.waitForTimeout(1000);
+      
+      const resultText = await this.safeGetText(config.resultValue, "Array Felt252 result");
+      
+      return { 
+        success: resultText ? true : false, 
+        actualValue: resultText,
+        name: "ArrayFelt252"
+      };
+    } catch (error) {
+      const err = await captureError(this.page, error, "Array Felt252 test");
+      
+      return { 
+        success: false, 
+        actualValue: "", 
+        error: err.message,
+        name: "ArrayFelt252"
+      };
+    }
   }
 
   async testGetArrayContractAddress(): Promise<TestResult> {
-    const config = this.inputConfigs.getArrayContractAddress;
-    await this.scrollToElement(config.clickField as Locator);
-    await config.clickField.click();
-
-    await config.addButton.click();
-    await config.arrayInputs[0].fill(
-      "0x064b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"
-    );
-
-    await config.readButton.click();
-    await this.page.waitForTimeout(1000);
-    await config.clickField.click();
-    const resultText = (await config.resultValue.textContent()) || "";
-    return { success: resultText ? true : false, actualValue: resultText };
+    try {
+      const config = this.inputConfigs.getArrayContractAddress;
+      
+      await this.scrollToElement(config.clickField);
+      await this.safeClick(config.clickField, "Array Contract Address field");
+      
+      await this.safeClick(config.addButton, "Add button for Array Contract Address");
+      await this.safeFill(
+        config.arrayInputs[0], 
+        "0x064b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691", 
+        "Array Contract Address element"
+      );
+      
+      await this.safeClick(config.readButton, "Read button for Array Contract Address");
+      await this.page.waitForTimeout(1000);
+      
+      await this.safeClick(config.clickField, "Array Contract Address field to refresh");
+      const resultText = await this.safeGetText(config.resultValue, "Array Contract Address result");
+      
+      return { 
+        success: resultText ? true : false, 
+        actualValue: resultText,
+        name: "ArrayContractAddress"
+      };
+    } catch (error) {
+      const err = await captureError(this.page, error, "Array Contract Address test");
+      
+      return { 
+        success: false, 
+        actualValue: "", 
+        error: err.message,
+        name: "ArrayContractAddress"
+      };
+    }
   }
 
   async testGetArrayStruct(): Promise<TestResult> {
-    const config = this.inputConfigs.getArrayStruct;
-    await this.scrollToElement(config.clickField as Locator);
-    await config.clickField.click();
-    await config.addButton.click();
-    await config.structClick.click();
+    try {
+      const config = this.inputConfigs.getArrayStruct;
+      
+      await this.scrollToElement(config.clickField);
+      await this.safeClick(config.clickField, "Array Struct field");
+      await this.safeClick(config.addButton, "Add button for Array Struct");
+      await this.safeClick(config.structClick, "Struct field");
 
-    await config.structId.fill("1"),
-      await config.structName.fill("Test Pending"),
-      await config.structEnumClick.click();
-    await config.structEnum1.fill("1");
-    await config.readButton.click();
-    await this.page.waitForTimeout(1000);
-    const resultText = (await config.resultValue.textContent()) || "";
-    return { success: resultText ? true : false, actualValue: resultText };
+      await this.safeFill(config.structId, "1", "Struct ID");
+      await this.safeFill(config.structName, "Test Pending", "Struct Name");
+      await this.safeClick(config.structEnumClick, "Struct Enum field");
+      await this.safeFill(config.structEnum1, "1", "Struct Enum1 value");
+      
+      await this.safeClick(config.readButton, "Read button for Array Struct");
+      await this.page.waitForTimeout(1000);
+      
+      const resultText = await this.safeGetText(config.resultValue, "Array Struct result");
+      
+      return { 
+        success: resultText ? true : false, 
+        actualValue: resultText,
+        name: "ArrayStruct"
+      };
+    } catch (error) {
+      const err = await captureError(this.page, error, "Array Struct test");
+      
+      return { 
+        success: false, 
+        actualValue: "", 
+        error: err.message,
+        name: "ArrayStruct"
+      };
+    }
   }
 
   async testGetArrayNestedStruct(): Promise<TestResult> {
-    const config = this.inputConfigs.getArrayNestedStruct;
-    await this.scrollToElement(config.clickField as Locator);
-    await config.clickField.click();
-    await config.addButton.click();
-    await config.structClick.click();
+    try {
+      const config = this.inputConfigs.getArrayNestedStruct;
+      
+      await this.scrollToElement(config.clickField);
+      await this.safeClick(config.clickField, "Array Nested Struct field");
+      await this.safeClick(config.addButton, "Add button for Array Nested Struct");
+      await this.safeClick(config.structClick, "Nested Struct field");
 
-    await config.strucAddress.fill(
-      "0x064b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"
-    );
-    await config.structDataClick.click();
-    await config.structDataId.fill("1");
-    await config.structDataName.fill("Starknet Test");
+      await this.safeFill(
+        config.strucAddress,
+        "0x064b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+        "Struct Contract Address"
+      );
+      await this.safeClick(config.structDataClick, "Struct Data field");
+      await this.safeFill(config.structDataId, "1", "Struct Data ID");
+      await this.safeFill(config.structDataName, "Starknet Test", "Struct Data Name");
 
-    await config.structDataEnumClick.click();
-    await config.strucDataEnum1.fill("1");
+      await this.safeClick(config.structDataEnumClick, "Struct Data Enum field");
+      await this.safeFill(config.strucDataEnum1, "1", "Struct Data Enum1");
 
-    await config.structStatusClick.click();
-    await config.structStatusEnum1.fill("2");
+      await this.safeClick(config.structStatusClick, "Struct Status field");
+      await this.safeFill(config.structStatusEnum1, "2", "Struct Status Enum1");
 
-    await config.readButton.click();
-    await this.page.waitForTimeout(1000);
-    const resultText = (await config.resultValue.textContent()) || "";
-    return { success: resultText ? true : false, actualValue: resultText };
+      await this.safeClick(config.readButton, "Read button for Array Nested Struct");
+      await this.page.waitForTimeout(1000);
+      
+      const resultText = await this.safeGetText(config.resultValue, "Array Nested Struct result");
+      
+      return { 
+        success: resultText ? true : false, 
+        actualValue: resultText,
+        name: "ArrayNestedStruct"
+      };
+    } catch (error) {
+      const err = await captureError(this.page, error, "Array Nested Struct test");
+      
+      return { 
+        success: false, 
+        actualValue: "", 
+        error: err.message,
+        name: "ArrayNestedStruct"
+      };
+    }
   }
 
   async testGetArrayStructFiveElement(): Promise<TestResult> {
-    const config = this.inputConfigs.getArrayStructFiveElement;
-    const structData = {
-      element1: "256",
-      element2: "252",
-      element3: "Starknet Test",
-      element4:
-        "0x064b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
-      element5: "true",
-    };
-
-    await this.scrollToElement(config.clickField as Locator);
-    await config.clickField.click();
-    await config.addButton.click();
-
-    await config.structClick.click();
-    await this.page.waitForTimeout(300);
-
-    for (let i = 0; i < config.structElement.length; i++) {
-      const element = config.structElement[i];
-      const value = Object.values(structData)[i];
-
-      await this.scrollToElement(element as Locator);
-      await element.clear();
-      await element.fill(value);
-      await this.page.waitForTimeout(100);
+    try {
+      const config = this.inputConfigs.getArrayStructFiveElement;
+      const structData = {
+        element1: "256",
+        element2: "252",
+        element3: "Starknet Test",
+        element4: "0x064b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+        element5: "true",
+      };
+      
+      await this.scrollToElement(config.clickField);
+      await this.safeClick(config.clickField, "Array Struct Five Element field");
+      await this.safeClick(config.addButton, "Add button for Array Struct Five Element");
+      await this.safeClick(config.structClick, "Struct Five Element field");
+      
+      await this.page.waitForTimeout(300);
+      
+      for (let i = 0; i < config.structElement.length; i++) {
+        const element = config.structElement[i];
+        const value = Object.values(structData)[i];
+        
+        await this.scrollToElement(element);
+        await element.clear();
+        await this.safeFill(element, value, `Struct Five Element ${i+1}`);
+        await this.page.waitForTimeout(100);
+      }
+      
+      await this.scrollToElement(config.readButton);
+      await this.safeClick(config.readButton, "Read button for Array Struct Five Element");
+      await this.page.waitForTimeout(1000);
+      
+      const resultText = await this.safeGetText(config.resultValue, "Array Struct Five Element result");
+      
+      return { 
+        success: resultText ? true : false, 
+        actualValue: resultText,
+        name: "ArrayStructFiveElement"
+      };
+    } catch (error) {
+      const err = await captureError(this.page, error, "Array Struct Five Element test");
+      
+      return { 
+        success: false, 
+        actualValue: "", 
+        error: err.message,
+        name: "ArrayStructFiveElement"
+      };
     }
-
-    await this.scrollToElement(config.readButton as Locator);
-    await config.readButton.click();
-    await this.page.waitForTimeout(1000);
-
-    const resultText = (await config.resultValue.textContent()) || "";
-    return { success: resultText ? true : false, actualValue: resultText };
   }
+
   async testGetArrayStructFourLayer(): Promise<TestResult> {
-    const config = this.inputConfigs.getArrayStrucFourLayer;
-
-    await this.scrollToElement(config.clickField as Locator);
-    await config.clickField.click();
-    await config.addButton.click();
-
-    await config.structClick.click();
-    await this.page.waitForTimeout(300);
-    await config.layer3.click();
-    await this.page.waitForTimeout(300);
-    await config.layer2.click();
-    await this.page.waitForTimeout(300);
-    await config.layer1.click();
-    await this.page.waitForTimeout(300);
-    await config.layer1_element.fill("256");
-
-    await this.scrollToElement(config.readButton as Locator);
-    await config.readButton.click();
-    await this.page.waitForTimeout(1000);
-
-    const resultText = (await config.resultValue.textContent()) || "";
-    return { success: resultText ? true : false, actualValue: resultText };
+    try {
+      const config = this.inputConfigs.getArrayStrucFourLayer;
+      
+      await this.scrollToElement(config.clickField);
+      await this.safeClick(config.clickField, "Array Struct Four Layer field");
+      await this.safeClick(config.addButton, "Add button for Array Struct Four Layer");
+      await this.safeClick(config.structClick, "Struct Four Layer field");
+      
+      await this.page.waitForTimeout(300);
+      await this.safeClick(config.layer3, "Layer 3 field");
+      await this.page.waitForTimeout(300);
+      await this.safeClick(config.layer2, "Layer 2 field");
+      await this.page.waitForTimeout(300);
+      await this.safeClick(config.layer1, "Layer 1 field");
+      await this.page.waitForTimeout(300);
+      await this.safeFill(config.layer1_element, "256", "Layer 1 element value");
+      
+      await this.scrollToElement(config.readButton);
+      await this.safeClick(config.readButton, "Read button for Array Struct Four Layer");
+      await this.page.waitForTimeout(1000);
+      
+      const resultText = await this.safeGetText(config.resultValue, "Array Struct Four Layer result");
+      
+      return { 
+        success: resultText ? true : false, 
+        actualValue: resultText,
+        name: "ArrayStructFourLayer"
+      };
+    } catch (error) {
+      const err = await captureError(this.page, error, "Array Struct Four Layer test");
+      
+      return { 
+        success: false, 
+        actualValue: "", 
+        error: err.message,
+        name: "ArrayStructFourLayer"
+      };
+    }
   }
 
   async testGetSpanFelt252(): Promise<TestResult> {
-    const config = this.inputConfigs.getSpanFelt252;
-
-    await this.scrollToElement(config.clickField as Locator);
-    await config.clickField.click();
-
-    await config.addButton.click();
-    await config.arrayInputs[0].fill("252");
-
-    await config.addButton.click();
-    await config.arrayInputs[1].fill("42");
-
-    await this.scrollToElement(config.readButton as Locator);
-    await config.readButton.click();
-    await this.page.waitForTimeout(1000);
-
-    const resultText = (await config.resultValue.textContent()) || "";
-    return { success: resultText ? true : false, actualValue: resultText };
+    try {
+      const config = this.inputConfigs.getSpanFelt252;
+      
+      await this.scrollToElement(config.clickField);
+      await this.safeClick(config.clickField, "Span Felt252 field");
+      
+      await this.safeClick(config.addButton, "Add button for Span Felt252");
+      await this.safeFill(config.arrayInputs[0], "252", "Span Felt252 first element");
+      
+      await this.safeClick(config.addButton, "Add button for Span Felt252 second element");
+      await this.safeFill(config.arrayInputs[1], "42", "Span Felt252 second element");
+      
+      await this.scrollToElement(config.readButton);
+      await this.safeClick(config.readButton, "Read button for Span Felt252");
+      await this.page.waitForTimeout(1000);
+      
+      const resultText = await this.safeGetText(config.resultValue, "Span Felt252 result");
+      
+      return { 
+        success: resultText ? true : false, 
+        actualValue: resultText,
+        name: "SpanFelt252"
+      };
+    } catch (error) {
+      const err = await captureError(this.page, error, "Span Felt252 test");
+      
+      return { 
+        success: false, 
+        actualValue: "", 
+        error: err.message,
+        name: "SpanFelt252"
+      };
+    }
   }
 
   async testGetSpanAddressContract(): Promise<TestResult> {
-    const config = this.inputConfigs.getSpanContractAddress;
-
-    await this.scrollToElement(config.clickField as Locator);
-    await config.clickField.click();
-
-    await config.addButton.click();
-    await config.arrayInputs[0].fill(
-      "0x064b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"
-    );
-    await this.scrollToElement(config.readButton as Locator);
-    await config.readButton.click();
-    await this.page.waitForTimeout(1000);
-
-    const resultText = (await config.resultValue.textContent()) || "";
-    return { success: resultText ? true : false, actualValue: resultText };
+    try {
+      const config = this.inputConfigs.getSpanContractAddress;
+      
+      await this.scrollToElement(config.clickField);
+      await this.safeClick(config.clickField, "Span Contract Address field");
+      
+      await this.safeClick(config.addButton, "Add button for Span Contract Address");
+      await this.safeFill(
+        config.arrayInputs[0], 
+        "0x064b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691", 
+        "Span Contract Address element"
+      );
+      
+      await this.scrollToElement(config.readButton);
+      await this.safeClick(config.readButton, "Read button for Span Contract Address");
+      await this.page.waitForTimeout(1000);
+      
+      const resultText = await this.safeGetText(config.resultValue, "Span Contract Address result");
+      
+      return { 
+        success: resultText ? true : false, 
+        actualValue: resultText,
+        name: "SpanContractAddress"
+      };
+    } catch (error) {
+      const err = await captureError(this.page, error, "Span Contract Address test");
+      
+      return { 
+        success: false, 
+        actualValue: "", 
+        error: err.message,
+        name: "SpanContractAddress"
+      };
+    }
   }
 }

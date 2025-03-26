@@ -3,6 +3,7 @@ import { navigateAndWait } from "./utils/navigate";
 import { HomePage } from "./pages/HomePage";
 import { endpoint } from "./configTypes";
 import { VarsDebugPage } from "./pages/VarsDebugPage";
+import { captureError, formatTestResults } from "./utils/error-handler";
 
 const BURNER_WALLET_SHORT = "0x64b4...5691";
 const SET_U256_FELT_WITH_KEY = "u256_felt256_key";
@@ -23,101 +24,167 @@ const SET_BOOL_VALUE = "true";
 
 test("Vars Debug Page Interaction Flow", async ({ page }) => {
   test.setTimeout(90000);
-
-  await navigateAndWait(page, endpoint.BASE_URL);
-
-  const homePage = new HomePage(page);
-
-  await homePage.getConnectButton().click();
-  await homePage.getConnecterButton("Burner Wallet").click();
-
-  const accountButton = homePage.getAccountButton(BURNER_WALLET_SHORT);
-  await accountButton.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(500);
-  await accountButton.click({ force: true, timeout: 5000 });
-  await page.waitForTimeout(1000);
-
-  await homePage.getDebugPageLinkButton().click();
-  await page.waitForTimeout(1000);
-
-  const varsDebugPage = new VarsDebugPage(page);
-
-  await varsDebugPage.switchToVarsTab();
-  await page.waitForTimeout(1000);
-
-  const testResults = [];
-
-  // Test Felt252
-  const felt252Result = await varsDebugPage.testFelt252(
-    SET_U256_FELT_WITH_KEY,
-    SET_U256_FELT_WITH_VALUE
-  );
-  console.log("Felt252 test result:", felt252Result);
-  testResults.push({
-    name: "Felt252",
-    success: felt252Result.success,
-    details: felt252Result
-  });
-
-  // Test Felt
-  const feltResult = await varsDebugPage.testFelt(
-    SET_FELT_WITH_KEY,
-    SET_FELT_VALUE
-  );
-  console.log("Felt test result:", feltResult);
-  testResults.push({
-    name: "Felt",
-    success: feltResult.success,
-    details: feltResult
-  });
-
-  // Test ByteArray
-  const byteArrayResult = await varsDebugPage.testByteArray(
-    SET_BYTE_ARRAY_KEY,
-    SET_BYTE_ARRAY_VALUE
-  );
-  console.log("ByteArray test result:", byteArrayResult);
-  testResults.push({
-    name: "ByteArray",
-    success: byteArrayResult.success,
-    details: byteArrayResult
-  });
-
-  // Test ContractAddress
-  const contractAddressResult = await varsDebugPage.testContractAddress(
-    SET_CONTRACT_ADDRESS_KEY,
-    SET_CONTRACT_ADDRESS_VALUE
-  );
-  console.log("ContractAddress test result:", contractAddressResult);
-  testResults.push({
-    name: "ContractAddress",
-    success: contractAddressResult.success,
-    details: contractAddressResult
-  });
-
-  // Test Bool
-  const boolResult = await varsDebugPage.testBool(
-    SET_BOOL_KEY,
-    SET_BOOL_VALUE
-  );
-  console.log("Bool test result:", boolResult);
-  testResults.push({
-    name: "Bool",
-    success: boolResult.success,
-    details: boolResult
-  });
-
-  const failedTests = testResults.filter(test => !test.success);
+  const testTimestamp = Date.now();
+  const testId = `vars-debug-${testTimestamp}`;
   
-  if (failedTests.length > 0) {
-    const failedTestNames = failedTests.map(test => test.name).join(", ");
-    const errorMessage = `Failure case: ${failedTestNames}`;
+  const testResults = [];
+  const errorLogs = [];
+
+  try {
+    console.log(`[${testId}] Starting test: Vars Debug Page Interaction Flow`);
     
-    const details = failedTests.map(test => 
-      `${test.name}: ${JSON.stringify(test.details)}`
-    ).join("\n");
+    try {
+      await navigateAndWait(page, endpoint.BASE_URL);
+      console.log(`[${testId}] Successfully navigated to ${endpoint.BASE_URL}`);
+    } catch (error) {
+      const navErr = await captureError(page, error, "Navigation");
+      errorLogs.push(navErr);
+      console.error(`[${testId}] Navigation failed:`, navErr.message);
+      
+      await page.screenshot({ path: `${testId}-navigation-error.png` });
+      test.fail(true, `Navigation failed: ${error instanceof Error ? error.message : String(error)}`);
+      return;
+    }
     
-    console.error(`${errorMessage}\n${details}`);
-    test.fail(true, errorMessage);
+    const homePage = new HomePage(page);
+
+    try {
+      await homePage.getConnectButton().click();
+      await homePage.getConnecterButton("Burner Wallet").click();
+
+      const accountButton = homePage.getAccountButton(BURNER_WALLET_SHORT);
+      await accountButton.scrollIntoViewIfNeeded();
+      await page.waitForTimeout(500);
+      await accountButton.click({ force: true, timeout: 5000 });
+      await page.waitForTimeout(1000);
+      
+      console.log(`[${testId}] Successfully connected to wallet: ${BURNER_WALLET_SHORT}`);
+    } catch (error) {
+      const walletErr = await captureError(page, error, "Wallet Connection");
+      errorLogs.push(walletErr);
+      console.error(`[${testId}] Wallet connection failed:`, walletErr.message);
+      
+      await page.screenshot({ path: `${testId}-wallet-connection-error.png` });
+      test.fail(true, `Wallet connection failed: ${error instanceof Error ? error.message : String(error)}`);
+      return;
+    }
+
+    try {
+      await homePage.getDebugPageLinkButton().click();
+      await page.waitForTimeout(1000);
+      console.log(`[${testId}] Successfully navigated to debug page`);
+    } catch (error) {
+      const debugErr = await captureError(page, error, "Debug Page Navigation");
+      errorLogs.push(debugErr);
+      console.error(`[${testId}] Debug page navigation failed:`, debugErr.message);
+      
+      await page.screenshot({ path: `${testId}-debug-navigation-error.png` });
+      test.fail(true, `Debug page navigation failed: ${error instanceof Error ? error.message : String(error)}`);
+      return;
+    }
+
+    const varsDebugPage = new VarsDebugPage(page);
+
+    try {
+      await varsDebugPage.switchToVarsTab();
+      await page.waitForTimeout(1000);
+      console.log(`[${testId}] Successfully switched to Vars tab`);
+    } catch (error) {
+      const tabErr = await captureError(page, error, "Tab Switch");
+      errorLogs.push(tabErr);
+      console.error(`[${testId}] Failed to switch to Vars tab:`, tabErr.message);
+      
+      await page.screenshot({ path: `${testId}-tab-switch-error.png` });
+      test.fail(true, `Failed to switch to Vars tab: ${error instanceof Error ? error.message : String(error)}`);
+      return;
+    }
+
+    console.log(`[${testId}] Starting Felt252 test`);
+    const felt252Result = await varsDebugPage.testFelt252(
+      SET_U256_FELT_WITH_KEY,
+      SET_U256_FELT_WITH_VALUE
+    );
+    console.log(`[${testId}] Felt252 test result:`, 
+      felt252Result.success ? "SUCCESS" : `FAILED: ${felt252Result.error}`);
+    testResults.push({
+      ...felt252Result,
+      name: "Felt252",
+    });
+
+    console.log(`[${testId}] Starting Felt test`);
+    const feltResult = await varsDebugPage.testFelt(
+      SET_FELT_WITH_KEY,
+      SET_FELT_VALUE
+    );
+    console.log(`[${testId}] Felt test result:`, 
+      feltResult.success ? "SUCCESS" : `FAILED: ${feltResult.error}`);
+    testResults.push({
+      ...feltResult,
+      name: "Felt",
+    });
+
+    console.log(`[${testId}] Starting ByteArray test`);
+    const byteArrayResult = await varsDebugPage.testByteArray(
+      SET_BYTE_ARRAY_KEY,
+      SET_BYTE_ARRAY_VALUE
+    );
+    console.log(`[${testId}] ByteArray test result:`, 
+      byteArrayResult.success ? "SUCCESS" : `FAILED: ${byteArrayResult.error}`);
+    testResults.push({
+      ...byteArrayResult,
+      name: "ByteArray",
+    });
+
+    console.log(`[${testId}] Starting ContractAddress test`);
+    const contractAddressResult = await varsDebugPage.testContractAddress(
+      SET_CONTRACT_ADDRESS_KEY,
+      SET_CONTRACT_ADDRESS_VALUE
+    );
+    console.log(`[${testId}] ContractAddress test result:`, 
+      contractAddressResult.success ? "SUCCESS" : `FAILED: ${contractAddressResult.error}`);
+    testResults.push({
+      ...contractAddressResult,
+      name: "ContractAddress",
+    });
+
+    console.log(`[${testId}] Starting Bool test`);
+    const boolResult = await varsDebugPage.testBool(
+      SET_BOOL_KEY,
+      SET_BOOL_VALUE as "true" | "false"
+    );
+    console.log(`[${testId}] Bool test result:`, 
+      boolResult.success ? "SUCCESS" : `FAILED: ${boolResult.error}`);
+    testResults.push({
+      ...boolResult,
+      name: "Bool",
+    });
+
+    const failedTests = testResults.filter(test => !test.success);
+    
+    if (failedTests.length > 0) {
+      const formattedResults = formatTestResults(testResults);
+      console.error(`[${testId}] TEST SUMMARY:\n${formattedResults}`);
+      
+      await page.screenshot({ path: `${testId}-test-failures.png` });
+      
+      const failedTestNames = failedTests.map(test => test.name).join(", ");
+      const errorMessage = `${failedTests.length}/${testResults.length} tests failed: ${failedTestNames}`;
+      
+      const details = failedTests.map(test => 
+        `${test.name}: ${test.error}\nActual: ${test.actualValue}\nDetails: ${JSON.stringify(test.details)}`
+      ).join("\n\n");
+      
+      console.error(`[${testId}] DETAILED TEST FAILURES:\n${details}`);
+      test.fail(true, `${errorMessage}\n\nSee logs for details or check screenshot: ${testId}-test-failures.png`);
+    } else {
+      console.log(`[${testId}] All tests passed successfully!`);
+    }
+  } catch (error) {
+    const generalErr = await captureError(page, error, "General Test Execution");
+    errorLogs.push(generalErr);
+    console.error(`[${testId}] Test execution failed with unexpected error:`, generalErr.message);
+    
+    await page.screenshot({ path: `${testId}-unexpected-error.png` });
+    test.fail(true, `Unexpected test failure: ${error instanceof Error ? error.message : String(error)}`);
   }
 });
