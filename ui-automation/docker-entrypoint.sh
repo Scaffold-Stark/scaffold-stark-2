@@ -14,7 +14,16 @@ while ! curl -s $RPC_URL_DEVNET > /dev/null; do
 done
 
 cd /app/packages/snfoundry
+echo "Starting deployment..."
 yarn deploy
+DEPLOY_STATUS=$?
+
+if [ $DEPLOY_STATUS -ne 0 ]; then
+    echo "Error: Deployment failed with status $DEPLOY_STATUS"
+    exit $DEPLOY_STATUS
+fi
+
+echo "Deployment completed successfully!"
 
 cd /app/packages/nextjs
 exec yarn dev 

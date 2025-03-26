@@ -30,7 +30,6 @@ test("Eth Token Complete Interaction Flow", async ({ page }) => {
       errorLogs.push(navErr);
       console.error(`[${testId}] Navigation failed:`, navErr.message);
 
-      await page.screenshot({ path: `${testId}-navigation-error.png` });
       test.fail(
         true,
         `Navigation failed: ${error instanceof Error ? error.message : String(error)}`
@@ -59,7 +58,6 @@ test("Eth Token Complete Interaction Flow", async ({ page }) => {
       errorLogs.push(walletErr);
       console.error(`[${testId}] Wallet connection failed:`, walletErr.message);
 
-      await page.screenshot({ path: `${testId}-wallet-connection-error.png` });
       test.fail(
         true,
         `Wallet connection failed: ${error instanceof Error ? error.message : String(error)}`
@@ -80,7 +78,6 @@ test("Eth Token Complete Interaction Flow", async ({ page }) => {
         debugErr.message
       );
 
-      await page.screenshot({ path: `${testId}-debug-navigation-error.png` });
       test.fail(
         true,
         `Debug page navigation failed: ${error instanceof Error ? error.message : String(error)}`
@@ -121,7 +118,6 @@ test("Eth Token Complete Interaction Flow", async ({ page }) => {
       errorLogs.push(balanceErr);
       console.error(`[${testId}] Balance check failed:`, balanceErr.message);
 
-      await page.screenshot({ path: `${testId}-balance-check-error.png` });
       testResults.push({
         name: "BalanceCheck",
         success: false,
@@ -187,7 +183,6 @@ test("Eth Token Complete Interaction Flow", async ({ page }) => {
         allowanceErr.message
       );
 
-      await page.screenshot({ path: `${testId}-allowance-error.png` });
       testResults.push({
         name: "AllowanceCheck",
         success: false,
@@ -253,7 +248,6 @@ test("Eth Token Complete Interaction Flow", async ({ page }) => {
       errorLogs.push(transferErr);
       console.error(`[${testId}] Token transfer failed:`, transferErr.message);
 
-      await page.screenshot({ path: `${testId}-transfer-error.png` });
       testResults.push({
         name: "TokenTransfer",
         success: false,
@@ -295,7 +289,6 @@ test("Eth Token Complete Interaction Flow", async ({ page }) => {
       errorLogs.push(finalErr);
       console.log(`[${testId}] Final verification skipped:`, finalErr.message);
 
-      await page.screenshot({ path: `${testId}-final-check-error.png` });
       testResults.push({
         name: "FinalBalanceCheck",
         success: false,
@@ -335,7 +328,6 @@ test("Eth Token Complete Interaction Flow", async ({ page }) => {
       generalErr.message
     );
 
-    await page.screenshot({ path: `${testId}-unexpected-error.png` });
     test.fail(
       true,
       `Unexpected test failure: ${error instanceof Error ? error.message : String(error)}`

@@ -3,14 +3,11 @@
   "version": "1.0.0",
   "description": "A project for using playwright for end-to-end testing purpose with docker for deployment",
   "scripts": {
-    "test" : "playwright test",
-    "test:ui:eth": "playwright test debug-contract-eth.spec.ts --headed",
-    "test:ui:strk": "playwright test debug-contract-strk.spec.ts --headed",
-    "test:eth": "playwright test debug-contract-eth.spec.ts",
-    "test:strk": "playwright test debug-contract-strk.spec.ts",
-    "test:connect": "playwright test connect-wallet.spec.ts",
+    "test": "playwright test",
     "test-html-report": "playwright test --browser=all --reporter=html",
-    "test-json-report": "PLAYWRIGHT_JSON_OUTPUT_NAME=results.json playwright test --browser=chromium --reporter=json"
+    "test-json-report": "PLAYWRIGHT_JSON_OUTPUT_NAME=results.json playwright test --browser=chromium --reporter=json",
+    "test:sequential": "bash ./run-tests.sh",
+    "test:sequential:ui": "bash ./run-tests.sh true"
   },
   "author": "Q3 Labs",
   "license": "MIT",

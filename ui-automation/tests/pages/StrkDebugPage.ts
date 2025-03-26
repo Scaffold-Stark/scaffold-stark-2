@@ -169,9 +169,6 @@ export class StrkDebugPage extends BasePage {
       if (await errorElement.isVisible().catch(() => false)) {
         const errorMsg = (await errorElement.textContent()) || "Unknown error";
         console.error(`Transfer error displayed: ${errorMsg}`);
-        await this.page.screenshot({
-          path: `strk-transfer-error-${Date.now()}.png`,
-        });
         return { success: false, error: errorMsg };
       }
 
@@ -357,9 +354,6 @@ export class StrkDebugPage extends BasePage {
           resultText.replace("Result:", "").trim() || amount;
         return { success: true, value: allowanceValue };
       } else {
-        await this.page.screenshot({
-          path: `strk-allowance-no-result-${Date.now()}.png`,
-        });
         return {
           success: false,
           error: "Could not retrieve allowance result",
@@ -373,9 +367,7 @@ export class StrkDebugPage extends BasePage {
         `Check STRK allowance of ${amount} for spender ${spenderAddress}`
       );
       console.error(`Allowance check failed: ${err.message}`);
-      await this.page.screenshot({
-        path: `strk-allowance-error-${Date.now()}.png`,
-      });
+    
       return {
         success: false,
         error: err.message,

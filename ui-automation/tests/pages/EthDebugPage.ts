@@ -202,7 +202,6 @@ export class EthDebugPage extends BasePage {
       if (await errorElement.isVisible().catch(() => false)) {
         const errorMsg = await errorElement.textContent() || "Unknown error";
         console.error(`Transfer error displayed: ${errorMsg}`);
-        await this.page.screenshot({ path: `eth-transfer-error-${Date.now()}.png` });
         return { success: false, error: errorMsg };
       }
   
@@ -320,7 +319,6 @@ export class EthDebugPage extends BasePage {
         const allowanceValue = resultText.replace("Result:", "").trim() || amount;
         return { success: true, value: allowanceValue };
       } else {
-        await this.page.screenshot({ path: `eth-allowance-no-result-${Date.now()}.png` });
         return { 
           success: false, 
           error: "Could not retrieve allowance result", 
@@ -334,7 +332,6 @@ export class EthDebugPage extends BasePage {
         `Check ETH allowance of ${amount} for spender ${spenderAddress}`
       );
       console.error(`Allowance check failed: ${err.message}`);
-      await this.page.screenshot({ path: `eth-allowance-error-${Date.now()}.png` });
       return { 
         success: false, 
         error: err.message,

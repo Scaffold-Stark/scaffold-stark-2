@@ -20,7 +20,6 @@ export interface TestResult {
 export async function captureError(page: Page, error: any, context: string): Promise<TestError> {
   const timestamp = Date.now();
   const screenshotPath = `error-${context.replace(/\s+/g, '-')}-${timestamp}.png`;
-  await page.screenshot({ path: screenshotPath });
   
   let errorMessage = "Unknown error";
   if (error instanceof Error) {

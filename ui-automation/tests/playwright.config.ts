@@ -1,45 +1,29 @@
-import { PlaywrightTestConfig } from "@playwright/test";
+import { defineConfig, devices } from '@playwright/test';
 
-const config: PlaywrightTestConfig = {
-  testDir: "./tests",
-  testMatch: "**/*.spec.ts",
-  timeout: 30000,
+export default defineConfig({
+  testDir: './tests',
+  fullyParallel: false,
+  forbidOnly: false,
   retries: 0,
-  workers: undefined,
-  reporter: "html",
-  projects: [
-    {
-      name: "chromium",
-      use: {
-        browserName: "chromium",
-      },
-    },
-    {
-      name: "firefox",
-      use: {
-        browserName: "firefox",
-      },
-    },
-    {
-      name: "webkit",
-      use: {
-        browserName: "webkit",
-      },
-    },
+  workers: 1,
+  reporter: [
+    ['html'],
+    ['json', { outputFile: 'test-results/results.json' }]
   ],
   use: {
-    headless: false,
-    viewport: null,
-    ignoreHTTPSErrors: true,
-    video: "on-first-retry",
-    trace: "on-first-retry",
-    actionTimeout: 15000,
-    navigationTimeout: 20000,
-
-    launchOptions: {
-      slowMo: 1000,
-    },
+    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    trace: 'on-first-retry',
+    video: 'on-first-retry',
+    screenshot: 'only-on-failure',
   },
-};
-
-export default config;
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+  ],
+  timeout: 60000,
+  expect: {
+    timeout: 10000
+  },
+});

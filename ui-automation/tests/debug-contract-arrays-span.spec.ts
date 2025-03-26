@@ -33,7 +33,6 @@ test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
       const walletErr = await captureError(page, error, "Wallet Connection");
       errorLogs.push(walletErr);
       
-      await page.screenshot({ path: `${testId}-wallet-connection-error.png` });
       test.fail(true, `Wallet connection failed: ${error instanceof Error ? error.message : String(error)}`);
       return;
     }
@@ -45,7 +44,6 @@ test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
       const debugErr = await captureError(page, error, "Debug Page Navigation");
       errorLogs.push(debugErr);
       
-      await page.screenshot({ path: `${testId}-debug-navigation-error.png` });
       test.fail(true, `Debug page navigation failed: ${error instanceof Error ? error.message : String(error)}`);
       return;
     }
@@ -61,7 +59,6 @@ test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
       const tabErr = await captureError(page, error, "Tab Switch");
       errorLogs.push(tabErr);
       
-      await page.screenshot({ path: `${testId}-tab-switch-error.png` });
       test.fail(true, `Failed to switch tabs: ${error instanceof Error ? error.message : String(error)}`);
       return;
     }
@@ -109,14 +106,12 @@ test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
         .map((test) => `${test.name}: ${test.error || 'Unknown error'}\nDetails: ${test.actualValue || "No value returned"}`)
         .join("\n\n");
       
-      await page.screenshot({ path: `${testId}-test-failures.png` });
       test.fail(true, `${errorMessage}\n\nSee logs for details or check screenshot: ${testId}-test-failures.png`);
     }
   } catch (error) {
     const generalErr = await captureError(page, error, "General ArraysSpan Test Execution");
     errorLogs.push(generalErr);
     
-    await page.screenshot({ path: `${testId}-unexpected-error.png` });
     test.fail(true, `Unexpected test failure: ${error instanceof Error ? error.message : String(error)}`);
   }
 });

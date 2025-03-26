@@ -41,7 +41,6 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
       errorLogs.push(navErr);
       console.error(`[${testId}] Navigation failed:`, navErr.message);
       
-      await page.screenshot({ path: `${testId}-navigation-error.png` });
       test.fail(true, `Navigation failed: ${error instanceof Error ? error.message : String(error)}`);
       return;
     }
@@ -64,7 +63,6 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
       errorLogs.push(walletErr);
       console.error(`[${testId}] Wallet connection failed:`, walletErr.message);
       
-      await page.screenshot({ path: `${testId}-wallet-connection-error.png` });
       test.fail(true, `Wallet connection failed: ${error instanceof Error ? error.message : String(error)}`);
       return;
     }
@@ -78,7 +76,6 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
       errorLogs.push(debugErr);
       console.error(`[${testId}] Debug page navigation failed:`, debugErr.message);
       
-      await page.screenshot({ path: `${testId}-debug-navigation-error.png` });
       test.fail(true, `Debug page navigation failed: ${error instanceof Error ? error.message : String(error)}`);
       return;
     }
@@ -94,7 +91,6 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
       errorLogs.push(tabErr);
       console.error(`[${testId}] Failed to switch to Vars tab:`, tabErr.message);
       
-      await page.screenshot({ path: `${testId}-tab-switch-error.png` });
       test.fail(true, `Failed to switch to Vars tab: ${error instanceof Error ? error.message : String(error)}`);
       return;
     }
@@ -165,8 +161,6 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
       const formattedResults = formatTestResults(testResults);
       console.error(`[${testId}] TEST SUMMARY:\n${formattedResults}`);
       
-      await page.screenshot({ path: `${testId}-test-failures.png` });
-      
       const failedTestNames = failedTests.map(test => test.name).join(", ");
       const errorMessage = `${failedTests.length}/${testResults.length} tests failed: ${failedTestNames}`;
       
@@ -184,7 +178,6 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
     errorLogs.push(generalErr);
     console.error(`[${testId}] Test execution failed with unexpected error:`, generalErr.message);
     
-    await page.screenshot({ path: `${testId}-unexpected-error.png` });
     test.fail(true, `Unexpected test failure: ${error instanceof Error ? error.message : String(error)}`);
   }
 });
