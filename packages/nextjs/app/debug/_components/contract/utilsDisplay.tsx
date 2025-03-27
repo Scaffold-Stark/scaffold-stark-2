@@ -5,6 +5,7 @@ import {
   isCairoArray,
   isCairoOption,
   isCairoResult,
+  isCairoSpan,
   parseGenericType,
 } from "~~/utils/scaffold-stark/types";
 import { formatEther } from "ethers";
@@ -191,6 +192,22 @@ const _decodeContractResponseItem = (
     );
   }
 
+  // span
+  if (abiType.name && abiType.name.startsWith("core::array::Span")) {
+    const match = abiType.name.match(/<([^>]+)>/);
+    const spanItemType = match ? match[1] : null;
+    if (!spanItemType || !Array.isArray(respItem)) {
+      return [];
+    }
+    return respItem.map((spanItem) =>
+      _decodeContractResponseItem(
+        spanItem,
+        getFieldType(spanItemType, abi),
+        abi,
+      ),
+    );
+  }
+
   // struct
   if (abiType.type === "struct") {
     const members = abiType.members;
@@ -294,7 +311,12 @@ export const displayType = (type: string) => {
   }
 
   // arrays and options
-  else if (isCairoResult(type) || isCairoArray(type) || isCairoOption(type)) {
+  else if (
+    isCairoResult(type) ||
+    isCairoArray(type) ||
+    isCairoOption(type) ||
+    isCairoSpan(type)
+  ) {
     const kindOfArray = type.split("::").at(2);
     const parsed = parseGenericType(type);
 
