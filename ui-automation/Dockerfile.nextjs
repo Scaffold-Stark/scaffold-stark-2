@@ -1,4 +1,4 @@
-FROM starknetfoundation/starknet-dev:2.9.2
+FROM starknetfoundation/starknet-dev:2.8.4
 
 USER root
 
@@ -24,7 +24,6 @@ WORKDIR /app
 COPY . .
 
 RUN yarn install
-
 COPY ./ui-automation/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
