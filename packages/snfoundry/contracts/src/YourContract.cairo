@@ -10,11 +10,12 @@ pub trait IYourContract<TContractState> {
 mod YourContract {
     use openzeppelin_access::ownable::OwnableComponent;
     use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
-    use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
-    use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
-    use starknet::{ContractAddress, contract_address_const};
-    use starknet::{get_caller_address, get_contract_address};
-    use super::{IYourContract};
+    use starknet::storage::{
+        Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
+        StoragePointerWriteAccess,
+    };
+    use starknet::{ContractAddress, get_caller_address, get_contract_address};
+    use super::IYourContract;
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
 
@@ -22,8 +23,8 @@ mod YourContract {
     impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
     impl OwnableInternalImpl = OwnableComponent::InternalImpl<ContractState>;
 
-    const ETH_CONTRACT_ADDRESS: felt252 =
-        0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7;
+    const STRK_CONTRACT_ADDRESS: felt252 =
+        0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d;
 
     #[event]
     #[derive(Drop, starknet::Event)]
@@ -76,11 +77,13 @@ mod YourContract {
                 Option::Some(amount_eth) => {
                     // In `Debug Contract` or UI implementation, call `approve` on ETH contract
                     // before invoking fn set_greeting()
-                    let eth_contract_address = contract_address_const::<ETH_CONTRACT_ADDRESS>();
-                    let eth_dispatcher = IERC20Dispatcher {
-                        contract_address: eth_contract_address,
+                    let strk_contract_address: ContractAddress = STRK_CONTRACT_ADDRESS
+                        .try_into()
+                        .unwrap();
+                    let strk_dispatcher = IERC20Dispatcher {
+                        contract_address: strk_contract_address,
                     };
-                    eth_dispatcher
+                    strk_dispatcher
                         .transfer_from(get_caller_address(), get_contract_address(), amount_eth);
                     self.premium.write(true);
                 },
@@ -98,10 +101,10 @@ mod YourContract {
         }
         fn withdraw(ref self: ContractState) {
             self.ownable.assert_only_owner();
-            let eth_contract_address = contract_address_const::<ETH_CONTRACT_ADDRESS>();
-            let eth_dispatcher = IERC20Dispatcher { contract_address: eth_contract_address };
-            let balance = eth_dispatcher.balance_of(get_contract_address());
-            eth_dispatcher.transfer(self.ownable.owner(), balance);
+            let strk_contract_address = STRK_CONTRACT_ADDRESS.try_into().unwrap();
+            let strk_dispatcher = IERC20Dispatcher { contract_address: strk_contract_address };
+            let balance = strk_dispatcher.balance_of(get_contract_address());
+            strk_dispatcher.transfer(self.ownable.owner(), balance);
         }
         fn premium(self: @ContractState) -> bool {
             self.premium.read()
