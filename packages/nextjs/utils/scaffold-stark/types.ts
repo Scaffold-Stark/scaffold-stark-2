@@ -62,6 +62,9 @@ export const isCairoFelt = (type: string): type is CairoFelt =>
 export const isCairoTuple = (type: string): type is CairoTuple =>
   /\(([^)]+)\)/i.test(type);
 
+export const isCairoSpan = (type: string): boolean =>
+  type.includes("core::array::Span");
+
 export const isCairoType = (type: string): boolean => {
   return (
     isCairoInt(type) ||
@@ -77,7 +80,8 @@ export const isCairoType = (type: string): boolean => {
     isCairoByteArray(type) ||
     isCairoSecp256k1Point(type) ||
     isCairoFelt(type) ||
-    isCairoTuple(type)
+    isCairoTuple(type) ||
+    isCairoSpan(type)
   );
 };
 
