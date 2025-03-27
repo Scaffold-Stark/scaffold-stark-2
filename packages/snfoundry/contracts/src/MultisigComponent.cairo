@@ -19,7 +19,7 @@ pub mod MultisigComponent {
     use core::num::traits::Zero;
     use core::panic_with_felt252;
     use core::pedersen::PedersenTrait;
-    use openzeppelin_governance::multisig::interface::{IMultisig, TransactionID, TransactionState};
+    use contracts::interface::{IMultisig, TransactionID, TransactionState};
     use openzeppelin_governance::multisig::storage_utils::{SignersInfo, SignersInfoStorePackingV2};
     use openzeppelin_governance::multisig::storage_utils::{TxInfo, TxInfoStorePacking};
     use openzeppelin_governance::utils::call_impls::{CallPartialEq, HashCallImpl, HashCallsImpl};
@@ -151,13 +151,13 @@ pub mod MultisigComponent {
         }
 
         /// Returns the list of all current signers.
-        fn get_signers(self: @ComponentState<TContractState>) -> Span<ContractAddress> {
+        fn get_signers(self: @ComponentState<TContractState>) -> Array<ContractAddress> {
             let mut result = array![];
             let signers_count = self.Multisig_signers_info.read().signers_count;
             for i in 0..signers_count {
                 result.append(self.Multisig_signers_by_index.read(i));
             };
-            result.span()
+            result
         }
 
         /// Returns whether the transaction with the given `id` has been confirmed.
@@ -212,7 +212,7 @@ pub mod MultisigComponent {
             let mut result = 0;
             let all_signers = self.get_signers();
             for signer in all_signers {
-                if self.is_confirmed_by(id, *signer) {
+                if self.is_confirmed_by(id, signer) {
                     result += 1;
                 }
             };
@@ -236,7 +236,7 @@ pub mod MultisigComponent {
         fn add_signers(
             ref self: ComponentState<TContractState>,
             new_quorum: u32,
-            signers_to_add: Span<ContractAddress>,
+            signers_to_add: Array<ContractAddress>,
         ) {
             self.assert_only_self();
             self._add_signers(new_quorum, signers_to_add);
@@ -254,7 +254,7 @@ pub mod MultisigComponent {
         fn remove_signers(
             ref self: ComponentState<TContractState>,
             new_quorum: u32,
-            signers_to_remove: Span<ContractAddress>,
+            signers_to_remove: Array<ContractAddress>,
         ) {
             self.assert_only_self();
             self._remove_signers(new_quorum, signers_to_remove);
@@ -307,11 +307,12 @@ pub mod MultisigComponent {
             ref self: ComponentState<TContractState>,
             to: ContractAddress,
             selector: felt252,
-            calldata: Span<felt252>,
+            calldata: Array<felt252>,
             salt: felt252,
         ) -> TransactionID {
-            let call = Call { to, selector, calldata };
-            let id = self.submit_transaction_batch(array![call].span(), salt);
+            println!("selector submit_transaction: {:?}", selector);
+            let call = Call { to, selector, calldata:calldata.span() };
+            let id = self.submit_transaction_batch(array![call], salt);
             println!("id submit_transaction: {:?}", id);
             id
         }
@@ -326,7 +327,7 @@ pub mod MultisigComponent {
         /// Emits a `TransactionSubmitted` event.
         /// Emits a `CallSalt` event if `salt` is not zero.
         fn submit_transaction_batch(
-            ref self: ComponentState<TContractState>, calls: Span<Call>, salt: felt252,
+            ref self: ComponentState<TContractState>, calls: Array<Call>, salt: felt252,
         ) -> TransactionID {
             let caller = starknet::get_caller_address();
             self.assert_one_of_signers(caller);
@@ -395,11 +396,12 @@ pub mod MultisigComponent {
             ref self: ComponentState<TContractState>,
             to: ContractAddress,
             selector: felt252,
-            calldata: Span<felt252>,
+            calldata: Array<felt252>,
             salt: felt252,
         ) {
-            let call = Call { to, selector, calldata };
-            self.execute_transaction_batch(array![call].span(), salt)
+            println!("selector execute_transaction: {:?}", selector);
+            let call = Call { to, selector, calldata:calldata.span() };
+            self.execute_transaction_batch(array![call], salt)
         }
 
         /// Executes a confirmed batch transaction.
@@ -411,9 +413,10 @@ pub mod MultisigComponent {
         ///
         /// Emits a `TransactionExecuted` event.
         fn execute_transaction_batch(
-            ref self: ComponentState<TContractState>, calls: Span<Call>, salt: felt252,
+            ref self: ComponentState<TContractState>, calls: Array<Call>, salt: felt252,
         ) {
-            let id = self.hash_transaction_batch(calls, salt);
+            let calls_clone = calls.clone();
+            let id = self.hash_transaction_batch(calls_clone, salt);
             match self.resolve_tx_state(id) {
                 TransactionState::NotFound => panic_with_felt252(Errors::TX_NOT_FOUND),
                 TransactionState::Pending => panic_with_felt252(Errors::TX_NOT_CONFIRMED),
@@ -425,7 +428,8 @@ pub mod MultisigComponent {
                     tx_info.is_executed = true;
                     self.Multisig_tx_info.write(id, tx_info);
                     for call in calls {
-                        let Call { to, selector, calldata } = *call;
+                        let Call { to, selector, calldata } = call;
+                        println!("selector execute_transaction_batch: {:?}", selector);
                         call_contract_syscall(to, selector, calldata).unwrap_syscall();
                     };
                     self.emit(TransactionExecuted { id });
@@ -438,18 +442,19 @@ pub mod MultisigComponent {
             self: @ComponentState<TContractState>,
             to: ContractAddress,
             selector: felt252,
-            calldata: Span<felt252>,
+            calldata: Array<felt252>,
             salt: felt252,
         ) -> TransactionID {
-            let call = Call { to, selector, calldata };
-            self.hash_transaction_batch(array![call].span(), salt)
+            println!("selector hash_transaction: {:?}", selector);
+            let call = Call { to, selector, calldata:calldata.span() };
+            self.hash_transaction_batch(array![call], salt)
         }
 
         /// Returns the computed identifier of a transaction containing a batch of calls.
         fn hash_transaction_batch(
-            self: @ComponentState<TContractState>, calls: Span<Call>, salt: felt252,
+            self: @ComponentState<TContractState>, calls: Array<Call>, salt: felt252,
         ) -> TransactionID {
-            let hash = PedersenTrait::new(0).update_with(calls).update_with(salt).finalize();
+            let hash = PedersenTrait::new(0).update_with(calls.span()).update_with(salt).finalize();
             println!("hash: {:?}", hash);
             hash
         }
@@ -473,7 +478,7 @@ pub mod MultisigComponent {
         /// Emits a `SignerAdded` event for each signer added.
         /// Emits a `QuorumUpdated` event if the quorum changes.
         fn initializer(
-            ref self: ComponentState<TContractState>, quorum: u32, signers: Span<ContractAddress>,
+            ref self: ComponentState<TContractState>, quorum: u32, signers: Array<ContractAddress>,
         ) {
             self._add_signers(quorum, signers);
         }
@@ -546,12 +551,12 @@ pub mod MultisigComponent {
         fn _add_signers(
             ref self: ComponentState<TContractState>,
             new_quorum: u32,
-            signers_to_add: Span<ContractAddress>,
+            signers_to_add: Array<ContractAddress>,
         ) {
             if !signers_to_add.is_empty() {
                 let SignersInfo { quorum, mut signers_count } = self.Multisig_signers_info.read();
                 for signer in signers_to_add {
-                    let signer_to_add = *signer;
+                    let signer_to_add = signer;
                     assert(signer_to_add.is_non_zero(), Errors::ZERO_ADDRESS_SIGNER);
                     if self.is_signer(signer_to_add) {
                         continue;
@@ -581,12 +586,12 @@ pub mod MultisigComponent {
         fn _remove_signers(
             ref self: ComponentState<TContractState>,
             new_quorum: u32,
-            signers_to_remove: Span<ContractAddress>,
+            signers_to_remove: Array<ContractAddress>,
         ) {
             if !signers_to_remove.is_empty() {
                 let SignersInfo { quorum, mut signers_count } = self.Multisig_signers_info.read();
                 for signer in signers_to_remove {
-                    let signer_to_remove = *signer;
+                    let signer_to_remove = signer;
                     if !self.is_signer(signer_to_remove) {
                         continue;
                     }
