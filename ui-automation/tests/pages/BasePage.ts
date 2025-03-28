@@ -1,9 +1,9 @@
 import { Page, Locator } from "playwright";
-import { captureError, TestError } from "../utils/error-handler";
+import { captureError } from "../utils/error-handler";
 
 export class BasePage {
   protected page: Page;
-  
+
   constructor(page: Page) {
     this.page = page;
   }
@@ -23,7 +23,7 @@ export class BasePage {
   }
 
   async safeAction<T>(
-    action: () => Promise<T>, 
+    action: () => Promise<T>,
     context: string,
     screenshot = true
   ): Promise<T> {
@@ -38,10 +38,7 @@ export class BasePage {
     }
   }
 
-  async safeGetText(
-    locator: Locator, 
-    context: string
-  ): Promise<string> {
+  async safeGetText(locator: Locator, context: string): Promise<string> {
     return this.safeAction(
       async () => (await locator.textContent()) || "",
       `Get text from ${context}`
@@ -49,31 +46,27 @@ export class BasePage {
   }
 
   async safeFill(
-    locator: Locator, 
-    value: string, 
+    locator: Locator,
+    value: string,
     context: string
   ): Promise<void> {
-    return this.safeAction(
-      async () => {
-        await locator.scrollIntoViewIfNeeded();
-        await locator.fill(value);
-      },
-      `Fill ${context} with "${value}"`
-    );
+    return this.safeAction(async () => {
+      await locator.scrollIntoViewIfNeeded();
+      await locator.fill(value);
+    }, `Fill ${context} with "${value}"`);
   }
 
   async safeClick(
-    locator: Locator, 
+    locator: Locator,
     context: string,
     options?: { force?: boolean; timeout?: number }
   ): Promise<void> {
-    return this.safeAction(
-      async () => {
-        await locator.scrollIntoViewIfNeeded();
-        await locator.click(options);
-      },
-      `Click ${context}`
-    );
+    return this.safeAction(async () => {
+      await locator.scrollIntoViewIfNeeded();
+      await this.page.waitForTimeout(500);
+      await locator.click(options);
+      await this.page.waitForTimeout(500);
+    }, `Click ${context}`);
   }
 
   async connectWallet(account: string): Promise<boolean> {
@@ -82,23 +75,24 @@ export class BasePage {
       await this.safeClick(connectButton, "Connect button");
 
       await this.safeClick(
-        this.getConnecterButton("Burner Wallet"), 
+        this.getConnecterButton("Burner Wallet"),
         "Burner Wallet connector"
       );
 
       const button = this.getAccountButton(account);
-      await this.safeAction(
-        async () => {
-          await button.scrollIntoViewIfNeeded();
-          await this.page.waitForTimeout(500);
-          await button.click({ force: true, timeout: 5000 });
-        },
-        `Select account ${account}`
-      );
-      
+      await this.safeAction(async () => {
+        await button.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(500);
+        await button.click({ force: true, timeout: 5000 });
+      }, `Select account ${account}`);
+
       return true;
     } catch (error) {
-      const testError = await captureError(this.page, error, `Connect wallet ${account}`);
+      const testError = await captureError(
+        this.page,
+        error,
+        `Connect wallet ${account}`
+      );
       console.error("Failed to connect wallet:", testError.message);
       return false;
     }

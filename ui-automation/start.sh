@@ -13,7 +13,7 @@ while ! curl -s http://localhost:5050 > /dev/null; do
     sleep 1
 done
 
-echo "Waiting for next js to start..."
+echo "Waiting for nextjs to start..."
 while ! curl -s http://localhost:3000 > /dev/null; do
     sleep 1
 done
@@ -41,3 +41,5 @@ for test_file in $TEST_FILES; do
     sleep 3
 done
 echo "All tests completed!"
+
+export DEBUG=pw:api

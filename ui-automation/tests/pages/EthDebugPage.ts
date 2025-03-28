@@ -28,12 +28,8 @@ export class EthDebugPage extends BasePage {
     super(page);
     this.readWriteTab = this.page.getByText("ReadWrite").first();
     this.ethTab = this.page.getByRole("button", { name: "Eth", exact: true });
-    this.balanceOfInput = this.page
-      .getByPlaceholder("ContractAddress account")
-      .first();
-    this.balanceOfReadButton = this.page
-      .getByRole("button", { name: "Read 📡" })
-      .first();
+    this.balanceOfInput = this.page.getByTestId("input-account").first();
+    this.balanceOfReadButton = this.page.getByTestId("btn-balance_of").first();
     this.balanceOfResult = this.page.getByTestId("result-balance_of");
     this.writeTab = this.page.getByTestId("Eth-write");
     this.readTab = this.page.getByTestId("Eth-read");
@@ -125,9 +121,17 @@ export class EthDebugPage extends BasePage {
 
   async fillBalanceOfInput(address: string) {
     try {
-      await this.safeFill(this.balanceOfInput, address, `Balance of input with address ${address}`);
+      await this.safeFill(
+        this.balanceOfInput,
+        address,
+        `Balance of input with address ${address}`
+      );
     } catch (error) {
-      await captureError(this.page, error, `Fill balance of input with address ${address}`);
+      await captureError(
+        this.page,
+        error,
+        `Fill balance of input with address ${address}`
+      );
       throw error;
     }
   }
@@ -161,18 +165,34 @@ export class EthDebugPage extends BasePage {
 
   async fillTransferRecipient(address: string) {
     try {
-      await this.safeFill(this.transferRecipientInput, address, `Transfer recipient input with address ${address}`);
+      await this.safeFill(
+        this.transferRecipientInput,
+        address,
+        `Transfer recipient input with address ${address}`
+      );
     } catch (error) {
-      await captureError(this.page, error, `Fill transfer recipient with address ${address}`);
+      await captureError(
+        this.page,
+        error,
+        `Fill transfer recipient with address ${address}`
+      );
       throw error;
     }
   }
 
   async fillTransferAmount(amount: string) {
     try {
-      await this.safeFill(this.transferAmountInput, amount, `Transfer amount input with value ${amount}`);
+      await this.safeFill(
+        this.transferAmountInput,
+        amount,
+        `Transfer amount input with value ${amount}`
+      );
     } catch (error) {
-      await captureError(this.page, error, `Fill transfer amount with value ${amount}`);
+      await captureError(
+        this.page,
+        error,
+        `Fill transfer amount with value ${amount}`
+      );
       throw error;
     }
   }
@@ -194,20 +214,28 @@ export class EthDebugPage extends BasePage {
       await this.fillTransferRecipient(recipientAddress);
       await this.fillTransferAmount(amount);
       await this.clickTransferSendButton();
-      console.log(`Completed ETH transfer request of ${amount} to ${recipientAddress}`);
-      
-      await this.page.waitForTimeout(3000); 
-      
-      const errorElement = await this.page.locator('text=/error|failed|rejected/i').first();
+      console.log(
+        `Completed ETH transfer request of ${amount} to ${recipientAddress}`
+      );
+
+      await this.page.waitForTimeout(3000);
+
+      const errorElement = await this.page
+        .locator("text=/error|failed|rejected/i")
+        .first();
       if (await errorElement.isVisible().catch(() => false)) {
-        const errorMsg = await errorElement.textContent() || "Unknown error";
+        const errorMsg = (await errorElement.textContent()) || "Unknown error";
         console.error(`Transfer error displayed: ${errorMsg}`);
         return { success: false, error: errorMsg };
       }
-  
+
       return { success: true, note: "Transfer request sent successfully" };
     } catch (error) {
-      const err = await captureError(this.page, error, `Perform ETH transfer of ${amount} to ${recipientAddress}`);
+      const err = await captureError(
+        this.page,
+        error,
+        `Perform ETH transfer of ${amount} to ${recipientAddress}`
+      );
       console.error(`Transfer operation failed: ${err.message}`);
       return { success: false, error: err.message };
     }
@@ -224,7 +252,11 @@ export class EthDebugPage extends BasePage {
       console.log(`ETH Balance for ${address}: ${balance}`);
       return { success: true, balance };
     } catch (error) {
-      const err = await captureError(this.page, error, `Check ETH balance for ${address}`);
+      const err = await captureError(
+        this.page,
+        error,
+        `Check ETH balance for ${address}`
+      );
       console.error(`Balance check failed: ${err.message}`);
       return { success: false, error: err.message };
     }
@@ -237,105 +269,143 @@ export class EthDebugPage extends BasePage {
     allowSpenderAddress: string
   ) {
     try {
-      console.log(`Setting and checking ETH allowance of ${amount} for spender ${spenderAddress}`);
-      
-      const actionResults = await withDelaySequence(this.page, [
-        async () => {
-          await this.switchToEthTab();
-          return "Switched to ETH tab";
-        },
-        async () => {
-          await this.switchToWriteTab();
-          return "Switched to Write tab";
-        },
-        async () => {
-          await this.approveSpenderInput.scrollIntoViewIfNeeded();
-          await this.page.waitForTimeout(1000);
-          return "Scrolled to approve spender input";
-        },
-        async () => {
-          await this.safeFill(this.approveSpenderInput, spenderAddress, "Approve spender input");
-          return `Filled approve spender input with ${spenderAddress}`;
-        },
-        async () => {
-          await this.safeFill(this.approveAmountInput, amount, "Approve amount input");
-          return `Filled approve amount input with ${amount}`;
-        },
-        async () => {
-          await this.safeClick(this.approveSendButton, "Approve send button");
-          return "Clicked approve send button";
-        },
-        async () => {
-          try {
-            await this.page.waitForSelector('text="🎉Transaction completed"', { timeout: 15000 });
-            return "Approve transaction completed";
-          } catch (timeoutError) {
-            const errorElement = await this.page.locator('text=/error|failed|rejected/i').first();
-            if (await errorElement.isVisible().catch(() => false)) {
-              const errorText = await errorElement.textContent() || "Unknown error";
-              throw new Error(`Approve transaction failed: ${errorText}`);
+      console.log(
+        `Setting and checking ETH allowance of ${amount} for spender ${spenderAddress}`
+      );
+
+      const actionResults = await withDelaySequence(
+        this.page,
+        [
+          async () => {
+            await this.switchToEthTab();
+            return "Switched to ETH tab";
+          },
+          async () => {
+            await this.switchToWriteTab();
+            return "Switched to Write tab";
+          },
+          async () => {
+            await this.approveSpenderInput.scrollIntoViewIfNeeded();
+            await this.page.waitForTimeout(1000);
+            return "Scrolled to approve spender input";
+          },
+          async () => {
+            await this.safeFill(
+              this.approveSpenderInput,
+              spenderAddress,
+              "Approve spender input"
+            );
+            return `Filled approve spender input with ${spenderAddress}`;
+          },
+          async () => {
+            await this.safeFill(
+              this.approveAmountInput,
+              amount,
+              "Approve amount input"
+            );
+            return `Filled approve amount input with ${amount}`;
+          },
+          async () => {
+            await this.safeClick(this.approveSendButton, "Approve send button");
+            return "Clicked approve send button";
+          },
+          async () => {
+            try {
+              await this.page.waitForSelector(
+                'text="🎉Transaction completed"',
+                { timeout: 15000 }
+              );
+              return "Approve transaction completed";
+            } catch (timeoutError) {
+              const errorElement = await this.page
+                .locator("text=/error|failed|rejected/i")
+                .first();
+              if (await errorElement.isVisible().catch(() => false)) {
+                const errorText =
+                  (await errorElement.textContent()) || "Unknown error";
+                throw new Error(`Approve transaction failed: ${errorText}`);
+              }
+              return "Approve transaction status unclear";
             }
-            return "Approve transaction status unclear";
-          }
-        },
-        async () => {
-          await this.switchToReadTab();
-          return "Switched to Read tab";
-        },
-        async () => {
-          await this.allowOwnerInput.scrollIntoViewIfNeeded();
-          await this.page.waitForTimeout(1000);
-          return "Scrolled to allow owner input";
-        },
-        async () => {
-          await this.safeFill(this.allowOwnerInput, allowOwnerAddress, "Allow owner input");
-          return `Filled allow owner input with ${allowOwnerAddress}`;
-        },
-        async () => {
-          await this.safeFill(this.allowSpenderInput, allowSpenderAddress, "Allow spender input");
-          return `Filled allow spender input with ${allowSpenderAddress}`;
-        },
-        async () => {
-          await this.safeClick(this.allowSendButton, "Allow send button");
-          return "Clicked allow send button";
-        }
-      ], 1000, [
-        "SwitchToEthTab", "SwitchToWriteTab", "ScrollToApproveSpender",
-        "FillApproveSpender", "FillApproveAmount", "ClickApproveSend",
-        "WaitForApproveTransaction", "SwitchToReadTab", "ScrollToAllowOwner",
-        "FillAllowOwner", "FillAllowSpender", "ClickAllowSend"
-      ]);
-      
+          },
+          async () => {
+            await this.switchToReadTab();
+            return "Switched to Read tab";
+          },
+          async () => {
+            await this.allowOwnerInput.scrollIntoViewIfNeeded();
+            await this.page.waitForTimeout(1000);
+            return "Scrolled to allow owner input";
+          },
+          async () => {
+            await this.safeFill(
+              this.allowOwnerInput,
+              allowOwnerAddress,
+              "Allow owner input"
+            );
+            return `Filled allow owner input with ${allowOwnerAddress}`;
+          },
+          async () => {
+            await this.safeFill(
+              this.allowSpenderInput,
+              allowSpenderAddress,
+              "Allow spender input"
+            );
+            return `Filled allow spender input with ${allowSpenderAddress}`;
+          },
+          async () => {
+            await this.safeClick(this.allowSendButton, "Allow send button");
+            return "Clicked allow send button";
+          },
+        ],
+        1000,
+        [
+          "SwitchToEthTab",
+          "SwitchToWriteTab",
+          "ScrollToApproveSpender",
+          "FillApproveSpender",
+          "FillApproveAmount",
+          "ClickApproveSend",
+          "WaitForApproveTransaction",
+          "SwitchToReadTab",
+          "ScrollToAllowOwner",
+          "FillAllowOwner",
+          "FillAllowSpender",
+          "ClickAllowSend",
+        ]
+      );
+
       console.log("Allowance sequence completed");
-      
+
       await this.page.waitForTimeout(2000);
-      
+
       const isResultVisible = await this.resultCheckAllow
         .isVisible()
         .catch(() => false);
-        
+
       if (isResultVisible) {
         const resultText = (await this.resultCheckAllow.textContent()) || "";
-        const allowanceValue = resultText.replace("Result:", "").trim() || amount;
+        const allowanceValue =
+          resultText.replace("Result:", "").trim() || amount;
         return { success: true, value: allowanceValue };
       } else {
-        return { 
-          success: false, 
-          error: "Could not retrieve allowance result", 
-          value: amount 
+        return {
+          success: false,
+          error: "Could not retrieve allowance result",
+          value: amount,
         };
       }
     } catch (error) {
       const err = await captureError(
-        this.page, 
-        error, 
+        this.page,
+        error,
         `Check ETH allowance of ${amount} for spender ${spenderAddress}`
       );
       console.error(`Allowance check failed: ${err.message}`);
-      return { 
-        success: false, 
+      return {
+        success: false,
         error: err.message,
-        value: "Error" 
+        value: "Error",
       };
     }
   }

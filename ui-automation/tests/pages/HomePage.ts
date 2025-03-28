@@ -7,9 +7,9 @@ export class HomePage extends BasePage {
   }
 
   getDebugPageLinkButton() {
-    return this.page.locator("a", {
-      hasText: "Debug Contracts",
-      has: this.page.locator("svg"),
-    });
+    return this.page
+      .locator("li")
+      .filter({ hasText: "Debug Contracts" })
+      .getByRole("link");
   }
 }

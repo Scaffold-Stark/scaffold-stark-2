@@ -92,8 +92,10 @@ test("Eth Token Complete Interaction Flow", async ({ page }) => {
     );
     try {
       console.log(`[${testId}] Switching to Eth tab and checking balance...`);
+
       await debugPage.switchToEthTab();
       await debugPage.fillBalanceOfInput(BURNER_WALLET_ACCOUNT);
+
       await debugPage.clickBalanceOfReadButton();
       await page.waitForTimeout(1000);
 

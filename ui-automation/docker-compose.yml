@@ -39,8 +39,12 @@ services:
         condition: none
     depends_on:
       - nextjs
+    shm_size: "2gb"
     environment:
       - BASE_URL=http://nextjs:3000
+      - PLAYWRIGHT_BROWSER_CHROMIUM_CHANNEL=chrome
+    volumes:
+      - ./test-results:/app/test-results
     command: tail -f /dev/null
     networks:
       - scaffold-stark-network
