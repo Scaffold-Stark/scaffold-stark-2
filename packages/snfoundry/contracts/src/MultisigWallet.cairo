@@ -1,6 +1,6 @@
 #[starknet::contract]
 mod MultisigWallet {
-    use contracts::MultisigComponent::MultisigComponent;
+    use openzeppelin_governance::multisig::MultisigComponent;
     use starknet::ContractAddress;
 
     component!(path: MultisigComponent, storage: multisig, event: MultisigEvent);
@@ -23,7 +23,7 @@ mod MultisigWallet {
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, quorum: u32, signers: Array<ContractAddress>) {
+    fn constructor(ref self: ContractState, quorum: u32, signers: Span<ContractAddress>) {
         self.multisig.initializer(quorum, signers);
     }
 }

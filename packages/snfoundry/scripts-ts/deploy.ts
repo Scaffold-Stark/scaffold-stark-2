@@ -53,9 +53,6 @@ const deployScript = async (): Promise<void> => {
 	  },
 	}, 
 );
-await deployContract({
-	contract: "MultisigTargetMock",}
-);
   };
 
 const main = async (): Promise<void> => {

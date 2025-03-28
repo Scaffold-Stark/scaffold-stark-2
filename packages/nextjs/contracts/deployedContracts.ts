@@ -7,12 +7,13 @@ const deployedContracts = {
   devnet: {
     MultisigWallet: {
       address:
-        "0x3ee8c369a9d74602c2c79c0c7ff6526395d4aa489d05f2974b163db7fa3417",
+        "0x51c97821aeb83c07c5ba526dc96b4878d9d1032515d3e3a86ba7e8a3a086a31",
       abi: [
         {
           type: "impl",
           name: "MultisigImpl",
-          interface_name: "contracts::interface::IMultisig",
+          interface_name:
+            "openzeppelin_governance::multisig::interface::IMultisig",
         },
         {
           type: "enum",
@@ -29,8 +30,18 @@ const deployedContracts = {
           ],
         },
         {
+          type: "struct",
+          name: "core::array::Span::<core::starknet::contract_address::ContractAddress>",
+          members: [
+            {
+              name: "snapshot",
+              type: "@core::array::Array::<core::starknet::contract_address::ContractAddress>",
+            },
+          ],
+        },
+        {
           type: "enum",
-          name: "contracts::interface::TransactionState",
+          name: "openzeppelin_governance::multisig::interface::TransactionState",
           variants: [
             {
               name: "NotFound",
@@ -79,8 +90,18 @@ const deployedContracts = {
           ],
         },
         {
+          type: "struct",
+          name: "core::array::Span::<core::starknet::account::Call>",
+          members: [
+            {
+              name: "snapshot",
+              type: "@core::array::Array::<core::starknet::account::Call>",
+            },
+          ],
+        },
+        {
           type: "interface",
-          name: "contracts::interface::IMultisig",
+          name: "openzeppelin_governance::multisig::interface::IMultisig",
           items: [
             {
               type: "function",
@@ -115,7 +136,7 @@ const deployedContracts = {
               inputs: [],
               outputs: [
                 {
-                  type: "core::array::Array::<core::starknet::contract_address::ContractAddress>",
+                  type: "core::array::Span::<core::starknet::contract_address::ContractAddress>",
                 },
               ],
               state_mutability: "view",
@@ -199,7 +220,7 @@ const deployedContracts = {
               ],
               outputs: [
                 {
-                  type: "contracts::interface::TransactionState",
+                  type: "openzeppelin_governance::multisig::interface::TransactionState",
                 },
               ],
               state_mutability: "view",
@@ -234,7 +255,7 @@ const deployedContracts = {
                 },
                 {
                   name: "calldata",
-                  type: "core::array::Array::<core::felt252>",
+                  type: "core::array::Span::<core::felt252>",
                 },
                 {
                   name: "salt",
@@ -254,7 +275,7 @@ const deployedContracts = {
               inputs: [
                 {
                   name: "calls",
-                  type: "core::array::Array::<core::starknet::account::Call>",
+                  type: "core::array::Span::<core::starknet::account::Call>",
                 },
                 {
                   name: "salt",
@@ -278,7 +299,7 @@ const deployedContracts = {
                 },
                 {
                   name: "signers_to_add",
-                  type: "core::array::Array::<core::starknet::contract_address::ContractAddress>",
+                  type: "core::array::Span::<core::starknet::contract_address::ContractAddress>",
                 },
               ],
               outputs: [],
@@ -294,7 +315,7 @@ const deployedContracts = {
                 },
                 {
                   name: "signers_to_remove",
-                  type: "core::array::Array::<core::starknet::contract_address::ContractAddress>",
+                  type: "core::array::Span::<core::starknet::contract_address::ContractAddress>",
                 },
               ],
               outputs: [],
@@ -342,7 +363,7 @@ const deployedContracts = {
                 },
                 {
                   name: "calldata",
-                  type: "core::array::Array::<core::felt252>",
+                  type: "core::array::Span::<core::felt252>",
                 },
                 {
                   name: "salt",
@@ -362,7 +383,7 @@ const deployedContracts = {
               inputs: [
                 {
                   name: "calls",
-                  type: "core::array::Array::<core::starknet::account::Call>",
+                  type: "core::array::Span::<core::starknet::account::Call>",
                 },
                 {
                   name: "salt",
@@ -414,7 +435,7 @@ const deployedContracts = {
                 },
                 {
                   name: "calldata",
-                  type: "core::array::Array::<core::felt252>",
+                  type: "core::array::Span::<core::felt252>",
                 },
                 {
                   name: "salt",
@@ -430,7 +451,7 @@ const deployedContracts = {
               inputs: [
                 {
                   name: "calls",
-                  type: "core::array::Array::<core::starknet::account::Call>",
+                  type: "core::array::Span::<core::starknet::account::Call>",
                 },
                 {
                   name: "salt",
@@ -452,13 +473,13 @@ const deployedContracts = {
             },
             {
               name: "signers",
-              type: "core::array::Array::<core::starknet::contract_address::ContractAddress>",
+              type: "core::array::Span::<core::starknet::contract_address::ContractAddress>",
             },
           ],
         },
         {
           type: "event",
-          name: "contracts::MultisigComponent::MultisigComponent::SignerAdded",
+          name: "openzeppelin_governance::multisig::multisig::MultisigComponent::SignerAdded",
           kind: "struct",
           members: [
             {
@@ -470,7 +491,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::MultisigComponent::MultisigComponent::SignerRemoved",
+          name: "openzeppelin_governance::multisig::multisig::MultisigComponent::SignerRemoved",
           kind: "struct",
           members: [
             {
@@ -482,7 +503,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::MultisigComponent::MultisigComponent::QuorumUpdated",
+          name: "openzeppelin_governance::multisig::multisig::MultisigComponent::QuorumUpdated",
           kind: "struct",
           members: [
             {
@@ -499,7 +520,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::MultisigComponent::MultisigComponent::TransactionSubmitted",
+          name: "openzeppelin_governance::multisig::multisig::MultisigComponent::TransactionSubmitted",
           kind: "struct",
           members: [
             {
@@ -516,7 +537,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::MultisigComponent::MultisigComponent::TransactionConfirmed",
+          name: "openzeppelin_governance::multisig::multisig::MultisigComponent::TransactionConfirmed",
           kind: "struct",
           members: [
             {
@@ -533,7 +554,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::MultisigComponent::MultisigComponent::TransactionExecuted",
+          name: "openzeppelin_governance::multisig::multisig::MultisigComponent::TransactionExecuted",
           kind: "struct",
           members: [
             {
@@ -545,7 +566,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::MultisigComponent::MultisigComponent::ConfirmationRevoked",
+          name: "openzeppelin_governance::multisig::multisig::MultisigComponent::ConfirmationRevoked",
           kind: "struct",
           members: [
             {
@@ -562,7 +583,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::MultisigComponent::MultisigComponent::CallSalt",
+          name: "openzeppelin_governance::multisig::multisig::MultisigComponent::CallSalt",
           kind: "struct",
           members: [
             {
@@ -579,47 +600,47 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::MultisigComponent::MultisigComponent::Event",
+          name: "openzeppelin_governance::multisig::multisig::MultisigComponent::Event",
           kind: "enum",
           variants: [
             {
               name: "SignerAdded",
-              type: "contracts::MultisigComponent::MultisigComponent::SignerAdded",
+              type: "openzeppelin_governance::multisig::multisig::MultisigComponent::SignerAdded",
               kind: "nested",
             },
             {
               name: "SignerRemoved",
-              type: "contracts::MultisigComponent::MultisigComponent::SignerRemoved",
+              type: "openzeppelin_governance::multisig::multisig::MultisigComponent::SignerRemoved",
               kind: "nested",
             },
             {
               name: "QuorumUpdated",
-              type: "contracts::MultisigComponent::MultisigComponent::QuorumUpdated",
+              type: "openzeppelin_governance::multisig::multisig::MultisigComponent::QuorumUpdated",
               kind: "nested",
             },
             {
               name: "TransactionSubmitted",
-              type: "contracts::MultisigComponent::MultisigComponent::TransactionSubmitted",
+              type: "openzeppelin_governance::multisig::multisig::MultisigComponent::TransactionSubmitted",
               kind: "nested",
             },
             {
               name: "TransactionConfirmed",
-              type: "contracts::MultisigComponent::MultisigComponent::TransactionConfirmed",
+              type: "openzeppelin_governance::multisig::multisig::MultisigComponent::TransactionConfirmed",
               kind: "nested",
             },
             {
               name: "TransactionExecuted",
-              type: "contracts::MultisigComponent::MultisigComponent::TransactionExecuted",
+              type: "openzeppelin_governance::multisig::multisig::MultisigComponent::TransactionExecuted",
               kind: "nested",
             },
             {
               name: "ConfirmationRevoked",
-              type: "contracts::MultisigComponent::MultisigComponent::ConfirmationRevoked",
+              type: "openzeppelin_governance::multisig::multisig::MultisigComponent::ConfirmationRevoked",
               kind: "nested",
             },
             {
               name: "CallSalt",
-              type: "contracts::MultisigComponent::MultisigComponent::CallSalt",
+              type: "openzeppelin_governance::multisig::multisig::MultisigComponent::CallSalt",
               kind: "nested",
             },
           ],
@@ -631,69 +652,14 @@ const deployedContracts = {
           variants: [
             {
               name: "MultisigEvent",
-              type: "contracts::MultisigComponent::MultisigComponent::Event",
+              type: "openzeppelin_governance::multisig::multisig::MultisigComponent::Event",
               kind: "flat",
             },
           ],
         },
       ],
       classHash:
-        "0x1aaa8b3108c9e2d51224b2648b6e123a273307bd77f65016c604083d2f7ae47",
-    },
-    MultisigTargetMock: {
-      address:
-        "0x5a4124806b49cc5b10db595c74613549b3af21d6bb8bed372d2c7294851f3ac",
-      abi: [
-        {
-          type: "impl",
-          name: "MockContractImpl",
-          interface_name: "contracts::MultisigTargetMock::IMultisigTargetMock",
-        },
-        {
-          type: "interface",
-          name: "contracts::MultisigTargetMock::IMultisigTargetMock",
-          items: [
-            {
-              type: "function",
-              name: "add_number",
-              inputs: [
-                {
-                  name: "number",
-                  type: "core::felt252",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "get_current_sum",
-              inputs: [],
-              outputs: [
-                {
-                  type: "core::felt252",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "failing_function",
-              inputs: [],
-              outputs: [],
-              state_mutability: "view",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "contracts::MultisigTargetMock::MultisigTargetMock::Event",
-          kind: "enum",
-          variants: [],
-        },
-      ],
-      classHash:
-        "0x5360c1cd9d996a7c18fe5041b43f9cf165304529762c3c6ffbef19b7d35a144",
+        "0x3af4b4163a5edd47dcfad519e95233c05102a7d9ac7014be9f4be4a1b50f7b9",
     },
   },
   sepolia: {
