@@ -13,6 +13,7 @@ import {
   isSierra,
   TransactionReceipt,
   constants,
+  GetTransactionReceiptResponse,
 } from "starknet";
 import { DeployContractParams, Network } from "./types";
 import { green, red, yellow } from "./helpers/colorize-log";
@@ -247,11 +248,11 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
       version: constants.TRANSACTION_VERSION.V3,
     });
     if (networkName === "sepolia" || networkName === "mainnet") {
-      const receipt = (await provider.waitForTransaction(
-        transaction_hash
-      )) as TransactionReceipt;
-      if (receipt.execution_status !== "SUCCEEDED") {
-        const revertReason = receipt.revert_reason;
+      const receipt = await provider.waitForTransaction(transaction_hash);
+      // Using type assertion to handle API changes in Starknet.js v7.0.0-beta.4
+      const receiptAny = receipt as any;
+      if (receiptAny.execution_status !== "SUCCEEDED") {
+        const revertReason = receiptAny.revert_reason;
         throw new Error(red(`Deploy Calls Failed: ${revertReason}`));
       }
     }
