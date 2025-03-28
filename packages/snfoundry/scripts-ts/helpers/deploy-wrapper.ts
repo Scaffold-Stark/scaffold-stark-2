@@ -39,6 +39,7 @@ function main() {
       `cd contracts && scarb build && ts-node ../scripts-ts/deploy.ts` +
         ` --network ${argv.network || "devnet"}` +
         ` --fee ${argv.fee || "eth"}` +
+        ` ${argv.reset ? "--reset" : "--no-reset"}` +
         ` && ts-node ../scripts-ts/helpers/parse-deployments.ts && cd ..`,
       { stdio: "inherit" }
     );
