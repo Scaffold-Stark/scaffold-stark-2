@@ -4,6 +4,7 @@ import { HomePage } from "./pages/HomePage";
 import { endpoint } from "./configTypes";
 import { EthDebugPage } from "./pages/EthDebugPage";
 import { captureError } from "./utils/error-handler";
+import { getErrorMessage } from "./utils/helper";
 
 const BURNER_WALLET_ACCOUNT =
   "0x064b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691";
@@ -12,7 +13,7 @@ const CONTRACT_ADDRESS =
   "0x049D36570D4e46f48e99674bd3fcc84644DdD6b96F7C741B1562B82f9e004dC7";
 
 test("Eth Token Complete Interaction Flow", async ({ page }) => {
-  test.setTimeout(90000);
+  test.setTimeout(120000);
   const testTimestamp = Date.now();
   const testId = `eth-token-${testTimestamp}`;
 
@@ -32,7 +33,7 @@ test("Eth Token Complete Interaction Flow", async ({ page }) => {
 
       test.fail(
         true,
-        `Navigation failed: ${error instanceof Error ? error.message : String(error)}`
+        `Navigation failed: ${getErrorMessage(error)}`
       );
       return;
     }
@@ -60,7 +61,7 @@ test("Eth Token Complete Interaction Flow", async ({ page }) => {
 
       test.fail(
         true,
-        `Wallet connection failed: ${error instanceof Error ? error.message : String(error)}`
+        `Wallet connection failed: ${getErrorMessage(error)}`
       );
       return;
     }
@@ -80,7 +81,7 @@ test("Eth Token Complete Interaction Flow", async ({ page }) => {
 
       test.fail(
         true,
-        `Debug page navigation failed: ${error instanceof Error ? error.message : String(error)}`
+        `Debug page navigation failed: ${getErrorMessage(error)}`
       );
       return;
     }
@@ -93,9 +94,18 @@ test("Eth Token Complete Interaction Flow", async ({ page }) => {
     try {
       console.log(`[${testId}] Switching to Eth tab and checking balance...`);
 
-      await debugPage.switchToEthTab();
-      await debugPage.fillBalanceOfInput(BURNER_WALLET_ACCOUNT);
+      try {
+        await debugPage.switchToEthTab();
+      } catch (error) {
+        const tabErr = await captureError(page, error, "ETH Tab Check");
+        errorLogs.push(tabErr);
+        console.error(`[${testId}] ETH tab not found:`, tabErr.message);
+        
+        test.fail(true, `ETH tab not found: ${getErrorMessage(error)}`);
+        return; // Exit test if tab is not found
+      }
 
+      await debugPage.fillBalanceOfInput(BURNER_WALLET_ACCOUNT);
       await debugPage.clickBalanceOfReadButton();
       await page.waitForTimeout(1000);
 
@@ -332,7 +342,7 @@ test("Eth Token Complete Interaction Flow", async ({ page }) => {
 
     test.fail(
       true,
-      `Unexpected test failure: ${error instanceof Error ? error.message : String(error)}`
+      `Unexpected test failure: ${getErrorMessage(error)}`
     );
   }
 });

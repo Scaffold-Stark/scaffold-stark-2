@@ -166,6 +166,10 @@ export class StructsDebugPage extends BasePage {
   }
 
   async switchToStructsTab() {
+    const isVisible = await this.structsTab.isVisible().catch(() => false);
+    if (!isVisible) {
+      throw new Error("Structs tab not found or not visible");
+    }
     await this.safeClick(this.structsTab, "Structs tab");
   }
 

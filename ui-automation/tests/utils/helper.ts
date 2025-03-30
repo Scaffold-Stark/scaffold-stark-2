@@ -80,3 +80,7 @@ export async function withRetry<T>(
   console.error(`All ${maxAttempts} attempts failed for ${context}:`, finalError.message);
   throw lastError;
 }
+
+export function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}

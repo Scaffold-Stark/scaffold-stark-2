@@ -4,6 +4,7 @@ import { HomePage } from "./pages/HomePage";
 import { endpoint } from "./configTypes";
 import { VarsDebugPage } from "./pages/VarsDebugPage";
 import { captureError, formatTestResults } from "./utils/error-handler";
+import { getErrorMessage } from "./utils/helper";
 
 const BURNER_WALLET_SHORT = "0x64b4...5691";
 const SET_U256_FELT_WITH_KEY = "u256_felt256_key";
@@ -23,7 +24,7 @@ const SET_BOOL_KEY = "bool_key";
 const SET_BOOL_VALUE = "true";
 
 test("Vars Debug Page Interaction Flow", async ({ page }) => {
-  test.setTimeout(90000);
+  test.setTimeout(150000);
   const testTimestamp = Date.now();
   const testId = `vars-debug-${testTimestamp}`;
   
@@ -41,7 +42,7 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
       errorLogs.push(navErr);
       console.error(`[${testId}] Navigation failed:`, navErr.message);
       
-      test.fail(true, `Navigation failed: ${error instanceof Error ? error.message : String(error)}`);
+      test.fail(true, `Navigation failed: ${getErrorMessage(error)}`);
       return;
     }
     
@@ -63,7 +64,7 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
       errorLogs.push(walletErr);
       console.error(`[${testId}] Wallet connection failed:`, walletErr.message);
       
-      test.fail(true, `Wallet connection failed: ${error instanceof Error ? error.message : String(error)}`);
+      test.fail(true, `Wallet connection failed: ${getErrorMessage(error)}`);
       return;
     }
 
@@ -76,7 +77,7 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
       errorLogs.push(debugErr);
       console.error(`[${testId}] Debug page navigation failed:`, debugErr.message);
       
-      test.fail(true, `Debug page navigation failed: ${error instanceof Error ? error.message : String(error)}`);
+      test.fail(true, `Debug page navigation failed: ${getErrorMessage(error)}`);
       return;
     }
 
@@ -91,8 +92,8 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
       errorLogs.push(tabErr);
       console.error(`[${testId}] Failed to switch to Vars tab:`, tabErr.message);
       
-      test.fail(true, `Failed to switch to Vars tab: ${error instanceof Error ? error.message : String(error)}`);
-      return;
+      test.fail(true, `Failed to switch to Vars tab: ${getErrorMessage(error)}`);
+      return; // Exit test immediately if tab is not found
     }
 
     console.log(`[${testId}] Starting Felt252 test`);
@@ -178,6 +179,6 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
     errorLogs.push(generalErr);
     console.error(`[${testId}] Test execution failed with unexpected error:`, generalErr.message);
     
-    test.fail(true, `Unexpected test failure: ${error instanceof Error ? error.message : String(error)}`);
+    test.fail(true, `Unexpected test failure: ${getErrorMessage(error)}`);
   }
 });

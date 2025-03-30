@@ -68,6 +68,10 @@ export class StrkDebugPage extends BasePage {
 
   async switchToStrkTab() {
     try {
+      const isVisible = await this.strkTab.isVisible().catch(() => false);
+      if (!isVisible) {
+        throw new Error("Strk tab not found or not visible");
+      }
       await this.safeClick(this.strkTab, "STRK tab");
     } catch (error) {
       await captureError(this.page, error, "Switch to STRK tab");

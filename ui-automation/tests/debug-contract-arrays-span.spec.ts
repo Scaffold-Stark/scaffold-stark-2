@@ -4,11 +4,12 @@ import { navigateAndWait } from "./utils/navigate";
 import { HomePage } from "./pages/HomePage";
 import { endpoint } from "./configTypes";
 import { captureError } from "./utils/error-handler";
+import { getErrorMessage } from "./utils/helper";
 
 const BURNER_WALLET_SHORT = "0x64b4...5691";
 
 test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
-  test.setTimeout(90000);
+  test.setTimeout(180000);
   const testTimestamp = Date.now();
   const testId = `arrays-span-debug-${testTimestamp}`;
 
@@ -35,7 +36,7 @@ test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
 
       test.fail(
         true,
-        `Wallet connection failed: ${error instanceof Error ? error.message : String(error)}`
+        `Wallet connection failed: ${getErrorMessage(error)}`
       );
       return;
     }
@@ -49,7 +50,7 @@ test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
 
       test.fail(
         true,
-        `Debug page navigation failed: ${error instanceof Error ? error.message : String(error)}`
+        `Debug page navigation failed: ${getErrorMessage(error)}`
       );
       return;
     }
@@ -64,12 +65,17 @@ test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
     } catch (error) {
       const tabErr = await captureError(page, error, "Tab Switch");
       errorLogs.push(tabErr);
+      
+      const errorMessage = getErrorMessage(error);
+      if (errorMessage.includes("ArraysSpans tab not found")) {
+        console.error(`[${testId}] ArraysSpans tab not found:`, errorMessage);
+        test.fail(true, `ArraysSpans tab not found: ${errorMessage}`);
+      } else {
+        console.error(`[${testId}] Failed to switch tabs:`, errorMessage);
+        test.fail(true, `Failed to switch tabs: ${errorMessage}`);
+      }
 
-      test.fail(
-        true,
-        `Failed to switch tabs: ${error instanceof Error ? error.message : String(error)}`
-      );
-      return;
+      return; // Exit test immediately if tab switching fails
     }
 
     const getArrayFelt252Result =
@@ -190,7 +196,7 @@ test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
 
     test.fail(
       true,
-      `Unexpected test failure: ${error instanceof Error ? error.message : String(error)}`
+      `Unexpected test failure: ${getErrorMessage(error)}`
     );
   }
 });

@@ -16,9 +16,6 @@ export default defineConfig({
     actionTimeout: 30000,  
     navigationTimeout: 60000,
     launchOptions: {
-      env: {
-        DEBUG: "pw:api",
-      },
       headless: true,
       slowMo: 200,
       args: [

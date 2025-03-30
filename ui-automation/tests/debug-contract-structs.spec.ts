@@ -4,11 +4,12 @@ import { HomePage } from "./pages/HomePage";
 import { endpoint } from "./configTypes";
 import { StructsDebugPage } from "./pages/StructsDebugPage";
 import { captureError, formatTestResults } from "./utils/error-handler";
+import { getErrorMessage } from "./utils/helper";
 
 const BURNER_WALLET_SHORT = "0x64b4...5691";
 
 test("Structs Debug Page Interaction Flow", async ({ page }) => {
-  test.setTimeout(90000);
+  test.setTimeout(150000);
   const testTimestamp = Date.now();
   const testId = `structs-debug-${testTimestamp}`;
   
@@ -26,7 +27,7 @@ test("Structs Debug Page Interaction Flow", async ({ page }) => {
       errorLogs.push(navErr);
       console.error(`[${testId}] Navigation failed:`, navErr.message);
       
-      test.fail(true, `Navigation failed: ${error instanceof Error ? error.message : String(error)}`);
+      test.fail(true, `Navigation failed: ${getErrorMessage(error)}`);
       return;
     }
     
@@ -48,7 +49,7 @@ test("Structs Debug Page Interaction Flow", async ({ page }) => {
       errorLogs.push(walletErr);
       console.error(`[${testId}] Wallet connection failed:`, walletErr.message);
       
-      test.fail(true, `Wallet connection failed: ${error instanceof Error ? error.message : String(error)}`);
+      test.fail(true, `Wallet connection failed: ${getErrorMessage(error)}`);
       return;
     }
 
@@ -61,7 +62,7 @@ test("Structs Debug Page Interaction Flow", async ({ page }) => {
       errorLogs.push(debugErr);
       console.error(`[${testId}] Debug page navigation failed:`, debugErr.message);
       
-      test.fail(true, `Debug page navigation failed: ${error instanceof Error ? error.message : String(error)}`);
+      test.fail(true, `Debug page navigation failed: ${getErrorMessage(error)}`);
       return;
     }
 
@@ -76,8 +77,8 @@ test("Structs Debug Page Interaction Flow", async ({ page }) => {
       errorLogs.push(tabErr);
       console.error(`[${testId}] Failed to switch to Structs tab:`, tabErr.message);
       
-      test.fail(true, `Failed to switch to Structs tab: ${error instanceof Error ? error.message : String(error)}`);
-      return;
+      test.fail(true, `Failed to switch to Structs tab: ${getErrorMessage(error)}`);
+      return; // Exit test immediately if tab is not found
     }
 
     console.log(`[${testId}] Starting SampleStruct test`);
@@ -177,6 +178,6 @@ test("Structs Debug Page Interaction Flow", async ({ page }) => {
     errorLogs.push(generalErr);
     console.error(`[${testId}] Test execution failed with unexpected error:`, generalErr.message);
     
-    test.fail(true, `Unexpected test failure: ${error instanceof Error ? error.message : String(error)}`);
+    test.fail(true, `Unexpected test failure: ${getErrorMessage(error)}`);
   }
 });

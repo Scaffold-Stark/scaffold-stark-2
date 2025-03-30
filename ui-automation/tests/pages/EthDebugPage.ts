@@ -103,6 +103,10 @@ export class EthDebugPage extends BasePage {
 
   async switchToEthTab() {
     try {
+      const isVisible = await this.ethTab.isVisible().catch(() => false);
+      if (!isVisible) {
+        throw new Error("Eth tab not found or not visible");
+      }
       await this.safeClick(this.ethTab, "ETH tab");
     } catch (error) {
       await captureError(this.page, error, "Switch to ETH tab");

@@ -4,6 +4,7 @@ import { HomePage } from "./pages/HomePage";
 import { endpoint } from "./configTypes";
 import { StrkDebugPage } from "./pages/StrkDebugPage";
 import { captureError } from "./utils/error-handler";
+import { getErrorMessage } from "./utils/helper";
 
 const BURNER_WALLET_ACCOUNT =
   "0x064b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691";
@@ -32,7 +33,7 @@ test("STRK Token Complete Interaction Flow", async ({ page }) => {
 
       test.fail(
         true,
-        `Navigation failed: ${error instanceof Error ? error.message : String(error)}`
+        `Navigation failed: ${getErrorMessage(error)}`
       );
       return;
     }
@@ -60,7 +61,7 @@ test("STRK Token Complete Interaction Flow", async ({ page }) => {
 
       test.fail(
         true,
-        `Wallet connection failed: ${error instanceof Error ? error.message : String(error)}`
+        `Wallet connection failed: ${getErrorMessage(error)}`
       );
       return;
     }
@@ -80,7 +81,7 @@ test("STRK Token Complete Interaction Flow", async ({ page }) => {
 
       test.fail(
         true,
-        `Debug page navigation failed: ${error instanceof Error ? error.message : String(error)}`
+        `Debug page navigation failed: ${getErrorMessage(error)}`
       );
       return;
     }
@@ -92,7 +93,18 @@ test("STRK Token Complete Interaction Flow", async ({ page }) => {
     );
     try {
       console.log(`[${testId}] Switching to Strk tab and checking balance...`);
-      await debugPage.switchToStrkTab();
+      
+      try {
+        await debugPage.switchToStrkTab();
+      } catch (error) {
+        const tabErr = await captureError(page, error, "STRK Tab Check");
+        errorLogs.push(tabErr);
+        console.error(`[${testId}] STRK tab not found:`, tabErr.message);
+        
+        test.fail(true, `STRK tab not found: ${getErrorMessage(error)}`);
+        return; // Exit test if tab is not found
+      }
+      
       await debugPage.fillBalanceOfInput(BURNER_WALLET_ACCOUNT);
       await debugPage.clickBalanceOfReadButton();
       await page.waitForTimeout(1000);
@@ -334,7 +346,7 @@ test("STRK Token Complete Interaction Flow", async ({ page }) => {
 
     test.fail(
       true,
-      `Unexpected test failure: ${error instanceof Error ? error.message : String(error)}`
+      `Unexpected test failure: ${getErrorMessage(error)}`
     );
   }
 });

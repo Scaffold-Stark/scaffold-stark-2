@@ -106,9 +106,12 @@ export class VarsDebugPage extends BasePage {
   }
 
   async switchToVarsTab() {
+    const isVisible = await this.varsTab.isVisible().catch(() => false);
+    if (!isVisible) {
+      throw new Error("Vars tab not found or not visible");
+    }
     await this.safeClick(this.varsTab, "Vars tab");
   }
-
   async switchToReadTab() {
     await this.safeClick(this.readTab, "Read tab");
   }
