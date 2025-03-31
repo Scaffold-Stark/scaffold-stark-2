@@ -18,6 +18,9 @@ snforge_std = "0.38.2"
 [[target.starknet-contract]]
 casm = true
 
+[tool.scarb]
+allow-prebuilt-plugins = ["snforge_std"]
+
 [tool.fmt]
 sort-module-level-items = true
 
