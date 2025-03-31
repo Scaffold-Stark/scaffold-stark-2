@@ -19,7 +19,7 @@ export type FormErrorMessageState = Record<string, string>;
 export function addError(
   state: FormErrorMessageState,
   key: string,
-  message: string
+  message: string,
 ): FormErrorMessageState {
   return {
     ...state,
@@ -29,7 +29,7 @@ export function addError(
 
 export function clearError(
   state: FormErrorMessageState,
-  key: string
+  key: string,
 ): FormErrorMessageState {
   delete state[key];
   return state;
@@ -116,7 +116,7 @@ const _decodeContractResponseItem = (
   respItem: any,
   abiType: any,
   abi: Abi,
-  showAsString?: boolean
+  showAsString?: boolean,
 ): any => {
   if (respItem === undefined) {
     return "";
@@ -189,9 +189,9 @@ const _decodeContractResponseItem = (
           return _decodeContractResponseItem(
             respItem[index],
             getFieldType(type, abi),
-            abi
+            abi,
           );
-        }
+        },
       );
 
       return `(${decodedArr.join(", ")})`;
@@ -209,7 +209,7 @@ const _decodeContractResponseItem = (
       return [];
     }
     return respItem.map((arrItem) =>
-      _decodeContractResponseItem(arrItem, getFieldType(arrItemType, abi), abi)
+      _decodeContractResponseItem(arrItem, getFieldType(arrItemType, abi), abi),
     );
   }
 
@@ -224,8 +224,8 @@ const _decodeContractResponseItem = (
       _decodeContractResponseItem(
         spanItem,
         getFieldType(spanItemType, abi),
-        abi
-      )
+        abi,
+      ),
     );
   }
 
@@ -235,13 +235,13 @@ const _decodeContractResponseItem = (
     const decoded: Record<string, any> = {};
     for (const [structKey, structValue] of Object.entries(respItem)) {
       const structItemDef = (members || []).find(
-        (item: any) => item.name === structKey
+        (item: any) => item.name === structKey,
       );
       if (structItemDef && structItemDef.type) {
         decoded[structKey] = _decodeContractResponseItem(
           structValue,
           structItemDef,
-          abi
+          abi,
         );
       }
     }
@@ -285,7 +285,7 @@ const _decodeContractResponseItem = (
           if (enumValue === undefined) continue;
 
           const enumItemDef = variants.find(
-            (item: any) => item.name === enumKey
+            (item: any) => item.name === enumKey,
           );
           if (enumItemDef && enumItemDef.type) {
             return enumKey;
@@ -330,8 +330,8 @@ export const decodeContractResponse = ({
         arrResp[index],
         abiTypes[index],
         abi,
-        showAsString
-      )
+        showAsString,
+      ),
     );
   }
 
