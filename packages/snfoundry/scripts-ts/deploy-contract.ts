@@ -19,7 +19,7 @@ import { green, red, yellow } from "./helpers/colorize-log";
 
 interface Arguments {
   network: string;
-  reset: boolean;
+  noReset?: boolean;
   [x: string]: unknown;
   _: (string | number)[];
   $0: string;
@@ -31,17 +31,15 @@ const argv = yargs(process.argv.slice(2))
     description: "Specify the network",
     demandOption: true,
   })
-  .option("reset", {
-    alias: "nr",
+  .option("no-reset", {
     type: "boolean",
-    description:
-      "(--no-reset) Do not reset deployments (keep existing deployments)",
-    default: true,
+    description: "Do not reset deployments (keep existing deployments)",
+    default: false,
   })
   .parseSync() as Arguments;
 
 const networkName: string = argv.network;
-const resetDeployments: boolean = argv.reset ?? true;
+const resetDeployments: boolean = !argv.noReset;
 
 let deployments = {};
 let deployCalls = [];
@@ -289,7 +287,7 @@ const exportDeployments = () => {
     `../deployments/${networkName}_latest.json`
   );
 
-  const resetDeployments: boolean = argv.reset ?? true;
+  const resetDeployments: boolean = !argv.noReset;
 
   if (!resetDeployments && fs.existsSync(networkPath)) {
     const currentTimestamp = new Date().getTime();
