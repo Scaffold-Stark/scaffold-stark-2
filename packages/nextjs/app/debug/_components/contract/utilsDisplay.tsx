@@ -19,7 +19,7 @@ export type FormErrorMessageState = Record<string, string>;
 export function addError(
   state: FormErrorMessageState,
   key: string,
-  message: string,
+  message: string
 ): FormErrorMessageState {
   return {
     ...state,
@@ -29,7 +29,7 @@ export function addError(
 
 export function clearError(
   state: FormErrorMessageState,
-  key: string,
+  key: string
 ): FormErrorMessageState {
   delete state[key];
   return state;
@@ -112,12 +112,11 @@ const getFieldType = (type: string, abi: Abi): any => {
   }
   return abi.find((item) => item.name === type);
 };
-
 const _decodeContractResponseItem = (
   respItem: any,
   abiType: any,
   abi: Abi,
-  showAsString?: boolean,
+  showAsString?: boolean
 ): any => {
   if (respItem === undefined) {
     return "";
@@ -161,23 +160,45 @@ const _decodeContractResponseItem = (
     }
     return respItem;
   }
-
   // tuple
   if (abiType.type && /^\([^()]*\)$/.test(abiType.type)) {
-    const tupleTypes: any[] = abiType.type
-      .match(/\(([^)]+)\)/)[1]
-      .split(/\s*,\s*/);
-    if (tupleTypes.length !== Object.keys(respItem).length) {
+    if (respItem === null || respItem === undefined) {
       return "";
     }
-    const decodedArr = tupleTypes.map((type, index) => {
-      return _decodeContractResponseItem(
-        respItem[index],
-        getFieldType(type, abi),
-        abi,
+
+    try {
+      const tupleMatch: RegExpMatchArray | null =
+        abiType.type.match(/\(([^)]+)\)/);
+      if (!tupleMatch || !tupleMatch[1]) {
+        return String(respItem);
+      }
+
+      const tupleTypes: string[] = tupleMatch[1].split(/\s*,\s*/);
+
+      if (typeof respItem !== "object") {
+        return String(respItem);
+      }
+
+      const respKeys: string[] = respItem ? Object.keys(respItem) : [];
+      if (tupleTypes.length !== respKeys.length) {
+        return "";
+      }
+
+      const decodedArr: any[] = tupleTypes.map(
+        (type: string, index: number) => {
+          return _decodeContractResponseItem(
+            respItem[index],
+            getFieldType(type, abi),
+            abi
+          );
+        }
       );
-    });
-    return `(${decodedArr})`;
+
+      return `(${decodedArr.join(", ")})`;
+    } catch (error) {
+      console.error("Error processing tuple:", error);
+      return String(respItem);
+    }
   }
 
   // array
@@ -188,7 +209,7 @@ const _decodeContractResponseItem = (
       return [];
     }
     return respItem.map((arrItem) =>
-      _decodeContractResponseItem(arrItem, getFieldType(arrItemType, abi), abi),
+      _decodeContractResponseItem(arrItem, getFieldType(arrItemType, abi), abi)
     );
   }
 
@@ -203,8 +224,8 @@ const _decodeContractResponseItem = (
       _decodeContractResponseItem(
         spanItem,
         getFieldType(spanItemType, abi),
-        abi,
-      ),
+        abi
+      )
     );
   }
 
@@ -214,13 +235,13 @@ const _decodeContractResponseItem = (
     const decoded: Record<string, any> = {};
     for (const [structKey, structValue] of Object.entries(respItem)) {
       const structItemDef = (members || []).find(
-        (item: any) => item.name === structKey,
+        (item: any) => item.name === structKey
       );
       if (structItemDef && structItemDef.type) {
         decoded[structKey] = _decodeContractResponseItem(
           structValue,
           structItemDef,
-          abi,
+          abi
         );
       }
     }
@@ -239,22 +260,45 @@ const _decodeContractResponseItem = (
     return respItem;
   }
 
+  // enum
   if (abiType.type === "enum") {
-    const variant = (respItem as any).variant;
-    const variants = abiType.variants;
-    for (const [enumKey, enumValue] of Object.entries(variant)) {
-      if (enumValue === undefined) {
-        continue;
+    if (respItem === null || respItem === undefined) {
+      return "";
+    }
+
+    if (typeof respItem === "number" || typeof respItem === "bigint") {
+      const enumIndex = Number(respItem);
+      if (Array.isArray(abiType.variants) && abiType.variants[enumIndex]) {
+        return abiType.variants[enumIndex].name;
       }
-      const enumItemDef = (variants || []).find(
-        (item: any) => item.name === enumKey,
-      );
-      if (enumItemDef && enumItemDef.type) {
-        return {
-          [enumKey]: _decodeContractResponseItem(enumValue, enumItemDef, abi),
-        };
+      return enumIndex;
+    }
+
+    if (typeof respItem === "object" && respItem !== null) {
+      if (respItem.variant) {
+        const variant = respItem.variant;
+        const variants = Array.isArray(abiType.variants)
+          ? abiType.variants
+          : [];
+
+        for (const [enumKey, enumValue] of Object.entries(variant)) {
+          if (enumValue === undefined) continue;
+
+          const enumItemDef = variants.find(
+            (item: any) => item.name === enumKey
+          );
+          if (enumItemDef && enumItemDef.type) {
+            return enumKey;
+          }
+        }
+      }
+
+      const enumKeys = Object.keys(respItem);
+      if (enumKeys.length === 1) {
+        return enumKeys[0];
       }
     }
+    return String(respItem);
   }
   return respItem;
 };
@@ -286,8 +330,8 @@ export const decodeContractResponse = ({
         arrResp[index],
         abiTypes[index],
         abi,
-        showAsString,
-      ),
+        showAsString
+      )
     );
   }
 
