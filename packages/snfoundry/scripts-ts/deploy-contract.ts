@@ -19,7 +19,7 @@ import { green, red, yellow } from "./helpers/colorize-log";
 
 interface Arguments {
   network: string;
-  noReset?: boolean;
+  reset: boolean;
   [x: string]: unknown;
   _: (string | number)[];
   $0: string;
@@ -31,15 +31,15 @@ const argv = yargs(process.argv.slice(2))
     description: "Specify the network",
     demandOption: true,
   })
-  .option("no-reset", {
+  .option("reset", {
     type: "boolean",
-    description: "Do not reset deployments (keep existing deployments)",
-    default: false,
+    description: "Reset deployments (remove existing deployments)",
+    default: true,
   })
   .parseSync() as Arguments;
 
 const networkName: string = argv.network;
-const resetDeployments: boolean = !argv.noReset;
+const resetDeployments: boolean = argv.reset;
 
 let deployments = {};
 let deployCalls = [];
@@ -99,7 +99,6 @@ const findContractFile = (
   const targetDir = path.resolve(__dirname, "../contracts/target/dev");
   const files = fs.readdirSync(targetDir);
 
-  // Look for files that end with the contract name and file type
   const pattern = new RegExp(`.*${contract}\\.${fileType}\\.json$`);
   const matchingFile = files.find((file) => pattern.test(file));
 
@@ -113,26 +112,6 @@ const findContractFile = (
   return path.join(targetDir, matchingFile);
 };
 
-/**
- * Deploy a contract using the specified parameters.
- *
- * @param {DeployContractParams} params - The parameters for deploying the contract.
- * @param {string} params.contract - The name of the contract to deploy.
- * @param {string} [params.contractName] - The name to export the contract as (optional).
- * @param {RawArgs} [params.constructorArgs] - The constructor arguments for the contract (optional).
- * @param {UniversalDetails} [params.options] - Additional deployment options (optional).
- *
- * @returns {Promise<{ classHash: string; address: string }>} The deployed contract's class hash and address.
- *
- * @example
- * ///Example usage of deployContract function
- * await deployContract({
- *   contract: "YourContract",
- *   contractName: "YourContractExportName",
- *   constructorArgs: { owner: deployer.address },
- *   options: { maxFee: BigInt(1000000000000) }
- * });
- */
 const deployContract = async (
   params: DeployContractParams
 ): Promise<{
@@ -255,7 +234,6 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
     }
     console.log(green("Deploy Calls Executed at "), transaction_hash);
   } catch (error) {
-    // split the calls in half and try again recursively
     if (deployCalls.length > 100) {
       let half = Math.ceil(deployCalls.length / 2);
       let firstHalf = deployCalls.slice(0, half);
@@ -286,8 +264,6 @@ const exportDeployments = () => {
     __dirname,
     `../deployments/${networkName}_latest.json`
   );
-
-  const resetDeployments: boolean = !argv.noReset;
 
   if (!resetDeployments && fs.existsSync(networkPath)) {
     const currentTimestamp = new Date().getTime();

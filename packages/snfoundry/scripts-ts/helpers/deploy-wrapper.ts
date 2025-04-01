@@ -6,7 +6,7 @@ interface CommandLineOptions {
   _: string[];
   $0: string;
   network?: string;
-  noReset?: boolean;
+  reset?: boolean;
 }
 
 function main() {
@@ -15,6 +15,13 @@ function main() {
       type: "string",
       choices: ["devnet", "sepolia", "mainnet"],
       default: "devnet",
+      description: "Specify the network to deploy to",
+    })
+    .option("reset", {
+      type: "boolean",
+      description: "Reset deployments (remove existing deployments)",
+      default: true,
+      hidden: true,
     })
     .option("no-reset", {
       type: "boolean",
@@ -22,6 +29,7 @@ function main() {
       default: false,
     })
     .demandOption(["network"])
+    .help()
     .parseSync() as CommandLineOptions;
 
   if (argv._.length > 0) {
@@ -31,14 +39,16 @@ function main() {
     return;
   }
 
+  const resetFlag = argv.reset === false ? "--no-reset" : "";
+
   try {
-    execSync(
+    const command =
       `cd contracts && scarb build && ts-node ../scripts-ts/deploy.ts` +
-        ` --network ${argv.network || "devnet"}` +
-        ` ${argv.noReset ? "--no-reset" : ""}` +
-        ` && ts-node ../scripts-ts/helpers/parse-deployments.ts && cd ..`,
-      { stdio: "inherit" }
-    );
+      ` --network ${argv.network || "devnet"}` +
+      `${resetFlag ? " " + resetFlag : ""}` +
+      ` && ts-node ../scripts-ts/helpers/parse-deployments.ts && cd ..`;
+
+    execSync(command, { stdio: "inherit" });
   } catch (error) {
     console.error("Error during deployment:", error);
   }
