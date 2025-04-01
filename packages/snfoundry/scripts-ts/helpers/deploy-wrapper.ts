@@ -3,9 +3,9 @@ import yargs from "yargs";
 import { execSync } from "child_process";
 
 interface CommandLineOptions {
-  _: string[];
-  $0: string;
-  network?: string;
+  _: string[]; // Non-hyphenated arguments are usually under the `_` key
+  $0: string; // The script name or path is under the `$0` key
+  network?: string; // The --network option
   reset?: boolean;
 }
 

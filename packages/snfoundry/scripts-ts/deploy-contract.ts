@@ -112,6 +112,27 @@ const findContractFile = (
   return path.join(targetDir, matchingFile);
 };
 
+/**
+ * Deploy a contract using the specified parameters.
+ *
+ * @param {DeployContractParams} params - The parameters for deploying the contract.
+ * @param {string} params.contract - The name of the contract to deploy.
+ * @param {string} [params.contractName] - The name to export the contract as (optional).
+ * @param {RawArgs} [params.constructorArgs] - The constructor arguments for the contract (optional).
+ * @param {UniversalDetails} [params.options] - Additional deployment options (optional).
+ *
+ * @returns {Promise<{ classHash: string; address: string }>} The deployed contract's class hash and address.
+ *
+ * @example
+ * ///Example usage of deployContract function
+ * await deployContract({
+ *   contract: "YourContract",
+ *   contractName: "YourContractExportName",
+ *   constructorArgs: { owner: deployer.address },
+ *   options: { maxFee: BigInt(1000000000000) }
+ * });
+ */
+
 const deployContract = async (
   params: DeployContractParams
 ): Promise<{
@@ -234,6 +255,7 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
     }
     console.log(green("Deploy Calls Executed at "), transaction_hash);
   } catch (error) {
+    // split the calls in half and try again recursively
     if (deployCalls.length > 100) {
       let half = Math.ceil(deployCalls.length / 2);
       let firstHalf = deployCalls.slice(0, half);
