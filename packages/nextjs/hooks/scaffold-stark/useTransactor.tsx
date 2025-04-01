@@ -1,5 +1,10 @@
 import { useAccount } from "~~/hooks/useAccount";
-import { AccountInterface, InvokeFunctionResponse, constants } from "starknet";
+import {
+  AccountInterface,
+  InvokeFunctionResponse,
+  constants,
+  Call,
+} from "starknet";
 import { getBlockExplorerTxLink, notification } from "~~/utils/scaffold-stark";
 import { useTargetNetwork } from "./useTargetNetwork";
 
@@ -75,11 +80,56 @@ export const useTransactor = (
           transactionHash = result.transaction_hash;
         }
       } else if (tx != null) {
-        transactionHash = (
-          await walletClient.execute(tx, {
+        try {
+          // First try to estimate fees
+          const estimatedFee = await walletClient.estimateInvokeFee(
+            tx as Call[],
+          );
+
+          // Use estimated fee with a safety margin (multiply by 1.5)
+          const maxFee =
+            (BigInt(estimatedFee.overall_fee) * BigInt(15)) / BigInt(10);
+
+          // Set RPC 0.8 compatible parameters with estimated fees
+          const txOptions = {
             version: constants.TRANSACTION_VERSION.V3,
-          })
-        ).transaction_hash;
+            maxFee: "0x" + maxFee.toString(16),
+          };
+
+          transactionHash = (await walletClient.execute(tx, txOptions))
+            .transaction_hash;
+        } catch (feeEstimationError) {
+          console.warn(
+            "Fee estimation failed, using fallback values:",
+            feeEstimationError,
+          );
+
+          // Fallback to safe default values if estimation fails
+          const txOptions = {
+            version: constants.TRANSACTION_VERSION.V3,
+            // Use a reasonable maxFee value that won't exceed account balance
+            maxFee: "0x1000000000",
+            // Set resource bounds for RPC 0.8 compatibility
+            resourceBounds: {
+              l1_gas: {
+                max_amount: "0x1000000",
+                max_price_per_unit: "0x1",
+              },
+              l2_gas: {
+                max_amount: "0x1000000",
+                max_price_per_unit: "0x1",
+              },
+            },
+            // Add l1_data_gas field for RPC 0.8 compatibility
+            l1_data_gas: {
+              max_amount: "0x1000000",
+              max_price_per_unit: "0x1",
+            },
+          };
+
+          transactionHash = (await walletClient.execute(tx, txOptions))
+            .transaction_hash;
+        }
       } else {
         throw new Error("Incorrect transaction passed to transactor");
       }
@@ -117,7 +167,7 @@ export const useTransactor = (
       const match = errorPattern.exec(error.message);
       const message = match ? match[1] : error.message;
 
-      console.error("⚡️ ~ file: useTransactor.ts ~ error", message);
+      console.error("⚡️ ~ file: useTransactor.tsx ~ error", message);
 
       notification.error(message);
       throw error;
