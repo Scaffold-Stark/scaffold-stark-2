@@ -5,7 +5,7 @@ export default defineConfig({
   testDir: "./tests",
   fullyParallel: false,
   forbidOnly: false,
-  retries: 2,
+  retries: 1,
   workers: 1,
   reporter: [["html"], ["json", { outputFile: "test-results/results.json" }]],
   use: {
