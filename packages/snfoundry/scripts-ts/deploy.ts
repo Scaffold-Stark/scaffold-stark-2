@@ -42,14 +42,23 @@ import { green } from "./helpers/colorize-log";
  * @returns {Promise<void>}
  */
 const deployScript = async (): Promise<void> => {
-	await deployContract({
-	  contract: "MultisigWallet",
+// 	await deployContract({
+// 	  contract: "MultisigWallet",
+// 	  constructorArgs: {
+// 		quorum: 1,
+// 		signers: [
+// 		  deployer.address,
+// 		  "0x078662e7352d062084b0010068b99288486c2d8b914f6e2a55ce945f8792c8b1",
+// 		],
+// 	  },
+// 	}, 
+// );
+
+await deployContract({
+	  contract: "CustomMultisigWallet",
 	  constructorArgs: {
 		quorum: 1,
-		signers: [
-		  deployer.address,
-		  "0x078662e7352d062084b0010068b99288486c2d8b914f6e2a55ce945f8792c8b1",
-		],
+		signer: deployer.address,
 	  },
 	}, 
 );

@@ -5,15 +5,15 @@
 
 const deployedContracts = {
   devnet: {
-    MultisigWallet: {
+    CustomMultisigWallet: {
       address:
-        "0x51c97821aeb83c07c5ba526dc96b4878d9d1032515d3e3a86ba7e8a3a086a31",
+        "0x7cb57c05f823ff28571c1f87ebd22dae079b33ad8b12ba21ef537319dfeae3a",
       abi: [
         {
           type: "impl",
           name: "MultisigImpl",
           interface_name:
-            "openzeppelin_governance::multisig::interface::IMultisig",
+            "contracts::CustomInterfaceMultisigComponent::IMultisig",
         },
         {
           type: "enum",
@@ -30,18 +30,8 @@ const deployedContracts = {
           ],
         },
         {
-          type: "struct",
-          name: "core::array::Span::<core::starknet::contract_address::ContractAddress>",
-          members: [
-            {
-              name: "snapshot",
-              type: "@core::array::Array::<core::starknet::contract_address::ContractAddress>",
-            },
-          ],
-        },
-        {
           type: "enum",
-          name: "openzeppelin_governance::multisig::interface::TransactionState",
+          name: "contracts::CustomInterfaceMultisigComponent::TransactionState",
           variants: [
             {
               name: "NotFound",
@@ -90,18 +80,8 @@ const deployedContracts = {
           ],
         },
         {
-          type: "struct",
-          name: "core::array::Span::<core::starknet::account::Call>",
-          members: [
-            {
-              name: "snapshot",
-              type: "@core::array::Array::<core::starknet::account::Call>",
-            },
-          ],
-        },
-        {
           type: "interface",
-          name: "openzeppelin_governance::multisig::interface::IMultisig",
+          name: "contracts::CustomInterfaceMultisigComponent::IMultisig",
           items: [
             {
               type: "function",
@@ -136,7 +116,7 @@ const deployedContracts = {
               inputs: [],
               outputs: [
                 {
-                  type: "core::array::Span::<core::starknet::contract_address::ContractAddress>",
+                  type: "core::array::Array::<core::starknet::contract_address::ContractAddress>",
                 },
               ],
               state_mutability: "view",
@@ -220,7 +200,7 @@ const deployedContracts = {
               ],
               outputs: [
                 {
-                  type: "openzeppelin_governance::multisig::interface::TransactionState",
+                  type: "contracts::CustomInterfaceMultisigComponent::TransactionState",
                 },
               ],
               state_mutability: "view",
@@ -255,7 +235,7 @@ const deployedContracts = {
                 },
                 {
                   name: "calldata",
-                  type: "core::array::Span::<core::felt252>",
+                  type: "core::array::Array::<core::felt252>",
                 },
                 {
                   name: "salt",
@@ -275,7 +255,7 @@ const deployedContracts = {
               inputs: [
                 {
                   name: "calls",
-                  type: "core::array::Span::<core::starknet::account::Call>",
+                  type: "core::array::Array::<core::starknet::account::Call>",
                 },
                 {
                   name: "salt",
@@ -291,15 +271,15 @@ const deployedContracts = {
             },
             {
               type: "function",
-              name: "add_signers",
+              name: "add_signer",
               inputs: [
                 {
                   name: "new_quorum",
                   type: "core::integer::u32",
                 },
                 {
-                  name: "signers_to_add",
-                  type: "core::array::Span::<core::starknet::contract_address::ContractAddress>",
+                  name: "signer_to_add",
+                  type: "core::starknet::contract_address::ContractAddress",
                 },
               ],
               outputs: [],
@@ -315,7 +295,7 @@ const deployedContracts = {
                 },
                 {
                   name: "signers_to_remove",
-                  type: "core::array::Span::<core::starknet::contract_address::ContractAddress>",
+                  type: "core::array::Array::<core::starknet::contract_address::ContractAddress>",
                 },
               ],
               outputs: [],
@@ -363,7 +343,7 @@ const deployedContracts = {
                 },
                 {
                   name: "calldata",
-                  type: "core::array::Span::<core::felt252>",
+                  type: "core::array::Array::<core::felt252>",
                 },
                 {
                   name: "salt",
@@ -383,7 +363,7 @@ const deployedContracts = {
               inputs: [
                 {
                   name: "calls",
-                  type: "core::array::Span::<core::starknet::account::Call>",
+                  type: "core::array::Array::<core::starknet::account::Call>",
                 },
                 {
                   name: "salt",
@@ -435,7 +415,7 @@ const deployedContracts = {
                 },
                 {
                   name: "calldata",
-                  type: "core::array::Span::<core::felt252>",
+                  type: "core::array::Array::<core::felt252>",
                 },
                 {
                   name: "salt",
@@ -451,7 +431,7 @@ const deployedContracts = {
               inputs: [
                 {
                   name: "calls",
-                  type: "core::array::Span::<core::starknet::account::Call>",
+                  type: "core::array::Array::<core::starknet::account::Call>",
                 },
                 {
                   name: "salt",
@@ -472,14 +452,14 @@ const deployedContracts = {
               type: "core::integer::u32",
             },
             {
-              name: "signers",
-              type: "core::array::Span::<core::starknet::contract_address::ContractAddress>",
+              name: "signer",
+              type: "core::starknet::contract_address::ContractAddress",
             },
           ],
         },
         {
           type: "event",
-          name: "openzeppelin_governance::multisig::multisig::MultisigComponent::SignerAdded",
+          name: "contracts::CustomMultisigComponent::MultisigComponent::SignerAdded",
           kind: "struct",
           members: [
             {
@@ -491,7 +471,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "openzeppelin_governance::multisig::multisig::MultisigComponent::SignerRemoved",
+          name: "contracts::CustomMultisigComponent::MultisigComponent::SignerRemoved",
           kind: "struct",
           members: [
             {
@@ -503,7 +483,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "openzeppelin_governance::multisig::multisig::MultisigComponent::QuorumUpdated",
+          name: "contracts::CustomMultisigComponent::MultisigComponent::QuorumUpdated",
           kind: "struct",
           members: [
             {
@@ -520,7 +500,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "openzeppelin_governance::multisig::multisig::MultisigComponent::TransactionSubmitted",
+          name: "contracts::CustomMultisigComponent::MultisigComponent::TransactionSubmitted",
           kind: "struct",
           members: [
             {
@@ -537,7 +517,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "openzeppelin_governance::multisig::multisig::MultisigComponent::TransactionConfirmed",
+          name: "contracts::CustomMultisigComponent::MultisigComponent::TransactionConfirmed",
           kind: "struct",
           members: [
             {
@@ -554,7 +534,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "openzeppelin_governance::multisig::multisig::MultisigComponent::TransactionExecuted",
+          name: "contracts::CustomMultisigComponent::MultisigComponent::TransactionExecuted",
           kind: "struct",
           members: [
             {
@@ -566,7 +546,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "openzeppelin_governance::multisig::multisig::MultisigComponent::ConfirmationRevoked",
+          name: "contracts::CustomMultisigComponent::MultisigComponent::ConfirmationRevoked",
           kind: "struct",
           members: [
             {
@@ -583,7 +563,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "openzeppelin_governance::multisig::multisig::MultisigComponent::CallSalt",
+          name: "contracts::CustomMultisigComponent::MultisigComponent::CallSalt",
           kind: "struct",
           members: [
             {
@@ -600,338 +580,66 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "openzeppelin_governance::multisig::multisig::MultisigComponent::Event",
+          name: "contracts::CustomMultisigComponent::MultisigComponent::Event",
           kind: "enum",
           variants: [
             {
               name: "SignerAdded",
-              type: "openzeppelin_governance::multisig::multisig::MultisigComponent::SignerAdded",
+              type: "contracts::CustomMultisigComponent::MultisigComponent::SignerAdded",
               kind: "nested",
             },
             {
               name: "SignerRemoved",
-              type: "openzeppelin_governance::multisig::multisig::MultisigComponent::SignerRemoved",
+              type: "contracts::CustomMultisigComponent::MultisigComponent::SignerRemoved",
               kind: "nested",
             },
             {
               name: "QuorumUpdated",
-              type: "openzeppelin_governance::multisig::multisig::MultisigComponent::QuorumUpdated",
+              type: "contracts::CustomMultisigComponent::MultisigComponent::QuorumUpdated",
               kind: "nested",
             },
             {
               name: "TransactionSubmitted",
-              type: "openzeppelin_governance::multisig::multisig::MultisigComponent::TransactionSubmitted",
+              type: "contracts::CustomMultisigComponent::MultisigComponent::TransactionSubmitted",
               kind: "nested",
             },
             {
               name: "TransactionConfirmed",
-              type: "openzeppelin_governance::multisig::multisig::MultisigComponent::TransactionConfirmed",
+              type: "contracts::CustomMultisigComponent::MultisigComponent::TransactionConfirmed",
               kind: "nested",
             },
             {
               name: "TransactionExecuted",
-              type: "openzeppelin_governance::multisig::multisig::MultisigComponent::TransactionExecuted",
+              type: "contracts::CustomMultisigComponent::MultisigComponent::TransactionExecuted",
               kind: "nested",
             },
             {
               name: "ConfirmationRevoked",
-              type: "openzeppelin_governance::multisig::multisig::MultisigComponent::ConfirmationRevoked",
+              type: "contracts::CustomMultisigComponent::MultisigComponent::ConfirmationRevoked",
               kind: "nested",
             },
             {
               name: "CallSalt",
-              type: "openzeppelin_governance::multisig::multisig::MultisigComponent::CallSalt",
+              type: "contracts::CustomMultisigComponent::MultisigComponent::CallSalt",
               kind: "nested",
             },
           ],
         },
         {
           type: "event",
-          name: "contracts::MultisigWallet::MultisigWallet::Event",
+          name: "contracts::CustomMultisigWallet::CustomMultisigWallet::Event",
           kind: "enum",
           variants: [
             {
               name: "MultisigEvent",
-              type: "openzeppelin_governance::multisig::multisig::MultisigComponent::Event",
+              type: "contracts::CustomMultisigComponent::MultisigComponent::Event",
               kind: "flat",
             },
           ],
         },
       ],
       classHash:
-        "0x3af4b4163a5edd47dcfad519e95233c05102a7d9ac7014be9f4be4a1b50f7b9",
-    },
-  },
-  sepolia: {
-    YourContract: {
-      address:
-        "0x92751c955e2d0fab6ca55f69def5d1c55a30f1d093c716255bfbfa575b9b91",
-      abi: [
-        {
-          type: "impl",
-          name: "YourContractImpl",
-          interface_name: "contracts::YourContract::IYourContract",
-        },
-        {
-          type: "struct",
-          name: "core::byte_array::ByteArray",
-          members: [
-            {
-              name: "data",
-              type: "core::array::Array::<core::bytes_31::bytes31>",
-            },
-            {
-              name: "pending_word",
-              type: "core::felt252",
-            },
-            {
-              name: "pending_word_len",
-              type: "core::integer::u32",
-            },
-          ],
-        },
-        {
-          type: "struct",
-          name: "core::integer::u256",
-          members: [
-            {
-              name: "low",
-              type: "core::integer::u128",
-            },
-            {
-              name: "high",
-              type: "core::integer::u128",
-            },
-          ],
-        },
-        {
-          type: "enum",
-          name: "core::option::Option::<core::integer::u256>",
-          variants: [
-            {
-              name: "Some",
-              type: "core::integer::u256",
-            },
-            {
-              name: "None",
-              type: "()",
-            },
-          ],
-        },
-        {
-          type: "enum",
-          name: "core::bool",
-          variants: [
-            {
-              name: "False",
-              type: "()",
-            },
-            {
-              name: "True",
-              type: "()",
-            },
-          ],
-        },
-        {
-          type: "interface",
-          name: "contracts::YourContract::IYourContract",
-          items: [
-            {
-              type: "function",
-              name: "greeting",
-              inputs: [],
-              outputs: [
-                {
-                  type: "core::byte_array::ByteArray",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "set_greeting",
-              inputs: [
-                {
-                  name: "new_greeting",
-                  type: "core::byte_array::ByteArray",
-                },
-                {
-                  name: "amount_eth",
-                  type: "core::option::Option::<core::integer::u256>",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "withdraw",
-              inputs: [],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "premium",
-              inputs: [],
-              outputs: [
-                {
-                  type: "core::bool",
-                },
-              ],
-              state_mutability: "view",
-            },
-          ],
-        },
-        {
-          type: "impl",
-          name: "OwnableImpl",
-          interface_name: "openzeppelin_access::ownable::interface::IOwnable",
-        },
-        {
-          type: "interface",
-          name: "openzeppelin_access::ownable::interface::IOwnable",
-          items: [
-            {
-              type: "function",
-              name: "owner",
-              inputs: [],
-              outputs: [
-                {
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              state_mutability: "view",
-            },
-            {
-              type: "function",
-              name: "transfer_ownership",
-              inputs: [
-                {
-                  name: "new_owner",
-                  type: "core::starknet::contract_address::ContractAddress",
-                },
-              ],
-              outputs: [],
-              state_mutability: "external",
-            },
-            {
-              type: "function",
-              name: "renounce_ownership",
-              inputs: [],
-              outputs: [],
-              state_mutability: "external",
-            },
-          ],
-        },
-        {
-          type: "constructor",
-          name: "constructor",
-          inputs: [
-            {
-              name: "owner",
-              type: "core::starknet::contract_address::ContractAddress",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferred",
-          kind: "struct",
-          members: [
-            {
-              name: "previous_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "new_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
-          kind: "struct",
-          members: [
-            {
-              name: "previous_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "new_owner",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "openzeppelin_access::ownable::ownable::OwnableComponent::Event",
-          kind: "enum",
-          variants: [
-            {
-              name: "OwnershipTransferred",
-              type: "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferred",
-              kind: "nested",
-            },
-            {
-              name: "OwnershipTransferStarted",
-              type: "openzeppelin_access::ownable::ownable::OwnableComponent::OwnershipTransferStarted",
-              kind: "nested",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "contracts::YourContract::YourContract::GreetingChanged",
-          kind: "struct",
-          members: [
-            {
-              name: "greeting_setter",
-              type: "core::starknet::contract_address::ContractAddress",
-              kind: "key",
-            },
-            {
-              name: "new_greeting",
-              type: "core::byte_array::ByteArray",
-              kind: "key",
-            },
-            {
-              name: "premium",
-              type: "core::bool",
-              kind: "data",
-            },
-            {
-              name: "value",
-              type: "core::option::Option::<core::integer::u256>",
-              kind: "data",
-            },
-          ],
-        },
-        {
-          type: "event",
-          name: "contracts::YourContract::YourContract::Event",
-          kind: "enum",
-          variants: [
-            {
-              name: "OwnableEvent",
-              type: "openzeppelin_access::ownable::ownable::OwnableComponent::Event",
-              kind: "flat",
-            },
-            {
-              name: "GreetingChanged",
-              type: "contracts::YourContract::YourContract::GreetingChanged",
-              kind: "nested",
-            },
-          ],
-        },
-      ],
-      classHash:
-        "0x21654e7be8bbd096e09739022ff70a55b929e24a9dd84d02ea97de95c7d6cbe",
+        "0x725c10197b17b90a1a65d17285ae6445ca56a769ef9b36e93dcbc3b8c9d2166",
     },
   },
 } as const;
