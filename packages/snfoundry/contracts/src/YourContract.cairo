@@ -1,7 +1,7 @@
 #[starknet::interface]
 pub trait IYourContract<TContractState> {
     fn greeting(self: @TContractState) -> ByteArray;
-    fn set_greeting(ref self: TContractState, new_greeting: ByteArray, amount_eth: Option<u256>);
+    fn set_greeting(ref self: TContractState, new_greeting: ByteArray, amount_strk: Option<u256>);
     fn withdraw(ref self: TContractState);
     fn premium(self: @TContractState) -> bool;
 }
@@ -66,16 +66,16 @@ mod YourContract {
             self.greeting.read()
         }
         fn set_greeting(
-            ref self: ContractState, new_greeting: ByteArray, amount_eth: Option<u256>,
+            ref self: ContractState, new_greeting: ByteArray, amount_strk: Option<u256>,
         ) {
             self.greeting.write(new_greeting);
             self.total_counter.write(self.total_counter.read() + 1);
             let user_counter = self.user_greeting_counter.read(get_caller_address());
             self.user_greeting_counter.write(get_caller_address(), user_counter + 1);
 
-            match amount_eth {
-                Option::Some(amount_eth) => {
-                    // In `Debug Contract` or UI implementation, call `approve` on ETH contract
+            match amount_strk {
+                Option::Some(amount_strk) => {
+                    // In `Debug Contract` or UI implementation, call `approve` on STRK contract
                     // before invoking fn set_greeting()
                     let strk_contract_address: ContractAddress = STRK_CONTRACT_ADDRESS
                         .try_into()
@@ -84,7 +84,7 @@ mod YourContract {
                         contract_address: strk_contract_address,
                     };
                     strk_dispatcher
-                        .transfer_from(get_caller_address(), get_contract_address(), amount_eth);
+                        .transfer_from(get_caller_address(), get_contract_address(), amount_strk);
                     self.premium.write(true);
                 },
                 Option::None => { self.premium.write(false); },
@@ -95,7 +95,7 @@ mod YourContract {
                         greeting_setter: get_caller_address(),
                         new_greeting: self.greeting.read(),
                         premium: true,
-                        value: amount_eth,
+                        value: amount_strk,
                     },
                 );
         }
