@@ -46,7 +46,7 @@ const convertFeltToAddress = (felt: string) => {
 const MultisigPage = () => {
   const { account } = useAccount();
   const { data: deployedContractData } = useDeployedContractInfo(
-    "CustomMultisigWallet"
+    "CustomMultisigWallet",
   );
 
   const [selectedOption, setSelectedOption] = useState<SignerOption>("");
@@ -59,7 +59,7 @@ const MultisigPage = () => {
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [pendingTransactions, setPendingTransactions] = useState<Transaction[]>(
-    []
+    [],
   );
   const [executedTransactions, setExecutedTransactions] = useState<
     Transaction[]
@@ -145,7 +145,7 @@ const MultisigPage = () => {
     return new Contract(
       deployedContractData.abi,
       deployedContractData.address,
-      account
+      account,
     );
   };
 
@@ -203,7 +203,7 @@ const MultisigPage = () => {
 
             if (confirmedTxEvents) {
               const txConfirmEvents = confirmedTxEvents.filter(
-                (e) => e.args.id.toString() === txId
+                (e) => e.args.id.toString() === txId,
               );
 
               for (const confirmEvent of txConfirmEvents) {
@@ -288,7 +288,7 @@ const MultisigPage = () => {
   const confirmTransaction = async (txId: string) => {
     if (!account || !deployedContractData || !txId) {
       notification.error(
-        "Please connect your wallet and provide a transaction ID"
+        "Please connect your wallet and provide a transaction ID",
       );
       return;
     }
@@ -351,7 +351,7 @@ const MultisigPage = () => {
   const revokeConfirmation = async (txId: string) => {
     if (!account || !deployedContractData || !txId) {
       notification.error(
-        "Please connect your wallet and provide a transaction ID"
+        "Please connect your wallet and provide a transaction ID",
       );
       return;
     }
@@ -366,7 +366,7 @@ const MultisigPage = () => {
         const tx = prev[txId];
         if (tx) {
           const updatedAddressConfirmed = (tx.addressConfirmed || []).filter(
-            (address) => address !== account.address
+            (address) => address !== account.address,
           );
           return {
             ...prev,
@@ -395,7 +395,7 @@ const MultisigPage = () => {
     return tx.addressConfirmed.some(
       (addr) =>
         convertFeltToAddress(addr).toLowerCase() ===
-        account.address.toLowerCase()
+        account.address.toLowerCase(),
     );
   };
 
@@ -437,14 +437,14 @@ const MultisigPage = () => {
         contractAddress,
         selector,
         calldata,
-        salt
+        salt,
       );
 
       const submitResponse = await contract.submit_transaction(
         contractAddress,
         selector,
         calldata,
-        salt
+        salt,
       );
 
       const txIdString = txIdResponse.toString();
@@ -466,7 +466,7 @@ const MultisigPage = () => {
       }));
 
       notification.success(
-        `Transaction to ${selectedOption} signer submitted. ID: ${txIdString}`
+        `Transaction to ${selectedOption} signer submitted. ID: ${txIdString}`,
       );
 
       setAddress("");
@@ -495,7 +495,7 @@ const MultisigPage = () => {
 
       if (signers.length > 1 && Number(confirmations) < signers.length) {
         notification.error(
-          "All signers must confirm this transaction before execution"
+          "All signers must confirm this transaction before execution",
         );
         setLoading(false);
         return;
@@ -508,7 +508,7 @@ const MultisigPage = () => {
           storedTx.to,
           storedTx.selector,
           storedTx.calldata,
-          storedTx.salt
+          storedTx.salt,
         );
       } else {
         const transaction = transactions.find((tx) => tx.id === txId);
@@ -521,7 +521,7 @@ const MultisigPage = () => {
           transaction.to,
           transaction.selector,
           transaction.calldata,
-          transaction.salt
+          transaction.salt,
         );
       }
 
@@ -548,7 +548,7 @@ const MultisigPage = () => {
       : "0x" + account?.address.toLowerCase();
 
     return signersAddresses.some(
-      (address) => address.toLowerCase() === normalizedUserAddress
+      (address) => address.toLowerCase() === normalizedUserAddress,
     );
   };
 
