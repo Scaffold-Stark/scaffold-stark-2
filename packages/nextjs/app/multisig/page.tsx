@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useState, useEffect, ChangeEvent } from "react";
-import { useAccount, useConnect } from "@starknet-react/core";
-import { Contract, CallData, shortString, hash } from "starknet";
+import { useAccount } from "@starknet-react/core";
+import { Contract, CallData, hash } from "starknet";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { notification } from "~~/utils/scaffold-stark";
@@ -21,13 +22,7 @@ interface Transaction {
   submittedBlock: string;
   salt: string;
   calldata: string[];
-}
-
-interface ExecuteTransactionParams {
-  to: string;
-  selector: string;
-  calldata: string[];
-  salt: string;
+  addressConfirmed: string[];
 }
 
 const convertFeltToAddress = (felt: string) => {
@@ -51,25 +46,20 @@ const convertFeltToAddress = (felt: string) => {
 const MultisigPage = () => {
   const { account } = useAccount();
   const { data: deployedContractData } = useDeployedContractInfo(
-    "CustomMultisigWallet",
+    "CustomMultisigWallet"
   );
 
   const [selectedOption, setSelectedOption] = useState<SignerOption>("");
   const [address, setAddress] = useState<string>("");
-  const [transactionId, setTransactionId] = useState<string>("");
-  const [customTo, setCustomTo] = useState<string>("");
-  const [customSelector, setCustomSelector] = useState<string>("");
-  const [customCalldata, setCustomCalldata] = useState<string>("");
   const [newQuorum, setNewQuorum] = useState<number>(1);
   const [loading, setLoading] = useState(false);
 
   const [signers, setSigners] = useState<string[]>([]);
-  const [quorum, setQuorum] = useState<number>(0);
   const [loadingSigners, setLoadingSigners] = useState(false);
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [pendingTransactions, setPendingTransactions] = useState<Transaction[]>(
-    [],
+    []
   );
   const [executedTransactions, setExecutedTransactions] = useState<
     Transaction[]
@@ -130,22 +120,6 @@ const MultisigPage = () => {
     setAddress(e.target.value);
   };
 
-  const handleTransactionIdChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setTransactionId(e.target.value);
-  };
-
-  const handleToAddressChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setCustomTo(e.target.value);
-  };
-
-  const handleSelectorChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setCustomSelector(e.target.value);
-  };
-
-  const handleCalldataChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setCustomCalldata(e.target.value);
-  };
-
   const handleNewQuorumChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
     setNewQuorum(isNaN(value) ? 1 : value);
@@ -171,7 +145,7 @@ const MultisigPage = () => {
     return new Contract(
       deployedContractData.abi,
       deployedContractData.address,
-      account,
+      account
     );
   };
 
@@ -183,7 +157,6 @@ const MultisigPage = () => {
       const contract = getContract();
 
       const quorumResult = await contract.get_quorum();
-      setQuorum(Number(quorumResult));
 
       const signersResult = await contract.get_signers();
 
@@ -210,6 +183,9 @@ const MultisigPage = () => {
       const executed: Transaction[] = [];
       const contract = getContract();
 
+      const currentSignersCount = signers.length;
+      const singleSignerMode = currentSignersCount === 1;
+
       if (submittedTxEvents && submittedTxEvents.length > 0) {
         for (const event of submittedTxEvents) {
           try {
@@ -223,6 +199,21 @@ const MultisigPage = () => {
 
             const storedTxData = transactionDetails[txId];
 
+            let addressesConfirmed = storedTxData?.addressConfirmed || [signer];
+
+            if (confirmedTxEvents) {
+              const txConfirmEvents = confirmedTxEvents.filter(
+                (e) => e.args.id.toString() === txId
+              );
+
+              for (const confirmEvent of txConfirmEvents) {
+                const confirmerAddress = confirmEvent.args.signer.toString();
+                if (!addressesConfirmed.includes(confirmerAddress)) {
+                  addressesConfirmed.push(confirmerAddress);
+                }
+              }
+            }
+
             const tx: Transaction = {
               id: txId,
               to: storedTxData?.to || deployedContractData.address,
@@ -233,6 +224,7 @@ const MultisigPage = () => {
               submittedBlock: submittedBlock.toString(),
               salt: storedTxData?.salt || "0",
               calldata: storedTxData?.calldata || [],
+              addressConfirmed: addressesConfirmed,
             };
 
             if (storedTxData) {
@@ -243,6 +235,7 @@ const MultisigPage = () => {
                   confirmations: Number(confirmations),
                   executed: Boolean(isExecuted),
                   submittedBlock: submittedBlock.toString(),
+                  addressConfirmed: addressesConfirmed,
                 },
               }));
             }
@@ -252,19 +245,21 @@ const MultisigPage = () => {
             } else {
               pending.push(tx);
 
-              if (Number(confirmations) >= quorum && !isExecuted) {
-                const txDetails = storedTxData || tx;
-                try {
-                  await contract.execute_transaction(
-                    txDetails.to,
-                    txDetails.selector,
-                    txDetails.calldata,
-                    txDetails.salt,
-                  );
-                } catch (execErr) {
-                  console.error("Error auto-executing transaction:", execErr);
-                }
-              }
+              // if (singleSignerMode && !isExecuted) {
+              //   const txDetails = storedTxData || tx;
+              //   try {
+              //     if (txDetails.to && txDetails.selector) {
+              //       await contract.execute_transaction(
+              //         txDetails.to,
+              //         txDetails.selector,
+              //         txDetails.calldata,
+              //         txDetails.salt
+              //       );
+              //     }
+              //   } catch (execErr) {
+              //     console.error("Error auto-executing transaction:", execErr);
+              //   }
+              // }
             }
           } catch (err) {
             console.error("Error processing transaction:", err);
@@ -290,34 +285,119 @@ const MultisigPage = () => {
     }
   };
 
-  useEffect(() => {
-    if (account && deployedContractData) {
-      loadSigners();
-      loadTransactions();
+  const confirmTransaction = async (txId: string) => {
+    if (!account || !deployedContractData || !txId) {
+      notification.error(
+        "Please connect your wallet and provide a transaction ID"
+      );
+      return;
     }
-  }, [account, deployedContractData]);
 
-  useEffect(() => {
-    if (submittedTxEvents || confirmedTxEvents || executedTxEvents) {
-      loadTransactions();
-    }
-  }, [submittedTxEvents, confirmedTxEvents, executedTxEvents]);
+    setLoading(true);
+    try {
+      const contract = getContract();
+      const singleSignerMode = signers.length === 1;
 
-  useEffect(() => {
-    if (signerAddedEvents || signerRemovedEvents) {
-      loadSigners();
-    }
-  }, [signerAddedEvents, signerRemovedEvents]);
+      await contract.confirm_transaction(txId);
 
-  useEffect(() => {
-    if (selectedTxType === "pending") {
-      setTransactions(pendingTransactions);
-    } else if (selectedTxType === "executed") {
-      setTransactions(executedTransactions);
-    } else {
-      setTransactions([...pendingTransactions, ...executedTransactions]);
+      setTransactionDetails((prev) => {
+        const tx = prev[txId];
+        if (tx) {
+          const updatedAddressConfirmed = [...(tx.addressConfirmed || [])];
+          if (!updatedAddressConfirmed.includes(account.address)) {
+            updatedAddressConfirmed.push(account.address);
+          }
+          return {
+            ...prev,
+            [txId]: {
+              ...tx,
+              addressConfirmed: updatedAddressConfirmed,
+              confirmations: tx.confirmations + 1,
+            },
+          };
+        }
+        return prev;
+      });
+
+      notification.success("Transaction confirmed successfully");
+
+      // if (singleSignerMode) {
+      //   const storedTx = transactionDetails[txId];
+      //   if (storedTx) {
+      //     try {
+      //       await contract.execute_transaction(
+      //         storedTx.to,
+      //         storedTx.selector,
+      //         storedTx.calldata,
+      //         storedTx.salt
+      //       );
+      //       notification.success("Transaction auto-executed successfully");
+      //     } catch (execErr: any) {
+      //       console.error("Error auto-executing transaction:", execErr);
+      //       notification.error("Auto-execution failed: " + execErr.message);
+      //     }
+      //   }
+      // }
+
+      await loadTransactions();
+    } catch (err: any) {
+      console.error("Error confirming transaction:", err);
+      notification.error(err.message || "Error confirming transaction");
+    } finally {
+      setLoading(false);
     }
-  }, [selectedTxType, pendingTransactions, executedTransactions]);
+  };
+
+  const revokeConfirmation = async (txId: string) => {
+    if (!account || !deployedContractData || !txId) {
+      notification.error(
+        "Please connect your wallet and provide a transaction ID"
+      );
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const contract = getContract();
+
+      await contract.revoke_confirmation(txId);
+
+      setTransactionDetails((prev) => {
+        const tx = prev[txId];
+        if (tx) {
+          const updatedAddressConfirmed = (tx.addressConfirmed || []).filter(
+            (address) => address !== account.address
+          );
+          return {
+            ...prev,
+            [txId]: {
+              ...tx,
+              addressConfirmed: updatedAddressConfirmed,
+              confirmations: Math.max(0, tx.confirmations - 1),
+            },
+          };
+        }
+        return prev;
+      });
+
+      notification.success("Confirmation revoked successfully");
+      await loadTransactions();
+    } catch (err: any) {
+      console.error("Error revoking confirmation:", err);
+      notification.error(err.message || "Error revoking confirmation");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const hasUserConfirmed = (tx: Transaction) => {
+    if (!account || !tx.addressConfirmed) return false;
+    return tx.addressConfirmed.some(
+      (addr) =>
+        convertFeltToAddress(addr).toLowerCase() ===
+        account.address.toLowerCase()
+    );
+  };
 
   const createSignerTransaction = async () => {
     if (!account || !deployedContractData) {
@@ -357,18 +437,17 @@ const MultisigPage = () => {
         contractAddress,
         selector,
         calldata,
-        salt,
+        salt
       );
 
-      await contract.submit_transaction(
+      const submitResponse = await contract.submit_transaction(
         contractAddress,
         selector,
         calldata,
-        salt,
+        salt
       );
 
       const txIdString = txIdResponse.toString();
-      setTransactionId(txIdString);
 
       setTransactionDetails((prev) => ({
         ...prev,
@@ -382,23 +461,16 @@ const MultisigPage = () => {
           executed: false,
           submittedBy: account.address,
           submittedBlock: "pending",
+          addressConfirmed: [account.address],
         },
       }));
 
       notification.success(
-        `Transaction to ${selectedOption} signer submitted. ID: ${txIdString}`,
+        `Transaction to ${selectedOption} signer submitted. ID: ${txIdString}`
       );
 
       setAddress("");
       setSelectedOption("");
-
-      if (quorum <= 1) {
-        try {
-          await executeTransaction(txIdString);
-        } catch (execErr) {
-          console.error("Error auto-executing transaction:", execErr);
-        }
-      }
 
       await Promise.all([loadSigners(), loadTransactions()]);
     } catch (err: any) {
@@ -406,79 +478,6 @@ const MultisigPage = () => {
       notification.error(err.message || "Error creating transaction");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const confirmTransaction = async (txId: string) => {
-    if (!account || !deployedContractData || !txId) {
-      notification.error(
-        "Please connect your wallet and provide a transaction ID",
-      );
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const contract = getContract();
-
-      await contract.confirm_transaction(txId);
-      notification.success("Transaction confirmed successfully");
-
-      const confirmations = await contract.get_transaction_confirmations(txId);
-      const isExecuted = await contract.is_executed(txId);
-
-      if (Number(confirmations) >= quorum && !isExecuted) {
-        const storedTx = transactionDetails[txId];
-        if (storedTx) {
-          try {
-            await contract.execute_transaction(
-              storedTx.to,
-              storedTx.selector,
-              storedTx.calldata,
-              storedTx.salt,
-            );
-            notification.success("Transaction auto-executed successfully");
-          } catch (execErr) {
-            console.error("Error auto-executing transaction:", execErr);
-            notification.error(
-              "Auto-execution failed, please execute manually",
-            );
-          }
-        }
-      }
-
-      await loadTransactions();
-    } catch (err: any) {
-      console.error("Error confirming transaction:", err);
-      notification.error(err.message || "Error confirming transaction");
-    } finally {
-      setLoading(false);
-      setTransactionId("");
-    }
-  };
-
-  const revokeConfirmation = async (txId: string) => {
-    if (!account || !deployedContractData || !txId) {
-      notification.error(
-        "Please connect your wallet and provide a transaction ID",
-      );
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const contract = getContract();
-
-      await contract.revoke_confirmation(txId);
-
-      notification.success("Confirmation revoked successfully");
-      await loadTransactions();
-    } catch (err: any) {
-      console.error("Error revoking confirmation:", err);
-      notification.error(err.message || "Error revoking confirmation");
-    } finally {
-      setLoading(false);
-      setTransactionId("");
     }
   };
 
@@ -492,6 +491,16 @@ const MultisigPage = () => {
     try {
       const contract = getContract();
 
+      const confirmations = await contract.get_transaction_confirmations(txId);
+
+      if (signers.length > 1 && Number(confirmations) < signers.length) {
+        notification.error(
+          "All signers must confirm this transaction before execution"
+        );
+        setLoading(false);
+        return;
+      }
+
       const storedTx = transactionDetails[txId];
 
       if (storedTx) {
@@ -499,7 +508,7 @@ const MultisigPage = () => {
           storedTx.to,
           storedTx.selector,
           storedTx.calldata,
-          storedTx.salt,
+          storedTx.salt
         );
       } else {
         const transaction = transactions.find((tx) => tx.id === txId);
@@ -512,7 +521,7 @@ const MultisigPage = () => {
           transaction.to,
           transaction.selector,
           transaction.calldata,
-          transaction.salt,
+          transaction.salt
         );
       }
 
@@ -524,7 +533,6 @@ const MultisigPage = () => {
       notification.error(err.message || "Error executing transaction");
     } finally {
       setLoading(false);
-      setTransactionId("");
     }
   };
 
@@ -540,9 +548,45 @@ const MultisigPage = () => {
       : "0x" + account?.address.toLowerCase();
 
     return signersAddresses.some(
-      (address) => address.toLowerCase() === normalizedUserAddress,
+      (address) => address.toLowerCase() === normalizedUserAddress
     );
   };
+
+  useEffect(() => {
+    if (account && deployedContractData) {
+      loadSigners();
+      loadTransactions();
+    }
+  }, [account, deployedContractData]);
+
+  useEffect(() => {
+    if (submittedTxEvents || confirmedTxEvents || executedTxEvents) {
+      loadTransactions();
+    }
+  }, [submittedTxEvents, confirmedTxEvents, executedTxEvents]);
+
+  useEffect(() => {
+    if (signerAddedEvents || signerRemovedEvents) {
+      loadSigners();
+    }
+  }, [signerAddedEvents, signerRemovedEvents]);
+
+  useEffect(() => {
+    if (selectedTxType === "pending") {
+      setTransactions(pendingTransactions);
+    } else if (selectedTxType === "executed") {
+      setTransactions(executedTransactions);
+    } else {
+      setTransactions([...pendingTransactions, ...executedTransactions]);
+    }
+  }, [selectedTxType, pendingTransactions, executedTransactions]);
+
+  useEffect(() => {
+    if (account && deployedContractData) {
+      loadSigners();
+      loadTransactions();
+    }
+  }, [account, deployedContractData]);
 
   return (
     <section className="max-w-screen-2xl mx-auto mt-8 px-4 pb-12">
@@ -674,71 +718,6 @@ const MultisigPage = () => {
               </button>
             </div>
           </div>
-
-          {/* <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-4">
-              Create Custom Transaction
-            </h3>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm mb-1">
-                  Target Contract Address:
-                </label>
-                <input
-                  type="text"
-                  value={customTo}
-                  onChange={handleToAddressChange}
-                  placeholder="Contract address to call"
-                  className="block w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm mb-1">Function Selector:</label>
-                <input
-                  type="text"
-                  value={customSelector}
-                  onChange={handleSelectorChange}
-                  placeholder="Function name or hex selector"
-                  className="block w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <p className="text-xs text-gray-400 mt-1">
-                  Either function name (e.g. &quot;transfer&quot;) or hex
-                  selector
-                </p>
-              </div>
-
-              <div>
-                <label className="block text-sm mb-1">Calldata (JSON):</label>
-                <textarea
-                  value={customCalldata}
-                  onChange={handleCalldataChange}
-                  placeholder='["param1", "param2"]'
-                  rows={3}
-                  className="block w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <p className="text-xs text-gray-400 mt-1">
-                  JSON array of parameters
-                </p>
-              </div>
-
-              <button
-                onClick={createCustomTransaction}
-                disabled={
-                  loading ||
-                  !customTo ||
-                  !customSelector ||
-                  !account ||
-                  !deployedContractData ||
-                  !isUserSigner()
-                }
-                className="w-full rounded-md py-2 font-medium bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
-              >
-                {loading ? "Processing..." : "Submit Custom Transaction"}
-              </button>
-            </div>
-          </div> */}
         </div>
 
         <div className="space-y-6">
@@ -788,11 +767,17 @@ const MultisigPage = () => {
                         </span>
                       </div>
                       <span
-                        className={`text-xs px-2 py-1 rounded ${tx.executed ? "bg-green-800" : tx.confirmations >= quorum ? "bg-blue-800" : "bg-yellow-800"}`}
+                        className={`text-xs px-2 py-1 rounded ${
+                          tx.executed
+                            ? "bg-green-800"
+                            : tx.confirmations >= signers.length
+                              ? "bg-blue-800"
+                              : "bg-yellow-800"
+                        }`}
                       >
                         {tx.executed
                           ? "Executed"
-                          : `${tx.confirmations}/${quorum} confirmations`}
+                          : `${tx.confirmations}/${signers.length} confirmations`}
                       </span>
                     </div>
 
@@ -825,7 +810,7 @@ const MultisigPage = () => {
                               e.stopPropagation();
                               revokeConfirmation(tx.id);
                             }}
-                            disabled={loading}
+                            disabled={loading || !hasUserConfirmed(tx)}
                             className="flex-1 py-1 text-xs rounded bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
                           >
                             Revoke
@@ -836,12 +821,14 @@ const MultisigPage = () => {
                               e.stopPropagation();
                               executeTransaction(tx.id);
                             }}
-                            disabled={loading || tx.confirmations < quorum}
+                            disabled={
+                              loading || tx.confirmations < signers.length
+                            }
                             className="flex-1 py-1 text-xs rounded bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
                           >
-                            {tx.confirmations >= quorum
+                            {tx.confirmations >= signers.length
                               ? "Execute"
-                              : "Not Ready"}
+                              : "Need All Confirmations"}
                           </button>
                         </div>
                       )}
@@ -862,53 +849,6 @@ const MultisigPage = () => {
             >
               {loadingTransactions ? "Loading..." : "Refresh Transactions"}
             </button>
-          </div>
-
-          <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-3">Transaction by ID</h3>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm mb-1">Transaction ID:</label>
-                <input
-                  type="text"
-                  value={transactionId}
-                  onChange={handleTransactionIdChange}
-                  placeholder="Enter transaction ID"
-                  className="block w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div className="flex space-x-3">
-                <button
-                  onClick={() => confirmTransaction(transactionId)}
-                  disabled={
-                    loading ||
-                    !transactionId ||
-                    !account ||
-                    !deployedContractData ||
-                    !isUserSigner()
-                  }
-                  className="flex-1 rounded-md py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
-                >
-                  {loading ? "Processing..." : "Confirm"}
-                </button>
-
-                <button
-                  onClick={() => revokeConfirmation(transactionId)}
-                  disabled={
-                    loading ||
-                    !transactionId ||
-                    !account ||
-                    !deployedContractData ||
-                    !isUserSigner()
-                  }
-                  className="flex-1 rounded-md py-2 text-sm font-medium bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
-                >
-                  {loading ? "Processing..." : "Revoke"}
-                </button>
-              </div>
-            </div>
           </div>
 
           <div className="bg-gray-800 p-6 rounded-lg shadow-md">
