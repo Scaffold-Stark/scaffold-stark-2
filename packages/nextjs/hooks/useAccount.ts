@@ -32,7 +32,7 @@ export function useAccount(): UseAccountResult {
           } else if ((account as any).channel?.getChainId) {
             chainId = await (account as any).channel.getChainId();
           } else {
-          chainId = constants.StarknetChainId.SN_MAIN;
+            chainId = constants.StarknetChainId.SN_MAIN;
           }
 
           if (chainId) {
@@ -52,16 +52,20 @@ export function useAccount(): UseAccountResult {
       const provisionalAccount = {
         address,
         execute: async () => {
-          throw new Error("Wallet connection issue. Please refresh and reconnect.");
+          throw new Error(
+            "Wallet connection issue. Please refresh and reconnect.",
+          );
         },
         estimateInvokeFee: async () => {
-          throw new Error("Wallet connection issue. Please refresh and reconnect.");
+          throw new Error(
+            "Wallet connection issue. Please refresh and reconnect.",
+          );
         },
         getChainId: async () => {
-          return constants.StarknetChainId.SN_MAIN; 
+          return constants.StarknetChainId.SN_MAIN;
         },
         cairoVersion: "1",
-        signer: {}
+        signer: {},
       };
 
       return provisionalAccount as unknown as AccountInterface;
