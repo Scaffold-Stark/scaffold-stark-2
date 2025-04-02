@@ -19,7 +19,8 @@ function main() {
     })
     .option("reset", {
       type: "boolean",
-      description: "Reset deployments (overwrites the latest file only, previous generated files will remain)",
+      description:
+        "Reset deployments (overwrites the latest file only, previous generated files will remain)",
       default: true,
       hidden: true,
     })
