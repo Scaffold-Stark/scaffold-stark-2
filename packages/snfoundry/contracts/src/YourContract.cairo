@@ -4,14 +4,6 @@ pub trait IYourContract<TContractState> {
     fn set_greeting(ref self: TContractState, new_greeting: ByteArray, amount_eth: Option<u256>);
     fn withdraw(ref self: TContractState);
     fn premium(self: @TContractState) -> bool;
-    fn transaction_state(self: @TContractState, transaction_id: u256) -> TransactionState;
-}
-#[derive(Copy, Drop, Serde, PartialEq, Debug)]
-pub enum TransactionState {
-    NotFound,
-    Pending,
-    Confirmed,
-    Executed,
 }
 
 #[starknet::contract]
@@ -22,7 +14,7 @@ mod YourContract {
     use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
     use starknet::{ContractAddress, contract_address_const};
     use starknet::{get_caller_address, get_contract_address};
-    use super::{IYourContract, TransactionState};
+    use super::{IYourContract};
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
 
@@ -113,9 +105,6 @@ mod YourContract {
         }
         fn premium(self: @ContractState) -> bool {
             self.premium.read()
-        }
-        fn transaction_state(self: @ContractState, transaction_id: u256) -> TransactionState {
-            TransactionState::NotFound
         }
     }
 }
