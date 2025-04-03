@@ -194,7 +194,7 @@ const _decodeContractResponseItem = (
         },
       );
 
-      return `(${decodedArr.join(", ")})`;
+      return `(${decodedArr.join(",")})`;
     } catch (error) {
       console.error("Error processing tuple:", error);
       return String(respItem);
@@ -288,16 +288,44 @@ const _decodeContractResponseItem = (
             (item: any) => item.name === enumKey,
           );
           if (enumItemDef && enumItemDef.type) {
-            return enumKey;
+            if (abiType.name === "contracts::YourContract::TransactionState") {
+              return enumKey;
+            }
+
+            const processedValue = _decodeContractResponseItem(
+              enumValue,
+              { type: enumItemDef.type },
+              abi,
+            );
+            return { [enumKey]: processedValue };
           }
         }
       }
 
       const enumKeys = Object.keys(respItem);
       if (enumKeys.length === 1) {
-        return enumKeys[0];
+        const enumKey = enumKeys[0];
+        const enumValue = respItem[enumKey];
+
+        if (abiType.name === "contracts::YourContract::TransactionState") {
+          return enumKey;
+        }
+
+        const enumVariant = abiType.variants?.find(
+          (v: any) => v.name === enumKey,
+        );
+        if (enumVariant) {
+          const processedValue = _decodeContractResponseItem(
+            enumValue,
+            { type: enumVariant.type },
+            abi,
+          );
+          return { [enumKey]: processedValue };
+        }
+        return { [enumKey]: enumValue };
       }
     }
+
     return String(respItem);
   }
   return respItem;
