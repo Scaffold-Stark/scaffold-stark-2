@@ -312,3 +312,57 @@ describe("utilsDisplay", () => {
     ).toEqual('{"Err":12}');
   });
 });
+
+it("should parse enum TransactionState response successfully", () => {
+  expect(
+    decodeContractResponse({
+      resp: 0,
+      abi,
+      functionOutputs: [
+        {
+          type: "contracts::YourContract::TransactionState",
+        },
+      ],
+      asText: true,
+    }),
+  ).toEqual("NotFound");
+
+  expect(
+    decodeContractResponse({
+      resp: 1,
+      abi,
+      functionOutputs: [
+        {
+          type: "contracts::YourContract::TransactionState",
+        },
+      ],
+      asText: true,
+    }),
+  ).toEqual("Pending");
+
+  expect(
+    decodeContractResponse({
+      resp: 2,
+      abi,
+      functionOutputs: [
+        {
+          type: "contracts::YourContract::TransactionState",
+        },
+      ],
+      asText: true,
+    }),
+  ).toEqual("Confirmed");
+
+  expect(
+    decodeContractResponse({
+      resp: 3,
+      abi,
+      functionOutputs: [
+        {
+          type: "contracts::YourContract::TransactionState",
+        },
+      ],
+      asText: true,
+    }),
+  ).toEqual("Executed");
+});
