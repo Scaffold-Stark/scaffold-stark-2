@@ -8,6 +8,7 @@ import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEven
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { notification } from "~~/utils/scaffold-stark";
 import CopyToClipboard from "react-copy-to-clipboard";
+import { BlockieAvatar } from "~~/components/scaffold-stark";
 
 type SignerOption = "" | "add" | "remove";
 type TxType = "pending" | "executed" | "all";
@@ -645,10 +646,16 @@ const MultisigPage = () => {
                       key={index}
                       className="text-sm p-2 rounded bg-gray-700 flex justify-between items-center"
                     >
-                      <span className="font-mono break-all">
-                        {formatAddress(convertFeltToAddress(address))}
-                      </span>
-                      {address === account?.address && (
+                      <div className="flex items-center gap-2">
+                        <BlockieAvatar
+                          address={convertFeltToAddress(address)}
+                          size={16}
+                        />
+                        <span className="font-mono break-all">
+                          {formatAddress(convertFeltToAddress(address))}
+                        </span>
+                      </div>
+                      {convertFeltToAddress(address) == account?.address && (
                         <span className="text-xs bg-blue-600 px-2 py-1 rounded ml-2">
                           You
                         </span>
@@ -795,9 +802,17 @@ const MultisigPage = () => {
 
                       <div className="text-xs text-gray-300 space-y-1">
                         <div>To: {formatAddress(tx.to)}</div>
-                        <div>
-                          Submitted by:{" "}
-                          {formatAddress(convertFeltToAddress(tx.submittedBy))}
+                        <div className="flex items-center gap-2">
+                          Submitted by:
+                          <span className="flex items-center gap-1">
+                            <BlockieAvatar
+                              address={convertFeltToAddress(tx.submittedBy)}
+                              size={16}
+                            />{" "}
+                            {formatAddress(
+                              convertFeltToAddress(tx.submittedBy),
+                            )}
+                          </span>
                         </div>
                         <div>Block: {tx.submittedBlock}</div>
                         <div>
@@ -889,13 +904,21 @@ const MultisigPage = () => {
                           <div className="font-mono text-xs">
                             ID: {formatAddress(event.args.id.toString())}
                           </div>
-                          <div className="text-xs text-gray-400">
-                            By:{" "}
-                            {formatAddress(
-                              convertFeltToAddress(
-                                event.args.signer.toString(),
-                              ),
-                            )}
+                          <div className="text-xs text-gray-400 flex items-center gap-2">
+                            <span>By:</span>
+                            <div className="flex items-center gap-1.5">
+                              <BlockieAvatar
+                                address={convertFeltToAddress(
+                                  event.args.signer.toString(),
+                                )}
+                                size={16}
+                              />
+                              {formatAddress(
+                                convertFeltToAddress(
+                                  event.args.signer.toString(),
+                                ),
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -923,13 +946,21 @@ const MultisigPage = () => {
                           <div className="font-mono text-xs">
                             ID: {formatAddress(event.args.id.toString())}
                           </div>
-                          <div className="text-xs text-gray-400">
-                            By:{" "}
-                            {formatAddress(
-                              convertFeltToAddress(
-                                event.args.signer.toString(),
-                              ),
-                            )}
+                          <div className="text-xs text-gray-400 flex items-center gap-2">
+                            <span>By:</span>
+                            <div className="flex items-center gap-1.5">
+                              <BlockieAvatar
+                                address={convertFeltToAddress(
+                                  event.args.signer.toString(),
+                                )}
+                                size={16}
+                              />
+                              {formatAddress(
+                                convertFeltToAddress(
+                                  event.args.signer.toString(),
+                                ),
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
