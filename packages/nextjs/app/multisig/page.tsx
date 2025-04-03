@@ -50,6 +50,8 @@ const convertSelectorToFuncName = (text: string) => {
       return "add_signer";
     case "0x1b266621d7e8d679991575aa72fe52af4e5e336d71013f0de37be2802b34bc6":
       return "remove_signers";
+    case "0x15cbdfd86e04fc1247c8cea1f9f6c9c0d92f1f1668c7a46591ed6e4091fbad":
+      return "transfer_funds";
     default:
       return null;
   }
@@ -58,7 +60,7 @@ const convertSelectorToFuncName = (text: string) => {
 const MultisigPage = () => {
   const { account } = useAccount();
   const { data: deployedContractData } = useDeployedContractInfo(
-    "CustomMultisigWallet",
+    "CustomMultisigWallet"
   );
 
   const [selectedOption, setSelectedOption] = useState<SignerOption>("");
@@ -66,12 +68,15 @@ const MultisigPage = () => {
   const [newQuorum, setNewQuorum] = useState<number>(1);
   const [loading, setLoading] = useState(false);
 
+  const [transferRecipient, setTransferRecipient] = useState<string>("");
+  const [transferAmount, setTransferAmount] = useState<string>("");
+
   const [signers, setSigners] = useState<string[]>([]);
   const [loadingSigners, setLoadingSigners] = useState(false);
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [pendingTransactions, setPendingTransactions] = useState<Transaction[]>(
-    [],
+    []
   );
   const [executedTransactions, setExecutedTransactions] = useState<
     Transaction[]
@@ -90,7 +95,7 @@ const MultisigPage = () => {
     fromBlock: 0n,
     watch: true,
   });
-  console.log(submittedTxEvents, "submittedTxEventssubmittedTxEvents");
+
   const { data: confirmedTxEvents } = useScaffoldEventHistory({
     contractName: "CustomMultisigWallet",
     eventName:
@@ -157,7 +162,7 @@ const MultisigPage = () => {
     return new Contract(
       deployedContractData.abi,
       deployedContractData.address,
-      account,
+      account
     );
   };
 
@@ -215,7 +220,7 @@ const MultisigPage = () => {
 
             if (confirmedTxEvents) {
               const txConfirmEvents = confirmedTxEvents.filter(
-                (e) => e.args.id.toString() === txId,
+                (e) => e.args.id.toString() === txId
               );
 
               for (const confirmEvent of txConfirmEvents) {
@@ -300,7 +305,7 @@ const MultisigPage = () => {
   const confirmTransaction = async (txId: string) => {
     if (!account || !deployedContractData || !txId) {
       notification.error(
-        "Please connect your wallet and provide a transaction ID",
+        "Please connect your wallet and provide a transaction ID"
       );
       return;
     }
@@ -363,7 +368,7 @@ const MultisigPage = () => {
   const revokeConfirmation = async (txId: string) => {
     if (!account || !deployedContractData || !txId) {
       notification.error(
-        "Please connect your wallet and provide a transaction ID",
+        "Please connect your wallet and provide a transaction ID"
       );
       return;
     }
@@ -378,7 +383,7 @@ const MultisigPage = () => {
         const tx = prev[txId];
         if (tx) {
           const updatedAddressConfirmed = (tx.addressConfirmed || []).filter(
-            (address) => address !== account.address,
+            (address) => address !== account.address
           );
           return {
             ...prev,
@@ -407,7 +412,7 @@ const MultisigPage = () => {
     return tx.addressConfirmed.some(
       (addr) =>
         convertFeltToAddress(addr).toLowerCase() ===
-        account.address.toLowerCase(),
+        account.address.toLowerCase()
     );
   };
 
@@ -449,14 +454,14 @@ const MultisigPage = () => {
         contractAddress,
         selector,
         calldata,
-        salt,
+        salt
       );
 
       const submitResponse = await contract.submit_transaction(
         contractAddress,
         selector,
         calldata,
-        salt,
+        salt
       );
 
       const txIdString = txIdResponse.toString();
@@ -478,7 +483,7 @@ const MultisigPage = () => {
       }));
 
       notification.success(
-        `Transaction to ${selectedOption} signer submitted. ID: ${txIdString}`,
+        `Transaction to ${selectedOption} signer submitted. ID: ${txIdString}`
       );
 
       setAddress("");
@@ -507,7 +512,7 @@ const MultisigPage = () => {
 
       if (signers.length > 1 && Number(confirmations) < signers.length) {
         notification.error(
-          "All signers must confirm this transaction before execution",
+          "All signers must confirm this transaction before execution"
         );
         setLoading(false);
         return;
@@ -520,7 +525,7 @@ const MultisigPage = () => {
           storedTx.to,
           storedTx.selector,
           storedTx.calldata,
-          storedTx.salt,
+          storedTx.salt
         );
       } else {
         const transaction = transactions.find((tx) => tx.id === txId);
@@ -533,7 +538,7 @@ const MultisigPage = () => {
           transaction.to,
           transaction.selector,
           transaction.calldata,
-          transaction.salt,
+          transaction.salt
         );
       }
 
@@ -543,6 +548,76 @@ const MultisigPage = () => {
     } catch (err: any) {
       console.error("Error executing transaction:", err);
       notification.error(err.message || "Error executing transaction");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createTransferTransaction = async () => {
+    if (!account || !deployedContractData) {
+      notification.error("Please connect your wallet first");
+      return;
+    }
+
+    if (!transferRecipient) {
+      notification.error("Please enter a valid recipient address");
+      return;
+    }
+
+    if (!transferAmount || isNaN(Number(transferAmount))) {
+      notification.error("Please enter a valid amount");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const contract = getContract();
+      const salt = "0x1234"; // Hard-coded salt for now
+
+      const selector = hash.getSelectorFromName("transfer_funds");
+
+      const calldata = [transferRecipient, transferAmount];
+
+      const txIdResponse = await contract.hash_transaction(
+        deployedContractData.address,
+        selector,
+        calldata,
+        salt
+      );
+
+      await contract.submit_transaction(
+        deployedContractData.address,
+        selector,
+        calldata,
+        salt
+      );
+
+      const txIdString = txIdResponse.toString();
+
+      setTransactionDetails((prev) => ({
+        ...prev,
+        [txIdString]: {
+          id: txIdString,
+          to: deployedContractData.address,
+          selector: selector,
+          calldata: calldata,
+          salt: salt,
+          confirmations: 1,
+          executed: false,
+          submittedBy: account.address,
+          submittedBlock: "pending",
+        },
+      }));
+
+      notification.success(`Transfer transaction submitted. ID: ${txIdString}`);
+
+      setTransferRecipient("");
+      setTransferAmount("");
+
+      await Promise.all([loadSigners(), loadTransactions()]);
+    } catch (err: any) {
+      console.error("Error creating transfer transaction:", err);
+      notification.error(err.message || "Error creating transfer transaction");
     } finally {
       setLoading(false);
     }
@@ -560,7 +635,7 @@ const MultisigPage = () => {
       : "0x" + account?.address.toLowerCase();
 
     return signersAddresses.some(
-      (address) => address.toLowerCase() === normalizedUserAddress,
+      (address) => address.toLowerCase() === normalizedUserAddress
     );
   };
 
@@ -736,6 +811,43 @@ const MultisigPage = () => {
               </button>
             </div>
           </div>
+          <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+            <h3 className="text-xl font-semibold mb-4">
+              Create Transfer Transaction
+            </h3>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm mb-1">Recipient Address:</label>
+                <input
+                  type="text"
+                  value={transferRecipient || ""}
+                  onChange={(e) => setTransferRecipient(e.target.value)}
+                  placeholder="Enter recipient wallet address"
+                  className="block w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm mb-1">Amount (in wei):</label>
+                <input
+                  type="text"
+                  value={transferAmount || ""}
+                  onChange={(e) => setTransferAmount(e.target.value)}
+                  placeholder="Enter amount to transfer"
+                  className="block w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <button
+                onClick={createTransferTransaction}
+                disabled={loading || !account || !deployedContractData}
+                className="w-full rounded-md py-2 font-medium bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
+              >
+                {loading ? "Processing..." : "Create Transfer Transaction"}
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="space-y-6">
@@ -810,7 +922,7 @@ const MultisigPage = () => {
                               size={16}
                             />{" "}
                             {formatAddress(
-                              convertFeltToAddress(tx.submittedBy),
+                              convertFeltToAddress(tx.submittedBy)
                             )}
                           </span>
                         </div>
@@ -909,14 +1021,14 @@ const MultisigPage = () => {
                             <div className="flex items-center gap-1.5">
                               <BlockieAvatar
                                 address={convertFeltToAddress(
-                                  event.args.signer.toString(),
+                                  event.args.signer.toString()
                                 )}
                                 size={16}
                               />
                               {formatAddress(
                                 convertFeltToAddress(
-                                  event.args.signer.toString(),
-                                ),
+                                  event.args.signer.toString()
+                                )
                               )}
                             </div>
                           </div>
@@ -951,14 +1063,14 @@ const MultisigPage = () => {
                             <div className="flex items-center gap-1.5">
                               <BlockieAvatar
                                 address={convertFeltToAddress(
-                                  event.args.signer.toString(),
+                                  event.args.signer.toString()
                                 )}
                                 size={16}
                               />
                               {formatAddress(
                                 convertFeltToAddress(
-                                  event.args.signer.toString(),
-                                ),
+                                  event.args.signer.toString()
+                                )
                               )}
                             </div>
                           </div>

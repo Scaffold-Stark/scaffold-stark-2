@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     CustomMultisigWallet: {
       address:
-        "0x7b57cc02f916ddbb2df2899d7350916b26df5a5086c4f017ea3060703a1f90e",
+        "0x1bc2302ad3b3f31017e1114f638a4cf6a155d4cc144e0ceea20a363d9be9c9f",
       abi: [
         {
           type: "impl",
