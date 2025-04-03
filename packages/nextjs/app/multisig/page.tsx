@@ -43,6 +43,17 @@ const convertFeltToAddress = (felt: string) => {
   return hexString;
 };
 
+const convertSelectorToFuncName = (text: string) => {
+  switch (text) {
+    case "0x5c587631625b8e19617cebe376ee17e070ca15615606aaad48d9afae7823ad":
+      return "add_signer";
+    case "0x1b266621d7e8d679991575aa72fe52af4e5e336d71013f0de37be2802b34bc6":
+      return "remove_signers";
+    default:
+      return null;
+  }
+};
+
 const MultisigPage = () => {
   const { account } = useAccount();
   const { data: deployedContractData } = useDeployedContractInfo(
@@ -78,7 +89,7 @@ const MultisigPage = () => {
     fromBlock: 0n,
     watch: true,
   });
-
+  console.log(submittedTxEvents, "submittedTxEventssubmittedTxEvents");
   const { data: confirmedTxEvents } = useScaffoldEventHistory({
     contractName: "CustomMultisigWallet",
     eventName:
@@ -589,7 +600,7 @@ const MultisigPage = () => {
   }, [account, deployedContractData]);
 
   return (
-    <section className="max-w-screen-2xl mx-auto mt-8 px-4 pb-12">
+    <section className="max-w-screen-2xl w-full mx-auto mt-8 px-4 pb-12">
       <h1 className="text-2xl font-bold mb-6">Multisig Wallet</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -608,7 +619,7 @@ const MultisigPage = () => {
                     }}
                   >
                     <span className="font-mono text-xs ml-2 break-all cursor-pointer">
-                      {deployedContractData.address}
+                      {formatAddress(deployedContractData.address)}
                     </span>
                   </CopyToClipboard>
                 </div>
@@ -635,7 +646,7 @@ const MultisigPage = () => {
                       className="text-sm p-2 rounded bg-gray-700 flex justify-between items-center"
                     >
                       <span className="font-mono break-all">
-                        {convertFeltToAddress(address)}
+                        {formatAddress(convertFeltToAddress(address))}
                       </span>
                       {address === account?.address && (
                         <span className="text-xs bg-blue-600 px-2 py-1 rounded ml-2">
@@ -742,98 +753,104 @@ const MultisigPage = () => {
               <div className="text-gray-400 my-4">No transactions found</div>
             ) : (
               <div className="space-y-3 max-h-96 overflow-y-auto">
-                {transactions.map((tx) => (
-                  <div
-                    key={tx.id}
-                    className={`p-3 rounded ${selectedTxId === tx.id ? "bg-blue-900" : "bg-gray-700"} cursor-pointer hover:bg-gray-600`}
-                    onClick={() => handleTxSelect(tx.id)}
-                  >
-                    <div className="flex justify-between items-center mb-2">
-                      <div>
-                        <span className="font-medium">
-                          ID: {formatAddress(tx.id)}
-                        </span>{" "}
-                        <span>
-                          <CopyToClipboard
-                            text={tx.id}
-                            onCopy={() => {
-                              notification.success("Copy successfully!");
-                            }}
-                          >
-                            <button className="bg-gray-800 rounded-xl px-2 py-1 text-[10px]">
-                              Copy
-                            </button>
-                          </CopyToClipboard>
+                {transactions.map((tx) => {
+                  return (
+                    <div
+                      key={tx.id}
+                      className={`p-3 rounded ${selectedTxId === tx.id ? "bg-blue-900" : "bg-gray-700"} cursor-pointer hover:bg-gray-600`}
+                      onClick={() => handleTxSelect(tx.id)}
+                    >
+                      <div className="flex justify-between items-center mb-2">
+                        <div>
+                          <span className="font-medium">
+                            ID: {formatAddress(tx.id)}
+                          </span>{" "}
+                          <span>
+                            <CopyToClipboard
+                              text={tx.id}
+                              onCopy={() => {
+                                notification.success("Copy successfully!");
+                              }}
+                            >
+                              <button className="bg-gray-800 rounded-xl px-2 py-1 text-[10px]">
+                                Copy
+                              </button>
+                            </CopyToClipboard>
+                          </span>
+                        </div>
+                        <span
+                          className={`text-xs px-2 py-1 rounded ${
+                            tx.executed
+                              ? "bg-green-800"
+                              : tx.confirmations >= signers.length
+                                ? "bg-blue-800"
+                                : "bg-yellow-800"
+                          }`}
+                        >
+                          {tx.executed
+                            ? "Executed"
+                            : `${tx.confirmations}/${signers.length} confirmations`}
                         </span>
                       </div>
-                      <span
-                        className={`text-xs px-2 py-1 rounded ${
-                          tx.executed
-                            ? "bg-green-800"
-                            : tx.confirmations >= signers.length
-                              ? "bg-blue-800"
-                              : "bg-yellow-800"
-                        }`}
-                      >
-                        {tx.executed
-                          ? "Executed"
-                          : `${tx.confirmations}/${signers.length} confirmations`}
-                      </span>
-                    </div>
 
-                    <div className="text-xs text-gray-300 space-y-1">
-                      <div>To: {formatAddress(tx.to)}</div>
-                      <div>
-                        Submitted by:{" "}
-                        {formatAddress(convertFeltToAddress(tx.submittedBy))}
-                      </div>
-                      <div>Block: {tx.submittedBlock}</div>
-                    </div>
-
-                    {selectedTxId === tx.id &&
-                      !tx.executed &&
-                      isUserSigner() && (
-                        <div className="mt-3 flex space-x-2">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              confirmTransaction(tx.id);
-                            }}
-                            disabled={loading}
-                            className="flex-1 py-1 text-xs rounded bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
-                          >
-                            Confirm
-                          </button>
-
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              revokeConfirmation(tx.id);
-                            }}
-                            disabled={loading || !hasUserConfirmed(tx)}
-                            className="flex-1 py-1 text-xs rounded bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
-                          >
-                            Revoke
-                          </button>
-
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              executeTransaction(tx.id);
-                            }}
-                            disabled={
-                              loading || tx.confirmations < signers.length
-                            }
-                            className="flex-1 py-1 text-xs rounded bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
-                          >
-                            {tx.confirmations >= signers.length
-                              ? "Execute"
-                              : "Need All Confirmations"}
-                          </button>
+                      <div className="text-xs text-gray-300 space-y-1">
+                        <div>To: {formatAddress(tx.to)}</div>
+                        <div>
+                          Submitted by:{" "}
+                          {formatAddress(convertFeltToAddress(tx.submittedBy))}
                         </div>
-                      )}
-                  </div>
-                ))}
+                        <div>Block: {tx.submittedBlock}</div>
+                        <div>
+                          Function Name:{" "}
+                          {convertSelectorToFuncName(tx.selector)}
+                        </div>
+                      </div>
+
+                      {selectedTxId === tx.id &&
+                        !tx.executed &&
+                        isUserSigner() && (
+                          <div className="mt-3 flex space-x-2">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                confirmTransaction(tx.id);
+                              }}
+                              disabled={loading}
+                              className="flex-1 py-1 text-xs rounded bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                            >
+                              Confirm
+                            </button>
+
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                revokeConfirmation(tx.id);
+                              }}
+                              disabled={loading || !hasUserConfirmed(tx)}
+                              className="flex-1 py-1 text-xs rounded bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                            >
+                              Revoke
+                            </button>
+
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                executeTransaction(tx.id);
+                              }}
+                              disabled={
+                                loading || tx.confirmations < signers.length
+                              }
+                              className="flex-1 py-1 text-xs rounded bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                            >
+                              {tx.confirmations >= signers.length
+                                ? "Execute"
+                                : "Need All Confirmations"}
+                            </button>
+                          </div>
+                        )}
+                    </div>
+                  );
+                })}
               </div>
             )}
 
@@ -874,7 +891,11 @@ const MultisigPage = () => {
                           </div>
                           <div className="text-xs text-gray-400">
                             By:{" "}
-                            {convertFeltToAddress(event.args.signer.toString())}
+                            {formatAddress(
+                              convertFeltToAddress(
+                                event.args.signer.toString(),
+                              ),
+                            )}
                           </div>
                         </div>
                       </div>
@@ -904,7 +925,11 @@ const MultisigPage = () => {
                           </div>
                           <div className="text-xs text-gray-400">
                             By:{" "}
-                            {convertFeltToAddress(event.args.signer.toString())}
+                            {formatAddress(
+                              convertFeltToAddress(
+                                event.args.signer.toString(),
+                              ),
+                            )}
                           </div>
                         </div>
                       </div>
