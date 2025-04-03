@@ -114,7 +114,9 @@ export const WriteOnlyFunctionForm = ({
     hash: result?.transaction_hash,
   });
   useEffect(() => {
-    setDisplayedTxResult(txResult as InvokeTransactionReceiptResponse);
+    setDisplayedTxResult(
+      txResult as unknown as InvokeTransactionReceiptResponse,
+    );
   }, [txResult]);
 
   // TODO use `useMemo` to optimize also update in ReadOnlyFunctionForm
