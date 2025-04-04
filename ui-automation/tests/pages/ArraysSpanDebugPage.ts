@@ -346,6 +346,11 @@ export class ArraysSpansDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Tests array operations with felt252 type values
+   * Creates an array with two felt252 values and verifies the result
+   * @returns TestResult with success status and actual value
+   */
   async testGetArrayFelt252(): Promise<TestResult> {
     try {
       const config = this.inputConfigs.getArrayFelt252;
@@ -393,6 +398,11 @@ export class ArraysSpansDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Tests array operations with ContractAddress type values
+   * Creates an array with a contract address and verifies the result
+   * @returns TestResult with success status and actual value
+   */
   async testGetArrayContractAddress(): Promise<TestResult> {
     try {
       const config = this.inputConfigs.getArrayContractAddress;
@@ -485,6 +495,11 @@ export class ArraysSpansDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Tests complex array operations with nested structs
+   * Creates an array with a nested struct containing multiple fields
+   * @returns TestResult with success status and actual value
+   */
   async testGetArrayNestedStruct(): Promise<TestResult> {
     try {
       const config = this.inputConfigs.getArrayNestedStruct;
@@ -619,6 +634,11 @@ export class ArraysSpansDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Tests deep nested structures with 4 layers of nesting
+   * Creates a deeply nested structure and verifies the result
+   * @returns TestResult with success status and actual value
+   */
   async testGetArrayStructFourLayer(): Promise<TestResult> {
     try {
       const config = this.inputConfigs.getArrayStrucFourLayer;
@@ -677,6 +697,11 @@ export class ArraysSpansDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Tests Span type with felt252 values
+   * Creates a span with two felt252 values and verifies the result
+   * @returns TestResult with success status and actual value
+   */
   async testGetSpanFelt252(): Promise<TestResult> {
     try {
       const config = this.inputConfigs.getSpanFelt252;

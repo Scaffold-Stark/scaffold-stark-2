@@ -12,6 +12,10 @@ const BURNER_WALLET_SHORT = "0x64b4...5691";
 const CONTRACT_ADDRESS =
   "0x04718f5a0Fc34cC1AF16A1cdee98fFB20C31f5cD61D6Ab07201858f4287c938D";
 
+/**
+ * End-to-end test for STRK token functionality
+ * Tests balance checking, allowance setting, and token transfers with a Burner Wallet
+ */
 test("STRK Token Complete Interaction Flow", async ({ page }) => {
   test.setTimeout(120000);
   const testTimestamp = Date.now();
@@ -31,10 +35,7 @@ test("STRK Token Complete Interaction Flow", async ({ page }) => {
       errorLogs.push(navErr);
       console.error(`[${testId}] Navigation failed:`, navErr.message);
 
-      test.fail(
-        true,
-        `Navigation failed: ${getErrorMessage(error)}`
-      );
+      test.fail(true, `Navigation failed: ${getErrorMessage(error)}`);
       return;
     }
 
@@ -59,10 +60,7 @@ test("STRK Token Complete Interaction Flow", async ({ page }) => {
       errorLogs.push(walletErr);
       console.error(`[${testId}] Wallet connection failed:`, walletErr.message);
 
-      test.fail(
-        true,
-        `Wallet connection failed: ${getErrorMessage(error)}`
-      );
+      test.fail(true, `Wallet connection failed: ${getErrorMessage(error)}`);
       return;
     }
 
@@ -93,18 +91,18 @@ test("STRK Token Complete Interaction Flow", async ({ page }) => {
     );
     try {
       console.log(`[${testId}] Switching to Strk tab and checking balance...`);
-      
+
       try {
         await debugPage.switchToStrkTab();
       } catch (error) {
         const tabErr = await captureError(page, error, "STRK Tab Check");
         errorLogs.push(tabErr);
         console.error(`[${testId}] STRK tab not found:`, tabErr.message);
-        
+
         test.fail(true, `STRK tab not found: ${getErrorMessage(error)}`);
         return; // Exit test if tab is not found
       }
-      
+
       await debugPage.fillBalanceOfInput(BURNER_WALLET_ACCOUNT);
       await debugPage.clickBalanceOfReadButton();
       await page.waitForTimeout(1000);
@@ -344,9 +342,6 @@ test("STRK Token Complete Interaction Flow", async ({ page }) => {
       generalErr.message
     );
 
-    test.fail(
-      true,
-      `Unexpected test failure: ${getErrorMessage(error)}`
-    );
+    test.fail(true, `Unexpected test failure: ${getErrorMessage(error)}`);
   }
 });

@@ -4,12 +4,12 @@ import { navigateAndWait } from "./utils/navigate";
 import { endpoint } from "./configTypes";
 import { captureError } from "./utils/error-handler";
 
-const burnerAccounts = [
-  "0x64b4...5691",
-  "0xd513...5cb5",
-  "0x4b3f...5ee1",
-];
+const burnerAccounts = ["0x64b4...5691", "0xd513...5cb5", "0x4b3f...5ee1"];
 
+/**
+ * Tests connecting to the dApp with different Burner Wallet accounts
+ * Iterates through predefined accounts and verifies successful connection for each
+ */
 for (const account of burnerAccounts) {
   test(`Connect with Burner Wallet account: ${account}`, async ({ page }) => {
     test.setTimeout(60000);
@@ -62,6 +62,10 @@ for (const account of burnerAccounts) {
   });
 }
 
+/**
+ * Tests connecting to the dApp with Argent X wallet
+ * Verifies the wallet extension is detected and connection dialog appears
+ */
 test("Connect with Argent X wallet", async ({ page }) => {
   test.setTimeout(60000);
   const testTimestamp = Date.now();
@@ -118,6 +122,10 @@ test("Connect with Argent X wallet", async ({ page }) => {
   }
 });
 
+/**
+ * Tests connecting to the dApp with Braavos wallet
+ * Verifies the wallet extension is detected and connection dialog appears
+ */
 test("Connect with Braavos wallet", async ({ page }) => {
   test.setTimeout(60000);
   const testTimestamp = Date.now();
@@ -174,6 +182,11 @@ test("Connect with Braavos wallet", async ({ page }) => {
   }
 });
 
+/**
+ * Verifies all wallet connection options are available
+ * Checks that Argent X, Braavos, and Burner Wallet options are visible
+ * Also verifies all predefined Burner accounts are displayed after selecting Burner Wallet
+ */
 test("Verify all wallet options and Burner accounts are visible", async ({
   page,
 }) => {

@@ -8,6 +8,10 @@ import { getErrorMessage } from "./utils/helper";
 
 const BURNER_WALLET_SHORT = "0x64b4...5691";
 
+/**
+ * End-to-end test for the ArraysSpan Debug Page functionality
+ * Tests all array and span data types with proper error handling and reporting
+ */
 test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
   test.setTimeout(180000);
   const testTimestamp = Date.now();
@@ -34,10 +38,7 @@ test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
       const walletErr = await captureError(page, error, "Wallet Connection");
       errorLogs.push(walletErr);
 
-      test.fail(
-        true,
-        `Wallet connection failed: ${getErrorMessage(error)}`
-      );
+      test.fail(true, `Wallet connection failed: ${getErrorMessage(error)}`);
       return;
     }
 
@@ -65,7 +66,7 @@ test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
     } catch (error) {
       const tabErr = await captureError(page, error, "Tab Switch");
       errorLogs.push(tabErr);
-      
+
       const errorMessage = getErrorMessage(error);
       if (errorMessage.includes("ArraysSpans tab not found")) {
         console.error(`[${testId}] ArraysSpans tab not found:`, errorMessage);
@@ -194,9 +195,6 @@ test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
     );
     errorLogs.push(generalErr);
 
-    test.fail(
-      true,
-      `Unexpected test failure: ${getErrorMessage(error)}`
-    );
+    test.fail(true, `Unexpected test failure: ${getErrorMessage(error)}`);
   }
 });

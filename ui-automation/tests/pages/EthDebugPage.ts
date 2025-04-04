@@ -210,6 +210,12 @@ export class EthDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Performs a complete token transfer operation
+   * @param recipientAddress The recipient address
+   * @param amount The amount to transfer
+   * @returns Object indicating success or failure with details
+   */
   async performTransfer(recipientAddress: string, amount: string) {
     try {
       console.log(`Starting ETH transfer of ${amount} to ${recipientAddress}`);
@@ -245,6 +251,11 @@ export class EthDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Performs a complete balance check operation
+   * @param address The address to check balance for
+   * @returns Object with balance or error details
+   */
   async checkBalance(address: string) {
     try {
       console.log(`Checking ETH balance for address: ${address}`);
@@ -266,6 +277,15 @@ export class EthDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Tests the approve and allowance check functionality
+   * Sets an allowance and then verifies it was set correctly
+   * @param amount The allowance amount to set
+   * @param spenderAddress The spender address for approval
+   * @param allowOwnerAddress The owner address for allowance check
+   * @param allowSpenderAddress The spender address for allowance check
+   * @returns Object with allowance value or error details
+   */
   async checkAllowance(
     amount: string,
     spenderAddress: string,

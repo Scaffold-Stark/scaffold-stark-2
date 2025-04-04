@@ -8,17 +8,23 @@ import { getErrorMessage } from "./utils/helper";
 
 const BURNER_WALLET_SHORT = "0x64b4...5691";
 
+/**
+ * End-to-end test for Structs Debug Page functionality
+ * Tests various struct types, nested structs, enums, and complex data structures
+ */
 test("Structs Debug Page Interaction Flow", async ({ page }) => {
   test.setTimeout(150000);
   const testTimestamp = Date.now();
   const testId = `structs-debug-${testTimestamp}`;
-  
+
   const testResults = [];
   const errorLogs = [];
 
   try {
-    console.log(`[${testId}] Starting test: Structs Debug Page Interaction Flow`);
-    
+    console.log(
+      `[${testId}] Starting test: Structs Debug Page Interaction Flow`
+    );
+
     try {
       await navigateAndWait(page, endpoint.BASE_URL);
       console.log(`[${testId}] Successfully navigated to ${endpoint.BASE_URL}`);
@@ -26,11 +32,11 @@ test("Structs Debug Page Interaction Flow", async ({ page }) => {
       const navErr = await captureError(page, error, "Navigation");
       errorLogs.push(navErr);
       console.error(`[${testId}] Navigation failed:`, navErr.message);
-      
+
       test.fail(true, `Navigation failed: ${getErrorMessage(error)}`);
       return;
     }
-    
+
     const homePage = new HomePage(page);
 
     try {
@@ -42,13 +48,15 @@ test("Structs Debug Page Interaction Flow", async ({ page }) => {
       await page.waitForTimeout(500);
       await accountButton.click({ force: true, timeout: 5000 });
       await page.waitForTimeout(1000);
-      
-      console.log(`[${testId}] Successfully connected to wallet: ${BURNER_WALLET_SHORT}`);
+
+      console.log(
+        `[${testId}] Successfully connected to wallet: ${BURNER_WALLET_SHORT}`
+      );
     } catch (error) {
       const walletErr = await captureError(page, error, "Wallet Connection");
       errorLogs.push(walletErr);
       console.error(`[${testId}] Wallet connection failed:`, walletErr.message);
-      
+
       test.fail(true, `Wallet connection failed: ${getErrorMessage(error)}`);
       return;
     }
@@ -60,9 +68,15 @@ test("Structs Debug Page Interaction Flow", async ({ page }) => {
     } catch (error) {
       const debugErr = await captureError(page, error, "Debug Page Navigation");
       errorLogs.push(debugErr);
-      console.error(`[${testId}] Debug page navigation failed:`, debugErr.message);
-      
-      test.fail(true, `Debug page navigation failed: ${getErrorMessage(error)}`);
+      console.error(
+        `[${testId}] Debug page navigation failed:`,
+        debugErr.message
+      );
+
+      test.fail(
+        true,
+        `Debug page navigation failed: ${getErrorMessage(error)}`
+      );
       return;
     }
 
@@ -75,9 +89,15 @@ test("Structs Debug Page Interaction Flow", async ({ page }) => {
     } catch (error) {
       const tabErr = await captureError(page, error, "Tab Switch");
       errorLogs.push(tabErr);
-      console.error(`[${testId}] Failed to switch to Structs tab:`, tabErr.message);
-      
-      test.fail(true, `Failed to switch to Structs tab: ${getErrorMessage(error)}`);
+      console.error(
+        `[${testId}] Failed to switch to Structs tab:`,
+        tabErr.message
+      );
+
+      test.fail(
+        true,
+        `Failed to switch to Structs tab: ${getErrorMessage(error)}`
+      );
       return; // Exit test immediately if tab is not found
     }
 
@@ -93,8 +113,10 @@ test("Structs Debug Page Interaction Flow", async ({ page }) => {
       }
     );
 
-    console.log(`[${testId}] SampleStruct test result:`, 
-      sampleStruct.success ? "SUCCESS" : `FAILED: ${sampleStruct.error}`);
+    console.log(
+      `[${testId}] SampleStruct test result:`,
+      sampleStruct.success ? "SUCCESS" : `FAILED: ${sampleStruct.error}`
+    );
     testResults.push(sampleStruct);
 
     console.log(`[${testId}] Starting NestedStruct test`);
@@ -114,8 +136,10 @@ test("Structs Debug Page Interaction Flow", async ({ page }) => {
       }
     );
 
-    console.log(`[${testId}] NestedStruct test result:`, 
-      nestedStruct.success ? "SUCCESS" : `FAILED: ${nestedStruct.error}`);
+    console.log(
+      `[${testId}] NestedStruct test result:`,
+      nestedStruct.success ? "SUCCESS" : `FAILED: ${nestedStruct.error}`
+    );
     testResults.push(nestedStruct);
 
     console.log(`[${testId}] Starting SampleEnum test`);
@@ -123,8 +147,10 @@ test("Structs Debug Page Interaction Flow", async ({ page }) => {
       enum1: "2",
     });
 
-    console.log(`[${testId}] SampleEnum test result:`, 
-      sampleEnum.success ? "SUCCESS" : `FAILED: ${sampleEnum.error}`);
+    console.log(
+      `[${testId}] SampleEnum test result:`,
+      sampleEnum.success ? "SUCCESS" : `FAILED: ${sampleEnum.error}`
+    );
     testResults.push(sampleEnum);
 
     console.log(`[${testId}] Starting StructFiveElement test`);
@@ -140,8 +166,12 @@ test("Structs Debug Page Interaction Flow", async ({ page }) => {
       }
     );
 
-    console.log(`[${testId}] StructFiveElement test result:`, 
-      structFiveElement.success ? "SUCCESS" : `FAILED: ${structFiveElement.error}`);
+    console.log(
+      `[${testId}] StructFiveElement test result:`,
+      structFiveElement.success
+        ? "SUCCESS"
+        : `FAILED: ${structFiveElement.error}`
+    );
     testResults.push(structFiveElement);
 
     console.log(`[${testId}] Starting StructFourLayer test`);
@@ -150,8 +180,10 @@ test("Structs Debug Page Interaction Flow", async ({ page }) => {
       "9000000000000000000"
     );
 
-    console.log(`[${testId}] StructFourLayer test result:`, 
-      structFourLayer.success ? "SUCCESS" : `FAILED: ${structFourLayer.error}`);
+    console.log(
+      `[${testId}] StructFourLayer test result:`,
+      structFourLayer.success ? "SUCCESS" : `FAILED: ${structFourLayer.error}`
+    );
     testResults.push(structFourLayer);
 
     const failedTests = testResults.filter((test) => !test.success);
@@ -159,25 +191,37 @@ test("Structs Debug Page Interaction Flow", async ({ page }) => {
     if (failedTests.length > 0) {
       const formattedResults = formatTestResults(testResults);
       console.error(`[${testId}] TEST SUMMARY:\n${formattedResults}`);
-      
-      
+
       const failedTestNames = failedTests.map((test) => test.name).join(", ");
       const errorMessage = `${failedTests.length}/${testResults.length} tests failed: ${failedTestNames}`;
-      
+
       const details = failedTests
-        .map((test) => `${test.name}: ${test.error || 'Unknown error'}\nDetails: ${JSON.stringify(test.details)}`)
+        .map(
+          (test) =>
+            `${test.name}: ${test.error || "Unknown error"}\nDetails: ${JSON.stringify(test.details)}`
+        )
         .join("\n\n");
-      
+
       console.error(`[${testId}] DETAILED TEST FAILURES:\n${details}`);
-      test.fail(true, `${errorMessage}\n\nSee logs for details or check screenshot: ${testId}-test-failures.png`);
+      test.fail(
+        true,
+        `${errorMessage}\n\nSee logs for details or check screenshot: ${testId}-test-failures.png`
+      );
     } else {
       console.log(`[${testId}] All tests passed successfully!`);
     }
   } catch (error) {
-    const generalErr = await captureError(page, error, "General Test Execution");
+    const generalErr = await captureError(
+      page,
+      error,
+      "General Test Execution"
+    );
     errorLogs.push(generalErr);
-    console.error(`[${testId}] Test execution failed with unexpected error:`, generalErr.message);
-    
+    console.error(
+      `[${testId}] Test execution failed with unexpected error:`,
+      generalErr.message
+    );
+
     test.fail(true, `Unexpected test failure: ${getErrorMessage(error)}`);
   }
 });

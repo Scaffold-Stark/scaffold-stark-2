@@ -8,20 +8,41 @@ export class BasePage {
     this.page = page;
   }
 
+  /**
+   * Gets the main wallet connect button
+   * @returns Locator for the connect button element
+   */
   getConnectButton() {
     return this.page
       .locator('label[for="connect-modal"]')
       .filter({ hasText: /^Connect$/ });
   }
 
+  /**
+   * Gets a specific wallet connector button by name
+   * @param connector The name of the wallet connector (e.g., "Burner Wallet")
+   * @returns Locator for the specific connector button
+   */
   getConnecterButton(connector: string) {
     return this.page.locator(`button:has-text("${connector}")`);
   }
 
+  /**
+   * Gets a specific account selection button by name
+   * @param account The account identifier to select
+   * @returns Locator for the account button
+   */
   getAccountButton(account: string) {
     return this.page.locator(`button:has-text("${account}")`);
   }
 
+  /**
+   * Performs an action with error handling and optional screenshot capture
+   * @param action The async function to execute safely
+   * @param context Description of the action for error reporting
+   * @param screenshot Whether to capture a screenshot on error (default: true)
+   * @returns Promise of the action result
+   */
   async safeAction<T>(
     action: () => Promise<T>,
     context: string,
@@ -38,6 +59,12 @@ export class BasePage {
     }
   }
 
+  /**
+   * Gets text content from an element with error handling
+   * @param locator The element to get text from
+   * @param context Description for error reporting
+   * @returns Promise with the element's text content
+   */
   async safeGetText(locator: Locator, context: string): Promise<string> {
     return this.safeAction(
       async () => (await locator.textContent()) || "",
@@ -45,6 +72,12 @@ export class BasePage {
     );
   }
 
+  /**
+   * Fills an input field with a value, with scroll and error handling
+   * @param locator The input element to fill
+   * @param value The value to enter
+   * @param context Description for error reporting
+   */
   async safeFill(
     locator: Locator,
     value: string,
@@ -56,6 +89,12 @@ export class BasePage {
     }, `Fill ${context} with "${value}"`);
   }
 
+  /**
+   * Clicks an element with scroll and wait timing, plus error handling
+   * @param locator The element to click
+   * @param context Description for error reporting
+   * @param options Optional Playwright click options
+   */
   async safeClick(
     locator: Locator,
     context: string,
@@ -69,6 +108,11 @@ export class BasePage {
     }, `Click ${context}`);
   }
 
+  /**
+   * Connects to a wallet using the specified account
+   * @param account The account to connect with
+   * @returns Promise<boolean> indicating success or failure
+   */
   async connectWallet(account: string): Promise<boolean> {
     try {
       const connectButton = await this.getConnectButton();
@@ -98,6 +142,10 @@ export class BasePage {
     }
   }
 
+  /**
+   * Gets the Debug Contracts link button
+   * @returns Locator for the Debug Contracts link
+   */
   getDebugPageLinkButton() {
     return this.page.locator("a", {
       hasText: "Debug Contracts",

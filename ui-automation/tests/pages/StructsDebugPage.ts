@@ -88,7 +88,7 @@ export class StructsDebugPage extends BasePage {
         ),
         valueInput: this.page.getByText("enumenum1u256∗enum2u256∗").nth(3),
         valueEnum1Input: this.page.getByRole("textbox", { name: "u256 enum1" }),
-        sendButton: this.page.getByTestId('btn-set_sample_enum_with_key'),
+        sendButton: this.page.getByTestId("btn-set_sample_enum_with_key"),
         readValueInput: this.page.locator(
           'input[name="get_sample_enum_with_key_key_core\\:\\:felt252"]'
         ),
@@ -115,7 +115,9 @@ export class StructsDebugPage extends BasePage {
           }),
           element5: this.page.getByRole("textbox", { name: "bool element5" }),
         },
-        sendButton: this.page.getByTestId('btn-set_struct_with_five_elements_with_key'),
+        sendButton: this.page.getByTestId(
+          "btn-set_struct_with_five_elements_with_key"
+        ),
         readValueInput: this.page.locator(
           'input[name="get_struct_with_five_elements_with_key_key_core\\:\\:felt252"]'
         ),
@@ -147,7 +149,9 @@ export class StructsDebugPage extends BasePage {
         sendValueInput: this.page.getByRole("textbox", {
           name: "u256 layer1_element",
         }),
-        sendButton: this.page.getByTestId('btn-set_struct_with_4_layers_with_key'),
+        sendButton: this.page.getByTestId(
+          "btn-set_struct_with_4_layers_with_key"
+        ),
         readButton: this.page.getByTestId(
           "btn-get_struct_with_4_layers_with_key"
         ),
@@ -181,37 +185,58 @@ export class StructsDebugPage extends BasePage {
     await this.safeClick(this.writeTab, "Write tab");
   }
 
-  async isTransactionCompleted(): Promise<{success: boolean; error?: string}> {
+  /**
+   * Checks if a transaction completed successfully
+   * @returns Object with success status and optional error message
+   */
+  async isTransactionCompleted(): Promise<{
+    success: boolean;
+    error?: string;
+  }> {
     try {
       const toastVisible = await this.transaction_completed
         .isVisible({ timeout: 1000 })
         .catch((e) => {
-          console.warn("Toast visibility check failed:", e instanceof Error ? e.message : String(e));
+          console.warn(
+            "Toast visibility check failed:",
+            e instanceof Error ? e.message : String(e)
+          );
           return false;
         });
-        
-      if (toastVisible) return {success: true};
+
+      if (toastVisible) return { success: true };
 
       await this.page.waitForTimeout(2000);
-      
+
       const errorLocator = this.page.getByText(/error|failed|failure/i);
       const errorVisible = await errorLocator.isVisible().catch((e) => {
-        console.warn("Error check failed:", e instanceof Error ? e.message : String(e));
+        console.warn(
+          "Error check failed:",
+          e instanceof Error ? e.message : String(e)
+        );
         return false;
       });
-      
+
       if (errorVisible) {
-        const errorText = await errorLocator.textContent() || "Unknown error";
-        return {success: false, error: `Transaction error: ${errorText}`};
+        const errorText = (await errorLocator.textContent()) || "Unknown error";
+        return { success: false, error: `Transaction error: ${errorText}` };
       }
-      
-      return {success: true};
+
+      return { success: true };
     } catch (error) {
       const errMsg = error instanceof Error ? error.message : String(error);
-      return {success: false, error: `Failed to check transaction status: ${errMsg}`};
+      return {
+        success: false,
+        error: `Failed to check transaction status: ${errMsg}`,
+      };
     }
   }
 
+  /**
+   * Sets and sends a sample struct with the given key and value
+   * @param key The key identifier for the struct
+   * @param value The struct data to set
+   */
   async setAndSendSampleStruct(
     key: string,
     value: { structId: string; name: string; enum: { enum1: string } }
@@ -227,19 +252,31 @@ export class StructsDebugPage extends BasePage {
 
       await this.safeFill(config.structId, value.structId, "Sample struct ID");
       await this.safeFill(config.structName, value.name, "Sample struct name");
-      await this.safeClick(config.structStatus, "Sample struct status dropdown");
-      await this.safeFill(config.structStatusEnum1, value.enum.enum1, "Sample struct enum1");
+      await this.safeClick(
+        config.structStatus,
+        "Sample struct status dropdown"
+      );
+      await this.safeFill(
+        config.structStatusEnum1,
+        value.enum.enum1,
+        "Sample struct enum1"
+      );
       await this.safeClick(config.sendButton, "Send sample struct button");
     } catch (error) {
       await captureError(
-        this.page, 
-        error, 
+        this.page,
+        error,
         `setAndSendSampleStruct with key=${key}, value=${JSON.stringify(value)}`
       );
       throw error;
     }
   }
 
+  /**
+   * Reads a sample struct value by key
+   * @param key The key to look up
+   * @returns Promise with the struct value as string
+   */
   async readSampleStruct(key: string): Promise<string> {
     try {
       await this.switchToReadTab();
@@ -247,11 +284,18 @@ export class StructsDebugPage extends BasePage {
 
       const config = this.inputConfigs.struct;
       await this.scrollToElement(config.readValueInput);
-      await this.safeFill(config.readValueInput, key, `Sample struct read key (${key})`);
+      await this.safeFill(
+        config.readValueInput,
+        key,
+        `Sample struct read key (${key})`
+      );
       await this.safeClick(config.readButton, "Read sample struct button");
 
       await this.page.waitForTimeout(1000);
-      const resultText = await this.safeGetText(config.readResultValue, "Sample struct result");
+      const resultText = await this.safeGetText(
+        config.readResultValue,
+        "Sample struct result"
+      );
       return resultText;
     } catch (error) {
       await captureError(this.page, error, `readSampleStruct with key=${key}`);
@@ -259,6 +303,11 @@ export class StructsDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Sets and sends a nested struct with the given key and complex value
+   * @param key The key identifier for the nested struct
+   * @param value The nested struct data to set
+   */
   async setAndSendNestedStruct(
     key: string,
     value: {
@@ -280,27 +329,58 @@ export class StructsDebugPage extends BasePage {
       await this.safeFill(config.keyInput, key, `Nested struct key (${key})`);
       await this.safeClick(config.valueInput, "Nested struct value dropdown");
 
-      await this.safeFill(config.structContractAddressUser, value.structUserContractAddress, "Nested struct contract address");
+      await this.safeFill(
+        config.structContractAddressUser,
+        value.structUserContractAddress,
+        "Nested struct contract address"
+      );
       await this.safeClick(config.structData, "Nested struct data dropdown");
 
       const dataValue = config.structDataValue;
-      await this.safeFill(dataValue.structDataId, value.structDataValue.structDataId, "Nested struct data ID");
-      await this.safeFill(dataValue.structDataName, value.structDataValue.structDataName, "Nested struct data name");
-      await this.safeClick(dataValue.structDataStatus, "Nested struct data status dropdown");
-      await this.safeFill(dataValue.structDataStatusEnum1, value.structDataValue.structDataStatus.enum1, "Nested struct data enum1");
-      await this.safeClick(config.structStatus, "Nested struct status dropdown");
-      await this.safeFill(config.structStatusEnum1, value.structDataStatus.enum1, "Nested struct enum1");
+      await this.safeFill(
+        dataValue.structDataId,
+        value.structDataValue.structDataId,
+        "Nested struct data ID"
+      );
+      await this.safeFill(
+        dataValue.structDataName,
+        value.structDataValue.structDataName,
+        "Nested struct data name"
+      );
+      await this.safeClick(
+        dataValue.structDataStatus,
+        "Nested struct data status dropdown"
+      );
+      await this.safeFill(
+        dataValue.structDataStatusEnum1,
+        value.structDataValue.structDataStatus.enum1,
+        "Nested struct data enum1"
+      );
+      await this.safeClick(
+        config.structStatus,
+        "Nested struct status dropdown"
+      );
+      await this.safeFill(
+        config.structStatusEnum1,
+        value.structDataStatus.enum1,
+        "Nested struct enum1"
+      );
       await this.safeClick(config.sendButton, "Send nested struct button");
     } catch (error) {
       await captureError(
-        this.page, 
-        error, 
+        this.page,
+        error,
         `setAndSendNestedStruct with key=${key}, value=${JSON.stringify(value)}`
       );
       throw error;
     }
   }
 
+  /**
+   * Reads a nested struct value by key
+   * @param key The key to look up
+   * @returns Promise with the nested struct value as string
+   */
   async readNestedStruct(key: string): Promise<string> {
     try {
       await this.switchToReadTab();
@@ -308,11 +388,18 @@ export class StructsDebugPage extends BasePage {
 
       const config = this.inputConfigs.nestedStruct;
       await this.scrollToElement(config.readValueInput);
-      await this.safeFill(config.readValueInput, key, `Nested struct read key (${key})`);
+      await this.safeFill(
+        config.readValueInput,
+        key,
+        `Nested struct read key (${key})`
+      );
       await this.safeClick(config.readButton, "Read nested struct button");
 
       await this.page.waitForTimeout(1000);
-      const resultText = await this.safeGetText(config.readResultValue, "Nested struct result");
+      const resultText = await this.safeGetText(
+        config.readResultValue,
+        "Nested struct result"
+      );
       return resultText;
     } catch (error) {
       await captureError(this.page, error, `readNestedStruct with key=${key}`);
@@ -320,6 +407,11 @@ export class StructsDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Sets and sends an enum value with the given key
+   * @param key The key identifier for the enum
+   * @param value The enum value to set
+   */
   async setAndSendSampleEnum(key: string, value: { enum1: string }) {
     try {
       await this.switchToWriteTab();
@@ -329,18 +421,27 @@ export class StructsDebugPage extends BasePage {
       await this.scrollToElement(config.keyInput);
       await this.safeFill(config.keyInput, key, `Sample enum key (${key})`);
       await this.safeClick(config.valueInput, "Sample enum value dropdown");
-      await this.safeFill(config.valueEnum1Input, value.enum1, "Sample enum enum1");
+      await this.safeFill(
+        config.valueEnum1Input,
+        value.enum1,
+        "Sample enum enum1"
+      );
       await this.safeClick(config.sendButton, "Send sample enum button");
     } catch (error) {
       await captureError(
-        this.page, 
-        error, 
+        this.page,
+        error,
         `setAndSendSampleEnum with key=${key}, value=${JSON.stringify(value)}`
       );
       throw error;
     }
   }
 
+  /**
+   * Reads an enum value by key
+   * @param key The key to look up
+   * @returns Promise with the enum value as string
+   */
   async readSampleEnum(key: string): Promise<string> {
     try {
       await this.switchToReadTab();
@@ -348,11 +449,18 @@ export class StructsDebugPage extends BasePage {
 
       const config = this.inputConfigs.enum;
       await this.scrollToElement(config.readValueInput);
-      await this.safeFill(config.readValueInput, key, `Sample enum read key (${key})`);
+      await this.safeFill(
+        config.readValueInput,
+        key,
+        `Sample enum read key (${key})`
+      );
       await this.safeClick(config.readButton, "Read sample enum button");
 
       await this.page.waitForTimeout(1000);
-      const resultText = await this.safeGetText(config.readResultValue, "Sample enum result");
+      const resultText = await this.safeGetText(
+        config.readResultValue,
+        "Sample enum result"
+      );
       return resultText;
     } catch (error) {
       await captureError(this.page, error, `readSampleEnum with key=${key}`);
@@ -360,6 +468,11 @@ export class StructsDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Sets and sends a struct with five different element types
+   * @param key The key identifier for the struct
+   * @param value Object containing the five elements with different types
+   */
   async setAndSendStructFiveElement(
     key: string,
     value: {
@@ -376,26 +489,61 @@ export class StructsDebugPage extends BasePage {
 
       const config = this.inputConfigs.structFiveElement;
       await this.scrollToElement(config.keyInput);
-      await this.safeFill(config.keyInput, key, `Five element struct key (${key})`);
-      await this.safeClick(config.valueInput, "Five element struct value dropdown");
+      await this.safeFill(
+        config.keyInput,
+        key,
+        `Five element struct key (${key})`
+      );
+      await this.safeClick(
+        config.valueInput,
+        "Five element struct value dropdown"
+      );
 
       const valueConfig = config.value;
-      await this.safeFill(valueConfig.element1, value.element1, "Five element struct element1");
-      await this.safeFill(valueConfig.element2, value.element2, "Five element struct element2");
-      await this.safeFill(valueConfig.element3, value.element3, "Five element struct element3");
-      await this.safeFill(valueConfig.element4, value.element4, "Five element struct element4");
-      await this.safeFill(valueConfig.element5, value.element5, "Five element struct element5");
-      await this.safeClick(config.sendButton, "Send five element struct button");
+      await this.safeFill(
+        valueConfig.element1,
+        value.element1,
+        "Five element struct element1"
+      );
+      await this.safeFill(
+        valueConfig.element2,
+        value.element2,
+        "Five element struct element2"
+      );
+      await this.safeFill(
+        valueConfig.element3,
+        value.element3,
+        "Five element struct element3"
+      );
+      await this.safeFill(
+        valueConfig.element4,
+        value.element4,
+        "Five element struct element4"
+      );
+      await this.safeFill(
+        valueConfig.element5,
+        value.element5,
+        "Five element struct element5"
+      );
+      await this.safeClick(
+        config.sendButton,
+        "Send five element struct button"
+      );
     } catch (error) {
       await captureError(
-        this.page, 
-        error, 
+        this.page,
+        error,
         `setAndSendStructFiveElement with key=${key}, value=${JSON.stringify(value)}`
       );
       throw error;
     }
   }
 
+  /**
+   * Reads a five-element struct value by key
+   * @param key The key to look up
+   * @returns Promise with the struct value as string
+   */
   async readStructFiveElement(key: string): Promise<string> {
     try {
       await this.switchToReadTab();
@@ -403,18 +551,37 @@ export class StructsDebugPage extends BasePage {
 
       const config = this.inputConfigs.structFiveElement;
       await this.scrollToElement(config.readValueInput);
-      await this.safeFill(config.readValueInput, key, `Five element struct read key (${key})`);
-      await this.safeClick(config.readButton, "Read five element struct button");
+      await this.safeFill(
+        config.readValueInput,
+        key,
+        `Five element struct read key (${key})`
+      );
+      await this.safeClick(
+        config.readButton,
+        "Read five element struct button"
+      );
 
       await this.page.waitForTimeout(1000);
-      const resultText = await this.safeGetText(config.readResultValue, "Five element struct result");
+      const resultText = await this.safeGetText(
+        config.readResultValue,
+        "Five element struct result"
+      );
       return resultText;
     } catch (error) {
-      await captureError(this.page, error, `readStructFiveElement with key=${key}`);
+      await captureError(
+        this.page,
+        error,
+        `readStructFiveElement with key=${key}`
+      );
       throw error;
     }
   }
 
+  /**
+   * Sets and sends a deeply nested struct with four layers
+   * @param key The key identifier for the struct
+   * @param value The value to set at the innermost layer
+   */
   async setAndSendStructFourLayer(key: string, value: string) {
     try {
       await this.switchToWriteTab();
@@ -422,23 +589,36 @@ export class StructsDebugPage extends BasePage {
 
       const config = this.inputConfigs.structFourLayer;
       await this.scrollToElement(config.keyInput);
-      await this.safeFill(config.keyInput, key, `Four layer struct key (${key})`);
+      await this.safeFill(
+        config.keyInput,
+        key,
+        `Four layer struct key (${key})`
+      );
       await this.safeClick(config.layer4, "Four layer struct layer4 dropdown");
       await this.safeClick(config.layer3, "Four layer struct layer3 dropdown");
       await this.safeClick(config.layer2, "Four layer struct layer2 dropdown");
       await this.safeClick(config.layer1, "Four layer struct layer1 dropdown");
-      await this.safeFill(config.sendValueInput, value, "Four layer struct value");
+      await this.safeFill(
+        config.sendValueInput,
+        value,
+        "Four layer struct value"
+      );
       await this.safeClick(config.sendButton, "Send four layer struct button");
     } catch (error) {
       await captureError(
-        this.page, 
-        error, 
+        this.page,
+        error,
         `setAndSendStructFourLayer with key=${key}, value=${value}`
       );
       throw error;
     }
   }
 
+  /**
+   * Reads a four-layer struct value by key
+   * @param key The key to look up
+   * @returns Promise with the struct value as string
+   */
   async readStructFourLayer(key: string): Promise<string> {
     try {
       await this.switchToReadTab();
@@ -446,18 +626,35 @@ export class StructsDebugPage extends BasePage {
 
       const config = this.inputConfigs.structFourLayer;
       await this.scrollToElement(config.readValueInput);
-      await this.safeFill(config.readValueInput, key, `Four layer struct read key (${key})`);
+      await this.safeFill(
+        config.readValueInput,
+        key,
+        `Four layer struct read key (${key})`
+      );
       await this.safeClick(config.readButton, "Read four layer struct button");
 
       await this.page.waitForTimeout(1000);
-      const resultText = await this.safeGetText(config.readResultValue, "Four layer struct result");
+      const resultText = await this.safeGetText(
+        config.readResultValue,
+        "Four layer struct result"
+      );
       return resultText;
     } catch (error) {
-      await captureError(this.page, error, `readStructFourLayer with key=${key}`);
+      await captureError(
+        this.page,
+        error,
+        `readStructFourLayer with key=${key}`
+      );
       throw error;
     }
   }
 
+  /**
+   * Complete test for setting and reading a sample struct
+   * @param key The key identifier for the struct
+   * @param value The struct data to test
+   * @returns TestResult with success status and relevant information
+   */
   async testSampleStruct(
     key: string,
     value: { structId: string; name: string; enum: { enum1: string } }
@@ -473,7 +670,7 @@ export class StructsDebugPage extends BasePage {
           actualValue: "",
           error: transactionResult.error || "Transaction failed",
           details: { key, value },
-          name: "SampleStruct"
+          name: "SampleStruct",
         };
       }
 
@@ -481,13 +678,14 @@ export class StructsDebugPage extends BasePage {
       try {
         resultText = await this.readSampleStruct(key);
       } catch (readError) {
-        const readErrorMsg = readError instanceof Error ? readError.message : String(readError);
+        const readErrorMsg =
+          readError instanceof Error ? readError.message : String(readError);
         return {
           success: false,
           actualValue: "",
           error: `Failed to read SampleStruct value after setting: ${readErrorMsg}`,
           details: { key, value },
-          name: "SampleStruct"
+          name: "SampleStruct",
         };
       }
 
@@ -495,22 +693,28 @@ export class StructsDebugPage extends BasePage {
         success: !!resultText,
         actualValue: resultText,
         details: { key, value, actualValue: resultText },
-        name: "SampleStruct"
+        name: "SampleStruct",
       };
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       await captureError(this.page, error, `SampleStruct test with key ${key}`);
-      
+
       return {
         success: false,
         actualValue: "",
         error: `SampleStruct test execution failed: ${errorMsg}`,
         details: { key, value },
-        name: "SampleStruct"
+        name: "SampleStruct",
       };
     }
   }
 
+  /**
+   * Complete test for setting and reading a nested struct
+   * @param key The key identifier for the struct
+   * @param value The nested struct data to test
+   * @returns TestResult with success status and relevant information
+   */
   async testNestedStruct(
     key: string,
     value: {
@@ -534,7 +738,7 @@ export class StructsDebugPage extends BasePage {
           actualValue: "",
           error: transactionResult.error || "Transaction failed",
           details: { key, value },
-          name: "NestedStruct"
+          name: "NestedStruct",
         };
       }
 
@@ -542,13 +746,14 @@ export class StructsDebugPage extends BasePage {
       try {
         resultText = await this.readNestedStruct(key);
       } catch (readError) {
-        const readErrorMsg = readError instanceof Error ? readError.message : String(readError);
+        const readErrorMsg =
+          readError instanceof Error ? readError.message : String(readError);
         return {
           success: false,
           actualValue: "",
           error: `Failed to read NestedStruct value after setting: ${readErrorMsg}`,
           details: { key, value },
-          name: "NestedStruct"
+          name: "NestedStruct",
         };
       }
 
@@ -556,22 +761,28 @@ export class StructsDebugPage extends BasePage {
         success: !!resultText,
         actualValue: resultText,
         details: { key, value, actualValue: resultText },
-        name: "NestedStruct"
+        name: "NestedStruct",
       };
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       await captureError(this.page, error, `NestedStruct test with key ${key}`);
-      
+
       return {
         success: false,
         actualValue: "",
         error: `NestedStruct test execution failed: ${errorMsg}`,
         details: { key, value },
-        name: "NestedStruct"
+        name: "NestedStruct",
       };
     }
   }
 
+  /**
+   * Complete test for setting and reading an enum
+   * @param key The key identifier for the enum
+   * @param value The enum value to test
+   * @returns TestResult with success status and relevant information
+   */
   async testSampleEnum(
     key: string,
     value: { enum1: string }
@@ -587,7 +798,7 @@ export class StructsDebugPage extends BasePage {
           actualValue: "",
           error: transactionResult.error || "Transaction failed",
           details: { key, value },
-          name: "SampleEnum"
+          name: "SampleEnum",
         };
       }
 
@@ -595,13 +806,14 @@ export class StructsDebugPage extends BasePage {
       try {
         resultText = await this.readSampleEnum(key);
       } catch (readError) {
-        const readErrorMsg = readError instanceof Error ? readError.message : String(readError);
+        const readErrorMsg =
+          readError instanceof Error ? readError.message : String(readError);
         return {
           success: false,
           actualValue: "",
           error: `Failed to read SampleEnum value after setting: ${readErrorMsg}`,
           details: { key, value },
-          name: "SampleEnum"
+          name: "SampleEnum",
         };
       }
 
@@ -609,22 +821,28 @@ export class StructsDebugPage extends BasePage {
         success: !!resultText,
         actualValue: resultText,
         details: { key, value, actualValue: resultText },
-        name: "SampleEnum"
+        name: "SampleEnum",
       };
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       await captureError(this.page, error, `SampleEnum test with key ${key}`);
-      
+
       return {
         success: false,
         actualValue: "",
         error: `SampleEnum test execution failed: ${errorMsg}`,
         details: { key, value },
-        name: "SampleEnum"
+        name: "SampleEnum",
       };
     }
   }
 
+  /**
+   * Complete test for setting and reading a struct with five different element types
+   * @param key The key identifier for the struct
+   * @param value Object containing the five elements with different types
+   * @returns TestResult with success status and relevant information
+   */
   async testStructFiveElement(
     key: string,
     value: {
@@ -646,7 +864,7 @@ export class StructsDebugPage extends BasePage {
           actualValue: "",
           error: transactionResult.error || "Transaction failed",
           details: { key, value },
-          name: "StructFiveElement"
+          name: "StructFiveElement",
         };
       }
 
@@ -654,13 +872,14 @@ export class StructsDebugPage extends BasePage {
       try {
         resultText = await this.readStructFiveElement(key);
       } catch (readError) {
-        const readErrorMsg = readError instanceof Error ? readError.message : String(readError);
+        const readErrorMsg =
+          readError instanceof Error ? readError.message : String(readError);
         return {
           success: false,
           actualValue: "",
           error: `Failed to read StructFiveElement value after setting: ${readErrorMsg}`,
           details: { key, value },
-          name: "StructFiveElement"
+          name: "StructFiveElement",
         };
       }
 
@@ -668,26 +887,33 @@ export class StructsDebugPage extends BasePage {
         success: !!resultText,
         actualValue: resultText,
         details: { key, value, actualValue: resultText },
-        name: "StructFiveElement"
+        name: "StructFiveElement",
       };
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
-      await captureError(this.page, error, `StructFiveElement test with key ${key}`);
-      
+      await captureError(
+        this.page,
+        error,
+        `StructFiveElement test with key ${key}`
+      );
+
       return {
         success: false,
         actualValue: "",
         error: `StructFiveElement test execution failed: ${errorMsg}`,
         details: { key, value },
-        name: "StructFiveElement"
+        name: "StructFiveElement",
       };
     }
   }
 
-  async testStructFourLayer(
-    key: string,
-    value: string
-  ): Promise<TestResult> {
+  /**
+   * Complete test for setting and reading a four-layer nested struct
+   * @param key The key identifier for the struct
+   * @param value The value to set at the innermost layer
+   * @returns TestResult with success status and relevant information
+   */
+  async testStructFourLayer(key: string, value: string): Promise<TestResult> {
     try {
       await this.setAndSendStructFourLayer(key, value);
       await this.page.waitForTimeout(3000);
@@ -699,7 +925,7 @@ export class StructsDebugPage extends BasePage {
           actualValue: "",
           error: transactionResult.error || "Transaction failed",
           details: { key, value },
-          name: "StructFourLayer"
+          name: "StructFourLayer",
         };
       }
 
@@ -707,13 +933,14 @@ export class StructsDebugPage extends BasePage {
       try {
         resultText = await this.readStructFourLayer(key);
       } catch (readError) {
-        const readErrorMsg = readError instanceof Error ? readError.message : String(readError);
+        const readErrorMsg =
+          readError instanceof Error ? readError.message : String(readError);
         return {
           success: false,
           actualValue: "",
           error: `Failed to read StructFourLayer value after setting: ${readErrorMsg}`,
           details: { key, value },
-          name: "StructFourLayer"
+          name: "StructFourLayer",
         };
       }
 
@@ -721,18 +948,22 @@ export class StructsDebugPage extends BasePage {
         success: !!resultText,
         actualValue: resultText,
         details: { key, value, actualValue: resultText },
-        name: "StructFourLayer"
+        name: "StructFourLayer",
       };
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
-      await captureError(this.page, error, `StructFourLayer test with key ${key}`);
-      
+      await captureError(
+        this.page,
+        error,
+        `StructFourLayer test with key ${key}`
+      );
+
       return {
         success: false,
         actualValue: "",
         error: `StructFourLayer test execution failed: ${errorMsg}`,
         details: { key, value },
-        name: "StructFourLayer"
+        name: "StructFourLayer",
       };
     }
   }

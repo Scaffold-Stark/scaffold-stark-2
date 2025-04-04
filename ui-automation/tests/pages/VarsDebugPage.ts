@@ -120,6 +120,10 @@ export class VarsDebugPage extends BasePage {
     await this.safeClick(this.writeTab, "Write tab");
   }
 
+  /**
+   * Checks if a transaction completed successfully
+   * @returns Object with success status and optional error message
+   */
   async isTransactionCompleted(): Promise<{
     success: boolean;
     error?: string;
@@ -165,6 +169,11 @@ export class VarsDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Sets and sends a felt252 value with the specified key
+   * @param key The key identifier for the variable
+   * @param value The felt252 value to set
+   */
   async setAndSendFelt252(key: string, value: string) {
     try {
       await this.switchToWriteTab();
@@ -193,6 +202,11 @@ export class VarsDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Reads a felt252 value by key
+   * @param key The key to look up
+   * @returns Promise with the variable value as string
+   */
   async readFelt252(key: string): Promise<string> {
     try {
       await this.switchToReadTab();
@@ -223,6 +237,12 @@ export class VarsDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Complete test for setting and reading a felt252 value
+   * @param key The key identifier for the variable
+   * @param value The value to test
+   * @returns TestResult with success status and relevant information
+   */
   async testFelt252(key: string, value: string): Promise<TestResult> {
     try {
       await this.setAndSendFelt252(key, value);
@@ -285,6 +305,11 @@ export class VarsDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Sets and sends a felt value with the specified key
+   * @param key The key identifier for the variable
+   * @param value The felt value to set
+   */
   async setAndSendFelt(key: string, value: string) {
     try {
       await this.switchToWriteTab();
@@ -309,6 +334,11 @@ export class VarsDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Reads a felt value by key
+   * @param key The key to look up
+   * @returns Promise with the variable value as string
+   */
   async readFelt(key: string): Promise<string> {
     try {
       await this.switchToReadTab();
@@ -339,6 +369,12 @@ export class VarsDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Complete test for setting and reading a felt value
+   * @param key The key identifier for the variable
+   * @param value The value to test
+   * @returns TestResult with success status and relevant information
+   */
   async testFelt(key: string, value: string): Promise<TestResult> {
     try {
       await this.setAndSendFelt(key, value);
@@ -401,6 +437,11 @@ export class VarsDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Sets and sends a ByteArray value with the specified key
+   * @param key The key identifier for the variable
+   * @param value The ByteArray value to set
+   */
   async setAndSendByteArray(key: string, value: string) {
     try {
       await this.switchToWriteTab();
@@ -429,6 +470,11 @@ export class VarsDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Reads a ByteArray value by key
+   * @param key The key to look up
+   * @returns Promise with the variable value as string
+   */
   async readByteArray(key: string): Promise<string> {
     try {
       await this.switchToReadTab();
@@ -459,6 +505,12 @@ export class VarsDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Complete test for setting and reading a ByteArray value
+   * @param key The key identifier for the variable
+   * @param value The value to test
+   * @returns TestResult with success status and relevant information
+   */
   async testByteArray(key: string, value: string): Promise<TestResult> {
     try {
       await this.setAndSendByteArray(key, value);
@@ -527,6 +579,11 @@ export class VarsDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Sets and sends a ContractAddress value with the specified key
+   * @param key The key identifier for the variable
+   * @param address The ContractAddress value to set
+   */
   async setAndSendContractAddress(key: string, address: string) {
     try {
       await this.switchToWriteTab();
@@ -559,6 +616,11 @@ export class VarsDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Reads a ContractAddress value by key
+   * @param key The key to look up
+   * @returns Promise with the variable value as string
+   */
   async readContractAddress(key: string): Promise<string> {
     try {
       await this.switchToReadTab();
@@ -593,6 +655,12 @@ export class VarsDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Complete test for setting and reading a ContractAddress value
+   * @param key The key identifier for the variable
+   * @param value The value to test
+   * @returns TestResult with success status and relevant information
+   */
   async testContractAddress(key: string, value: string): Promise<TestResult> {
     try {
       await this.setAndSendContractAddress(key, value);
@@ -655,6 +723,11 @@ export class VarsDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Sets and sends a Boolean value with the specified key
+   * @param key The key identifier for the variable
+   * @param bool The Boolean value to set ("true" or "false")
+   */
   async setAndSendBool(key: string, bool: "true" | "false") {
     try {
       await this.switchToWriteTab();
@@ -678,6 +751,12 @@ export class VarsDebugPage extends BasePage {
       throw error;
     }
   }
+
+  /**
+   * Reads a Boolean value by key
+   * @param key The key to look up
+   * @returns Promise with the variable value as string
+   */
   async readBool(key: string): Promise<string> {
     try {
       await this.switchToReadTab();
@@ -708,6 +787,12 @@ export class VarsDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Complete test for setting and reading a Boolean value
+   * @param key The key identifier for the variable
+   * @param value The value to test ("true" or "false")
+   * @returns TestResult with success status and relevant information
+   */
   async testBool(key: string, value: "true" | "false"): Promise<TestResult> {
     try {
       await this.setAndSendBool(key, value);

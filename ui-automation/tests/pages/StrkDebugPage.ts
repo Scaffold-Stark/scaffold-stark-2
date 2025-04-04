@@ -97,6 +97,11 @@ export class StrkDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Performs a complete balance check operation
+   * @param address The address to check balance for
+   * @returns Object with balance or error details
+   */
   async checkBalance(address: string) {
     try {
       console.log(`Checking STRK balance for address: ${address}`);
@@ -153,6 +158,12 @@ export class StrkDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Performs a complete token transfer operation
+   * @param recipientAddress The recipient address
+   * @param amount The amount to transfer
+   * @returns Object indicating success or failure with details
+   */
   async performTransfer(recipientAddress: string, amount: string) {
     try {
       console.log(`Starting STRK transfer of ${amount} to ${recipientAddress}`);
@@ -231,6 +242,15 @@ export class StrkDebugPage extends BasePage {
     }
   }
 
+  /**
+   * Tests the approve and allowance check functionality
+   * Sets an allowance and then verifies it was set correctly
+   * @param amount The allowance amount to set
+   * @param spenderAddress The spender address for approval
+   * @param allowOwnerAddress The owner address for allowance check
+   * @param allowSpenderAddress The spender address for allowance check
+   * @returns Object with allowance value or error details
+   */
   async checkAllowance(
     amount: string,
     spenderAddress: string,
@@ -371,7 +391,7 @@ export class StrkDebugPage extends BasePage {
         `Check STRK allowance of ${amount} for spender ${spenderAddress}`
       );
       console.error(`Allowance check failed: ${err.message}`);
-    
+
       return {
         success: false,
         error: err.message,

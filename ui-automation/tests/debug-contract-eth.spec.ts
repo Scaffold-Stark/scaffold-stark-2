@@ -12,6 +12,10 @@ const BURNER_WALLET_SHORT = "0x64b4...5691";
 const CONTRACT_ADDRESS =
   "0x049D36570D4e46f48e99674bd3fcc84644DdD6b96F7C741B1562B82f9e004dC7";
 
+/**
+ * End-to-end test for ETH token functionality
+ * Tests balance checking, allowance setting, and token transfers with a Burner Wallet
+ */
 test("Eth Token Complete Interaction Flow", async ({ page }) => {
   test.setTimeout(120000);
   const testTimestamp = Date.now();
@@ -31,10 +35,7 @@ test("Eth Token Complete Interaction Flow", async ({ page }) => {
       errorLogs.push(navErr);
       console.error(`[${testId}] Navigation failed:`, navErr.message);
 
-      test.fail(
-        true,
-        `Navigation failed: ${getErrorMessage(error)}`
-      );
+      test.fail(true, `Navigation failed: ${getErrorMessage(error)}`);
       return;
     }
 
@@ -59,10 +60,7 @@ test("Eth Token Complete Interaction Flow", async ({ page }) => {
       errorLogs.push(walletErr);
       console.error(`[${testId}] Wallet connection failed:`, walletErr.message);
 
-      test.fail(
-        true,
-        `Wallet connection failed: ${getErrorMessage(error)}`
-      );
+      test.fail(true, `Wallet connection failed: ${getErrorMessage(error)}`);
       return;
     }
 
@@ -100,7 +98,7 @@ test("Eth Token Complete Interaction Flow", async ({ page }) => {
         const tabErr = await captureError(page, error, "ETH Tab Check");
         errorLogs.push(tabErr);
         console.error(`[${testId}] ETH tab not found:`, tabErr.message);
-        
+
         test.fail(true, `ETH tab not found: ${getErrorMessage(error)}`);
         return; // Exit test if tab is not found
       }
@@ -340,9 +338,6 @@ test("Eth Token Complete Interaction Flow", async ({ page }) => {
       generalErr.message
     );
 
-    test.fail(
-      true,
-      `Unexpected test failure: ${getErrorMessage(error)}`
-    );
+    test.fail(true, `Unexpected test failure: ${getErrorMessage(error)}`);
   }
 });
