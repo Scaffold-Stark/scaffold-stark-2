@@ -15,11 +15,11 @@
 /// governance.
 #[starknet::component]
 pub mod MultisigComponent {
+    use contracts::CustomInterfaceMultisigComponent::{IMultisig, TransactionID, TransactionState};
     use core::hash::{HashStateExTrait, HashStateTrait};
     use core::num::traits::Zero;
     use core::panic_with_felt252;
     use core::pedersen::PedersenTrait;
-    use contracts::CustomInterfaceMultisigComponent::{IMultisig, TransactionID, TransactionState};
     use openzeppelin_governance::multisig::storage_utils::{SignersInfo, SignersInfoStorePackingV2};
     use openzeppelin_governance::multisig::storage_utils::{TxInfo, TxInfoStorePacking};
     use openzeppelin_governance::utils::call_impls::{CallPartialEq, HashCallImpl, HashCallsImpl};
