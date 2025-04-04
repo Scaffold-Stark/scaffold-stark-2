@@ -2,9 +2,7 @@ use starknet::ContractAddress;
 
 #[starknet::interface]
 pub trait IMultisigWallet<TContractState> {
-    fn transfer_funds(
-        ref self: TContractState, token: ContractAddress, to: ContractAddress, amount: u256,
-    );
+    fn transfer_funds(ref self: TContractState, to: ContractAddress, amount: u256);
 }
 
 #[starknet::contract]
@@ -43,10 +41,9 @@ mod CustomMultisigWallet {
 
     #[abi(embed_v0)]
     impl MultisigWalletImpl of IMultisigWallet<ContractState> {
-        fn transfer_funds(
-            ref self: ContractState, token: ContractAddress, to: ContractAddress, amount: u256,
-        ) {
-            let token_dispatcher = IERC20Dispatcher { contract_address: token };
+        fn transfer_funds(ref self: ContractState, to: ContractAddress, amount: u256) {
+            let eth_contract_address = contract_address_const::<ETH_CONTRACT_ADDRESS>();
+            let token_dispatcher = IERC20Dispatcher { contract_address: eth_contract_address };
             token_dispatcher.transfer(to, amount);
         }
     }
