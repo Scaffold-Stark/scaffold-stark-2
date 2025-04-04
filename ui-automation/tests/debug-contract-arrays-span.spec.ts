@@ -21,6 +21,7 @@ test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
   const errorLogs = [];
 
   try {
+    console.log(`[${testId}] Starting test: ArraysSpan Debug Page Interaction Flow`);
     await navigateAndWait(page, endpoint.BASE_URL);
 
     const homePage = new HomePage(page);

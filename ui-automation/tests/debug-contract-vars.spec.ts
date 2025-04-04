@@ -114,7 +114,6 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
       return; // Exit test immediately if tab is not found
     }
 
-    console.log(`[${testId}] Starting Felt252 test`);
     const felt252Result = await varsDebugPage.testFelt252(
       SET_U256_FELT_WITH_KEY,
       SET_U256_FELT_WITH_VALUE
@@ -128,7 +127,6 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
       name: "Felt252",
     });
 
-    console.log(`[${testId}] Starting Felt test`);
     const feltResult = await varsDebugPage.testFelt(
       SET_FELT_WITH_KEY,
       SET_FELT_VALUE
@@ -142,7 +140,6 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
       name: "Felt",
     });
 
-    console.log(`[${testId}] Starting ByteArray test`);
     const byteArrayResult = await varsDebugPage.testByteArray(
       SET_BYTE_ARRAY_KEY,
       SET_BYTE_ARRAY_VALUE
@@ -156,7 +153,6 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
       name: "ByteArray",
     });
 
-    console.log(`[${testId}] Starting ContractAddress test`);
     const contractAddressResult = await varsDebugPage.testContractAddress(
       SET_CONTRACT_ADDRESS_KEY,
       SET_CONTRACT_ADDRESS_VALUE
@@ -172,7 +168,6 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
       name: "ContractAddress",
     });
 
-    console.log(`[${testId}] Starting Bool test`);
     const boolResult = await varsDebugPage.testBool(
       SET_BOOL_KEY,
       SET_BOOL_VALUE as "true" | "false"
