@@ -7,7 +7,7 @@ const deployedContracts = {
   devnet: {
     CustomMultisigWallet: {
       address:
-        "0x71916f94d88f8192545fc4909df9ff0c5df8981371916a2ea66ff0ae8848a30",
+        "0x4d7cff067f9029b37b71456fc6b4b47f148abf4398421facb059fc40eead5ca",
       abi: [
         {
           type: "impl",
@@ -36,6 +36,10 @@ const deployedContracts = {
               type: "function",
               name: "transfer_funds",
               inputs: [
+                {
+                  name: "token",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
                 {
                   name: "to",
                   type: "core::starknet::contract_address::ContractAddress",
@@ -680,7 +684,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x3440a322d8a7e3880cba7a6914ce1b1edd510dc194b58c30c08dbb24064e600",
+        "0x170f7b645eb3d68ec31fdf903708bf45c2911b5cc4a2d3590a46bc4ca66a716",
     },
   },
 } as const;
