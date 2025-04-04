@@ -7,8 +7,49 @@ const deployedContracts = {
   devnet: {
     CustomMultisigWallet: {
       address:
-        "0x7cb57c05f823ff28571c1f87ebd22dae079b33ad8b12ba21ef537319dfeae3a",
+        "0x71916f94d88f8192545fc4909df9ff0c5df8981371916a2ea66ff0ae8848a30",
       abi: [
+        {
+          type: "impl",
+          name: "MultisigWalletImpl",
+          interface_name: "contracts::CustomMultisigWallet::IMultisigWallet",
+        },
+        {
+          type: "struct",
+          name: "core::integer::u256",
+          members: [
+            {
+              name: "low",
+              type: "core::integer::u128",
+            },
+            {
+              name: "high",
+              type: "core::integer::u128",
+            },
+          ],
+        },
+        {
+          type: "interface",
+          name: "contracts::CustomMultisigWallet::IMultisigWallet",
+          items: [
+            {
+              type: "function",
+              name: "transfer_funds",
+              inputs: [
+                {
+                  name: "to",
+                  type: "core::starknet::contract_address::ContractAddress",
+                },
+                {
+                  name: "amount",
+                  type: "core::integer::u256",
+                },
+              ],
+              outputs: [],
+              state_mutability: "external",
+            },
+          ],
+        },
         {
           type: "impl",
           name: "MultisigImpl",
@@ -639,7 +680,7 @@ const deployedContracts = {
         },
       ],
       classHash:
-        "0x725c10197b17b90a1a65d17285ae6445ca56a769ef9b36e93dcbc3b8c9d2166",
+        "0x3440a322d8a7e3880cba7a6914ce1b1edd510dc194b58c30c08dbb24064e600",
     },
   },
 } as const;
