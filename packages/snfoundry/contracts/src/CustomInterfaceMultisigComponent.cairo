@@ -37,7 +37,7 @@ pub trait IMultisig<TState> {
     fn hash_transaction_batch(self: @TState, calls: Array<Call>, salt: felt252) -> TransactionID;
     // Customized add_signer: add a single signer
     fn add_signer(ref self: TState, new_quorum: u32, signer_to_add: ContractAddress);
-    fn remove_signers(ref self: TState, new_quorum: u32, signers_to_remove: Array<ContractAddress>);
+    fn remove_signer(ref self: TState, new_quorum: u32, signer_to_remove: ContractAddress);
     fn replace_signer(
         ref self: TState, signer_to_remove: ContractAddress, signer_to_add: ContractAddress,
     );
