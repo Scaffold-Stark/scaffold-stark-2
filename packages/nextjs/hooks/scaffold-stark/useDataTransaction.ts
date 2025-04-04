@@ -4,7 +4,7 @@ import { useTargetNetwork } from "./useTargetNetwork";
 
 interface BlockData {
   transaction: number;
-  blockStatus: string;
+  blockStatus: string | undefined;
   blockNumber: number;
   blockHash: string;
   blockVersion: string;
