@@ -539,18 +539,6 @@ export const abi: any = [
         name: "NotFound",
         type: "()",
       },
-      {
-        name: "Pending",
-        type: "()",
-      },
-      {
-        name: "Confirmed",
-        type: "()",
-      },
-      {
-        name: "Executed",
-        type: "()",
-      },
     ],
   },
 ];
