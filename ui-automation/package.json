@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "A project for using playwright for end-to-end testing purpose with docker for deployment",
   "scripts": {
-    "test": "playwright test --headed --workers=1",
+    "test": "playwright test --workers=1",
+    "clear-test-results": "rimraf test-results/*",
     "test-html-report": "playwright test --browser=all --reporter=html",
     "test-json-report": "PLAYWRIGHT_JSON_OUTPUT_NAME=results.json playwright test --browser=chromium --reporter=json"
   },
@@ -15,5 +16,8 @@
     "playwright": "1.46.1",
     "toml": "^3.0.0",
     "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "rimraf": "^5.0.10"
   }
 }

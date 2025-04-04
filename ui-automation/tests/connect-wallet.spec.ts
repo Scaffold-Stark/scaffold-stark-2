@@ -6,14 +6,7 @@ import { captureError } from "./utils/error-handler";
 
 const burnerAccounts = [
   "0x64b4...5691",
-  "0x7866...c8b1",
-  "0x49df...f38e",
-  "0x4f34...27d3",
   "0xd513...5cb5",
-  "0x1e8c...de78",
-  "0x557b...4c7e",
-  "0x3736...e06f",
-  "0x4d8b...3ad0",
   "0x4b3f...5ee1",
 ];
 
@@ -96,17 +89,21 @@ test("Connect with Argent X wallet", async ({ page }) => {
         .first();
 
       if (await argentXDialog.isVisible({ timeout: 5000 }).catch(() => false)) {
-        await expect(
-          page.locator("text=/Install Argent X|Get Argent X/")
-        ).toBeVisible();
+        test.fail(
+          true,
+          "Test failed: Argent X wallet extension is not installed in the browser"
+        );
+        return;
       } else {
         try {
           await expect(
             page.locator("text=/Connect|Approve|Confirm/i")
           ).toBeVisible({ timeout: 10000 });
+          console.log("Argent X wallet extension detected successfully");
         } catch (e) {
-          console.log(
-            "Could not detect Argent X connection dialog. Wallet may not be installed."
+          test.fail(
+            true,
+            "Test failed: Could not detect Argent X connection dialog. Wallet may not be installed."
           );
         }
       }
@@ -148,17 +145,21 @@ test("Connect with Braavos wallet", async ({ page }) => {
         .first();
 
       if (await braavosDialog.isVisible({ timeout: 5000 }).catch(() => false)) {
-        await expect(
-          page.locator("text=/Install Braavos|Get Braavos/")
-        ).toBeVisible();
+        test.fail(
+          true,
+          "Test failed: Braavos wallet extension is not installed in the browser"
+        );
+        return;
       } else {
         try {
           await expect(
             page.locator("text=/Connect|Approve|Confirm/i")
           ).toBeVisible({ timeout: 10000 });
+          console.log("Braavos wallet extension detected successfully");
         } catch (e) {
-          console.log(
-            "Could not detect Braavos connection dialog. Wallet may not be installed."
+          test.fail(
+            true,
+            "Test failed: Could not detect Braavos connection dialog. Wallet may not be installed."
           );
         }
       }

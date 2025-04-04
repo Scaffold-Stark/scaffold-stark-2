@@ -13,7 +13,7 @@ export default defineConfig({
     trace: "on-first-retry",
     video: "on-first-retry",
     screenshot: "only-on-failure",
-    actionTimeout: 30000,  
+    actionTimeout: 30000,
     navigationTimeout: 60000,
     launchOptions: {
       headless: true,
@@ -34,6 +34,7 @@ export default defineConfig({
   ],
   timeout: 240000,
   expect: {
-    timeout: 20000, 
+    timeout: 20000,
   },
+  preserveOutput: "always",
 });

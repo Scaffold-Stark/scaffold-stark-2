@@ -317,7 +317,7 @@ export class EthDebugPage extends BasePage {
             try {
               await this.page.waitForSelector(
                 'text="🎉Transaction completed"',
-                { timeout: 15000 }
+                { timeout: 3000 }
               );
               return "Approve transaction completed";
             } catch (timeoutError) {
