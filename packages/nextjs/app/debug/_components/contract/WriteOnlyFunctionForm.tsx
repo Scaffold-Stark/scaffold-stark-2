@@ -33,6 +33,7 @@ type WriteOnlyFunctionFormProps = {
   abiFunction: AbiFunction;
   onChange: () => void;
   contractAddress: Address;
+  testBtnId?: string;
   //   inheritedFrom?: string;
 };
 
@@ -41,6 +42,7 @@ export const WriteOnlyFunctionForm = ({
   abiFunction,
   onChange,
   contractAddress,
+  testBtnId,
 }: WriteOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialFormState(abiFunction),
@@ -167,6 +169,7 @@ export const WriteOnlyFunctionForm = ({
             data-tip={`${errorMsg}`}
           >
             <button
+              data-testid={testBtnId}
               className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
               disabled={writeDisabled || !!formErrorMessage || isLoading}
               onClick={handleWrite}

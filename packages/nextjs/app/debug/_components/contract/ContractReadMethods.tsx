@@ -39,6 +39,8 @@ export const ContractReadMethods = ({
           contractAddress={deployedContractData.address}
           abiFunction={fn}
           key={fn.name}
+          testBtnId={`btn-${fn.name}`}
+          testResultId={`result-${fn.name}`}
         />
       ))}
     </>
