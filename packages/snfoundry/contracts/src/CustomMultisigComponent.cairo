@@ -251,13 +251,13 @@ pub mod MultisigComponent {
         ///
         /// Emits a `SignerRemoved` event for each signer removed.
         /// Emits a `QuorumUpdated` event if the quorum changes.
-        fn remove_signers(
+        fn remove_signer(
             ref self: ComponentState<TContractState>,
             new_quorum: u32,
-            signers_to_remove: Array<ContractAddress>,
+            signer_to_remove: ContractAddress,
         ) {
             self.assert_only_self();
-            self._remove_signers(new_quorum, signers_to_remove);
+            self._remove_signer(new_quorum, signer_to_remove);
         }
 
         /// Replaces an existing signer with a new signer.
@@ -557,7 +557,6 @@ pub mod MultisigComponent {
                 self.emit(SignerAdded { signer: signer_to_add });
 
                 signers_count += 1;
-                //};
                 self.Multisig_signers_info.write(SignersInfo { quorum, signers_count });
             }
             self._change_quorum(new_quorum);
@@ -572,20 +571,18 @@ pub mod MultisigComponent {
         ///
         /// Emits a `SignerRemoved` event for each signer removed.
         /// Emits a `QuorumUpdated` event if the quorum changes.
-        fn _remove_signers(
+        fn _remove_signer(
             ref self: ComponentState<TContractState>,
             new_quorum: u32,
-            signers_to_remove: Array<ContractAddress>,
+            signer_to_remove: ContractAddress,
         ) {
-            if !signers_to_remove.is_empty() {
+            if !signer_to_remove.is_zero() {
                 let SignersInfo { quorum, mut signers_count } = self.Multisig_signers_info.read();
-                for signer in signers_to_remove {
-                    let signer_to_remove = signer;
-                    if !self.is_signer(signer_to_remove) {
-                        continue;
-                    }
-                    let last_index = signers_count - 1;
-                    let index = self.Multisig_signers_indices.read(signer_to_remove);
+                if !self.is_signer(signer_to_remove) {
+                    panic_with_felt252(Errors::NOT_A_SIGNER);
+                }
+                let last_index = signers_count - 1;
+                let index = self.Multisig_signers_indices.read(signer_to_remove);
                     if index != last_index {
                         // Swap signer to remove with the last signer
                         let last_signer = self.Multisig_signers_by_index.read(last_index);
@@ -599,7 +596,6 @@ pub mod MultisigComponent {
                     self.emit(SignerRemoved { signer: signer_to_remove });
 
                     signers_count -= 1;
-                };
                 self.Multisig_signers_info.write(SignersInfo { quorum, signers_count });
             }
             self._change_quorum(new_quorum);
