@@ -131,6 +131,50 @@ Visit your app on: `http://localhost:3000`. You can interact with your smart con
 
 5. Check your environment variables. We have a yarn postinstall script that helps to fill in your environment variables. If the environment variable does not exist, you can fill them it manually to get the app running!
 
+### Automated UI Testing
+
+We use Playwright for end-to-end testing of the application interface:
+
+1. Install dependencies:
+
+```bash
+yarn install
+```
+
+2. Start local chain in the first terminal:
+
+```bash
+yarn chain
+```
+
+3. On a second terminal, deploy the sample contract:
+
+```bash
+yarn deploy
+```
+
+4. On a third terminal, start your NextJS app:
+
+```bash
+yarn start
+```
+
+5. On a fourth terminal, run the UI tests:
+
+```bash
+cd ui-automation
+npm test
+```
+
+To run with browser visible, add the --headed flag:
+
+```bash
+npm test -- --headed
+```
+
+- Test failure screenshots are saved in the `ui-automation/test-results` folder.
+- 💬 Hint: For Docker environments, URL access issues may occur. Check the test-results directory for error screenshots.
+
 ## Quickstart with Sepolia Testnet
 
 <details>
