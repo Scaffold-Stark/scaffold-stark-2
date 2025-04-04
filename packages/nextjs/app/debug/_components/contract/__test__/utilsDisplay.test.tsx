@@ -312,3 +312,18 @@ describe("utilsDisplay", () => {
     ).toEqual('{"Err":12}');
   });
 });
+
+it("should parse enum TransactionState response successfully", () => {
+  expect(
+    decodeContractResponse({
+      resp: 0,
+      abi,
+      functionOutputs: [
+        {
+          type: "contracts::YourContract::TransactionState",
+        },
+      ],
+      asText: true,
+    }),
+  ).toEqual("NotFound");
+});

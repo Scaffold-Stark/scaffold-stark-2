@@ -32,16 +32,14 @@ const argv = yargs(process.argv.slice(2))
     demandOption: true,
   })
   .option("reset", {
-    alias: "nr",
     type: "boolean",
-    description:
-      "(--no-reset) Do not reset deployments (keep existing deployments)",
+    description: "Reset deployments (remove existing deployments)",
     default: true,
   })
   .parseSync() as Arguments;
 
 const networkName: string = argv.network;
-const resetDeployments: boolean = argv.reset ?? true;
+const resetDeployments: boolean = argv.reset;
 
 let deployments = {};
 let deployCalls = [];
@@ -101,7 +99,6 @@ const findContractFile = (
   const targetDir = path.resolve(__dirname, "../contracts/target/dev");
   const files = fs.readdirSync(targetDir);
 
-  // Look for files that end with the contract name and file type
   const pattern = new RegExp(`.*${contract}\\.${fileType}\\.json$`);
   const matchingFile = files.find((file) => pattern.test(file));
 
@@ -135,6 +132,7 @@ const findContractFile = (
  *   options: { maxFee: BigInt(1000000000000) }
  * });
  */
+
 const deployContract = async (
   params: DeployContractParams
 ): Promise<{
@@ -288,8 +286,6 @@ const exportDeployments = () => {
     __dirname,
     `../deployments/${networkName}_latest.json`
   );
-
-  const resetDeployments: boolean = argv.reset ?? true;
 
   if (!resetDeployments && fs.existsSync(networkPath)) {
     const currentTimestamp = new Date().getTime();
