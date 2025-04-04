@@ -173,7 +173,14 @@ npm test -- --headed
 ```
 
 - Test failure screenshots are saved in the `ui-automation/test-results` folder.
+
 - 💬 Hint: For Docker environments, URL access issues may occur. Check the test-results directory for error screenshots.
+
+- 💬 Hint: In case want to remove all file result test case failed, run
+```bash
+cd ui-automation
+npm clear-test-results
+```
 
 ## Quickstart with Sepolia Testnet
 
