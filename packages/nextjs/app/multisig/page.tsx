@@ -565,7 +565,7 @@ const MultisigPage = () => {
       return;
     }
 
-    if (!transferAmount || isNaN(Number(transferAmount))) {
+    if (!transferAmount || isNaN(Number(transferAmount))) { // TODO: Make sure the amount is a representation of u256 on felt format
       notification.error("Please enter a valid amount");
       return;
     }
@@ -577,9 +577,7 @@ const MultisigPage = () => {
 
       const selector = hash.getSelectorFromName("transfer_funds");
 
-	  const ethContractAddress = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
-
-      const calldata = [ethContractAddress, transferRecipient, 100000000000000000n, 0n];
+      const calldata = [transferRecipient, transferAmount];
 
       const txIdResponse = await contract.hash_transaction(
         deployedContractData.address,
