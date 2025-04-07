@@ -1,9 +1,16 @@
-export const ADD_SIGNER_SELECTOR =
-  "163160470112599928456934797768840367968245733614578848060926957836914140077";
-export const REMOVE_SIGNER_SELECTOR =
-  "409261550851542507680168322314239740979393570425390024668899463010292902806";
-export const TRANSFER_FUNDS_SELECTOR =
-  "38510877729565715727506855624077120381398490202787197538796091827660389293";
+import { hash, number } from "starknet";
+
+export function getFunctionSelector(functionName: string) {
+  const selectorHex = hash.getSelectorFromName(functionName);
+
+  const selectorFelt = number.hexToDecimalString(selectorHex);
+
+  return selectorFelt;
+}
+
+export const ADD_SIGNER_SELECTOR = getFunctionSelector("add_signer");
+export const REMOVE_SIGNER_SELECTOR = getFunctionSelector("remove_signer");
+export const TRANSFER_FUNDS_SELECTOR = getFunctionSelector("transfer_funds");
 
 export const convertFeltToAddress = (felt: string) => {
   if (!felt) return "";
