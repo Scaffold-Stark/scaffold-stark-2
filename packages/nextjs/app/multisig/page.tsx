@@ -448,7 +448,7 @@ const MultisigPage = () => {
       setAddress("");
       setSelectedOption("add");
 
-      await Promise.all([loadSigners(), loadTransactions()]);
+      // await Promise.all([loadSigners(), loadTransactions()]);
     } catch (err: any) {
       console.error("Error creating transaction:", err);
       notification.error(err.message || "Error creating transaction");
@@ -570,8 +570,6 @@ const MultisigPage = () => {
         }
 
         const storedTx = transactionDetails[txId];
-        console.log(storedTx, "storedTx");
-
         if (storedTx) {
           let calldata = storedTx.calldata;
 
