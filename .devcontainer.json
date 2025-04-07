@@ -1,0 +1,12 @@
+{
+    "name": "Scaffold Stark",
+    "image": "starknetfoundation/starknet-dev:2.9.4",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "StarkWare.cairo1",
+                "tamasfe.even-better-toml"
+            ]
+        }
+    }
+}

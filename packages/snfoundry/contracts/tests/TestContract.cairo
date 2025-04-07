@@ -1,7 +1,7 @@
 use contracts::YourContract::{IYourContractDispatcher, IYourContractDispatcherTrait};
 use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 use openzeppelin_utils::serde::SerializedAppend;
-use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, cheat_caller_address, CheatSpan};
+use snforge_std::{CheatSpan, ContractClassTrait, DeclareResultTrait, cheat_caller_address, declare};
 use starknet::{ContractAddress, contract_address_const};
 
 // Real contract address deployed on Sepolia
@@ -31,7 +31,7 @@ fn test_set_greetings() {
     assert(current_greeting == expected_greeting, 'Should have the right message');
 
     let new_greeting: ByteArray = "Learn Scaffold-Stark 2! :)";
-    dispatcher.set_greeting(new_greeting.clone(), 0); // we transfer 0 eth
+    dispatcher.set_greeting(new_greeting.clone(), Option::None); // we dont transfer any eth
     assert(dispatcher.greeting() == new_greeting, 'Should allow set new message');
 }
 
@@ -43,7 +43,7 @@ fn test_transfer() {
     let your_contract_address = deploy_contract("YourContract");
 
     let your_contract_dispatcher = IYourContractDispatcher {
-        contract_address: your_contract_address
+        contract_address: your_contract_address,
     };
     let erc20_dispatcher = IERC20Dispatcher { contract_address: eth_contract_address };
     let amount_to_transfer = 500;
@@ -55,7 +55,10 @@ fn test_transfer() {
     let new_greeting: ByteArray = "Learn Scaffold-Stark 2! :)";
 
     cheat_caller_address(your_contract_address, user, CheatSpan::TargetCalls(1));
-    your_contract_dispatcher.set_greeting(new_greeting.clone(), 500); // we transfer 0 eth
+    your_contract_dispatcher
+        .set_greeting(
+            new_greeting.clone(), Option::Some(amount_to_transfer),
+        ); // we transfer 500 wei
     assert(your_contract_dispatcher.greeting() == new_greeting, 'Should allow set new message');
 }
 
