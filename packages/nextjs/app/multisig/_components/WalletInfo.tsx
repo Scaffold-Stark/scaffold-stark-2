@@ -2,7 +2,8 @@ import React from "react";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { BlockieAvatar } from "~~/components/scaffold-stark";
 import { notification } from "~~/utils/scaffold-stark";
-import { convertFeltToAddress, formatAddress, WalletInfoProps } from "../types";
+import { convertFeltToAddress, formatAddress } from "../utils";
+import { WalletInfoProps } from "../types";
 
 const WalletInfo: React.FC<WalletInfoProps> = ({
   deployedContractData,
@@ -65,9 +66,16 @@ const WalletInfo: React.FC<WalletInfoProps> = ({
                     address={convertFeltToAddress(address)}
                     size={16}
                   />
-                  <span className="font-mono break-all">
-                    {formatAddress(convertFeltToAddress(address))}
-                  </span>
+                  <CopyToClipboard
+                    text={convertFeltToAddress(address)}
+                    onCopy={() => {
+                      notification.success("Copy successfully!");
+                    }}
+                  >
+                    <span className="font-mono break-all cursor-pointer">
+                      {formatAddress(convertFeltToAddress(address))}
+                    </span>
+                  </CopyToClipboard>
                 </div>
                 {convertFeltToAddress(address) === account?.address && (
                   <span className="text-xs bg-blue-600 px-2 py-1 rounded ml-2">

@@ -7,7 +7,7 @@ import {
   convertSelectorToFuncName,
   formatAddress,
   ADD_SIGNER_SELECTOR,
-  REMOVE_SIGNERS_SELECTOR,
+  REMOVE_SIGNER_SELECTOR,
   TRANSFER_FUNDS_SELECTOR,
   formatTokenAmount,
 } from "../utils";
@@ -66,7 +66,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
           <div>New Quorum: {tx.calldata[0]}</div>
         </>
       );
-    } else if (tx.selector === REMOVE_SIGNERS_SELECTOR) {
+    } else if (tx.selector === REMOVE_SIGNER_SELECTOR) {
       return (
         <>
           <div>Function: Remove Signer</div>

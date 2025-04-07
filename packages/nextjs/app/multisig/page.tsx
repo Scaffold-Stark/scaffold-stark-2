@@ -3,7 +3,7 @@
 
 import { useState, useEffect, ChangeEvent, useCallback } from "react";
 import { useAccount } from "@starknet-react/core";
-import { Contract, hash } from "starknet";
+import { Contract } from "starknet";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { notification } from "~~/utils/scaffold-stark";
@@ -18,7 +18,7 @@ import TransactionEvents from "./_components/TransactionEvents";
 import {
   ADD_SIGNER_SELECTOR,
   convertFeltToAddress,
-  REMOVE_SIGNERS_SELECTOR,
+  REMOVE_SIGNER_SELECTOR,
   TRANSFER_FUNDS_SELECTOR,
 } from "./utils";
 
@@ -48,7 +48,6 @@ const MultisigPage = () => {
   const [loadingSigners, setLoadingSigners] = useState(false);
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  console.log(transactions, "transactions");
   const [pendingTransactions, setPendingTransactions] = useState<Transaction[]>(
     [],
   );
@@ -406,7 +405,7 @@ const MultisigPage = () => {
         calldata = [newQuorum.toString(), address];
       } else if (selectedOption === "remove") {
         const validNewQuorum = Math.min(newQuorum, signers.length - 1);
-        selector = REMOVE_SIGNERS_SELECTOR;
+        selector = REMOVE_SIGNER_SELECTOR;
         calldata = [validNewQuorum.toString(), address];
       }
 
