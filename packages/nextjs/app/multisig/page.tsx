@@ -3,35 +3,36 @@
 
 import { useState, useEffect, ChangeEvent, useCallback } from "react";
 import { useAccount } from "@starknet-react/core";
-import { Contract, CallData, hash } from "starknet";
+import { Contract, hash } from "starknet";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { notification } from "~~/utils/scaffold-stark";
 import useScaffoldEthBalance from "~~/hooks/scaffold-stark/useScaffoldEthBalance";
 import useScaffoldStrkBalance from "~~/hooks/scaffold-stark/useScaffoldStrkBalance";
 
-import {
-  Transaction,
-  SignerOption,
-  TxType,
-  convertFeltToAddress,
-} from "./types";
+import { Transaction, SignerOption, TxType } from "./types";
 import WalletInfo from "./_components/WalletInfo";
 import ManageTransaction from "./_components/ManageTransaction";
 import TransactionList from "./_components/TransactionList";
 import TransactionEvents from "./_components/TransactionEvents";
+import {
+  ADD_SIGNER_SELECTOR,
+  convertFeltToAddress,
+  REMOVE_SIGNERS_SELECTOR,
+  TRANSFER_FUNDS_SELECTOR,
+} from "./utils";
 
 const MultisigPage = () => {
   const { account } = useAccount();
   const { data: deployedContractData } = useDeployedContractInfo(
-    "CustomMultisigWallet"
+    "CustomMultisigWallet",
   );
 
-  const { value: contractEthBalance } = useScaffoldEthBalance({
+  const { formatted: contractEthBalance } = useScaffoldEthBalance({
     address: deployedContractData?.address,
   });
 
-  const { value: contractStrkBalance } = useScaffoldStrkBalance({
+  const { formatted: contractStrkBalance } = useScaffoldStrkBalance({
     address: deployedContractData?.address,
   });
 
@@ -49,7 +50,7 @@ const MultisigPage = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   console.log(transactions, "transactions");
   const [pendingTransactions, setPendingTransactions] = useState<Transaction[]>(
-    []
+    [],
   );
   const [executedTransactions, setExecutedTransactions] = useState<
     Transaction[]
@@ -106,7 +107,7 @@ const MultisigPage = () => {
       const value = e.target.value as SignerOption;
       setSelectedOption(value);
     },
-    []
+    [],
   );
 
   const handleSignerChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -118,14 +119,14 @@ const MultisigPage = () => {
       const value = parseInt(e.target.value);
       setNewQuorum(isNaN(value) ? 1 : value);
     },
-    []
+    [],
   );
 
   const handleTxTypeChange = useCallback(
     (e: ChangeEvent<HTMLSelectElement>) => {
       setSelectedTxType(e.target.value as TxType);
     },
-    []
+    [],
   );
 
   const handleTxSelect = useCallback(
@@ -137,7 +138,7 @@ const MultisigPage = () => {
 
       setSelectedTxId(id);
     },
-    [selectedTxId]
+    [selectedTxId],
   );
 
   const getContract = useCallback(() => {
@@ -147,7 +148,7 @@ const MultisigPage = () => {
     return new Contract(
       deployedContractData.abi,
       deployedContractData.address,
-      account
+      account,
     );
   }, [account, deployedContractData]);
 
@@ -202,7 +203,7 @@ const MultisigPage = () => {
 
             if (confirmedTxEvents) {
               const txConfirmEvents = confirmedTxEvents.filter(
-                (e) => e.args.id.toString() === txId
+                (e) => e.args.id.toString() === txId,
               );
 
               for (const confirmEvent of txConfirmEvents) {
@@ -224,6 +225,7 @@ const MultisigPage = () => {
               salt: storedTxData?.salt || "0",
               calldata: storedTxData?.calldata || [],
               addressConfirmed: addressesConfirmed,
+              tokenType: storedTxData?.tokenType || "ETH",
             };
 
             if (storedTxData) {
@@ -280,7 +282,7 @@ const MultisigPage = () => {
     async (txId: string) => {
       if (!account || !deployedContractData || !txId) {
         notification.error(
-          "Please connect your wallet and provide a transaction ID"
+          "Please connect your wallet and provide a transaction ID",
         );
         return;
       }
@@ -320,14 +322,14 @@ const MultisigPage = () => {
         setLoading(false);
       }
     },
-    [account, deployedContractData, getContract, loadTransactions]
+    [account, deployedContractData, getContract, loadTransactions],
   );
 
   const revokeConfirmation = useCallback(
     async (txId: string) => {
       if (!account || !deployedContractData || !txId) {
         notification.error(
-          "Please connect your wallet and provide a transaction ID"
+          "Please connect your wallet and provide a transaction ID",
         );
         return;
       }
@@ -342,7 +344,7 @@ const MultisigPage = () => {
           const tx = prev[txId];
           if (tx) {
             const updatedAddressConfirmed = (tx.addressConfirmed || []).filter(
-              (address) => address !== account.address
+              (address) => address !== account.address,
             );
             return {
               ...prev,
@@ -365,7 +367,7 @@ const MultisigPage = () => {
         setLoading(false);
       }
     },
-    [account, deployedContractData, getContract, loadTransactions]
+    [account, deployedContractData, getContract, loadTransactions],
   );
 
   const hasUserConfirmed = useCallback(
@@ -374,10 +376,10 @@ const MultisigPage = () => {
       return tx.addressConfirmed.some(
         (addr) =>
           convertFeltToAddress(addr).toLowerCase() ===
-          account.address.toLowerCase()
+          account.address.toLowerCase(),
       );
     },
-    [account]
+    [account],
   );
 
   const createSignerTransaction = useCallback(async () => {
@@ -397,35 +399,29 @@ const MultisigPage = () => {
       const contractAddress = deployedContractData.address;
       const salt = "0";
       let selector = "";
-      let calldata: any[] = [];
+      let calldata: string[] = [];
 
       if (selectedOption === "add") {
-        selector = hash.getSelectorFromName("add_signer");
-        calldata = CallData.compile({
-          new_quorum: newQuorum,
-          signer_to_add: address,
-        });
+        selector = ADD_SIGNER_SELECTOR;
+        calldata = [newQuorum.toString(), address];
       } else if (selectedOption === "remove") {
         const validNewQuorum = Math.min(newQuorum, signers.length - 1);
-        selector = hash.getSelectorFromName("remove_signers");
-        calldata = CallData.compile({
-          new_quorum: validNewQuorum,
-          signers_to_remove: [address],
-        });
+        selector = REMOVE_SIGNERS_SELECTOR;
+        calldata = [validNewQuorum.toString(), address];
       }
 
       const txIdResponse = await contract.hash_transaction(
         contractAddress,
         selector,
         calldata,
-        salt
+        salt,
       );
 
       await contract.submit_transaction(
         contractAddress,
         selector,
         calldata,
-        salt
+        salt,
       );
 
       const txIdString = txIdResponse.toString();
@@ -447,7 +443,7 @@ const MultisigPage = () => {
       }));
 
       notification.success(
-        `Transaction to ${selectedOption} signer submitted. ID: ${txIdString}`
+        `Transaction to ${selectedOption} signer submitted. ID: ${txIdString}`,
       );
 
       setAddress("");
@@ -472,73 +468,6 @@ const MultisigPage = () => {
     signers.length,
   ]);
 
-  const executeTransaction = useCallback(
-    async (txId: string) => {
-      if (!account || !deployedContractData || !txId) {
-        notification.error("Transaction ID is required for execution");
-        return;
-      }
-
-      setLoading(true);
-      try {
-        const contract = getContract();
-
-        const confirmations =
-          await contract.get_transaction_confirmations(txId);
-
-        if (signers.length > 1 && Number(confirmations) < signers.length) {
-          notification.error(
-            "All signers must confirm this transaction before execution"
-          );
-          setLoading(false);
-          return;
-        }
-
-        const storedTx = transactionDetails[txId];
-        console.log(storedTx, "storedTx");
-
-        if (storedTx) {
-          await contract.execute_transaction(
-            storedTx.to,
-            storedTx.selector,
-            storedTx.calldata,
-            storedTx.salt
-          );
-        } else {
-          const transaction = transactions.find((tx) => tx.id === txId);
-
-          if (!transaction) {
-            throw new Error("Transaction data not found");
-          }
-
-          await contract.execute_transaction(
-            transaction.to,
-            transaction.selector,
-            transaction.calldata,
-            transaction.salt
-          );
-        }
-
-        notification.success("Transaction executed successfully");
-
-        await Promise.all([loadSigners(), loadTransactions()]);
-      } catch (err: any) {
-        console.error("Error executing transaction:", err);
-        notification.error(err.message || "Error executing transaction");
-      } finally {
-        setLoading(false);
-      }
-    },
-    [
-      account,
-      deployedContractData,
-      getContract,
-      signers.length,
-      transactionDetails,
-      transactions,
-    ]
-  );
-
   const createTransferTransaction = useCallback(async () => {
     if (!account || !deployedContractData) {
       notification.error("Please connect your wallet first");
@@ -558,24 +487,24 @@ const MultisigPage = () => {
     setLoading(true);
     try {
       const contract = getContract();
-      const salt = "0x1234"; // Hard-coded salt for now
+      const salt = "0";
 
-      const selector = hash.getSelectorFromName("transfer_funds");
+      const selector = TRANSFER_FUNDS_SELECTOR;
 
-      const calldata = [transferRecipient, transferAmount];
+      const calldata = [transferRecipient, transferAmount, "0"];
 
       const txIdResponse = await contract.hash_transaction(
         deployedContractData.address,
         selector,
         calldata,
-        salt
+        salt,
       );
 
       await contract.submit_transaction(
         deployedContractData.address,
         selector,
         calldata,
-        salt
+        salt,
       );
 
       const txIdString = txIdResponse.toString();
@@ -593,6 +522,7 @@ const MultisigPage = () => {
           submittedBy: account.address,
           submittedBlock: "pending",
           addressConfirmed: [account.address],
+          tokenType: "ETH",
         },
       }));
 
@@ -618,6 +548,93 @@ const MultisigPage = () => {
     transferRecipient,
   ]);
 
+  const executeTransaction = useCallback(
+    async (txId: string) => {
+      if (!account || !deployedContractData || !txId) {
+        notification.error("Transaction ID is required for execution");
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const contract = getContract();
+
+        const confirmations =
+          await contract.get_transaction_confirmations(txId);
+
+        if (signers.length > 1 && Number(confirmations) < signers.length) {
+          notification.error(
+            "All signers must confirm this transaction before execution",
+          );
+          setLoading(false);
+          return;
+        }
+
+        const storedTx = transactionDetails[txId];
+        console.log(storedTx, "storedTx");
+
+        if (storedTx) {
+          let calldata = storedTx.calldata;
+
+          if (
+            storedTx.selector === TRANSFER_FUNDS_SELECTOR &&
+            calldata.length === 2
+          ) {
+            calldata = [...calldata, "0"];
+          }
+
+          await contract.execute_transaction(
+            storedTx.to,
+            storedTx.selector,
+            calldata,
+            storedTx.salt,
+          );
+        } else {
+          const transaction = transactions.find((tx) => tx.id === txId);
+
+          if (!transaction) {
+            throw new Error("Transaction data not found");
+          }
+
+          let calldata = transaction.calldata;
+
+          if (
+            transaction.selector === TRANSFER_FUNDS_SELECTOR &&
+            calldata.length === 2
+          ) {
+            calldata = [...calldata, "0"];
+          }
+
+          await contract.execute_transaction(
+            transaction.to,
+            transaction.selector,
+            calldata,
+            transaction.salt,
+          );
+        }
+
+        notification.success("Transaction executed successfully");
+
+        await Promise.all([loadSigners(), loadTransactions()]);
+      } catch (err: any) {
+        console.error("Error executing transaction:", err);
+        notification.error(err.message || "Error executing transaction");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [
+      account,
+      deployedContractData,
+      getContract,
+      signers.length,
+      transactionDetails,
+      transactions,
+      loadSigners,
+      loadTransactions,
+    ],
+  );
+
   const isUserSigner = useCallback(() => {
     const signersAddresses = signers.map(convertFeltToAddress);
     const normalizedUserAddress = account?.address.startsWith("0x")
@@ -625,7 +642,7 @@ const MultisigPage = () => {
       : "0x" + account?.address.toLowerCase();
 
     return signersAddresses.some(
-      (address) => address.toLowerCase() === normalizedUserAddress
+      (address) => address.toLowerCase() === normalizedUserAddress,
     );
   }, [account, signers]);
 
@@ -666,7 +683,11 @@ const MultisigPage = () => {
   }, [selectedTxType, pendingTransactions, executedTransactions]);
 
   if (!deployedContractData)
-    return <div className="text-center w-full h-full flex flex-1 items-center justify-center">Not found contract</div>;
+    return (
+      <div className="text-center w-full h-full flex flex-1 items-center justify-center">
+        Not found contract
+      </div>
+    );
 
   return (
     <section className="max-w-screen-2xl w-full mx-auto mt-8 px-4 pb-12">
@@ -676,8 +697,12 @@ const MultisigPage = () => {
         <div className="space-y-6">
           <WalletInfo
             deployedContractData={deployedContractData}
-            contractEthBalance={contractEthBalance?.toString() ?? "0"}
-            contractStrkBalance={contractStrkBalance?.toString() ?? "0"}
+            contractEthBalance={
+              parseFloat(contractEthBalance).toFixed(4) ?? "0"
+            }
+            contractStrkBalance={
+              parseFloat(contractStrkBalance).toFixed(4) ?? "0"
+            }
             signers={signers}
             loadingSigners={loadingSigners}
             loadSigners={loadSigners}

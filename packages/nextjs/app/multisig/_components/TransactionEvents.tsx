@@ -38,14 +38,14 @@ const TransactionEvents: React.FC<TransactionEventsProps> = ({
                       <div className="flex items-center gap-1.5">
                         <BlockieAvatar
                           address={convertFeltToAddress(
-                            event.args.signer?.toString() || ""
+                            event.args.signer?.toString() || "",
                           )}
                           size={16}
                         />
                         {formatAddress(
                           convertFeltToAddress(
-                            event.args.signer?.toString() || ""
-                          )
+                            event.args.signer?.toString() || "",
+                          ),
                         )}
                       </div>
                     </div>
@@ -76,14 +76,14 @@ const TransactionEvents: React.FC<TransactionEventsProps> = ({
                       <div className="flex items-center gap-1.5">
                         <BlockieAvatar
                           address={convertFeltToAddress(
-                            event.args.signer?.toString() || ""
+                            event.args.signer?.toString() || "",
                           )}
                           size={16}
                         />
                         {formatAddress(
                           convertFeltToAddress(
-                            event.args.signer?.toString() || ""
-                          )
+                            event.args.signer?.toString() || "",
+                          ),
                         )}
                       </div>
                     </div>

@@ -19,6 +19,41 @@ const ManageTransaction: React.FC<ManageTransactionProps> = ({
   loading,
   signers,
 }) => {
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    if (value === "") {
+      setTransferAmount("");
+      return;
+    }
+
+    const numbersOnly = /^[0-9]+$/;
+    if (numbersOnly.test(value)) {
+      try {
+        BigInt(value);
+        setTransferAmount(value);
+      } catch (error) {
+        console.error("Invalid amount value:", error);
+      }
+    }
+  };
+
+  const handleMultiplyToWei = () => {
+    if (!transferAmount) {
+      setTransferAmount("1000000000000000000");
+      return;
+    }
+
+    try {
+      const value = BigInt(transferAmount);
+      const multiplied = value * 10n ** 18n;
+      setTransferAmount(multiplied.toString());
+    } catch (error) {
+      console.error("Error converting to wei:", error);
+      setTransferAmount("1000000000000000000");
+    }
+  };
+
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-md">
       <h3 className="text-xl font-semibold mb-4">Manage Transaction</h3>
@@ -85,13 +120,22 @@ const ManageTransaction: React.FC<ManageTransactionProps> = ({
 
             <div>
               <label className="block text-sm mb-1">Amount (in wei):</label>
-              <input
-                type="text"
-                value={transferAmount || ""}
-                onChange={(e) => setTransferAmount(e.target.value)}
-                placeholder="Enter amount to transfer"
-                className="block w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={transferAmount || ""}
+                  onChange={handleAmountChange}
+                  placeholder="Enter amount in wei (numbers only)"
+                  className="block w-full px-4 py-2 pr-12 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  onClick={handleMultiplyToWei}
+                  type="button"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer font-semibold px-2 text-accent"
+                >
+                  ∗
+                </button>
+              </div>
             </div>
           </>
         )}

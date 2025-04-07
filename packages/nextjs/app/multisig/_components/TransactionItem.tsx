@@ -6,8 +6,12 @@ import {
   convertFeltToAddress,
   convertSelectorToFuncName,
   formatAddress,
-  TransactionItemProps,
-} from "../types";
+  ADD_SIGNER_SELECTOR,
+  REMOVE_SIGNERS_SELECTOR,
+  TRANSFER_FUNDS_SELECTOR,
+  formatTokenAmount,
+} from "../utils";
+import { TransactionItemProps } from "../types";
 
 const TransactionItem: React.FC<TransactionItemProps> = ({
   tx,
@@ -21,15 +25,72 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
   isUserSigner,
   hasUserConfirmed,
 }) => {
+  const renderTransactionInfo = () => {
+    const funcName = convertSelectorToFuncName(tx.selector);
+
+    if (tx.selector === TRANSFER_FUNDS_SELECTOR) {
+      const recipient = tx.calldata[0];
+      try {
+        return (
+          <>
+            <div>Function: Transfer Funds</div>
+            <div>
+              To Address: {formatAddress(convertFeltToAddress(recipient))}
+            </div>
+            <div>
+              Amount: {formatTokenAmount(tx.calldata[1])}{" "}
+              {tx.tokenType || "ETH"}
+            </div>
+          </>
+        );
+      } catch (error) {
+        console.error("Error parsing transfer amount:", error);
+        return (
+          <>
+            <div>Function: Transfer Funds</div>
+            <div>
+              To Address: {formatAddress(convertFeltToAddress(recipient))}
+            </div>
+            <div>Amount: Error parsing amount</div>
+          </>
+        );
+      }
+    } else if (tx.selector === ADD_SIGNER_SELECTOR) {
+      return (
+        <>
+          <div>Function: Add Signer</div>
+          <div>
+            New Signer:{" "}
+            {formatAddress(convertFeltToAddress(tx.calldata[1] || ""))}
+          </div>
+          <div>New Quorum: {tx.calldata[0]}</div>
+        </>
+      );
+    } else if (tx.selector === REMOVE_SIGNERS_SELECTOR) {
+      return (
+        <>
+          <div>Function: Remove Signer</div>
+          <div>
+            Signer To Remove:{" "}
+            {formatAddress(convertFeltToAddress(tx.calldata[1] || ""))}
+          </div>
+          <div>New Quorum: {tx.calldata[0]}</div>
+        </>
+      );
+    }
+
+    return <div>Function Name: {funcName || "Unknown..."}</div>;
+  };
+
   return (
     <div
       className={`p-3 rounded ${isSelected ? "bg-blue-900" : "bg-gray-700"} cursor-pointer hover:bg-gray-600`}
       onClick={() => onSelect(tx.id)}
     >
       <div className="flex justify-between items-center mb-2">
-        <div>
-          <span className="font-medium">ID: {formatAddress(tx.id)}</span>{" "}
-          <span>
+        <div className="flex items-center gap-2.5">
+          <div className="font-medium">ID: {formatAddress(tx.id)}</div>{" "}
+          <div>
             <CopyToClipboard
               text={tx.id}
               onCopy={() => {
@@ -40,7 +101,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
                 Copy
               </button>
             </CopyToClipboard>
-          </span>
+          </div>
         </div>
         <span
           className={`text-xs px-2 py-1 rounded ${
@@ -70,7 +131,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
           </span>
         </div>
         <div>Block: {tx.submittedBlock}</div>
-        <div>Function Name: {convertSelectorToFuncName(tx.selector)}</div>
+        {renderTransactionInfo()}
       </div>
 
       {isSelected && !tx.executed && isUserSigner && (
@@ -83,7 +144,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
             disabled={loading}
             className="flex-1 py-1 text-xs rounded bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
           >
-            Confirm
+            {hasUserConfirmed(tx) ? "Confirmed" : "Confirm"}
           </button>
 
           <button
