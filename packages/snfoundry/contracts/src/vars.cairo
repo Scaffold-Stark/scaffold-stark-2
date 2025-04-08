@@ -21,7 +21,6 @@ pub trait IVars<TContractState> {
     fn get_bytes31(self: @TContractState) -> bytes31;
     fn get_non_zero_u256(self: @TContractState) -> NonZero<u256>;
 
-
     // get with value
     fn get_u256_with_value(self: @TContractState, value: u256) -> u256;
     fn get_felt_with_value(self: @TContractState, value: felt252) -> felt252;
@@ -87,7 +86,7 @@ pub trait IVars<TContractState> {
 
 #[starknet::contract]
 mod Vars {
-    use starknet::storage::Map;
+    use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
     use super::{ContractAddress, IVars};
 
     #[storage]

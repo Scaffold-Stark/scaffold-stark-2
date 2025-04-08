@@ -1,39 +1,5 @@
 use starknet::ContractAddress;
-
-#[derive(Drop, Serde, starknet::Store)]
-enum SampleEnum {
-    #[default]
-    enum1: u256,
-    enum2: u256,
-    enum3: ByteArray,
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct SampleStruct {
-    id: u256,
-    name: ByteArray,
-    status: SampleEnum,
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct Layer1 {
-    layer1_element: u256,
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct Layer2 {
-    layer2_element: Layer1,
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct Layer3 {
-    layer3_element: Layer2,
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct StructWith4Layers {
-    layer4_element: Layer3,
-}
+use contracts::types::{SampleEnum, SampleStruct, StructWith4Layers, Layer1, Layer2, Layer3};
 
 #[derive(Drop, Serde, starknet::Store)]
 struct StructWithTuple {
@@ -80,10 +46,8 @@ pub trait IComplex<TContractState> {
 
 #[starknet::contract]
 mod Complex {
-    use starknet::storage::Map;
-    use super::{
-        ContractAddress, IComplex, StructWithTuple, ComplexStruct, SampleStruct, StructWith4Layers
-    };
+    use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
+    use super::{IComplex, StructWithTuple, ComplexStruct};
 
     #[storage]
     struct Storage {

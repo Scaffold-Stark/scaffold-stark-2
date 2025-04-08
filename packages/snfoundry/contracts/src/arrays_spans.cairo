@@ -1,67 +1,8 @@
 use starknet::ContractAddress;
-
-#[derive(Drop, Serde, starknet::Store)]
-enum SampleEnum {
-    #[default]
-    enum1: u256,
-    enum2: u256,
-    enum3: ByteArray,
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct SampleStruct {
-    id: u256,
-    name: ByteArray,
-    status: SampleEnum,
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct SampleNestedStruct {
-    user: ContractAddress,
-    data: SampleStruct,
-    status: SampleEnum,
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct StructWithFiveElements {
-    element1: u256,
-    element2: felt252,
-    element3: ByteArray,
-    element4: ContractAddress,
-    element5: bool,
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct StructWithEightElements {
-    element1: u256,
-    element2: felt252,
-    element3: ByteArray,
-    element4: ContractAddress,
-    element5: bool,
-    element6: u64,
-    element7: i128,
-    element8: bytes31,
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct Layer1 {
-    layer1_element: u256,
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct Layer2 {
-    layer2_element: Layer1,
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct Layer3 {
-    layer3_element: Layer2,
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct StructWith4Layers {
-    layer4_element: Layer3,
-}
+use contracts::types::{
+    SampleEnum, SampleNestedStruct, SampleStruct, StructWithFiveElements, StructWithEightElements,
+    Layer1, Layer2, Layer3, StructWith4Layers
+};
 
 #[starknet::interface]
 pub trait IArraysSpans<TContractState> {

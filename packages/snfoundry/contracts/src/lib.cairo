@@ -1,6 +1,7 @@
 mod arrays_spans;
-mod complex;
-mod events;
-mod structs;
-mod tuples;
-mod vars;
+//mod complex;
+// mod events; Use events hook in Home page
+// mod structs;
+// mod tuples;
+// mod vars;
+mod types;
