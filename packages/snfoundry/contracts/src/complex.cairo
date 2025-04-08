@@ -1,5 +1,5 @@
 use starknet::ContractAddress;
-use contracts::types::{SampleEnum, SampleStruct, StructWith4Layers, Layer1, Layer2, Layer3};
+use contracts::types::{SampleStruct, StructWith4Layers};
 
 #[derive(Drop, Serde, starknet::Store)]
 struct StructWithTuple {

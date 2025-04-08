@@ -1,8 +1,6 @@
-use starknet::ContractAddress;
-
 use contracts::types::{
     SampleEnum, SampleNestedStruct, SampleStruct, StructWithFiveElements, StructWithEightElements,
-    StructWith4Layers, Layer1, Layer2, Layer3
+    StructWith4Layers
 };
 
 #[starknet::interface]
