@@ -4,6 +4,8 @@ pub trait IYourContract<TContractState> {
     fn set_greeting(ref self: TContractState, new_greeting: ByteArray, amount_eth: Option<u256>);
     fn withdraw(ref self: TContractState);
     fn premium(self: @TContractState) -> bool;
+    fn i8_value(self: @TContractState) -> i8;
+    fn set_i8_value(ref self: TContractState, i8_value: i8);
 }
 
 #[starknet::contract]
@@ -51,6 +53,7 @@ mod YourContract {
         user_greeting_counter: Map<ContractAddress, u256>,
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
+        i8_value: i8,
     }
 
     #[constructor]
@@ -105,6 +108,12 @@ mod YourContract {
         }
         fn premium(self: @ContractState) -> bool {
             self.premium.read()
+        }
+        fn i8_value(self: @ContractState) -> i8 {
+            self.i8_value.read()
+        }
+        fn set_i8_value(ref self: ContractState, i8_value: i8) {
+            self.i8_value.write(i8_value);
         }
     }
 }
