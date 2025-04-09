@@ -154,7 +154,7 @@ Find the `packages/nextjs/scaffold.config.ts` file and change the `targetNetwork
 
 4. Get some testnet tokens.
 
-You will need to get some `ETH` or `STRK` Sepolia tokens to deploy your contract to Sepolia testnet.
+You will need to get some `STRK` Sepolia tokens to deploy your contract to Sepolia testnet.
 
 > Some popular faucets are [Starknet Faucet](https://starknet-faucet.vercel.app/) and [Blastapi Starknet Sepolia Eth](https://blastapi.io/faucets/starknet-sepolia-eth)
 

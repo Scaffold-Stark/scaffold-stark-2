@@ -9,6 +9,7 @@ type UseScaffoldEthBalanceProps = {
   address?: Address | string;
 };
 
+// @ts-ignore: use STRK as default token
 const useScaffoldEthBalance = ({ address }: UseScaffoldEthBalanceProps) => {
   const { data: deployedContract } = useDeployedContractInfo("Eth");
 
