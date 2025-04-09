@@ -1,6 +1,6 @@
 use contracts::types::{
-    SampleEnum, SampleNestedStruct, SampleStruct, StructWithFiveElements, StructWithEightElements,
-    StructWith4Layers
+    SampleEnum, SampleNestedStruct, SampleStruct, StructWith4Layers, StructWithEightElements,
+    StructWithFiveElements,
 };
 
 #[starknet::interface]
@@ -18,43 +18,43 @@ pub trait IStructs<TContractState> {
     fn get_sample_nested_struct_with_key(self: @TContractState, key: felt252) -> SampleNestedStruct;
     fn get_sample_enum_with_key(self: @TContractState, key: felt252) -> SampleEnum;
     fn get_struct_with_five_elements_with_key(
-        self: @TContractState, key: felt252
+        self: @TContractState, key: felt252,
     ) -> StructWithFiveElements;
     fn get_struct_with_eight_elements_with_key(
-        self: @TContractState, key: felt252
+        self: @TContractState, key: felt252,
     ) -> StructWithEightElements;
     fn get_struct_with_4_layers_with_key(self: @TContractState, key: felt252) -> StructWith4Layers;
 
     // Struct getters with values
     fn get_sample_struct_with_value(self: @TContractState, value: SampleStruct) -> SampleStruct;
     fn get_sample_nested_struct_with_value(
-        self: @TContractState, value: SampleNestedStruct
+        self: @TContractState, value: SampleNestedStruct,
     ) -> SampleNestedStruct;
     fn get_sample_enum_with_value(self: @TContractState, value: SampleEnum) -> SampleEnum;
     fn get_struct_with_five_elements_with_value(
-        self: @TContractState, value: StructWithFiveElements
+        self: @TContractState, value: StructWithFiveElements,
     ) -> StructWithFiveElements;
     fn get_struct_with_eight_elements_with_value(
-        self: @TContractState, value: StructWithEightElements
+        self: @TContractState, value: StructWithEightElements,
     ) -> StructWithEightElements;
     fn get_struct_with_4_layers_with_value(
-        self: @TContractState, value: StructWith4Layers
+        self: @TContractState, value: StructWith4Layers,
     ) -> StructWith4Layers;
 
     // Struct setters with keys
     fn set_sample_struct_with_key(ref self: TContractState, key: felt252, value: SampleStruct);
     fn set_sample_nested_struct_with_key(
-        ref self: TContractState, key: felt252, value: SampleNestedStruct
+        ref self: TContractState, key: felt252, value: SampleNestedStruct,
     );
     fn set_sample_enum_with_key(ref self: TContractState, key: felt252, value: SampleEnum);
     fn set_struct_with_five_elements_with_key(
-        ref self: TContractState, key: felt252, value: StructWithFiveElements
+        ref self: TContractState, key: felt252, value: StructWithFiveElements,
     );
     fn set_struct_with_eight_elements_with_key(
-        ref self: TContractState, key: felt252, value: StructWithEightElements
+        ref self: TContractState, key: felt252, value: StructWithEightElements,
     );
     fn set_struct_with_4_layers_with_key(
-        ref self: TContractState, key: felt252, value: StructWith4Layers
+        ref self: TContractState, key: felt252, value: StructWith4Layers,
     );
 }
 
@@ -62,8 +62,8 @@ pub trait IStructs<TContractState> {
 mod Structs {
     use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
     use super::{
-        IStructs, SampleEnum, SampleNestedStruct, SampleStruct, StructWithFiveElements,
-        StructWithEightElements, StructWith4Layers
+        IStructs, SampleEnum, SampleNestedStruct, SampleStruct, StructWith4Layers,
+        StructWithEightElements, StructWithFiveElements,
     };
 
     #[storage]
@@ -112,7 +112,7 @@ mod Structs {
         }
 
         fn get_sample_nested_struct_with_key(
-            self: @ContractState, key: felt252
+            self: @ContractState, key: felt252,
         ) -> SampleNestedStruct {
             self.mapping_sample_nested_struct.read(key)
         }
@@ -122,19 +122,19 @@ mod Structs {
         }
 
         fn get_struct_with_five_elements_with_key(
-            self: @ContractState, key: felt252
+            self: @ContractState, key: felt252,
         ) -> StructWithFiveElements {
             self.mapping_struct_with_five_elements.read(key)
         }
 
         fn get_struct_with_eight_elements_with_key(
-            self: @ContractState, key: felt252
+            self: @ContractState, key: felt252,
         ) -> StructWithEightElements {
             self.mapping_struct_with_eight_elements.read(key)
         }
 
         fn get_struct_with_4_layers_with_key(
-            self: @ContractState, key: felt252
+            self: @ContractState, key: felt252,
         ) -> StructWith4Layers {
             self.mapping_struct_with_4_layers.read(key)
         }
@@ -145,7 +145,7 @@ mod Structs {
         }
 
         fn get_sample_nested_struct_with_value(
-            self: @ContractState, value: SampleNestedStruct
+            self: @ContractState, value: SampleNestedStruct,
         ) -> SampleNestedStruct {
             value
         }
@@ -155,19 +155,19 @@ mod Structs {
         }
 
         fn get_struct_with_five_elements_with_value(
-            self: @ContractState, value: StructWithFiveElements
+            self: @ContractState, value: StructWithFiveElements,
         ) -> StructWithFiveElements {
             value
         }
 
         fn get_struct_with_eight_elements_with_value(
-            self: @ContractState, value: StructWithEightElements
+            self: @ContractState, value: StructWithEightElements,
         ) -> StructWithEightElements {
             value
         }
 
         fn get_struct_with_4_layers_with_value(
-            self: @ContractState, value: StructWith4Layers
+            self: @ContractState, value: StructWith4Layers,
         ) -> StructWith4Layers {
             value
         }
@@ -178,7 +178,7 @@ mod Structs {
         }
 
         fn set_sample_nested_struct_with_key(
-            ref self: ContractState, key: felt252, value: SampleNestedStruct
+            ref self: ContractState, key: felt252, value: SampleNestedStruct,
         ) {
             self.mapping_sample_nested_struct.write(key, value);
         }
@@ -188,19 +188,19 @@ mod Structs {
         }
 
         fn set_struct_with_five_elements_with_key(
-            ref self: ContractState, key: felt252, value: StructWithFiveElements
+            ref self: ContractState, key: felt252, value: StructWithFiveElements,
         ) {
             self.mapping_struct_with_five_elements.write(key, value);
         }
 
         fn set_struct_with_eight_elements_with_key(
-            ref self: ContractState, key: felt252, value: StructWithEightElements
+            ref self: ContractState, key: felt252, value: StructWithEightElements,
         ) {
             self.mapping_struct_with_eight_elements.write(key, value);
         }
 
         fn set_struct_with_4_layers_with_key(
-            ref self: ContractState, key: felt252, value: StructWith4Layers
+            ref self: ContractState, key: felt252, value: StructWith4Layers,
         ) {
             self.mapping_struct_with_4_layers.write(key, value);
         }

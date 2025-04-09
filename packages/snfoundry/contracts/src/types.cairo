@@ -1,28 +1,28 @@
 use starknet::ContractAddress;
 
-#[derive(Drop, Serde, starknet::Store)]
+#[derive(Drop, Serde, starknet::Store, Clone)]
 pub enum SampleEnum {
     #[default]
-    enum1: u256,
+    enum1,
     enum2: u256,
     enum3: ByteArray,
 }
 
-#[derive(Drop, Serde, starknet::Store)]
+#[derive(Drop, Serde, starknet::Store, Clone)]
 pub struct SampleStruct {
     pub id: u256,
     pub name: ByteArray,
     pub status: SampleEnum,
 }
 
-#[derive(Drop, Serde, starknet::Store)]
+#[derive(Drop, Serde, starknet::Store, Clone)]
 pub struct SampleNestedStruct {
     pub user: ContractAddress,
     pub data: SampleStruct,
     pub status: SampleEnum,
 }
 
-#[derive(Drop, Serde, starknet::Store)]
+#[derive(Drop, Serde, starknet::Store, Clone)]
 pub struct StructWithFiveElements {
     pub element1: u256,
     pub element2: felt252,
@@ -31,7 +31,7 @@ pub struct StructWithFiveElements {
     pub element5: bool,
 }
 
-#[derive(Drop, Serde, starknet::Store)]
+#[derive(Drop, Serde, starknet::Store, Clone)]
 pub struct StructWithEightElements {
     pub element1: u256,
     pub element2: felt252,
@@ -43,22 +43,22 @@ pub struct StructWithEightElements {
     pub element8: bytes31,
 }
 
-#[derive(Drop, Serde, starknet::Store)]
+#[derive(Drop, Serde, starknet::Store, Clone)]
 pub struct Layer1 {
     pub layer1_element: u256,
 }
 
-#[derive(Drop, Serde, starknet::Store)]
+#[derive(Drop, Serde, starknet::Store, Clone)]
 pub struct Layer2 {
     pub layer2_element: Layer1,
 }
 
-#[derive(Drop, Serde, starknet::Store)]
+#[derive(Drop, Serde, starknet::Store, Clone)]
 pub struct Layer3 {
     pub layer3_element: Layer2,
 }
 
-#[derive(Drop, Serde, starknet::Store)]
+#[derive(Drop, Serde, starknet::Store, Clone)]
 pub struct StructWith4Layers {
     pub layer4_element: Layer3,
 }
