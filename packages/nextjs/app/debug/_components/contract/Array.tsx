@@ -17,9 +17,9 @@ type ArrayProps = {
   parentForm: Record<string, any> | undefined;
   setParentForm: (form: Record<string, any>) => void;
   parentStateObjectKey: string;
-  testId?: string;
   setFormErrorMessage: Dispatch<SetStateAction<FormErrorMessageState>>;
   isDisabled?: boolean;
+  testId?: string;
 };
 
 export const ArrayInput = ({
@@ -29,8 +29,8 @@ export const ArrayInput = ({
   parentStateObjectKey,
   abiParameter,
   setFormErrorMessage,
-  testId,
   isDisabled,
+  testId,
 }: ArrayProps) => {
   // array in object representation
   const [inputArr, setInputArr] = useState<any>({});
@@ -47,7 +47,7 @@ export const ArrayInput = ({
     setParentForm({
       ...parentForm,
       [parentStateObjectKey]: Object.values(inputArr).filter(
-        (item) => item !== null,
+        (item) => item !== null
       ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -74,7 +74,7 @@ export const ArrayInput = ({
                 setForm={(
                   nextInputRecipe:
                     | Record<string, any>
-                    | ((arg: Record<string, any>) => void),
+                    | ((arg: Record<string, any>) => void)
                 ) => {
                   // if we find a function (a.k.a setState recipe), we run it to generate the next state based on recpe, else just use the object passed in
                   const nextInputObject: Record<string, any> =

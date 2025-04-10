@@ -13,9 +13,9 @@ type StructProps = {
   setParentForm: (form: Record<string, any>) => void;
   parentStateObjectKey: string;
   abiMember?: AbiStruct | AbiEnum;
-  testId: string;
   setFormErrorMessage: Dispatch<SetStateAction<FormErrorMessageState>>;
   isDisabled?: boolean;
+  testId?: string;
 };
 
 export const Struct = ({
@@ -25,8 +25,8 @@ export const Struct = ({
   abiMember,
   abi,
   setFormErrorMessage,
-  testId,
   isDisabled = false,
+  testId
 }: StructProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialTupleFormState(
@@ -72,34 +72,58 @@ export const Struct = ({
   return (
     <div>
       <div
-        data-testid={`click-${testId}-field`}
-        className="collapse bg-base-200 pl-4 pt-1.5 pb-2 border-2 border-secondary custom-after"
+      data-testid={`click-${testId}-field`}
+        className={`collapse bg-base-200 pl-4 pt-1.5 pb-2 border-2 ${
+          isDisabled ? "border-base-100 cursor-not-allowed" : "border-secondary"
+        } custom-after`}
       >
-        <input type="checkbox" className="min-h-fit peer" />
+        {!isDisabled && <input type="checkbox" className="min-h-fit peer" />}
         <div
-          className={`collapse bg-base-200 pl-4 pt-1.5 pb-2 border-2 ${
-            isDisabled
-              ? "border-base-100 cursor-not-allowed"
-              : "border-secondary"
-          } custom-after`}
+          className={`collapse-title p-0 min-h-fit peer-checked:mb-2 text-primary-content/50 ${
+            isDisabled && "cursor-not-allowed"
+          } `}
         >
-          {!isDisabled && <input type="checkbox" className="min-h-fit peer" />}
-          <div
-            className={`collapse-title p-0 min-h-fit peer-checked:mb-2 text-primary-content/50 ${
-              isDisabled && "cursor-not-allowed"
-            } `}
-          >
-            <p className="m-0 p-0 text-[1rem]">{abiMember.type}</p>
-          </div>
-          <div className="ml-3 flex-col space-y-4 border-secondary/80 border-l-2 pl-4 collapse-content">
-            {abiMember.type === "struct"
-              ? abiMember.members.map((member, index) => {
-                  const key = getFunctionInputKey(
-                    abiMember.name || "struct",
-                    member,
-                    index,
-                  );
-                  return (
+          <p className="m-0 p-0 text-[1rem]">{abiMember.type}</p>
+        </div>
+        <div className="ml-3 flex-col space-y-4 border-secondary/80 border-l-2 pl-4 collapse-content">
+          {abiMember.type === "struct"
+            ? abiMember.members.map((member, index) => {
+                const key = getFunctionInputKey(
+                  abiMember.name || "struct",
+                  member,
+                  index,
+                );
+                return (
+                  <ContractInput
+                    setFormErrorMessage={setFormErrorMessage}
+                    abi={abi}
+                    setForm={setForm}
+                    form={form}
+                    key={index}
+                    stateObjectKey={key}
+                    paramType={{ name: member.name, type: member.type }}
+                  />
+                );
+              })
+            : abiMember.variants.map((variant, index) => {
+                const key = getFunctionInputKey(
+                  abiMember.name || "tuple",
+                  variant,
+                  index,
+                );
+
+                return (
+                  <div key={index} className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      name={`radio-${index}`}
+                      className="radio radio-xs radio-secondary"
+                      checked={index === activeVariantIndex}
+                      onChange={() => {}}
+                      onClick={() => {
+                        setActiveVariantIndex(index);
+                      }}
+                    />
                     <ContractInput
                       setFormErrorMessage={setFormErrorMessage}
                       abi={abi}
@@ -107,49 +131,18 @@ export const Struct = ({
                       form={form}
                       key={index}
                       stateObjectKey={key}
-                      paramType={{ name: member.name, type: member.type }}
+                      paramType={variant}
+                      isDisabled={
+                        index !== activeVariantIndex ||
+                        // this will disable the input box if the variant is None
+                        // added option type check for safety
+                        (isCairoOption(abiMember.name) &&
+                          variant.name === "None")
+                      }
                     />
-                  );
-                })
-              : abiMember.variants.map((variant, index) => {
-                  const key = getFunctionInputKey(
-                    abiMember.name || "tuple",
-                    variant,
-                    index,
-                  );
-
-                  return (
-                    <div key={index} className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        name={`radio-${index}`}
-                        className="radio radio-xs radio-secondary"
-                        checked={index === activeVariantIndex}
-                        onChange={() => {}}
-                        onClick={() => {
-                          setActiveVariantIndex(index);
-                        }}
-                      />
-                      <ContractInput
-                        setFormErrorMessage={setFormErrorMessage}
-                        abi={abi}
-                        setForm={setForm}
-                        form={form}
-                        key={index}
-                        stateObjectKey={key}
-                        paramType={variant}
-                        isDisabled={
-                          index !== activeVariantIndex ||
-                          // this will disable the input box if the variant is None
-                          // added option type check for safety
-                          (isCairoOption(abiMember.name) &&
-                            variant.name === "None")
-                        }
-                      />
-                    </div>
-                  );
-                })}
-          </div>
+                  </div>
+                );
+              })}
         </div>
       </div>
     </div>
