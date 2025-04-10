@@ -31,10 +31,10 @@ const MultisigPage = () => {
   });
 
   const {
-    transactions,
     pendingTransactions,
     executedTransactions,
     signers,
+    quorum,
     initialized,
     loading: storeLoading,
     loadTransactions,
@@ -67,7 +67,6 @@ const MultisigPage = () => {
   const [selectedTxId, setSelectedTxId] = useState<string>("");
   const [displayedTransactions, setDisplayedTransactions] =
     useState(pendingTransactions);
-
   const { data: submittedTxEvents } = useScaffoldEventHistory({
     contractName: "CustomMultisigWallet",
     eventName:
@@ -108,12 +107,24 @@ const MultisigPage = () => {
     watch: true,
   });
 
+  const { data: quorumUpdatedEvents } = useScaffoldEventHistory({
+    contractName: "CustomMultisigWallet",
+    eventName:
+      "contracts::CustomMultisigComponent::MultisigComponent::QuorumUpdated",
+    fromBlock: 0n,
+    watch: true,
+  });
+
   const handleSelectChange = useCallback(
     (e: ChangeEvent<HTMLSelectElement>) => {
       const value = e.target.value as SignerOption;
       setSelectedOption(value);
+
+      if (value === "change_quorum") {
+        setNewQuorum(quorum);
+      }
     },
-    [],
+    [quorum],
   );
 
   const handleSignerChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -147,7 +158,10 @@ const MultisigPage = () => {
   );
 
   const handleCreateSignerTransaction = useCallback(async () => {
-    if (!address || !selectedOption) return;
+    if (!selectedOption) return;
+
+    if ((selectedOption === "add" || selectedOption === "remove") && !address)
+      return;
 
     setLoading(true);
     try {
@@ -164,13 +178,17 @@ const MultisigPage = () => {
 
     setLoading(true);
     try {
-      await createTransferTransaction(transferRecipient, transferAmount);
+      await createTransferTransaction(
+        transferRecipient,
+        transferAmount,
+        newQuorum,
+      );
       setTransferRecipient("");
       setTransferAmount("");
     } finally {
       setLoading(false);
     }
-  }, [createTransferTransaction, transferAmount, transferRecipient]);
+  }, [createTransferTransaction, transferAmount, transferRecipient, newQuorum]);
 
   const refreshSigners = useCallback(async () => {
     setLoadingSigners(true);
@@ -218,11 +236,11 @@ const MultisigPage = () => {
   }, [submittedTxEvents, confirmedTxEvents, executedTxEvents]);
 
   useEffect(() => {
-    if (signerAddedEvents || signerRemovedEvents) {
+    if (signerAddedEvents || signerRemovedEvents || quorumUpdatedEvents) {
       syncSigners();
       loadSigners();
     }
-  }, [signerAddedEvents, signerRemovedEvents]);
+  }, [signerAddedEvents, signerRemovedEvents, quorumUpdatedEvents]);
 
   if (!deployedContractData)
     return (
@@ -247,6 +265,7 @@ const MultisigPage = () => {
             loadingSigners={loadingSigners}
             loadSigners={refreshSigners}
             account={account}
+            quorum={quorum}
           />
 
           <ManageTransaction
@@ -289,6 +308,7 @@ const MultisigPage = () => {
             }}
             loading={loading || operationsLoading}
             signers={signers}
+            quorum={quorum}
             isUserSigner={isUserSigner}
             hasUserConfirmed={hasUserConfirmed}
             account={account}

@@ -1,4 +1,9 @@
-export type SignerOption = "" | "add" | "remove" | "transfer_fund";
+export type SignerOption =
+  | ""
+  | "add"
+  | "remove"
+  | "transfer_fund"
+  | "change_quorum";
 export type TxType = "pending" | "executed" | "all";
 
 export interface Transaction {
@@ -13,6 +18,7 @@ export interface Transaction {
   calldata: string[];
   addressConfirmed: string[];
   tokenType?: string;
+  txQuorum?: number;
   createdAt: number;
   updatedAt: number;
 }
@@ -42,11 +48,12 @@ export interface WalletInfoProps {
   loadingSigners: boolean;
   loadSigners: () => Promise<void>;
   account?: { address: string };
+  quorum: number;
 }
 
 export interface TransactionItemProps {
   tx: Transaction;
-  signers: string[];
+  quorum: number;
   isSelected: boolean;
   onSelect: (id: string) => void;
   confirmTransaction: (id: string) => Promise<void>;
@@ -70,6 +77,7 @@ export interface TransactionListProps {
   executeTransaction: (id: string) => Promise<void>;
   loading: boolean;
   signers: string[];
+  quorum: number;
   isUserSigner: () => boolean;
   hasUserConfirmed: (tx: Transaction) => boolean;
   account?: { address: string };

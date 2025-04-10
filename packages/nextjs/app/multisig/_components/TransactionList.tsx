@@ -14,7 +14,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
   revokeConfirmation,
   executeTransaction,
   loading,
-  signers,
+  quorum,
   isUserSigner,
   hasUserConfirmed,
   account,
@@ -48,7 +48,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
             <TransactionItem
               key={tx.id}
               tx={tx}
-              signers={signers}
+              quorum={quorum}
               isSelected={selectedTxId === tx.id}
               onSelect={handleTxSelect}
               confirmTransaction={confirmTransaction}

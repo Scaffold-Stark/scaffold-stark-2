@@ -11,6 +11,7 @@ export function getFunctionSelector(functionName: string) {
 export const ADD_SIGNER_SELECTOR = getFunctionSelector("add_signer");
 export const REMOVE_SIGNER_SELECTOR = getFunctionSelector("remove_signer");
 export const TRANSFER_FUNDS_SELECTOR = getFunctionSelector("transfer_funds");
+export const CHANGE_QUORUM_SELECTOR = getFunctionSelector("change_quorum");
 
 /**
  * Converts a felt representation to a hex address
@@ -48,6 +49,8 @@ export const convertSelectorToFuncName = (text: string) => {
       return "remove_signer";
     case TRANSFER_FUNDS_SELECTOR:
       return "transfer_funds";
+    case CHANGE_QUORUM_SELECTOR:
+      return "change_quorum";
     default:
       return null;
   }

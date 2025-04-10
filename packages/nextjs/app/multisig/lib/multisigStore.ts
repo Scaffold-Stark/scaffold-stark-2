@@ -27,6 +27,7 @@ interface MultisigState {
   saveConfig: (contractAddress: string, quorum: number) => Promise<boolean>;
 
   resetStore: () => void;
+  resetDatabase: () => Promise<boolean>;
 }
 
 export const useMultisigStore = create<MultisigState>((set, get) => ({
@@ -167,5 +168,20 @@ export const useMultisigStore = create<MultisigState>((set, get) => ({
       quorum: 0,
       contractAddress: "",
     });
+  },
+  resetDatabase: async () => {
+    set({ loading: true });
+    try {
+      const result = await dbService.resetDatabase();
+      if (result) {
+        get().resetStore();
+      }
+      return result;
+    } catch (error) {
+      console.error("Failed to reset database:", error);
+      return false;
+    } finally {
+      set({ loading: false });
+    }
   },
 }));

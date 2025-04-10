@@ -133,4 +133,17 @@ export const dbService = {
       return null;
     }
   },
+  async resetDatabase(): Promise<boolean> {
+    try {
+      await db.transactions.clear();
+      await db.signers.clear();
+      await db.configs.clear();
+
+      console.log("Database has been reset successfully");
+      return true;
+    } catch (error) {
+      console.error("Failed to reset database:", error);
+      return false;
+    }
+  },
 };

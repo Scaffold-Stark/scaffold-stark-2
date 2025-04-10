@@ -4,6 +4,7 @@ import { BlockieAvatar } from "~~/components/scaffold-stark";
 import { notification } from "~~/utils/scaffold-stark";
 import { convertFeltToAddress, formatAddress } from "../utils";
 import { WalletInfoProps } from "../types";
+import ResetDataButton from "./ResetDataButton";
 
 const WalletInfo: React.FC<WalletInfoProps> = ({
   deployedContractData,
@@ -13,13 +14,14 @@ const WalletInfo: React.FC<WalletInfoProps> = ({
   loadingSigners,
   loadSigners,
   account,
+  quorum,
 }) => {
-  const quorum = signers.length;
-
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-md">
-      <h3 className="text-xl font-semibold mb-3">Wallet Information</h3>
-
+      <div className="flex items-center gap-2 justify-between mb-3">
+        <h3 className="text-xl font-semibold ">Wallet Information</h3>
+        <ResetDataButton />
+      </div>
       {deployedContractData && (
         <div className="grid grid-cols-2 gap-5">
           <div className="mb-4">
@@ -37,7 +39,7 @@ const WalletInfo: React.FC<WalletInfoProps> = ({
               </CopyToClipboard>
             </div>
             <div className="text-sm">
-              <span className="font-semibold">Required Signatures:</span>
+              <span className="font-semibold">Signers:</span>
               <span className="ml-2">
                 {loadingSigners ? "Loading..." : signers.length}
               </span>

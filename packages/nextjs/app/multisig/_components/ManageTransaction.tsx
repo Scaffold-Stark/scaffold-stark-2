@@ -33,6 +33,10 @@ export const ManageTransaction: React.FC<ManageTransactionProps> = ({
     }
   };
 
+  const getMaxQuorumValue = () => {
+    return signers.length;
+  };
+
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-md">
       <h3 className="text-xl font-semibold mb-4">Manage Transaction</h3>
@@ -48,12 +52,13 @@ export const ManageTransaction: React.FC<ManageTransactionProps> = ({
             >
               <option value="add">Add Signer</option>
               <option value="remove">Remove Signer</option>
+              {/* <option value="change_quorum">Change Quorum</option> */}
               <option value="transfer_fund">Transfer</option>
             </select>
           </div>
         </div>
 
-        {(selectedOption === "add" || selectedOption === "remove") && (
+        {selectedOption === "add" && (
           <>
             <div>
               <label className="block text-sm mb-1">Signer Address:</label>
@@ -67,27 +72,59 @@ export const ManageTransaction: React.FC<ManageTransactionProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm mb-1">New Quorum Value:</label>
+              <label className="block text-sm mb-1">Quorum:</label>
               <input
                 type="number"
                 min="1"
-                max={
-                  selectedOption === "add"
-                    ? signers.length + 1
-                    : signers.length - 1
-                }
+                max={getMaxQuorumValue()}
                 value={newQuorum}
                 onChange={handleNewQuorumChange}
                 className="block w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <p className="text-xs text-gray-400 mt-1">
-                {selectedOption === "add"
-                  ? `Must be between 1 and ${signers.length + 1}`
-                  : `Must be between 1 and ${Math.max(1, signers.length - 1)}`}
-              </p>
             </div>
           </>
         )}
+
+        {selectedOption === "remove" && (
+          <>
+            <div>
+              <label className="block text-sm mb-1">Signer Address:</label>
+              <input
+                type="text"
+                value={address}
+                onChange={handleSignerChange}
+                placeholder="Enter wallet address"
+                className="block w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm mb-1">Quorum Value:</label>
+              <input
+                type="number"
+                min="1"
+                max={getMaxQuorumValue()}
+                value={newQuorum}
+                onChange={handleNewQuorumChange}
+                className="block w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </>
+        )}
+
+        {/* {selectedOption === "change_quorum" && (
+          <div>
+            <label className="block text-sm mb-1">Quorum Value:</label>
+            <input
+              type="number"
+              min="1"
+              max={getMaxQuorumValue()}
+              value={newQuorum}
+              onChange={handleNewQuorumChange}
+              className="block w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        )} */}
 
         {selectedOption === "transfer_fund" && (
           <>
@@ -113,10 +150,18 @@ export const ManageTransaction: React.FC<ManageTransactionProps> = ({
                   className="block w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
-              <p className="text-xs text-gray-400 mt-1">
-                Example: 0.01 for 0.01 ETH
-              </p>
             </div>
+            {/* <div>
+              <label className="block text-sm mb-1">Quorum Value:</label>
+              <input
+                type="number"
+                min="1"
+                max={getMaxQuorumValue()}
+                value={newQuorum}
+                onChange={handleNewQuorumChange}
+                className="block w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div> */}
           </>
         )}
 
@@ -128,8 +173,10 @@ export const ManageTransaction: React.FC<ManageTransactionProps> = ({
           }
           disabled={
             loading ||
+            newQuorum > getMaxQuorumValue() ||
             !selectedOption ||
-            (selectedOption !== "transfer_fund" && !address) ||
+            (selectedOption === "add" && !address) ||
+            (selectedOption === "remove" && !address) ||
             (selectedOption === "transfer_fund" &&
               (!transferRecipient || !transferAmount)) ||
             !account ||
@@ -141,8 +188,8 @@ export const ManageTransaction: React.FC<ManageTransactionProps> = ({
         </button>
 
         <div className="text-xs text-gray-400 mt-2">
-          Note: After creating a transaction, all signers (including you) must
-          confirm it separately before it can be executed.
+          Note: After creating a transaction, it needs {newQuorum} confirmations
+          to be executed.
         </div>
       </div>
     </div>

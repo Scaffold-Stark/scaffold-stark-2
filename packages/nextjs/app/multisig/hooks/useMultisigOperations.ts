@@ -10,6 +10,7 @@ import {
   convertToWei,
   REMOVE_SIGNER_SELECTOR,
   TRANSFER_FUNDS_SELECTOR,
+  CHANGE_QUORUM_SELECTOR,
   convertFeltToAddress,
   getFunctionSelector,
 } from "../utils";
@@ -121,11 +122,6 @@ export const useMultisigOperations = () => {
         return null;
       }
 
-      if (!signerAddress) {
-        notification.error("Signer address is required");
-        return null;
-      }
-
       setLoading(true);
       try {
         const contract = getContract();
@@ -133,14 +129,32 @@ export const useMultisigOperations = () => {
         const salt = "0";
         let selector = "";
         let calldata: string[] = [];
+        let functionName = "";
 
         if (option === "add") {
+          if (!signerAddress) {
+            notification.error("Signer address is required");
+            return null;
+          }
           selector = ADD_SIGNER_SELECTOR;
           calldata = [newQuorum.toString(), signerAddress];
+          functionName = "add_signer";
         } else if (option === "remove") {
+          if (!signerAddress) {
+            notification.error("Signer address is required");
+            return null;
+          }
           const validNewQuorum = Math.min(newQuorum, signers.length - 1);
           selector = REMOVE_SIGNER_SELECTOR;
           calldata = [validNewQuorum.toString(), signerAddress];
+          functionName = "remove_signer";
+        } else if (option === "change_quorum") {
+          selector = CHANGE_QUORUM_SELECTOR;
+          calldata = [newQuorum.toString()];
+          functionName = "change_quorum";
+        } else {
+          notification.error("Invalid option selected");
+          return null;
         }
 
         const txIdResponse = await contract.hash_transaction(
@@ -159,22 +173,19 @@ export const useMultisigOperations = () => {
 
         const txIdString = txIdResponse.toString();
 
-        // Create transaction object for saving to IndexedDB
-        const functionName =
-          selector === ADD_SIGNER_SELECTOR
-            ? "add_signer"
-            : selector === REMOVE_SIGNER_SELECTOR
-              ? "remove_signer"
-              : null;
-
         // Get the current block number
         const currentBlockNumber = await starknet.getBlockNumber();
         const currentTime = Date.now();
 
+        const txQuorum =
+          option === "add" || option === "remove" || option === "change_quorum"
+            ? Number(calldata[0])
+            : undefined;
+
         const transaction: Transaction = {
           id: txIdString,
           to: contractAddress,
-          selector: functionName || "unknown_function",
+          selector: functionName,
           calldata: calldata,
           salt: salt,
           confirmations: 0,
@@ -182,6 +193,7 @@ export const useMultisigOperations = () => {
           submittedBy: account.address,
           submittedBlock: currentBlockNumber.toString(),
           addressConfirmed: [],
+          txQuorum: txQuorum,
           createdAt: currentTime,
           updatedAt: currentTime,
         };
@@ -207,7 +219,7 @@ export const useMultisigOperations = () => {
   );
 
   const createTransferTransaction = useCallback(
-    async (recipient: string, amount: string) => {
+    async (recipient: string, amount: string, newQuorum: number) => {
       if (!account || !deployedContractData) {
         notification.error("No account connected or contract not loaded");
         return null;
@@ -230,6 +242,7 @@ export const useMultisigOperations = () => {
 
         const selector = TRANSFER_FUNDS_SELECTOR;
         const calldata = [recipient, convertToWei(amount), "0"];
+        // const calldata = [recipient, convertToWei(amount), newQuorum.toString()];
 
         const txIdResponse = await contract.hash_transaction(
           deployedContractData.address,
@@ -264,6 +277,7 @@ export const useMultisigOperations = () => {
           submittedBlock: currentBlockNumber.toString(),
           addressConfirmed: [],
           tokenType: "ETH",
+          txQuorum: newQuorum,
           createdAt: currentTime,
           updatedAt: currentTime,
         };
@@ -393,7 +407,7 @@ export const useMultisigOperations = () => {
 
         let calldata = tx.calldata;
 
-        if (tx.selector === TRANSFER_FUNDS_SELECTOR && calldata.length === 2) {
+        if (tx.selector === "transfer_funds" && calldata.length === 2) {
           calldata = [...calldata, "0"];
         }
 

@@ -11,7 +11,6 @@ import { TransactionItemProps } from "../types";
 
 const TransactionItem: React.FC<TransactionItemProps> = ({
   tx,
-  signers,
   isSelected,
   onSelect,
   confirmTransaction,
@@ -21,6 +20,33 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
   isUserSigner,
   hasUserConfirmed,
 }) => {
+  const getTransactionQuorum = () => {
+    if (tx.txQuorum !== undefined) {
+      return tx.txQuorum;
+    }
+
+    if (
+      (tx.selector === "add_signer" ||
+        tx.selector === "remove_signer" ||
+        tx.selector === "change_quorum") &&
+      tx.calldata &&
+      tx.calldata.length > 0
+    ) {
+      return Number(tx.calldata[0]);
+    }
+    if (
+      tx.selector === "transfer_funds" &&
+      tx.calldata &&
+      tx.calldata.length > 0
+    ) {
+      return Number(tx.calldata[2]);
+    }
+
+    return null;
+  };
+
+  const txQuorum = getTransactionQuorum();
+
   const renderTransactionInfo = () => {
     const funcName = tx.selector;
 
@@ -59,7 +85,6 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
             New Signer:{" "}
             {formatAddress(convertFeltToAddress(tx.calldata[1] || ""))}
           </div>
-          <div>New Quorum: {tx.calldata[0]}</div>
         </>
       );
     } else if (funcName === "remove_signer") {
@@ -70,7 +95,13 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
             Signer To Remove:{" "}
             {formatAddress(convertFeltToAddress(tx.calldata[1] || ""))}
           </div>
-          <div>New Quorum: {tx.calldata[0]}</div>
+        </>
+      );
+    } else if (funcName === "change_quorum") {
+      return (
+        <>
+          <div>Function: Change Quorum</div>
+          <div>New Quorum: {txQuorum || tx.calldata[0]}</div>
         </>
       );
     }
@@ -99,25 +130,19 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
             </CopyToClipboard>
           </div>
         </div>
-        {signers.length > 0 ? (
-          <span
-            className={`text-xs px-2 py-1 rounded ${
-              tx.executed
-                ? "bg-green-800"
-                : tx.confirmations >= signers.length
-                  ? "bg-blue-800"
-                  : "bg-yellow-800"
-            }`}
-          >
-            {tx.executed
-              ? "Executed"
-              : `${tx.confirmations}/${signers.length} confirmations`}
-          </span>
-        ) : (
-          <span className="text-xs px-2 py-1 rounded bg-gray-600">
-            Loading...
-          </span>
-        )}
+        <span
+          className={`text-xs px-2 py-1 rounded ${
+            tx.executed
+              ? "bg-green-800"
+              : tx.confirmations >= (txQuorum || parseInt(tx.calldata[0]))
+                ? "bg-blue-800"
+                : "bg-yellow-800"
+          }`}
+        >
+          {tx.executed
+            ? "Executed"
+            : `${tx.confirmations}/${txQuorum} confirmations`}
+        </span>
       </div>
 
       <div className="text-xs text-gray-300 space-y-1">
@@ -165,19 +190,16 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
               e.stopPropagation();
               executeTransaction(tx.id);
             }}
-            disabled={loading || tx.confirmations < signers.length}
+            disabled={
+              loading ||
+              tx.confirmations < (txQuorum || parseInt(tx.calldata[0]))
+            }
             className="flex-1 py-1 text-xs rounded bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
           >
-            {tx.confirmations >= signers.length
+            {tx.confirmations >= (txQuorum || parseInt(tx.calldata[0]))
               ? "Execute"
-              : `Need ${signers.length - tx.confirmations} More`}
+              : `Need ${(txQuorum || parseInt(tx.calldata[0])) - tx.confirmations} More`}
           </button>
-        </div>
-      )}
-
-      {isUserSigner && tx.executed && (
-        <div className="mt-3 px-3 py-1.5 text-center text-xs rounded bg-green-900">
-          Transaction Executed
         </div>
       )}
 

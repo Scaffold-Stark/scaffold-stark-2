@@ -5,6 +5,7 @@ export interface TransactionWithAdditionalInfo extends Transaction {
   hash?: string;
   notes?: string;
   metadata?: any;
+  txQuorum?: number;
 }
 
 export interface Signer {
@@ -30,7 +31,7 @@ export class MultisigDatabase extends Dexie {
     super("multisigWalletDB");
     this.version(1).stores({
       transactions:
-        "id, to, selector, executed, submittedBy, submittedBlock, createdAt, updatedAt",
+        "id, to, selector, executed, submittedBy, submittedBlock, txQuorum, createdAt, updatedAt",
       signers: "address",
       configs: "id, contractAddress, quorum, updatedAt",
     });
