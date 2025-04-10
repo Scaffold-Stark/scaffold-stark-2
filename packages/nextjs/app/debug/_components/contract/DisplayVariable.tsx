@@ -9,7 +9,7 @@ import { Abi } from "abi-wan-kanabi";
 import { Address } from "@starknet-react/chains";
 import { useReadContract } from "@starknet-react/core";
 import { BlockNumber } from "starknet";
-import { displayTxResult } from "./utilsDisplay";
+import { decodeContractResponse } from "./utilsDisplay";
 import { useTheme } from "next-themes";
 
 type DisplayVariableProps = {
@@ -59,7 +59,9 @@ export const DisplayVariable = ({
     <div className="space-y-1 pb-2">
       <div className="flex items-center">
         <h3
-          className={`font-medium text-lg mb-0 break-all ${isDarkMode ? "text-[#4DB4FF]" : "text-[#7800FF]"}`}
+          className={`font-medium text-lg mb-0 break-all ${
+            isDarkMode ? "text-[#4DB4FF]" : "text-[#7800FF]"
+          }`}
         >
           {abiFunction.name}
         </h3>
@@ -85,7 +87,13 @@ export const DisplayVariable = ({
               showAnimation ? "bg-warning rounded-sm animate-pulse-fast" : ""
             }`}
           >
-            {displayTxResult(result, false, abiFunction?.outputs)}
+            {decodeContractResponse({
+              resp: result,
+              abi,
+              functionOutputs: abiFunction?.outputs,
+              asText: true,
+              showAsString: false,
+            })}
           </div>
         </div>
       </div>

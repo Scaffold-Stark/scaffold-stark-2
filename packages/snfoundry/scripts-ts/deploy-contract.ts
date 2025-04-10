@@ -11,15 +11,15 @@ import {
   DeclareContractPayload,
   UniversalDetails,
   isSierra,
+  TransactionReceipt,
+  constants,
 } from "starknet";
 import { DeployContractParams, Network } from "./types";
 import { green, red, yellow } from "./helpers/colorize-log";
-import { getTxVersion } from "./helpers/fees";
 
 interface Arguments {
   network: string;
   reset: boolean;
-  fee?: string;
   [x: string]: unknown;
   _: (string | number)[];
   $0: string;
@@ -32,24 +32,14 @@ const argv = yargs(process.argv.slice(2))
     demandOption: true,
   })
   .option("reset", {
-    alias: "nr",
     type: "boolean",
-    description:
-      "(--no-reset) Do not reset deployments (keep existing deployments)",
+    description: "Reset deployments (remove existing deployments)",
     default: true,
-  })
-  .option("fee", {
-    type: "string",
-    description: "Specify the fee token",
-    demandOption: false,
-    choices: ["eth", "strk"],
-    default: "eth",
   })
   .parseSync() as Arguments;
 
 const networkName: string = argv.network;
 const resetDeployments: boolean = argv.reset;
-const feeToken: string = argv.fee;
 
 let deployments = {};
 let deployCalls = [];
@@ -65,15 +55,9 @@ const declareIfNot_NotWait = async (
     await provider.getClassByHash(declareContractPayload.classHash);
   } catch (error) {
     try {
-      const isSierraContract = isSierra(payload.contract);
-      const txVersion = await getTxVersion(
-        networks[networkName],
-        feeToken,
-        isSierraContract
-      );
       const { transaction_hash } = await deployer.declare(payload, {
         ...options,
-        version: txVersion,
+        version: constants.TRANSACTION_VERSION.V3,
       });
       if (networkName === "sepolia" || networkName === "mainnet") {
         await provider.waitForTransaction(transaction_hash);
@@ -108,6 +92,26 @@ const deployContract_NotWait = async (payload: {
   }
 };
 
+const findContractFile = (
+  contract: string,
+  fileType: "compiled_contract_class" | "contract_class"
+): string => {
+  const targetDir = path.resolve(__dirname, "../contracts/target/dev");
+  const files = fs.readdirSync(targetDir);
+
+  const pattern = new RegExp(`.*${contract}\\.${fileType}\\.json$`);
+  const matchingFile = files.find((file) => pattern.test(file));
+
+  if (!matchingFile) {
+    throw new Error(
+      `Could not find ${fileType} file for contract "${contract}". ` +
+        `Try removing snfoundry/contracts/target, then run 'yarn compile' and check if your contract name is correct inside the contracts/target/dev directory.`
+    );
+  }
+
+  return path.join(targetDir, matchingFile);
+};
+
 /**
  * Deploy a contract using the specified parameters.
  *
@@ -128,6 +132,7 @@ const deployContract_NotWait = async (payload: {
  *   options: { maxFee: BigInt(1000000000000) }
  * });
  */
+
 const deployContract = async (
   params: DeployContractParams
 ): Promise<{
@@ -155,28 +160,13 @@ const deployContract = async (
   try {
     compiledContractCasm = JSON.parse(
       fs
-        .readFileSync(
-          path.resolve(
-            __dirname,
-            `../contracts/target/dev/contracts_${contract}.compiled_contract_class.json`
-          )
-        )
+        .readFileSync(findContractFile(contract, "compiled_contract_class"))
         .toString("ascii")
     );
   } catch (error) {
-    if (
-      typeof error.message === "string" &&
-      error.message.includes("no such file") &&
-      error.message.includes("compiled_contract_class")
-    ) {
-      const match = error.message.match(
-        /\/dev\/(.+?)\.compiled_contract_class/
-      );
-      const missingContract = match ? match[1].split("_").pop() : "Unknown";
+    if (error.message.includes("Could not find")) {
       console.error(
-        red(
-          `The contract "${missingContract}" doesn't exist or is not compiled`
-        )
+        red(`The contract "${contract}" doesn't exist or is not compiled`)
       );
     } else {
       console.error(red("Error reading compiled contract class file: "), error);
@@ -190,12 +180,7 @@ const deployContract = async (
   try {
     compiledContractSierra = JSON.parse(
       fs
-        .readFileSync(
-          path.resolve(
-            __dirname,
-            `../contracts/target/dev/contracts_${contract}.contract_class.json`
-          )
-        )
+        .readFileSync(findContractFile(contract, "contract_class"))
         .toString("ascii")
     );
   } catch (error) {
@@ -255,19 +240,23 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
   }
 
   try {
-    const txVersion = await getTxVersion(networks[networkName], feeToken);
     let { transaction_hash } = await deployer.execute(deployCalls, {
       ...options,
-      version: txVersion,
+      version: constants.TRANSACTION_VERSION.V3,
     });
-    console.log(green("Deploy Calls Executed at "), transaction_hash);
     if (networkName === "sepolia" || networkName === "mainnet") {
-      await provider.waitForTransaction(transaction_hash);
+      const receipt = (await provider.waitForTransaction(
+        transaction_hash
+      )) as TransactionReceipt;
+      if (receipt.execution_status !== "SUCCEEDED") {
+        const revertReason = receipt.revert_reason;
+        throw new Error(red(`Deploy Calls Failed: ${revertReason}`));
+      }
     }
+    console.log(green("Deploy Calls Executed at "), transaction_hash);
   } catch (error) {
-    console.error(red("Error executing deploy calls: "), error);
     // split the calls in half and try again recursively
-    if (deployCalls.length > 1) {
+    if (deployCalls.length > 100) {
       let half = Math.ceil(deployCalls.length / 2);
       let firstHalf = deployCalls.slice(0, half);
       let secondHalf = deployCalls.slice(half);
@@ -275,6 +264,8 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
       await executeDeployCalls(options);
       deployCalls = secondHalf;
       await executeDeployCalls(options);
+    } else {
+      throw error;
     }
   }
 };
@@ -295,8 +286,6 @@ const exportDeployments = () => {
     __dirname,
     `../deployments/${networkName}_latest.json`
   );
-
-  const resetDeployments: boolean = argv.reset;
 
   if (!resetDeployments && fs.existsSync(networkPath)) {
     const currentTimestamp = new Date().getTime();

@@ -21,13 +21,12 @@ pub trait IVars<TContractState> {
     fn get_bytes31(self: @TContractState) -> bytes31;
     fn get_non_zero_u256(self: @TContractState) -> NonZero<u256>;
 
-
     // get with value
     fn get_u256_with_value(self: @TContractState, value: u256) -> u256;
     fn get_felt_with_value(self: @TContractState, value: felt252) -> felt252;
     fn get_byte_array_with_value(self: @TContractState, value: ByteArray) -> ByteArray;
     fn get_contract_address_with_value(
-        self: @TContractState, value: ContractAddress
+        self: @TContractState, value: ContractAddress,
     ) -> ContractAddress;
     fn get_bool_with_value(self: @TContractState, value: bool) -> bool;
     fn get_u8_with_value(self: @TContractState, value: u8) -> u8;
@@ -68,7 +67,7 @@ pub trait IVars<TContractState> {
     fn set_felt_with_key(ref self: TContractState, key: felt252, value: felt252);
     fn set_byte_array_with_key(ref self: TContractState, key: felt252, value: ByteArray);
     fn set_contract_address_with_key(
-        ref self: TContractState, key: felt252, value: ContractAddress
+        ref self: TContractState, key: felt252, value: ContractAddress,
     );
     fn set_bool_with_key(ref self: TContractState, key: felt252, value: bool);
     fn set_u8_with_key(ref self: TContractState, key: felt252, value: u8);
@@ -87,7 +86,7 @@ pub trait IVars<TContractState> {
 
 #[starknet::contract]
 mod Vars {
-    use starknet::storage::Map;
+    use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
     use super::{ContractAddress, IVars};
 
     #[storage]
@@ -275,7 +274,7 @@ mod Vars {
         }
 
         fn get_contract_address_with_value(
-            self: @ContractState, value: ContractAddress
+            self: @ContractState, value: ContractAddress,
         ) -> ContractAddress {
             value
         }
@@ -325,7 +324,7 @@ mod Vars {
         }
 
         fn get_non_zero_u256_with_value(
-            self: @ContractState, value: NonZero<u256>
+            self: @ContractState, value: NonZero<u256>,
         ) -> NonZero<u256> {
             value
         }
@@ -349,7 +348,7 @@ mod Vars {
         }
 
         fn set_contract_address_with_key(
-            ref self: ContractState, key: felt252, value: ContractAddress
+            ref self: ContractState, key: felt252, value: ContractAddress,
         ) {
             self.mapping_contract_address.write(key, value);
         }

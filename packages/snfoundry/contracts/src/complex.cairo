@@ -1,39 +1,5 @@
+use contracts::types::{SampleStruct, StructWith4Layers};
 use starknet::ContractAddress;
-
-#[derive(Drop, Serde, starknet::Store)]
-enum SampleEnum {
-    #[default]
-    enum1: u256,
-    enum2: u256,
-    enum3: ByteArray,
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct SampleStruct {
-    id: u256,
-    name: ByteArray,
-    status: SampleEnum,
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct Layer1 {
-    layer1_element: u256,
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct Layer2 {
-    layer2_element: Layer1,
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct Layer3 {
-    layer3_element: Layer2,
-}
-
-#[derive(Drop, Serde, starknet::Store)]
-struct StructWith4Layers {
-    layer4_element: Layer3,
-}
 
 #[derive(Drop, Serde, starknet::Store)]
 struct StructWithTuple {
@@ -62,28 +28,26 @@ pub trait IComplex<TContractState> {
 
     // Struct getters with values
     fn get_struct_with_tuple_with_value(
-        self: @TContractState, value: StructWithTuple
+        self: @TContractState, value: StructWithTuple,
     ) -> StructWithTuple;
     fn get_complex_struct_with_value(self: @TContractState, value: ComplexStruct) -> ComplexStruct;
 
     // Struct setters with keys
     fn set_struct_with_tuple_with_key(
-        ref self: TContractState, key: felt252, value: StructWithTuple
+        ref self: TContractState, key: felt252, value: StructWithTuple,
     );
     fn set_complex_struct_with_key(ref self: TContractState, key: felt252, value: ComplexStruct);
 
     // Function to read multiple values from complex types
     fn read_two_complex_values(
-        self: @TContractState, key1: felt252, key2: felt252
+        self: @TContractState, key1: felt252, key2: felt252,
     ) -> (StructWithTuple, ComplexStruct);
 }
 
 #[starknet::contract]
 mod Complex {
-    use starknet::storage::Map;
-    use super::{
-        ContractAddress, IComplex, StructWithTuple, ComplexStruct, SampleStruct, StructWith4Layers
-    };
+    use starknet::storage::{Map, StorageMapReadAccess, StorageMapWriteAccess};
+    use super::{ComplexStruct, IComplex, StructWithTuple};
 
     #[storage]
     struct Storage {
@@ -116,33 +80,33 @@ mod Complex {
 
         // Struct getters with values
         fn get_struct_with_tuple_with_value(
-            self: @ContractState, value: StructWithTuple
+            self: @ContractState, value: StructWithTuple,
         ) -> StructWithTuple {
             value
         }
 
         fn get_complex_struct_with_value(
-            self: @ContractState, value: ComplexStruct
+            self: @ContractState, value: ComplexStruct,
         ) -> ComplexStruct {
             value
         }
 
         // Struct setters with keys
         fn set_struct_with_tuple_with_key(
-            ref self: ContractState, key: felt252, value: StructWithTuple
+            ref self: ContractState, key: felt252, value: StructWithTuple,
         ) {
             self.mapping_struct_with_tuple.write(key, value);
         }
 
         fn set_complex_struct_with_key(
-            ref self: ContractState, key: felt252, value: ComplexStruct
+            ref self: ContractState, key: felt252, value: ComplexStruct,
         ) {
             self.mapping_complex_struct.write(key, value);
         }
 
         // Function to read multiple values from complex types
         fn read_two_complex_values(
-            self: @ContractState, key1: felt252, key2: felt252
+            self: @ContractState, key1: felt252, key2: felt252,
         ) -> (StructWithTuple, ComplexStruct) {
             let value1 = self.mapping_struct_with_tuple.read(key1);
             let value2 = self.mapping_complex_struct.read(key2);

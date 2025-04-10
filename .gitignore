@@ -1,6 +1,5 @@
 .vscode/**
 node_modules
-local-devnet
 package-lock.json
 .idea
 
@@ -13,3 +12,4 @@ package-lock.json
 !.yarn/versions
 .eslintcache
 .DS_Store
+.vercel

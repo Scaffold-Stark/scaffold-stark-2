@@ -5,13 +5,13 @@ use starknet::ContractAddress;
 #[derive(Drop, Serde)]
 enum SampleEnum {
     enum1: u256,
-    enum2: felt252
+    enum2: felt252,
 }
 
 #[derive(Drop, Serde)]
 enum SampleNestedEnum {
     enum1: SampleEnum,
-    enum2: felt252
+    enum2: felt252,
 }
 
 #[derive(Drop, Serde)]
@@ -23,7 +23,7 @@ struct SampleNestedStruct {
 #[derive(Drop, Serde)]
 struct Layer2NestedStruct {
     element1: SampleNestedStruct,
-    element2: felt252
+    element2: felt252,
 }
 
 #[derive(Drop, Serde)]
@@ -57,7 +57,7 @@ pub struct EventWithSimpleTypes {
     element1: u256,
     element2: felt252,
     element3: bool,
-    element4: i128
+    element4: i128,
 }
 
 #[derive(Drop, starknet::Event)]
@@ -97,19 +97,19 @@ pub struct EventWithTwoKeys {
 #[derive(Drop, starknet::Event)]
 pub struct EventWithNestedStruct {
     outer_element1: SampleNestedStruct,
-    outer_element2: u256
+    outer_element2: u256,
 }
 
 #[derive(Drop, starknet::Event)]
 pub struct EventWithLayer2NestedStruct {
     outer_element1: Layer2NestedStruct,
-    outer_element2: u256
+    outer_element2: u256,
 }
 
 #[derive(Drop, starknet::Event)]
 pub struct EventWithLayer3NestedStruct {
     outer_element1: Layer3NestedStruct,
-    outer_element2: u256
+    outer_element2: u256,
 }
 
 // FLAT EVENTS
@@ -117,27 +117,27 @@ pub struct EventWithLayer3NestedStruct {
 #[derive(Drop, starknet::Event)]
 pub enum EventWithoutFlat {
     Element1: UpdatedName,
-    Element2: UpdatedAge
+    Element2: UpdatedAge,
 }
 
 #[derive(Drop, starknet::Event)]
 pub enum EventFlat {
     Element1: UpdatedName,
-    Element2: UpdatedAge
+    Element2: UpdatedAge,
 }
 
 #[derive(Drop, starknet::Event)]
 pub struct UpdatedName {
     #[key]
     id: u32,
-    name: felt252
+    name: felt252,
 }
 
 #[derive(Drop, starknet::Event)]
 pub struct UpdatedAge {
     #[key]
     id: u32,
-    age: u256
+    age: u256,
 }
 
 #[starknet::interface]
@@ -146,7 +146,7 @@ pub trait IEvents<TContractState> {
     fn emit_event_with_two_types(ref self: TContractState, element1: bytes31, element2: u256);
     fn emit_simple_event(ref self: TContractState, id: u256, name: ByteArray);
     fn emit_event_with_simple_types(
-        ref self: TContractState, element1: u256, element2: felt252, element3: bool, element4: i128
+        ref self: TContractState, element1: u256, element2: felt252, element3: bool, element4: i128,
     );
 
     // DOESNT WORK FOR ARRAY
@@ -154,7 +154,7 @@ pub trait IEvents<TContractState> {
         ref self: TContractState,
         element1: ContractAddress,
         element2: ByteArray,
-        element3: Array<u256>
+        element3: Array<u256>,
     );
 
 
@@ -167,7 +167,7 @@ pub trait IEvents<TContractState> {
         ref self: TContractState,
         element1: (ContractAddress, felt252),
         element2: (felt252, u256),
-        element3: (ByteArray, bool)
+        element3: (ByteArray, bool),
     );
 
     // DOESNT WORK
@@ -175,7 +175,7 @@ pub trait IEvents<TContractState> {
 
     // DOESNT WORK
     fn emit_event_with_nested_enum(
-        ref self: TContractState, element1: u256, element2: SampleNestedEnum
+        ref self: TContractState, element1: u256, element2: SampleNestedEnum,
     );
 
 
@@ -185,17 +185,17 @@ pub trait IEvents<TContractState> {
     // args only show SampleNestedStruct.element1 but no SampleNestedStruct.element2
     // outer_element2 is show but incorrect
     fn emit_event_with_nested_struct(
-        ref self: TContractState, element1: SampleNestedStruct, element2: u256
+        ref self: TContractState, element1: SampleNestedStruct, element2: u256,
     );
 
     // DOESNT WORK
     fn emit_event_with_layer2_nested_struct(
-        ref self: TContractState, element1: Layer2NestedStruct, element2: u256
+        ref self: TContractState, element1: Layer2NestedStruct, element2: u256,
     );
 
     // DOESNT WORK
     fn emit_event_with_layer3_nested_struct(
-        ref self: TContractState, element1: Layer3NestedStruct, element2: u256
+        ref self: TContractState, element1: Layer3NestedStruct, element2: u256,
     );
 
     // UI BREAKs
@@ -212,11 +212,12 @@ pub trait IEvents<TContractState> {
 #[starknet::contract]
 mod Events {
     use super::{
-        ContractAddress, EmptyEvent, EventWithBytes31, EventWithOption, SampleNestedStruct,
-        SampleEnum, SampleNestedEnum, Layer2NestedStruct, Layer3NestedStruct, IEvents, SimpleEvent,
-        EventWithSimpleTypes, EventWithComplexTypes, EventWithEnum, EventWithNestedEnum,
-        EventWithTwoKeys, EventWithTuple, EventWithNestedStruct, EventWithLayer2NestedStruct,
-        EventWithLayer3NestedStruct, EventWithoutFlat, EventFlat, UpdatedName, UpdatedAge,
+        ContractAddress, EmptyEvent, EventFlat, EventWithBytes31, EventWithComplexTypes,
+        EventWithEnum, EventWithLayer2NestedStruct, EventWithLayer3NestedStruct,
+        EventWithNestedEnum, EventWithNestedStruct, EventWithOption, EventWithSimpleTypes,
+        EventWithTuple, EventWithTwoKeys, EventWithoutFlat, IEvents, Layer2NestedStruct,
+        Layer3NestedStruct, SampleEnum, SampleNestedEnum, SampleNestedStruct, SimpleEvent,
+        UpdatedAge, UpdatedName,
     };
 
 
@@ -271,7 +272,7 @@ mod Events {
             element1: u256,
             element2: felt252,
             element3: bool,
-            element4: i128
+            element4: i128,
         ) {
             self.emit(EventWithSimpleTypes { element1, element2, element3, element4 });
         }
@@ -280,7 +281,7 @@ mod Events {
             ref self: ContractState,
             element1: ContractAddress,
             element2: ByteArray,
-            element3: Array<u256>
+            element3: Array<u256>,
         ) {
             self.emit(EventWithComplexTypes { element1, element2, element3 });
         }
@@ -289,7 +290,7 @@ mod Events {
             ref self: ContractState,
             element1: (ContractAddress, felt252),
             element2: (felt252, u256),
-            element3: (ByteArray, bool)
+            element3: (ByteArray, bool),
         ) {
             self.emit(EventWithTuple { element1, element2, element3 });
         }
@@ -299,7 +300,7 @@ mod Events {
         }
 
         fn emit_event_with_nested_enum(
-            ref self: ContractState, element1: u256, element2: SampleNestedEnum
+            ref self: ContractState, element1: u256, element2: SampleNestedEnum,
         ) {
             self.emit(EventWithNestedEnum { element1, element2 });
         }
@@ -309,30 +310,30 @@ mod Events {
         }
 
         fn emit_event_with_nested_struct(
-            ref self: ContractState, element1: SampleNestedStruct, element2: u256
+            ref self: ContractState, element1: SampleNestedStruct, element2: u256,
         ) {
             self.emit(EventWithNestedStruct { outer_element1: element1, outer_element2: element2 });
         }
 
         fn emit_event_with_layer2_nested_struct(
-            ref self: ContractState, element1: Layer2NestedStruct, element2: u256
+            ref self: ContractState, element1: Layer2NestedStruct, element2: u256,
         ) {
             self
                 .emit(
                     EventWithLayer2NestedStruct {
-                        outer_element1: element1, outer_element2: element2
-                    }
+                        outer_element1: element1, outer_element2: element2,
+                    },
                 );
         }
 
         fn emit_event_with_layer3_nested_struct(
-            ref self: ContractState, element1: Layer3NestedStruct, element2: u256
+            ref self: ContractState, element1: Layer3NestedStruct, element2: u256,
         ) {
             self
                 .emit(
                     EventWithLayer3NestedStruct {
-                        outer_element1: element1, outer_element2: element2
-                    }
+                        outer_element1: element1, outer_element2: element2,
+                    },
                 );
         }
 
