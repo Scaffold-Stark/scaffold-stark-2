@@ -7,21 +7,6 @@ import { captureError, formatTestResults } from "./utils/error-handler";
 import { getErrorMessage } from "./utils/helper";
 
 const BURNER_WALLET_SHORT = "0x64b4...5691";
-const SET_U256_FELT_WITH_KEY = "u256_felt256_key";
-const SET_U256_FELT_WITH_VALUE = "42";
-
-const SET_FELT_WITH_KEY = "0x123";
-const SET_FELT_VALUE = "0x456";
-
-const SET_BYTE_ARRAY_KEY = "byte_array";
-const SET_BYTE_ARRAY_VALUE = "Hello Starknet";
-
-const SET_CONTRACT_ADDRESS_KEY = "contract_address";
-const SET_CONTRACT_ADDRESS_VALUE =
-  "0x064b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691";
-
-const SET_BOOL_KEY = "bool_key";
-const SET_BOOL_VALUE = "true";
 
 /**
  * End-to-end test for Variables Debug Page functionality
@@ -115,8 +100,8 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
     }
 
     const felt252Result = await varsDebugPage.testFelt252(
-      SET_U256_FELT_WITH_KEY,
-      SET_U256_FELT_WITH_VALUE
+      "u256_felt256_key",
+      "42"
     );
     console.log(
       `[${testId}] Felt252 test result:`,
@@ -127,10 +112,7 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
       name: "Felt252",
     });
 
-    const feltResult = await varsDebugPage.testFelt(
-      SET_FELT_WITH_KEY,
-      SET_FELT_VALUE
-    );
+    const feltResult = await varsDebugPage.testFelt("0x123", "0x456");
     console.log(
       `[${testId}] Felt test result:`,
       feltResult.success ? "SUCCESS" : `FAILED: ${feltResult.error}`
@@ -141,8 +123,8 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
     });
 
     const byteArrayResult = await varsDebugPage.testByteArray(
-      SET_BYTE_ARRAY_KEY,
-      SET_BYTE_ARRAY_VALUE
+      "byte_array",
+      "Hello Starknet"
     );
     console.log(
       `[${testId}] ByteArray test result:`,
@@ -154,8 +136,8 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
     });
 
     const contractAddressResult = await varsDebugPage.testContractAddress(
-      SET_CONTRACT_ADDRESS_KEY,
-      SET_CONTRACT_ADDRESS_VALUE
+      "contract_address",
+      "0x064b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"
     );
     console.log(
       `[${testId}] ContractAddress test result:`,
@@ -169,8 +151,8 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
     });
 
     const boolResult = await varsDebugPage.testBool(
-      SET_BOOL_KEY,
-      SET_BOOL_VALUE as "true" | "false"
+      "bool_key",
+      "true" as "true" | "false"
     );
     console.log(
       `[${testId}] Bool test result:`,
@@ -179,6 +161,26 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
     testResults.push({
       ...boolResult,
       name: "Bool",
+    });
+
+    const bytes31Result = await varsDebugPage.testBytes31("0x1234", "0x12345");
+    console.log(
+      `[${testId}] Bytes31 test result:`,
+      bytes31Result.success ? "SUCCESS" : `FAILED: ${bytes31Result.error}`
+    );
+    testResults.push({
+      ...bytes31Result,
+      name: "Bytes31",
+    });
+
+    const i128Result = await varsDebugPage.testI128("0x1234", "10");
+    console.log(
+      `[${testId}] I128 test result:`,
+      i128Result.success ? "SUCCESS" : `FAILED: ${i128Result.error}`
+    );
+    testResults.push({
+      ...i128Result,
+      name: "I128",
     });
 
     const failedTests = testResults.filter((test) => !test.success);

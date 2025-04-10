@@ -98,7 +98,10 @@ export const ReadOnlyFunctionForm = ({
           {data !== null && data !== undefined && (
             <div className="bg-input text-sm px-4 py-1.5 break-words">
               <p className="font-bold m-0 mb-1">Result:</p>
-              <pre className="whitespace-pre-wrap break-words">
+              <pre
+                className="whitespace-pre-wrap break-words"
+                data-testid={testResultId}
+              >
                 {decodeContractResponse({
                   resp: data,
                   abi,

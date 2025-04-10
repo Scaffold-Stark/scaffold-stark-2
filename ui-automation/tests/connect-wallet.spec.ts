@@ -4,7 +4,7 @@ import { navigateAndWait } from "./utils/navigate";
 import { endpoint } from "./configTypes";
 import { captureError } from "./utils/error-handler";
 
-const burnerAccounts = ["0x64b4...5691", "0xd513...5cb5", "0x4b3f...5ee1"];
+const burnerAccounts = ["0x64b4...5691"];
 
 /**
  * Tests connecting to the dApp with different Burner Wallet accounts

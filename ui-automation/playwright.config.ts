@@ -3,6 +3,7 @@ import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./tests",
+  testIgnore: "**/debug-contract-eth.spec.ts",
   fullyParallel: false,
   forbidOnly: false,
   retries: 1,

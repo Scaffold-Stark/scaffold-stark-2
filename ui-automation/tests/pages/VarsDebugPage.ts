@@ -98,6 +98,30 @@ export class VarsDebugPage extends BasePage {
         readButton: this.page.getByTestId("btn-get_bool_with_key"),
         readResultValue: this.page.getByTestId("result-get_bool_with_key"),
       },
+      bytes31: {
+        keyInput: this.page.locator(
+          'input[name="set_bytes31_with_key_key_core\\:\\:felt252"]'
+        ),
+        valueInput: this.page.getByPlaceholder("bytes31 value"),
+        sendButton: this.page.getByTestId("btn-set_bytes31_with_key"),
+        readValueInput: this.page.locator(
+          'input[name="get_bytes31_with_key_key_core\\:\\:felt252"]'
+        ),
+        readButton: this.page.getByTestId("btn-get_bytes31_with_key"),
+        readResultValue: this.page.getByTestId("result-get_bytes31_with_key"),
+      },
+      i128: {
+        keyInput: this.page.locator(
+          'input[name="set_i128_with_key_key_core\\:\\:felt252"]'
+        ),
+        valueInput: this.page.getByPlaceholder("i128 value"),
+        sendButton: this.page.getByTestId("btn-set_i128_with_key"),
+        readValueInput: this.page.locator(
+          'input[name="get_i128_with_key_key_core\\:\\:felt252"]'
+        ),
+        readButton: this.page.getByTestId("btn-get_i128_with_key"),
+        readResultValue: this.page.getByTestId("result-get_i128_with_key"),
+      },
     };
   }
 
@@ -851,6 +875,274 @@ export class VarsDebugPage extends BasePage {
         error: `Test execution failed: ${errorMsg}`,
         details: { key, expectedValue: value },
         name: "Bool",
+      };
+    }
+  }
+
+  /**
+   * Sets and sends a Bytes31 value with the specified key
+   * @param key The key identifier for the variable
+   * @param value The bytes31 value to set
+   */
+  async setAndSendBytes31(key: string, value: string) {
+    try {
+      await this.switchToWriteTab();
+      await this.page.waitForTimeout(500);
+
+      const config = this.inputConfigs.bytes31;
+      await this.scrollToElement(config.keyInput);
+      await this.safeFill(config.keyInput, key, `bytes31 key with ${key}`);
+
+      await this.scrollToElement(config.valueInput);
+      await this.safeFill(
+        config.valueInput,
+        value,
+        `bytes31 value with ${value}`
+      );
+
+      await this.scrollToElement(config.sendButton);
+      await this.safeClick(config.sendButton, "send bytes31 button");
+    } catch (error) {
+      await captureError(
+        this.page,
+        error,
+        `setAndSendBytes31 with key=${key}, value=${value}`
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Reads a Bytes31 value by key
+   * @param key The key to look up
+   * @returns Promise with the variable value as string
+   */
+  async readBytes31(key: string): Promise<string> {
+    try {
+      await this.switchToReadTab();
+      await this.page.waitForTimeout(500);
+
+      const config = this.inputConfigs.bytes31;
+      await this.scrollToElement(config.readValueInput);
+      await this.safeFill(
+        config.readValueInput,
+        key,
+        `bytes31 read key with ${key}`
+      );
+
+      await this.scrollToElement(config.readButton);
+      await this.safeClick(config.readButton, "read bytes31 button");
+
+      await this.page.waitForTimeout(1000);
+
+      await this.scrollToElement(config.readResultValue);
+      const resultText = await this.safeGetText(
+        config.readResultValue,
+        "bytes31 result"
+      );
+      return resultText;
+    } catch (error) {
+      await captureError(this.page, error, `readBytes31 with key=${key}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Complete test for setting and reading a Bytes31 value
+   * @param key The key identifier for the variable
+   * @param value The value to test
+   * @returns TestResult with success status and relevant information
+   */
+  async testBytes31(key: string, value: string): Promise<TestResult> {
+    try {
+      await this.setAndSendBytes31(key, value);
+
+      await this.page.waitForTimeout(5000);
+      const transactionResult = await this.isTransactionCompleted();
+
+      if (!transactionResult.success) {
+        return {
+          success: false,
+          actualValue: "",
+          error: transactionResult.error || "Transaction failed",
+          details: { key, expectedValue: value },
+          name: "Bytes31",
+        };
+      }
+
+      let resultText = "";
+      try {
+        resultText = await this.readBytes31(key);
+      } catch (readError) {
+        const readErrorMsg =
+          readError instanceof Error ? readError.message : String(readError);
+        return {
+          success: false,
+          actualValue: "",
+          error: `Failed to read value after setting: ${readErrorMsg}`,
+          details: { key, expectedValue: value },
+          name: "Bytes31",
+        };
+      }
+
+      const success = resultText === value;
+
+      return {
+        success,
+        actualValue: resultText,
+        error: success
+          ? undefined
+          : `Value mismatch: expected "${value}", got "${resultText}"`,
+        details: { key, expectedValue: value, actualValue: resultText },
+        name: "Bytes31",
+      };
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+
+      await captureError(
+        this.page,
+        error,
+        `Bytes31 test with key ${key} and value ${value}`
+      );
+
+      return {
+        success: false,
+        actualValue: "",
+        error: `Test execution failed: ${errorMsg}`,
+        details: { key, expectedValue: value },
+        name: "Bytes31",
+      };
+    }
+  }
+
+  /**
+   * Sets and sends an i128 value with the specified key
+   * @param key The key identifier for the variable
+   * @param value The i128 value to set
+   */
+  async setAndSendI128(key: string, value: string) {
+    try {
+      await this.switchToWriteTab();
+      await this.page.waitForTimeout(500);
+
+      const config = this.inputConfigs.i128;
+      await this.scrollToElement(config.keyInput);
+      await this.safeFill(config.keyInput, key, `i128 key with ${key}`);
+
+      await this.scrollToElement(config.valueInput);
+      await this.safeFill(config.valueInput, value, `i128 value with ${value}`);
+
+      await this.scrollToElement(config.sendButton);
+      await this.safeClick(config.sendButton, "send i128 button");
+    } catch (error) {
+      await captureError(
+        this.page,
+        error,
+        `setAndSendI128 with key=${key}, value=${value}`
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Reads an i128 value by key
+   * @param key The key to look up
+   * @returns Promise with the variable value as string
+   */
+  async readI128(key: string): Promise<string> {
+    try {
+      await this.switchToReadTab();
+      await this.page.waitForTimeout(500);
+
+      const config = this.inputConfigs.i128;
+      await this.scrollToElement(config.readValueInput);
+      await this.safeFill(
+        config.readValueInput,
+        key,
+        `i128 read key with ${key}`
+      );
+
+      await this.scrollToElement(config.readButton);
+      await this.safeClick(config.readButton, "read i128 button");
+
+      await this.page.waitForTimeout(1000);
+
+      await this.scrollToElement(config.readResultValue);
+      const resultText = await this.safeGetText(
+        config.readResultValue,
+        "i128 result"
+      );
+      return resultText;
+    } catch (error) {
+      await captureError(this.page, error, `readI128 with key=${key}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Complete test for setting and reading an i128 value
+   * @param key The key identifier for the variable
+   * @param value The value to test
+   * @returns TestResult with success status and relevant information
+   */
+  async testI128(key: string, value: string): Promise<TestResult> {
+    try {
+      await this.setAndSendI128(key, value);
+
+      await this.page.waitForTimeout(5000);
+      const transactionResult = await this.isTransactionCompleted();
+
+      if (!transactionResult.success) {
+        return {
+          success: false,
+          actualValue: "",
+          error: transactionResult.error || "Transaction failed",
+          details: { key, expectedValue: value },
+          name: "I128",
+        };
+      }
+
+      let resultText = "";
+      try {
+        resultText = await this.readI128(key);
+      } catch (readError) {
+        const readErrorMsg =
+          readError instanceof Error ? readError.message : String(readError);
+        return {
+          success: false,
+          actualValue: "",
+          error: `Failed to read value after setting: ${readErrorMsg}`,
+          details: { key, expectedValue: value },
+          name: "I128",
+        };
+      }
+
+      const success = resultText === value;
+
+      return {
+        success,
+        actualValue: resultText,
+        error: success
+          ? undefined
+          : `Value mismatch: expected "${value}", got "${resultText}"`,
+        details: { key, expectedValue: value, actualValue: resultText },
+        name: "I128",
+      };
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+
+      await captureError(
+        this.page,
+        error,
+        `I128 test with key ${key} and value ${value}`
+      );
+
+      return {
+        success: false,
+        actualValue: "",
+        error: `Test execution failed: ${errorMsg}`,
+        details: { key, expectedValue: value },
+        name: "I128",
       };
     }
   }
