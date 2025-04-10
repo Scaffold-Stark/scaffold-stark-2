@@ -1,17 +1,22 @@
 import { hash, number } from "starknet";
 
+// Get the function selector from the function name
 export function getFunctionSelector(functionName: string) {
   const selectorHex = hash.getSelectorFromName(functionName);
-
   const selectorFelt = number.hexToDecimalString(selectorHex);
-
   return selectorFelt;
 }
 
+// Predefined function selectors
 export const ADD_SIGNER_SELECTOR = getFunctionSelector("add_signer");
 export const REMOVE_SIGNER_SELECTOR = getFunctionSelector("remove_signer");
 export const TRANSFER_FUNDS_SELECTOR = getFunctionSelector("transfer_funds");
 
+/**
+ * Converts a felt representation to a hex address
+ * @param felt The felt string to convert
+ * @returns The converted address as a hex string
+ */
 export const convertFeltToAddress = (felt: string) => {
   if (!felt) return "";
 
@@ -30,6 +35,11 @@ export const convertFeltToAddress = (felt: string) => {
   return hexString;
 };
 
+/**
+ * Maps a selector to a function name
+ * @param text The selector to convert
+ * @returns The function name or null if not found
+ */
 export const convertSelectorToFuncName = (text: string) => {
   switch (text) {
     case ADD_SIGNER_SELECTOR:
@@ -43,22 +53,31 @@ export const convertSelectorToFuncName = (text: string) => {
   }
 };
 
+/**
+ * Formats an address for display by shortening it
+ * @param address The address to format
+ * @returns Shortened address format (e.g., 0x1234...5678)
+ */
 export const formatAddress = (address: string) => {
   if (!address || address.length <= 10) return address;
   return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
 };
 
+/**
+ * Formats a token amount with proper decimal places
+ * @param amount The amount as a string
+ * @param decimals The number of decimals the token has
+ * @param displayDecimals The number of decimals to display
+ * @returns Formatted token amount
+ */
 export const formatTokenAmount = (
   amount: string,
   decimals = 18,
   displayDecimals = 4,
 ) => {
   const amountBigInt = BigInt(amount);
-
   const divisor = BigInt(10 ** decimals);
-
   const integerPart = amountBigInt / divisor;
-
   const fractionalPart = amountBigInt % divisor;
   const fractionalStr = fractionalPart.toString().padStart(decimals, "0");
 
@@ -67,4 +86,21 @@ export const formatTokenAmount = (
   }`;
 
   return result.replace(/\.?0+$/, "");
+};
+
+export const convertToWei = (amount: string): string => {
+  if (!amount || amount === "0" || amount === ".") return "0";
+
+  const parts = amount.split(".");
+
+  if (parts.length === 1) {
+    return parts[0] + "0".repeat(18);
+  }
+
+  let whole = parts[0] || "0";
+  let fraction = parts[1] || "";
+
+  fraction = fraction.padEnd(18, "0").slice(0, 18);
+
+  return (whole + fraction).replace(/^0+(\d)/, "$1");
 };

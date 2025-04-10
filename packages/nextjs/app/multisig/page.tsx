@@ -12,15 +12,16 @@ import useScaffoldStrkBalance from "~~/hooks/scaffold-stark/useScaffoldStrkBalan
 
 import { Transaction, SignerOption, TxType } from "./types";
 import WalletInfo from "./_components/WalletInfo";
-import ManageTransaction from "./_components/ManageTransaction";
 import TransactionList from "./_components/TransactionList";
 import TransactionEvents from "./_components/TransactionEvents";
 import {
   ADD_SIGNER_SELECTOR,
-  convertFeltToAddress,
   REMOVE_SIGNER_SELECTOR,
   TRANSFER_FUNDS_SELECTOR,
+  convertFeltToAddress,
+  convertToWei,
 } from "./utils";
+import { ManageTransaction } from "./_components/ManageTransaction";
 
 const MultisigPage = () => {
   const { account } = useAccount();
@@ -43,7 +44,6 @@ const MultisigPage = () => {
 
   const [transferRecipient, setTransferRecipient] = useState<string>("");
   const [transferAmount, setTransferAmount] = useState<string>("");
-
   const [signers, setSigners] = useState<string[]>([]);
   const [loadingSigners, setLoadingSigners] = useState(false);
 
@@ -489,8 +489,7 @@ const MultisigPage = () => {
       const salt = "0";
 
       const selector = TRANSFER_FUNDS_SELECTOR;
-
-      const calldata = [transferRecipient, transferAmount, "0"];
+      const calldata = [transferRecipient, convertToWei(transferAmount), "0"];
 
       const txIdResponse = await contract.hash_transaction(
         deployedContractData.address,

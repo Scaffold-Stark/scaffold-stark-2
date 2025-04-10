@@ -1,10 +1,7 @@
 import React from "react";
 import { BlockieAvatar } from "~~/components/scaffold-stark";
-import {
-  convertFeltToAddress,
-  formatAddress,
-  TransactionEventsProps,
-} from "../types";
+import { convertFeltToAddress, formatAddress } from "../utils";
+import { TransactionEventsProps } from "../types";
 
 const TransactionEvents: React.FC<TransactionEventsProps> = ({
   submittedTxEvents,

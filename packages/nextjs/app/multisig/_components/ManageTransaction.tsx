@@ -1,7 +1,7 @@
 import React from "react";
 import { ManageTransactionProps } from "../types";
 
-const ManageTransaction: React.FC<ManageTransactionProps> = ({
+export const ManageTransaction: React.FC<ManageTransactionProps> = ({
   account,
   deployedContractData,
   selectedOption,
@@ -27,14 +27,9 @@ const ManageTransaction: React.FC<ManageTransactionProps> = ({
       return;
     }
 
-    const numbersOnly = /^[0-9]+$/;
-    if (numbersOnly.test(value)) {
-      try {
-        BigInt(value);
-        setTransferAmount(value);
-      } catch (error) {
-        console.error("Invalid amount value:", error);
-      }
+    const decimalNumberRegex = /^[0-9]*\.?[0-9]*$/;
+    if (decimalNumberRegex.test(value)) {
+      setTransferAmount(value);
     }
   };
 
@@ -119,22 +114,15 @@ const ManageTransaction: React.FC<ManageTransactionProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm mb-1">Amount (in wei):</label>
+              <label className="block text-sm mb-1">Amount:</label>
               <div className="relative">
                 <input
                   type="text"
                   value={transferAmount || ""}
                   onChange={handleAmountChange}
-                  placeholder="Enter amount in wei (numbers only)"
+                  placeholder="Enter amount..."
                   className="block w-full px-4 py-2 pr-12 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <button
-                  onClick={handleMultiplyToWei}
-                  type="button"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer font-semibold px-2 text-accent"
-                >
-                  ∗
-                </button>
               </div>
             </div>
           </>
@@ -163,5 +151,3 @@ const ManageTransaction: React.FC<ManageTransactionProps> = ({
     </div>
   );
 };
-
-export default ManageTransaction;
