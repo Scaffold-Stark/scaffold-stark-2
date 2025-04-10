@@ -19,6 +19,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
   loading,
   isUserSigner,
   hasUserConfirmed,
+  quorum,
 }) => {
   const getTransactionQuorum = () => {
     if (tx.txQuorum !== undefined) {
@@ -134,14 +135,14 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
           className={`text-xs px-2 py-1 rounded ${
             tx.executed
               ? "bg-green-800"
-              : tx.confirmations >= (txQuorum || parseInt(tx.calldata[0]))
+              : tx.confirmations >= quorum
                 ? "bg-blue-800"
                 : "bg-yellow-800"
           }`}
         >
           {tx.executed
             ? "Executed"
-            : `${tx.confirmations}/${txQuorum} confirmations`}
+            : `${tx.confirmations}/${quorum} confirmations`}
         </span>
       </div>
 
@@ -169,7 +170,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
               confirmTransaction(tx.id);
             }}
             disabled={
-              loading || hasUserConfirmed(tx) || tx.confirmations == txQuorum
+              loading || hasUserConfirmed(tx) || tx.confirmations == quorum
             }
             className="flex-1 py-1 text-xs rounded bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
           >
@@ -192,15 +193,12 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
               e.stopPropagation();
               executeTransaction(tx.id);
             }}
-            disabled={
-              loading || (txQuorum !== null && tx.confirmations < txQuorum)
-            }
+            disabled={loading || tx.confirmations < quorum}
             className="flex-1 py-1 text-xs rounded bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
           >
-            {tx.confirmations >=
-            (txQuorum !== null ? txQuorum : parseInt(tx.calldata[0]))
+            {tx.confirmations >= quorum
               ? "Execute"
-              : `Need ${(txQuorum || parseInt(tx.calldata[0])) - tx.confirmations} More`}
+              : `Need ${quorum - tx.confirmations} More`}
           </button>
         </div>
       )}

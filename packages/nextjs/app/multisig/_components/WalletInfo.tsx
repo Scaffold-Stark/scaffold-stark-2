@@ -25,7 +25,7 @@ const WalletInfo: React.FC<WalletInfoProps> = ({
       {deployedContractData && (
         <div className="grid grid-cols-2 gap-5">
           <div className="mb-4">
-            <div className="text-sm mb-2">
+            <div className="text-sm">
               <span className="font-semibold">Contract Address:</span>
               <CopyToClipboard
                 text={deployedContractData.address}
@@ -43,6 +43,10 @@ const WalletInfo: React.FC<WalletInfoProps> = ({
               <span className="ml-2">
                 {loadingSigners ? "Loading..." : signers.length}
               </span>
+            </div>
+            <div className="text-sm">
+              <span className="font-semibold">Quorum:</span>
+              <span className="ml-2">{quorum}</span>
             </div>
           </div>
           <div className="text-sm font-semibold text-right">
