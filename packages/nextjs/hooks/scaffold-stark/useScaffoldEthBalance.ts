@@ -11,6 +11,7 @@ type UseScaffoldEthBalanceProps = {
 
 // @deprecated: use STRK as default token
 const useScaffoldEthBalance = ({ address }: UseScaffoldEthBalanceProps) => {
+  // @ts-ignore
   const { data: deployedContract } = useDeployedContractInfo("Eth");
 
   const { data, ...props } = useReadContract({
