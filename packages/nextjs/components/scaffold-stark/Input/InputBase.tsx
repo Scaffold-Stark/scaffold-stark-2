@@ -43,7 +43,7 @@ export const InputBase = <
     (e: ChangeEvent<HTMLInputElement>) => {
       onChange(e.target.value as unknown as T);
     },
-    [onChange],
+    [onChange]
   );
 
   // Runs only when reFocus prop is passed, useful for setting the cursor
@@ -52,7 +52,7 @@ export const InputBase = <
     if (reFocus !== undefined) {
       e.currentTarget.setSelectionRange(
         e.currentTarget.value.length,
-        e.currentTarget.value.length,
+        e.currentTarget.value.length
       );
     }
   };
@@ -65,10 +65,10 @@ export const InputBase = <
       {prefix}
       <input
         data-testid={testInputId}
-        className="input input-ghost focus-within:border-transparent focus:outline-none focus:bg-transparent h-[2.2rem] min-h-[2.2rem] px-4 border w-full text-xs placeholder:text-[#9596BF] text-neutral"
+        className="input input-ghost focus-within:border-transparent focus:outline-none focus:bg-transparent h-[2.2rem] min-h-[2.2rem] px-4 border w-full text-xs placeholder:text-[#9596BF] text-neutral rounded-none"
         placeholder={placeholder}
         name={name}
-        value={value?.toString()}
+        value={value?.toString() || ""}
         onChange={handleChange}
         disabled={disabled}
         autoComplete="off"

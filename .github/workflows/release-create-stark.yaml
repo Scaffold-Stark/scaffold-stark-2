@@ -2,11 +2,12 @@ name: Version Bump and Notify
 
 on:
   pull_request:
-    types: [merged]
+    types: [closed]
     branches: [main]
 
 jobs:
   check_commit:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
       SHOULD_RUN: ${{ steps.check_commit.outputs.SHOULD_RUN }}
@@ -72,7 +73,7 @@ jobs:
 
       - name: Copy Files to Destination Repository
         run: |
-          rsync -av --delete --exclude='.git' source_repo/ destination_repo/templates/base
+          rsync -av --delete --exclude='.git' --exclude='.github/*' --include='.github/workflows/main.yml' --include='.github/workflows/' source_repo/ destination_repo/templates/base
           cd destination_repo
           git add .
           git commit -m "chore: sync files from scaffold-stark-2 [skip ci]"

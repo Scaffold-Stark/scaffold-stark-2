@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback } from "react";
 import { useTargetNetwork } from "./useTargetNetwork";
 import {
   useDeployedContractInfo,
@@ -8,22 +8,11 @@ import {
   ContractAbi,
   ContractName,
   ExtractAbiFunctionNamesScaffold,
-  getFunctionsByStateMutability,
-  parseFunctionParams,
   UseScaffoldWriteConfig,
 } from "~~/utils/scaffold-stark/contract";
-import {
-  useSendTransaction,
-  useNetwork,
-  Abi,
-  useContract,
-} from "@starknet-react/core";
+import { useSendTransaction, useNetwork, Abi } from "@starknet-react/core";
 import { notification } from "~~/utils/scaffold-stark";
 import { Contract as StarknetJsContract } from "starknet";
-
-type UpdatedArgs = Parameters<
-  ReturnType<typeof useSendTransaction>["sendAsync"]
->[0];
 
 export const useScaffoldWriteContract = <
   TAbi extends Abi,
@@ -41,30 +30,6 @@ export const useScaffoldWriteContract = <
   const { chain } = useNetwork();
   const sendTxnWrapper = useTransactor();
   const { targetNetwork } = useTargetNetwork();
-
-  const abiFunction = useMemo(
-    () =>
-      getFunctionsByStateMutability(
-        deployedContractData?.abi || [],
-        "external",
-      ).find((fn) => fn.name === functionName),
-    [deployedContractData?.abi, functionName],
-  );
-
-  // TODO: see if we need this bit later
-  // const parsedParams = useMemo(() => {
-  //   if (args && abiFunction && deployedContractData) {
-  //     const parsed = parseFunctionParams({
-  //       abiFunction,
-  //       abi: deployedContractData.abi,
-  //       inputs: args as any[],
-  //       isRead: false,
-  //       isReadArgsParsing: true,
-  //     }).flat(Infinity);
-  //     return parsed;
-  //   }
-  //   return [];
-  // }, [args, abiFunction, deployedContractData]);
 
   // leave blank for now since default args will be called by the trigger function anyway
   const sendTransactionInstance = useSendTransaction({});
@@ -93,18 +58,6 @@ export const useScaffoldWriteContract = <
         console.error("You are on the wrong network");
         return;
       }
-
-      // TODO: see if we need this back, keeping this here
-      // let newParsedParams =
-      //   newArgs && abiFunction && deployedContractData
-      //     ? parseFunctionParams({
-      //         abiFunction,
-      //         abi: deployedContractData.abi,
-      //         inputs: newArgs as any[],
-      //         isRead: false,
-      //         isReadArgsParsing: false,
-      //       })
-      //     : parsedParams;
 
       // we convert to starknetjs contract instance here since deployed data may be undefined if contract is not deployed
       const contractInstance = new StarknetJsContract(
