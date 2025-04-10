@@ -170,6 +170,7 @@ const MultisigPage = () => {
       setSelectedOption("add");
     } finally {
       setLoading(false);
+      setNewQuorum(1);
     }
   }, [address, createSignerTransaction, newQuorum, selectedOption]);
 

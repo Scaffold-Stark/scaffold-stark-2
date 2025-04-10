@@ -168,7 +168,9 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
               e.stopPropagation();
               confirmTransaction(tx.id);
             }}
-            disabled={loading || hasUserConfirmed(tx)}
+            disabled={
+              loading || hasUserConfirmed(tx) || tx.confirmations == txQuorum
+            }
             className="flex-1 py-1 text-xs rounded bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
           >
             {hasUserConfirmed(tx) ? "Confirmed" : "Confirm"}
@@ -191,12 +193,12 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
               executeTransaction(tx.id);
             }}
             disabled={
-              loading ||
-              tx.confirmations < (txQuorum || parseInt(tx.calldata[0]))
+              loading || (txQuorum !== null && tx.confirmations < txQuorum)
             }
             className="flex-1 py-1 text-xs rounded bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
           >
-            {tx.confirmations >= (txQuorum || parseInt(tx.calldata[0]))
+            {tx.confirmations >=
+            (txQuorum !== null ? txQuorum : parseInt(tx.calldata[0]))
               ? "Execute"
               : `Need ${(txQuorum || parseInt(tx.calldata[0])) - tx.confirmations} More`}
           </button>
