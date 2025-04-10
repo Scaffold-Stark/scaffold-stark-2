@@ -80,7 +80,7 @@ As an alternative to installing the tools locally, you can use Docker. Here's wh
 1. Install [Docker](https://www.docker.com/get-started/)
 2. Install [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 3. Use the provided `devcontainer.json` file to set up the environment:
-   - The configuration uses the `starknetfoundation/starknet-dev:2.9.2` image.
+   - The configuration uses the `starknetfoundation/starknet-dev:2.11.3` image.
    - This includes all required tools pre-installed, such as Scarb, Starknet Foundry, Starknet Devnet and other dependencies.
 
 ### Getting Started with Docker Setup
