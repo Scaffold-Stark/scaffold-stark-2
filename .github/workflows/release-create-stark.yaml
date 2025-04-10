@@ -73,7 +73,11 @@ jobs:
 
       - name: Copy Files to Destination Repository
         run: |
-          rsync -av --delete --exclude='.git' --exclude='.github' source_repo/ destination_repo/templates/base
+          rsync -av --delete \
+            --exclude='.git' \
+            --include='.github/workflows/main.yml' \
+            --exclude='.github/**' \
+            source_repo/ destination_repo/templates/base
           cd destination_repo
           git add .
           git commit -m "chore: sync files from scaffold-stark-2 [skip ci]"

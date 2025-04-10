@@ -7,7 +7,6 @@ edition = "2024_07"
 
 [dependencies]
 starknet = "2.9.4"
-# Change to just "openzeppelin" to use full features
 openzeppelin_access = "1.0.0"
 openzeppelin_token = "1.0.0"
 
@@ -16,7 +15,7 @@ openzeppelin_utils = "1.0.0"
 snforge_std = "0.38.2"
 
 [[target.starknet-contract]]
-casm = true
+casm = true # taggle this to `false` to speed up compilation/testing
 
 [tool.fmt]
 sort-module-level-items = true

@@ -1,21 +1,18 @@
-use contracts::YourContract::{IYourContractDispatcher, IYourContractDispatcherTrait};
+use contracts::YourContract::{
+    IYourContractDispatcher, IYourContractDispatcherTrait, YourContract::STRK_CONTRACT_ADDRESS,
+};
 use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 use openzeppelin_utils::serde::SerializedAppend;
 use snforge_std::{CheatSpan, ContractClassTrait, DeclareResultTrait, cheat_caller_address, declare};
-use starknet::{ContractAddress, contract_address_const};
+use starknet::{ContractAddress};
 
 // Real contract address deployed on Sepolia
-fn OWNER() -> ContractAddress {
-    contract_address_const::<0x02dA5254690b46B9C4059C25366D1778839BE63C142d899F0306fd5c312A5918>()
-}
-
-const STRK_CONTRACT_ADDRESS: felt252 =
-    0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d;
+const OWNER: felt252 = 0x02dA5254690b46B9C4059C25366D1778839BE63C142d899F0306fd5c312A5918;
 
 fn deploy_contract(name: ByteArray) -> ContractAddress {
     let contract_class = declare(name).unwrap().contract_class();
     let mut calldata = array![];
-    calldata.append_serde(OWNER());
+    calldata.append_serde(OWNER);
     let (contract_address, _) = contract_class.deploy(@calldata).unwrap();
     contract_address
 }
@@ -38,8 +35,8 @@ fn test_set_greetings() {
 #[test]
 #[fork("SEPOLIA_LATEST")]
 fn test_transfer() {
-    let user = OWNER();
-    let strk_contract_address = contract_address_const::<STRK_CONTRACT_ADDRESS>();
+    let user: ContractAddress = OWNER.try_into().unwrap();
+    let strk_contract_address = STRK_CONTRACT_ADDRESS.try_into().unwrap();
     let your_contract_address = deploy_contract("YourContract");
 
     let your_contract_dispatcher = IYourContractDispatcher {
@@ -61,4 +58,3 @@ fn test_transfer() {
         ); // we transfer 500 wei
     assert(your_contract_dispatcher.greeting() == new_greeting, 'Should allow set new message');
 }
-
