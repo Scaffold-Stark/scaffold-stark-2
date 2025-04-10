@@ -88,6 +88,11 @@ export const formatTokenAmount = (
   return result.replace(/\.?0+$/, "");
 };
 
+/**
+ * Converts a decimal amount to wei (multiply by 10^18)
+ * @param amount The amount as a string
+ * @returns The amount in wei as a string
+ */
 export const convertToWei = (amount: string): string => {
   if (!amount || amount === "0" || amount === ".") return "0";
 
@@ -100,6 +105,7 @@ export const convertToWei = (amount: string): string => {
   let whole = parts[0] || "0";
   let fraction = parts[1] || "";
 
+  // Pad or truncate fraction to 18 decimals
   fraction = fraction.padEnd(18, "0").slice(0, 18);
 
   return (whole + fraction).replace(/^0+(\d)/, "$1");

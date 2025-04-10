@@ -33,22 +33,6 @@ export const ManageTransaction: React.FC<ManageTransactionProps> = ({
     }
   };
 
-  const handleMultiplyToWei = () => {
-    if (!transferAmount) {
-      setTransferAmount("1000000000000000000");
-      return;
-    }
-
-    try {
-      const value = BigInt(transferAmount);
-      const multiplied = value * 10n ** 18n;
-      setTransferAmount(multiplied.toString());
-    } catch (error) {
-      console.error("Error converting to wei:", error);
-      setTransferAmount("1000000000000000000");
-    }
-  };
-
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-md">
       <h3 className="text-xl font-semibold mb-4">Manage Transaction</h3>
@@ -96,6 +80,11 @@ export const ManageTransaction: React.FC<ManageTransactionProps> = ({
                 onChange={handleNewQuorumChange}
                 className="block w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+              <p className="text-xs text-gray-400 mt-1">
+                {selectedOption === "add"
+                  ? `Must be between 1 and ${signers.length + 1}`
+                  : `Must be between 1 and ${Math.max(1, signers.length - 1)}`}
+              </p>
             </div>
           </>
         )}
@@ -114,16 +103,19 @@ export const ManageTransaction: React.FC<ManageTransactionProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm mb-1">Amount:</label>
+              <label className="block text-sm mb-1">Amount (ETH):</label>
               <div className="relative">
                 <input
                   type="text"
                   value={transferAmount || ""}
                   onChange={handleAmountChange}
-                  placeholder="Enter amount..."
-                  className="block w-full px-4 py-2 pr-12 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter amount in ETH"
+                  className="block w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
+              <p className="text-xs text-gray-400 mt-1">
+                Example: 0.01 for 0.01 ETH
+              </p>
             </div>
           </>
         )}
@@ -147,6 +139,11 @@ export const ManageTransaction: React.FC<ManageTransactionProps> = ({
         >
           {loading ? "Processing..." : "Create Transaction"}
         </button>
+
+        <div className="text-xs text-gray-400 mt-2">
+          Note: After creating a transaction, all signers (including you) must
+          confirm it separately before it can be executed.
+        </div>
       </div>
     </div>
   );

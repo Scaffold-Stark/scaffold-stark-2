@@ -10,11 +10,11 @@ import useScaffoldStrkBalance from "~~/hooks/scaffold-stark/useScaffoldStrkBalan
 
 import { SignerOption, TxType } from "./types";
 import WalletInfo from "./_components/WalletInfo";
-import TransactionList from "./_components/TransactionList";
 import TransactionEvents from "./_components/TransactionEvents";
 import { ManageTransaction } from "./_components/ManageTransaction";
 import { useMultisigStore } from "./lib/multisigStore";
 import { useMultisigOperations } from "./hooks/useMultisigOperations";
+import TransactionList from "./_components/TransactionList";
 
 const MultisigPage = () => {
   const { account } = useAccount();
@@ -213,12 +213,14 @@ const MultisigPage = () => {
   useEffect(() => {
     if (submittedTxEvents || confirmedTxEvents || executedTxEvents) {
       syncTransactions();
+      loadTransactions();
     }
   }, [submittedTxEvents, confirmedTxEvents, executedTxEvents]);
 
   useEffect(() => {
     if (signerAddedEvents || signerRemovedEvents) {
       syncSigners();
+      loadSigners();
     }
   }, [signerAddedEvents, signerRemovedEvents]);
 
@@ -236,10 +238,10 @@ const MultisigPage = () => {
           <WalletInfo
             deployedContractData={deployedContractData}
             contractEthBalance={
-              parseFloat(contractEthBalance).toFixed(4) ?? "0"
+              parseFloat(contractEthBalance || "0").toFixed(4) ?? "0"
             }
             contractStrkBalance={
-              parseFloat(contractStrkBalance).toFixed(4) ?? "0"
+              parseFloat(contractStrkBalance || "0").toFixed(4) ?? "0"
             }
             signers={signers}
             loadingSigners={loadingSigners}
@@ -291,7 +293,6 @@ const MultisigPage = () => {
             hasUserConfirmed={hasUserConfirmed}
             account={account}
             deployedContractData={deployedContractData}
-            pendingTransactions={pendingTransactions}
           />
 
           <TransactionEvents

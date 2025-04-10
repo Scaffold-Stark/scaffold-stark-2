@@ -4,18 +4,15 @@ import { Transaction } from "../types";
 export const toTransactionWithInfo = (
   tx: Transaction,
 ): TransactionWithAdditionalInfo => {
-  const now = Date.now();
   return {
     ...tx,
-    createdAt: now,
-    updatedAt: now,
   };
 };
 
 export const toTransaction = (
   tx: TransactionWithAdditionalInfo,
 ): Transaction => {
-  const { createdAt, updatedAt, hash, notes, metadata, ...transaction } = tx;
+  const { hash, notes, metadata, ...transaction } = tx;
   return transaction;
 };
 

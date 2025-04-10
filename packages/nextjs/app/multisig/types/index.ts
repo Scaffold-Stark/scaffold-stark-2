@@ -13,6 +13,8 @@ export interface Transaction {
   calldata: string[];
   addressConfirmed: string[];
   tokenType?: string;
+  createdAt: number;
+  updatedAt: number;
 }
 
 export interface ContractInfo {
@@ -72,7 +74,6 @@ export interface TransactionListProps {
   hasUserConfirmed: (tx: Transaction) => boolean;
   account?: { address: string };
   deployedContractData?: ContractInfo;
-  pendingTransactions: Transaction[];
 }
 
 export interface TransactionEventsProps {

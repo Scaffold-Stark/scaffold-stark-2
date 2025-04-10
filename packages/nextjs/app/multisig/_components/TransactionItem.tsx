@@ -4,11 +4,7 @@ import { BlockieAvatar } from "~~/components/scaffold-stark";
 import { notification } from "~~/utils/scaffold-stark";
 import {
   convertFeltToAddress,
-  convertSelectorToFuncName,
   formatAddress,
-  ADD_SIGNER_SELECTOR,
-  REMOVE_SIGNER_SELECTOR,
-  TRANSFER_FUNDS_SELECTOR,
   formatTokenAmount,
 } from "../utils";
 import { TransactionItemProps } from "../types";
@@ -26,9 +22,9 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
   hasUserConfirmed,
 }) => {
   const renderTransactionInfo = () => {
-    const funcName = convertSelectorToFuncName(tx.selector);
+    const funcName = tx.selector;
 
-    if (tx.selector === TRANSFER_FUNDS_SELECTOR) {
+    if (funcName === "transfer_funds") {
       const recipient = tx.calldata[0];
       try {
         return (
@@ -55,7 +51,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
           </>
         );
       }
-    } else if (tx.selector === ADD_SIGNER_SELECTOR) {
+    } else if (funcName === "add_signer") {
       return (
         <>
           <div>Function: Add Signer</div>
@@ -66,7 +62,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
           <div>New Quorum: {tx.calldata[0]}</div>
         </>
       );
-    } else if (tx.selector === REMOVE_SIGNER_SELECTOR) {
+    } else if (funcName === "remove_signer") {
       return (
         <>
           <div>Function: Remove Signer</div>
@@ -79,7 +75,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
       );
     }
 
-    return <div>Function Name: {funcName || "Unknown..."}</div>;
+    return <div>Function: {funcName || "Unknown..."}</div>;
   };
 
   return (
@@ -103,19 +99,25 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
             </CopyToClipboard>
           </div>
         </div>
-        <span
-          className={`text-xs px-2 py-1 rounded ${
-            tx.executed
-              ? "bg-green-800"
-              : tx.confirmations >= signers.length
-                ? "bg-blue-800"
-                : "bg-yellow-800"
-          }`}
-        >
-          {tx.executed
-            ? "Executed"
-            : `${tx.confirmations}/${signers.length} confirmations`}
-        </span>
+        {signers.length > 0 ? (
+          <span
+            className={`text-xs px-2 py-1 rounded ${
+              tx.executed
+                ? "bg-green-800"
+                : tx.confirmations >= signers.length
+                  ? "bg-blue-800"
+                  : "bg-yellow-800"
+            }`}
+          >
+            {tx.executed
+              ? "Executed"
+              : `${tx.confirmations}/${signers.length} confirmations`}
+          </span>
+        ) : (
+          <span className="text-xs px-2 py-1 rounded bg-gray-600">
+            Loading...
+          </span>
+        )}
       </div>
 
       <div className="text-xs text-gray-300 space-y-1">
@@ -134,14 +136,14 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
         {renderTransactionInfo()}
       </div>
 
-      {isSelected && !tx.executed && isUserSigner && (
+      {isUserSigner && !tx.executed && (
         <div className="mt-3 flex space-x-2">
           <button
             onClick={(e) => {
               e.stopPropagation();
               confirmTransaction(tx.id);
             }}
-            disabled={loading}
+            disabled={loading || hasUserConfirmed(tx)}
             className="flex-1 py-1 text-xs rounded bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
           >
             {hasUserConfirmed(tx) ? "Confirmed" : "Confirm"}
@@ -168,8 +170,20 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
           >
             {tx.confirmations >= signers.length
               ? "Execute"
-              : "Need All Confirmations"}
+              : `Need ${signers.length - tx.confirmations} More`}
           </button>
+        </div>
+      )}
+
+      {isUserSigner && tx.executed && (
+        <div className="mt-3 px-3 py-1.5 text-center text-xs rounded bg-green-900">
+          Transaction Executed
+        </div>
+      )}
+
+      {!isUserSigner && (
+        <div className="mt-2 text-xs text-gray-400">
+          You need to be a signer to interact with this transaction
         </div>
       )}
     </div>

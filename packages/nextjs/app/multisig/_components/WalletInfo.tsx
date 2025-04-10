@@ -14,6 +14,8 @@ const WalletInfo: React.FC<WalletInfoProps> = ({
   loadSigners,
   account,
 }) => {
+  const quorum = signers.length;
+
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-md">
       <h3 className="text-xl font-semibold mb-3">Wallet Information</h3>
@@ -37,11 +39,11 @@ const WalletInfo: React.FC<WalletInfoProps> = ({
             <div className="text-sm">
               <span className="font-semibold">Required Signatures:</span>
               <span className="ml-2">
-                {loadingSigners ? "Loading..." : `${signers.length}`}
+                {loadingSigners ? "Loading..." : signers.length}
               </span>
             </div>
           </div>
-          <div className="text-sm font-semibold text-gray-400 text-right">
+          <div className="text-sm font-semibold text-right">
             <div className="mb-2">{contractEthBalance} ETH</div>
             <div>{contractStrkBalance} STRK</div>
           </div>

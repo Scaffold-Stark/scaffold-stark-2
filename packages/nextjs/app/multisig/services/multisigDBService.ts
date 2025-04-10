@@ -21,11 +21,8 @@ export const dbService = {
 
   async saveTransaction(tx: Transaction): Promise<string | null> {
     try {
-      const now = Date.now();
       const txWithInfo: TransactionWithAdditionalInfo = {
         ...tx,
-        createdAt: now,
-        updatedAt: now,
       };
       await db.transactions.put(txWithInfo);
       return tx.id;
@@ -81,22 +78,6 @@ export const dbService = {
     }
   },
 
-  async saveSigner(address: string): Promise<boolean> {
-    try {
-      const now = Date.now();
-      const signer: Signer = {
-        address,
-        addedAt: now,
-        isActive: true,
-      };
-      await db.signers.put(signer);
-      return true;
-    } catch (error) {
-      console.error("Failed to save signer:", error);
-      return false;
-    }
-  },
-
   async updateSigners(signerAddresses: string[]): Promise<boolean> {
     try {
       await db.signers.clear();
@@ -116,6 +97,7 @@ export const dbService = {
       return false;
     }
   },
+
   async getActiveSigners(): Promise<string[]> {
     try {
       const signers = await db.signers.toArray();
@@ -149,28 +131,6 @@ export const dbService = {
     } catch (error) {
       console.error("Failed to get config:", error);
       return null;
-    }
-  },
-
-  async deleteAllData(): Promise<boolean> {
-    try {
-      await db.transactions.clear();
-      await db.signers.clear();
-      await db.configs.clear();
-      return true;
-    } catch (error) {
-      console.error("Failed to delete all data:", error);
-      return false;
-    }
-  },
-  async resetDatabase(): Promise<boolean> {
-    try {
-      await db.delete();
-      await db.open();
-      return true;
-    } catch (error) {
-      console.error("Failed to reset database:", error);
-      return false;
     }
   },
 };

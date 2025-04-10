@@ -3,11 +3,10 @@ import { Transaction } from "../../types";
 
 export interface TransactionWithAdditionalInfo extends Transaction {
   hash?: string;
-  createdAt: number;
-  updatedAt: number;
   notes?: string;
   metadata?: any;
 }
+
 export interface Signer {
   address: string;
   hexAddress?: string;

@@ -38,6 +38,7 @@ export const useMultisigStore = create<MultisigState>((set, get) => ({
   signers: [],
   quorum: 0,
   contractAddress: "",
+
   initialize: async () => {
     const { loadTransactions, loadSigners, loadConfig } = get();
     set({ loading: true });

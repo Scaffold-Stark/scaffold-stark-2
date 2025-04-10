@@ -19,7 +19,6 @@ const TransactionList: React.FC<TransactionListProps> = ({
   hasUserConfirmed,
   account,
   deployedContractData,
-  pendingTransactions,
 }) => {
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-md">
@@ -64,13 +63,8 @@ const TransactionList: React.FC<TransactionListProps> = ({
       )}
 
       <button
-        onClick={() => loadTransactions()}
-        disabled={
-          loadingTransactions ||
-          !account ||
-          !deployedContractData ||
-          !pendingTransactions.length
-        }
+        onClick={loadTransactions}
+        disabled={loadingTransactions || !account || !deployedContractData}
         className="mt-4 w-full rounded-md py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
       >
         {loadingTransactions ? "Loading..." : "Refresh Transactions"}

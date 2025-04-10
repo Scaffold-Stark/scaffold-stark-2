@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useAccount } from "@starknet-react/core";
-import { Contract } from "starknet";
+import { Contract, Provider } from "starknet";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { useMultisigStore } from "../lib/multisigStore";
 import { notification } from "~~/utils/scaffold-stark";
@@ -10,7 +10,11 @@ import {
   convertToWei,
   REMOVE_SIGNER_SELECTOR,
   TRANSFER_FUNDS_SELECTOR,
+  convertFeltToAddress,
+  getFunctionSelector,
 } from "../utils";
+
+const starknet = new Provider();
 
 export const useMultisigOperations = () => {
   const { account } = useAccount();
@@ -21,26 +25,13 @@ export const useMultisigOperations = () => {
 
   const {
     initialized,
-    loadTransactions,
-    loadSigners,
     saveTransaction,
     updateTransaction,
     updateSigners,
     saveConfig,
     pendingTransactions,
-    executedTransactions,
     signers,
   } = useMultisigStore();
-
-  useEffect(() => {
-    const initializeDB = async () => {
-      if (!initialized) {
-        useMultisigStore.getState().initialize();
-      }
-    };
-
-    initializeDB();
-  }, [initialized]);
 
   const getContract = useCallback(() => {
     if (!account || !deployedContractData) {
@@ -88,10 +79,9 @@ export const useMultisigOperations = () => {
 
     setLoading(true);
     try {
-      const allTransactions = [...pendingTransactions, ...executedTransactions];
       const contract = getContract();
 
-      for (const tx of allTransactions) {
+      for (const tx of pendingTransactions) {
         try {
           const isExecuted = await contract.is_executed(tx.id);
           const confirmations = await contract.get_transaction_confirmations(
@@ -111,8 +101,6 @@ export const useMultisigOperations = () => {
           console.error(`Error updating transaction ${tx.id}:`, err);
         }
       }
-
-      await loadTransactions();
     } catch (err: any) {
       console.error("Error syncing transactions:", err);
     } finally {
@@ -121,9 +109,7 @@ export const useMultisigOperations = () => {
   }, [
     account,
     deployedContractData,
-    executedTransactions,
     getContract,
-    loadTransactions,
     pendingTransactions,
     updateTransaction,
   ]);
@@ -131,10 +117,12 @@ export const useMultisigOperations = () => {
   const createSignerTransaction = useCallback(
     async (option: SignerOption, signerAddress: string, newQuorum: number) => {
       if (!account || !deployedContractData) {
+        notification.error("No account connected or contract not loaded");
         return null;
       }
 
       if (!signerAddress) {
+        notification.error("Signer address is required");
         return null;
       }
 
@@ -171,24 +159,39 @@ export const useMultisigOperations = () => {
 
         const txIdString = txIdResponse.toString();
 
+        // Create transaction object for saving to IndexedDB
+        const functionName =
+          selector === ADD_SIGNER_SELECTOR
+            ? "add_signer"
+            : selector === REMOVE_SIGNER_SELECTOR
+              ? "remove_signer"
+              : null;
+
+        // Get the current block number
+        const currentBlockNumber = await starknet.getBlockNumber();
+        const currentTime = Date.now();
+
         const transaction: Transaction = {
           id: txIdString,
           to: contractAddress,
-          selector: selector,
+          selector: functionName || "unknown_function",
           calldata: calldata,
           salt: salt,
-          confirmations: 1,
+          confirmations: 0,
           executed: false,
           submittedBy: account.address,
-          submittedBlock: "pending",
-          addressConfirmed: [account.address],
+          submittedBlock: currentBlockNumber.toString(),
+          addressConfirmed: [],
+          createdAt: currentTime,
+          updatedAt: currentTime,
         };
 
         await saveTransaction(transaction);
-
+        notification.success("Transaction created successfully");
         return txIdString;
       } catch (err: any) {
         console.error("Error creating transaction:", err);
+        notification.error("Failed to create transaction");
         return null;
       } finally {
         setLoading(false);
@@ -206,14 +209,17 @@ export const useMultisigOperations = () => {
   const createTransferTransaction = useCallback(
     async (recipient: string, amount: string) => {
       if (!account || !deployedContractData) {
+        notification.error("No account connected or contract not loaded");
         return null;
       }
 
       if (!recipient) {
+        notification.error("Recipient address is required");
         return null;
       }
 
       if (!amount || isNaN(Number(amount))) {
+        notification.error("Valid amount is required");
         return null;
       }
 
@@ -241,25 +247,33 @@ export const useMultisigOperations = () => {
 
         const txIdString = txIdResponse.toString();
 
+        // Create transaction object for saving to IndexedDB
+        const functionName = "transfer_funds";
+        const currentBlockNumber = await starknet.getBlockNumber();
+        const currentTime = Date.now();
+
         const transaction: Transaction = {
           id: txIdString,
           to: deployedContractData.address,
-          selector: selector,
+          selector: functionName,
           calldata: calldata,
           salt: salt,
-          confirmations: 1,
+          confirmations: 0,
           executed: false,
           submittedBy: account.address,
-          submittedBlock: "pending",
-          addressConfirmed: [account.address],
+          submittedBlock: currentBlockNumber.toString(),
+          addressConfirmed: [],
           tokenType: "ETH",
+          createdAt: currentTime,
+          updatedAt: currentTime,
         };
 
         await saveTransaction(transaction);
-
+        notification.success("Transfer transaction created successfully");
         return txIdString;
       } catch (err: any) {
         console.error("Error creating transfer transaction:", err);
+        notification.error("Failed to create transfer transaction");
         return null;
       } finally {
         setLoading(false);
@@ -271,6 +285,7 @@ export const useMultisigOperations = () => {
   const confirmTransaction = useCallback(
     async (txId: string) => {
       if (!account || !deployedContractData || !txId) {
+        notification.error("Account, contract, or transaction ID missing");
         return false;
       }
 
@@ -280,6 +295,7 @@ export const useMultisigOperations = () => {
 
         await contract.confirm_transaction(txId);
 
+        // Find the transaction in our store
         const tx = pendingTransactions.find((t) => t.id === txId);
 
         if (tx) {
@@ -294,9 +310,11 @@ export const useMultisigOperations = () => {
           });
         }
 
+        notification.success("Transaction confirmed successfully");
         return true;
       } catch (err: any) {
         console.error("Error confirming transaction:", err);
+        notification.error("Failed to confirm transaction");
         return false;
       } finally {
         setLoading(false);
@@ -314,6 +332,7 @@ export const useMultisigOperations = () => {
   const revokeConfirmation = useCallback(
     async (txId: string) => {
       if (!account || !deployedContractData || !txId) {
+        notification.error("Account, contract, or transaction ID missing");
         return false;
       }
 
@@ -336,9 +355,11 @@ export const useMultisigOperations = () => {
           });
         }
 
+        notification.success("Confirmation revoked successfully");
         return true;
       } catch (err: any) {
         console.error("Error revoking confirmation:", err);
+        notification.error("Failed to revoke confirmation");
         return false;
       } finally {
         setLoading(false);
@@ -356,6 +377,7 @@ export const useMultisigOperations = () => {
   const executeTransaction = useCallback(
     async (txId: string) => {
       if (!account || !deployedContractData || !txId) {
+        notification.error("Account, contract, or transaction ID missing");
         return false;
       }
 
@@ -377,7 +399,7 @@ export const useMultisigOperations = () => {
 
         await contract.execute_transaction(
           tx.to,
-          tx.selector,
+          getFunctionSelector(tx.selector),
           calldata,
           tx.salt,
         );
@@ -386,9 +408,11 @@ export const useMultisigOperations = () => {
           executed: true,
         });
 
+        notification.success("Transaction executed successfully");
         return true;
       } catch (err: any) {
         console.error("Error executing transaction:", err);
+        notification.error("Failed to execute transaction");
         return false;
       } finally {
         setLoading(false);
@@ -404,14 +428,12 @@ export const useMultisigOperations = () => {
   );
 
   const isUserSigner = useCallback(() => {
-    return signers.some((signer) => {
-      const normalizedSignerAddress = signer.startsWith("0x")
-        ? signer.toLowerCase()
-        : "0x" + signer.toLowerCase();
+    if (!account) return false;
 
-      const normalizedUserAddress = account?.address.startsWith("0x")
-        ? account.address.toLowerCase()
-        : "0x" + account?.address.toLowerCase();
+    return signers.some((signer) => {
+      const signerAddress = convertFeltToAddress(signer);
+      const normalizedSignerAddress = signerAddress.toLowerCase();
+      const normalizedUserAddress = account.address.toLowerCase();
 
       return normalizedSignerAddress === normalizedUserAddress;
     });
@@ -422,13 +444,8 @@ export const useMultisigOperations = () => {
       if (!account || !tx.addressConfirmed) return false;
 
       return tx.addressConfirmed.some((addr) => {
-        const normalizedConfirmAddress = addr.startsWith("0x")
-          ? addr.toLowerCase()
-          : "0x" + addr.toLowerCase();
-
-        const normalizedUserAddress = account.address.startsWith("0x")
-          ? account.address.toLowerCase()
-          : "0x" + account.address.toLowerCase();
+        const normalizedConfirmAddress = addr.toLowerCase();
+        const normalizedUserAddress = account.address.toLowerCase();
 
         return normalizedConfirmAddress === normalizedUserAddress;
       });
