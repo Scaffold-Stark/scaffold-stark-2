@@ -23,9 +23,6 @@ RUN apt-get update && apt-get install -y \
 # Set the work directory
 WORKDIR /app
 
-# Set the environment path to node_modules/.bin
-ENV PATH /app/node_modules/.bin:$PATH
-
 # Copy package files
 COPY ui-automation/package.json /app/
 COPY ui-automation/tests/ /app/tests/

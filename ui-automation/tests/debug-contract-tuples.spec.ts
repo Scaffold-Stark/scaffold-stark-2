@@ -83,7 +83,7 @@ test("Tuples Debug Page Interaction Flow", async ({ page }) => {
     const tuplesDebugPage = new TuplesDebugPage(page);
 
     try {
-      await tuplesDebugPage.switchToVarsTab();
+      await tuplesDebugPage.switchToTuplesTab();
       await page.waitForTimeout(1000);
       console.log(`[${testId}] Successfully switched to Tuples tab`);
     } catch (error) {
