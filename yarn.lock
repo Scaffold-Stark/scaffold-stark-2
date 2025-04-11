@@ -3857,6 +3857,7 @@ __metadata:
     autoprefixer: ^10.0.1
     blo: ^1.1.1
     daisyui: ^4.7.3
+    dexie: ^4.0.11
     eslint: ^8
     eslint-config-next: 15.2.3
     ethers: ^6.12.0
@@ -6783,6 +6784,13 @@ __metadata:
   version: 1.1.0
   resolution: "detect-node-es@npm:1.1.0"
   checksum: e46307d7264644975b71c104b9f028ed1d3d34b83a15b8a22373640ce5ea630e5640b1078b8ea15f202b54641da71e4aa7597093bd4b91f113db520a26a37449
+  languageName: node
+  linkType: hard
+
+"dexie@npm:^4.0.11":
+  version: 4.0.11
+  resolution: "dexie@npm:4.0.11"
+  checksum: 144e93fb337880d2594b6907d4bda338772321adf04a4edd58768bc79cc0a173f2c1eb65efec77e077002477ac33db9221f75e653138764bbc6cf86d1468ad6c
   languageName: node
   linkType: hard
 

@@ -15,11 +15,11 @@
 /// governance.
 #[starknet::component]
 pub mod MultisigComponent {
+    use contracts::CustomInterfaceMultisigComponent::{IMultisig, TransactionID, TransactionState};
     use core::hash::{HashStateExTrait, HashStateTrait};
     use core::num::traits::Zero;
     use core::panic_with_felt252;
     use core::pedersen::PedersenTrait;
-    use contracts::CustomInterfaceMultisigComponent::{IMultisig, TransactionID, TransactionState};
     use openzeppelin_governance::multisig::storage_utils::{SignersInfo, SignersInfoStorePackingV2};
     use openzeppelin_governance::multisig::storage_utils::{TxInfo, TxInfoStorePacking};
     use openzeppelin_governance::utils::call_impls::{CallPartialEq, HashCallImpl, HashCallsImpl};
@@ -583,19 +583,19 @@ pub mod MultisigComponent {
                 }
                 let last_index = signers_count - 1;
                 let index = self.Multisig_signers_indices.read(signer_to_remove);
-                    if index != last_index {
-                        // Swap signer to remove with the last signer
-                        let last_signer = self.Multisig_signers_by_index.read(last_index);
-                        self.Multisig_signers_indices.write(last_signer, index);
-                        self.Multisig_signers_by_index.write(index, last_signer);
-                    }
-                    // Remove the last signer
-                    self.Multisig_is_signer.write(signer_to_remove, false);
-                    self.Multisig_signers_by_index.write(last_index, Zero::zero());
-                    self.Multisig_signers_indices.write(signer_to_remove, 0);
-                    self.emit(SignerRemoved { signer: signer_to_remove });
+                if index != last_index {
+                    // Swap signer to remove with the last signer
+                    let last_signer = self.Multisig_signers_by_index.read(last_index);
+                    self.Multisig_signers_indices.write(last_signer, index);
+                    self.Multisig_signers_by_index.write(index, last_signer);
+                }
+                // Remove the last signer
+                self.Multisig_is_signer.write(signer_to_remove, false);
+                self.Multisig_signers_by_index.write(last_index, Zero::zero());
+                self.Multisig_signers_indices.write(signer_to_remove, 0);
+                self.emit(SignerRemoved { signer: signer_to_remove });
 
-                    signers_count -= 1;
+                signers_count -= 1;
                 self.Multisig_signers_info.write(SignersInfo { quorum, signers_count });
             }
             self._change_quorum(new_quorum);
