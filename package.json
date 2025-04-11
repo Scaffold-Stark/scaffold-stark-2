@@ -18,8 +18,8 @@
     "changeset:release": "yarn build && changeset publish"
   },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-typescript": "11.1.0",
+    "@rollup/plugin-node-resolve": "16.0.1",
+    "@rollup/plugin-typescript": "12.1.2",
     "@types/glob": "^8.1.0",
     "@types/inquirer": "9.0.7",
     "@types/listr": "0.14.9",
