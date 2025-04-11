@@ -2,7 +2,7 @@ import { Locator, Page } from "playwright";
 import { BasePage } from "./BasePage";
 import { captureError } from "../utils/error-handler";
 
-export interface InputConfig {
+interface InputConfig {
   keyInput: Locator;
   valueInput: Locator;
   sendButton: Locator;
@@ -11,7 +11,7 @@ export interface InputConfig {
   readResultValue: Locator;
 }
 
-export interface TestResult {
+interface TestResult {
   success: boolean;
   actualValue: string;
   error?: string;
@@ -73,10 +73,10 @@ export class TuplesDebugPage extends BasePage {
     await element.scrollIntoViewIfNeeded();
   }
 
-  async switchToVarsTab() {
+  async switchToTuplesTab() {
     const isVisible = await this.tuplesTab.isVisible().catch(() => false);
     if (!isVisible) {
-      throw new Error("Vars tab not found or not visible");
+      throw new Error("Tuples tab not found or not visible");
     }
     await this.safeClick(this.tuplesTab, "Tuples tab");
   }

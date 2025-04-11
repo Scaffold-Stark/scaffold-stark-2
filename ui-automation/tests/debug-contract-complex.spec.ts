@@ -2,26 +2,28 @@ import { test } from "@playwright/test";
 import { navigateAndWait } from "./utils/navigate";
 import { HomePage } from "./pages/HomePage";
 import { endpoint } from "./configTypes";
-import { VarsDebugPage } from "./pages/VarsDebugPage";
+import { ComplexDebugPage } from "./pages/ComplexDebugPage";
 import { captureError, formatTestResults } from "./utils/error-handler";
 import { getErrorMessage } from "./utils/helper";
 
 const BURNER_WALLET_SHORT = "0x64b4...5691";
 
 /**
- * End-to-end test for Variables Debug Page functionality
- * Tests various primitive data types including felt252, felt, ByteArray, ContractAddress, and boolean
+ * End-to-end test for Complex Debug Page functionality
+ * Tests complex data structures including structs with tuples
  */
-test("Vars Debug Page Interaction Flow", async ({ page }) => {
+test("Complex Debug Page Interaction Flow", async ({ page }) => {
   test.setTimeout(150000);
   const testTimestamp = Date.now();
-  const testId = `vars-debug-${testTimestamp}`;
+  const testId = `complex-debug-${testTimestamp}`;
 
   const testResults = [];
   const errorLogs = [];
 
   try {
-    console.log(`[${testId}] Starting test: Vars Debug Page Interaction Flow`);
+    console.log(
+      `[${testId}] Starting test: Complex Debug Page Interaction Flow`
+    );
 
     try {
       await navigateAndWait(page, endpoint.BASE_URL);
@@ -78,121 +80,67 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
       return;
     }
 
-    const varsDebugPage = new VarsDebugPage(page);
-
+    const complexDebugPage = new ComplexDebugPage(page);
     try {
-      await varsDebugPage.switchToVarsTab();
+      await complexDebugPage.switchToVarsTab();
       await page.waitForTimeout(1000);
-      console.log(`[${testId}] Successfully switched to Vars tab`);
+      console.log(`[${testId}] Successfully switched to Complex tab`);
     } catch (error) {
       const tabErr = await captureError(page, error, "Tab Switch");
       errorLogs.push(tabErr);
       console.error(
-        `[${testId}] Failed to switch to Vars tab:`,
+        `[${testId}] Failed to switch to Complex tab:`,
         tabErr.message
       );
 
       test.fail(
         true,
-        `Failed to switch to Vars tab: ${getErrorMessage(error)}`
+        `Failed to switch to Complex tab: ${getErrorMessage(error)}`
       );
       return; // Exit test immediately if tab is not found
     }
 
-    const felt252Result = await varsDebugPage.testFelt252(
-      "u256_felt256_key",
-      "42"
+    console.log(`[${testId}] Starting StructWithTuple test`);
+    const structWithTuple = await complexDebugPage.testStructWithTuple(
+      "struct_with_tuple_key",
+      {
+        tupleElement: "(1,Starknet,true)",
+        contractAddress:
+          "0x064b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
+      }
     );
-    console.log(
-      `[${testId}] Felt252 test result:`,
-      felt252Result.success ? "SUCCESS" : `FAILED: ${felt252Result.error}`
-    );
-    testResults.push({
-      ...felt252Result,
-      name: "Felt252",
-    });
 
-    const feltResult = await varsDebugPage.testFelt("0x123", "0x456");
     console.log(
-      `[${testId}] Felt test result:`,
-      feltResult.success ? "SUCCESS" : `FAILED: ${feltResult.error}`
+      `[${testId}] StructWithTuple test result:`,
+      structWithTuple.success ? "SUCCESS" : `FAILED: ${structWithTuple.error}`
     );
-    testResults.push({
-      ...feltResult,
-      name: "Felt",
-    });
+    testResults.push(structWithTuple);
 
-    const byteArrayResult = await varsDebugPage.testByteArray(
-      "byte_array",
-      "Hello Starknet"
+    console.log(`[${testId}] Starting ComplexStruct test`);
+    const complexStruct = await complexDebugPage.testComplexStruct(
+      "complex_struct_key",
+      {
+        id: "256",
+        sampleStruct: {
+          id: "52",
+          name: "StarknetByteArray",
+          enum: {
+            enum1: "1",
+            enum2: "2",
+            enum3: "SpeedRun",
+          },
+        },
+        status: "true",
+        layer1Element: "42",
+        tupleData: "(12,ScaffoldStark)",
+      }
     );
+
     console.log(
-      `[${testId}] ByteArray test result:`,
-      byteArrayResult.success ? "SUCCESS" : `FAILED: ${byteArrayResult.error}`
+      `[${testId}] ComplexStruct test result:`,
+      complexStruct.success ? "SUCCESS" : `FAILED: ${complexStruct.error}`
     );
-    testResults.push({
-      ...byteArrayResult,
-      name: "ByteArray",
-    });
-
-    const contractAddressResult = await varsDebugPage.testContractAddress(
-      "contract_address",
-      "0x064b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691"
-    );
-    console.log(
-      `[${testId}] ContractAddress test result:`,
-      contractAddressResult.success
-        ? "SUCCESS"
-        : `FAILED: ${contractAddressResult.error}`
-    );
-    testResults.push({
-      ...contractAddressResult,
-      name: "ContractAddress",
-    });
-
-    const boolResult = await varsDebugPage.testBool(
-      "bool_key",
-      "true" as "true" | "false"
-    );
-    console.log(
-      `[${testId}] Bool test result:`,
-      boolResult.success ? "SUCCESS" : `FAILED: ${boolResult.error}`
-    );
-    testResults.push({
-      ...boolResult,
-      name: "Bool",
-    });
-
-    const bytes31Result = await varsDebugPage.testBytes31("0x1234", "0x12345");
-    console.log(
-      `[${testId}] Bytes31 test result:`,
-      bytes31Result.success ? "SUCCESS" : `FAILED: ${bytes31Result.error}`
-    );
-    testResults.push({
-      ...bytes31Result,
-      name: "Bytes31",
-    });
-
-    const i18Result = await varsDebugPage.testI8("0x1234", "10");
-    console.log(
-      `[${testId}] I8 test result:`,
-      i18Result.success ? "SUCCESS" : `FAILED: ${i18Result.error}`
-    );
-    testResults.push({
-      ...i18Result,
-      name: "I8",
-    });
-
-
-    const nonZeroU256 = await varsDebugPage.testNonZeroU256("0x12");
-    console.log(
-      `[${testId}] nonZeroU256 test result:`,
-      nonZeroU256.success ? "SUCCESS" : `FAILED: ${nonZeroU256.error}`
-    );
-    testResults.push({
-      ...nonZeroU256,
-      name: "nonZeroU256",
-    });
+    testResults.push(complexStruct);
 
     const failedTests = testResults.filter((test) => !test.success);
 
@@ -206,7 +154,7 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
       const details = failedTests
         .map(
           (test) =>
-            `${test.name}: ${test.error}\nActual: ${test.actualValue}\nDetails: ${JSON.stringify(test.details)}`
+            `${test.name}: ${test.error || "Unknown error"}\nDetails: ${JSON.stringify(test.details)}`
         )
         .join("\n\n");
 

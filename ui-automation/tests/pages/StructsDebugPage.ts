@@ -2,7 +2,7 @@ import { Locator, Page } from "playwright";
 import { BasePage } from "./BasePage";
 import { captureError } from "../utils/error-handler";
 
-export interface TestResult {
+interface TestResult {
   success: boolean;
   actualValue: string;
   error?: string;

@@ -2,7 +2,7 @@ import { Locator, Page } from "playwright";
 import { BasePage } from "./BasePage";
 import { captureError } from "../utils/error-handler";
 
-export interface InputConfig {
+interface InputConfig {
   keyInput: Locator;
   valueInput: Locator;
   sendButton: Locator;
@@ -11,7 +11,7 @@ export interface InputConfig {
   readResultValue: Locator;
 }
 
-export interface TestResult {
+interface TestResult {
   success: boolean;
   actualValue: string;
   error?: string;
@@ -110,17 +110,33 @@ export class VarsDebugPage extends BasePage {
         readButton: this.page.getByTestId("btn-get_bytes31_with_key"),
         readResultValue: this.page.getByTestId("result-get_bytes31_with_key"),
       },
-      i128: {
+      i8: {
         keyInput: this.page.locator(
-          'input[name="set_i128_with_key_key_core\\:\\:felt252"]'
+          'input[name="set_i8_with_key_key_core\\:\\:felt252"]'
         ),
-        valueInput: this.page.getByPlaceholder("i128 value"),
-        sendButton: this.page.getByTestId("btn-set_i128_with_key"),
+        valueInput: this.page.getByPlaceholder("i8 value"),
+        sendButton: this.page.getByTestId("btn-set_i8_with_key"),
         readValueInput: this.page.locator(
-          'input[name="get_i128_with_key_key_core\\:\\:felt252"]'
+          'input[name="get_i8_with_key_key_core\\:\\:felt252"]'
         ),
-        readButton: this.page.getByTestId("btn-get_i128_with_key"),
-        readResultValue: this.page.getByTestId("result-get_i128_with_key"),
+        readButton: this.page.getByTestId("btn-get_i8_with_key"),
+        readResultValue: this.page.getByTestId("result-get_i8_with_key"),
+      },
+      noneZeroU256: {
+        keyInput: this.page.locator(
+          'input[name="set_non_zero_u256_with_key_key_core\\:\\:felt252"]'
+        ),
+        valueInput: this.page.locator(
+          'input[name="set_non_zero_u256_with_key_key_core\\:\\:felt252"]'
+        ),
+        sendButton: this.page.getByTestId("btn-set_non_zero_u256_with_key"),
+        readValueInput: this.page.locator(
+          'input[name="get_non_zero_u256_with_key_key_core\\:\\:felt252"]'
+        ),
+        readButton: this.page.getByTestId("btn-get_non_zero_u256_with_key"),
+        readResultValue: this.page.getByTestId(
+          "result-get_non_zero_u256_with_key"
+        ),
       },
     };
   }
@@ -154,7 +170,7 @@ export class VarsDebugPage extends BasePage {
   }> {
     try {
       const toastVisible = await this.transaction_completed
-        .isVisible({ timeout: 1000 })
+        .isVisible({ timeout: 2000 })
         .catch((e) => {
           console.warn(
             "Toast visibility check failed:",
@@ -169,7 +185,10 @@ export class VarsDebugPage extends BasePage {
 
       await this.page.waitForTimeout(2000);
 
-      const errorLocator = this.page.getByText(/error|failed|failure/i);
+      const errorLocator = this.page
+        .locator('[id="_rht_toaster"] div')
+        .filter({ hasText: "RPC: starknet_estimateFee" })
+        .nth(1);
       const errorVisible = await errorLocator.isVisible().catch((e) => {
         console.warn(
           "Error check failed:",
@@ -183,7 +202,11 @@ export class VarsDebugPage extends BasePage {
         return { success: false, error: `Transaction error: ${errorText}` };
       }
 
-      return { success: true };
+      return {
+        success: false,
+        error:
+          "Transaction completion indicator not detected. UI may not have updated properly.",
+      };
     } catch (error) {
       const errMsg = error instanceof Error ? error.message : String(error);
       return {
@@ -1016,78 +1039,78 @@ export class VarsDebugPage extends BasePage {
   }
 
   /**
-   * Sets and sends an i128 value with the specified key
+   * Sets and sends an i8 value with the specified key
    * @param key The key identifier for the variable
-   * @param value The i128 value to set
+   * @param value The i8 value to set
    */
-  async setAndSendI128(key: string, value: string) {
+  async setAndSendI8(key: string, value: string) {
     try {
       await this.switchToWriteTab();
       await this.page.waitForTimeout(500);
 
-      const config = this.inputConfigs.i128;
+      const config = this.inputConfigs.i8;
       await this.scrollToElement(config.keyInput);
-      await this.safeFill(config.keyInput, key, `i128 key with ${key}`);
+      await this.safeFill(config.keyInput, key, `i8 key with ${key}`);
 
       await this.scrollToElement(config.valueInput);
-      await this.safeFill(config.valueInput, value, `i128 value with ${value}`);
+      await this.safeFill(config.valueInput, value, `i8 value with ${value}`);
 
       await this.scrollToElement(config.sendButton);
-      await this.safeClick(config.sendButton, "send i128 button");
+      await this.safeClick(config.sendButton, "send i8 button");
     } catch (error) {
       await captureError(
         this.page,
         error,
-        `setAndSendI128 with key=${key}, value=${value}`
+        `setAndSendI8 with key=${key}, value=${value}`
       );
       throw error;
     }
   }
 
   /**
-   * Reads an i128 value by key
+   * Reads an i8 value by key
    * @param key The key to look up
    * @returns Promise with the variable value as string
    */
-  async readI128(key: string): Promise<string> {
+  async readI8(key: string): Promise<string> {
     try {
       await this.switchToReadTab();
       await this.page.waitForTimeout(500);
 
-      const config = this.inputConfigs.i128;
+      const config = this.inputConfigs.i8;
       await this.scrollToElement(config.readValueInput);
       await this.safeFill(
         config.readValueInput,
         key,
-        `i128 read key with ${key}`
+        `i8 read key with ${key}`
       );
 
       await this.scrollToElement(config.readButton);
-      await this.safeClick(config.readButton, "read i128 button");
+      await this.safeClick(config.readButton, "read i8 button");
 
       await this.page.waitForTimeout(1000);
 
       await this.scrollToElement(config.readResultValue);
       const resultText = await this.safeGetText(
         config.readResultValue,
-        "i128 result"
+        "i8 result"
       );
       return resultText;
     } catch (error) {
-      await captureError(this.page, error, `readI128 with key=${key}`);
+      await captureError(this.page, error, `readI8 with key=${key}`);
       throw error;
     }
   }
 
   /**
-   * Complete test for setting and reading an i128 value
+   * Complete test for setting and reading an i8 value
    * @param key The key identifier for the variable
    * @param value The value to test
    * @returns TestResult with success status and relevant information
    */
-  async testI128(key: string, value: string): Promise<TestResult> {
+  async testI8(key: string, value: string): Promise<TestResult> {
     try {
-      await this.setAndSendI128(key, value);
+      await this.setAndSendI8(key, value);
 
       await this.page.waitForTimeout(5000);
       const transactionResult = await this.isTransactionCompleted();
@@ -1098,13 +1121,13 @@ export class VarsDebugPage extends BasePage {
           actualValue: "",
           error: transactionResult.error || "Transaction failed",
           details: { key, expectedValue: value },
-          name: "I128",
+          name: "I8",
         };
       }
 
       let resultText = "";
       try {
-        resultText = await this.readI128(key);
+        resultText = await this.readI8(key);
       } catch (readError) {
         const readErrorMsg =
           readError instanceof Error ? readError.message : String(readError);
@@ -1113,7 +1136,7 @@ export class VarsDebugPage extends BasePage {
           actualValue: "",
           error: `Failed to read value after setting: ${readErrorMsg}`,
           details: { key, expectedValue: value },
-          name: "I128",
+          name: "I8",
         };
       }
 
@@ -1126,7 +1149,7 @@ export class VarsDebugPage extends BasePage {
           ? undefined
           : `Value mismatch: expected "${value}", got "${resultText}"`,
         details: { key, expectedValue: value, actualValue: resultText },
-        name: "I128",
+        name: "I8",
       };
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
@@ -1134,7 +1157,7 @@ export class VarsDebugPage extends BasePage {
       await captureError(
         this.page,
         error,
-        `I128 test with key ${key} and value ${value}`
+        `I8 test with key ${key} and value ${value}`
       );
 
       return {
@@ -1142,7 +1165,120 @@ export class VarsDebugPage extends BasePage {
         actualValue: "",
         error: `Test execution failed: ${errorMsg}`,
         details: { key, expectedValue: value },
-        name: "I128",
+        name: "I8",
+      };
+    }
+  }
+
+  /**
+   * Sets and sends a non-zero u256 value with the given key
+   * @param key The key identifier for the non-zero u256
+   * @param value The non-zero u256 value
+   */
+  async setAndSendNonZeroU256(key: string): Promise<void> {
+    try {
+      await this.switchToWriteTab();
+      await this.page.waitForTimeout(500);
+
+      const config = this.inputConfigs.noneZeroU256;
+      await this.scrollToElement(config.keyInput);
+      await this.safeFill(config.keyInput, key, `Non-zero u256 key (${key})`);
+
+      await this.safeClick(config.sendButton, "Send non-zero u256 button");
+    } catch (error) {
+      await captureError(
+        this.page,
+        error,
+        `setAndSendNonZeroU256 with key=${key}`
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Reads a non-zero u256 value by key
+   * @param key The key to look up
+   * @returns Promise with the non-zero u256 value as string
+   */
+  async readNonZeroU256(key: string): Promise<string> {
+    try {
+      await this.switchToReadTab();
+      await this.page.waitForTimeout(500);
+
+      const config = this.inputConfigs.noneZeroU256;
+      await this.scrollToElement(config.readValueInput);
+      await this.safeFill(
+        config.readValueInput,
+        key,
+        `Non-zero u256 read key (${key})`
+      );
+      await this.safeClick(config.readButton, "Read non-zero u256 button");
+
+      await this.page.waitForTimeout(1000);
+      const resultText = await this.safeGetText(
+        config.readResultValue,
+        "Non-zero u256 result"
+      );
+      return resultText;
+    } catch (error) {
+      await captureError(this.page, error, `readNonZeroU256 with key=${key}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Complete test for setting and reading a non-zero u256
+   * @param key The key identifier for the non-zero u256
+   * @param value The non-zero u256 value to test
+   * @returns TestResult with success status and relevant information
+   */
+  async testNonZeroU256(key: string): Promise<TestResult> {
+    try {
+      await this.setAndSendNonZeroU256(key);
+      await this.page.waitForTimeout(3000);
+
+      const transactionResult = await this.isTransactionCompleted();
+      if (!transactionResult.success) {
+        return {
+          success: false,
+          actualValue: "",
+          error: transactionResult.error || "Transaction failed",
+          details: { key },
+          name: "NonZeroU256",
+        };
+      }
+
+      let resultText = "";
+      try {
+        resultText = await this.readNonZeroU256(key);
+      } catch (readError) {
+        const readErrorMsg =
+          readError instanceof Error ? readError.message : String(readError);
+        return {
+          success: false,
+          actualValue: "",
+          error: `Failed to read NonZeroU256 value after setting: ${readErrorMsg}`,
+          details: { key },
+          name: "NonZeroU256",
+        };
+      }
+
+      return {
+        success: !!resultText,
+        actualValue: resultText,
+        details: { key, actualValue: resultText },
+        name: "NonZeroU256",
+      };
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      await captureError(this.page, error, `NonZeroU256 test with key ${key}`);
+
+      return {
+        success: false,
+        actualValue: "",
+        error: `NonZeroU256 test execution failed: ${errorMsg}`,
+        details: { key },
+        name: "NonZeroU256",
       };
     }
   }
