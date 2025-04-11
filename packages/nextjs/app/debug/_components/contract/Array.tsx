@@ -19,6 +19,7 @@ type ArrayProps = {
   parentStateObjectKey: string;
   setFormErrorMessage: Dispatch<SetStateAction<FormErrorMessageState>>;
   isDisabled?: boolean;
+  testId?: string;
 };
 
 export const ArrayInput = ({
@@ -29,6 +30,7 @@ export const ArrayInput = ({
   abiParameter,
   setFormErrorMessage,
   isDisabled,
+  testId,
 }: ArrayProps) => {
   // array in object representation
   const [inputArr, setInputArr] = useState<any>({});
@@ -53,7 +55,10 @@ export const ArrayInput = ({
 
   return (
     <div>
-      <div className="collapse bg-base-200 pl-4 pt-1.5 pb-2 border-2 border-secondary custom-after">
+      <div
+        data-testid={`click-${testId}-field`}
+        className="collapse bg-base-200 pl-4 pt-1.5 pb-2 border-2 border-secondary custom-after"
+      >
         <input type="checkbox" className="min-h-fit peer" />
         <div className="collapse-title p-0 min-h-fit peer-checked:mb-2 text-primary-content/50">
           <p className="m-0 p-0 text-[1rem]">array (length: {arrLength + 1})</p>
@@ -65,6 +70,7 @@ export const ArrayInput = ({
               <ContractInput
                 abi={abi}
                 key={index}
+                data-testid={`click-${testId}-field-${index}`}
                 isDisabled={isDisabled}
                 setForm={(
                   nextInputRecipe:
@@ -98,6 +104,7 @@ export const ArrayInput = ({
           })}
           <div className="flex gap-3">
             <button
+              data-testid={`add-${testId}-btn`}
               onClick={() => {
                 const nextLength = arrLength + 1;
                 setInputArr((prev: any) => ({
@@ -111,6 +118,7 @@ export const ArrayInput = ({
               + Add (push)
             </button>
             <button
+              data-testid={`remove-${testId}-btn`}
               className="btn  btn-sm shadow-none border border-error text-white"
               onClick={() => {
                 if (arrLength > -1) {
