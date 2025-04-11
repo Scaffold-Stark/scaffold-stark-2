@@ -173,13 +173,13 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
       name: "Bytes31",
     });
 
-    const i18Result = await varsDebugPage.testI8("0x1234", "10");
+    const i8Result = await varsDebugPage.testI8("0x1234", "10");
     console.log(
       `[${testId}] I8 test result:`,
-      i18Result.success ? "SUCCESS" : `FAILED: ${i18Result.error}`
+      i8Result.success ? "SUCCESS" : `FAILED: ${i8Result.error}`
     );
     testResults.push({
-      ...i18Result,
+      ...i8Result,
       name: "I8",
     });
 

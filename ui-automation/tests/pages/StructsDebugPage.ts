@@ -30,12 +30,19 @@ export class StructsDebugPage extends BasePage {
         keyInput: this.page.locator(
           'input[name="set_sample_struct_with_key_key_core\\:\\:felt252"]'
         ),
-        valueInput: this.page.getByText("structidu256∗").first(),
+        valueInput: this.page
+          .getByTestId("click-contracts::types::SampleStruct-field")
+          .first(),
         structId: this.page.getByRole("textbox", { name: "u256 id" }),
         structName: this.page.getByRole("textbox", { name: "ByteArray name" }),
-        structStatus: this.page.getByText("enumenum1u256∗enum2u256∗").first(),
-        structStatusEnum1: this.page.getByRole("textbox", {
-          name: "u256 enum1",
+        structStatus: this.page
+          .getByTestId("click-contracts::types::SampleEnum-field")
+          .first(),
+        structStatusClick3: this.page
+          .getByTestId("radio-contracts::types::SampleEnum-2")
+          .first(),
+        structStatusEnum3: this.page.getByRole("textbox", {
+          name: "ByteArray enum3",
         }),
         sendButton: this.page.getByTestId("btn-set_sample_struct_with_key"),
         readValueInput: this.page.locator(
@@ -50,25 +57,40 @@ export class StructsDebugPage extends BasePage {
         keyInput: this.page.locator(
           'input[name="set_sample_nested_struct_with_key_key_core\\:\\:felt252"]'
         ),
-        valueInput: this.page.getByText(
-          "structuserContractAddressdataSampleStructstructidu256∗"
+        valueInput: this.page.getByTestId(
+          "click-contracts::types::SampleNestedStruct-field"
         ),
         structContractAddressUser: this.page.getByTestId("input-user"),
-        structData: this.page.getByText("structidu256∗").nth(1),
+        structData: this.page
+          .getByTestId("click-contracts::types::SampleNestedStruct-field")
+          .getByTestId("click-contracts::types::SampleStruct-field"),
         structDataValue: {
-          structDataId: this.page.getByRole("textbox", { name: "u256 id" }),
-          structDataName: this.page.getByRole("textbox", {
-            name: "ByteArray name",
-          }),
-          structDataStatus: this.page
-            .getByText("enumenum1u256∗enum2u256∗")
-            .nth(1),
-          structDataStatusEnum1: this.page.getByRole("textbox", {
-            name: "u256 enum1",
-          }),
+          structDataId: this.page
+            .getByTestId("click-contracts::types::SampleNestedStruct-field")
+            .getByPlaceholder("u256 id"),
+          structDataName: this.page
+            .getByTestId("click-contracts::types::SampleNestedStruct-field")
+            .getByTestId("input-name"),
+          structDataStatusClick: this.page
+            .getByTestId("click-contracts::types::SampleNestedStruct-field")
+            .getByTestId("click-contracts::types::SampleStruct-field")
+            .getByTestId("click-contracts::types::SampleEnum-field"),
+          structDataEnumClick3: this.page
+            .getByTestId("click-contracts::types::SampleNestedStruct-field")
+            .getByTestId("click-contracts::types::SampleStruct-field")
+            .getByTestId("radio-contracts::types::SampleEnum-2"),
+          structDataStatusEnum3: this.page
+            .getByTestId("click-contracts::types::SampleNestedStruct-field")
+            .getByTestId("click-contracts::types::SampleStruct-field")
+            .getByTestId("input-enum3"),
         },
-        structStatus: this.page.getByText("enumenum1u256∗enum2u256∗").nth(2),
-        structStatusEnum1: this.page.getByPlaceholder("u256 enum1").nth(2),
+        structStatus: this.page
+          .getByTestId("click-contracts::types::SampleEnum-field")
+          .nth(2),
+        structStatusEnumClick3: this.page
+          .getByTestId("radio-contracts::types::SampleEnum-2")
+          .nth(2),
+        structStatusEnum3: this.page.getByTestId("input-enum3").nth(2),
         sendButton: this.page.getByTestId(
           "btn-set_sample_nested_struct_with_key"
         ),
@@ -86,8 +108,24 @@ export class StructsDebugPage extends BasePage {
         keyInput: this.page.locator(
           'input[name="set_sample_enum_with_key_key_core\\:\\:felt252"]'
         ),
-        valueInput: this.page.getByText("enumenum1u256∗enum2u256∗").nth(3),
-        valueEnum1Input: this.page.getByRole("textbox", { name: "u256 enum1" }),
+        valueInput: this.page
+          .locator("div")
+          .filter({
+            hasText: /^valueSampleEnumenumenum1\(\)enum2u256enum3ByteArray$/,
+          })
+          .getByTestId("click-contracts::types::SampleEnum-field"),
+        valueEnum3Click: this.page
+          .locator("div")
+          .filter({
+            hasText: /^valueSampleEnumenumenum1\(\)enum2u256enum3ByteArray$/,
+          })
+          .getByTestId("radio-contracts::types::SampleEnum-2"),
+        valueEnum3Input: this.page
+          .locator("div")
+          .filter({
+            hasText: /^valueSampleEnumenumenum1\(\)enum2u256enum3ByteArray$/,
+          })
+          .getByTestId("input-enum3"),
         sendButton: this.page.getByTestId("btn-set_sample_enum_with_key"),
         readValueInput: this.page.locator(
           'input[name="get_sample_enum_with_key_key_core\\:\\:felt252"]'
@@ -101,19 +139,25 @@ export class StructsDebugPage extends BasePage {
         keyInput: this.page.locator(
           'input[name="set_struct_with_five_elements_with_key_key_core\\:\\:felt252"]'
         ),
-        valueInput: this.page.getByText("structelement1u256∗").first(),
+        valueInput: this.page.getByTestId(
+          "click-contracts::types::StructWithFiveElements-field"
+        ),
         value: {
-          element1: this.page.getByRole("textbox", { name: "u256 element1" }),
-          element2: this.page.getByRole("textbox", {
-            name: "felt252 element2",
-          }),
-          element3: this.page.getByRole("textbox", {
-            name: "ByteArray element3",
-          }),
-          element4: this.page.getByRole("textbox", {
-            name: "ContractAddress element4",
-          }),
-          element5: this.page.getByRole("textbox", { name: "bool element5" }),
+          element1: this.page
+            .getByTestId("click-contracts::types::StructWithFiveElements-field")
+            .getByPlaceholder("u256 element1"),
+          element2: this.page
+            .getByTestId("click-contracts::types::StructWithFiveElements-field")
+            .getByTestId("input-element2"),
+          element3: this.page
+            .getByTestId("click-contracts::types::StructWithFiveElements-field")
+            .getByTestId("input-element3"),
+          element4: this.page
+            .getByTestId("click-contracts::types::StructWithFiveElements-field")
+            .getByTestId("input-element4"),
+          element5: this.page
+            .getByTestId("click-contracts::types::StructWithFiveElements-field")
+            .getByTestId("input-element5"),
         },
         sendButton: this.page.getByTestId(
           "btn-set_struct_with_five_elements_with_key"
@@ -133,19 +177,17 @@ export class StructsDebugPage extends BasePage {
           'input[name="set_struct_with_4_layers_with_key_key_core\\:\\:felt252"]'
         ),
         layer4: this.page
-          .getByText(
-            "structlayer4_elementLayer3structlayer3_elementLayer2structlayer2_elementLayer1st"
-          )
+          .getByTestId("click-contracts::types::StructWith4Layers-field")
           .first(),
         layer3: this.page
-          .getByText(
-            "structlayer3_elementLayer2structlayer2_elementLayer1structlayer1_elementu256∗"
-          )
+          .getByTestId("click-contracts::types::Layer3-field")
           .first(),
         layer2: this.page
-          .getByText("structlayer2_elementLayer1structlayer1_elementu256∗")
+          .getByTestId("click-contracts::types::Layer2-field")
           .first(),
-        layer1: this.page.getByText("structlayer1_elementu256∗").first(),
+        layer1: this.page
+          .getByTestId("click-contracts::types::Layer1-field")
+          .first(),
         sendValueInput: this.page.getByRole("textbox", {
           name: "u256 layer1_element",
         }),
@@ -239,7 +281,7 @@ export class StructsDebugPage extends BasePage {
    */
   async setAndSendSampleStruct(
     key: string,
-    value: { structId: string; name: string; enum: { enum1: string } }
+    value: { structId: string; name: string; enum: { enum3: string } }
   ) {
     try {
       await this.switchToWriteTab();
@@ -256,10 +298,14 @@ export class StructsDebugPage extends BasePage {
         config.structStatus,
         "Sample struct status dropdown"
       );
+      await this.safeClick(
+        config.structStatusClick3,
+        "Sample struct status enum dropdown"
+      );
       await this.safeFill(
-        config.structStatusEnum1,
-        value.enum.enum1,
-        "Sample struct enum1"
+        config.structStatusEnum3,
+        value.enum.enum3,
+        "Sample struct enum3"
       );
       await this.safeClick(config.sendButton, "Send sample struct button");
     } catch (error) {
@@ -315,9 +361,9 @@ export class StructsDebugPage extends BasePage {
       structDataValue: {
         structDataId: string;
         structDataName: string;
-        structDataStatus: { enum1: string };
+        structDataStatus: { enum3: string };
       };
-      structDataStatus: { enum1: string };
+      structDataStatus: { enum3: string };
     }
   ) {
     try {
@@ -336,6 +382,7 @@ export class StructsDebugPage extends BasePage {
       );
       await this.safeClick(config.structData, "Nested struct data dropdown");
 
+
       const dataValue = config.structDataValue;
       await this.safeFill(
         dataValue.structDataId,
@@ -348,22 +395,30 @@ export class StructsDebugPage extends BasePage {
         "Nested struct data name"
       );
       await this.safeClick(
-        dataValue.structDataStatus,
+        dataValue.structDataStatusClick,
         "Nested struct data status dropdown"
       );
+      await this.safeClick(
+        dataValue.structDataEnumClick3,
+        "Nested struct data status enum checkbox"
+      );
       await this.safeFill(
-        dataValue.structDataStatusEnum1,
-        value.structDataValue.structDataStatus.enum1,
-        "Nested struct data enum1"
+        dataValue.structDataStatusEnum3,
+        value.structDataValue.structDataStatus.enum3,
+        "Nested struct data enum3"
       );
       await this.safeClick(
         config.structStatus,
         "Nested struct status dropdown"
       );
+      await this.safeClick(
+        config.structStatusEnumClick3,
+        "Nested struct data status enum checkbox"
+      );
       await this.safeFill(
-        config.structStatusEnum1,
-        value.structDataStatus.enum1,
-        "Nested struct enum1"
+        config.structStatusEnum3,
+        value.structDataStatus.enum3,
+        "Nested struct enum3"
       );
       await this.safeClick(config.sendButton, "Send nested struct button");
     } catch (error) {
@@ -412,7 +467,7 @@ export class StructsDebugPage extends BasePage {
    * @param key The key identifier for the enum
    * @param value The enum value to set
    */
-  async setAndSendSampleEnum(key: string, value: { enum1: string }) {
+  async setAndSendSampleEnum(key: string, value: { enum3: string }) {
     try {
       await this.switchToWriteTab();
       await this.page.waitForTimeout(500);
@@ -421,10 +476,11 @@ export class StructsDebugPage extends BasePage {
       await this.scrollToElement(config.keyInput);
       await this.safeFill(config.keyInput, key, `Sample enum key (${key})`);
       await this.safeClick(config.valueInput, "Sample enum value dropdown");
+      await this.safeClick(config.valueEnum3Click, "Sample enum3 checkbox");
       await this.safeFill(
-        config.valueEnum1Input,
-        value.enum1,
-        "Sample enum enum1"
+        config.valueEnum3Input,
+        value.enum3,
+        "Sample enum enum3"
       );
       await this.safeClick(config.sendButton, "Send sample enum button");
     } catch (error) {
@@ -657,7 +713,7 @@ export class StructsDebugPage extends BasePage {
    */
   async testSampleStruct(
     key: string,
-    value: { structId: string; name: string; enum: { enum1: string } }
+    value: { structId: string; name: string; enum: { enum3: string } }
   ): Promise<TestResult> {
     try {
       await this.setAndSendSampleStruct(key, value);
@@ -722,9 +778,9 @@ export class StructsDebugPage extends BasePage {
       structDataValue: {
         structDataId: string;
         structDataName: string;
-        structDataStatus: { enum1: string };
+        structDataStatus: { enum3: string };
       };
-      structDataStatus: { enum1: string };
+      structDataStatus: { enum3: string };
     }
   ): Promise<TestResult> {
     try {
@@ -785,7 +841,7 @@ export class StructsDebugPage extends BasePage {
    */
   async testSampleEnum(
     key: string,
-    value: { enum1: string }
+    value: { enum3: string }
   ): Promise<TestResult> {
     try {
       await this.setAndSendSampleEnum(key, value);

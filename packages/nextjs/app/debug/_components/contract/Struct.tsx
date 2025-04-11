@@ -116,6 +116,7 @@ export const Struct = ({
                   <div key={index} className="flex items-center gap-3">
                     <input
                       type="checkbox"
+                      data-testid={`radio-${testId}-${index}`}
                       name={`radio-${index}`}
                       className="radio radio-xs radio-secondary"
                       checked={index === activeVariantIndex}

@@ -1,35 +1,37 @@
 import { test } from "@playwright/test";
-import { ArraysSpansDebugPage } from "./pages/ArraysSpanDebugPage";
 import { navigateAndWait } from "./utils/navigate";
 import { HomePage } from "./pages/HomePage";
 import { endpoint } from "./configTypes";
 import { captureError } from "./utils/error-handler";
 import { getErrorMessage } from "./utils/helper";
+import { ArraysSpansPage } from "./pages/ArraysSpanDebugPage";
 
 const BURNER_WALLET_SHORT = "0x64b4...5691";
 
 /**
- * End-to-end test for the ArraysSpan Debug Page functionality
- * Tests all array and span data types with proper error handling and reporting
+ * End-to-end test for the ArraysSpan Page with ArrayValue functionality
+ * Tests array operations with struct and nested struct data types
  */
-test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
+test("ArrayValue Interaction Flow", async ({ page }) => {
   test.setTimeout(180000);
   const testTimestamp = Date.now();
-  const testId = `arrays-span-debug-${testTimestamp}`;
+  const testId = `array-value-test-${testTimestamp}`;
 
   const testResults = [];
   const errorLogs = [];
 
   try {
-    console.log(`[${testId}] Starting test: ArraysSpan Debug Page Interaction Flow`);
+    console.log(`[${testId}] Starting test: ArrayValue Interaction Flow`);
     await navigateAndWait(page, endpoint.BASE_URL);
 
     const homePage = new HomePage(page);
 
     try {
+      // Connect wallet
       await homePage.getConnectButton().click();
       await homePage.getConnecterButton("Burner Wallet").click();
 
+      // Select account
       const accountButton = homePage.getAccountButton(BURNER_WALLET_SHORT);
       await accountButton.scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);
@@ -44,6 +46,7 @@ test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
     }
 
     try {
+      // Navigate to debug page
       await homePage.getDebugPageLinkButton().click();
       await page.waitForTimeout(1000);
     } catch (error) {
@@ -57,12 +60,13 @@ test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
       return;
     }
 
-    const arraysSpanDebugPage = new ArraysSpansDebugPage(page);
+    const arraysSpansPage = new ArraysSpansPage(page);
 
     try {
-      await arraysSpanDebugPage.switchToArraysSpanTab();
+      // Switch to ArraysSpan tab and Read tab
+      await arraysSpansPage.switchToArraysSpanTab();
       await page.waitForTimeout(1000);
-      await arraysSpanDebugPage.switchToReadTab();
+      await arraysSpansPage.switchToReadTab();
       await page.waitForTimeout(500);
     } catch (error) {
       const tabErr = await captureError(page, error, "Tab Switch");
@@ -80,90 +84,27 @@ test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
       return; // Exit test immediately if tab switching fails
     }
 
-    const getArrayFelt252Result =
-      await arraysSpanDebugPage.testGetArrayFelt252();
+    // Run the ArrayValueStruct test
+    const arrayValueStructResult = await arraysSpansPage.testGetArrayValueStruct();
     console.log(
-      `[${testId}] ArrayFelt252 test result:`,
-      getArrayFelt252Result.success
+      `[${testId}] ArrayValueStruct test result:`,
+      arrayValueStructResult.success
         ? "SUCCESS"
-        : `FAILED: ${getArrayFelt252Result.error}`
+        : `FAILED: ${arrayValueStructResult.error}`
     );
-    testResults.push(getArrayFelt252Result);
+    testResults.push(arrayValueStructResult);
 
-    const getArrayContractAddressResult =
-      await arraysSpanDebugPage.testGetArrayContractAddress();
+    // Run the ArrayValueNestedStruct test
+    const arrayValueNestedStructResult = await arraysSpansPage.testGetArrayValueNestedStruct();
     console.log(
-      `[${testId}] ContractAddress test result:`,
-      getArrayContractAddressResult.success
+      `[${testId}] ArrayValueNestedStruct test result:`,
+      arrayValueNestedStructResult.success
         ? "SUCCESS"
-        : `FAILED: ${getArrayContractAddressResult.error}`
+        : `FAILED: ${arrayValueNestedStructResult.error}`
     );
-    testResults.push(getArrayContractAddressResult);
+    testResults.push(arrayValueNestedStructResult);
 
-    const getArrayStructResult = await arraysSpanDebugPage.testGetArrayStruct();
-    console.log(
-      `[${testId}] ArrayStruct test result:`,
-      getArrayStructResult.success
-        ? "SUCCESS"
-        : `FAILED: ${getArrayStructResult.error}`
-    );
-    testResults.push(getArrayStructResult);
-
-    const getArrayNestedStruct =
-      await arraysSpanDebugPage.testGetArrayNestedStruct();
-    console.log(
-      `[${testId}] ArrayNestedStruct test result:`,
-      getArrayNestedStruct.success
-        ? "SUCCESS"
-        : `FAILED: ${getArrayNestedStruct.error}`
-    );
-    testResults.push(getArrayNestedStruct);
-
-    const getArrayStructFiveElement =
-      await arraysSpanDebugPage.testGetArrayStructFiveElement();
-    console.log(
-      `[${testId}] ArrayStructFiveElement test result:`,
-      getArrayStructFiveElement.success
-        ? "SUCCESS"
-        : `FAILED: ${getArrayStructFiveElement.error}`
-    );
-    testResults.push(getArrayStructFiveElement);
-
-    const getArrayStructFourLayer =
-      await arraysSpanDebugPage.testGetArrayStructFourLayer();
-    console.log(
-      `[${testId}] ArrayStructFourLayer test result:`,
-      getArrayStructFourLayer.success
-        ? "SUCCESS"
-        : `FAILED: ${getArrayStructFourLayer.error}`
-    );
-    testResults.push(getArrayStructFourLayer);
-
-    const getSpanFelt252 = await arraysSpanDebugPage.testGetSpanFelt252();
-    console.log(
-      `[${testId}] SpanFelt252 test result:`,
-      getSpanFelt252.success ? "SUCCESS" : `FAILED: ${getSpanFelt252.error}`
-    );
-    testResults.push(getSpanFelt252);
-
-    const getSpanContractAddress =
-      await arraysSpanDebugPage.testGetSpanAddressContract();
-    console.log(
-      `[${testId}] SpanContractAddress test result:`,
-      getSpanContractAddress.success
-        ? "SUCCESS"
-        : `FAILED: ${getSpanContractAddress.error}`
-    );
-    testResults.push(getSpanContractAddress);
-
-    const successfulTests = testResults.filter((test) => {
-      return (
-        test.success ||
-        (test.error?.includes("timed out") && test.actualValue) ||
-        test.actualValue !== ""
-      );
-    });
-
+    // Determine if test failed
     const realFailedTests = testResults.filter(
       (test) =>
         !test.success &&
@@ -176,23 +117,18 @@ test("ArraysSpan Debug Page Interaction Flow", async ({ page }) => {
         .join(", ");
       const errorMessage = `${realFailedTests.length}/${testResults.length} tests failed: ${failedTestNames}`;
 
-      const details = realFailedTests
-        .map(
-          (test) =>
-            `${test.name}: ${test.error || "Unknown error"}\nDetails: ${test.actualValue || "No value returned"}`
-        )
-        .join("\n\n");
-
       test.fail(
         true,
         `${errorMessage}\n\nSee logs for details or check screenshot: ${testId}-test-failures.png`
       );
+    } else {
+      console.log(`[${testId}] Test completed successfully`);
     }
   } catch (error) {
     const generalErr = await captureError(
       page,
       error,
-      "General ArraysSpan Test Execution"
+      "General ArrayValue Test Execution"
     );
     errorLogs.push(generalErr);
 

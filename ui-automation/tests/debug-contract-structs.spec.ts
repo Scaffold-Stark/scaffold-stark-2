@@ -108,7 +108,7 @@ test("Structs Debug Page Interaction Flow", async ({ page }) => {
         structId: "1",
         name: "Test Asset",
         enum: {
-          enum1: "1",
+          enum3: "Hello Starknet",
         },
       }
     );
@@ -125,12 +125,12 @@ test("Structs Debug Page Interaction Flow", async ({ page }) => {
       {
         structUserContractAddress:
           "0x064b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
-        structDataStatus: { enum1: "1" },
+        structDataStatus: { enum3: "Starknet devnet" },
         structDataValue: {
           structDataId: "1",
           structDataName: "Test",
           structDataStatus: {
-            enum1: "1",
+            enum3: "starknet developer",
           },
         },
       }
@@ -144,7 +144,7 @@ test("Structs Debug Page Interaction Flow", async ({ page }) => {
 
     console.log(`[${testId}] Starting SampleEnum test`);
     const sampleEnum = await structsDebugPage.testSampleEnum("sample_enum", {
-      enum1: "2",
+      enum3: "hello starknet",
     });
 
     console.log(

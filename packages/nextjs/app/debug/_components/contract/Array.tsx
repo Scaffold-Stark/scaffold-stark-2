@@ -70,6 +70,7 @@ export const ArrayInput = ({
               <ContractInput
                 abi={abi}
                 key={index}
+                data-testid={`click-${testId}-field-${index}`}
                 isDisabled={isDisabled}
                 setForm={(
                   nextInputRecipe:
