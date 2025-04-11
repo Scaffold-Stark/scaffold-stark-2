@@ -21,33 +21,6 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
   hasUserConfirmed,
   quorum,
 }) => {
-  const getTransactionQuorum = () => {
-    if (tx.txQuorum !== undefined) {
-      return tx.txQuorum;
-    }
-
-    if (
-      (tx.selector === "add_signer" ||
-        tx.selector === "remove_signer" ||
-        tx.selector === "change_quorum") &&
-      tx.calldata &&
-      tx.calldata.length > 0
-    ) {
-      return Number(tx.calldata[0]);
-    }
-    if (
-      tx.selector === "transfer_funds" &&
-      tx.calldata &&
-      tx.calldata.length > 0
-    ) {
-      return Number(tx.calldata[2]);
-    }
-
-    return null;
-  };
-
-  const txQuorum = getTransactionQuorum();
-
   const renderTransactionInfo = () => {
     const funcName = tx.selector;
 
@@ -102,7 +75,6 @@ const TransactionItem: React.FC<TransactionItemProps> = ({
       return (
         <>
           <div>Function: Change Quorum</div>
-          <div>New Quorum: {txQuorum || tx.calldata[0]}</div>
         </>
       );
     }

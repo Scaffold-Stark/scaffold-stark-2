@@ -72,7 +72,7 @@ export const ManageTransaction: React.FC<ManageTransactionProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm mb-1">Quorum:</label>
+              <label className="block text-sm mb-1">New Quorum:</label>
               <input
                 type="number"
                 min="1"
@@ -99,7 +99,7 @@ export const ManageTransaction: React.FC<ManageTransactionProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm mb-1">Quorum Value:</label>
+              <label className="block text-sm mb-1">New Quorum:</label>
               <input
                 type="number"
                 min="1"

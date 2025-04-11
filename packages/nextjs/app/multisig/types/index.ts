@@ -18,7 +18,6 @@ export interface Transaction {
   calldata: string[];
   addressConfirmed: string[];
   tokenType?: string;
-  txQuorum?: number;
   createdAt: number;
   updatedAt: number;
 }

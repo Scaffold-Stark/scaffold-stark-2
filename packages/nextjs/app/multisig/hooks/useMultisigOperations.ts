@@ -177,11 +177,6 @@ export const useMultisigOperations = () => {
         const currentBlockNumber = await starknet.getBlockNumber();
         const currentTime = Date.now();
 
-        const txQuorum =
-          option === "add" || option === "remove" || option === "change_quorum"
-            ? Number(calldata[0])
-            : undefined;
-
         const transaction: Transaction = {
           id: txIdString,
           to: contractAddress,
@@ -193,7 +188,6 @@ export const useMultisigOperations = () => {
           submittedBy: account.address,
           submittedBlock: currentBlockNumber.toString(),
           addressConfirmed: [],
-          txQuorum: txQuorum,
           createdAt: currentTime,
           updatedAt: currentTime,
         };
@@ -277,7 +271,6 @@ export const useMultisigOperations = () => {
           submittedBlock: currentBlockNumber.toString(),
           addressConfirmed: [],
           tokenType: "ETH",
-          txQuorum: newQuorum,
           createdAt: currentTime,
           updatedAt: currentTime,
         };
