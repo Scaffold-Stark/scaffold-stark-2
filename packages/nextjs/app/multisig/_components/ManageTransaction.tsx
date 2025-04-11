@@ -52,7 +52,6 @@ export const ManageTransaction: React.FC<ManageTransactionProps> = ({
             >
               <option value="add">Add Signer</option>
               <option value="remove">Remove Signer</option>
-              {/* <option value="change_quorum">Change Quorum</option> */}
               <option value="transfer_fund">Transfer</option>
             </select>
           </div>
@@ -112,20 +111,6 @@ export const ManageTransaction: React.FC<ManageTransactionProps> = ({
           </>
         )}
 
-        {/* {selectedOption === "change_quorum" && (
-          <div>
-            <label className="block text-sm mb-1">Quorum Value:</label>
-            <input
-              type="number"
-              min="1"
-              max={getMaxQuorumValue()}
-              value={newQuorum}
-              onChange={handleNewQuorumChange}
-              className="block w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        )} */}
-
         {selectedOption === "transfer_fund" && (
           <>
             <div>
@@ -151,17 +136,6 @@ export const ManageTransaction: React.FC<ManageTransactionProps> = ({
                 />
               </div>
             </div>
-            {/* <div>
-              <label className="block text-sm mb-1">Quorum Value:</label>
-              <input
-                type="number"
-                min="1"
-                max={getMaxQuorumValue()}
-                value={newQuorum}
-                onChange={handleNewQuorumChange}
-                className="block w-full px-4 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div> */}
           </>
         )}
 
