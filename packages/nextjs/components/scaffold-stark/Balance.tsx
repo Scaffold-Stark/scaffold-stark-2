@@ -15,7 +15,7 @@ type BalanceProps = {
  * Display (STRK & USD) balance of an address.
  */
 export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
-  const strkPrice = useGlobalState((state) => state.strkCurrencyPrice);
+  const strkPrice = useGlobalState((state) => state.nativeCurrencyPrice);
   const {
     formatted: strkFormatted,
     isLoading: strkIsLoading,

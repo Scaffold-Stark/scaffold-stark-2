@@ -65,7 +65,7 @@ export const StarkInput = ({
 }: CommonInputProps & { usdMode?: boolean }) => {
   const [transitoryDisplayValue, setTransitoryDisplayValue] =
     useState<string>();
-  const currencyPrice = useGlobalState((state) => state.strkCurrencyPrice);
+  const currencyPrice = useGlobalState((state) => state.nativeCurrencyPrice);
   const [internalUsdMode, setInternalUSDMode] = useState(
     currencyPrice > 0 ? Boolean(usdMode) : false,
   );

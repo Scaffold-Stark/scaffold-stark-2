@@ -29,11 +29,9 @@ class PriceService {
     any,
     {
       setNativeCurrencyPrice: (price: number) => void;
-      setStrkCurrencyPrice: (price: number) => void;
     }
   > = new Map();
   private currentNativeCurrencyPrice: number = 0;
-  private currentStrkCurrencyPrice: number = 0;
   private idCounter: number = 0;
 
   private constructor() {}
@@ -52,14 +50,12 @@ class PriceService {
   public startPolling(
     ref: any,
     setNativeCurrencyPrice: (price: number) => void,
-    setStrkCurrencyPrice: (price: number) => void,
   ) {
     if (this.listeners.has(ref)) return;
-    this.listeners.set(ref, { setNativeCurrencyPrice, setStrkCurrencyPrice });
+    this.listeners.set(ref, { setNativeCurrencyPrice });
 
     if (this.intervalId) {
       setNativeCurrencyPrice(this.currentNativeCurrencyPrice);
-      setStrkCurrencyPrice(this.currentStrkCurrencyPrice);
       return;
     }
 
@@ -84,19 +80,15 @@ class PriceService {
     return this.currentNativeCurrencyPrice;
   }
 
-  public getCurrentStrkCurrencyPrice() {
-    return this.currentStrkCurrencyPrice;
-  }
-
   private async fetchPrices() {
     try {
       const strkPrice = await fetchPrice();
       if (strkPrice) {
-        this.currentStrkCurrencyPrice = strkPrice;
+        this.currentNativeCurrencyPrice = strkPrice;
       }
       this.listeners.forEach((listener) => {
-        listener.setStrkCurrencyPrice(
-          strkPrice || this.currentStrkCurrencyPrice,
+        listener.setNativeCurrencyPrice(
+          strkPrice || this.currentNativeCurrencyPrice,
         );
       });
     } catch (error) {
