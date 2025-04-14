@@ -239,7 +239,9 @@ describe("PriceService", () => {
 
       priceService["currentNativeCurrencyPrice"] = mockNativePrice;
 
-      expect(priceService.getCurrentNativeCurrencyPrice()).toBe(mockNativePrice);
+      expect(priceService.getCurrentNativeCurrencyPrice()).toBe(
+        mockNativePrice,
+      );
     });
   });
 
@@ -264,9 +266,7 @@ describe("PriceService", () => {
     it("should handle duplicate polling starts with same reference", () => {
       const ref = priceService.getNextId();
       priceService.startPolling(ref, vi.fn());
-      expect(() =>
-        priceService.startPolling(ref, vi.fn()),
-      ).not.toThrow();
+      expect(() => priceService.startPolling(ref, vi.fn())).not.toThrow();
     });
   });
 });
