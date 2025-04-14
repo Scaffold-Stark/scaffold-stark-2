@@ -1,20 +1,15 @@
 import scaffoldConfig from "~~/scaffold.config";
 
-export const fetchPriceFromCoingecko = async (
-  symbol: string,
-  retries = 3,
-): Promise<number> => {
+export const fetchPrice = async (retries = 3): Promise<number> => {
   let attempt = 0;
   while (attempt < retries) {
     try {
-      const response = await fetch(`/api/price/${symbol}`);
+      const response = await fetch(`/api/price`);
       const data = await response.json();
-      return symbol === "ETH" ? data.ethereum.usd : data.starknet.usd;
+      return data.starknet.usd;
     } catch (error) {
       console.error(
-        `Attempt ${
-          attempt + 1
-        } - Error fetching ${symbol} price from Coingecko: `,
+        `Attempt ${attempt + 1} - Error fetching STRK price from Coingecko: `,
         error,
       );
       attempt++;
@@ -95,16 +90,11 @@ class PriceService {
 
   private async fetchPrices() {
     try {
-      const ethPrice = await fetchPriceFromCoingecko("ETH");
-      const strkPrice = await fetchPriceFromCoingecko("STRK");
-      if (ethPrice && strkPrice) {
-        this.currentNativeCurrencyPrice = ethPrice;
+      const strkPrice = await fetchPrice();
+      if (strkPrice) {
         this.currentStrkCurrencyPrice = strkPrice;
       }
       this.listeners.forEach((listener) => {
-        listener.setNativeCurrencyPrice(
-          ethPrice || this.currentNativeCurrencyPrice,
-        );
         listener.setStrkCurrencyPrice(
           strkPrice || this.currentStrkCurrencyPrice,
         );

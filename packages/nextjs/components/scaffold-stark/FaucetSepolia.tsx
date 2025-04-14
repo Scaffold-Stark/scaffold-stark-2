@@ -10,7 +10,7 @@ import GenericModal from "./CustomConnectButton/GenericModal";
 import { useTheme } from "next-themes";
 
 /**
- * Faucet modal which displays external websites that lets you send small amounts of L2 Sepolia ETH/STRK to an account address on Starknet Sepolia..
+ * Faucet modal which displays external websites that lets you send small amounts of L2 Sepolia STRK to an account address on Starknet Sepolia..
  */
 export const FaucetSepolia = () => {
   const { chain: ConnectedChain } = useNetwork();
@@ -22,14 +22,9 @@ export const FaucetSepolia = () => {
       link: "https://starknet-faucet.vercel.app/",
     },
     {
-      name: "Alchemy",
-      img: "/logo_alchemy.png",
-      link: "https://www.alchemy.com/faucets/starknet-sepolia",
-    },
-    {
       name: "Blast",
       img: "/blast-icon-color.svg",
-      link: "https://blastapi.io/faucets/starknet-sepolia-eth",
+      link: "https://blastapi.io/faucets/starknet-sepolia-strk",
     },
   ];
 
