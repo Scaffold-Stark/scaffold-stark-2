@@ -65,11 +65,7 @@ describe("PriceService", () => {
   describe("Polling Management", () => {
     it("should start polling when first listener is added", () => {
       const ref = priceService.getNextId();
-      priceService.startPolling(
-        ref,
-        vi.fn(),
-        mockSetStrkCurrencyPrice,
-      );
+      priceService.startPolling(ref, vi.fn(), mockSetStrkCurrencyPrice);
 
       expect(priceService["intervalId"]).not.toBeNull();
       expect(priceService["listeners"].size).toBe(1);
@@ -79,18 +75,10 @@ describe("PriceService", () => {
       const ref1 = priceService.getNextId();
       const ref2 = priceService.getNextId();
 
-      priceService.startPolling(
-        ref1,
-        vi.fn(),
-        mockSetStrkCurrencyPrice,
-      );
+      priceService.startPolling(ref1, vi.fn(), mockSetStrkCurrencyPrice);
       const firstIntervalId = priceService["intervalId"];
 
-      priceService.startPolling(
-        ref2,
-        vi.fn(),
-        mockSetStrkCurrencyPrice,
-      );
+      priceService.startPolling(ref2, vi.fn(), mockSetStrkCurrencyPrice);
 
       expect(priceService["intervalId"]).toBe(firstIntervalId);
       expect(priceService["listeners"].size).toBe(2);
@@ -98,11 +86,7 @@ describe("PriceService", () => {
 
     it("should stop polling when last listener is removed", () => {
       const ref = priceService.getNextId();
-      priceService.startPolling(
-        ref,
-        vi.fn(),
-        mockSetStrkCurrencyPrice,
-      );
+      priceService.startPolling(ref, vi.fn(), mockSetStrkCurrencyPrice);
       priceService.stopPolling(ref);
 
       expect(priceService["intervalId"]).toBeNull();
@@ -113,16 +97,8 @@ describe("PriceService", () => {
       const ref1 = priceService.getNextId();
       const ref2 = priceService.getNextId();
 
-      priceService.startPolling(
-        ref1,
-        vi.fn(),
-        mockSetStrkCurrencyPrice,
-      );
-      priceService.startPolling(
-        ref2,
-        vi.fn(),
-        mockSetStrkCurrencyPrice,
-      );
+      priceService.startPolling(ref1, vi.fn(), mockSetStrkCurrencyPrice);
+      priceService.startPolling(ref2, vi.fn(), mockSetStrkCurrencyPrice);
 
       priceService.stopPolling(ref1);
 
@@ -152,11 +128,7 @@ describe("PriceService", () => {
       const mockStrkPrice = 100;
 
       const ref = priceService.getNextId();
-      priceService.startPolling(
-        ref,
-        vi.fn(),
-        mockSetStrkCurrencyPrice,
-      );
+      priceService.startPolling(ref, vi.fn(), mockSetStrkCurrencyPrice);
 
       await vi.advanceTimersByTimeAsync(0);
 
@@ -167,11 +139,7 @@ describe("PriceService", () => {
       const mockStrkPrice = 100;
 
       const ref = priceService.getNextId();
-      priceService.startPolling(
-        ref,
-        vi.fn(),
-        mockSetStrkCurrencyPrice,
-      );
+      priceService.startPolling(ref, vi.fn(), mockSetStrkCurrencyPrice);
 
       await vi.advanceTimersByTimeAsync(0);
       vi.clearAllMocks();
@@ -195,11 +163,7 @@ describe("PriceService", () => {
       });
 
       const ref = priceService.getNextId();
-      priceService.startPolling(
-        ref,
-        vi.fn(),
-        mockSetStrkCurrencyPrice,
-      );
+      priceService.startPolling(ref, vi.fn(), mockSetStrkCurrencyPrice);
 
       await vi.advanceTimersByTimeAsync(0);
 
@@ -222,11 +186,7 @@ describe("PriceService", () => {
       );
 
       const ref = priceService.getNextId();
-      priceService.startPolling(
-        ref,
-        vi.fn(),
-        mockSetStrkCurrencyPrice,
-      );
+      priceService.startPolling(ref, vi.fn(), mockSetStrkCurrencyPrice);
 
       // Should not throw error
       await expect(priceService["fetchPrices"]()).resolves.not.toThrow();
