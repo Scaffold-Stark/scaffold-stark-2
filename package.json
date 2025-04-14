@@ -23,7 +23,7 @@
     "@types/inquirer": "9.0.7",
     "@types/listr": "0.14.9",
     "@types/ncp": "2.0.8",
-    "@types/node": "18.16.0",
+    "@types/node": "22.14.0",
     "rollup": "3.21.0",
     "rollup-plugin-auto-external": "2.0.0",
     "tslib": "2.8.1",
