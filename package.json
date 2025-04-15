@@ -24,7 +24,7 @@
     "@types/listr": "0.14.9",
     "@types/ncp": "2.0.8",
     "@types/node": "22.14.0",
-    "rollup": "3.21.0",
+    "rollup": "4.39.0",
     "rollup-plugin-auto-external": "2.0.0",
     "tslib": "2.8.1",
     "typescript": "5.0.4"
