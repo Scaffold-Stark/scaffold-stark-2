@@ -13,6 +13,7 @@ export function parseArgumentsIntoOptions(rawArgs: Args): RawOptions {
       "-s": "--skip-install",
 
       "--dev": Boolean,
+      
       "--dir": String,
       "-d": "--dir",
     },
