@@ -20,8 +20,6 @@ const deployerDevnet =
   PRIVATE_KEY_DEVNET &&
   new Account(providerDevnet, ACCOUNT_ADDRESS_DEVNET, PRIVATE_KEY_DEVNET, "1");
 
-const ETH_TOKEN_ADDRESS_DEVNET =
-  "0x49D36570D4E46F48E99674BD3FCC84644DDD6B96F7C741B1562B82F9E004DC7";
 const STRK_TOKEN_ADDRESS_DEVNET =
   "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
 
@@ -39,8 +37,6 @@ const deployerSepolia =
     "1"
   );
 
-const ETH_TOKEN_ADDRESS =
-  "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
 const STRK_TOKEN_ADDRESS =
   "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
 
@@ -59,18 +55,9 @@ const deployerMainnet =
   );
 
 const feeTokenOptions = {
-  devnet: [
-    { name: "eth", address: ETH_TOKEN_ADDRESS_DEVNET },
-    { name: "strk", address: STRK_TOKEN_ADDRESS_DEVNET },
-  ],
-  mainnet: [
-    { name: "eth", address: ETH_TOKEN_ADDRESS },
-    { name: "strk", address: STRK_TOKEN_ADDRESS },
-  ],
-  sepolia: [
-    { name: "eth", address: ETH_TOKEN_ADDRESS },
-    { name: "strk", address: STRK_TOKEN_ADDRESS },
-  ],
+  devnet: [{ name: "strk", address: STRK_TOKEN_ADDRESS_DEVNET }],
+  mainnet: [{ name: "strk", address: STRK_TOKEN_ADDRESS }],
+  sepolia: [{ name: "strk", address: STRK_TOKEN_ADDRESS }],
 };
 
 export const networks: Networks = {

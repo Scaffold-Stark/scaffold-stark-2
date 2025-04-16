@@ -26,7 +26,7 @@ vi.mock("@starknet-react/core", () => ({
 
 // TODO: unskip (and rewrite if required) when we determine direction of this hook
 describe.skip("useScaffoldWriteContract", () => {
-  const contractName = "Eth";
+  const contractName = "Strk";
   const functionName = "transfer";
   const args: readonly [string, number] = ["0x1234", 1000];
 

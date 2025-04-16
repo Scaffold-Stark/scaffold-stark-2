@@ -11,9 +11,14 @@ import {
   afterEach,
   type Mock,
 } from "vitest";
+import * as PriceService from "~~/services/web3/PriceService";
 
 vi.mock("../useTargetNetwork", () => ({
   useTargetNetwork: vi.fn(),
+}));
+
+vi.mock("~~/services/web3/PriceService", () => ({
+  fetchPrice: vi.fn(),
 }));
 
 const mockGetBlock = vi.fn();
@@ -73,11 +78,11 @@ describe("useDataTransaction", () => {
 
   // Mocks for transactions
   const mockTransactionReceipt1 = {
-    actual_fee: { amount: "1000000000000000000" }, // 1 Ether in Wei
+    actual_fee: { amount: "1000000000000000000" }, // 1 STARK
   };
 
   const mockTransactionReceipt2 = {
-    actual_fee: { amount: "1000000000000000000" }, // 1 Ether in Wei
+    actual_fee: { amount: "1000000000000000000" }, // 1 STARK
   };
 
   beforeEach(() => {
@@ -88,10 +93,8 @@ describe("useDataTransaction", () => {
       targetNetwork: mockTargetNetwork,
     });
 
-    // Mock fetch to get ETH price
-    global.fetch = vi.fn().mockResolvedValue({
-      json: vi.fn().mockResolvedValue({ ethereum: { usd: 2000 } }),
-    });
+    // Mock fetchPrice to return STARK price directly
+    (PriceService.fetchPrice as Mock).mockResolvedValue(2000);
 
     // Configure RpcProvider mocks
     mockGetBlock.mockImplementation((identifier: number) => {
@@ -102,7 +105,7 @@ describe("useDataTransaction", () => {
 
     mockGetBlockWithTxHashes.mockResolvedValue(mockBlockWithTxHashes);
 
-    // Simulate getTransactionReceipt being called twice, returning 1 Ether each time
+    // Simulate getTransactionReceipt being called twice, returning 1 STARK each time
     mockGetTransactionReceipt
       .mockResolvedValueOnce(mockTransactionReceipt1)
       .mockResolvedValueOnce(mockTransactionReceipt2);
@@ -139,7 +142,7 @@ describe("useDataTransaction", () => {
     expect(bd?.totalTransactions).toBe(mockBlockLatest.transactions.length);
 
     // Check the average fee calculation (averageFeeUSD)
-    // total actual_fee = 2 Ether = 4000 USD, 2 transactions => average fee = 2000 USD
+    // total actual_fee = 2 STARK = 4000 USD, 2 transactions => average fee = 2000 USD
     expect(bd?.averageFeeUSD).toBe("2000.0000");
 
     // TPS Calculation:
