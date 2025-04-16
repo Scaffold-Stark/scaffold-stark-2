@@ -3874,7 +3874,7 @@ __metadata:
     react-copy-to-clipboard: ^5.1.0
     react-dom: 19.0.0
     react-hot-toast: ^2.4.1
-    starknet: ^7.0.1
+    starknet: ^7.1.0
     tailwindcss: ^3.3.0
     type-fest: ^4.6.0
     typescript: ^5
@@ -3906,7 +3906,7 @@ __metadata:
     globals: ^15.8.0
     prettier: ^2.8.8
     shx: ^0.3.4
-    starknet: ^7.0.1
+    starknet: ^7.1.0
     toml: ^3.0.0
     ts-node: ^10.9.2
     tslib: ^2.6.2
@@ -3918,7 +3918,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@starknet-io/types-js@npm:^0.7.10, @starknet-io/types-js@npm:^0.7.7, starknet-types-07@npm:@starknet-io/types-js@^0.7.10":
+"@starknet-io/types-js@npm:^0.7.10, @starknet-io/types-js@npm:^0.7.7, starknet-types-07@npm:@starknet-io/types-js@~0.7.10":
   version: 0.7.10
   resolution: "@starknet-io/types-js@npm:0.7.10"
   checksum: 8f71c57d0f101ebbde91e3016b73ab70ce3329ccb7463764a27a61db42b9ea14b690bd620a6b2dd4303e890b4a9212bdd40626962e0320e82e0c600fd3be5abf
@@ -12313,16 +12313,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"starknet-types-08@npm:@starknet-io/types-js@0.8.0-beta.10":
-  version: 0.8.0-beta.10
-  resolution: "@starknet-io/types-js@npm:0.8.0-beta.10"
-  checksum: dad9ef41be3cfd85c08cd1899f7b2f1786f24c5d3637ddcc5e820650515939a19e3367d139e04f0989b0950939e196a9c92993b5928a605d8a6a1c16816a3184
+"starknet-types-08@npm:@starknet-io/types-js@~0.8.1":
+  version: 0.8.1
+  resolution: "@starknet-io/types-js@npm:0.8.1"
+  checksum: 306bb1de4e9f034138d16031894255a628287ef58845b9c17b0cdfb6a7979c373cffe5c34adc3c57c1df925da10ad29c67f4f11edebc70f8b25dc6d3bb521280
   languageName: node
   linkType: hard
 
-"starknet@npm:^7.0.1":
-  version: 7.0.1
-  resolution: "starknet@npm:7.0.1"
+"starknet@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "starknet@npm:7.1.0"
   dependencies:
     "@noble/curves": 1.7.0
     "@noble/hashes": 1.6.0
@@ -12332,11 +12332,11 @@ __metadata:
     isows: ^1.0.6
     lossless-json: ^4.0.1
     pako: ^2.0.4
-    starknet-types-07: "npm:@starknet-io/types-js@^0.7.10"
-    starknet-types-08: "npm:@starknet-io/types-js@0.8.0-beta.10"
+    starknet-types-07: "npm:@starknet-io/types-js@~0.7.10"
+    starknet-types-08: "npm:@starknet-io/types-js@~0.8.1"
     ts-mixer: ^6.0.3
     ws: ^8.18.0
-  checksum: c7326be9db4b8bf151f006513a94a5ae4a8d3d82995e977c9d7fe43d6770425dbc10409f12d62fd04aa5187f678354a8a7752c5b5ea87473d60ca4256683f202
+  checksum: 3666f021212747446b423e5aa628ff0f3816ec012b43150d111d90a094a2ca2edc448de51d897597ec61a12ae5e638fad206875095b0b641dae5161c1dd1f3e4
   languageName: node
   linkType: hard
 
