@@ -7,7 +7,7 @@ pub trait IYourContract<TContractState> {
 }
 
 #[starknet::contract]
-mod YourContract {
+pub mod YourContract {
     use openzeppelin_access::ownable::OwnableComponent;
     use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     use starknet::storage::{

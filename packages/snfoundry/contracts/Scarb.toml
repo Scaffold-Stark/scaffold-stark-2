@@ -17,7 +17,7 @@ snforge_std = "0.40.0"
 ## TODO: add openzeppelin_testing and common
 
 [[target.starknet-contract]]
-casm = true
+casm = true # taggle this to `false` to speed up compilation/testing
 
 [tool.fmt]
 sort-module-level-items = true

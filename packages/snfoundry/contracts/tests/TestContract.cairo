@@ -1,4 +1,6 @@
-use contracts::YourContract::{IYourContractDispatcher, IYourContractDispatcherTrait};
+use contracts::YourContract::{
+    IYourContractDispatcher, IYourContractDispatcherTrait, YourContract::STRK_CONTRACT_ADDRESS,
+};
 use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 use openzeppelin_utils::serde::SerializedAppend;
 use snforge_std::{CheatSpan, ContractClassTrait, DeclareResultTrait, cheat_caller_address, declare};
@@ -61,4 +63,3 @@ fn test_transfer() {
         ); // we transfer 500 wei
     assert(your_contract_dispatcher.greeting() == new_greeting, 'Should allow set new message');
 }
-
