@@ -1,6 +1,5 @@
-use contracts::YourContract::{
-    IYourContractDispatcher, IYourContractDispatcherTrait, YourContract::STRK_CONTRACT_ADDRESS,
-};
+use contracts::YourContract::YourContract::STRK_CONTRACT_ADDRESS;
+use contracts::YourContract::{IYourContractDispatcher, IYourContractDispatcherTrait};
 use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 use openzeppelin_utils::serde::SerializedAppend;
 use snforge_std::{CheatSpan, ContractClassTrait, DeclareResultTrait, cheat_caller_address, declare};
@@ -11,8 +10,7 @@ const OWNER: ContractAddress = 0x02dA5254690b46B9C4059C25366D1778839BE63C142d899
     .try_into()
     .unwrap();
 
-const STRK_CONTRACT_ADDRESS: felt252 =
-    0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d;
+const STRK_TOKEN_CONTRACT_ADDRESS: ContractAddress = STRK_CONTRACT_ADDRESS.try_into().unwrap();
 
 fn deploy_contract(name: ByteArray) -> ContractAddress {
     let contract_class = declare(name).unwrap().contract_class();
@@ -41,15 +39,14 @@ fn test_set_greetings() {
 #[fork("SEPOLIA_LATEST")]
 fn test_transfer() {
     let user = OWNER;
-    let strk_contract_address = STRK_CONTRACT_ADDRESS.try_into().unwrap();
     let your_contract_address = deploy_contract("YourContract");
 
     let your_contract_dispatcher = IYourContractDispatcher {
         contract_address: your_contract_address,
     };
-    let erc20_dispatcher = IERC20Dispatcher { contract_address: strk_contract_address };
+    let erc20_dispatcher = IERC20Dispatcher { contract_address: STRK_TOKEN_CONTRACT_ADDRESS };
     let amount_to_transfer = 500;
-    cheat_caller_address(strk_contract_address, user, CheatSpan::TargetCalls(1));
+    cheat_caller_address(STRK_TOKEN_CONTRACT_ADDRESS, user, CheatSpan::TargetCalls(1));
     erc20_dispatcher.approve(your_contract_address, amount_to_transfer);
     let approved_amount = erc20_dispatcher.allowance(user, your_contract_address);
     assert(approved_amount == amount_to_transfer, 'Not the right amount approved');
