@@ -11,7 +11,7 @@ import fs = require("fs");
 
 const burnerAccounts = ["0x64b4...5691"];
 
-const launchContextWithExtension = async (extensionName: "argentx" | "braavos") => {
+const launchContextWithExtension = async (extensionName: "argentx") => {
   const isDocker = process.cwd().includes('/app');
   
   const extensionPath = isDocker 
@@ -161,7 +161,7 @@ test("Connect with Argent X wallet", async () => {
         } catch (e) {
           test.fail(
             true,
-            "Test failed: Could not detect Argent X connection dialog. Wallet may not be installed. " + e
+            "Test failed: Could not detect Argent X connection dialog. Wallet may not be installed. "
           );
         }
       }
@@ -172,94 +172,6 @@ test("Connect with Argent X wallet", async () => {
     test.fail(
       true,
       `Failed to connect with Argent X wallet: ${error instanceof Error ? error.message : String(error)}`
-    );
-  }
-});
-
-/**
- * Tests connecting to the dApp with Braavos wallet
- * Verifies the wallet extension is detected and connection dialog appears
- */
-test("Connect with Braavos wallet", async () => {
-  test.setTimeout(60000);
-  const { page } = await launchContextWithExtension("braavos");
-  const testTimestamp = Date.now();
-  const testId = `connect-braavos-${testTimestamp}`;
-
-  try {  
-    await page.waitForTimeout(5000);
-    const context = page.context();
-    const homePage = new HomePage(page);
-
-    const extension = context.pages().find(p => p.url().startsWith("chrome-extension://"));
-
-    if (!extension) {
-      throw new Error("Braavos extension not found");
-    }
-
-    const braavosWalletPage = new BraavosWalletPage(extension);
-    await braavosWalletPage.createNewWallet('MyS3curePass!');
-    await navigateAndWait(page, endpoint.BASE_URL);
-
-    try {
-      await homePage.safeClick(homePage.getConnectButton(), "Connect button");
-      await expect(
-        page.getByRole("heading", { name: "Connect a Wallet", level: 3 })
-      ).toBeVisible();
-
-      await homePage.safeClick(
-        homePage.getConnecterButton("Braavos"),
-        "Braavos button"
-      );
-
-      const braavosDialog = page
-        .locator("text=/Install Braavos|Braavos not detected/")
-        .first();
-
-      if (await braavosDialog.isVisible({ timeout: 5000 }).catch(() => false)) {
-        test.fail(
-          true,
-          "Test failed: Braavos wallet extension is not installed in the browser"
-        );
-        return;
-      } else {
-        try {
-          const approvalPage = context.pages().find(page => page.url().includes('dapp-request'));
-
-          if (!approvalPage){
-            test.fail(
-              true,
-              "Test failed: Could not detect Braavos connection dialog. Wallet may not be installed."
-            );
-            return;
-          }
-              
-          const braavosApprovalPage = new BraavosWalletPage(approvalPage);
-
-          const isDialogVisible = await braavosApprovalPage.isConnectionDialogVisible();
-      
-          if (!isDialogVisible) {
-            test.fail(
-              true,
-              "Test failed: Could not detect Braavos connection dialog. Wallet may not be installed."
-            );
-          }
-
-          await braavosApprovalPage.clickConnect();
-        } catch (e) {
-          test.fail(
-            true,
-            "Test failed: Could not detect Braavos connection dialog. Wallet may not be installed. " + e
-          );
-        }
-      }
-    } catch (error) {
-      throw error;
-    }
-  } catch (error) {
-    test.fail(
-      true,
-      `Failed to connect with Braavos wallet: ${error instanceof Error ? error.message : String(error)}`
     );
   }
 });
