@@ -148,6 +148,14 @@ By default `Scaffold-Stark` takes the first prefunded account from `starknet-dev
 yarn start
 ```
 
+6. To make sure wallet connection test work, unzip the extension:
+
+```bash
+cd ui-automation/extensions
+unzip -q braavos.zip -d braavos
+unzip -q argentx.zip -d argentx
+```
+
 Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
 
 5. Check your environment variables. We have a yarn postinstall script that helps to fill in your environment variables. If the environment variable does not exist, you can fill them it manually to get the app running!
