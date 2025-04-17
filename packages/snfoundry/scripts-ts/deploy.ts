@@ -43,11 +43,29 @@ import { green } from "./helpers/colorize-log";
  */
 const deployScript = async (): Promise<void> => {
   await deployContract({
-    contract: "YourContract",
-    constructorArgs: {
-      owner: deployer.address,
-    },
+    contract: "Vars",
+    constructorArgs: {},
   });
+  await deployContract({
+    contract: "Structs",
+    constructorArgs: {},
+  });
+  await deployContract({
+    contract: "Complex",
+    constructorArgs: {},
+  });
+  await deployContract({
+    contract: "ArraysSpans",
+    constructorArgs: {},
+  });
+  await deployContract({
+    contract: "Tuples",
+    constructorArgs: {},
+  });
+//   await deployContract({
+//     contract: "Events",
+//     constructorArgs: {},
+//   });
 };
 
 const main = async (): Promise<void> => {
