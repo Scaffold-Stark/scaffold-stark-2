@@ -13,6 +13,7 @@ export function parseArgumentsIntoOptions(rawArgs: Args): RawOptions {
       "-s": "--skip-install",
 
       "--dev": Boolean,
+      
       "--dir": String,
       "-d": "--dir",
     },
@@ -36,6 +37,5 @@ export function parseArgumentsIntoOptions(rawArgs: Args): RawOptions {
     directory,
     install: hasInstallRelatedFlag ? install || !skipInstall : null,
     dev,
-    extensions: null, // TODO add extensions flags
   };
 }
