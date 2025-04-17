@@ -1,4 +1,4 @@
-import { RpcProvider, Account } from "starknet";
+import { RpcProvider, Account, constants } from "starknet";
 import path from "path";
 import dotenv from "dotenv";
 import { Networks } from "../types";
@@ -23,7 +23,7 @@ const deployerDevnet =
     ACCOUNT_ADDRESS_DEVNET,
     PRIVATE_KEY_DEVNET,
     "1",
-    "0x3"
+    constants.TRANSACTION_VERSION.V3
   );
 
 const ETH_TOKEN_ADDRESS_DEVNET =
@@ -43,7 +43,7 @@ const deployerSepolia =
     process.env.ACCOUNT_ADDRESS_SEPOLIA,
     process.env.PRIVATE_KEY_SEPOLIA,
     "1",
-    "0x3"
+    constants.TRANSACTION_VERSION.V3
   );
 
 const ETH_TOKEN_ADDRESS =
@@ -63,7 +63,7 @@ const deployerMainnet =
     process.env.ACCOUNT_ADDRESS_MAINNET,
     process.env.PRIVATE_KEY_MAINNET,
     "1",
-    "0x3"
+    constants.TRANSACTION_VERSION.V3
   );
 
 const feeTokenOptions = {

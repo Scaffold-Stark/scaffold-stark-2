@@ -3837,7 +3837,7 @@ __metadata:
     "@radix-ui/react-icons": 1.3.0
     "@radix-ui/themes": 2.0.3
     "@scaffold-stark/stark-burner": ^0.1.9
-    "@starknet-io/types-js": ^0.7.10
+    "@starknet-io/types-js": ^0.8.1
     "@starknet-react/chains": ^3.1.2
     "@starknet-react/core": ^3.7.2
     "@starknet-react/typescript-config": 0.0.2
@@ -3918,10 +3918,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@starknet-io/types-js@npm:^0.7.10, @starknet-io/types-js@npm:^0.7.7, starknet-types-07@npm:@starknet-io/types-js@~0.7.10":
+"@starknet-io/types-js@npm:^0.7.7, starknet-types-07@npm:@starknet-io/types-js@~0.7.10":
   version: 0.7.10
   resolution: "@starknet-io/types-js@npm:0.7.10"
   checksum: 8f71c57d0f101ebbde91e3016b73ab70ce3329ccb7463764a27a61db42b9ea14b690bd620a6b2dd4303e890b4a9212bdd40626962e0320e82e0c600fd3be5abf
+  languageName: node
+  linkType: hard
+
+"@starknet-io/types-js@npm:^0.8.1, starknet-types-08@npm:@starknet-io/types-js@~0.8.1":
+  version: 0.8.1
+  resolution: "@starknet-io/types-js@npm:0.8.1"
+  checksum: 306bb1de4e9f034138d16031894255a628287ef58845b9c17b0cdfb6a7979c373cffe5c34adc3c57c1df925da10ad29c67f4f11edebc70f8b25dc6d3bb521280
   languageName: node
   linkType: hard
 
@@ -12310,13 +12317,6 @@ __metadata:
   version: 0.0.2
   resolution: "stackback@npm:0.0.2"
   checksum: 2d4dc4e64e2db796de4a3c856d5943daccdfa3dd092e452a1ce059c81e9a9c29e0b9badba91b43ef0d5ff5c04ee62feb3bcc559a804e16faf447bac2d883aa99
-  languageName: node
-  linkType: hard
-
-"starknet-types-08@npm:@starknet-io/types-js@~0.8.1":
-  version: 0.8.1
-  resolution: "@starknet-io/types-js@npm:0.8.1"
-  checksum: 306bb1de4e9f034138d16031894255a628287ef58845b9c17b0cdfb6a7979c373cffe5c34adc3c57c1df925da10ad29c67f4f11edebc70f8b25dc6d3bb521280
   languageName: node
   linkType: hard
 
