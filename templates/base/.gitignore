@@ -1,5 +1,4 @@
-const contents = () => 
-`.vscode/**
+.vscode/**
 node_modules
 package-lock.json
 .idea
@@ -13,6 +12,4 @@ package-lock.json
 !.yarn/versions
 .eslintcache
 .DS_Store
-.vercel`
-
-export default contents;
+.vercel
