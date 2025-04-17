@@ -37,6 +37,5 @@ export function parseArgumentsIntoOptions(rawArgs: Args): RawOptions {
     directory,
     install: hasInstallRelatedFlag ? install || !skipInstall : null,
     dev,
-    extensions: null, // TODO add extensions flags
   };
 }
