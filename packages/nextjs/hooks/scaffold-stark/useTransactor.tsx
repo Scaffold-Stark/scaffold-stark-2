@@ -13,8 +13,11 @@ import {
   UseTransactionReceiptResult,
 } from "@starknet-react/core";
 
+type CustomTransactionFunc = () =>
+  | Promise<InvokeFunctionResponse>
+  | Promise<string>;
 type TransactionFunc = (
-  tx: () => Promise<InvokeFunctionResponse> | Promise<string>,
+  tx: CustomTransactionFunc | Call[],
   // | SendTransactionParameters,
 ) => Promise<string | undefined>;
 
@@ -101,7 +104,7 @@ export const useTransactor = (
   }, [txResult]);
 
   const writeTransaction = async (
-    tx: () => Promise<InvokeFunctionResponse> | Promise<string>,
+    tx: CustomTransactionFunc | Call[],
   ): Promise<string | undefined> => {
     if (!walletClient) {
       notification.error("Cannot access account");
