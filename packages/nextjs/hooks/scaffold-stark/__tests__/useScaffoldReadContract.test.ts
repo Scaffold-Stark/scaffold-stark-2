@@ -18,7 +18,7 @@ vi.mock("@starknet-react/core", () => ({
 }));
 
 describe("useScaffoldReadContract", () => {
-  const contractName = "Eth"; // Using a valid contract name. we could use 'TestContract' here
+  const contractName = "Strk"; // Using a valid contract name. we could use 'TestContract' here
   const functionName = "symbol"; // Using a valid function name. we could actually use 'testFunction' here
 
   const mockUseReadContract = useReadContract as unknown as Mock;
