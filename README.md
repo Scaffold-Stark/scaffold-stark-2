@@ -192,6 +192,7 @@ yarn start
 
 ```bash
 cd ui-automation
+npm install
 npm test
 ```
 
