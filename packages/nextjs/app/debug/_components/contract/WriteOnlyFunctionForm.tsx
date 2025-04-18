@@ -117,6 +117,7 @@ export const WriteOnlyFunctionForm = ({
     setDisplayedTxResult(
       txResult as unknown as InvokeTransactionReceiptResponse,
     );
+    onChange();
   }, [txResult]);
 
   // TODO use `useMemo` to optimize also update in ReadOnlyFunctionForm

@@ -7,6 +7,8 @@ import {
 } from "starknet";
 import { getBlockExplorerTxLink, notification } from "~~/utils/scaffold-stark";
 import { useTargetNetwork } from "./useTargetNetwork";
+import { useState, useEffect } from "react";
+import { useTransactionReceipt } from "@starknet-react/core";
 
 type TransactionFunc = (
   tx: () => Promise<InvokeFunctionResponse> | Promise<string>,
@@ -54,6 +56,40 @@ export const useTransactor = (
   if (walletClient === undefined && account) {
     walletClient = account;
   }
+
+  const [notificationId, setNotificationId] = useState<string | null>(null);
+  const [blockExplorerTxURL, setBlockExplorerTxURL] = useState<string | undefined>(
+    undefined,
+  );
+  const [transactionHash, setTransactionHash] = useState<string | undefined>(
+    undefined,
+  );
+  const { data: txResult, status: txStatus } = useTransactionReceipt({
+    hash: transactionHash,
+  });
+
+  const resetStates = () => {
+    setTransactionHash(undefined);
+    setBlockExplorerTxURL(undefined);
+  };
+
+  useEffect(() => {
+    if (notificationId && txStatus && txStatus !== "pending") {
+      notification.remove(notificationId);
+    }
+    if (txStatus === "success") {
+      notification.success(
+        <TxnNotification
+          message="Transaction completed successfully!"
+          blockExplorerLink={blockExplorerTxURL}
+        />,
+        {
+          icon: "🎉",
+        },
+      );
+      resetStates();
+    }
+  }, [txResult]);
 
   return async (tx) => {
     if (!walletClient) {
@@ -134,30 +170,22 @@ export const useTransactor = (
         throw new Error("Incorrect transaction passed to transactor");
       }
 
+      setTransactionHash(transactionHash);
+
       notification.remove(notificationId);
 
       const blockExplorerTxURL = networkId
         ? getBlockExplorerTxLink(targetNetwork.network, transactionHash)
         : "";
+      setBlockExplorerTxURL(blockExplorerTxURL);
 
       notificationId = notification.loading(
         <TxnNotification
           message="Waiting for transaction to complete."
           blockExplorerLink={blockExplorerTxURL}
-        />,
+        />
       );
-
-      notification.remove(notificationId);
-
-      notification.success(
-        <TxnNotification
-          message="Transaction completed successfully!"
-          blockExplorerLink={blockExplorerTxURL}
-        />,
-        {
-          icon: "🎉",
-        },
-      );
+      setNotificationId(notificationId);
     } catch (error: any) {
       if (notificationId) {
         notification.remove(notificationId);
