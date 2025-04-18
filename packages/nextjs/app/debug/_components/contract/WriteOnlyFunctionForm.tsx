@@ -13,11 +13,7 @@ import {
   isError,
 } from "~~/app/debug/_components/contract";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
-import {
-  useSendTransaction,
-  useNetwork,
-  useContract,
-} from "@starknet-react/core";
+import { useNetwork, useContract } from "@starknet-react/core";
 import { Abi } from "abi-wan-kanabi";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { Address } from "@starknet-react/chains";
@@ -47,7 +43,11 @@ export const WriteOnlyFunctionForm = ({
     useState<FormErrorMessageState>({});
   const { status: walletStatus, isConnected, account, chainId } = useAccount();
   const { chain } = useNetwork();
-  const { writeTransaction, transactionReceiptInstance } = useTransactor();
+  const {
+    writeTransaction,
+    transactionReceiptInstance,
+    sendTransactionInstance,
+  } = useTransactor();
   const { data: txResult } = transactionReceiptInstance;
   const { targetNetwork } = useTargetNetwork();
 
@@ -64,12 +64,7 @@ export const WriteOnlyFunctionForm = ({
     address: contractAddress,
   });
 
-  const {
-    data: result,
-    isPending: isLoading,
-    sendAsync,
-    error,
-  } = useSendTransaction({});
+  const { isPending: isLoading, error } = sendTransactionInstance;
 
   // side effect for error logging
   useEffect(() => {
@@ -80,30 +75,26 @@ export const WriteOnlyFunctionForm = ({
   }, [error]);
 
   const handleWrite = async () => {
-    if (sendAsync) {
-      try {
-        const makeWriteWithParams = () =>
-          sendAsync(
-            !!contractInstance
-              ? [
-                  contractInstance.populate(
-                    abiFunction.name,
-                    getArgsAsStringInputFromForm(form),
-                  ),
-                ]
-              : [],
-          );
-        await writeTransaction(makeWriteWithParams);
-      } catch (e: any) {
-        const errorPattern = /Contract (.*?)"}/;
-        const match = errorPattern.exec(e.message);
-        const message = match ? match[1] : e.message;
+    try {
+      await writeTransaction(
+        !!contractInstance
+          ? [
+              contractInstance.populate(
+                abiFunction.name,
+                getArgsAsStringInputFromForm(form),
+              ),
+            ]
+          : [],
+      );
+    } catch (e: any) {
+      const errorPattern = /Contract (.*?)"}/;
+      const match = errorPattern.exec(e.message);
+      const message = match ? match[1] : e.message;
 
-        console.error(
-          "⚡️ ~ file: WriteOnlyFunctionForm.tsx:handleWrite ~ error",
-          message,
-        );
-      }
+      console.error(
+        "⚡️ ~ file: WriteOnlyFunctionForm.tsx:handleWrite ~ error",
+        message,
+      );
     }
   };
 

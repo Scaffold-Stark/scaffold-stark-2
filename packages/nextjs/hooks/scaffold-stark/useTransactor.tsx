@@ -9,21 +9,21 @@ import { getBlockExplorerTxLink, notification } from "~~/utils/scaffold-stark";
 import { useTargetNetwork } from "./useTargetNetwork";
 import { useState, useEffect } from "react";
 import {
+  useSendTransaction,
+  UseSendTransactionResult,
   useTransactionReceipt,
   UseTransactionReceiptResult,
 } from "@starknet-react/core";
 
-type CustomTransactionFunc = () =>
-  | Promise<InvokeFunctionResponse>
-  | Promise<string>;
 type TransactionFunc = (
-  tx: CustomTransactionFunc | Call[],
+  tx: Call[],
   // | SendTransactionParameters,
 ) => Promise<string | undefined>;
 
 interface UseTransactorReturn {
   writeTransaction: TransactionFunc;
   transactionReceiptInstance: UseTransactionReceiptResult;
+  sendTransactionInstance: UseSendTransactionResult;
 }
 
 /**
@@ -67,6 +67,7 @@ export const useTransactor = (
   if (walletClient === undefined && account) {
     walletClient = account;
   }
+  const sendTransactionInstance = useSendTransaction({});
 
   const [notificationId, setNotificationId] = useState<string | null>(null);
   const [blockExplorerTxURL, setBlockExplorerTxURL] = useState<
@@ -103,9 +104,8 @@ export const useTransactor = (
     }
   }, [txResult]);
 
-  const writeTransaction = async (
-    tx: CustomTransactionFunc | Call[],
-  ): Promise<string | undefined> => {
+  const writeTransaction = async (tx: Call[]): Promise<string | undefined> => {
+    resetStates();
     if (!walletClient) {
       notification.error("Cannot access account");
       console.error("⚡️ ~ file: useTransactor.tsx ~ error");
@@ -121,64 +121,13 @@ export const useTransactor = (
       notificationId = notification.loading(
         <TxnNotification message="Awaiting for user confirmation" />,
       );
-      if (typeof tx === "function") {
+      if (tx != null) {
         // Tx is already prepared by the caller
-        const result = await tx();
+        const result = await sendTransactionInstance.sendAsync(tx);
         if (typeof result === "string") {
           transactionHash = result;
         } else {
           transactionHash = result.transaction_hash;
-        }
-      } else if (tx != null) {
-        try {
-          // First try to estimate fees
-          const estimatedFee = await walletClient.estimateInvokeFee(
-            tx as Call[],
-          );
-
-          // Use estimated fee with a safety margin (multiply by 1.5)
-          const maxFee =
-            (BigInt(estimatedFee.overall_fee) * BigInt(15)) / BigInt(10);
-
-          // Set RPC 0.8 compatible parameters with estimated fees
-          const txOptions = {
-            version: constants.TRANSACTION_VERSION.V3,
-            maxFee: "0x" + maxFee.toString(16),
-          };
-
-          transactionHash = (await walletClient.execute(tx, txOptions))
-            .transaction_hash;
-        } catch (feeEstimationError) {
-          console.warn(
-            "Fee estimation failed, using fallback values:",
-            feeEstimationError,
-          );
-
-          // Fallback to safe default values if estimation fails
-          const txOptions = {
-            version: constants.TRANSACTION_VERSION.V3,
-            // Use a reasonable maxFee value that won't exceed account balance
-            maxFee: "0x1000000000",
-            // Set resource bounds for RPC 0.8 compatibility
-            resourceBounds: {
-              l1_gas: {
-                max_amount: "0x1000000",
-                max_price_per_unit: "0x1",
-              },
-              l2_gas: {
-                max_amount: "0x1000000",
-                max_price_per_unit: "0x1",
-              },
-            },
-            // Add l1_data_gas field for RPC 0.8 compatibility
-            l1_data_gas: {
-              max_amount: "0x1000000",
-              max_price_per_unit: "0x1",
-            },
-          };
-
-          transactionHash = (await walletClient.execute(tx, txOptions))
-            .transaction_hash;
         }
       } else {
         throw new Error("Incorrect transaction passed to transactor");
@@ -221,5 +170,6 @@ export const useTransactor = (
   return {
     writeTransaction,
     transactionReceiptInstance,
+    sendTransactionInstance,
   };
 };
