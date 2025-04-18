@@ -5,7 +5,7 @@ import { fetchPrice } from "~~/services/web3/PriceService";
 
 interface BlockData {
   transaction: number;
-  blockStatus: string;
+  blockStatus: string | undefined;
   blockNumber: number;
   blockHash: string;
   blockVersion: string;

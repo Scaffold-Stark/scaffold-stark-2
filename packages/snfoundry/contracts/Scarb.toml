@@ -6,21 +6,22 @@ edition = "2024_07"
 # See more keys and their definitions at https://docs.swmansion.com/scarb/docs/reference/manifest.html
 
 [dependencies]
-starknet = "2.9.4"
-openzeppelin_access = "1.0.0"
-openzeppelin_token = "1.0.0"
+starknet = "2.11.2"
+openzeppelin_access = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", commit = "0f54318" } # v2.0.0-alpha.0, later will update to v2.0.0
+openzeppelin_token = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", commit = "0f54318" }  # v2.0.0-alpha.0, later will update to v2.0.0
 
 [dev-dependencies]
-openzeppelin_utils = "1.0.0"
-snforge_std = "0.38.2"
+openzeppelin_utils = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", commit = "0f54318" }   # v2.0.0-alpha.0, later will update to v2.0.0
+openzeppelin_testing = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", commit = "0f54318" } # v2.0.0-alpha.0, later will update to v2.0.0
+snforge_std = "0.41.0"
 
 [[target.starknet-contract]]
-casm = true # taggle this to `false` to speed up compilation/testing
+casm = true # taggle this to `false` to speed up compilation/script tests
 
 [tool.fmt]
 sort-module-level-items = true
 
 [[tool.snforge.fork]]
 name = "SEPOLIA_LATEST"
-url = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
+url = "https://starknet-sepolia.public.blastapi.io/rpc/v0_8"
 block_id.tag = "latest"
