@@ -11,7 +11,13 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && \
     sudo apt-get install -y nodejs && \
     sudo rm -rf /var/lib/apt/lists/*
 
-RUN npm install -g yarn@1.22.19
+RUN if ! command -v yarn >/dev/null || [ "$(yarn --version)" != "1.22.19" ]; then \
+    echo "Installing yarn@1.22.19..."; \
+    rm -f /usr/local/bin/yarn /usr/local/bin/yarnpkg; \
+    npm install -g yarn@1.22.19; \
+else \
+    echo "Yarn 1.22.19 is already installed."; \
+fi
 
 ARG RPC_URL_DEVNET
 ARG NEXT_PUBLIC_RPC_URL_DEVNET
