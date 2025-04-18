@@ -153,7 +153,7 @@ yarn start
 
 ```bash
 cd ui-automation/extensions
-unzip -q argentx.zip -d argentx
+unzip -q argentx.zip
 ```
 
 Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
