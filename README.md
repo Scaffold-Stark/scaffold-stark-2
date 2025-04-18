@@ -149,12 +149,6 @@ npm install
 yarn start
 ```
 
-6. To make sure wallet connection test work, unzip the extension:
-
-```bash
-cd ui-automation/extensions
-unzip -q argentx.zip
-```
 
 Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
 
@@ -162,54 +156,28 @@ Visit your app on: `http://localhost:3000`. You can interact with your smart con
 
 ### Automated UI Testing
 
-We use Playwright for end-to-end testing of the application interface:
+We use Playwright for end-to-end testing. Setup steps:
 
-1. Install dependencies:
+#### Local Env
+
+1. Install dependencies: `yarn install`
+2. Start local chain: `yarn chain`
+3. Deploy sample contract: `yarn deploy`
+4. Start NextJS app: `yarn start`
+5. Unzip the extension:
 
 ```bash
-yarn install
+cd ui-automation/extensions
+unzip -q argentx.zip
+cd ../
 ```
 
-2. Start local chain in the first terminal:
+6. Run UI tests: `npm test -- --headed`
+
+#### Docker Env
 
 ```bash
-yarn chain
-```
-
-3. On a second terminal, deploy the sample contract:
-
-```bash
-yarn deploy
-```
-
-4. On a third terminal, start your NextJS app:
-
-```bash
-yarn start
-```
-
-5. On a fourth terminal, run the UI tests:
-
-```bash
-cd ui-automation
-npm install
-npm test
-```
-
-To run with browser visible, add the --headed flag:
-
-```bash
-npm test -- --headed
-```
-
-- Test failure screenshots are saved in the `ui-automation/test-results` folder.
-
-- 💬 Hint: For Docker environments, URL access issues may occur. Check the test-results directory for error screenshots.
-
-- 💬 Hint: In case want to remove all file result test case failed, run
-```bash
-cd ui-automation
-npm clear-test-results
+bash start.sh
 ```
 
 ## Quickstart with Sepolia Testnet
