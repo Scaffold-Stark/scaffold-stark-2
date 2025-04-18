@@ -8,12 +8,17 @@ import {
 import { getBlockExplorerTxLink, notification } from "~~/utils/scaffold-stark";
 import { useTargetNetwork } from "./useTargetNetwork";
 import { useState, useEffect } from "react";
-import { useTransactionReceipt } from "@starknet-react/core";
+import { useTransactionReceipt, UseTransactionReceiptResult } from "@starknet-react/core";
 
 type TransactionFunc = (
   tx: () => Promise<InvokeFunctionResponse> | Promise<string>,
   // | SendTransactionParameters,
 ) => Promise<string | undefined>;
+
+interface UseTransactorReturn {
+  writeTransaction: TransactionFunc;
+  transactionReceiptInstance: UseTransactionReceiptResult;
+}
 
 /**
  * Custom notification content for TXs.
@@ -45,11 +50,11 @@ const TxnNotification = ({
 /**
  * Runs Transaction passed in to returned function showing UI feedback.
  * @param _walletClient - Optional wallet client to use. If not provided, will use the one from useWalletClient.
- * @returns function that takes in transaction function as callback, shows UI feedback for transaction and returns a promise of the transaction hash
+ * @returns An object with the writeTransaction function, transaction status, and other transaction-related properties
  */
 export const useTransactor = (
   _walletClient?: AccountInterface,
-): TransactionFunc => {
+): UseTransactorReturn => {
   let walletClient = _walletClient;
   const { account, address, status } = useAccount();
   const { targetNetwork } = useTargetNetwork();
@@ -64,9 +69,10 @@ export const useTransactor = (
   const [transactionHash, setTransactionHash] = useState<string | undefined>(
     undefined,
   );
-  const { data: txResult, status: txStatus } = useTransactionReceipt({
+  const transactionReceiptInstance = useTransactionReceipt({
     hash: transactionHash,
   });
+  const { data: txResult, status: txStatus } = transactionReceiptInstance;
 
   const resetStates = () => {
     setTransactionHash(undefined);
@@ -91,7 +97,7 @@ export const useTransactor = (
     }
   }, [txResult]);
 
-  return async (tx) => {
+  const writeTransaction = async (tx: () => Promise<InvokeFunctionResponse> | Promise<string>): Promise<string | undefined> => {
     if (!walletClient) {
       notification.error("Cannot access account");
       console.error("⚡️ ~ file: useTransactor.tsx ~ error");
@@ -203,4 +209,9 @@ export const useTransactor = (
 
     return transactionHash;
   };
+
+  return {
+    writeTransaction,
+    transactionReceiptInstance
+  }
 };

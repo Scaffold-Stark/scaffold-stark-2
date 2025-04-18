@@ -16,7 +16,6 @@ import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import {
   useSendTransaction,
   useNetwork,
-  useTransactionReceipt,
   useContract,
 } from "@starknet-react/core";
 import { Abi } from "abi-wan-kanabi";
@@ -48,7 +47,8 @@ export const WriteOnlyFunctionForm = ({
     useState<FormErrorMessageState>({});
   const { status: walletStatus, isConnected, account, chainId } = useAccount();
   const { chain } = useNetwork();
-  const writeTxn = useTransactor();
+  const {writeTransaction, transactionReceiptInstance} = useTransactor();
+  const { data: txResult } = transactionReceiptInstance;
   const { targetNetwork } = useTargetNetwork();
 
   const writeDisabled = useMemo(
@@ -93,7 +93,7 @@ export const WriteOnlyFunctionForm = ({
                 ]
               : [],
           );
-        await writeTxn(makeWriteWithParams);
+        await writeTransaction(makeWriteWithParams);
         onChange();
       } catch (e: any) {
         const errorPattern = /Contract (.*?)"}/;
@@ -110,9 +110,6 @@ export const WriteOnlyFunctionForm = ({
 
   const [displayedTxResult, setDisplayedTxResult] =
     useState<InvokeTransactionReceiptResponse>();
-  const { data: txResult } = useTransactionReceipt({
-    hash: result?.transaction_hash,
-  });
   useEffect(() => {
     setDisplayedTxResult(
       txResult as unknown as InvokeTransactionReceiptResponse,

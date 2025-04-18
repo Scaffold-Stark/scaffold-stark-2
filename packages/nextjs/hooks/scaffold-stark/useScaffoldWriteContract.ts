@@ -28,7 +28,7 @@ export const useScaffoldWriteContract = <
 }: UseScaffoldWriteConfig<TAbi, TContractName, TFunctionName>) => {
   const { data: deployedContractData } = useDeployedContractInfo(contractName);
   const { chain } = useNetwork();
-  const sendTxnWrapper = useTransactor();
+  const { writeTransaction: sendTxnWrapper } = useTransactor();
   const { targetNetwork } = useTargetNetwork();
 
   // leave blank for now since default args will be called by the trigger function anyway

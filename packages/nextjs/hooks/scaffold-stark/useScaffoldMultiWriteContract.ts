@@ -39,7 +39,7 @@ export const useScaffoldMultiWriteContract = <
 }) => {
   const { targetNetwork } = useTargetNetwork();
   const { chain } = useNetwork();
-  const sendTxnWrapper = useTransactor();
+  const { writeTransaction: sendTxnWrapper } = useTransactor();
 
   // TODO add custom options
 
