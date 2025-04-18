@@ -94,7 +94,6 @@ export const WriteOnlyFunctionForm = ({
               : [],
           );
         await writeTransaction(makeWriteWithParams);
-        onChange();
       } catch (e: any) {
         const errorPattern = /Contract (.*?)"}/;
         const match = errorPattern.exec(e.message);
@@ -115,7 +114,7 @@ export const WriteOnlyFunctionForm = ({
       txResult as unknown as InvokeTransactionReceiptResponse,
     );
     onChange();
-  }, [txResult]);
+  }, [txResult, onChange]);
 
   // TODO use `useMemo` to optimize also update in ReadOnlyFunctionForm
   const transformedFunction = transformAbiFunction(abiFunction);
