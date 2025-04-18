@@ -61,7 +61,7 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
 
     try {
       await homePage.getDebugPageLinkButton().click();
-      await page.waitForTimeout(1000);
+      await page.waitForTimeout(3000);
       console.log(`[${testId}] Successfully navigated to debug page`);
     } catch (error) {
       const debugErr = await captureError(page, error, "Debug Page Navigation");
@@ -188,7 +188,7 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
     // console.log(
     //   `[${testId}] nonZeroU256 test result:`,
     //   nonZeroU256.success ? "SUCCESS" : `FAILED: ${nonZeroU256.error}`
-    // );
+  // );
     // testResults.push({
     //   ...nonZeroU256,
     //   name: "nonZeroU256",

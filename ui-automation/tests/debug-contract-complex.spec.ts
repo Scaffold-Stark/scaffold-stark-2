@@ -63,7 +63,7 @@ test("Complex Debug Page Interaction Flow", async ({ page }) => {
 
     try {
       await homePage.getDebugPageLinkButton().click();
-      await page.waitForTimeout(1000);
+      await page.waitForTimeout(3000);
       console.log(`[${testId}] Successfully navigated to debug page`);
     } catch (error) {
       const debugErr = await captureError(page, error, "Debug Page Navigation");

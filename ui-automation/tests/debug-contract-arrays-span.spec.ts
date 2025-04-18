@@ -48,7 +48,7 @@ test("ArrayValue Interaction Flow", async ({ page }) => {
     try {
       // Navigate to debug page
       await homePage.getDebugPageLinkButton().click();
-      await page.waitForTimeout(1000);
+      await page.waitForTimeout(3000);
     } catch (error) {
       const debugErr = await captureError(page, error, "Debug Page Navigation");
       errorLogs.push(debugErr);
