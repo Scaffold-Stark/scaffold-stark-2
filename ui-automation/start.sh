@@ -4,9 +4,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 cd "$SCRIPT_DIR"
 
-# docker compose build --no-cache nextjs
-
-docker compose up -d
+docker compose up --build -d
 
 echo "Waiting for starknet-devnet to start..."
 while ! curl -s http://localhost:5050 > /dev/null; do
