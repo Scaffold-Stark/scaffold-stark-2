@@ -6,6 +6,7 @@ name = "contracts"
 version = "0.2.0"
 dependencies = [
  "openzeppelin_access",
+ "openzeppelin_testing",
  "openzeppelin_token",
  "openzeppelin_utils",
  "snforge_std",
@@ -14,7 +15,7 @@ dependencies = [
 [[package]]
 name = "openzeppelin_access"
 version = "2.0.0-alpha.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git#df60a4231ecf8063d0a48752bf5b42738f4389a4"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git#0f54318ffdb3fa5cad8a8bd4eaf1cccc2527fe2a"
 dependencies = [
  "openzeppelin_introspection",
 ]
@@ -22,7 +23,7 @@ dependencies = [
 [[package]]
 name = "openzeppelin_account"
 version = "2.0.0-alpha.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git#df60a4231ecf8063d0a48752bf5b42738f4389a4"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git#0f54318ffdb3fa5cad8a8bd4eaf1cccc2527fe2a"
 dependencies = [
  "openzeppelin_introspection",
  "openzeppelin_utils",
@@ -31,12 +32,20 @@ dependencies = [
 [[package]]
 name = "openzeppelin_introspection"
 version = "2.0.0-alpha.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git#df60a4231ecf8063d0a48752bf5b42738f4389a4"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git#0f54318ffdb3fa5cad8a8bd4eaf1cccc2527fe2a"
+
+[[package]]
+name = "openzeppelin_testing"
+version = "3.0.0"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git#0f54318ffdb3fa5cad8a8bd4eaf1cccc2527fe2a"
+dependencies = [
+ "snforge_std",
+]
 
 [[package]]
 name = "openzeppelin_token"
 version = "2.0.0-alpha.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git#df60a4231ecf8063d0a48752bf5b42738f4389a4"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git#0f54318ffdb3fa5cad8a8bd4eaf1cccc2527fe2a"
 dependencies = [
  "openzeppelin_access",
  "openzeppelin_account",
@@ -47,7 +56,7 @@ dependencies = [
 [[package]]
 name = "openzeppelin_utils"
 version = "2.0.0-alpha.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git#df60a4231ecf8063d0a48752bf5b42738f4389a4"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git#0f54318ffdb3fa5cad8a8bd4eaf1cccc2527fe2a"
 
 [[package]]
 name = "snforge_scarb_plugin"

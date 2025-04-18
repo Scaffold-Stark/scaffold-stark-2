@@ -1,23 +1,22 @@
-use contracts::YourContract::YourContract::STRK_CONTRACT_ADDRESS;
+use contracts::YourContract::YourContract::FELT_STRK_CONTRACT;
 use contracts::YourContract::{IYourContractDispatcher, IYourContractDispatcherTrait};
+use openzeppelin_testing::declare_and_deploy;
 use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 use openzeppelin_utils::serde::SerializedAppend;
-use snforge_std::{CheatSpan, ContractClassTrait, DeclareResultTrait, cheat_caller_address, declare};
+use snforge_std::{CheatSpan, cheat_caller_address};
 use starknet::ContractAddress;
 
-// Real contract address deployed on Sepolia
+// Real wallet address deployed on Sepolia
 const OWNER: ContractAddress = 0x02dA5254690b46B9C4059C25366D1778839BE63C142d899F0306fd5c312A5918
     .try_into()
     .unwrap();
 
-const STRK_TOKEN_CONTRACT_ADDRESS: ContractAddress = STRK_CONTRACT_ADDRESS.try_into().unwrap();
+const STRK_TOKEN_CONTRACT_ADDRESS: ContractAddress = FELT_STRK_CONTRACT.try_into().unwrap();
 
 fn deploy_contract(name: ByteArray) -> ContractAddress {
-    let contract_class = declare(name).unwrap().contract_class();
     let mut calldata = array![];
     calldata.append_serde(OWNER);
-    let (contract_address, _) = contract_class.deploy(@calldata).unwrap();
-    contract_address
+    declare_and_deploy(name, calldata)
 }
 
 #[test]
@@ -31,7 +30,7 @@ fn test_set_greetings() {
     assert(current_greeting == expected_greeting, 'Should have the right message');
 
     let new_greeting: ByteArray = "Learn Scaffold-Stark 2! :)";
-    dispatcher.set_greeting(new_greeting.clone(), Option::None); // we dont transfer any eth
+    dispatcher.set_greeting(new_greeting.clone(), Option::None); // we don't transfer any strk
     assert(dispatcher.greeting() == new_greeting, 'Should allow set new message');
 }
 
