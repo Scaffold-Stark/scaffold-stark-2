@@ -58,7 +58,6 @@ export const fetchProfileFromApi = async (address: string) => {
       // proofOfPersonhood?: boolean;
     };
   } catch (e) {
-    console.error(e);
     return {
       name: "",
       profilePicture: "",
