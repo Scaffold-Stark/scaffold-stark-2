@@ -34,8 +34,7 @@ COPY ui-automation/playwright.config.ts /app/
 COPY ui-automation/extensions/ /app/extensions/
 
 # Unzip extensions into folders
-RUN mkdir -p /app/extensions/argentx && \
-    unzip -o -q /app/extensions/argentx.zip
+RUN unzip -o -q /app/extensions/argentx.zip -d /app/extensions
 
 # Install Node dependencies
 RUN npm install
