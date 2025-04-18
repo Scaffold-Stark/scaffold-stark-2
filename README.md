@@ -25,9 +25,55 @@ Before you begin, you need to install the following tools:
 - [Node (>= v18.17)](https://nodejs.org/en/download/)
 - Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
 - [Git](https://git-scm.com/downloads)
-- [Rust](https://rust-lang.org/tools/install)
+
+### Starkup
+
+Tool for installing all the Starknet essentials for development. [Starkup](https://github.com/software-mansion/starkup) will install the latest stable versions of:
+
+- [Scarb](https://docs.swmansion.com/scarb/)
+- [Starknet Foundry](https://foundry-rs.github.io/starknet-foundry/index.html)
 - [asdf](https://asdf-vm.com/guide/getting-started.html)
-- [Cairo 1.0 extension for VSCode](https://marketplace.visualstudio.com/items?itemName=starkware.cairo1)
+- [Cairo 1.0 extension](https://marketplace.visualstudio.com/items?itemName=starkware.cairo1) for VSCode.
+
+Curently, [starknet-devnet](https://0xspaceshard.github.io/starknet-devnet/) is not supported by `starkup`.
+
+To install `starkup`, run the following command:
+
+```sh
+curl -sSf https://raw.githubusercontent.com/starkware-libs/starkup/main/install.sh | bash
+```
+
+### Scarb version
+
+To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.11.3`. To accomplish this, first check your local Scarb version:
+
+```sh
+scarb --version
+```
+
+If your local `Scarb` version is not `2.11.3`, you need to install it. If you already have installed `Scarb` via `starkup`, you can setup this specific version with the following command:
+
+```sh
+asdf install scarb 2.11.3 && asdf set scarb 2.11.3
+```
+
+Otherwise, you can install Scarb `2.11.3` following the [instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf).
+
+### Starknet Foundry version
+
+To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be `0.41.0`. To accomplish this, first check your Starknet Foundry version:
+
+```sh
+snforge --version
+```
+
+If your Starknet Foundry version is not `0.41.0`, you need to install it. If you already have installed `Starknet Foundry` via `starkup`, you can setup this specific version with the following command:
+
+```sh
+asdf install starknet-foundry 0.41.0 && asdf set starknet-foundry 0.41.0
+```
+
+Otherwise, you can install Starknet Foundry `0.41.0` following the [instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf).
 
 ### Starknet-devnet version
 
@@ -41,35 +87,11 @@ If your local starknet-devnet version is not `0.3.0`, you need to install it.
 
 - Install Starknet-devnet `0.3.0` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
 
-### Scarb version
-
-To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.11.3`. To accomplish this, first check your local Scarb version:
-
-```sh
-scarb --version
-```
-
-If your local Scarb version is not `2.11.3`, you need to install it.
-
-- Install Scarb `2.11.3` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
-
-### Starknet Foundry version
-
-To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.38.2. To accomplish this, first check your Starknet Foundry version:
-
-```sh
-snforge --version
-```
-
-If your Starknet Foundry version is not `0.40.0`, you need to install it.
-
-- Install Starknet Foundry `0.40.0` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
-
 ## Compatible versions
 
 - Starknet-devnet - v0.3.0
 - Scarb - v2.11.3
-- Snforge - v0.40.0
+- Snforge - v0.41.0
 - Cairo - v2.11.2
 - Rpc - v0.8.0
 
@@ -101,8 +123,8 @@ To get started with Scaffold-Stark, follow the steps below:
 1. Clone this repo and install dependencies
 
 ```bash
-git clone https://github.com/Scaffold-Stark/scaffold-stark-2.git
-cd scaffold-stark-2
+npx create-stark@latest
+cd my-dapp-example
 yarn install
 ```
 
@@ -144,7 +166,7 @@ Visit your app on: `http://localhost:3000`. You can interact with your smart con
 
 2. Prepare your environment variables.
 
-Find the `packages/snfoundry/.env` file and fill the env variables related to Sepolia testnet with your own wallet account contract address and private key.
+Find the `packages/snfoundry/.env` file and fill the env variables related to Sepolia testnet with your own wallet account contract address and private key. Find the `packages/nextjs/.env` file and fill the env variable related to Sepolia testnet rpc url.
 
 3. Change your default network to Sepolia testnet.
 
@@ -215,10 +237,6 @@ These variables are used in the configuration to assign the correct RPC URLs:
 "mainnet": process.env.NEXT_PUBLIC_MAINNET_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || ""
 ```
 
-### RPC specific version
-
-To ensure the proper functioning of Scaffold-Stark with Testnet or Mainnet, your RPC version must be `0.8.0`. This repository contains a `.env.example` file with the default RPC URL for Starknet Testnet:
-
 ## CLI Usage
 
 Depending on your package manager, substitute the work COMMAND with the appropiate one from the list.
@@ -255,7 +273,6 @@ Commands:
 | test:nextjs | Runs the nextjs tests                        |
 | vercel      | Deploys app to vercel                        |
 | vercel:yolo | Force deploy app to vercel (ignoring errors) |
-
 
 ## **What's next**
 
