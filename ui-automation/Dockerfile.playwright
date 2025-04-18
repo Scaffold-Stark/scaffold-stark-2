@@ -35,7 +35,7 @@ COPY ui-automation/extensions/ /app/extensions/
 
 # Unzip extensions into folders
 RUN mkdir -p /app/extensions/argentx && \
-    unzip -o -q /app/extensions/argentx.zip -d /app/extensions/argentx
+    unzip -o -q /app/extensions/argentx.zip
 
 # Install Node dependencies
 RUN npm install
