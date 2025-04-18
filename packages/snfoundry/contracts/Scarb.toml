@@ -7,7 +7,6 @@ edition = "2024_07"
 
 [dependencies]
 starknet = "2.11.2"
-# Change to just "openzeppelin" to use full features
 openzeppelin_access = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", commit = "0f54318" } # v2.0.0-alpha.0, later will update to v2.0.0
 openzeppelin_token = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", commit = "0f54318" }  # v2.0.0-alpha.0, later will update to v2.0.0
 
@@ -15,7 +14,6 @@ openzeppelin_token = { git = "https://github.com/OpenZeppelin/cairo-contracts.gi
 openzeppelin_utils = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", commit = "0f54318" }   # v2.0.0-alpha.0, later will update to v2.0.0
 openzeppelin_testing = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", commit = "0f54318" } # v2.0.0-alpha.0, later will update to v2.0.0
 snforge_std = "0.41.0"
-## TODO: add openzeppelin_testing and common
 
 [[target.starknet-contract]]
 casm = true # taggle this to `false` to speed up compilation/script tests
