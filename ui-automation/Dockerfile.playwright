@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/playwright:v1.46.1   
 
 
-ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=0
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
@@ -34,9 +34,8 @@ COPY ui-automation/playwright.config.ts /app/
 COPY ui-automation/extensions/ /app/extensions/
 
 # Unzip extensions into folders
-RUN mkdir -p /app/extensions/argentx /app/extensions/braavos && \
-    unzip -o -q /app/extensions/argentx.zip -d /app/extensions/argentx && \
-    unzip -o -q /app/extensions/braavos.zip -d /app/extensions/braavos
+RUN mkdir -p /app/extensions/argentx && \
+    unzip -o -q /app/extensions/argentx.zip -d /app/extensions/argentx
 
 # Install Node dependencies
 RUN npm install

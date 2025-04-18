@@ -5,9 +5,7 @@ import { navigateAndWait } from "./utils/navigate";
 import { endpoint } from "./configTypes";
 import { chromium } from "@playwright/test";
 import path = require("path");
-import { BraavosWalletPage } from "./pages/BraavosWalletPage";
 import { captureError } from "./utils/error-handler";
-import fs = require("fs");
 
 const burnerAccounts = ["0x64b4...5691"];
 
@@ -38,57 +36,59 @@ const expect = test.expect;
  * Tests connecting to the dApp with different Burner Wallet accounts
  * Iterates through predefined accounts and verifies successful connection for each
  */
-for (const account of burnerAccounts) {
-  test(`Connect with Burner Wallet account: ${account}`, async ({ page }) => {
-    test.setTimeout(60000);
-    const testTimestamp = Date.now();
-    const testId = `connect-burner-${account.substring(2, 6)}-${testTimestamp}`;
+
+const burnerAccount = burnerAccounts[0];
+
+test(`Connect with Burner Wallet account: ${burnerAccount}`, async ({ page }) => {
+  test.setTimeout(60000);
+  const testTimestamp = Date.now();
+  const testId = `connect-burner-${burnerAccount.substring(2, 6)}-${testTimestamp}`;
+
+  try {
+    await navigateAndWait(page, endpoint.BASE_URL);
+
+    const homePage = new HomePage(page);
 
     try {
-      await navigateAndWait(page, endpoint.BASE_URL);
+      await homePage.safeClick(homePage.getConnectButton(), "Connect button");
+      await expect(
+        page.getByRole("heading", { name: "Connect a Wallet", level: 3 })
+      ).toBeVisible();
 
-      const homePage = new HomePage(page);
-
-      try {
-        await homePage.safeClick(homePage.getConnectButton(), "Connect button");
-        await expect(
-          page.getByRole("heading", { name: "Connect a Wallet", level: 3 })
-        ).toBeVisible();
-
-        await homePage.safeClick(
-          homePage.getConnecterButton("Burner Wallet"),
-          "Burner Wallet button"
-        );
-
-        const button = homePage.getAccountButton(account);
-        await button.scrollIntoViewIfNeeded();
-        await page.waitForTimeout(1000);
-
-        await homePage.safeClick(button, `Account button ${account}`, {
-          force: true,
-          timeout: 5000,
-        });
-
-        await Promise.all([
-          page.waitForLoadState("domcontentloaded"),
-          page.waitForLoadState("networkidle"),
-        ]);
-
-        await page.waitForSelector('text="Connected Address:"', {
-          state: "visible",
-          timeout: 15000,
-        });
-      } catch (error) {
-        throw error;
-      }
-    } catch (error) {
-      test.fail(
-        true,
-        `Failed to connect with Burner wallet ${account}: ${error instanceof Error ? error.message : String(error)}`
+      await homePage.safeClick(
+        homePage.getConnecterButton("Burner Wallet"),
+        "Burner Wallet button"
       );
+
+      const button = homePage.getAccountButton(burnerAccount);
+      await button.scrollIntoViewIfNeeded();
+      await page.waitForTimeout(1000);
+
+      await homePage.safeClick(button, `Account button ${burnerAccount}`, {
+        force: true,
+        timeout: 5000,
+      });
+
+      await Promise.all([
+        page.waitForLoadState("domcontentloaded"),
+        page.waitForLoadState("networkidle"),
+      ]);
+
+      await page.waitForSelector('text="Connected Address:"', {
+        state: "visible",
+        timeout: 15000,
+      });
+    } catch (error) {
+      throw error;
     }
-  });
-}
+  } catch (error) {
+    test.fail(
+      true,
+      `Failed to connect with Burner wallet ${burnerAccount}: ${error instanceof Error ? error.message : String(error)}`
+    );
+  }
+});
+
 
 /**
  * Tests connecting to the dApp with Argent X wallet
@@ -153,6 +153,7 @@ test("Connect with Argent X wallet", async () => {
               true,
               "Test failed: Could not detect Argent X connection dialog. Wallet may not be installed."
             );
+            return;
           }
 
           await argentXWalletPage.clickConnect();
@@ -200,7 +201,6 @@ test("Verify all wallet options and Burner accounts are visible", async ({
       ).toBeVisible();
 
       await expect(homePage.getConnecterButton("Argent X")).toBeVisible();
-      await expect(homePage.getConnecterButton("Braavos")).toBeVisible();
       await expect(homePage.getConnecterButton("Burner Wallet")).toBeVisible();
 
       await homePage.safeClick(

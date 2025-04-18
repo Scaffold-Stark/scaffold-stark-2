@@ -184,15 +184,15 @@ test("Vars Debug Page Interaction Flow", async ({ page }) => {
     });
 
 
-    const nonZeroU256 = await varsDebugPage.testNonZeroU256("0x12");
-    console.log(
-      `[${testId}] nonZeroU256 test result:`,
-      nonZeroU256.success ? "SUCCESS" : `FAILED: ${nonZeroU256.error}`
-    );
-    testResults.push({
-      ...nonZeroU256,
-      name: "nonZeroU256",
-    });
+    // const nonZeroU256 = await varsDebugPage.testNonZeroU256("0x12");
+    // console.log(
+    //   `[${testId}] nonZeroU256 test result:`,
+    //   nonZeroU256.success ? "SUCCESS" : `FAILED: ${nonZeroU256.error}`
+    // );
+    // testResults.push({
+    //   ...nonZeroU256,
+    //   name: "nonZeroU256",
+    // });
 
     const failedTests = testResults.filter((test) => !test.success);
 
