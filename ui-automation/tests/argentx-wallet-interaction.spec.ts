@@ -19,9 +19,9 @@ const launchContextWithExtension = async (extensionName: "argentx") => {
     : path.resolve(__dirname, `../extensions/${extensionName}`);
 
   const context = await chromium.launchPersistentContext('', {
-    headless: true,
+    headless: isDocker ? true : false,
     args: [
-      `--headless=chrome`,
+      isDocker ? `--headless=chrome` : '',
       `--disable-extensions-except=${extensionPath}`,
       `--load-extension=${extensionPath}`,
     ],
@@ -59,7 +59,14 @@ test("Test interact with STRK contract using Argent X wallet", async () => {
 
       const argentXWalletPage = new ArgentXWalletPage(extension);
       await argentXWalletPage.restoreWallet("MyS3curePass!");
-      await argentXWalletPage.switchToTestnet();
+
+      if (isDocker) {
+        await argentXWalletPage.switchNetwork("Sepolia");
+      } else {
+        await argentXWalletPage.changeDevnetUrl("http://localhost:5050");
+        await argentXWalletPage.switchNetwork("Devnet");
+        await argentXWalletPage.fundAccountInDevnet();
+      }
 
       await navigateAndWait(page, endpoint.BASE_URL);
 

@@ -191,7 +191,7 @@ export class ArgentXWalletPage extends BasePage {
     );
   }
 
-  async switchToTestnet() {
+  async switchNetwork(network: "Devnet" | "Sepolia") {
     await this.safeClick(
       this.page.getByRole('button', { name: 'Show account list' }),
       "Show account list button"
@@ -203,8 +203,8 @@ export class ArgentXWalletPage extends BasePage {
     );
 
     await this.safeClick(
-      this.page.getByTestId('Sepolia'),
-      "Devnet button"
+      this.page.getByTestId(network),
+      "Switch network button"
     );
 
     const accountSelectButton = this.page.getByTestId('description');
