@@ -2,6 +2,7 @@ import { Page, Locator } from "playwright";
 import { BasePage } from "./BasePage";
 import { withDelaySequence } from "../utils/helper";
 import { captureError } from "../utils/error-handler";
+import { ArgentXWalletPage } from "./ArgentXWalletPage";
 
 export class StrkDebugPage extends BasePage {
   private strkTab: Locator;
@@ -162,9 +163,10 @@ export class StrkDebugPage extends BasePage {
    * Performs a complete token transfer operation
    * @param recipientAddress The recipient address
    * @param amount The amount to transfer
+   * @param argentXWalletPage (optional) ArgentXWalletPage instance to click confirm transaction
    * @returns Object indicating success or failure with details
    */
-  async performTransfer(recipientAddress: string, amount: string) {
+  async performTransfer(recipientAddress: string, amount: string, argentXWalletPage?: ArgentXWalletPage) {
     try {
       console.log(`Starting STRK transfer of ${amount} to ${recipientAddress}`);
       await this.switchToStrkTab();
@@ -175,6 +177,10 @@ export class StrkDebugPage extends BasePage {
       console.log(
         `Completed STRK transfer request of ${amount} to ${recipientAddress}`
       );
+
+      if (argentXWalletPage) {
+        await argentXWalletPage.clickConfirmTransaction();
+      }
 
       await this.page.waitForTimeout(3000);
 
