@@ -24,8 +24,8 @@ vi.mock("~~/utils/scaffold-stark/contract", () => ({
       Strk: {
         address: "0x12345",
         abi: [{ type: "function", name: "transfer", inputs: [], outputs: [] }],
-      }
-    }
+      },
+    },
   },
   // Add any other exports that might be needed
   ContractName: {},

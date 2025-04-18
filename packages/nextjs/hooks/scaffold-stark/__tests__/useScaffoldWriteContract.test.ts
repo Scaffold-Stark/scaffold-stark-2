@@ -52,25 +52,25 @@ describe("useScaffoldWriteContract", () => {
   beforeEach(() => {
     // Reset all mocks before each test
     vi.clearAllMocks();
-    
+
     // Set up the mock implementations for the hooks
-    mockUseSendTransaction.mockReturnValue({ 
+    mockUseSendTransaction.mockReturnValue({
       sendAsync: vi.fn(),
-      status: "idle" 
+      status: "idle",
     });
-    
+
     mockUseTransactor.mockReturnValue({
       writeTransaction: vi.fn().mockResolvedValue("mock-tx-hash"),
-      sendTransactionInstance: { 
+      sendTransactionInstance: {
         sendAsync: vi.fn(),
-        status: "idle" 
+        status: "idle",
       },
       transactionReceiptInstance: {
         data: null,
-        status: "idle"
-      }
+        status: "idle",
+      },
     });
-    
+
     mockUseTargetNetwork.mockReturnValue({
       targetNetwork: { id: 1, network: "testnet" },
     });
@@ -105,7 +105,7 @@ describe("useScaffoldWriteContract", () => {
         abi: [{ name: "testFunction" }],
       },
     });
-    
+
     mockUseTargetNetwork.mockReturnValue({
       targetNetwork: { id: 2, network: "mainnet" }, // Different network ID
     });
@@ -151,7 +151,7 @@ describe("useScaffoldWriteContract", () => {
           contractAddress: "0x123",
           entrypoint: functionName,
         }),
-      ])
+      ]),
     );
   });
 
