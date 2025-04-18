@@ -8,7 +8,10 @@ import {
 import { getBlockExplorerTxLink, notification } from "~~/utils/scaffold-stark";
 import { useTargetNetwork } from "./useTargetNetwork";
 import { useState, useEffect } from "react";
-import { useTransactionReceipt, UseTransactionReceiptResult } from "@starknet-react/core";
+import {
+  useTransactionReceipt,
+  UseTransactionReceiptResult,
+} from "@starknet-react/core";
 
 type TransactionFunc = (
   tx: () => Promise<InvokeFunctionResponse> | Promise<string>,
@@ -63,9 +66,9 @@ export const useTransactor = (
   }
 
   const [notificationId, setNotificationId] = useState<string | null>(null);
-  const [blockExplorerTxURL, setBlockExplorerTxURL] = useState<string | undefined>(
-    undefined,
-  );
+  const [blockExplorerTxURL, setBlockExplorerTxURL] = useState<
+    string | undefined
+  >(undefined);
   const [transactionHash, setTransactionHash] = useState<string | undefined>(
     undefined,
   );
@@ -97,7 +100,9 @@ export const useTransactor = (
     }
   }, [txResult]);
 
-  const writeTransaction = async (tx: () => Promise<InvokeFunctionResponse> | Promise<string>): Promise<string | undefined> => {
+  const writeTransaction = async (
+    tx: () => Promise<InvokeFunctionResponse> | Promise<string>,
+  ): Promise<string | undefined> => {
     if (!walletClient) {
       notification.error("Cannot access account");
       console.error("⚡️ ~ file: useTransactor.tsx ~ error");
@@ -189,7 +194,7 @@ export const useTransactor = (
         <TxnNotification
           message="Waiting for transaction to complete."
           blockExplorerLink={blockExplorerTxURL}
-        />
+        />,
       );
       setNotificationId(notificationId);
     } catch (error: any) {
@@ -212,6 +217,6 @@ export const useTransactor = (
 
   return {
     writeTransaction,
-    transactionReceiptInstance
-  }
+    transactionReceiptInstance,
+  };
 };
