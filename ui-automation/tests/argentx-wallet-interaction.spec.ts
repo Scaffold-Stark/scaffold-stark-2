@@ -59,13 +59,7 @@ test("Test interact with STRK contract using Argent X wallet", async () => {
 
       const argentXWalletPage = new ArgentXWalletPage(extension);
       await argentXWalletPage.restoreWallet("MyS3curePass!");
-      await argentXWalletPage.switchToDevnet();
-
-      if (!isDocker) {
-        await argentXWalletPage.changeDevnetUrl("http://localhost:5050");
-      }
-
-      await argentXWalletPage.fundAccountInDevnet();
+      await argentXWalletPage.switchToTestnet();
 
       await navigateAndWait(page, endpoint.BASE_URL);
 

@@ -191,7 +191,7 @@ export class ArgentXWalletPage extends BasePage {
     );
   }
 
-  async switchToDevnet() {
+  async switchToTestnet() {
     await this.safeClick(
       this.page.getByRole('button', { name: 'Show account list' }),
       "Show account list button"
@@ -203,7 +203,7 @@ export class ArgentXWalletPage extends BasePage {
     );
 
     await this.safeClick(
-      this.page.getByTestId('Devnet'),
+      this.page.getByTestId('Sepolia'),
       "Devnet button"
     );
 
