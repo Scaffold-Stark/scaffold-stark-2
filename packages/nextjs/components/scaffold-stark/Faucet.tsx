@@ -7,22 +7,22 @@ import {
   Address,
   AddressInput,
   Balance,
-  EtherInput,
+  StarkInput,
 } from "~~/components/scaffold-stark";
 import { useNetwork, useProvider } from "@starknet-react/core";
-import { mintEth } from "~~/services/web3/faucet";
+import { mintStrk } from "~~/services/web3/faucet";
 import { notification } from "~~/utils/scaffold-stark";
 import GenericModal from "./CustomConnectButton/GenericModal";
 
 /**
- * Faucet modal which lets you send ETH to any address.
+ * Faucet modal which lets you send STRK to any address.
  */
 export const Faucet = () => {
+  const faucetAddress: AddressType =
+    "0x78662e7352d062084b0010068b99288486c2d8b914f6e2a55ce945f8792c8b1";
+
   const [loading, setLoading] = useState(false);
   const [inputAddress, setInputAddress] = useState<AddressType>();
-  const [faucetAddress] = useState<AddressType>(
-    "0x78662e7352d062084b0010068b99288486c2d8b914f6e2a55ce945f8792c8b1",
-  );
   const [sendValue, setSendValue] = useState("");
 
   const { chain: ConnectedChain } = useNetwork();
@@ -67,12 +67,12 @@ export const Faucet = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const sendETH = async () => {
+  const sendSTRK = async () => {
     if (!faucetAddress || !inputAddress) {
       return;
     }
 
-    const res = await mintEth(inputAddress, sendValue);
+    const res = await mintStrk(inputAddress, sendValue);
     if (!res.new_balance) {
       setLoading(false);
       notification.error(`${res}`);
@@ -81,7 +81,7 @@ export const Faucet = () => {
     setLoading(false);
     setInputAddress(undefined);
     setSendValue("");
-    notification.success("ETH sent successfully!");
+    notification.success("STRK sent successfully!");
   };
 
   // Render only on local chain
@@ -116,7 +116,7 @@ export const Faucet = () => {
               value={inputAddress ?? ""}
               onChange={(value) => setInputAddress(value as AddressType)}
             />
-            <EtherInput
+            <StarkInput
               placeholder="Amount to send"
               value={sendValue}
               onChange={(value) => setSendValue(value)}
@@ -124,7 +124,7 @@ export const Faucet = () => {
           </div>
           <button
             className="h-10 btn cursor-pointer btn-sm px-2 rounded-[4px] bg-btn-wallet border-[#4f4ab7] border hover:bg-[#385183]"
-            onClick={sendETH}
+            onClick={sendSTRK}
             disabled={loading}
           >
             {!loading ? (

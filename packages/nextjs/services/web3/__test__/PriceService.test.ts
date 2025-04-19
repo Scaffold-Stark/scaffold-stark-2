@@ -12,13 +12,7 @@ import scaffoldConfig from "~~/scaffold.config";
 const mockFetch = vi.fn();
 vi.stubGlobal("fetch", mockFetch);
 mockFetch.mockImplementation((url: string) => {
-  if (url.includes("ETH")) {
-    return Promise.resolve({
-      ok: true,
-      json: () => Promise.resolve({ ethereum: { usd: 2000 } }),
-    });
-  }
-  if (url.includes("STRK")) {
+  if (url === "/api/price") {
     return Promise.resolve({
       ok: true,
       json: () => Promise.resolve({ starknet: { usd: 100 } }),
@@ -31,18 +25,15 @@ import { priceService } from "../PriceService";
 
 describe("PriceService", () => {
   let mockSetNativeCurrencyPrice: ReturnType<typeof vi.fn>;
-  let mockSetStrkCurrencyPrice: ReturnType<typeof vi.fn>;
 
   beforeAll(() => {
     vi.spyOn(console, "error").mockImplementation(() => {});
-    // vi.spyOn(console, 'log').mockImplementation(() => { });
   });
 
   beforeEach(() => {
     // Reset mocks and timers before each test
     vi.useFakeTimers();
     mockSetNativeCurrencyPrice = vi.fn();
-    mockSetStrkCurrencyPrice = vi.fn();
     vi.clearAllMocks();
   });
 
@@ -74,11 +65,7 @@ describe("PriceService", () => {
   describe("Polling Management", () => {
     it("should start polling when first listener is added", () => {
       const ref = priceService.getNextId();
-      priceService.startPolling(
-        ref,
-        mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
-      );
+      priceService.startPolling(ref, mockSetNativeCurrencyPrice);
 
       expect(priceService["intervalId"]).not.toBeNull();
       expect(priceService["listeners"].size).toBe(1);
@@ -88,18 +75,10 @@ describe("PriceService", () => {
       const ref1 = priceService.getNextId();
       const ref2 = priceService.getNextId();
 
-      priceService.startPolling(
-        ref1,
-        mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
-      );
+      priceService.startPolling(ref1, mockSetNativeCurrencyPrice);
       const firstIntervalId = priceService["intervalId"];
 
-      priceService.startPolling(
-        ref2,
-        mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
-      );
+      priceService.startPolling(ref2, mockSetNativeCurrencyPrice);
 
       expect(priceService["intervalId"]).toBe(firstIntervalId);
       expect(priceService["listeners"].size).toBe(2);
@@ -107,11 +86,7 @@ describe("PriceService", () => {
 
     it("should stop polling when last listener is removed", () => {
       const ref = priceService.getNextId();
-      priceService.startPolling(
-        ref,
-        mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
-      );
+      priceService.startPolling(ref, mockSetNativeCurrencyPrice);
       priceService.stopPolling(ref);
 
       expect(priceService["intervalId"]).toBeNull();
@@ -122,16 +97,8 @@ describe("PriceService", () => {
       const ref1 = priceService.getNextId();
       const ref2 = priceService.getNextId();
 
-      priceService.startPolling(
-        ref1,
-        mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
-      );
-      priceService.startPolling(
-        ref2,
-        mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
-      );
+      priceService.startPolling(ref1, mockSetNativeCurrencyPrice);
+      priceService.startPolling(ref2, mockSetNativeCurrencyPrice);
 
       priceService.stopPolling(ref1);
 
@@ -140,88 +107,63 @@ describe("PriceService", () => {
     });
 
     it("should notify all listeners of price updates", async () => {
-      const mockListener1 = { native: vi.fn(), strk: vi.fn() };
-      const mockListener2 = { native: vi.fn(), strk: vi.fn() };
+      const mockListener1 = { native: vi.fn() };
+      const mockListener2 = { native: vi.fn() };
 
       const ref1 = priceService.getNextId();
       const ref2 = priceService.getNextId();
 
-      priceService.startPolling(ref1, mockListener1.native, mockListener1.strk);
-      priceService.startPolling(ref2, mockListener2.native, mockListener2.strk);
+      priceService.startPolling(ref1, mockListener1.native);
+      priceService.startPolling(ref2, mockListener2.native);
 
       await vi.advanceTimersByTimeAsync(0);
 
       expect(mockListener1.native).toHaveBeenCalled();
-      expect(mockListener1.strk).toHaveBeenCalled();
       expect(mockListener2.native).toHaveBeenCalled();
-      expect(mockListener2.strk).toHaveBeenCalled();
     });
   });
 
   describe("Price Updates", () => {
-    it("should update prices and notify listeners immediately after starting", async () => {
-      const mockEthPrice = 2000;
-      const mockStrkPrice = 100;
+    it("should update native currency price and notify listeners immediately after starting", async () => {
+      const mockNativePrice = 100;
 
       const ref = priceService.getNextId();
-      priceService.startPolling(
-        ref,
-        mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
-      );
+      priceService.startPolling(ref, mockSetNativeCurrencyPrice);
 
       await vi.advanceTimersByTimeAsync(0);
 
-      expect(mockSetNativeCurrencyPrice).toHaveBeenCalledWith(mockEthPrice);
-      expect(mockSetStrkCurrencyPrice).toHaveBeenCalledWith(mockStrkPrice);
+      expect(mockSetNativeCurrencyPrice).toHaveBeenCalledWith(mockNativePrice);
     });
 
-    it("should update prices on polling interval", async () => {
-      const mockEthPrice = 2000;
-      const mockStrkPrice = 100;
+    it("should update native currency price on polling interval", async () => {
+      const mockNativePrice = 100;
 
       const ref = priceService.getNextId();
-      priceService.startPolling(
-        ref,
-        mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
-      );
+      priceService.startPolling(ref, mockSetNativeCurrencyPrice);
 
       await vi.advanceTimersByTimeAsync(0);
       vi.clearAllMocks();
 
       await vi.advanceTimersByTimeAsync(scaffoldConfig.pollingInterval);
 
-      expect(mockSetNativeCurrencyPrice).toHaveBeenCalledWith(mockEthPrice);
-      expect(mockSetStrkCurrencyPrice).toHaveBeenCalledWith(mockStrkPrice);
+      expect(mockSetNativeCurrencyPrice).toHaveBeenCalledWith(mockNativePrice);
     });
 
     it("should use cached prices when subsequent fetch fails", async () => {
-      const mockEthPrice = 2000;
-      const mockStrkPrice = 100;
+      const mockNativePrice = 100;
 
       mockFetch.mockImplementationOnce((url: string) => {
-        if (url.includes("ETH")) {
+        if (url === "/api/price") {
           return Promise.resolve({
             ok: true,
-            json: () => Promise.resolve({ ethereum: { usd: mockEthPrice } }),
-          });
-        }
-        if (url.includes("STRK")) {
-          return Promise.resolve({
-            ok: true,
-            json: () => Promise.resolve({ starknet: { usd: mockStrkPrice } }),
+            json: () => Promise.resolve({ starknet: { usd: mockNativePrice } }),
           });
         }
         return Promise.reject(new Error("Unknown URL"));
       });
 
       const ref = priceService.getNextId();
-      priceService.startPolling(
-        ref,
-        mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
-      );
+      priceService.startPolling(ref, mockSetNativeCurrencyPrice);
 
       await vi.advanceTimersByTimeAsync(0);
 
@@ -232,8 +174,7 @@ describe("PriceService", () => {
 
       await vi.advanceTimersByTimeAsync(scaffoldConfig.pollingInterval);
 
-      expect(mockSetNativeCurrencyPrice).toHaveBeenCalledWith(mockEthPrice);
-      expect(mockSetStrkCurrencyPrice).toHaveBeenCalledWith(mockStrkPrice);
+      expect(mockSetNativeCurrencyPrice).toHaveBeenCalledWith(mockNativePrice);
     });
   });
 
@@ -245,11 +186,7 @@ describe("PriceService", () => {
       );
 
       const ref = priceService.getNextId();
-      priceService.startPolling(
-        ref,
-        mockSetNativeCurrencyPrice,
-        mockSetStrkCurrencyPrice,
-      );
+      priceService.startPolling(ref, mockSetNativeCurrencyPrice);
 
       // Should not throw error
       await expect(priceService["fetchPrices"]()).resolves.not.toThrow();
@@ -269,24 +206,18 @@ describe("PriceService", () => {
     it("should retry failed requests up to maximum attempts", async () => {
       const mockError = new Error("Network error");
       mockFetch
-        // First attempt (ETH + STRK)
+        // First attempt
         .mockRejectedValueOnce(mockError)
+        // Second attempt
         .mockRejectedValueOnce(mockError)
-        // Second attempt (ETH + STRK)
-        .mockRejectedValueOnce(mockError)
-        .mockRejectedValueOnce(mockError)
-        // Third attempt (ETH + STRK)
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () => Promise.resolve({ ethereum: { usd: 2000 } }),
-        })
+        // Third attempt
         .mockResolvedValueOnce({
           ok: true,
           json: () => Promise.resolve({ starknet: { usd: 100 } }),
         });
 
       await priceService["fetchPrices"]();
-      expect(mockFetch).toHaveBeenCalledTimes(6); // 3次尝试 × 2个币种 = 6次调用
+      expect(mockFetch).toHaveBeenCalledTimes(3); // 3 attempts
     });
 
     it("should handle non-200 API responses", async () => {
@@ -303,22 +234,21 @@ describe("PriceService", () => {
   });
 
   describe("Price Getters", () => {
-    it("should return current prices", () => {
-      const mockEthPrice = 2000;
-      const mockStrkPrice = 100;
+    it("should return current native currency price", () => {
+      const mockNativePrice = 100;
 
-      priceService["currentNativeCurrencyPrice"] = mockEthPrice;
-      priceService["currentStrkCurrencyPrice"] = mockStrkPrice;
+      priceService["currentNativeCurrencyPrice"] = mockNativePrice;
 
-      expect(priceService.getCurrentNativeCurrencyPrice()).toBe(mockEthPrice);
-      expect(priceService.getCurrentStrkCurrencyPrice()).toBe(mockStrkPrice);
+      expect(priceService.getCurrentNativeCurrencyPrice()).toBe(
+        mockNativePrice,
+      );
     });
   });
 
   describe("Resource Cleanup", () => {
     it("should properly clean up resources when stopping polling", () => {
       const ref = priceService.getNextId();
-      priceService.startPolling(ref, vi.fn(), vi.fn());
+      priceService.startPolling(ref, vi.fn());
 
       const intervalId = priceService["intervalId"];
       priceService.stopPolling(ref);
@@ -335,10 +265,8 @@ describe("PriceService", () => {
 
     it("should handle duplicate polling starts with same reference", () => {
       const ref = priceService.getNextId();
-      priceService.startPolling(ref, vi.fn(), vi.fn());
-      expect(() =>
-        priceService.startPolling(ref, vi.fn(), vi.fn()),
-      ).not.toThrow();
+      priceService.startPolling(ref, vi.fn());
+      expect(() => priceService.startPolling(ref, vi.fn())).not.toThrow();
     });
   });
 });

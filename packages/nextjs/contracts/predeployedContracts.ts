@@ -4,10 +4,7 @@
  */
 
 import {
-  devnetEthClassHash,
   devnetStrkClassHash,
-  universalEthAddress,
-  sepoliaMainnetEthClassHash,
   universalStrkAddress,
   sepoliaMainnetStrkClassHash,
   universalErc20Abi,
@@ -15,11 +12,6 @@ import {
 
 const preDeployedContracts = {
   devnet: {
-    Eth: {
-      address: universalEthAddress,
-      abi: universalErc20Abi,
-      classHash: devnetEthClassHash,
-    },
     Strk: {
       address: universalStrkAddress,
       abi: universalErc20Abi,
@@ -27,11 +19,6 @@ const preDeployedContracts = {
     },
   },
   sepolia: {
-    Eth: {
-      address: universalEthAddress,
-      abi: universalErc20Abi,
-      classHash: sepoliaMainnetEthClassHash,
-    },
     Strk: {
       address: universalStrkAddress,
       abi: universalErc20Abi,
@@ -39,11 +26,6 @@ const preDeployedContracts = {
     },
   },
   mainnet: {
-    Eth: {
-      address: universalEthAddress,
-      abi: universalErc20Abi,
-      classHash: sepoliaMainnetEthClassHash,
-    },
     Strk: {
       address: universalStrkAddress,
       abi: universalErc20Abi,

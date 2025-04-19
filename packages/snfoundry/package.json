@@ -19,7 +19,7 @@
     "@types/prettier": "^2",
     "@types/yargs": "^17.0.32",
     "globals": "^15.8.0",
-    "shx": "^0.3.4",
+    "shx": "^0.4.0",
     "ts-node": "^10.9.2",
     "typescript": "^5",
     "typescript-eslint": "^7.16.1",
@@ -29,7 +29,7 @@
     "dotenv": "^16.3.1",
     "envfile": "^6.18.0",
     "prettier": "^2.8.8",
-    "starknet": "^6.24.0",
+    "starknet": "^7.1.0",
     "toml": "^3.0.0",
     "tslib": "^2.6.2"
   },

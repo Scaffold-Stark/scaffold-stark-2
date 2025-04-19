@@ -62,7 +62,7 @@ const baseNumberType = new Set([
 const baseHexType = new Set(["core::felt252"]);
 const baseType = new Set([
   "core::starknet::contract_address::ContractAddress",
-  "core::starknet::eth_address::EthAddress",
+  "core::starknet::eth_address::EthAddress", // Kept for backward compatibility
   "core::starknet::class_hash::ClassHash",
   "core::felt252",
   "core::integer::u512",

@@ -31,7 +31,7 @@ export const isCairoContractAddress = (
   type.includes("core::starknet::contract_address::ContractAddress");
 
 export const isCairoEthAddress = (type: string): type is CairoEthAddress =>
-  type.includes("core::starknet::eth_address::EthAddress");
+  type.includes("core::starknet::eth_address::EthAddress"); // Kept for backward compatibility
 
 export const isCairoClassHash = (type: string): type is CairoClassHash =>
   type.includes("core::starknet::class_hash::ClassHash");

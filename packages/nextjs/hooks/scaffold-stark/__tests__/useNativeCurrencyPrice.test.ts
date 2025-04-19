@@ -20,7 +20,6 @@ vi.mock("~~/services/web3/PriceService", () => ({
 
 describe("useNativeCurrencyPrice", () => {
   const mockSetNativeCurrencyPrice = vi.fn();
-  const mockSetStrkCurrencyPrice = vi.fn();
   const mockIds = {
     first: 123,
     second: 124,
@@ -29,10 +28,7 @@ describe("useNativeCurrencyPrice", () => {
   beforeEach(() => {
     // Setup mocks
     vi.mocked(useGlobalState).mockImplementation((selector) => {
-      if (selector.toString().includes("setNativeCurrencyPrice")) {
-        return mockSetNativeCurrencyPrice;
-      }
-      return mockSetStrkCurrencyPrice;
+      return mockSetNativeCurrencyPrice;
     });
 
     vi.mocked(priceService.getNextId).mockReturnValue(mockIds.first);
@@ -49,7 +45,6 @@ describe("useNativeCurrencyPrice", () => {
     expect(priceService.startPolling).toHaveBeenCalledWith(
       mockIds.first.toString(),
       mockSetNativeCurrencyPrice,
-      mockSetStrkCurrencyPrice,
     );
   });
 
@@ -82,7 +77,6 @@ describe("useNativeCurrencyPrice", () => {
     expect(priceService.startPolling).toHaveBeenCalledWith(
       mockIds.first.toString(),
       mockSetNativeCurrencyPrice,
-      mockSetStrkCurrencyPrice,
     );
   });
 
@@ -98,13 +92,11 @@ describe("useNativeCurrencyPrice", () => {
       1,
       mockIds.first.toString(),
       mockSetNativeCurrencyPrice,
-      mockSetStrkCurrencyPrice,
     );
     expect(priceService.startPolling).toHaveBeenNthCalledWith(
       2,
       mockIds.second.toString(),
       mockSetNativeCurrencyPrice,
-      mockSetStrkCurrencyPrice,
     );
 
     unmount1();

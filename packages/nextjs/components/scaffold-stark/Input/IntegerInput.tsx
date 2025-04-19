@@ -56,7 +56,7 @@ export const IntegerInput = ({
         !disableMultiplyBy1e18 && (
           <div
             className="space-x-4 flex tooltip tooltip-top tooltip-primary before:content-[attr(data-tip)] before:right-[-10px] before:left-auto before:transform-none text-white"
-            data-tip="Multiply by 10^18 (wei)"
+            data-tip="Multiply by 10^18"
           >
             <button
               className={`${
