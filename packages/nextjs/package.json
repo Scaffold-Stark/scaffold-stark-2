@@ -12,6 +12,7 @@
     "vercel:yolo": "vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "postinstall": "shx cp -n .env.example .env",
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
