@@ -149,7 +149,6 @@ npm install
 yarn start
 ```
 
-
 Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
 
 5. Check your environment variables. We have a yarn postinstall script that helps to fill in your environment variables. If the environment variable does not exist, you can fill them it manually to get the app running!
@@ -170,6 +169,7 @@ We use Playwright for end-to-end testing. Setup steps:
 cd ui-automation/extensions
 unzip -q argentx.zip
 cd ../
+npm install
 ```
 
 6. Run UI tests: `npm test -- --headed`
@@ -300,7 +300,6 @@ Commands:
 | test:nextjs | Runs the nextjs tests                        |
 | vercel      | Deploys app to vercel                        |
 | vercel:yolo | Force deploy app to vercel (ignoring errors) |
-
 
 ## **What's next**
 
