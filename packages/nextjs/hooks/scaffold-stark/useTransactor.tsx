@@ -17,6 +17,7 @@ import {
 
 type TransactionFunc = (
   tx: Call[],
+  withSendTransaction?: boolean,
   // | SendTransactionParameters,
 ) => Promise<string | undefined>;
 
@@ -104,7 +105,10 @@ export const useTransactor = (
     }
   }, [txResult]);
 
-  const writeTransaction = async (tx: Call[]): Promise<string | undefined> => {
+  const writeTransaction = async (
+    tx: Call[],
+    withSendTransaction: boolean = true,
+  ): Promise<string | undefined> => {
     resetStates();
     if (!walletClient) {
       notification.error("Cannot access account");
@@ -121,13 +125,64 @@ export const useTransactor = (
       notificationId = notification.loading(
         <TxnNotification message="Awaiting for user confirmation" />,
       );
-      if (tx != null) {
+      if (tx != null && withSendTransaction) {
         // Tx is already prepared by the caller
         const result = await sendTransactionInstance.sendAsync(tx);
         if (typeof result === "string") {
           transactionHash = result;
         } else {
           transactionHash = result.transaction_hash;
+        }
+      } else if (tx != null) {
+        try {
+          // First try to estimate fees
+          const estimatedFee = await walletClient.estimateInvokeFee(
+            tx as Call[],
+          );
+
+          // Use estimated fee with a safety margin (multiply by 1.5)
+          const maxFee =
+            (BigInt(estimatedFee.overall_fee) * BigInt(15)) / BigInt(10);
+
+          // Set RPC 0.8 compatible parameters with estimated fees
+          const txOptions = {
+            version: constants.TRANSACTION_VERSION.V3,
+            maxFee: "0x" + maxFee.toString(16),
+          };
+
+          transactionHash = (await walletClient.execute(tx, txOptions))
+            .transaction_hash;
+        } catch (feeEstimationError) {
+          console.warn(
+            "Fee estimation failed, using fallback values:",
+            feeEstimationError,
+          );
+
+          // Fallback to safe default values if estimation fails
+          const txOptions = {
+            version: constants.TRANSACTION_VERSION.V3,
+            // Use a reasonable maxFee value that won't exceed account balance
+            maxFee: "0x1000000000",
+            // Set resource bounds for RPC 0.8 compatibility
+            resourceBounds: {
+              l1_gas: {
+                max_amount: "0x1000000",
+                max_price_per_unit: "0x1",
+              },
+              l2_gas: {
+                max_amount: "0x1000000",
+                max_price_per_unit: "0x1",
+              },
+            },
+            // Add l1_data_gas field for RPC 0.8 compatibility
+            l1_data_gas: {
+              max_amount: "0x1000000",
+              max_price_per_unit: "0x1",
+            },
+          };
+
+          transactionHash = (await walletClient.execute(tx, txOptions))
+            .transaction_hash;
         }
       } else {
         throw new Error("Incorrect transaction passed to transactor");
