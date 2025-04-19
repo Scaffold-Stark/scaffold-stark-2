@@ -97,7 +97,7 @@ If your `starknet-devnet` version is not `0.3.0`, you need to install it.
 
 ## Requirements (Alternative Option with Docker)
 
-As an alternative to installing the tools locally, you can use Docker, this is the recommended option for `Windows` users. Here's what you need to do:
+As an alternative to installing the tools locally (Scarb, Starknet Foundry, Starknet Devnet), you can use Docker, this is the recommended option for `Windows` users. Here's what you need to do:
 
 1. Install [Docker](https://www.docker.com/get-started/)
 2. Install [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
@@ -120,7 +120,7 @@ To start using the Docker-based setup:
 
 To get started with Scaffold-Stark, follow the steps below:
 
-1. Clone this repo and install dependencies
+1. Install the latest version of Scaffold-Stark
 
 ```bash
 npx create-stark@latest
@@ -196,7 +196,7 @@ Visit your app on: `http://localhost:3000`. You can interact with your smart con
 
 </details>
 
-## RPC specific version
+## Setup RPC specific version
 
 <details>
 
@@ -296,31 +296,6 @@ Commands:
   - `yarn test:nextjs` to run regular tests with watch mode
   - `yarn test:nextjs run` to run regular tests without watch mode
   - `yarn test:nextjs run --coverage` to run regular tests without watch mode with coverage
-
-</details>
-
-## External Image Source Configuration
-
-<details>
-
-In the `next.config.mjs`, we've set up external image sources using `remotePatterns` to allow fetching assets from specific domains. This is particularly useful for loading images or assets from external servers or services.
-
-```javascript
-remotePatterns: [
-  // External image source for StarkNet ID identicons
-  {
-    protocol: "https",
-    hostname: "identicon.starknet.id",
-    pathname: "/**", // Allows all paths under this domain
-  },
-  // External image source for images hosted on Starkurabu
-  {
-    protocol: "https",
-    hostname: "img.starkurabu.com",
-    pathname: "/**",
-  },
-],
-```
 
 </details>
 
