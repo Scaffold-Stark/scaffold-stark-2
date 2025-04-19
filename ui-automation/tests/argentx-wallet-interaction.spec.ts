@@ -7,13 +7,44 @@ import { chromium } from "@playwright/test";
 import { StrkDebugPage } from "./pages/StrkDebugPage";
 
 import path = require("path");
+import fs = require("fs");
 
 const ARGENT_WALLET_ADDRESS = "0x0525628B7D03332237B7fe1e919b9DeDe66004a1eEc33885D97A512df87077b2"
 const TRANSFER_AMOUNT = "1";
 const isDocker = process.cwd().includes('/app');
 
+const modifyScaffoldConfig = (fromNetwork: string, toNetwork: string) => {
+  if (isDocker) {
+    return;
+  }
+
+  const scaffoldConfigPath = path.resolve(__dirname, "../../packages/nextjs/scaffold.config.ts");
+
+  if (fs.existsSync(scaffoldConfigPath)) {
+    let content = fs.readFileSync(scaffoldConfigPath, 'utf8');
+    
+    // Replace the network in the targetNetworks array
+    content = content.replace(
+      new RegExp(`targetNetworks: \\[chains\\.${fromNetwork}\\]`), 
+      `targetNetworks: [chains.${toNetwork}]`
+    );
+    
+    fs.writeFileSync(scaffoldConfigPath, content);
+    console.log(`Modified scaffold.config.ts to use ${toNetwork} instead of ${fromNetwork}`);
+  } else {
+    console.warn("scaffold.config.ts not found at expected path");
+  }
+};
+
+const editScaffoldConfig = () => {
+  modifyScaffoldConfig('devnet', 'sepolia');
+};
+
+const revertScaffoldConfig = () => {
+  modifyScaffoldConfig('sepolia', 'devnet');
+};
+
 const launchContextWithExtension = async (extensionName: "argentx") => {
-  
   const extensionPath = isDocker
     ? `/app/extensions/${extensionName}`
     : path.resolve(__dirname, `../extensions/${extensionName}`);
@@ -41,9 +72,11 @@ const expect = test.expect;
 test("Test interact with STRK contract using Argent X wallet", async () => {
   test.setTimeout(120000);
 
+  editScaffoldConfig();
+
   const { page } = await launchContextWithExtension("argentx");
 
-  try {  
+  try {
     await page.waitForTimeout(5000);
 
     const context = page.context();
@@ -60,13 +93,7 @@ test("Test interact with STRK contract using Argent X wallet", async () => {
       const argentXWalletPage = new ArgentXWalletPage(extension);
       await argentXWalletPage.restoreWallet("MyS3curePass!");
 
-      if (isDocker) {
-        await argentXWalletPage.switchNetwork("Sepolia");
-      } else {
-        await argentXWalletPage.changeDevnetUrl("http://localhost:5050");
-        await argentXWalletPage.switchNetwork("Devnet");
-        await argentXWalletPage.fundAccountInDevnet();
-      }
+      await argentXWalletPage.switchNetwork("Sepolia");
 
       await navigateAndWait(page, endpoint.BASE_URL);
 
@@ -113,5 +140,9 @@ test("Test interact with STRK contract using Argent X wallet", async () => {
       true,
       `Failed to connect with Argent X wallet: ${error instanceof Error ? error.message : String(error)}`
     );
+  } finally {
+    revertScaffoldConfig();
+
+    await page.waitForTimeout(2000);
   }
 });
