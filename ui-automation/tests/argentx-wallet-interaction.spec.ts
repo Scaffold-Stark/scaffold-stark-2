@@ -13,7 +13,7 @@ const ARGENT_WALLET_ADDRESS = "0x0525628B7D03332237B7fe1e919b9DeDe66004a1eEc3388
 const TRANSFER_AMOUNT = "1";
 const isDocker = process.cwd().includes('/app');
 
-const modifyScaffoldConfig = (fromNetwork: string, toNetwork: string) => {
+const modifyLocalScaffoldConfig = (fromNetwork: string, toNetwork: string) => {
   if (isDocker) {
     return;
   }
@@ -37,11 +37,11 @@ const modifyScaffoldConfig = (fromNetwork: string, toNetwork: string) => {
 };
 
 const editScaffoldConfig = () => {
-  modifyScaffoldConfig('devnet', 'sepolia');
+  modifyLocalScaffoldConfig('devnet', 'sepolia');
 };
 
 const revertScaffoldConfig = () => {
-  modifyScaffoldConfig('sepolia', 'devnet');
+  modifyLocalScaffoldConfig('sepolia', 'devnet');
 };
 
 const launchContextWithExtension = async (extensionName: "argentx") => {
