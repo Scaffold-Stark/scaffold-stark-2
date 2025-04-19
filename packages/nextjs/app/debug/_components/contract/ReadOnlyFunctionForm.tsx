@@ -22,12 +22,16 @@ type ReadOnlyFunctionFormProps = {
   contractAddress: Address;
   abiFunction: AbiFunction;
   abi: Abi;
+  testBtnId?: string;
+  testResultId?: string;
 };
 
 export const ReadOnlyFunctionForm = ({
   contractAddress,
   abiFunction,
   abi,
+  testBtnId,
+  testResultId,
 }: ReadOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
     getInitialFormState(abiFunction),
@@ -94,7 +98,10 @@ export const ReadOnlyFunctionForm = ({
           {data !== null && data !== undefined && (
             <div className="bg-input text-sm px-4 py-1.5 break-words">
               <p className="font-bold m-0 mb-1">Result:</p>
-              <pre className="whitespace-pre-wrap break-words">
+              <pre
+                className="whitespace-pre-wrap break-words"
+                data-testid={testResultId}
+              >
                 {decodeContractResponse({
                   resp: data,
                   abi,
@@ -114,6 +121,7 @@ export const ReadOnlyFunctionForm = ({
           data-tip={`${getTopErrorMessage(formErrorMessage)}`}
         >
           <button
+            data-testid={testBtnId}
             className="btn bg-gradient-dark btn-sm shadow-none border-none text-white"
             onClick={handleRead}
             disabled={(inputValue && isFetching) || isError(formErrorMessage)}

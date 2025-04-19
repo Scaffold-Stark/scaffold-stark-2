@@ -13,6 +13,7 @@ type InputBaseProps<T> = CommonInputProps<T> & {
   prefix?: ReactNode;
   suffix?: ReactNode;
   reFocus?: boolean;
+  testInputId?: string;
 };
 
 export const InputBase = <
@@ -27,6 +28,7 @@ export const InputBase = <
   prefix,
   suffix,
   reFocus,
+  testInputId,
 }: InputBaseProps<T>) => {
   const inputReft = useRef<HTMLInputElement>(null);
 
@@ -62,6 +64,7 @@ export const InputBase = <
     <div className={`flex bg-input text-accent ${modifier}`}>
       {prefix}
       <input
+        data-testid={testInputId}
         className="input input-ghost focus-within:border-transparent focus:outline-none focus:bg-transparent h-[2.2rem] min-h-[2.2rem] px-4 border w-full text-xs placeholder:text-[#9596BF] text-neutral rounded-none"
         placeholder={placeholder}
         name={name}

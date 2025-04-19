@@ -1,0 +1,54 @@
+services:
+  starknet-devnet:
+    image: shardlabs/starknet-devnet-rs:0.2.4
+    pull_policy: missing
+    command: --seed 0 --account-class cairo1
+    ports:
+      - "5050:5050"
+    networks:
+      - scaffold-stark-network
+
+  nextjs:
+    build:
+      context: ..
+      dockerfile: ui-automation/Dockerfile.nextjs
+      args:
+        - RPC_URL_DEVNET=http://starknet-devnet:5050
+        - NEXT_PUBLIC_RPC_URL_DEVNET=http://starknet-devnet:5050
+    pull_policy: missing
+    depends_on:
+      - starknet-devnet
+    ports:
+      - "3000:3000"
+    environment:
+      - RPC_URL_DEVNET=http://starknet-devnet:5050
+      - NEXT_PUBLIC_RPC_URL_DEVNET=http://starknet-devnet:5050
+    networks:
+      - scaffold-stark-network
+    entrypoint: ["/docker-entrypoint.sh"]
+
+  playwright:
+    build:
+      context: ..
+      dockerfile: ui-automation/Dockerfile.playwright
+      no_cache: true
+    pull_policy: always
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: none
+    depends_on:
+      - nextjs
+    shm_size: "2gb"
+    environment:
+      - BASE_URL=http://nextjs:3000
+      - PLAYWRIGHT_BROWSER_CHROMIUM_CHANNEL=chrome
+    volumes:
+      - ./test-results:/app/test-results
+    command: tail -f /dev/null
+    networks:
+      - scaffold-stark-network
+
+networks:
+  scaffold-stark-network:
+    driver: bridge

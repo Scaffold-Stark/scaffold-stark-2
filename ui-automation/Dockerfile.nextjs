@@ -1,0 +1,36 @@
+FROM starknetfoundation/starknet-dev:2.9.4
+
+USER root
+
+RUN apt-get update && \
+    apt-get install -y curl sudo && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && \
+    sudo apt-get update && \
+    sudo apt-get install -y nodejs && \
+    sudo rm -rf /var/lib/apt/lists/*
+
+RUN if ! command -v yarn >/dev/null || [ "$(yarn --version)" != "1.22.19" ]; then \
+    echo "Installing yarn@1.22.19..."; \
+    rm -f /usr/local/bin/yarn /usr/local/bin/yarnpkg; \
+    npm install -g yarn@1.22.19; \
+else \
+    echo "Yarn 1.22.19 is already installed."; \
+fi
+
+ARG RPC_URL_DEVNET
+ARG NEXT_PUBLIC_RPC_URL_DEVNET
+
+ENV RPC_URL_DEVNET=${RPC_URL_DEVNET}
+ENV NEXT_PUBLIC_RPC_URL_DEVNET=${NEXT_PUBLIC_RPC_URL_DEVNET}
+
+WORKDIR /app
+
+COPY . .
+
+RUN yarn install
+COPY ./ui-automation/docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
