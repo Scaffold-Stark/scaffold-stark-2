@@ -1,0 +1,28 @@
+name: Run E2E Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run docker compose
+        uses: hoverkraft-tech/compose-action@v2.0.1
+        with:
+          compose-file: "./ui-automation/docker-compose.yml"
+          up-flags: "--build -d"
+
+      - name: Wait for services and run tests
+        run: |
+          chmod +x ./ui-automation/start.sh
+          ./ui-automation/start.sh
