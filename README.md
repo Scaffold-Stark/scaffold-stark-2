@@ -45,19 +45,19 @@ curl -sSf https://raw.githubusercontent.com/starkware-libs/starkup/main/install.
 
 ### Scarb version
 
-To ensure the proper functioning of scaffold-stark, your `Scarb` version must be `2.11.3`. To accomplish this, first check Scarb version:
+To ensure the proper functioning of scaffold-stark, your `Scarb` version must be `2.11.4`. To accomplish this, first check Scarb version:
 
 ```sh
 scarb --version
 ```
 
-If your `Scarb` version is not `2.11.3`, you need to install it. If you already have installed `Scarb` via `starkup`, you can setup this specific version with the following command:
+If your `Scarb` version is not `2.11.4`, you need to install it. If you already have installed `Scarb` via `starkup`, you can setup this specific version with the following command:
 
 ```sh
-asdf install scarb 2.11.3 && asdf set scarb 2.11.3
+asdf install scarb 2.11.4 && asdf set scarb 2.11.4
 ```
 
-Otherwise, you can install Scarb `2.11.3` following the [instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf).
+Otherwise, you can install Scarb `2.11.4` following the [instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf).
 
 ### Starknet Foundry version
 
@@ -90,9 +90,9 @@ If your `starknet-devnet` version is not `0.3.0`, you need to install it.
 ## Compatible versions
 
 - Starknet-devnet - v0.3.0
-- Scarb - v2.11.3
+- Scarb - v2.11.4
 - Snforge - v0.41.0
-- Cairo - v2.11.2
+- Cairo - v2.11.4
 - Rpc - v0.8.0
 
 ## Requirements (Alternative Option with Docker)
@@ -102,7 +102,7 @@ As an alternative to installing the tools locally (Scarb, Starknet Foundry, Star
 1. Install [Docker](https://www.docker.com/get-started/)
 2. Install [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 3. Use the provided `devcontainer.json` file to set up the environment:
-   - The configuration uses the `starknetfoundation/starknet-dev:2.11.3` image.
+   - The configuration uses the `starknetfoundation/starknet-dev:2.11.4` image.
    - This includes all required tools pre-installed, such as Scarb, Starknet Foundry, Starknet Devnet and other dependencies.
 
 ### Getting Started with Docker Setup
