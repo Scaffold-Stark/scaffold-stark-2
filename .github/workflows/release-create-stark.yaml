@@ -81,6 +81,7 @@ jobs:
             --exclude='.github/*' \          # Exclude everything else directly under .github
             --exclude='.github/workflows/*' \ # Exclude everything else under .github/workflows
             source_repo/ destination_repo/templates/base
+          cd destination_repo
           git add .
           git commit -m "chore: sync files from scaffold-stark-2 [skip ci]"
 
