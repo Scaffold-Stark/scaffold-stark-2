@@ -25,4 +25,4 @@ jobs:
       - name: Wait for services and run tests
         run: |
           chmod +x ./ui-automation/start.sh
-          ./ui-automation/start.sh
+          ./ui-automation/start.sh --ci
