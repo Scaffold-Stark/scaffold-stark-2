@@ -22,13 +22,10 @@ const isGitKeepRegex = /\.gitkeep/;
 
 // Additional files/directories to exclude from template copying
 const excludePatterns = [
-  /\.github\//,               // GitHub specific files
+  /\.github\//,               // GitHub specific files todo: add workflows/main.yml later
   /CHANGELOG\.md/,            // Changelog file
-  // /CONTRIBUTING\.md/,         // Contributing guide
-  /\.devcontainer\.json/,     // Dev container configuration
   /\.editorconfig/,           // Editor configuration
-  /\.tool-versions/,          // Tool versions config is project-specific
-  /deploy\.config\.ts/,       // Deployment configs might be project-specific
+  /__test__/,                 // Test directories at any nesting level
 ];
 
 const copyBaseFiles = async (
