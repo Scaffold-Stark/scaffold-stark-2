@@ -39,6 +39,7 @@ export const ContractWriteMethods = ({
           abiFunction={fn}
           onChange={onChange}
           contractAddress={deployedContractData.address}
+          testBtnId={`btn-${fn.name}`}
           //   inheritedFrom={inheritedFrom}
         />
       ))}

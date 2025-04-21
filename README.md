@@ -145,12 +145,40 @@ By default `Scaffold-Stark` takes the first prefunded account from `starknet-dev
 5. On a third terminal, start your NextJS app:
 
 ```bash
+yarn install
 yarn start
 ```
 
 Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
 
 5. Check your environment variables. We have a yarn postinstall script that helps to fill in your environment variables. If the environment variable does not exist, you can fill them it manually to get the app running!
+
+### Automated UI Testing
+
+We use Playwright for end-to-end testing. Setup steps:
+
+#### Local Env
+
+1. Install dependencies: `yarn install`
+2. Start local chain: `yarn chain`
+3. Deploy sample contract: `yarn deploy`
+4. Start NextJS app: `yarn start`
+5. Unzip the extension:
+
+```bash
+cd ui-automation/extensions
+unzip -q argentx.zip
+cd ../
+npm install
+```
+
+6. Run UI tests: `npm test -- --headed`
+
+#### Docker Env
+
+```bash
+bash start.sh
+```
 
 ## Quickstart with Sepolia Testnet
 
@@ -272,7 +300,6 @@ Commands:
 | test:nextjs | Runs the nextjs tests                        |
 | vercel      | Deploys app to vercel                        |
 | vercel:yolo | Force deploy app to vercel (ignoring errors) |
-
 
 ## **What's next**
 

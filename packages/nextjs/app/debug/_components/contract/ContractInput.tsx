@@ -45,6 +45,7 @@ export const ContractInput = ({
   const inputProps = {
     name: stateObjectKey,
     value: form?.[stateObjectKey],
+    testInputId: `input-${paramType.name}`,
     placeholder: paramType.name
       ? `${displayType(paramType.type)} ${paramType.name}`
       : displayType(paramType.type),
@@ -66,6 +67,7 @@ export const ContractInput = ({
           parentForm={form}
           setParentForm={setForm}
           setFormErrorMessage={setFormErrorMessage}
+          testId={paramType.type}
           isDisabled={isDisabled}
         />
       );
@@ -112,6 +114,7 @@ export const ContractInput = ({
             // @ts-ignore
             (member) => member.name === paramType.type,
           )}
+          testId={paramType.type}
           isDisabled={isDisabled}
         />
       );

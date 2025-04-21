@@ -1,0 +1,40 @@
+# Get the latest version of Playwright
+FROM mcr.microsoft.com/playwright:v1.46.1   
+
+
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=0
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+
+RUN apt-get update && apt-get install -y \
+    libnss3 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libxkbcommon0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \ 
+    unzip
+
+# Set the work directory
+WORKDIR /app
+
+# Copy package files
+COPY ui-automation/package.json /app/
+COPY ui-automation/tests/ /app/tests/
+COPY ui-automation/tsconfig.json /app/
+COPY ui-automation/playwright.config.ts /app/
+
+# Copy extensions
+COPY ui-automation/extensions/ /app/extensions/
+
+# Unzip extensions into folders
+RUN unzip -o -q /app/extensions/argentx.zip -d /app/extensions
+
+# Install Node dependencies
+RUN npm install
