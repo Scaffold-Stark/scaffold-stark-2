@@ -83,13 +83,10 @@ export const useScaffoldMultiWriteContract = <
         }
       })();
 
-      // setIsMining(true);
       return await sendTxnWrapper(parsedCalls);
     } catch (e: any) {
       throw e;
-    } finally {
-      // setIsMining(false);
-    }
+    } 
   };
 
   return {

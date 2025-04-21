@@ -18,7 +18,6 @@ import {
 type TransactionFunc = (
   tx: Call[],
   withSendTransaction?: boolean,
-  // | SendTransactionParameters,
 ) => Promise<string | undefined>;
 
 interface UseTransactorReturn {

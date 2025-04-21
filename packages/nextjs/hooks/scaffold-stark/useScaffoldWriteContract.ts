@@ -68,13 +68,10 @@ export const useScaffoldWriteContract = <
         : [];
 
       try {
-        // setIsMining(true);
         return await sendTxnWrapper(newCalls as any[]);
       } catch (e: any) {
         throw e;
-      } finally {
-        // setIsMining(false);
-      }
+      } 
     },
     [
       args,
