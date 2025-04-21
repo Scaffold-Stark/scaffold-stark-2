@@ -24,7 +24,6 @@ const isGitKeepRegex = /\.gitkeep/;
 const excludePatterns = [
   /\.github\//,               // GitHub specific files todo: add workflows/main.yml later
   /CHANGELOG\.md/,            // Changelog file
-  /\.editorconfig/,           // Editor configuration
   /__test__/,                 // Test directories at any nesting level
 ];
 
