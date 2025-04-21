@@ -3,7 +3,13 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-docker compose up --build -d
+if [[ "$1" == "--ci" ]]; then
+  echo "Running in CI mode"
+  docker compose up -d
+else
+  echo "Running in local mode"
+  docker compose up --build -d
+fi
 
 echo "Waiting for services to start..."
 while ! curl -s http://localhost:5050 > /dev/null || ! curl -s http://localhost:3000 > /dev/null; do

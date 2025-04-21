@@ -6,6 +6,7 @@
   "private": true,
   "workspaces": {
     "packages": [
+      "ui-automation",
       "packages/snfoundry",
       "packages/nextjs"
     ]

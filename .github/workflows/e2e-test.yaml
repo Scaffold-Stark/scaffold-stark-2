@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  run-e2e-tests:
     runs-on: ubuntu-latest
 
     steps:
