@@ -24,7 +24,7 @@ const isGitKeepRegex = /\.gitkeep/;
 const excludePatterns = [
   /\.github\//,               // GitHub specific files todo: add workflows/main.yml later
   /CHANGELOG\.md/,            // Changelog file
-  /__test__/,                 // Test directories at any nesting level
+  /__test.*__/,               // All test directories (__test__, __tests__, etc.)
 ];
 
 const copyBaseFiles = async (
