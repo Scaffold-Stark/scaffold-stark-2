@@ -74,9 +74,15 @@ jobs:
       - name: Copy Files to Destination Repository
         run: |
           rsync -av --delete \
-            --exclude='.git' \
-            --include='.github/workflows/main.yml' \
-            --exclude='.github/**' \
+            --exclude='.git/' \
+            --include='.github/' \          # MUST include parent dir to allow descent
+            --include='.github/workflows/' \ # MUST include parent dir to allow descent
+            --include='.github/workflows/main.yml' \ # Specifically include the file
+            --exclude='.github/*' \          # Exclude everything else directly under .github
+            --exclude='.github/workflows/*' \ # Exclude everything else under .github/workflows
+            --exclude='__test*__' \
+            --exclude='CHANGELOG*' \
+            --exclude='CONTRIBUTING*' \
             source_repo/ destination_repo/templates/base
           cd destination_repo
           git add .
