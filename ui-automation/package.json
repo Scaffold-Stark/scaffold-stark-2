@@ -6,7 +6,9 @@
     "test": "playwright test --workers=1",
     "clear-test-results": "rimraf test-results/*",
     "test-html-report": "playwright test --browser=all --reporter=html",
-    "test-json-report": "PLAYWRIGHT_JSON_OUTPUT_NAME=results.json playwright test --browser=chromium --reporter=json"
+    "test-json-report": "PLAYWRIGHT_JSON_OUTPUT_NAME=results.json playwright test --browser=chromium --reporter=json",
+    "e2e:run": "bash start.sh",
+    "e2e:clean": "bash clear.sh"
   },
   "author": "Q3 Labs",
   "license": "MIT",

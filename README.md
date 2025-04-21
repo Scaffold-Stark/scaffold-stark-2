@@ -145,7 +145,7 @@ By default `Scaffold-Stark` takes the first prefunded account from `starknet-dev
 5. On a third terminal, start your NextJS app:
 
 ```bash
-npm install
+yarn install
 yarn start
 ```
 
