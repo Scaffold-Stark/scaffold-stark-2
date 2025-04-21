@@ -20,6 +20,17 @@ const isNextGeneratedRegex = /packages\/nextjs\/generated/;
 const isArgsRegex = /([^\/\\]*?)\.args\./;
 const isGitKeepRegex = /\.gitkeep/;
 
+// Additional files/directories to exclude from template copying
+const excludePatterns = [
+  /\.github\//,               // GitHub specific files
+  /CHANGELOG\.md/,            // Changelog file
+  // /CONTRIBUTING\.md/,         // Contributing guide
+  /\.devcontainer\.json/,     // Dev container configuration
+  /\.editorconfig/,           // Editor configuration
+  /\.tool-versions/,          // Tool versions config is project-specific
+  /deploy\.config\.ts/,       // Deployment configs might be project-specific
+];
+
 const copyBaseFiles = async (
     { dev: isDev }: Options,
     basePath: string,
@@ -34,7 +45,10 @@ const copyBaseFiles = async (
       const isNextGenerated = isNextGeneratedRegex.test(fileName);
       const isGitKeep = isGitKeepRegex.test(fileName);
 
-      const skipAlways = isTemplate || isPackageJson || isGitKeep;
+      // Check if file matches any exclude pattern
+      const isExcluded = excludePatterns.some(pattern => pattern.test(fileName));
+
+      const skipAlways = isTemplate || isPackageJson || isGitKeep || isExcluded;
       const skipDevOnly = isYarnLock || isNextGenerated;
       const shouldSkip = skipAlways || (isDev && skipDevOnly);
 
