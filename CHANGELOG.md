@@ -1,5 +1,11 @@
 # create-stark
 
+## Unreleased
+
+- Cli: don't prompt for install, use skip-install argurment instead
+- Optimize template cloning by excluding unnecessary files
+- Add patterns to filter out development and project-specific files
+
 ## 0.0.12
 
 - Add .env by default for nextjs and snfoundry

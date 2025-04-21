@@ -9,5 +9,12 @@ export default {
     format: "es",
     sourcemap: true,
   },
-  plugins: [nodeResolve(), autoExternal(), typescript({ exclude: ["templates/**"] })],
+  plugins: [
+    nodeResolve(), 
+    autoExternal(), 
+    typescript({ 
+      include: ["src/**/*.ts"],
+      exclude: ["templates/**"] 
+    })
+  ],
 };
