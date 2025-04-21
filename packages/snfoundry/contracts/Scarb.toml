@@ -15,7 +15,7 @@ openzeppelin_utils = "1.0.0"
 snforge_std = "0.38.2"
 
 [[target.starknet-contract]]
-casm = true # taggle this to `false` to speed up compilation/script tests
+casm = true # taggle this to false to speed up compilation/script tests
 
 [tool.fmt]
 sort-module-level-items = true
