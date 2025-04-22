@@ -76,14 +76,19 @@ export const useScaffoldEventHistory = <
   }, [targetNetwork.rpcUrls.public.http]);
 
   const readEvents = async (fromBlock?: bigint) => {
+    if (!enabled) {
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     try {
-      if (!deployedContractData) {
-        throw new Error("Contract not found");
+      if (deployedContractLoading) {
+        return;
       }
 
-      if (!enabled) {
-        throw new Error("Hook disabled");
+      if (!deployedContractData) {
+        throw new Error("Contract not found");
       }
 
       const event = (deployedContractData.abi as Abi).find(
@@ -227,7 +232,7 @@ export const useScaffoldEventHistory = <
 
   return {
     data: eventHistoryData,
-    isLoading: isLoading,
+    isLoading: isLoading || deployedContractLoading,
     error: error,
   };
 };
