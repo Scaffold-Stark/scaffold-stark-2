@@ -34,7 +34,7 @@ export const ManageTransaction: React.FC<ManageTransactionProps> = ({
   };
 
   const getMaxQuorumValue = () => {
-    return signers.length;
+    return signers.length + 1;
   };
 
   return (
