@@ -22,6 +22,9 @@ import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
 import { composeEventFilterKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
 
 const MAX_KEYS_COUNT = 16;
+// Increased chunk size from 100 to 1000 for better performance
+const CHUNK_SIZE = 1000;
+
 /**
  * Reads events from a deployed contract
  * @param config - The config settings
@@ -106,42 +109,104 @@ export const useScaffoldEventHistory = <
           );
         }
         keys = keys.slice(0, MAX_KEYS_COUNT);
-        const rawEventResp = await publicClient.getEvents({
-          chunk_size: 100,
-          keys,
-          address: deployedContractData?.address,
-          from_block: { block_number: Number(fromBlock || fromBlockUpdated) },
-          to_block: { block_number: blockNumber },
-        });
-        if (!rawEventResp) {
-          return;
+        
+        // Using adaptive block range fetching for better performance
+        const startBlock = BigInt(fromBlock || fromBlockUpdated);
+        const endBlock = BigInt(blockNumber);
+        
+        let currentBlock = startBlock;
+        let averageBlockPerCall = 1000n; // Start with a reasonable block range
+        const newEvents = [];
+        
+        while (currentBlock < endBlock) {
+          // Adjust block range if we're near the end
+          if (endBlock - currentBlock < averageBlockPerCall) {
+            averageBlockPerCall = endBlock - currentBlock;
+          }
+          
+          const blockRangeEvents = await publicClient.getEvents({
+            chunk_size: CHUNK_SIZE,
+            keys,
+            address: deployedContractData?.address,
+            from_block: { block_number: Number(currentBlock) },
+            to_block: { block_number: Number(currentBlock + averageBlockPerCall) },
+          });
+          
+          if (!blockRangeEvents) {
+            break;
+          }
+          
+          const logs = blockRangeEvents.events;
+          const totalEvents = logs.length;
+          
+          // Dynamically adjust block range based on returned events
+          if (totalEvents < CHUNK_SIZE) {
+            // Process the events
+            for (let i = logs.length - 1; i >= 0; i--) {
+              newEvents.push({
+                event,
+                log: logs[i],
+                block:
+                  blockData && logs[i].block_hash === null
+                    ? null
+                    : await publicClient.getBlockWithTxHashes(logs[i].block_hash),
+                transaction:
+                  transactionData && logs[i].transaction_hash !== null
+                    ? await publicClient.getTransactionByHash(
+                        logs[i].transaction_hash,
+                      )
+                    : null,
+                receipt:
+                  receiptData && logs[i].transaction_hash !== null
+                    ? await publicClient.getTransactionReceipt(
+                        logs[i].transaction_hash,
+                      )
+                    : null,
+              });
+            }
+            
+            // Increase block range for efficiency if we're well under the limit
+            currentBlock += averageBlockPerCall + 1n;
+            
+            if (totalEvents > 0) {
+              const increaseFactor = BigInt(Math.floor(CHUNK_SIZE / totalEvents));
+              if (increaseFactor > 1n) {
+                averageBlockPerCall *= increaseFactor;
+              }
+            }
+          } else if (averageBlockPerCall > 1n) {
+            // We hit the chunk size limit, reduce block range to avoid missing events
+            averageBlockPerCall /= 2n;
+          } else {
+            // We're at minimum block range (1) and still hitting limit - process what we can
+            for (let i = logs.length - 1; i >= 0; i--) {
+              newEvents.push({
+                event,
+                log: logs[i],
+                block:
+                  blockData && logs[i].block_hash === null
+                    ? null
+                    : await publicClient.getBlockWithTxHashes(logs[i].block_hash),
+                transaction:
+                  transactionData && logs[i].transaction_hash !== null
+                    ? await publicClient.getTransactionByHash(
+                        logs[i].transaction_hash,
+                      )
+                    : null,
+                receipt:
+                  receiptData && logs[i].transaction_hash !== null
+                    ? await publicClient.getTransactionReceipt(
+                        logs[i].transaction_hash,
+                      )
+                    : null,
+              });
+            }
+            currentBlock += 1n; // Move to next block
+          }
         }
-        const logs = rawEventResp.events;
+        
         setFromBlockUpdated(BigInt(blockNumber + 1));
 
-        const newEvents = [];
-        for (let i = logs.length - 1; i >= 0; i--) {
-          newEvents.push({
-            event,
-            log: logs[i],
-            block:
-              blockData && logs[i].block_hash === null
-                ? null
-                : await publicClient.getBlockWithTxHashes(logs[i].block_hash),
-            transaction:
-              transactionData && logs[i].transaction_hash !== null
-                ? await publicClient.getTransactionByHash(
-                    logs[i].transaction_hash,
-                  )
-                : null,
-            receipt:
-              receiptData && logs[i].transaction_hash !== null
-                ? await publicClient.getTransactionReceipt(
-                    logs[i].transaction_hash,
-                  )
-                : null,
-          });
-        }
         if (events && typeof fromBlock === "undefined") {
           setEvents([...newEvents, ...events]);
         } else {
