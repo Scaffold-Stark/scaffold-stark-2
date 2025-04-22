@@ -23,7 +23,7 @@ pub mod YourContract {
     impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
     impl OwnableInternalImpl = OwnableComponent::InternalImpl<ContractState>;
 
-    pub const STRK_CONTRACT_ADDRESS: felt252 =
+    pub const FELT_STRK_CONTRACT: felt252 =
         0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d;
 
     #[event]
@@ -77,7 +77,7 @@ pub mod YourContract {
                 Option::Some(amount_strk) => {
                     // In `Debug Contract` or UI implementation, call `approve` on STRK contract
                     // before invoking fn set_greeting()
-                    let strk_contract_address: ContractAddress = STRK_CONTRACT_ADDRESS
+                    let strk_contract_address: ContractAddress = FELT_STRK_CONTRACT
                         .try_into()
                         .unwrap();
                     let strk_dispatcher = IERC20Dispatcher {
@@ -101,7 +101,7 @@ pub mod YourContract {
         }
         fn withdraw(ref self: ContractState) {
             self.ownable.assert_only_owner();
-            let strk_contract_address = STRK_CONTRACT_ADDRESS.try_into().unwrap();
+            let strk_contract_address = FELT_STRK_CONTRACT.try_into().unwrap();
             let strk_dispatcher = IERC20Dispatcher { contract_address: strk_contract_address };
             let balance = strk_dispatcher.balance_of(get_contract_address());
             strk_dispatcher.transfer(self.ownable.owner(), balance);
