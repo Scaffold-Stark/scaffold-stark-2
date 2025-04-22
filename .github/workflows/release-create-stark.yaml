@@ -56,6 +56,8 @@ jobs:
             echo "type=major" >> "$GITHUB_ENV"
           elif [[ "$commit_message" == *"[minor]"* ]]; then
             echo "type=minor" >> "$GITHUB_ENV"
+          elif [[ "$commit_message" == *"[prerelease]"* ]]; then
+            echo "type=prerelease --preid=rc" >> "$GITHUB_ENV"
           else
             echo "type=patch" >> "$GITHUB_ENV"
           fi
