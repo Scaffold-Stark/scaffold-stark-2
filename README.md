@@ -77,19 +77,19 @@ Otherwise, you can install Starknet Foundry `0.41.0` following the [instructions
 
 ### Starknet-devnet version
 
-To ensure the proper functioning of scaffold-stark, your `starknet-devnet` version must be `0.3.0`. To accomplish this, first check your `starknet-devnet` version:
+To ensure the proper functioning of scaffold-stark, your `starknet-devnet` version must be `0.4.0`. To accomplish this, first check your `starknet-devnet` version:
 
 ```sh
 starknet-devnet --version
 ```
 
-If your `starknet-devnet` version is not `0.3.0`, you need to install it.
+If your `starknet-devnet` version is not `0.4.0`, you need to install it.
 
-- Install starknet-devnet `0.3.0` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
+- Install starknet-devnet `0.4.0` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
 
 ## Compatible versions
 
-- Starknet-devnet - v0.3.0
+- Starknet-devnet - v0.4.0
 - Scarb - v2.11.4
 - Snforge - v0.41.0
 - Cairo - v2.11.4
