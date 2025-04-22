@@ -62,7 +62,7 @@ export const fetchProfileFromApi = async (address: string) => {
 
     // Suppress known "no data" error, log all others
     if (!error.message.includes("No data found")) {
-      console.log("Error fetching profile from API: ", error);
+      console.error("Error fetching profile from API: ", error);
     } else {
       console.log(`The above error is because there is no profile for address: ${address}`);
     }
