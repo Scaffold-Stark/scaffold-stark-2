@@ -9,6 +9,19 @@ import { useSendTransaction } from "@starknet-react/core";
 import { vi, describe, beforeEach, afterAll, it, expect } from "vitest";
 import { Mock } from "vitest";
 
+// Mock starknet Contract constructor
+vi.mock("starknet", () => {
+  return {
+    Contract: vi.fn().mockImplementation(() => ({
+      populate: vi.fn().mockReturnValue({
+        contractAddress: "0x123",
+        entrypoint: "transfer",
+        calldata: ["0x1234", "1000"],
+      }),
+    })),
+  };
+});
+
 // Mock dependencies
 vi.mock("~~/hooks/scaffold-stark", () => ({
   useDeployedContractInfo: vi.fn(),
@@ -24,21 +37,43 @@ vi.mock("@starknet-react/core", () => ({
   useNetwork: vi.fn().mockReturnValue({ chain: { id: 1 } }),
 }));
 
-// TODO: unskip (and rewrite if required) when we determine direction of this hook
-describe.skip("useScaffoldWriteContract", () => {
-  const contractName = "Eth";
+// Now using the test without skipping as it has been updated for the new structure
+describe("useScaffoldWriteContract", () => {
+  const contractName = "Strk";
   const functionName = "transfer";
   const args: readonly [string, number] = ["0x1234", 1000];
 
   const mockUseDeployedContractInfo =
     useDeployedContractInfo as unknown as Mock;
-  const mochUseSendTransaction = useSendTransaction as unknown as Mock;
+  const mockUseSendTransaction = useSendTransaction as unknown as Mock;
   const mockUseTransactor = useTransactor as unknown as Mock;
   const mockUseTargetNetwork = useTargetNetwork as unknown as Mock;
 
   beforeEach(() => {
     // Reset all mocks before each test
     vi.clearAllMocks();
+
+    // Set up the mock implementations for the hooks
+    mockUseSendTransaction.mockReturnValue({
+      sendAsync: vi.fn(),
+      status: "idle",
+    });
+
+    mockUseTransactor.mockReturnValue({
+      writeTransaction: vi.fn().mockResolvedValue("mock-tx-hash"),
+      sendTransactionInstance: {
+        sendAsync: vi.fn(),
+        status: "idle",
+      },
+      transactionReceiptInstance: {
+        data: null,
+        status: "idle",
+      },
+    });
+
+    mockUseTargetNetwork.mockReturnValue({
+      targetNetwork: { id: 1, network: "testnet" },
+    });
   });
 
   afterAll(() => {
@@ -47,12 +82,6 @@ describe.skip("useScaffoldWriteContract", () => {
 
   it("should handle case where contract is not deployed", async () => {
     mockUseDeployedContractInfo.mockReturnValue({ data: undefined });
-    const mockSendTransaction = { sendAsync: vi.fn() };
-    mochUseSendTransaction.mockReturnValue(mockSendTransaction);
-    mockUseTransactor.mockReturnValue(vi.fn());
-    mockUseTargetNetwork.mockReturnValue({
-      targetNetwork: { id: 1 },
-    });
 
     const { result } = renderHook(() =>
       useScaffoldWriteContract({
@@ -66,7 +95,7 @@ describe.skip("useScaffoldWriteContract", () => {
       await result.current.sendAsync();
     });
 
-    expect(mockSendTransaction.sendAsync).not.toHaveBeenCalled();
+    expect(mockUseTransactor().writeTransaction).not.toHaveBeenCalled();
   });
 
   it("should handle case where user is on the wrong network", async () => {
@@ -76,11 +105,9 @@ describe.skip("useScaffoldWriteContract", () => {
         abi: [{ name: "testFunction" }],
       },
     });
-    const mockSendTransaction = { sendAsync: vi.fn() };
-    mochUseSendTransaction.mockReturnValue(mockSendTransaction);
-    mockUseTransactor.mockReturnValue(vi.fn());
+
     mockUseTargetNetwork.mockReturnValue({
-      targetNetwork: { id: 2 }, // Different network ID
+      targetNetwork: { id: 2, network: "mainnet" }, // Different network ID
     });
 
     const { result } = renderHook(() =>
@@ -95,7 +122,7 @@ describe.skip("useScaffoldWriteContract", () => {
       await result.current.sendAsync();
     });
 
-    expect(mockSendTransaction.sendAsync).not.toHaveBeenCalled();
+    expect(mockUseTransactor().writeTransaction).not.toHaveBeenCalled();
   });
 
   it("should send transaction when contract is deployed and user is on correct network", async () => {
@@ -105,12 +132,6 @@ describe.skip("useScaffoldWriteContract", () => {
         abi: [{ name: "testFunction" }],
       },
     });
-    const mockSendTransaction = { sendAsync: vi.fn() };
-    mochUseSendTransaction.mockReturnValue(mockSendTransaction);
-    mockUseTransactor.mockReturnValue(vi.fn((fn) => fn()));
-    mockUseTargetNetwork.mockReturnValue({
-      targetNetwork: { id: 1 },
-    });
 
     const { result } = renderHook(() =>
       useScaffoldWriteContract({
@@ -124,13 +145,14 @@ describe.skip("useScaffoldWriteContract", () => {
       await result.current.sendAsync();
     });
 
-    expect(mockSendTransaction.sendAsync).toHaveBeenCalledWith([
-      {
-        contractAddress: "0x123",
-        entrypoint: functionName,
-        calldata: expect.any(Array),
-      },
-    ]);
+    expect(mockUseTransactor().writeTransaction).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({
+          contractAddress: "0x123",
+          entrypoint: functionName,
+        }),
+      ]),
+    );
   });
 
   it("should call useDeployedContractInfo with the correct contract name", () => {

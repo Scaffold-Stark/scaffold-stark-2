@@ -6,22 +6,25 @@ edition = "2024_07"
 # See more keys and their definitions at https://docs.swmansion.com/scarb/docs/reference/manifest.html
 
 [dependencies]
-starknet = "2.9.4"
-# Change to just "openzeppelin" to use full features
-openzeppelin_governance = "1.0.0"
+starknet = "2.11.4"
+openzeppelin_access = "1.0.0"
 openzeppelin_token = "1.0.0"
 
 [dev-dependencies]
-openzeppelin_testing = "1.0.0"
-snforge_std = "0.34.0"
+openzeppelin_utils = "1.0.0"
+openzeppelin_testing = "3.0.0"
+snforge_std = "0.41.0"
 
 [[target.starknet-contract]]
-casm = true
+casm = true # taggle this to `false` to speed up compilation/script tests
+
+[tool.scarb]
+allow-prebuilt-plugins = ["snforge_std"]
 
 [tool.fmt]
 sort-module-level-items = true
 
 [[tool.snforge.fork]]
 name = "SEPOLIA_LATEST"
-url = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
+url = "https://starknet-sepolia.public.blastapi.io/rpc/v0_8"
 block_id.tag = "latest"
