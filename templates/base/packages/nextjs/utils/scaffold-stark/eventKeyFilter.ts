@@ -71,7 +71,7 @@ const mergeArrays = (arrays: any[][]) => {
 
 const certainLengthTypeMap: { [key: string]: string[][] } = {
   "core::starknet::contract_address::ContractAddress": [[]],
-  "core::starknet::eth_address::EthAddress": [[]],
+  "core::starknet::eth_address::EthAddress": [[]], // Kept for backward compatibility
   "core::starknet::class_hash::ClassHash": [[]],
   "core::starknet::storage_access::StorageAddress": [[]],
   "core::bool": [[]],
