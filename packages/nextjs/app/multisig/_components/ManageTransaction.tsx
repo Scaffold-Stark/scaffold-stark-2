@@ -34,7 +34,11 @@ export const ManageTransaction: React.FC<ManageTransactionProps> = ({
   };
 
   const getMaxQuorumValue = () => {
-    return signers.length + 1;
+    if (selectedOption === "add") {
+      return signers.length + 1;
+    } else if (selectedOption === "remove") {
+      return signers.length - 1;
+    }
   };
 
   return (
