@@ -86,7 +86,7 @@ export const useScaffoldMultiWriteContract = <
       return await sendTxnWrapper(parsedCalls);
     } catch (e: any) {
       throw e;
-    } 
+    }
   };
 
   return {

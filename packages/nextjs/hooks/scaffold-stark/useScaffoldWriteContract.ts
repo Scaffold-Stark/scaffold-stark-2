@@ -71,7 +71,7 @@ export const useScaffoldWriteContract = <
         return await sendTxnWrapper(newCalls as any[]);
       } catch (e: any) {
         throw e;
-      } 
+      }
     },
     [
       args,
