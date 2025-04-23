@@ -1,0 +1,64 @@
+name: Sync Main to v3-bulletproof-contracts for E2E Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync-and-update:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Detect changes to .tool-versions
+        id: check_changes
+        run: |
+          git fetch origin v3-bulletproof-contracts
+          git diff origin/v3-bulletproof-contracts..HEAD --name-only > changed_files.txt
+          if grep -q ".tool-versions" changed_files.txt; then
+            echo "tool_changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "tool_changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Extract versions from .tool-versions
+        if: steps.check_changes.outputs.tool_changed == 'true'
+        id: get_versions
+        run: |
+          SCARB_VERSION=$(grep '^scarb ' .tool-versions | awk '{print $2}')
+          DEVNET_VERSION=$(grep '^starknet-devnet ' .tool-versions | awk '{print $2}')
+          echo "scarb_version=$SCARB_VERSION" >> $GITHUB_OUTPUT
+          echo "devnet_version=$DEVNET_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Checkout v3-bulletproof-contracts branch
+        run: |
+          git fetch origin
+          git checkout v3-bulletproof-contracts
+
+      - name: Update Dockerfile and docker-compose.yml
+        if: steps.check_changes.outputs.tool_changed == 'true'
+        run: |
+          sed -i "s|^FROM starknetfoundation/starknet-dev:.*|FROM starknetfoundation/starknet-dev:${{ steps.get_versions.outputs.scarb_version }}|" ui-automation/Dockerfile.nextjs || echo "Dockerfile not found"
+          sed -i "s|image: shardlabs/starknet-devnet-rs:.*|image: shardlabs/starknet-devnet-rs:${{ steps.get_versions.outputs.devnet_version }}|" ui-automation/docker-compose.yml || echo "Compose file not found"
+
+          git add ui-automation/Dockerfile.nextjs ui-automation/docker-compose.yml || echo "No files to add"
+          git commit -m "chore: update Docker versions from .tool-versions [CI]" || echo "No commit needed"
+
+      - name: Merge main into v3-bulletproof-contracts
+        run: |
+          git merge origin/main --no-edit || echo "No changes to merge"
+          git push origin v3-bulletproof-contracts
