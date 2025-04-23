@@ -8,7 +8,7 @@
 
 🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on Starknet blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
 
-⚙️ Built using NextJS, Starknet.js, Scarb, Starknet-React, Starknet Foundry and Typescript.
+⚙️ Built using NextJS, Starknet.js, Scarb, Starknet-React, Starknet Foundry.
 
 - ✅ **Contract Fast Reload**: Your frontend auto-adapts to your smart contracts as you deploy them.
 - 🪝 [**Custom hooks**](https://docs.scaffoldstark.com/hooks/): Collection of React hooks wrapper around [starknet-react](https://starknet-react.com/) to simplify interactions with smart contracts with typescript autocompletion.
@@ -25,62 +25,84 @@ Before you begin, you need to install the following tools:
 - [Node (>= v18.17)](https://nodejs.org/en/download/)
 - Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
 - [Git](https://git-scm.com/downloads)
-- [Rust](https://rust-lang.org/tools/install)
-- [asdf](https://asdf-vm.com/guide/getting-started.html)
-- [Cairo 1.0 extension for VSCode](https://marketplace.visualstudio.com/items?itemName=starkware.cairo1)
 
-### Starknet-devnet version
+### Starkup
 
-To ensure the proper functioning of scaffold-stark, your local `starknet-devnet` version must be `0.2.4`. To accomplish this, first check your local starknet-devnet version:
+Tool for installing all the Starknet essentials for development. [Starkup](https://github.com/software-mansion/starkup) will install the latest stable versions of:
+
+- [Scarb](https://docs.swmansion.com/scarb/) - Cairo package manager and build toolchain
+- [Starknet Foundry](https://foundry-rs.github.io/starknet-foundry/index.html) - Development toolchain for testing on Starknet
+- [asdf](https://asdf-vm.com/guide/getting-started.html) - Version manager to easily switch between tool versions
+- [Cairo 1.0 extension](https://marketplace.visualstudio.com/items?itemName=starkware.cairo1) for VSCode - Syntax highlighting and language support
+
+Currently, [starknet-devnet](https://0xspaceshard.github.io/starknet-devnet/) is not supported by `starkup` and needs to be installed separately (see instructions below).
+
+To install `starkup`, run the following command:
 
 ```sh
-starknet-devnet --version
+curl -sSf https://raw.githubusercontent.com/starkware-libs/starkup/main/install.sh | bash
 ```
-
-If your local starknet-devnet version is not `0.2.4`, you need to install it.
-
-- Install Starknet-devnet `0.2.4` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
 
 ### Scarb version
 
-To ensure the proper functioning of scaffold-stark, your local `Scarb` version must be `2.9.4`. To accomplish this, first check your local Scarb version:
+To ensure the proper functioning of scaffold-stark, your `Scarb` version must be `2.11.4`. To accomplish this, first check Scarb version:
 
 ```sh
 scarb --version
 ```
 
-If your local Scarb version is not `2.9.4`, you need to install it.
+If your `Scarb` version is not `2.11.4`, you need to install it. If you already have installed `Scarb` via `starkup`, you can setup this specific version with the following command:
 
-- Install Scarb `2.9.4` via `asdf` ([instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf)).
+```sh
+asdf install scarb 2.11.4 && asdf set scarb 2.11.4
+```
+
+Otherwise, you can install Scarb `2.11.4` following the [instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf).
 
 ### Starknet Foundry version
 
-To ensure the proper functioning of the tests on scaffold-stark, your Starknet Foundry version must be 0.38.2. To accomplish this, first check your Starknet Foundry version:
+To ensure the proper functioning of the tests on scaffold-stark, your `Starknet Foundry` version must be `0.41.0`. To accomplish this, first check your `Starknet Foundry` version:
 
 ```sh
 snforge --version
 ```
 
-If your Starknet Foundry version is not `0.38.2`, you need to install it.
+If your `Starknet Foundry` version is not `0.41.0`, you need to install it. If you already have installed `Starknet Foundry` via `starkup`, you can setup this specific version with the following command:
 
-- Install Starknet Foundry `0.38.2` via `asdf` ([instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf)).
+```sh
+asdf install starknet-foundry 0.41.0 && asdf set starknet-foundry 0.41.0
+```
+
+Otherwise, you can install Starknet Foundry `0.41.0` following the [instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf).
+
+### Starknet-devnet version
+
+To ensure the proper functioning of scaffold-stark, your `starknet-devnet` version must be `0.4.0`. To accomplish this, first check your `starknet-devnet` version:
+
+```sh
+starknet-devnet --version
+```
+
+If your `starknet-devnet` version is not `0.4.0`, you need to install it.
+
+- Install starknet-devnet `0.4.0` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
 
 ## Compatible versions
 
-- Starknet-devnet - v0.2.4
-- Scarb - v2.9.4
-- Snforge - v0.38.2
-- Cairo - v2.9.4
-- Rpc - v0.7.1
+- Starknet-devnet - v0.4.0
+- Scarb - v2.11.4
+- Snforge - v0.41.0
+- Cairo - v2.11.4
+- Rpc - v0.8.0
 
 ## Requirements (Alternative Option with Docker)
 
-As an alternative to installing the tools locally, you can use Docker. Here's what you need to do:
+As an alternative to installing the tools locally (Scarb, Starknet Foundry, Starknet Devnet), you can use Docker, this is the recommended option for `Windows` users. Here's what you need to do:
 
 1. Install [Docker](https://www.docker.com/get-started/)
 2. Install [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 3. Use the provided `devcontainer.json` file to set up the environment:
-   - The configuration uses the `starknetfoundation/starknet-dev:2.9.2` image.
+   - The configuration uses the `starknetfoundation/starknet-dev:2.11.4` image.
    - This includes all required tools pre-installed, such as Scarb, Starknet Foundry, Starknet Devnet and other dependencies.
 
 ### Getting Started with Docker Setup
@@ -94,15 +116,15 @@ To start using the Docker-based setup:
 
 > Once inside the container, you can start working with all the tools and dependencies pre-configured.
 
-## Quickstart with Starknet-Devnet
+## Quickstart 1: Deploying a Smart Contract to Starknet-Devnet
 
 To get started with Scaffold-Stark, follow the steps below:
 
-1. Clone this repo and install dependencies
+1. Install the latest version of Scaffold-Stark
 
 ```bash
-git clone https://github.com/Scaffold-Stark/scaffold-stark-2.git
-cd scaffold-stark-2
+npx create-stark@latest
+cd my-dapp-example
 yarn install
 ```
 
@@ -149,9 +171,97 @@ yarn install
 yarn start
 ```
 
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
+Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page.
 
-5. Check your environment variables. We have a yarn postinstall script that helps to fill in your environment variables. If the environment variable does not exist, you can fill them it manually to get the app running!
+5. Check your environment variables. We have a `yarn postinstall` script that helps to fill in your environment variables. If the environment variable does not exist, you can fill them it manually to get the app running!
+
+## Quickstart 2: Deploying a Smart Contract to Sepolia Testnet
+
+<details>
+
+1. Make sure you already cloned this repo and installed dependencies.
+
+2. Prepare your environment variables.
+
+Find the `packages/snfoundry/.env` file and fill the env variables related to Sepolia testnet with your own wallet account contract address and private key. Find the `packages/nextjs/.env` file and fill the env variable related to Sepolia testnet rpc url.
+
+3. Change your default network to Sepolia testnet.
+
+Find the `packages/nextjs/scaffold.config.ts` file and change the `targetNetworks` to `[chains.sepolia]`.
+
+![chall-0-scaffold-config](./packages/nextjs/public/scaffold-config.png)
+
+4. Get some testnet tokens.
+
+You will need to get some `STRK` Sepolia tokens to deploy your contract to Sepolia testnet.
+
+> Some popular faucets are [Starknet Faucet](https://starknet-faucet.vercel.app/) and [Blastapi Starknet Sepolia STRK](https://blastapi.io/faucets/starknet-sepolia-strk)
+
+4. Open a terminal, deploy the sample contract to Sepolia testnet:
+
+```bash
+yarn deploy --network sepolia
+```
+
+5. On a second terminal, start your NextJS app:
+
+```bash
+yarn start
+```
+
+Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page.
+
+</details>
+
+## Setup RPC specific version
+
+<details>
+
+To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, your RPC version must be `0.8.0`. This repository contains `.env.example` files, where we provided the default RPC URL for the Starknet Testnet: `RPC_URL_SEPOLIA=https://starknet-sepolia.public.blastapi.io/rpc/v0_8`. Let's verify this RPC version is `0.8.x` by calling a `POST` request in an API platform like `Postman` or `Insommia` . Your API endpoint should be `https://starknet-sepolia.public.blastapi.io/rpc/v0_8` and the body should be:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "starknet_specVersion",
+  "id": 1
+}
+```
+
+You have to paste the endpoint and body in the API platform and click on the `Send` button. If the response is `0.8.x`, then you are good to go. Otherwise, you have to get the correct RPC URL endpoint.
+
+![rpc-version](./packages/nextjs/public/rpc-version.png)
+
+</details>
+
+
+## Network Configuration Centralization
+
+<details>
+
+By default, Network settings are centralized in `scaffold.config.ts` with all RPC URLs defined in the `rpcProviderUrl` object. We strongly recommend to use environment variables to configure the networks, otherwise the framework will choose a random provider for you.
+
+**How to Change Networks:**
+
+- Update the `targetNetworks` array in `scaffold.config.ts` (first network is the primary target)
+- Ensure each network has a corresponding RPC URL in the `rpcProviderUrl` object
+
+### Required Environment Variables
+
+Set these in your `.env` file:
+
+- `NEXT_PUBLIC_DEVNET_PROVIDER_URL`
+- `NEXT_PUBLIC_SEPOLIA_PROVIDER_URL`
+- `NEXT_PUBLIC_MAINNET_PROVIDER_URL`
+
+Configuration uses these variables with fallbacks:
+
+```typescript
+"devnet": process.env.NEXT_PUBLIC_DEVNET_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || "",
+"sepolia": process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || "",
+"mainnet": process.env.NEXT_PUBLIC_MAINNET_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || ""
+```
+
+</details>
 
 ### Automated UI Testing
 
@@ -180,96 +290,17 @@ npm install
 bash start.sh
 ```
 
-## Quickstart with Sepolia Testnet
-
-<details>
-
-1. Make sure you already cloned this repo and installed dependencies.
-
-2. Prepare your environment variables.
-
-Find the `packages/snfoundry/.env` file and fill the env variables related to Sepolia testnet with your own wallet account contract address and private key.
-
-3. Change your default network to Sepolia testnet.
-
-Find the `packages/nextjs/scaffold.config.ts` file and change the `targetNetworks` to `[chains.sepolia]`.
-
-![chall-0-scaffold-config](./packages/nextjs/public/scaffold-config.png)
-
-4. Get some testnet tokens.
-
-You will need to get some `ETH` or `STRK` Sepolia tokens to deploy your contract to Sepolia testnet.
-
-> Some popular faucets are [Starknet Faucet](https://starknet-faucet.vercel.app/) and [Blastapi Starknet Sepolia Eth](https://blastapi.io/faucets/starknet-sepolia-eth)
-
-4. Open a terminal, deploy the sample contract to Sepolia testnet:
-
-```bash
-yarn deploy --network sepolia
-```
-
-5. On a second terminal, start your NextJS app:
-
-```bash
-yarn start
-```
-
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
-
-### RPC specific version
-
-To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, your RPC version must be `0.7.1`. This repository contains a `.env.example` file, where we provided the default RPC URL for the Starknet Testnet: `RPC_URL_SEPOLIA=https://starknet-sepolia.public.blastapi.io/rpc/v0_7`. Let's verify this RPC version is `0.7.1` by calling a `POST` request in an API platform like `Postman` or `Insommia` . Your API endpoint should be `https://starknet-sepolia.public.blastapi.io/rpc/v0_7` and the body should be:
-
-```json
-{
-  "jsonrpc": "2.0",
-  "method": "starknet_specVersion",
-  "id": 1
-}
-```
-
-You have to paste the endpoint and body in the API platform and click on the `Send` button. If the response is `0.7.1`, then you are good to go. Otherwise, you have to get the correct RPC URL endpoint.
-
-![rpc-version](./packages/nextjs/public/rpc-version.png)
-
-</details>
-
-## Network Configuration Centralization
-
-We've streamlined RPC provider configuration by centralizing network settings in `scaffold.config.ts`. All RPC URLs are now defined in the `rpcProviderUrl` object, and functions reference this centralized configuration instead of using environment variables directly.
-
-**How to Change Networks:**
-
-- Update the `targetNetworks` array in `scaffold.config.ts`.
-- The first network in this array is used as the primary target.
-- Ensure each network has a corresponding RPC URL specified in the `rpcProviderUrl` object.
-
-### Required Environment Variables
-
-For the network configuration to work correctly, you must set the following environment variables in your `.env` file:
-
-- `NEXT_PUBLIC_DEVNET_PROVIDER_URL`
-- `NEXT_PUBLIC_SEPOLIA_PROVIDER_URL`
-- `NEXT_PUBLIC_MAINNET_PROVIDER_URL`
-
-These variables are used in the configuration to assign the correct RPC URLs:
-
-```typescript
-"devnet": process.env.NEXT_PUBLIC_DEVNET_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || "",
-"sepolia": process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || "",
-"mainnet": process.env.NEXT_PUBLIC_MAINNET_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || ""
-```
-
-### RPC specific version
-
-To ensure the proper functioning of Scaffold-Stark with Testnet or Mainnet, your RPC version must be `0.7.1`. This repository contains a `.env.example` file with the default RPC URL for Starknet Testnet:
-
 ## CLI Usage
 
-Depending on your package manager, substitute the work COMMAND with the appropiate one from the list.
+<details>
+Depending on your package manager, substitute the word `COMMAND` with the appropiate one from the list.
 
-   $ yarn COMMAND
-   $ npm run COMMAND
+```bash
+yarn COMMAND
+npm run COMMAND
+```
+
+This repo prefer yarn as package manager.
 
 Commands:
 
@@ -311,6 +342,8 @@ Commands:
   - `yarn test:nextjs` to run regular tests with watch mode
   - `yarn test:nextjs run` to run regular tests without watch mode
   - `yarn test:nextjs run --coverage` to run regular tests without watch mode with coverage
+
+</details>
 
 ## Documentation
 

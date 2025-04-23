@@ -33,8 +33,10 @@ export class StrkDebugPage extends BasePage {
     this.readTab = this.page.getByTestId("Strk-read");
     this.writeTab = this.page.getByTestId("Strk-write");
 
-    this.balanceOfInput = this.page.getByTestId("input-account").nth(2);
-    this.balanceOfReadButton = this.page.getByTestId("btn-balance_of").nth(1);
+    this.balanceOfInput = this.page.locator(
+      'input[name="balance_of_account_core\\:\\:starknet\\:\\:contract_address\\:\\:ContractAddress"]'
+    );
+    this.balanceOfReadButton = this.page.getByTestId("btn-balance_of");
     this.balanceOfResult = this.page.getByTestId("result-balance_of");
 
     this.transferRecipientInput = this.page.locator(
@@ -45,7 +47,7 @@ export class StrkDebugPage extends BasePage {
     );
     this.transferSendButton = this.page
       .getByRole("button", { name: "Send 💸" })
-      .first();
+      .nth(0);
 
     this.approveSpenderInput = this.page.getByRole("textbox", {
       name: "ContractAddress spender",
@@ -63,7 +65,7 @@ export class StrkDebugPage extends BasePage {
     this.allowSpenderInput = this.page.getByRole("textbox", {
       name: "ContractAddress spender",
     });
-    this.allowSendButton = this.page.getByTestId("btn-allowance").nth(1);
+    this.allowSendButton = this.page.getByTestId("btn-allowance");
     this.resultCheckAllow = this.page.getByText("Result:");
   }
 

@@ -39,11 +39,8 @@ export const useScaffoldMultiWriteContract = <
 }) => {
   const { targetNetwork } = useTargetNetwork();
   const { chain } = useNetwork();
-  const sendTxnWrapper = useTransactor();
-
-  // TODO add custom options
-
-  const sendTransactionInstance = useSendTransaction({});
+  const { writeTransaction: sendTxnWrapper, sendTransactionInstance } =
+    useTransactor();
 
   const sendContractWriteTx = async () => {
     if (!chain?.id) {
@@ -55,50 +52,40 @@ export const useScaffoldMultiWriteContract = <
       return;
     }
 
-    if (sendTransactionInstance.sendAsync) {
-      try {
-        // we just parse calldata here so that it will only parse on demand.
-        // use IIFE pattern
-        const parsedCalls = (() => {
-          if (calls) {
-            return calls.map((call) => {
-              if (isRawCall(call)) {
-                return call;
-              }
-              const functionName = call.functionName;
-              const contractName = call.contractName;
-              const unParsedArgs = call.args as any[];
-              const contract = contracts?.[targetNetwork.network]?.[
-                contractName as ContractName
-              ] as Contract<TContractName>;
-              // we convert to starknetjs contract instance here since deployed data may be undefined if contract is not deployed
-              const contractInstance = new StarknetJsContract(
-                contract.abi,
-                contract.address,
-              );
+    try {
+      // we just parse calldata here so that it will only parse on demand.
+      // use IIFE pattern
+      const parsedCalls = (() => {
+        if (calls) {
+          return calls.map((call) => {
+            if (isRawCall(call)) {
+              return call;
+            }
+            const functionName = call.functionName;
+            const contractName = call.contractName;
+            const unParsedArgs = call.args as any[];
+            const contract = contracts?.[targetNetwork.network]?.[
+              contractName as ContractName
+            ] as Contract<TContractName>;
+            // we convert to starknetjs contract instance here since deployed data may be undefined if contract is not deployed
+            const contractInstance = new StarknetJsContract(
+              contract.abi,
+              contract.address,
+            );
 
-              return contractInstance.populate(
-                functionName,
-                unParsedArgs as any[],
-              );
-            });
-          } else {
-            return [];
-          }
-        })();
+            return contractInstance.populate(
+              functionName,
+              unParsedArgs as any[],
+            );
+          });
+        } else {
+          return [];
+        }
+      })();
 
-        // setIsMining(true);
-        return await sendTxnWrapper(() =>
-          sendTransactionInstance.sendAsync(parsedCalls),
-        );
-      } catch (e: any) {
-        throw e;
-      } finally {
-        // setIsMining(false);
-      }
-    } else {
-      notification.error("Contract writer error. Try again.");
-      return;
+      return await sendTxnWrapper(parsedCalls);
+    } catch (e: any) {
+      throw e;
     }
   };
 

@@ -56,6 +56,8 @@ jobs:
             echo "type=major" >> "$GITHUB_ENV"
           elif [[ "$commit_message" == *"[minor]"* ]]; then
             echo "type=minor" >> "$GITHUB_ENV"
+          elif [[ "$commit_message" == *"[prerelease]"* ]]; then
+            echo "type=prerelease --preid=rc" >> "$GITHUB_ENV"
           else
             echo "type=patch" >> "$GITHUB_ENV"
           fi
@@ -73,7 +75,17 @@ jobs:
 
       - name: Copy Files to Destination Repository
         run: |
-          rsync -av --delete --exclude='.git' --exclude='.github/*' --include='.github/workflows/main.yml' --include='.github/workflows/' source_repo/ destination_repo/templates/base
+          rsync -av --delete \
+            --exclude='.git/' \
+            --include='.github/' \
+            --include='.github/workflows/' \
+            --include='.github/workflows/main.yml' \
+            --exclude='.github/*' \
+            --exclude='.github/workflows/*' \
+            --exclude='__test*__' \
+            --exclude='CHANGELOG*' \
+            --exclude='CONTRIBUTING*' \
+            source_repo/ destination_repo/templates/base
           cd destination_repo
           git add .
           git commit -m "chore: sync files from scaffold-stark-2 [skip ci]"
