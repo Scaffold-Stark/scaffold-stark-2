@@ -23,10 +23,7 @@ echo "Running tests in parallel"
 docker compose exec playwright npx playwright test $TEST_FILES --reporter=list --workers=2
 
 echo "Modifying config for Sepolia..."
-sed -i 's/chains.devnet/chains.sepolia/g' packages/nextjs/scaffold.config.ts
-
-echo "Rebuilding and restarting nextjs service..."
-docker compose up -d --build nextjs
+docker compose exec nextjs sed -i 's/chains.devnet/chains.sepolia/g' packages/nextjs/scaffold.config.ts
 
 echo "Waiting for nextjs to be ready..."
 
