@@ -233,7 +233,6 @@ You have to paste the endpoint and body in the API platform and click on the `Se
 
 </details>
 
-
 ## Network Configuration Centralization
 
 <details>
