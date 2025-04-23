@@ -23,16 +23,22 @@ echo "Running tests in parallel"
 docker compose exec playwright npx playwright test $TEST_FILES --reporter=list --workers=2
 
 echo "Modifying config for Sepolia..."
-docker compose exec nextjs sed -i 's/chains.devnet/chains.sepolia/g' packages/nextjs/scaffold.config.ts
+sed -i 's/chains.devnet/chains.sepolia/g' packages/nextjs/scaffold.config.ts
 
-echo "Waiting 10s for redeploy..."
+echo "Rebuilding and restarting nextjs service..."
+docker compose up -d --build nextjs
 
-sleep 10
+echo "Waiting for nextjs to be ready..."
 
-while ! curl -s http://localhost:3000 > /dev/null; do
+until curl -s http://localhost:3000 > /dev/null; do
     sleep 1
 done
 
 echo "Running argentx test..."
-docker compose exec playwright npx playwright test "/app/tests/argentx-wallet-interaction.spec.ts" --reporter=list
-[ $? -eq 0 ] && echo "✅ argentx test passed" || echo "❌ argentx test failed"
+
+if docker compose exec playwright npx playwright test "/app/tests/argentx-wallet-interaction.spec.ts" --reporter=list; then
+  echo "✅ Test passed"
+else
+  echo "❌ Test failed"
+  exit 1
+fi
