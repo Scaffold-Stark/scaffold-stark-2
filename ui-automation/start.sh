@@ -20,7 +20,13 @@ echo "Starting tests..."
 TEST_FILES=$(find . -name "*.spec.ts" ! -name "argentx-wallet-interaction.spec.ts")
 
 echo "Running tests in parallel"
-docker compose exec playwright npx playwright test $TEST_FILES --reporter=list --workers=2
+
+if docker compose exec playwright npx playwright test $TEST_FILES --reporter=list --workers=2; then
+  echo "✅ Test passed"
+else
+  echo "❌ Test failed"
+  exit 1
+fi
 
 echo "Modifying config for Sepolia..."
 docker compose exec nextjs sed -i 's/chains.devnet/chains.sepolia/g' packages/nextjs/scaffold.config.ts

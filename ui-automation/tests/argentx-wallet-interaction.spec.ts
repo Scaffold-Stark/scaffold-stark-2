@@ -13,6 +13,9 @@ const ARGENT_WALLET_ADDRESS = "0x0525628B7D03332237B7fe1e919b9DeDe66004a1eEc3388
 const TRANSFER_AMOUNT = "1";
 const isDocker = process.cwd().includes('/app');
 
+const testTimestamp = Date.now();
+const testId = `argentx-wallet-interaction-${testTimestamp}`;
+
 const modifyLocalScaffoldConfig = (fromNetwork: string, toNetwork: string) => {
   if (isDocker) {
     return;
@@ -30,21 +33,24 @@ const modifyLocalScaffoldConfig = (fromNetwork: string, toNetwork: string) => {
     );
     
     fs.writeFileSync(scaffoldConfigPath, content);
-    console.log(`Modified scaffold.config.ts to use ${toNetwork} instead of ${fromNetwork}`);
+    console.log(`[${testId}] Modified scaffold.config.ts to use ${toNetwork} instead of ${fromNetwork}`);
   } else {
     console.warn("scaffold.config.ts not found at expected path");
   }
 };
 
 const editScaffoldConfig = () => {
+  console.log(`[${testId}] Editing scaffold config from devnet to sepolia...`);
   modifyLocalScaffoldConfig('devnet', 'sepolia');
 };
 
 const revertScaffoldConfig = () => {
+  console.log(`[${testId}] Reverting scaffold config from sepolia to devnet...`);
   modifyLocalScaffoldConfig('sepolia', 'devnet');
 };
 
 const launchContextWithExtension = async (extensionName: "argentx") => {
+  console.log(`[${testId}] Launching context with ${extensionName} extension...`);
   const extensionPath = isDocker
     ? `/app/extensions/${extensionName}`
     : path.resolve(__dirname, `../extensions/${extensionName}`);
@@ -59,7 +65,7 @@ const launchContextWithExtension = async (extensionName: "argentx") => {
   });
 
   const page = await context.newPage();
-
+  console.log(`[${testId}] Extension context and page launched.`);
   return { context, page };
 };
 
@@ -84,6 +90,7 @@ test("Test interact with STRK contract using Argent X wallet", async () => {
     const debugPage = new StrkDebugPage(page);
 
     await test.step("Restore and connect Argent X wallet", async () => {
+      console.log(`[${testId}] Attempting to find Argent X extension page...`);
       const extension = context.pages().find(p => p.url().startsWith("chrome-extension://"));
 
       if (!extension) {
@@ -91,20 +98,28 @@ test("Test interact with STRK contract using Argent X wallet", async () => {
       }
 
       const argentXWalletPage = new ArgentXWalletPage(extension);
+      console.log(`[${testId}] Restoring wallet...`);
       await argentXWalletPage.restoreWallet("MyS3curePass!");
 
+      console.log(`[${testId}] Switching network to Sepolia...`);
       await argentXWalletPage.switchNetwork("Sepolia");
 
+      console.log(`[${testId}] Navigating to dApp at ${endpoint.BASE_URL}...`);
       await navigateAndWait(page, endpoint.BASE_URL);
 
+      console.log(`[${testId}] Clicking connect button...`);
       await homePage.safeClick(homePage.getConnectButton(), "Connect button");
+
+      console.log(`[${testId}] Clicking Argent X connector...`);
       await homePage.safeClick(
         homePage.getConnecterButton("Argent X"),
         "Argent X button"
       );
 
+      console.log(`[${testId}] Clicking connect in wallet extension...`);
       await argentXWalletPage.clickConnect();
 
+      console.log(`[${testId}] Navigating to debug page...`);
       await homePage.safeClick(
         homePage.getDebugPageLinkButton(),
         "Debug page link button"
@@ -116,23 +131,29 @@ test("Test interact with STRK contract using Argent X wallet", async () => {
     });
 
     await test.step("Read initial balance", async () => {
-      await debugPage.switchToStrkTab();
+      console.log(`[${testId}] Filling balance input with address: ${ARGENT_WALLET_ADDRESS}`);
       await debugPage.fillBalanceOfInput(ARGENT_WALLET_ADDRESS);
+
+      console.log(`[${testId}] Clicking balanceOf read button...`);
       await debugPage.clickBalanceOfReadButton();
 
       const initialBalanceText = await debugPage.getBalanceOfResultText();
+      console.log(`[${testId}] Initial balance: ${initialBalanceText}`);
       expect(initialBalanceText).toContain("Ξ");
     });
 
     await test.step("Send STRK tokens", async () => {
       const argentXWalletPage = new ArgentXWalletPage(context.pages().find(p => p.url().startsWith("chrome-extension://"))!);
-      
+
+      console.log(`[${testId}] Transferring ${TRANSFER_AMOUNT} STRK tokens...`);
       const transferResult = await debugPage.performTransfer(
         ARGENT_WALLET_ADDRESS,
         TRANSFER_AMOUNT,
-        argentXWalletPage
+        argentXWalletPage,
+        true,
       );
 
+      console.log(`[${testId}]  Transfer result: ${JSON.stringify(transferResult)}`);
       expect(transferResult.success).toBe(true);
     });
   } catch (error) {
@@ -140,9 +161,10 @@ test("Test interact with STRK contract using Argent X wallet", async () => {
       true,
       `Failed to connect with Argent X wallet: ${error instanceof Error ? error.message : String(error)}`
     );
+    console.error(`[${testId}] Error occurred:`, error);
   } finally {
     revertScaffoldConfig();
-
     await page.waitForTimeout(2000);
+    console.log(`[${testId}] Test finished. Config reverted and browser paused briefly.`);
   }
 });
