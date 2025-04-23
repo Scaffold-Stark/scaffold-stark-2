@@ -2,9 +2,9 @@ name: Run E2E Tests
 
 on:
   push:
-    branches: [main]
+    branches: [v3-bulletproof-contracts]
   pull_request:
-    branches: [main]
+    branches: [v3-bulletproof-contracts]
 
 jobs:
   run-e2e-tests:
