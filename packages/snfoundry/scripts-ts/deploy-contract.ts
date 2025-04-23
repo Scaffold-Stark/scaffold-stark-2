@@ -10,8 +10,6 @@ import {
   extractContractHashes,
   DeclareContractPayload,
   UniversalDetails,
-  isSierra,
-  TransactionReceipt,
   constants,
 } from "starknet";
 import { DeployContractParams, Network } from "./types";
@@ -60,7 +58,27 @@ const declareIfNot_NotWait = async (
         version: constants.TRANSACTION_VERSION.V3,
       });
       if (networkName === "sepolia" || networkName === "mainnet") {
-        await provider.waitForTransaction(transaction_hash);
+        console.log(
+          yellow("Waiting for declaration transaction to be accepted...")
+        );
+        const receipt = await provider.waitForTransaction(transaction_hash);
+        console.log(
+          yellow("Declaration transaction receipt:"),
+          JSON.stringify(
+            receipt,
+            (_, v) => (typeof v === "bigint" ? v.toString() : v),
+            2
+          )
+        );
+
+        const receiptAny = receipt as any;
+        if (receiptAny.execution_status !== "SUCCEEDED") {
+          const revertReason = receiptAny.revert_reason || "Unknown reason";
+          throw new Error(
+            red(`Declaration failed or reverted. Reason: ${revertReason}`)
+          );
+        }
+        console.log(green("Declaration successful"));
       }
     } catch (e) {
       console.error(red("Error declaring contract:"), e);
@@ -245,11 +263,10 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
       version: constants.TRANSACTION_VERSION.V3,
     });
     if (networkName === "sepolia" || networkName === "mainnet") {
-      const receipt = (await provider.waitForTransaction(
-        transaction_hash
-      )) as TransactionReceipt;
-      if (receipt.execution_status !== "SUCCEEDED") {
-        const revertReason = receipt.revert_reason;
+      const receipt = await provider.waitForTransaction(transaction_hash);
+      const receiptAny = receipt as any;
+      if (receiptAny.execution_status !== "SUCCEEDED") {
+        const revertReason = receiptAny.revert_reason;
         throw new Error(red(`Deploy Calls Failed: ${revertReason}`));
       }
     }
