@@ -168,10 +168,12 @@ export class StrkDebugPage extends BasePage {
    * @param argentXWalletPage (optional) ArgentXWalletPage instance to click confirm transaction
    * @returns Object indicating success or failure with details
    */
-  async performTransfer(recipientAddress: string, amount: string, argentXWalletPage?: ArgentXWalletPage) {
+  async performTransfer(recipientAddress: string, amount: string, argentXWalletPage?: ArgentXWalletPage, isTestnet: boolean = false) {
     try {
       console.log(`Starting STRK transfer of ${amount} to ${recipientAddress}`);
-      await this.switchToStrkTab();
+      if (!isTestnet) {
+        await this.switchToStrkTab();
+      }
       await this.switchToWriteTab();
       await this.fillTransferRecipient(recipientAddress);
       await this.fillTransferAmount(amount);

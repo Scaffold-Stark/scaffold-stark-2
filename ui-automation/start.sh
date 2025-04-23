@@ -20,21 +20,28 @@ echo "Starting tests..."
 TEST_FILES=$(find . -name "*.spec.ts" ! -name "argentx-wallet-interaction.spec.ts")
 
 echo "Running tests in parallel"
-docker compose exec playwright npx playwright test $TEST_FILES --reporter=list --workers=2
+
+if docker compose exec playwright npx playwright test $TEST_FILES --reporter=list --workers=2; then
+  echo "✅ Test passed"
+else
+  echo "❌ Test failed"
+  exit 1
+fi
 
 echo "Modifying config for Sepolia..."
 docker compose exec nextjs sed -i 's/chains.devnet/chains.sepolia/g' packages/nextjs/scaffold.config.ts
 
-echo "Waiting for redeploy..."
-while ! curl -s http://localhost:3000 > /dev/null; do
+echo "Waiting for nextjs to be ready..."
+
+until curl -s http://localhost:3000 > /dev/null; do
     sleep 1
 done
 
 echo "Running argentx test..."
-docker compose exec playwright npx playwright test "/app/tests/argentx-wallet-interaction.spec.ts" --reporter=list
-[ $? -eq 0 ] && echo "✅ argentx test passed" || echo "❌ argentx test failed"
 
-echo "Modifying config for Devnet..."
-docker compose exec nextjs sed -i 's/chains.sepolia/chains.devnet/g' packages/nextjs/scaffold.config.ts
-
-export DEBUG=pw:api
+if docker compose exec playwright npx playwright test "/app/tests/argentx-wallet-interaction.spec.ts" --reporter=list; then
+  echo "✅ Test passed"
+else
+  echo "❌ Test failed"
+  exit 1
+fi
