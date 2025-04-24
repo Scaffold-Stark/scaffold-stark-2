@@ -1,0 +1,113 @@
+name: Speedrun Sync and Update
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+  push:
+    branches: [update/auto-sync-speedrun]
+
+jobs:
+  # check_commit:
+  #   if: github.event.pull_request.merged == true
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     SHOULD_RUN: ${{ steps.check_commit.outputs.SHOULD_RUN }}
+  #   steps:
+  #     - name: Checkout Files
+  #       uses: actions/checkout@v4
+  #       with:
+  #         token: ${{ secrets.ORG_GITHUB_TOKEN }}
+
+  #     - name: check if skip ci
+  #       id: check_commit
+  #       run: |
+  #         COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+  #         if [[ "$COMMIT_MESSAGE" == *"[skip ci]"* ]]; then
+  #           echo "SHOULD_RUN=false" >> "$GITHUB_OUTPUT"
+  #         else
+  #           echo "Match is false"
+  #         fi
+
+  sync-basecamp:
+    # needs: check_commit
+    # if: ${{ needs.check_commit.outputs.SHOULD_RUN != 'false' }}
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - name: Checkout Source Repository
+        uses: actions/checkout@v4
+        with:
+          repository: Scaffold-Stark/scaffold-stark-2
+          token: ${{ secrets.ORG_GITHUB_TOKEN }}
+          path: source_repo
+
+      - name: Checkout Speedrun Repository
+        uses: actions/checkout@v4
+        with:
+          repository: Scaffold-Stark/speedrunstark
+          token: ${{ secrets.ORG_GITHUB_TOKEN }}
+          path: speedrun_repo
+          fetch-depth: 0
+
+      - name: Setup Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Checkout Base Challenge Branch
+        run: |
+          cd speedrun_repo
+          git fetch origin test-base-challenge-template
+          git checkout test-base-challenge-template
+
+      - name: Detect changes to .tool-versions
+        id: check_changes
+        run: |
+          if ! diff -u source_repo/.tool-versions speedrun_repo/.tool-versions > /dev/null; then
+            echo "tool_changed=true" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "tool_changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Sync Base Challenge Branch
+        run: |
+          cd speedrun_repo
+          git checkout test-base-challenge-template
+          rsync -av 
+            --exclude='.git'
+            --exclude='.github'
+            --exclude='README.md'
+            --exclude='__test__'
+            --exclude='__tests__'
+            ../source_repo/ ./
+          git add .
+          git commit -m "chore: sync files from scaffold-stark-2 [skip ci]"
+          git push origin test-base-challenge-template
+
+      # - name: Update Challenge Branches
+      #   run: |
+      #     cd speedrun_repo
+      #     git checkout step-0 && git merge base --no-edit && git push origin step-0
+      #     git checkout step-1 && git merge step-0 --no-edit && git push origin step-1
+      #     git checkout step-2 && git merge step-1 --no-edit && git push origin step-2
+      #     git checkout step-3 && git merge step-2 --no-edit && git push origin step-3
+
+      - name: Notify Slack on Success
+        if: success()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: "Successfully synced scaffold-stark-2 changes to speedrunstark repository and updated all step branches."
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Notify Slack on Failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: ${{ steps.check_changes.outputs.tool_changed == 'true' && 'Detected .tool-versions change in scaffold-stark-2. Please sync manually to speedrunstark.' || 'Failed to sync scaffold-stark-2 changes to speedrunstark repository. Check workflow logs.' }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
