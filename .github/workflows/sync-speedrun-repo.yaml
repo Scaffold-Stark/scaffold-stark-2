@@ -1,4 +1,6 @@
 name: Speedrun Sync and Update
+# Test: now trigger on push to update/auto-sync-speedrun branch for testing
+# Test: only merge to test-base-challenge-tempalte branch for testing
 
 on:
   pull_request:
@@ -66,10 +68,15 @@ jobs:
         run: |
           if ! diff -u source_repo/.tool-versions speedrun_repo/.tool-versions > /dev/null; then
             echo "tool_changed=true" >> $GITHUB_OUTPUT
-            exit 1
           else
             echo "tool_changed=false" >> $GITHUB_OUTPUT
           fi
+
+      - name: Update README
+        if: steps.check_changes.outputs.tool_changed == 'true'
+        run: |
+          cd source_repo
+          python3 readme_sync.py README.md ../speedrunstark/README.md
 
       - name: Sync Base Challenge Branch
         run: |
@@ -108,6 +115,6 @@ jobs:
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: ${{ steps.check_changes.outputs.tool_changed == 'true' && 'Detected .tool-versions change in scaffold-stark-2. Please sync manually to speedrunstark.' || 'Failed to sync scaffold-stark-2 changes to speedrunstark repository. Check workflow logs.' }}
+          slack-message: "Failed to sync scaffold-stark-2 changes to speedrunstark repository."
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
