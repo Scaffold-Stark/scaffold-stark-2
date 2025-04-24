@@ -58,8 +58,8 @@ jobs:
       - name: Checkout Base Challenge Branch
         run: |
           cd speedrun_repo
-          git fetch origin test-base-challenge-template
-          git checkout test-base-challenge-template
+          git fetch origin test-base-challenge-tempalte
+          git checkout test-base-challenge-tempalte
 
       - name: Detect changes to .tool-versions
         id: check_changes
@@ -74,7 +74,7 @@ jobs:
       - name: Sync Base Challenge Branch
         run: |
           cd speedrun_repo
-          git checkout test-base-challenge-template
+          git checkout test-base-challenge-tempalte
           rsync -av 
             --exclude='.git'
             --exclude='.github'
@@ -84,7 +84,7 @@ jobs:
             ../source_repo/ ./
           git add .
           git commit -m "chore: sync files from scaffold-stark-2 [skip ci]"
-          git push origin test-base-challenge-template
+          git push origin test-base-challenge-tempalte
 
       # - name: Update Challenge Branches
       #   run: |
