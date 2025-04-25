@@ -23,7 +23,7 @@ export const isCairoBigInt = (type: string): type is CairoBigInt =>
   /core::integer::(u|i)(64|128)$/.test(type);
 
 export const isCairoU256 = (type: string): type is CairoU256 =>
-  type.includes("core::integer::u256");
+  /core::integer::u256$/.test(type);
 
 export const isCairoContractAddress = (
   type: string,
@@ -31,7 +31,7 @@ export const isCairoContractAddress = (
   type.includes("core::starknet::contract_address::ContractAddress");
 
 export const isCairoEthAddress = (type: string): type is CairoEthAddress =>
-  type.includes("core::starknet::eth_address::EthAddress");
+  type.includes("core::starknet::eth_address::EthAddress"); // Kept for backward compatibility
 
 export const isCairoClassHash = (type: string): type is CairoClassHash =>
   type.includes("core::starknet::class_hash::ClassHash");
@@ -62,6 +62,9 @@ export const isCairoFelt = (type: string): type is CairoFelt =>
 export const isCairoTuple = (type: string): type is CairoTuple =>
   /\(([^)]+)\)/i.test(type);
 
+export const isCairoSpan = (type: string): boolean =>
+  type.includes("core::array::Span");
+
 export const isCairoType = (type: string): boolean => {
   return (
     isCairoInt(type) ||
@@ -77,7 +80,8 @@ export const isCairoType = (type: string): boolean => {
     isCairoByteArray(type) ||
     isCairoSecp256k1Point(type) ||
     isCairoFelt(type) ||
-    isCairoTuple(type)
+    isCairoTuple(type) ||
+    isCairoSpan(type)
   );
 };
 

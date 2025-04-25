@@ -5,6 +5,7 @@ import {
   isCairoArray,
   isCairoOption,
   isCairoResult,
+  isCairoSpan,
   parseGenericType,
 } from "~~/utils/scaffold-stark/types";
 import { formatEther } from "ethers";
@@ -61,7 +62,7 @@ const baseNumberType = new Set([
 const baseHexType = new Set(["core::felt252"]);
 const baseType = new Set([
   "core::starknet::contract_address::ContractAddress",
-  "core::starknet::eth_address::EthAddress",
+  "core::starknet::eth_address::EthAddress", // Kept for backward compatibility
   "core::starknet::class_hash::ClassHash",
   "core::felt252",
   "core::integer::u512",
@@ -111,7 +112,6 @@ const getFieldType = (type: string, abi: Abi): any => {
   }
   return abi.find((item) => item.name === type);
 };
-
 const _decodeContractResponseItem = (
   respItem: any,
   abiType: any,
@@ -160,23 +160,45 @@ const _decodeContractResponseItem = (
     }
     return respItem;
   }
-
   // tuple
   if (abiType.type && /^\([^()]*\)$/.test(abiType.type)) {
-    const tupleTypes: any[] = abiType.type
-      .match(/\(([^)]+)\)/)[1]
-      .split(/\s*,\s*/);
-    if (tupleTypes.length !== Object.keys(respItem).length) {
+    if (respItem === null || respItem === undefined) {
       return "";
     }
-    const decodedArr = tupleTypes.map((type, index) => {
-      return _decodeContractResponseItem(
-        respItem[index],
-        getFieldType(type, abi),
-        abi,
+
+    try {
+      const tupleMatch: RegExpMatchArray | null =
+        abiType.type.match(/\(([^)]+)\)/);
+      if (!tupleMatch || !tupleMatch[1]) {
+        return String(respItem);
+      }
+
+      const tupleTypes: string[] = tupleMatch[1].split(/\s*,\s*/);
+
+      if (typeof respItem !== "object") {
+        return String(respItem);
+      }
+
+      const respKeys: string[] = respItem ? Object.keys(respItem) : [];
+      if (tupleTypes.length !== respKeys.length) {
+        return "";
+      }
+
+      const decodedArr: any[] = tupleTypes.map(
+        (type: string, index: number) => {
+          return _decodeContractResponseItem(
+            respItem[index],
+            getFieldType(type, abi),
+            abi,
+          );
+        },
       );
-    });
-    return `(${decodedArr})`;
+
+      return `(${decodedArr.join(",")})`;
+    } catch (error) {
+      console.error("Error processing tuple:", error);
+      return String(respItem);
+    }
   }
 
   // array
@@ -188,6 +210,22 @@ const _decodeContractResponseItem = (
     }
     return respItem.map((arrItem) =>
       _decodeContractResponseItem(arrItem, getFieldType(arrItemType, abi), abi),
+    );
+  }
+
+  // span
+  if (abiType.name && abiType.name.startsWith("core::array::Span")) {
+    const match = abiType.name.match(/<([^>]+)>/);
+    const spanItemType = match ? match[1] : null;
+    if (!spanItemType || !Array.isArray(respItem)) {
+      return [];
+    }
+    return respItem.map((spanItem) =>
+      _decodeContractResponseItem(
+        spanItem,
+        getFieldType(spanItemType, abi),
+        abi,
+      ),
     );
   }
 
@@ -222,22 +260,73 @@ const _decodeContractResponseItem = (
     return respItem;
   }
 
+  // enum
   if (abiType.type === "enum") {
-    const variant = (respItem as any).variant;
-    const variants = abiType.variants;
-    for (const [enumKey, enumValue] of Object.entries(variant)) {
-      if (enumValue === undefined) {
-        continue;
+    if (respItem === null || respItem === undefined) {
+      return "";
+    }
+
+    if (typeof respItem === "number" || typeof respItem === "bigint") {
+      const enumIndex = Number(respItem);
+      if (Array.isArray(abiType.variants) && abiType.variants[enumIndex]) {
+        return abiType.variants[enumIndex].name;
       }
-      const enumItemDef = (variants || []).find(
-        (item: any) => item.name === enumKey,
-      );
-      if (enumItemDef && enumItemDef.type) {
-        return {
-          [enumKey]: _decodeContractResponseItem(enumValue, enumItemDef, abi),
-        };
+      return enumIndex;
+    }
+
+    if (typeof respItem === "object" && respItem !== null) {
+      if (respItem.variant) {
+        const variant = respItem.variant;
+        const variants = Array.isArray(abiType.variants)
+          ? abiType.variants
+          : [];
+
+        for (const [enumKey, enumValue] of Object.entries(variant)) {
+          if (enumValue === undefined) continue;
+
+          const enumItemDef = variants.find(
+            (item: any) => item.name === enumKey,
+          );
+          if (enumItemDef && enumItemDef.type) {
+            if (abiType.name === "contracts::YourContract::TransactionState") {
+              return enumKey;
+            }
+
+            const processedValue = _decodeContractResponseItem(
+              enumValue,
+              { type: enumItemDef.type },
+              abi,
+            );
+            return { [enumKey]: processedValue };
+          }
+        }
+      }
+
+      const enumKeys = Object.keys(respItem);
+      if (enumKeys.length === 1) {
+        const enumKey = enumKeys[0];
+        const enumValue = respItem[enumKey];
+
+        if (abiType.name === "contracts::YourContract::TransactionState") {
+          return enumKey;
+        }
+
+        const enumVariant = abiType.variants?.find(
+          (v: any) => v.name === enumKey,
+        );
+        if (enumVariant) {
+          const processedValue = _decodeContractResponseItem(
+            enumValue,
+            { type: enumVariant.type },
+            abi,
+          );
+          return { [enumKey]: processedValue };
+        }
+        return { [enumKey]: enumValue };
       }
     }
+
+    return String(respItem);
   }
   return respItem;
 };
@@ -294,7 +383,12 @@ export const displayType = (type: string) => {
   }
 
   // arrays and options
-  else if (isCairoResult(type) || isCairoArray(type) || isCairoOption(type)) {
+  else if (
+    isCairoResult(type) ||
+    isCairoArray(type) ||
+    isCairoOption(type) ||
+    isCairoSpan(type)
+  ) {
     const kindOfArray = type.split("::").at(2);
     const parsed = parseGenericType(type);
 

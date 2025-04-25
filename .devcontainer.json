@@ -1,6 +1,6 @@
 {
-    "name": "SpeedRun Stark",
-    "image": "starknetfoundation/starknet-dev:2.9.2",
+    "name": "Speedrun Stark",
+    "image": "starknetfoundation/starknet-dev:2.11.3",
     "customizations": {
         "vscode": {
             "extensions": [

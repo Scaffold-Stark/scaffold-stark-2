@@ -50,11 +50,10 @@ export const HeaderMenuLinks = () => {
             <Link
               href={href}
               passHref
-              className={`${
-                isActive
-                  ? "!bg-gradient-nav !text-white active:bg-gradient-nav shadow-md"
-                  : ""
-              } py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col hover:bg-gradient-nav hover:text-white`}
+              className={`${isActive
+                ? "!bg-gradient-nav !text-white active:bg-gradient-nav shadow-md"
+                : ""
+                } py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col hover:bg-gradient-nav hover:text-white`}
             >
               {icon}
               <span>{label}</span>
@@ -74,7 +73,6 @@ export const Header = () => {
   const burgerMenuRef = useRef<HTMLDivElement>(null);
 
   useOutsideClick(
-    //@ts-expect-error refs are supposed to be null by default
     burgerMenuRef,
     useCallback(() => setIsDrawerOpen(false), []),
   );
@@ -101,7 +99,7 @@ export const Header = () => {
           else setIsDeployed(false);
         })
         .catch((e) => {
-          console.error("contreact cehc", e);
+          console.error("contract check", e);
           if (e.toString().includes("Contract not found")) {
             setIsDeployed(false);
           }
@@ -177,9 +175,8 @@ export const Header = () => {
         <CustomConnectButton />
         {/* <FaucetButton /> */}
         <SwitchTheme
-          className={`pointer-events-auto ${
-            isLocalNetwork ? "mb-1 lg:mb-0" : ""
-          }`}
+          className={`pointer-events-auto ${isLocalNetwork ? "mb-1 lg:mb-0" : ""
+            }`}
         />
       </div>
     </div>
