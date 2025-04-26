@@ -1,0 +1,9 @@
+.husky/pre-commit merge=keeptheirs
+.devcontainer.json merge=keeptheirs
+.tool-versions merge=keeptheirs
+
+**/__test__/ merge=keepmine
+**/__tests__/ merge=keepmine
+
+# ignore lock files
+*.lock -text

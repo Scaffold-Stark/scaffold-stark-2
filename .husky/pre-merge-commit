@@ -1,0 +1,13 @@
+#!/bin/sh
+# Configures 'keepmine' and 'keeptheirs' drivers locally and merges the 'base' branch.
+
+set -e # Exit immediately if any command fails
+
+echo "Configuring local merge drivers..."
+# Keep Mine
+git config --local merge.keepmine.name "keep-mine"
+git config --local merge.keepmine.driver "true"
+
+# Keep Theirs
+git config --local merge.keeptheirs.name "keep-theirs"
+git config --local merge.keeptheirs.driver 'cp %B %A'

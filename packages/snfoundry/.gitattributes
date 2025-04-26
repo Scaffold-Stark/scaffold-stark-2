@@ -1,0 +1,3 @@
+contracts/src/** merge=keepmine
+
+scripts-ts/helpers/** merge=keeptheirs
