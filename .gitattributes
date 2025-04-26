@@ -2,8 +2,9 @@
 .devcontainer.json merge=keeptheirs
 .tool-versions merge=keeptheirs
 
-**/__test__/ merge=keepmine
-**/__tests__/ merge=keepmine
+.github/** merge=keepmine
+**/__test__/** merge=keepmine
+**/__tests__/** merge=keepmine
 
 # ignore lock files
 *.lock -text
