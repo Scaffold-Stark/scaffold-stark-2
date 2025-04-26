@@ -1,23 +1,25 @@
-# Contributing to Scaffold-Stark
+# Contributing to Speedrun-Stark
 
-Thank you for your interest in contributing to Scaffold-Stark! Your support enhances this Starknet-focused framework that bridges smart contract integration with web applications.
+Thank you for your interest in contributing to Speedrun-Stark! Your support helps improve this challenge platform for developers looking to quickly learn and master Starknet development.
 
 ## About the Project
 
-**Scaffold-Stark** provides a full DApp development template, offering seamless integration of Starket smart contracts with web applications. **SpeedrunStark.com** offers interactive challenges that serve to practice your Cairo and Starknet skills, learn how to use the provided hooks, and launch your applications swiftly with potential rewards.
+**SpeedrunStark.com** offers interactive challenges that serve to practice your Cairo and Starknet skills, learn how to use the provided hooks, and launch your applications swiftly with potential rewards.
 
 ## Project Vision
 
-Our goal is to simplify the DApp development and learning process, enabling developers to launch applications efficiently while understanding the intricacies of Starknet.
+Our goal is to gamify the Starknet learning experience through challenges, enabling developers to quickly build proficiency in Starknet development while having fun and competing with others in the community.
 
 ## How to Get Involved
 
 1. **Understand the Code**: Begin by familiarizing yourself with the architecture and flow by reading through the documentation provided in the README.md.
-2. **Check Issues and Discussions**: Look through existing issues and discussions to understand ongoing problems or feature requests.
-3. **Start Contributing**:
+2. **Understand the Challenges**: Familiarize yourself with existing challenges, their difficulty progression, and learning objectives.
+3. **Check Issues and Discussions**: Look through existing issues and discussions to understand ongoing problems or feature requests.
+4. **Start Contributing**:
    - **Fix Issues**: Choose an existing issue and work towards a solution.
    - **Enhance Documentation**: Improve instructions, examples, or explanations.
-   - **Develop New Features**: Contribute new features that align with our project's goals.
+   - **Create New Challenges**: Develop new challenges that test specific Starknet skills.
+   - **Improve User Experience**: Help make the speedrun platform more engaging and educational.
 
 ## Making Changes
 

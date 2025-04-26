@@ -2,6 +2,7 @@
 .devcontainer.json merge=keeptheirs
 .tool-versions merge=keeptheirs
 
+CONTRIBUTING.md merge=keepmine
 .github/** merge=keepmine
 **/__test__/** merge=keepmine
 **/__tests__/** merge=keepmine
