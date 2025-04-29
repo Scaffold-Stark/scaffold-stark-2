@@ -1,6 +1,6 @@
 name: Speedrun Sync and Update
 # Test: now trigger on push to update/auto-sync-speedrun branch for testing
-# Test: only merge to test-base-challenge-tempalte branch for testing
+# Test: only merge to feat/auto-merge branch for testing
 
 on:
   pull_request:
@@ -37,19 +37,11 @@ jobs:
     runs-on: ubuntu-22.04
     
     steps:
-      - name: Checkout Source Repository
-        uses: actions/checkout@v4
-        with:
-          repository: Scaffold-Stark/scaffold-stark-2
-          token: ${{ secrets.ORG_GITHUB_TOKEN }}
-          path: source_repo
-
-      - name: Checkout Speedrun Repository
+      - name: Checkout Repo
         uses: actions/checkout@v4
         with:
           repository: Scaffold-Stark/speedrunstark
           token: ${{ secrets.ORG_GITHUB_TOKEN }}
-          path: speedrun_repo
           fetch-depth: 0
 
       - name: Setup Git
@@ -57,49 +49,33 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
+          git config --local merge.keepmine.name "keep-mine"
+          git config --local merge.keepmine.driver "true"
+          git config --local merge.keeptheirs.name "keep-theirs"
+          git config --local merge.keeptheirs.driver 'cp %B %A'
+
+      - name: Fetch Upstream Main
+        run: |
+          git remote add upstream https://github.com/Scaffold-Stark/scaffold-stark-2.git
+          git fetch upstream main
+          git checkout main
+
       - name: Checkout Base Challenge Branch
         run: |
-          cd speedrun_repo
-          git fetch origin test-base-challenge-tempalte
-          git checkout test-base-challenge-tempalte
-
-      - name: Detect changes to .tool-versions
-        id: check_changes
-        run: |
-          if ! diff -u source_repo/.tool-versions speedrun_repo/.tool-versions > /dev/null; then
-            echo "tool_changed=true" >> $GITHUB_OUTPUT
-          else
-            echo "tool_changed=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Update README
-        if: steps.check_changes.outputs.tool_changed == 'true'
-        run: |
-          cd source_repo
-          python3 readme_sync.py README.md ../speedrunstark/README.md
+          git fetch origin feat/auto-merge
+          git checkout feat/auto-merge
 
       - name: Sync Base Challenge Branch
         run: |
-          cd speedrun_repo
-          git checkout test-base-challenge-tempalte
-          rsync -av 
-            --exclude='.git'
-            --exclude='.github'
-            --exclude='README.md'
-            --exclude='__test__'
-            --exclude='__tests__'
-            ../source_repo/ ./
+          git checkout feat/auto-merge
+          git merge upstream/main --no-edit --no-commit
+
+          chmod +x ./.github/scripts/clean_redundant_files.sh
+          ./.github/scripts/clean_redundant_files.sh
+
           git add .
           git commit -m "chore: sync files from scaffold-stark-2 [skip ci]"
-          git push origin test-base-challenge-tempalte
-
-      # - name: Update Challenge Branches
-      #   run: |
-      #     cd speedrun_repo
-      #     git checkout step-0 && git merge base --no-edit && git push origin step-0
-      #     git checkout step-1 && git merge step-0 --no-edit && git push origin step-1
-      #     git checkout step-2 && git merge step-1 --no-edit && git push origin step-2
-      #     git checkout step-3 && git merge step-2 --no-edit && git push origin step-3
+          git push origin feat/auto-merge
 
       - name: Notify Slack on Success
         if: success()
