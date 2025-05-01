@@ -25,6 +25,7 @@ Before you begin, you need to install the following tools:
 - [Node (>= v18.17)](https://nodejs.org/en/download/)
 - Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
 - [Git](https://git-scm.com/downloads)
+- Not required but recommended - [asdf](https://asdf-vm.com/guide/getting-started.html), allows you to manage the other dependencies with ease.
 
 ### Starkup
 
@@ -41,6 +42,14 @@ To install `starkup`, run the following command:
 
 ```sh
 curl -sSf https://raw.githubusercontent.com/starkware-libs/starkup/main/install.sh | bash
+```
+
+### ASDF Fast Install
+
+Since we have the required dependencies listed on a `.tool-versions` file, simply running the following command on the root folder will install all the required NON-NPM dependencies, assuming you have asdf installed:
+
+```bash
+asdf install
 ```
 
 ### Scarb version
@@ -204,15 +213,16 @@ To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, 
 
 ```json
 {
- "jsonrpc":"2.0",
- "method":"starknet_specVersion",
- "id":1
+  "jsonrpc": "2.0",
+  "method": "starknet_specVersion",
+  "id": 1
 }
 ```
 
 You have to paste the endpoint and body in the API platform and click on the `Send` button. If the response is `0.8.x`, then you are good to go. Otherwise, you have to get the correct RPC URL endpoint.
 
 ![rpc-version](./packages/nextjs/public/rpc-version.png)
+
 </details>
 
 ## Network Configuration Centralization
@@ -258,18 +268,18 @@ This repo prefer yarn as package manager.
 
 Commands:
 
-| Command     | Description |
-| --- | --- |
+| Command          | Description                                                                               |
+| ---------------- | ----------------------------------------------------------------------------------------- |
 | format:check     | (Read only) Batch checks for format inconsistencies for the nextjs and snfoundry codebase |
-| next:check-types | Compile  typscript project                                                                |
+| next:check-types | Compile typscript project                                                                 |
 | next:lint        | Runs next lint                                                                            |
 | prepare          | Install husky's git hooks                                                                 |
 | usage            | Show this text                                                                            |
 
 ### CLI Smart Contracts
 
-| Command     | Description |
-| --- | --- |
+| Command         | Description                                                                         |
+| --------------- | ----------------------------------------------------------------------------------- |
 | compile         | Compiles contracts.                                                                 |
 | test            | Runs snfoundry tests                                                                |
 | chain           | Starts the local blockchain network.                                                |
@@ -279,8 +289,8 @@ Commands:
 
 ### CLI Frontend
 
-| Command     | Description |
-| --- | --- |
+| Command     | Description                                  |
+| ----------- | -------------------------------------------- |
 | start       | Starts the frontend server                   |
 | test:nextjs | Runs the nextjs tests                        |
 | vercel      | Deploys app to vercel                        |
