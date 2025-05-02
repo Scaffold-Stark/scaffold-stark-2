@@ -27,11 +27,11 @@ export async function createProject(options: Options) {
   const tasks = new Listr([
     {
       title: `📁 Create project directory ${targetDirectory}`,
-      task: () => createProjectDirectory(options.project),
+      task: () => createProjectDirectory(options.directory),
     },
     {
       title: `🚀 Creating a new Scaffold-Stark 2 app in ${chalk.green.bold(
-        options.project,
+        options.directory,
       )}`,
       task: () =>
         copyTemplateFiles(options, templateDirectory, targetDirectory),
