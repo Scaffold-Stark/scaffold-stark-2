@@ -1,7 +1,6 @@
 export type Args = string[];
 
 export type RawOptions = {
-  project: string | null;
   directory: string | null;
   install: boolean | null;
   dev: boolean;

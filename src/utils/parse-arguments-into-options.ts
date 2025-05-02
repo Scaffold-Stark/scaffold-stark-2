@@ -22,14 +22,11 @@ export function parseArgumentsIntoOptions(rawArgs: Args): RawOptions {
 
   const dev = args["--dev"] ?? false; // info: use false avoid asking user
 
-  const project = args._[0] ?? null;
-
   const directory = args["--dir"] ?? null;
 
   return {
-    project,
     directory,
-    install: !!skipInstall ? false : null,
+    install: skipInstall ? false : null,
     dev,
   };
 }
