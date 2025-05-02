@@ -1,4 +1,4 @@
-import type {Options} from "../types";
+import type { Options } from "../types";
 import chalk from "chalk";
 
 export async function renderOutroMessage(options: Options) {
@@ -8,13 +8,9 @@ export async function renderOutroMessage(options: Options) {
 
   ${chalk.bold("Next steps:")}
   
-  ${chalk.dim("cd")} ${options.project}
+  ${chalk.dim("cd")} ${options.directory}
   `;
 
-  // if (
-  //   options.extensions.includes("scaffold-stark")
-  // ) {
-  // }
   message += `
     \t${chalk.bold("Start the local development node")}
     \t${chalk.dim("yarn")} chain
