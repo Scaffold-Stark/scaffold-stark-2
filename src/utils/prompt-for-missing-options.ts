@@ -1,7 +1,4 @@
-import {
-  Options,
-  RawOptions,
-} from "../types";
+import { Options, RawOptions } from "../types";
 import inquirer from "inquirer";
 
 // default values for unspecified args
@@ -33,18 +30,21 @@ export async function promptForMissingOptions(
       message: "Directory to be installed in:",
       default: (answers: RawOptions) => `./${answers.project}`,
       validate: (value: string) => value.length > 0,
-    }
+    },
+    {
+      type: "confirm",
+      name: "install",
+      message: "Install dependencies?",
+      default: true,
+    },
   ];
 
   const answers = await inquirer.prompt(questions, cliAnswers);
 
-  // Guarantee install is a boolean
-  const installOption: boolean = options.install === null ? defaultOptions.install as boolean : options.install;
-
   const mergedOptions: Options = {
     project: options.project ?? answers.project,
     directory: options.directory ?? answers.directory,
-    install: installOption,
+    install: options.install ?? answers.install,
     dev: options.dev ?? defaultOptions.dev,
   };
 

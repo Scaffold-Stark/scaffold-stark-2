@@ -9,7 +9,7 @@ export function parseArgumentsIntoOptions(rawArgs: Args): RawOptions {
       "-s": "--skip-install",
 
       "--dev": Boolean,
-      
+
       "--dir": String,
       "-d": "--dir",
     },
@@ -29,7 +29,7 @@ export function parseArgumentsIntoOptions(rawArgs: Args): RawOptions {
   return {
     project,
     directory,
-    install: !skipInstall,
+    install: !!skipInstall ? false : null,
     dev,
   };
 }
