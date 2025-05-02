@@ -46,7 +46,7 @@ export async function createProject(options: Options) {
       },
     },
     {
-      title: "🪄 Formatting files with prettier",
+      title: "🪄 Formatting Next.js files with prettier",
       task: () => prettierFormat(targetDirectory),
       skip: () => {
         if (!options.install) {
