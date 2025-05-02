@@ -28,7 +28,7 @@ export async function promptForMissingOptions(
       type: "confirm",
       name: "install",
       message: "Install dependencies?",
-      default: true,
+      default: defaultOptions.install,
     },
   ];
 
