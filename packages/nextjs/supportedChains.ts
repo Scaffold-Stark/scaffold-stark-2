@@ -1,7 +1,7 @@
 import * as chains from "@starknet-react/chains";
 
 const rpcUrlDevnet =
-  process.env.NEXT_PUBLIC_RPC_URL_DEVNET || "http://0.0.0.0:5050";
+  process.env.NEXT_PUBLIC_DEVNET_PROVIDER_URL || "http://127.0.0.1:5050";
 // devnet with mainnet network ID
 const mainnetFork = {
   id: BigInt("0x534e5f4d41494e"),
