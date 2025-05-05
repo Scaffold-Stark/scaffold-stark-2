@@ -28,13 +28,12 @@ jobs:
           git config --local merge.keeptheirs.name "keep-theirs"
           git config --local merge.keeptheirs.driver 'cp %B %A'
 
-      - name: Fetch base-challenge-template branch
-        run: |
-          git fetch origin
-          git checkout base-challenge-template
-
       - name: Update Challenge Branches
         run: |
+          git checkout base-challenge-template
+          git pull origin base-challenge-template
+
+          echo "Merging base-challenge-template into challenge branches..."
           git checkout challenge-1-decentralized-staking && git merge base-challenge-template --no-edit && git push origin challenge-1-decentralized-staking
           git checkout challenge-2-token-vendor && git merge base-challenge-template --no-edit && git push origin challenge-2-token-vendor
           git checkout challenge-3-dice-game && git merge base-challenge-template --no-edit && git push origin challenge-3-dice-game
