@@ -4,5 +4,6 @@ package.json merge=keeptheirs
 .tool-versions merge=keeptheirs
 CONTRIBUTING.md merge=keeptheirs
 .github/** merge=keeptheirs
+.env.example merge=keeptheirs
 
 README.md merge=keepmine

@@ -33,11 +33,7 @@ jobs:
           git pull origin base-challenge-template
 
           echo "Merging base-challenge-template into challenge branches..."
-          git checkout challenge-1-decentralized-staking && git merge base-challenge-template --no-edit && git push origin challenge-1-decentralized-staking
-          git checkout challenge-2-token-vendor && git merge base-challenge-template --no-edit && git push origin challenge-2-token-vendor
-          git checkout challenge-3-dice-game && git merge base-challenge-template --no-edit && git push origin challenge-3-dice-game
-          git checkout challenge-4-build-a-dex && git merge base-challenge-template --no-edit && git push origin challenge-4-build-a-dex
-          git checkout challenge-5-multisig-wallet && git merge base-challenge-template --no-edit && git push origin challenge-5-multisig-wallet
+          git checkout challenge-0-simple-mft && git merge base-challenge-template --no-edit && git push origin challenge-0-simple-mft
 
       - name: Notify Slack on Success
         if: success()
