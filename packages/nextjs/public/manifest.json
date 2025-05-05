@@ -1,6 +1,6 @@
 {
-  "name": "Speedrun Stark",
-  "short_name": "Speedrun",
+  "name": "Scaffold Stark",
+  "short_name": "Scaffold",
   "description": "Fast track your starknet journey",
   "start_url": "/",
   "display": "standalone",

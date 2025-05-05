@@ -61,8 +61,11 @@ jobs:
         working-directory: ./packages/nextjs
 
       - name: Check typings on Next.js
-        continue-on-error: true
         run: yarn next:check-types
+        working-directory: ./packages/nextjs
+
+      - name: Run Next.js tests
+        run: yarn test run
         working-directory: ./packages/nextjs
 
       - name: Build Next.js project
