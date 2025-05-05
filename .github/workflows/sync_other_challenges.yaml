@@ -16,6 +16,7 @@ jobs:
         with:
             repository: Scaffold-Stark/speedrunstark
             token: ${{ secrets.ORG_GITHUB_TOKEN }}
+            fetch-depth: 0
 
       - name: Setup Git
         run: |
