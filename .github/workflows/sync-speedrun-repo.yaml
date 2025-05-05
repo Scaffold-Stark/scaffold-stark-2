@@ -1,9 +1,12 @@
 name: Speedrun Sync and Update
+#test: trigger flow on pushed to update/auto-sync-speedruns
 
 on:
   pull_request:
     types: [closed]
     branches: [main]
+  push:
+    branches: [update/auto-sync-speedrun]
   workflow_dispatch:
 
 jobs:
