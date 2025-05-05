@@ -1,0 +1,59 @@
+name: Sync other challenges
+
+on:
+  push:
+    branches:
+      - base-challenge-template
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+            repository: Scaffold-Stark/speedrunstark
+            token: ${{ secrets.ORG_GITHUB_TOKEN }}
+
+      - name: Setup Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+          git config --local merge.keepmine.name "keep-mine"
+          git config --local merge.keepmine.driver "true"
+          git config --local merge.keeptheirs.name "keep-theirs"
+          git config --local merge.keeptheirs.driver 'cp %B %A'
+
+      - name: Fetch base-challenge-template branch
+        run: |
+          git fetch origin
+          git checkout base-challenge-template
+
+      - name: Update Challenge Branches
+        run: |
+          git checkout challenge-1-decentralized-staking && git merge base-challenge-template --no-edit && git push origin challenge-1-decentralized-staking
+          git checkout challenge-2-token-vendor && git merge base-challenge-template --no-edit && git push origin challenge-2-token-vendor
+          git checkout challenge-3-dice-game && git merge base-challenge-template --no-edit && git push origin challenge-3-dice-game
+          git checkout challenge-4-build-a-dex && git merge base-challenge-template --no-edit && git push origin challenge-4-build-a-dex
+          git checkout challenge-5-multisig-wallet && git merge base-challenge-template --no-edit && git push origin challenge-5-multisig-wallet
+
+      - name: Notify Slack on Success
+        if: success()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: "Successfully synced scaffold-stark-2 changes to speedrunstark repository and updated all step branches."
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Notify Slack on Failure
+        if: failure()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: "Failed to sync scaffold-stark-2 changes to speedrunstark repository."
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

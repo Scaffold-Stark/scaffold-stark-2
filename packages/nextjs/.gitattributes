@@ -3,10 +3,11 @@ components/Header.tsx merge=keepmine
 public/manifest.json merge=keepmine
 
 supportedChains.ts merge=keeptheirs
+app/configure/** merge=keeptheirs
 app/debug/** merge=keeptheirs
-components/scaffold-stark/** merge=keeptheirs
-hooks/** merge=keeptheirs
-utils/** merge=keeptheirs
+components/** merge=keeptheirs
 contracts/** merge=keeptheirs
-types/** merge=keeptheirs
+hooks/** merge=keeptheirs
 services/** merge=keeptheirs
+utils/** merge=keeptheirs
+types/** merge=keeptheirs

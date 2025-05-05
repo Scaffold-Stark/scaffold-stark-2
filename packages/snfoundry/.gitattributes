@@ -1,3 +1,5 @@
 contracts/src/** merge=keepmine
 
 scripts-ts/helpers/** merge=keeptheirs
+scripts-ts/deplloy-contract.ts merge=keeptheirs
+.env.example merge=keeptheirs
