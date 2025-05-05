@@ -2,10 +2,8 @@
 package.json merge=keeptheirs
 .husky/pre-commit merge=keeptheirs
 .tool-versions merge=keeptheirs
+yarn.lock merge=keeptheirs
 
 README.md merge=keepmine
 CONTRIBUTING.md merge=keepmine
 .github/** merge=keepmine
-
-# ignore lock files
-*.lock -text
