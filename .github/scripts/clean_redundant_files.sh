@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # --- Configuration ---
-TARGET_DIRS=("__test__" "__tests__" "public")
+TARGET_DIRS=("__test__" "__tests__" "public" ".github")
 
 # --- Script Logic ---
 set -e # Exit immediately if a command exits with a non-zero status.
