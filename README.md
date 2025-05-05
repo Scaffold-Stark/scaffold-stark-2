@@ -46,7 +46,9 @@ curl -sSf https://raw.githubusercontent.com/starkware-libs/starkup/main/install.
 
 ### ASDF Fast Install
 
-Since we have the required dependencies listed on a `.tool-versions` file, simply running the following command on the root folder will install all the required NON-NPM dependencies, assuming you have asdf installed:
+> This can be used when you run into version errors after using `starkup` to install your dependencies.
+
+Since we have the required dependencies listed on a `.tool-versions` file, simply running the following command on the root folder will install `scarb`, `starknet-devnet`, and `starknet-foundry` with the version SPECIFIED on the `.tool-versions` file (not necessarily the latest), assuming you have `asdf` installed:
 
 ```bash
 asdf install
