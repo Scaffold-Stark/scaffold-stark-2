@@ -65,8 +65,12 @@ jobs:
             --exclude='.github/*' \
             --exclude='.github/workflows/*' \
             --exclude='__test*__' \
+            --exclude='packages/nextjs/public/debug-image.png' \
+            --exclude='packages/nextjs/public/manifest.json' \
+            --exclude='packages/nextjs/public/rpc-version.png' \
             --exclude='CHANGELOG*' \
             --exclude='CONTRIBUTING*' \
+            --exclude='README.md'
             ../source_repo/ ./
           git add .
           git commit -m "chore: sync files from scaffold-stark-2 [skip ci]"
