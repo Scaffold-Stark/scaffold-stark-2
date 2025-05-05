@@ -1,17 +1,13 @@
 name: Speedrun Sync and Update
-#test: trigger flow on pushed to update/auto-sync-speedruns
 
 on:
   pull_request:
     types: [closed]
     branches: [main]
-  push:
-    branches: [update/auto-sync-speedrun]
-  workflow_dispatch:
 
 jobs:
   check_commit:
-    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
       SHOULD_RUN: ${{ steps.check_commit.outputs.SHOULD_RUN }}
@@ -28,20 +24,28 @@ jobs:
           if [[ "$COMMIT_MESSAGE" == *"[skip ci]"* ]]; then
             echo "SHOULD_RUN=false" >> "$GITHUB_OUTPUT"
           else
-            echo "SHOULD_RUN=false" >> "$GITHUB_OUTPUT"
+            echo "SHOULD_RUN=true" >> "$GITHUB_OUTPUT"
           fi
 
-  sync-basecamp:
-    # needs: check_commit
-    # if: ${{ needs.check_commit.outputs.SHOULD_RUN != 'false' }}
+  sync-speedrun:
+    needs: check_commit
+    if: ${{ needs.check_commit.outputs.SHOULD_RUN != 'false' }}
     runs-on: ubuntu-22.04
-    
+
     steps:
-      - name: Checkout Repo
+      - name: Checkout Source Repository
+        uses: actions/checkout@v4
+        with:
+          repository: Scaffold-Stark/scaffold-stark-2
+          token: ${{ secrets.ORG_GITHUB_TOKEN }}
+          path: source_repo
+
+      - name: Checkout Destination Repository
         uses: actions/checkout@v4
         with:
           repository: Scaffold-Stark/speedrunstark
           token: ${{ secrets.ORG_GITHUB_TOKEN }}
+          path: speedrun_repo
           fetch-depth: 0
 
       - name: Setup Git
@@ -49,30 +53,21 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-          git config --local merge.keepmine.name "keep-mine"
-          git config --local merge.keepmine.driver "true"
-          git config --local merge.keeptheirs.name "keep-theirs"
-          git config --local merge.keeptheirs.driver 'cp %B %A'
-
-      - name: Fetch Upstream Main
+      - name: Sync Base Challenge Template Branch
         run: |
-          git remote add upstream https://github.com/Scaffold-Stark/scaffold-stark-2.git
-          git fetch upstream main
-          git checkout main
-
-      - name: Checkout Base Challenge Branch
-        run: |
-          git fetch origin base-challenge-template
+          cd speedrun_repo
           git checkout base-challenge-template
-
-      - name: Sync Base Challenge Branch
-        run: |
-          git checkout base-challenge-template
-          git merge upstream/main --no-edit --no-commit
-
-          chmod +x ./.github/scripts/clean_redundant_files.sh
-          ./.github/scripts/clean_redundant_files.sh
-
+          rsync -av \
+            --exclude='.git/' \
+            --include='.github/' \
+            --include='.github/workflows/' \
+            --include='.github/workflows/main.yml' \
+            --exclude='.github/*' \
+            --exclude='.github/workflows/*' \
+            --exclude='__test*__' \
+            --exclude='CHANGELOG*' \
+            --exclude='CONTRIBUTING*' \
+            ../source_repo/ ./
           git add .
           git commit -m "chore: sync files from scaffold-stark-2 [skip ci]"
           git push origin base-challenge-template
@@ -82,7 +77,7 @@ jobs:
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: "Successfully synced scaffold-stark-2 changes to speedrunstark repository and updated all step branches."
+          slack-message: "Successfully synced scaffold-stark-2 changes to speedrunstark repository base-challenge-template branch."
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
