@@ -33,7 +33,7 @@ jobs:
           git pull origin base-challenge-template
 
           echo "Merging base-challenge-template into challenge branches..."
-          git checkout challenge-0-simple-mft && git merge base-challenge-template --no-edit && git push origin challenge-0-simple-mft
+          git checkout challenge-0-simple-nft && git merge base-challenge-template --no-edit && git push origin challenge-0-simple-nft
 
       - name: Notify Slack on Success
         if: success()
