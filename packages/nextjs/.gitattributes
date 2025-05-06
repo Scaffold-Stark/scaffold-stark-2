@@ -12,3 +12,5 @@ public/manifest.json merge=keeptheirs
 
 app/page.tsx merge=keepmine
 components/Header.tsx merge=keepmine
+
+package.json merge=union

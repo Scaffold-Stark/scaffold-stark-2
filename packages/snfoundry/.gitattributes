@@ -4,3 +4,5 @@ scripts-ts/deploy-contract.ts merge=keeptheirs
 
 contracts/** merge=keepmine
 scripts-ts/deploy.ts merge=keepmine
+
+contracts/Scarb.toml merge=union
