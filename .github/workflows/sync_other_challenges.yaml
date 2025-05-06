@@ -64,6 +64,10 @@ jobs:
               # Try merge again but allow it to record conflicts
               git merge base-challenge-template || true
               
+              # Commit the conflicts
+              git add .
+              git commit -m "Auto-commit merge conflicts between base-challenge-template and $branch"
+              
               # Push the branch with conflicts
               git push origin $CONFLICT_BRANCH
               
