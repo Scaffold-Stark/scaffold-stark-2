@@ -74,7 +74,7 @@ jobs:
             --exclude='README.md' \
             ../source_repo/ ./
           git add .
-          git commit -m "chore: sync files from scaffold-stark-2 [skip ci]"
+          git commit -m "chore: sync files from scaffold-stark-2"
           git push origin base-challenge-template
 
       - name: Notify Slack on Success
