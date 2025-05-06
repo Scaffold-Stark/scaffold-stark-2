@@ -34,7 +34,7 @@ If your local starknet-devnet version is not `0.4.0`, you need to install it.
 ### Compatible versions
 
 - Cairo - v2.11.4
-- Rpc - v0.8.0
+- Rpc - v0.8.x
 - Scarb - v2.11.4
 - Snforge - v0.41.0
 - Starknet-Devnet - v0.4.0
