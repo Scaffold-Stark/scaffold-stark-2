@@ -32,15 +32,63 @@ jobs:
           git checkout base-challenge-template
           git pull origin base-challenge-template
 
+          CHALLENGE_BRANCHES=(
+            "challenge-0-simple-nft"
+            "challenge-1-decentralized-staking"
+            "challenge-2-token-vendor"
+            "challenge-3-dice-game"
+            "challenge-4-build-a-dex"
+            "challenge-5-multisig-wallet"
+          )
+
           echo "Merging base-challenge-template into challenge branches..."
-          git checkout challenge-0-simple-nft && git merge base-challenge-template --no-edit && git push origin challenge-0-simple-nft
+
+          for branch in "${CHALLENGE_BRANCHES[@]}"; do
+            echo "Processing branch: $branch"
+            git checkout $branch
+            git pull origin $branch
+            
+            # Try to merge
+            if git merge base-challenge-template --no-edit; then
+              echo "Merge successful for $branch, pushing changes"
+              git push origin $branch
+            else
+              echo "Merge conflict detected in $branch, creating PR"
+              # Abort the current merge
+              git merge --abort
+              
+              # Create a new branch for the PR
+              CONFLICT_BRANCH="fix-conflicts-$branch-$(date +%s)"
+              git checkout -b $CONFLICT_BRANCH
+              
+              # Try merge again but allow it to record conflicts
+              git merge base-challenge-template || true
+              
+              # Push the branch with conflicts
+              git push origin $CONFLICT_BRANCH
+              
+              # Create PR using GitHub CLI if available, otherwise use API
+              PR_TITLE="Fix merge conflicts in $branch"
+              PR_BODY="This PR was automatically created to resolve merge conflicts between base-challenge-template and $branch."
+              
+              # Using GitHub API to create PR
+              curl -X POST \
+                -H "Authorization: token ${{ secrets.ORG_GITHUB_TOKEN }}" \
+                -H "Accept: application/vnd.github.v3+json" \
+                https://api.github.com/repos/Scaffold-Stark/speedrunstark/pulls \
+                -d "{\"title\":\"$PR_TITLE\",\"body\":\"$PR_BODY\",\"head\":\"$CONFLICT_BRANCH\",\"base\":\"$branch\"}"
+              
+              # Return to original branch
+              git checkout $branch
+            fi
+          done
 
       - name: Notify Slack on Success
         if: success()
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: "Successfully synced scaffold-stark-2 changes to speedrunstark repository and updated all step branches."
+          slack-message: "Successfully processed sync operation for speedrunstark repository. Check for any PRs that may have been created for conflict resolution."
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
