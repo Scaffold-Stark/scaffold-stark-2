@@ -68,6 +68,7 @@ jobs:
             --exclude='packages/nextjs/public/debug-image.png' \
             --exclude='packages/nextjs/public/manifest.json' \
             --exclude='packages/nextjs/public/rpc-version.png' \
+            --exclude='packages/snfoundry/contracts/src/YourContract.cairo' \
             --exclude='CHANGELOG*' \
             --exclude='CONTRIBUTING*' \
             --exclude='README.md' \
