@@ -8,6 +8,7 @@ services/** merge=keeptheirs
 utils/** merge=keeptheirs
 types/** merge=keeptheirs
 public/manifest.json merge=keeptheirs
+gitattributes merge=keeptheirs
 
 app/page.tsx merge=keepmine
 components/Header.tsx merge=keepmine
