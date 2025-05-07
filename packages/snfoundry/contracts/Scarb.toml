@@ -19,7 +19,9 @@ snforge_std = "0.41.0"
 casm = true # taggle this to `false` to speed up compilation/script tests
 
 [tool.scarb]
-allow-prebuilt-plugins = ["snforge_std"]
+allow-prebuilt-plugins = [
+	"snforge_std",
+] # Avoids the need to install Rust for snforge_std/starknet-foundry
 
 [tool.fmt]
 sort-module-level-items = true

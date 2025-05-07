@@ -1,4 +1,4 @@
-name: Basecamp Sync and Update
+name: Speedrun Sync and Update
 
 on:
   pull_request:
@@ -27,7 +27,7 @@ jobs:
             echo "SHOULD_RUN=true" >> "$GITHUB_OUTPUT"
           fi
 
-  sync-basecamp:
+  sync-speedrun:
     needs: check_commit
     if: ${{ needs.check_commit.outputs.SHOULD_RUN != 'false' }}
     runs-on: ubuntu-22.04
@@ -40,12 +40,12 @@ jobs:
           token: ${{ secrets.ORG_GITHUB_TOKEN }}
           path: source_repo
 
-      - name: Checkout Basecamp Repository
+      - name: Checkout Destination Repository
         uses: actions/checkout@v4
         with:
-          repository: Scaffold-Stark/basecamp
+          repository: Scaffold-Stark/speedrunstark
           token: ${{ secrets.ORG_GITHUB_TOKEN }}
-          path: basecamp_repo
+          path: speedrun_repo
           fetch-depth: 0
 
       - name: Setup Git
@@ -53,11 +53,11 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      - name: Sync Base Branch
+      - name: Sync Base Challenge Template Branch
         run: |
-          cd basecamp_repo
-          git checkout base
-          rsync -av --delete \
+          cd speedrun_repo
+          git checkout base-challenge-template
+          rsync -av \
             --exclude='.git/' \
             --include='.github/' \
             --include='.github/workflows/' \
@@ -68,28 +68,21 @@ jobs:
             --exclude='packages/nextjs/public/debug-image.png' \
             --exclude='packages/nextjs/public/manifest.json' \
             --exclude='packages/nextjs/public/rpc-version.png' \
+            --exclude='packages/snfoundry/contracts/src/YourContract.cairo' \
             --exclude='CHANGELOG*' \
             --exclude='CONTRIBUTING*' \
             --exclude='README.md' \
             ../source_repo/ ./
           git add .
-          git commit -m "chore: sync files from scaffold-stark-2 [skip ci]"
-          git push origin base
-
-      - name: Update Step Branches
-        run: |
-          cd basecamp_repo
-          git checkout step-0 && git merge base --no-edit && git push origin step-0
-          git checkout step-1 && git merge step-0 --no-edit && git push origin step-1
-          git checkout step-2 && git merge step-1 --no-edit && git push origin step-2
-          git checkout step-3 && git merge step-2 --no-edit && git push origin step-3
+          git commit -m "chore: sync files from scaffold-stark-2"
+          git push origin base-challenge-template
 
       - name: Notify Slack on Success
         if: success()
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: "Successfully synced scaffold-stark-2 changes to basecamp repository and updated all step branches."
+          slack-message: "Successfully synced scaffold-stark-2 changes to speedrunstark repository base-challenge-template branch."
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
@@ -98,6 +91,6 @@ jobs:
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: "Failed to sync scaffold-stark-2 changes to basecamp repository."
+          slack-message: "Failed to sync scaffold-stark-2 changes to speedrunstark repository."
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
