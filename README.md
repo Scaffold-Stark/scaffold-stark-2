@@ -25,7 +25,6 @@ Before you begin, you need to install the following tools:
 - [Node (>= v18.17)](https://nodejs.org/en/download/)
 - Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
 - [Git](https://git-scm.com/downloads)
-- Not required but recommended - [asdf](https://asdf-vm.com/guide/getting-started.html), allows you to manage the other dependencies with ease.
 
 ### Starkup
 
@@ -47,6 +46,8 @@ curl -sSf https://raw.githubusercontent.com/starkware-libs/starkup/main/install.
 ### ASDF Fast Install
 
 > This can be used when you run into version errors after using `starkup` to install your dependencies.
+
+- Install [asdf](https://asdf-vm.com/guide/getting-started.html) in case you don't have it installed yet. It allows you to manage the other dependencies with ease.
 
 Since we have the required dependencies listed on a `.tool-versions` file, simply running the following command on the root folder will install `scarb`, `starknet-devnet`, and `starknet-foundry` with the version SPECIFIED on the `.tool-versions` file (not necessarily the latest), assuming you have `asdf` installed:
 
