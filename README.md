@@ -18,7 +18,7 @@
 
 ![Debug Contracts tab](./packages/nextjs/public/debug-image.png)
 
-## Requirements
+## 0. Requirements
 
 Before you begin, you need to install the following tools:
 
@@ -26,7 +26,13 @@ Before you begin, you need to install the following tools:
 - Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
 - [Git](https://git-scm.com/downloads)
 
-### Starkup
+## 1. Install developer tools
+
+You can install the developer tools natively or use Dev Containers.
+
+### Option 1: Natively install developer tools
+
+#### 1.1 Starkup
 
 Tool for installing all the Starknet essentials for development. [Starkup](https://github.com/software-mansion/starkup) will install the latest stable versions of:
 
@@ -35,15 +41,51 @@ Tool for installing all the Starknet essentials for development. [Starkup](https
 - [asdf](https://asdf-vm.com/guide/getting-started.html) - Version manager to easily switch between tool versions
 - [Cairo 1.0 extension](https://marketplace.visualstudio.com/items?itemName=starkware.cairo1) for VSCode - Syntax highlighting and language support
 
-Currently, [starknet-devnet](https://0xspaceshard.github.io/starknet-devnet/) is not supported by `starkup` and needs to be installed separately (see instructions below).
+>Currently, [starknet-devnet](https://0xspaceshard.github.io/starknet-devnet/) is not supported by `starkup` and needs to be installed separately (see instructions below).
 
 To install `starkup`, run the following command:
 
 ```sh
-curl -sSf https://raw.githubusercontent.com/starkware-libs/starkup/main/install.sh | bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.starkup.sh | sh
 ```
 
-### Scarb version
+#### 1.2 Create your project
+
+Open a terminal and run the following command:
+
+```bash
+npx create-stark@latest
+cd my-dapp-example
+yarn install
+```
+
+Now you have a new project with the basic structure.
+
+#### 1.3 Install Starknet Devnet using ASDF Fast Install
+
+- Install [asdf](https://asdf-vm.com/guide/getting-started.html) in case you don't have it installed yet. It allows you to manage the other dependencies with ease.
+
+We are almost done, now we need to install `Starknet Devnet`. First let's register the Starknet Devnet plugin on `asdf`.
+
+```bash
+asdf plugin add starknet-devnet
+```
+
+Now open your new created project. Since we have the required dependencies listed on a `.tool-versions` file, simply running the below command on the root folder will install `starknet-devnet`(and other dependencies such as `scarb` and `starknet-foundry`) with the version SPECIFIED on the `.tool-versions` file (not necessarily the latest):
+
+```bash
+asdf install
+```
+
+Now you are ready!!!. You can jump to [Quickstart 1](#quickstart-1-deploying-a-smart-contract-to-starknet-devnet) to start developing your dapp.
+
+#### 1.4 Troubleshooting
+
+- If you run into version errors after using `starkup` or `asdf`, you can try to install the dependencies manually. Check the details below.
+
+<details>
+
+#### Scarb version
 
 To ensure the proper functioning of scaffold-stark, your `Scarb` version must be `2.11.4`. To accomplish this, first check Scarb version:
 
@@ -59,7 +101,7 @@ asdf install scarb 2.11.4 && asdf set scarb 2.11.4
 
 Otherwise, you can install Scarb `2.11.4` following the [instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf).
 
-### Starknet Foundry version
+#### Starknet Foundry version
 
 To ensure the proper functioning of the tests on scaffold-stark, your `Starknet Foundry` version must be `0.41.0`. To accomplish this, first check your `Starknet Foundry` version:
 
@@ -75,7 +117,7 @@ asdf install starknet-foundry 0.41.0 && asdf set starknet-foundry 0.41.0
 
 Otherwise, you can install Starknet Foundry `0.41.0` following the [instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf).
 
-### Starknet-devnet version
+#### Starknet-devnet version
 
 To ensure the proper functioning of scaffold-stark, your `starknet-devnet` version must be `0.4.0`. To accomplish this, first check your `starknet-devnet` version:
 
@@ -87,25 +129,27 @@ If your `starknet-devnet` version is not `0.4.0`, you need to install it.
 
 - Install starknet-devnet `0.4.0` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
 
-## Compatible versions
+</details>
 
-- Starknet-devnet - v0.4.0
-- Scarb - v2.11.4
-- Snforge - v0.41.0
-- Cairo - v2.11.4
-- Rpc - v0.8.0
+### Option 2. Dev Containers
 
-## Requirements (Alternative Option with Docker)
+#### 2.1 Install Docker Desktop
 
 As an alternative to installing the tools locally (Scarb, Starknet Foundry, Starknet Devnet), you can use Docker, this is the recommended option for `Windows` users. Here's what you need to do:
 
-1. Install [Docker](https://www.docker.com/get-started/)
+1. Install [Docker Desktop](https://www.docker.com/get-started/)
 2. Install [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-3. Use the provided `devcontainer.json` file to set up the environment:
-   - The configuration uses the `starknetfoundation/starknet-dev:2.11.4` image.
-   - This includes all required tools pre-installed, such as Scarb, Starknet Foundry, Starknet Devnet and other dependencies.
+3. Create a new project folder.
 
-### Getting Started with Docker Setup
+- `npx create-stark@latest`
+- `cd my-dapp-example`
+
+4. Check your project folder contains a `devcontainer.json` file. This file is used to set up the environment:
+
+- The configuration uses the `starknetfoundation/starknet-dev:2.11.4` image.
+- This includes all required tools pre-installed, such as Scarb, Starknet Foundry, Starknet Devnet and other dependencies.
+
+#### 2.2 Getting Started with Docker Setup
 
 To start using the Docker-based setup:
 
@@ -115,6 +159,16 @@ To start using the Docker-based setup:
    - **Dev Containers: Rebuild and Reopen in Container**
 
 > Once inside the container, you can start working with all the tools and dependencies pre-configured.
+
+Now you are ready!!!
+
+## Compatible versions
+
+- Starknet-devnet - v0.4.0
+- Scarb - v2.11.4
+- Snforge - v0.41.0
+- Cairo - v2.11.4
+- Rpc - v0.8.0
 
 ## Quickstart 1: Deploying a Smart Contract to Starknet-Devnet
 
@@ -173,7 +227,9 @@ yarn start
 
 Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page.
 
-5. Check your environment variables. We have a `yarn postinstall` script that helps to fill in your environment variables. If the environment variable does not exist, you can fill them it manually to get the app running!
+5. Check your environment variables. We have a `yarn postinstall` script that will create `.env` files based on the `.env.example` files provided. If the environment variables don't exist, you can manually create a `.env` file from the `.env.example` to get the app running!
+
+> ⚠️ **IMPORTANT**: Never commit your private keys or sensitive environment variables to version control. The `.env` files are included in `.gitignore` by default, but always double-check before pushing your changes.
 
 ## Quickstart 2: Deploying a Smart Contract to Sepolia Testnet
 
@@ -303,18 +359,18 @@ This repo prefer yarn as package manager.
 
 Commands:
 
-| Command     | Description |
-| --- | --- |
+| Command          | Description                                                                               |
+| ---------------- | ----------------------------------------------------------------------------------------- |
 | format:check     | (Read only) Batch checks for format inconsistencies for the nextjs and snfoundry codebase |
-| next:check-types | Compile  typscript project                                                                |
+| next:check-types | Compile typscript project                                                                 |
 | next:lint        | Runs next lint                                                                            |
 | prepare          | Install husky's git hooks                                                                 |
 | usage            | Show this text                                                                            |
 
 ### CLI Smart Contracts
 
-| Command     | Description |
-| --- | --- |
+| Command         | Description                                                                         |
+| --------------- | ----------------------------------------------------------------------------------- |
 | compile         | Compiles contracts.                                                                 |
 | test            | Runs snfoundry tests                                                                |
 | chain           | Starts the local blockchain network.                                                |
@@ -324,8 +380,8 @@ Commands:
 
 ### CLI Frontend
 
-| Command     | Description |
-| --- | --- |
+| Command     | Description                                  |
+| ----------- | -------------------------------------------- |
 | start       | Starts the frontend server                   |
 | test:nextjs | Runs the nextjs tests                        |
 | vercel      | Deploys app to vercel                        |
