@@ -65,13 +65,13 @@ Now you have a new project with the basic structure.
 
 - Install [asdf](https://asdf-vm.com/guide/getting-started.html) in case you don't have it installed yet. It allows you to manage the other dependencies with ease.
 
-We are almost done, now we need to install the Starknet Devnet. First let's register the Starknet Devnet plugin on `asdf`.
+We are almost done, now we need to install `Starknet Devnet`. First let's register the Starknet Devnet plugin on `asdf`.
 
 ```
 asdf plugin add starknet-devnet
 ```
 
-Now open your new created project. Since we have the required dependencies listed on a `.tool-versions` file, simply running the following command on the root folder will install `starknet-devnet`(and other dependencies such as `scarb` and `starknet-foundry`) with the version SPECIFIED on the `.tool-versions` file (not necessarily the latest):
+Now open your new created project. Since we have the required dependencies listed on a `.tool-versions` file, simply running the below command on the root folder will install `starknet-devnet`(and other dependencies such as `scarb` and `starknet-foundry`) with the version SPECIFIED on the `.tool-versions` file (not necessarily the latest):
 
 ```bash
 asdf install
@@ -133,16 +133,23 @@ If your `starknet-devnet` version is not `0.4.0`, you need to install it.
 
 ### Option 2. Dev Containers
 
+#### 2.1 Install Docker
+
 As an alternative to installing the tools locally (Scarb, Starknet Foundry, Starknet Devnet), you can use Docker, this is the recommended option for `Windows` users. Here's what you need to do:
 
 1. Install [Docker](https://www.docker.com/get-started/)
 2. Install [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+3. Create a new project folder.
 
-3. Use the provided `devcontainer.json` file to set up the environment:
-   - The configuration uses the `starknetfoundation/starknet-dev:2.11.4` image.
-   - This includes all required tools pre-installed, such as Scarb, Starknet Foundry, Starknet Devnet and other dependencies.
+- `npx create-stark@latest`
+- `cd my-dapp-example`
 
-### Getting Started with Docker Setup
+4. Check your project folder contains a `devcontainer.json` file. This file is used to set up the environment:
+
+- The configuration uses the `starknetfoundation/starknet-dev:2.11.4` image.
+- This includes all required tools pre-installed, such as Scarb, Starknet Foundry, Starknet Devnet and other dependencies.
+
+#### 2.2 Getting Started with Docker Setup
 
 To start using the Docker-based setup:
 
@@ -152,6 +159,8 @@ To start using the Docker-based setup:
    - **Dev Containers: Rebuild and Reopen in Container**
 
 > Once inside the container, you can start working with all the tools and dependencies pre-configured.
+
+Now you are ready!!!
 
 ## Compatible versions
 
@@ -201,7 +210,7 @@ yarn start
 
 Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page.
 
-5. Check your environment variables. We have a `yarn postinstall` script that helps to fill in your environment variables. If the environment variable does not exist, you can fill them it manually to get the app running!
+5. Check your environment variables. We have a `yarn postinstall` script that helps to fill in your environment variables. If the environment variable does not exist, you can fill them manually to get the app running!
 
 ## Quickstart 2: Deploying a Smart Contract to Sepolia Testnet
 
