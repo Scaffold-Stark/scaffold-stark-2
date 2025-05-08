@@ -46,7 +46,7 @@ Tool for installing all the Starknet essentials for development. [Starkup](https
 To install `starkup`, run the following command:
 
 ```sh
-curl -sSf https://raw.githubusercontent.com/starkware-libs/starkup/main/install.sh | bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.starkup.sh | sh
 ```
 
 #### 1.2 Create your project
