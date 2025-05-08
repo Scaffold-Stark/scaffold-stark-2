@@ -67,7 +67,7 @@ Now you have a new project with the basic structure.
 
 We are almost done, now we need to install `Starknet Devnet`. First let's register the Starknet Devnet plugin on `asdf`.
 
-```
+```bash
 asdf plugin add starknet-devnet
 ```
 
@@ -133,11 +133,11 @@ If your `starknet-devnet` version is not `0.4.0`, you need to install it.
 
 ### Option 2. Dev Containers
 
-#### 2.1 Install Docker
+#### 2.1 Install Docker Desktop
 
 As an alternative to installing the tools locally (Scarb, Starknet Foundry, Starknet Devnet), you can use Docker, this is the recommended option for `Windows` users. Here's what you need to do:
 
-1. Install [Docker](https://www.docker.com/get-started/)
+1. Install [Docker Desktop](https://www.docker.com/get-started/)
 2. Install [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 3. Create a new project folder.
 
@@ -210,7 +210,9 @@ yarn start
 
 Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page.
 
-5. Check your environment variables. We have a `yarn postinstall` script that helps to fill in your environment variables. If the environment variable does not exist, you can fill them manually to get the app running!
+5. Check your environment variables. We have a `yarn postinstall` script that will create `.env` files based on the `.env.example` files provided. If the environment variables don't exist, you can manually create a `.env` file from the `.env.example` to get the app running!
+
+> ⚠️ **IMPORTANT**: Never commit your private keys or sensitive environment variables to version control. The `.env` files are included in `.gitignore` by default, but always double-check before pushing your changes.
 
 ## Quickstart 2: Deploying a Smart Contract to Sepolia Testnet
 
