@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
-import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
+import { StarknetkitButton } from "~~/components/scaffold-stark/StarknetkitButton";
 import { useTheme } from "next-themes";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { devnet } from "@starknet-react/chains";
@@ -172,7 +172,7 @@ export const Header = () => {
             Wallet Not Deployed
           </span>
         ) : null}
-        <CustomConnectButton />
+        <StarknetkitButton />
         {/* <FaucetButton /> */}
         <SwitchTheme
           className={`pointer-events-auto ${
