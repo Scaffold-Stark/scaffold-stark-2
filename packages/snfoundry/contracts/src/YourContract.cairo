@@ -1,9 +1,21 @@
+/// Represents the possible states of a Multisig transaction.
+#[derive(Copy, Drop, Serde, starknet::Store, PartialEq, Debug)]
+pub enum TransactionState {
+    #[default]
+    NotFound,
+    Pending,
+    Confirmed,
+    Executed,
+}
+
 #[starknet::interface]
 pub trait IYourContract<TContractState> {
     fn greeting(self: @TContractState) -> ByteArray;
     fn set_greeting(ref self: TContractState, new_greeting: ByteArray, amount_strk: Option<u256>);
     fn withdraw(ref self: TContractState);
     fn premium(self: @TContractState) -> bool;
+    fn tx_state(self: @TContractState) -> TransactionState;
+    fn set_tx_state(ref self: TContractState, state: TransactionState);
 }
 
 #[starknet::contract]
@@ -15,7 +27,7 @@ pub mod YourContract {
         StoragePointerWriteAccess,
     };
     use starknet::{ContractAddress, get_caller_address, get_contract_address};
-    use super::IYourContract;
+    use super::{IYourContract, TransactionState};
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
 
@@ -50,6 +62,7 @@ pub mod YourContract {
         premium: bool,
         total_counter: u256,
         user_greeting_counter: Map<ContractAddress, u256>,
+        tx_state: TransactionState,
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
     }
@@ -108,6 +121,12 @@ pub mod YourContract {
         }
         fn premium(self: @ContractState) -> bool {
             self.premium.read()
+        }
+        fn tx_state(self: @ContractState) -> TransactionState {
+            self.tx_state.read()
+        }
+        fn set_tx_state(ref self: ContractState, state: TransactionState) {
+            self.tx_state.write(state);
         }
     }
 }
