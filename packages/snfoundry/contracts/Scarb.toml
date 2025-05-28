@@ -1,5 +1,5 @@
 [package]
-name = "contracts"
+name = "scaffold_contracts"
 version = "0.2.0"
 edition = "2024_07"
 

@@ -21,6 +21,23 @@ const getContractDataFromDeployments = (): Record<
     Record<string, { address: string; abi: Abi; classHash: string }>
   > = {};
 
+  // Extract package name from the target/dev directory
+  const getPackageName = (): string => {
+    const targetDevDir = path.join(__dirname, "../../contracts/target/dev/");
+    try {
+      const files = fs.readdirSync(targetDevDir);
+      const artifactFile = files.find(file => file.endsWith('.starknet_artifacts.json'));
+      if (artifactFile) {
+        // Extract package name from filename (remove .starknet_artifacts.json)
+        return artifactFile.replace('.starknet_artifacts.json', '');
+      }
+    } catch (e) {
+      console.warn("Could not read contracts/target/dev directory");
+    }
+  };
+
+  const packageName = getPackageName();
+
   files.forEach((file) => {
     if (path.extname(file) === ".json" && file.endsWith("_latest.json")) {
       const filePath = path.join(deploymentsDir, file);
@@ -38,7 +55,7 @@ const getContractDataFromDeployments = (): Record<
         try {
           const abiFilePath = path.join(
             __dirname,
-            `../../contracts/target/dev/contracts_${contractData.contract}.contract_class.json`
+            `../../contracts/target/dev/${packageName}_${contractData.contract}.contract_class.json`
           );
           const abiContent: CompiledSierra = JSON.parse(
             fs.readFileSync(abiFilePath, "utf8")
