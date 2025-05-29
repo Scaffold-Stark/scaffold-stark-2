@@ -200,7 +200,7 @@ export type UseScaffoldWriteConfig<
     UseSendTransactionProps,
     "chainId" | "abi" | "address" | "functionName" | "mode"
   > &
-    UseScaffoldArgsParam<TAbi, TContractName, TFunctionName>
+  UseScaffoldArgsParam<TAbi, TContractName, TFunctionName>
 >;
 
 type InferContractAbi<TContract> = TContract extends { abi: infer TAbi }
@@ -231,13 +231,13 @@ type OptionalTupple<T> = T extends readonly [infer H, ...infer R]
   : T;
 type UnionToIntersection<U> = Expand<
   (U extends any ? (k: U) => void : never) extends (k: infer I) => void
-    ? I
-    : never
+  ? I
+  : never
 >;
 type Expand<T> = T extends object
   ? T extends infer O
-    ? { [K in keyof O]: O[K] }
-    : never
+  ? { [K in keyof O]: O[K] }
+  : never
   : T;
 
 // helper function will only take from interfaces : //TODO: see if we can make it more generic
@@ -295,20 +295,20 @@ export type UseScaffoldArgsParam<
   TFunctionName extends ExtractAbiFunctionNamesWithInputsScaffold<
     ContractAbi<ContractName>
   >
-    ? {
-        args: OptionalTupple<
-          UnionToIntersection<
-            ExtractArgs<
-              TAbi,
-              ExtractAbiFunctionScaffold<
-                ContractAbi<TContractName>,
-                TFunctionName
-              >
-            >
+  ? {
+    args: OptionalTupple<
+      UnionToIntersection<
+        ExtractArgs<
+          TAbi,
+          ExtractAbiFunctionScaffold<
+            ContractAbi<TContractName>,
+            TFunctionName
           >
-        >;
-      }
-    : { args?: any[] };
+        >
+      >
+    >;
+  }
+  : { args?: any[] };
 
 export type UseScaffoldReadConfig<
   TAbi extends Abi,
@@ -327,7 +327,7 @@ export type UseScaffoldReadConfig<
     UseReadContractProps<TAbi, TFunctionName>,
     "chainId" | "abi" | "address" | "functionName" | "args"
   > &
-    UseScaffoldArgsParam<TAbi, TContractName, TFunctionName>
+  UseScaffoldArgsParam<TAbi, TContractName, TFunctionName>
 >;
 
 export type AbiFunctionOutputs<
@@ -360,6 +360,8 @@ export type EventFilters<
     }
 >;*/
 
+export type ExtractEventName<TEventName extends string> = TEventName extends `${string}::${string}::${string}::${infer EventName}` ? EventName : TEventName;
+
 export type UseScaffoldEventHistoryConfig<
   TContractName extends ContractName,
   TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
@@ -368,7 +370,7 @@ export type UseScaffoldEventHistoryConfig<
   TReceiptData extends boolean = false,
 > = {
   contractName: TContractName;
-  eventName: IsContractDeclarationMissing<string, TEventName>;
+  eventName: ExtractEventName<TEventName>;
   fromBlock: bigint;
   filters?: { [key: string]: any };
   blockData?: TBlockData;
@@ -447,7 +449,7 @@ const decodeParamsWithType = (paramType: string, param: any): unknown => {
       const genericType = parseGenericType(paramType)[0];
       return genericType
         ? // @ts-expect-error item type is unknown
-          param.map((item) => parseParamWithType(genericType, item, isRead))
+        param.map((item) => parseParamWithType(genericType, item, isRead))
         : param;
     }, param);
   } else if (isCairoOption(paramType)) {
@@ -456,10 +458,10 @@ const decodeParamsWithType = (paramType: string, param: any): unknown => {
       return option.isNone()
         ? "None"
         : `Some(${parseParamWithType(
-            paramType.split("<").pop()!,
-            option.unwrap(),
-            isRead,
-          )})`;
+          paramType.split("<").pop()!,
+          option.unwrap(),
+          isRead,
+        )})`;
     }, param);
   } else if (isCairoResult(paramType)) {
     return tryParsingParamReturnObject((x) => {

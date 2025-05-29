@@ -92,8 +92,12 @@ export const useScaffoldEventHistory = <
       }
 
       const event = (deployedContractData.abi as Abi).find(
-        (part) => part.type === "event" && part.name === eventName,
+        (part: { type: string; name: string }) => part.type === "event" && part.name.split("::").slice(-1)[0] === eventName,
       ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
+
+      if (!event) {
+        throw new Error(`Event ${eventName} not found in contract ${contractName}`);
+      }
 
       const blockNumber = (await publicClient.getBlockLatestAccepted())
         .block_number;
@@ -103,7 +107,7 @@ export const useScaffoldEventHistory = <
         blockNumber >= fromBlockUpdated
       ) {
         let keys: string[][] = [
-          [hash.getSelectorFromName(event.name.split("::").slice(-1)[0])],
+          [hash.getSelectorFromName(String(event.name.split("::").slice(-1)[0]))],
         ];
         if (filters) {
           keys = keys.concat(
@@ -136,14 +140,14 @@ export const useScaffoldEventHistory = <
             transaction:
               transactionData && logs[i].transaction_hash !== null
                 ? await publicClient.getTransactionByHash(
-                    logs[i].transaction_hash,
-                  )
+                  logs[i].transaction_hash,
+                )
                 : null,
             receipt:
               receiptData && logs[i].transaction_hash !== null
                 ? await publicClient.getTransactionReceipt(
-                    logs[i].transaction_hash,
-                  )
+                  logs[i].transaction_hash,
+                )
                 : null,
           });
         }
@@ -154,10 +158,10 @@ export const useScaffoldEventHistory = <
         }
         setError(undefined);
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
       setEvents(undefined);
-      setError(e);
+      setError(e instanceof Error ? e.message : String(e));
     } finally {
       setIsLoading(false);
     }
