@@ -8,10 +8,11 @@ import { WrongNetworkDropdown } from "./WrongNetworkDropdown";
 import { useAutoConnect, useNetworkColor } from "~~/hooks/scaffold-stark";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
-import { useAccount, useConnect, useNetwork } from "@starknet-react/core";
+import { useConnect, useNetwork } from "@starknet-react/core";
 import { Address } from "@starknet-react/chains";
 import { useEffect, useMemo, useState } from "react";
 import ConnectModal from "./ConnectModal";
+import { useAccount } from "~~/hooks/useAccount";
 
 /**
  * Custom Connect Button (watch balance + custom design)
@@ -24,6 +25,9 @@ export const CustomConnectButton = () => {
   const { account, status, address: accountAddress } = useAccount();
   const [accountChainId, setAccountChainId] = useState<bigint>(0n);
   const { chain } = useNetwork();
+  const [wasDisconnectedManually, setWasDisconnectedManually] = useState(
+    () => localStorage.getItem("wasDisconnectedManually") === "true",
+  );
 
   const blockExplorerAddressLink = useMemo(() => {
     return (
@@ -31,6 +35,17 @@ export const CustomConnectButton = () => {
       getBlockExplorerAddressLink(targetNetwork, accountAddress)
     );
   }, [accountAddress, targetNetwork]);
+
+  // Listen to disconnect event
+  useEffect(() => {
+    const handleManualDisconnect = () => {
+      setWasDisconnectedManually(false);
+    };
+    window.addEventListener("manualDisconnect", handleManualDisconnect);
+    return () => {
+      window.removeEventListener("manualDisconnect", handleManualDisconnect);
+    };
+  }, []);
 
   // effect to get chain id and address from account
   useEffect(() => {
@@ -59,7 +74,7 @@ export const CustomConnectButton = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connector]);
 
-  if (status === "disconnected" || accountChainId === 0n)
+  if (status === "disconnected" || wasDisconnectedManually)
     return <ConnectModal />;
 
   if (accountChainId !== targetNetwork.id) {

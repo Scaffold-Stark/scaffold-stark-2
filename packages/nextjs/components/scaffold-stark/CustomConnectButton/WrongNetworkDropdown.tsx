@@ -4,9 +4,22 @@ import {
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
 import { useDisconnect } from "@starknet-react/core";
+import { notification } from "~~/utils/scaffold-stark";
 
 export const WrongNetworkDropdown = () => {
   const { disconnect } = useDisconnect();
+  const handleDisconnect = () => {
+    try {
+      disconnect();
+      localStorage.removeItem("lastConnectionTime");
+      localStorage.setItem("wasDisconnectedManually", "true");
+      window.dispatchEvent(new Event("manualDisconnect"));
+      notification.success("Disconnect successfully!");
+    } catch (err) {
+      console.log(err);
+      notification.success("Disconnect failure!");
+    }
+  };
 
   return (
     <div className="dropdown dropdown-end mr-2">
@@ -28,7 +41,7 @@ export const WrongNetworkDropdown = () => {
           <button
             className="menu-item text-error btn-sm !rounded-xl flex gap-3 py-3"
             type="button"
-            onClick={() => disconnect()}
+            onClick={handleDisconnect}
           >
             <ArrowLeftEndOnRectangleIcon className="h-6 w-4 ml-2 sm:ml-0" />
             <span>Disconnect</span>
