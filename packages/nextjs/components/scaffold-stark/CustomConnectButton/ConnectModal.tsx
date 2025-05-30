@@ -69,6 +69,7 @@ const ConnectModal = () => {
       <label
         htmlFor="connect-modal"
         className="rounded-[18px]  btn-sm font-bold px-8 bg-btn-wallet py-3 cursor-pointer"
+        onClick={() => localStorage.removeItem("wasDisconnectedManually")}
       >
         <span>Connect</span>
       </label>
