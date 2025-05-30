@@ -1,81 +1,86 @@
 "use client";
 
-// @refresh reset
+import { useEffect, useMemo, useState } from "react";
+import { useConnect, useNetwork } from "@starknet-react/core";
+import { Address } from "@starknet-react/chains";
 import { Balance } from "../Balance";
 import { AddressInfoDropdown } from "./AddressInfoDropdown";
 import { AddressQRCodeModal } from "./AddressQRCodeModal";
 import { WrongNetworkDropdown } from "./WrongNetworkDropdown";
+import ConnectModal from "./ConnectModal";
 import { useAutoConnect, useNetworkColor } from "~~/hooks/scaffold-stark";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
-import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
-import { useConnect, useNetwork } from "@starknet-react/core";
-import { Address } from "@starknet-react/chains";
-import { useEffect, useMemo, useState } from "react";
-import ConnectModal from "./ConnectModal";
 import { useAccount } from "~~/hooks/useAccount";
+import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
 
-/**
- * Custom Connect Button (watch balance + custom design)
- */
 export const CustomConnectButton = () => {
   useAutoConnect();
   const networkColor = useNetworkColor();
   const { connector } = useConnect();
   const { targetNetwork } = useTargetNetwork();
-  const { account, status, address: accountAddress } = useAccount();
-  const [accountChainId, setAccountChainId] = useState<bigint>(0n);
   const { chain } = useNetwork();
+  const { account, status, address: accountAddress } = useAccount();
+
+  const [accountChainId, setAccountChainId] = useState<bigint>(0n);
   const [wasDisconnectedManually, setWasDisconnectedManually] = useState(
     () => localStorage.getItem("wasDisconnectedManually") === "true",
   );
 
   const blockExplorerAddressLink = useMemo(() => {
-    return (
-      accountAddress &&
-      getBlockExplorerAddressLink(targetNetwork, accountAddress)
-    );
+    return accountAddress
+      ? getBlockExplorerAddressLink(targetNetwork, accountAddress)
+      : "";
   }, [accountAddress, targetNetwork]);
 
-  // Listen to disconnect event
   useEffect(() => {
-    const handleManualDisconnect = () => {
-      setWasDisconnectedManually(false);
-    };
+    const handleManualDisconnect = () => setWasDisconnectedManually(false);
     window.addEventListener("manualDisconnect", handleManualDisconnect);
     return () => {
       window.removeEventListener("manualDisconnect", handleManualDisconnect);
     };
   }, []);
 
-  // effect to get chain id and address from account
   useEffect(() => {
-    if (account) {
-      const getChainId = async () => {
-        const chainId = await account.channel.getChainId();
-        setAccountChainId(BigInt(chainId as string));
-      };
-
-      getChainId();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (!account) return;
+    const getChainId = async () => {
+      const chainId = await account.channel.getChainId();
+      setAccountChainId(BigInt(chainId as string));
+    };
+    getChainId();
   }, [account, status]);
 
   useEffect(() => {
+    if (!connector) return;
     const handleChainChange = (event: { chainId?: bigint }) => {
-      const { chainId } = event;
-      if (chainId && chainId !== accountChainId) {
-        setAccountChainId(chainId);
+      if (event.chainId && event.chainId !== accountChainId) {
+        setAccountChainId(event.chainId);
       }
     };
-    connector?.on("change", handleChainChange);
+    connector.on("change", handleChainChange);
     return () => {
-      connector?.off("change", handleChainChange);
+      connector.off("change", handleChainChange);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connector]);
+  }, [connector, accountChainId]);
 
-  if (status === "disconnected" || wasDisconnectedManually)
+  if (status === "disconnected" || wasDisconnectedManually) {
     return <ConnectModal />;
+  }
+
+  const isLoading =
+    status === "connected" &&
+    (!accountAddress || !chain?.name || accountChainId === 0n);
+
+  if (isLoading) {
+    return (
+      <button
+        type="button"
+        disabled
+        className="w-36 h-10 rounded-xl bg-gray-200 dark:bg-gray-700 animate-pulse"
+      >
+        &nbsp;
+      </button>
+    );
+  }
 
   if (accountChainId !== targetNetwork.id) {
     return <WrongNetworkDropdown />;
@@ -94,8 +99,8 @@ export const CustomConnectButton = () => {
       </div>
       <AddressInfoDropdown
         address={accountAddress as Address}
-        displayName={""}
-        ensAvatar={""}
+        displayName=""
+        ensAvatar=""
         blockExplorerAddressLink={blockExplorerAddressLink}
       />
       <AddressQRCodeModal
