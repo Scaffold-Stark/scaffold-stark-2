@@ -21,11 +21,6 @@ export const BlockExplorer = () => {
       img: "/voyager-icon.svg",
       link: "https://voyager.online/",
     },
-    {
-      name: "Stark Compass",
-      img: "/starkcompass-icon.svg",
-      link: "https://starkcompass.com/",
-    },
   ];
 
   const { resolvedTheme } = useTheme();

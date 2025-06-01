@@ -21,11 +21,6 @@ export const BlockExplorerSepolia = () => {
       img: "/voyager-icon.svg",
       link: "https://sepolia.voyager.online/",
     },
-    {
-      name: "Stark Compass",
-      img: "/starkcompass-icon.svg",
-      link: "https://starkcompass.com/sepolia/",
-    },
   ];
 
   const { resolvedTheme } = useTheme();
