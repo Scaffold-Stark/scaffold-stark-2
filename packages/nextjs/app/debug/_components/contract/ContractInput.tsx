@@ -114,7 +114,7 @@ export const ContractInput = ({
           // @ts-ignore
           abiMember={abi?.find(
             // @ts-ignore
-            (member) => member.name === paramType.type
+            (member) => member.name === paramType.type,
           )}
           isDisabled={isDisabled}
         />
