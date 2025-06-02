@@ -3885,7 +3885,7 @@ __metadata:
     "@scaffold-stark/stark-burner": ^0.1.9
     "@starknet-io/types-js": ^0.8.1
     "@starknet-react/chains": ^3.1.3
-    "@starknet-react/core": ^3.7.4
+    "@starknet-react/core": 4.0.1-beta.1
     "@starknet-react/typescript-config": 0.0.2
     "@testing-library/dom": ^10.4.0
     "@testing-library/jest-dom": ^6.6.3
@@ -3965,7 +3965,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@starknet-io/types-js@npm:^0.7.7, starknet-types-07@npm:@starknet-io/types-js@~0.7.10":
+"@starknet-io/types-js@npm:^0.7.10, @starknet-io/types-js@npm:^0.7.7, starknet-types-07@npm:@starknet-io/types-js@~0.7.10":
   version: 0.7.10
   resolution: "@starknet-io/types-js@npm:0.7.10"
   checksum: 8f71c57d0f101ebbde91e3016b73ab70ce3329ccb7463764a27a61db42b9ea14b690bd620a6b2dd4303e890b4a9212bdd40626962e0320e82e0c600fd3be5abf
@@ -3986,12 +3986,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@starknet-react/core@npm:^3.7.4":
-  version: 3.7.4
-  resolution: "@starknet-react/core@npm:3.7.4"
+"@starknet-react/chains@npm:^4.0.1-beta.1":
+  version: 4.0.1-beta.1
+  resolution: "@starknet-react/chains@npm:4.0.1-beta.1"
+  checksum: f00fc46e35d50206b1e17038002ff790a79e4e6e92e8097168f9c90e05d49fb38b1f381ecc80107dff93a47dc69b77106fd54c60da34a6a092c1e611c918b1a5
+  languageName: node
+  linkType: hard
+
+"@starknet-react/core@npm:4.0.1-beta.1":
+  version: 4.0.1-beta.1
+  resolution: "@starknet-react/core@npm:4.0.1-beta.1"
   dependencies:
-    "@starknet-io/types-js": ^0.7.7
-    "@starknet-react/chains": ^3.1.3
+    "@starknet-io/types-js": ^0.7.10
+    "@starknet-react/chains": ^4.0.1-beta.1
     "@tanstack/react-query": ^5.25.0
     abi-wan-kanabi: ^2.2.4
     eventemitter3: ^5.0.1
@@ -4000,8 +4007,8 @@ __metadata:
   peerDependencies:
     get-starknet-core: ^4.0.0
     react: ^18.0
-    starknet: ^6.11.0
-  checksum: 2808e2072e5cdbd858a457be860f30f00342e80a0f139616b1989efc0539b8ba1c6e5dcbd91f04a91a57e4b200caf36bfda43dfb52660ee7218b517604d0456d
+    starknet: ^7.1.0
+  checksum: bb1f00dd41877d21a84d001ce4467eea4fa14c0ff4b8c096a2565a8ebbe855475692010a9db92d7882244c3146fc3ae33c854815095564b057a7197729899448
   languageName: node
   linkType: hard
 
