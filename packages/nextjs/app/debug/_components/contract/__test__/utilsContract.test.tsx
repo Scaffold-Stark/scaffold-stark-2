@@ -112,10 +112,10 @@ describe("utilsContract", () => {
       "echo_enum_u_input_u8_core::integer::u8": "1",
       "echo_enum_u_input_contracts::YourModel::Message": {
         variant: {
-        //   Quit: {
-        //     type: "()",
-        //     value: "",
-        //   },
+          //   Quit: {
+          //     type: "()",
+          //     value: "",
+          //   },
           Echo: {
             type: "core::felt252",
             value: "32",
