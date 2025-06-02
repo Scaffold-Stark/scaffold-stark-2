@@ -4,6 +4,8 @@ pub trait IYourContract<TContractState> {
     fn set_greeting(ref self: TContractState, new_greeting: ByteArray, amount_strk: Option<u256>);
     fn withdraw(ref self: TContractState);
     fn premium(self: @TContractState) -> bool;
+    fn get_var_non_zero(self: @TContractState) -> (u128, u128);
+    fn set_var_non_zero(ref self: TContractState, value_low: u128, value_high: u128);
 }
 
 #[starknet::contract]
@@ -52,6 +54,8 @@ pub mod YourContract {
         user_greeting_counter: Map<ContractAddress, u256>,
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
+        var_non_zero_low: u128,
+        var_non_zero_high: u128,
     }
 
     #[constructor]
@@ -75,8 +79,6 @@ pub mod YourContract {
 
             match amount_strk {
                 Option::Some(amount_strk) => {
-                    // In `Debug Contract` or UI implementation, call `approve` on STRK contract
-                    // before invoking fn set_greeting()
                     let strk_contract_address: ContractAddress = FELT_STRK_CONTRACT
                         .try_into()
                         .unwrap();
@@ -108,6 +110,15 @@ pub mod YourContract {
         }
         fn premium(self: @ContractState) -> bool {
             self.premium.read()
+        }
+        fn get_var_non_zero(self: @ContractState) -> (u128, u128) {
+            let low = self.var_non_zero_low.read();
+            let high = self.var_non_zero_high.read();
+            (low, high)
+        }
+        fn set_var_non_zero(ref self: ContractState, value_low: u128, value_high: u128) {
+            self.var_non_zero_low.write(value_low);
+            self.var_non_zero_high.write(value_high);
         }
     }
 }
