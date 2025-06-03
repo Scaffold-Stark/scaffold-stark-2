@@ -63,9 +63,9 @@ export const BlockExplorer = () => {
                   href={blockexplorer.link}
                   target="_blank"
                   className={`h-10 flex items-center px-4 gap-3 rounded-[4px] transition-all ${
-                    isDarkMode 
-                      ? 'hover:bg-[#385183] border-gray-700' 
-                      : 'hover:bg-slate-200 border-gray-200'
+                    isDarkMode
+                      ? "hover:bg-[#385183] border-gray-700"
+                      : "hover:bg-slate-200 border-gray-200"
                   } border`}
                   key={id}
                 >
