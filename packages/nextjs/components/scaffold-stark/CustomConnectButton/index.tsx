@@ -32,27 +32,32 @@ export const CustomConnectButton = () => {
       : "";
   }, [accountAddress, targetNetwork]);
 
+  // effect to get chain id and address from account
   useEffect(() => {
-    if (!account) return;
-    const getChainId = async () => {
-      const chainId = await account.channel.getChainId();
-      setAccountChainId(BigInt(chainId as string));
-    };
-    getChainId();
+    if (account) {
+      const getChainId = async () => {
+        const chainId = await account.channel.getChainId();
+        setAccountChainId(BigInt(chainId as string));
+      };
+
+      getChainId();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, status]);
 
   useEffect(() => {
-    if (!connector) return;
     const handleChainChange = (event: { chainId?: bigint }) => {
-      if (event.chainId && event.chainId !== accountChainId) {
-        setAccountChainId(event.chainId);
+      const { chainId } = event;
+      if (chainId && chainId !== accountChainId) {
+        setAccountChainId(chainId);
       }
     };
-    connector.on("change", handleChainChange);
+    connector?.on("change", handleChainChange);
     return () => {
-      connector.off("change", handleChainChange);
+      connector?.off("change", handleChainChange);
     };
-  }, [connector, accountChainId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connector]);
 
   if (status === "disconnected" || wasDisconnectedManually) {
     return <ConnectModal />;
