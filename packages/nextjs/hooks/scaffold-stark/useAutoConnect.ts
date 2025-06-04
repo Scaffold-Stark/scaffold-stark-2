@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useConnect } from "@starknet-react/core";
 import { useReadLocalStorage } from "usehooks-ts";
 import { BurnerConnector, burnerAccounts } from "@scaffold-stark/stark-burner";
@@ -20,7 +20,10 @@ export const useAutoConnect = (): void => {
   const { connect, connectors } = useConnect();
   const { account } = useAccount();
 
+  const hasAutoConnected = useRef(false);
+
   useEffect(() => {
+    if (hasAutoConnected.current) return;
     if (!scaffoldConfig.walletAutoConnect || wasDisconnectedManually) return;
 
     const now = Date.now();
@@ -41,6 +44,7 @@ export const useAutoConnect = (): void => {
     }
 
     if (shouldReconnect) {
+      hasAutoConnected.current = true;
       connect({ connector });
     }
   }, [

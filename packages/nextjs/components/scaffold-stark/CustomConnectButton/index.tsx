@@ -22,7 +22,7 @@ export const CustomConnectButton = () => {
   const { chain } = useNetwork();
   const { account, status, address: accountAddress } = useAccount();
   const wasDisconnectedManually = useReadLocalStorage<boolean>(
-    "wasDisconnectedManually"
+    "wasDisconnectedManually",
   );
   const [accountChainId, setAccountChainId] = useState<bigint>(0n);
 
@@ -34,16 +34,21 @@ export const CustomConnectButton = () => {
 
   // effect to get chain id and address from account
   useEffect(() => {
-    if (account) {
-      const getChainId = async () => {
-        const chainId = await account.channel.getChainId();
-        setAccountChainId(BigInt(chainId as string));
-      };
+    const getChainId = async () => {
+      try {
+        if (account?.channel?.getChainId) {
+          const chainId = await account.channel.getChainId();
+          setAccountChainId(BigInt(chainId));
+        } else if (chain?.id) {
+          setAccountChainId(BigInt(chain.id));
+        }
+      } catch (err) {
+        console.error("Failed to get chainId:", err);
+      }
+    };
 
-      getChainId();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, status]);
+    getChainId();
+  }, [account, status, chain?.id]);
 
   useEffect(() => {
     const handleChainChange = (event: { chainId?: bigint }) => {
