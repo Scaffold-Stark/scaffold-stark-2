@@ -13,8 +13,9 @@ export const useAutoConnect = (): void => {
   const lastConnectionTime = useReadLocalStorage<number>(
     LAST_CONNECTED_TIME_LOCALSTORAGE_KEY,
   );
-  const wasDisconnectedManually =
-    localStorage.getItem("wasDisconnectedManually") === "true";
+  const wasDisconnectedManually = useReadLocalStorage<boolean>(
+    "wasDisconnectedManually",
+  );
 
   const { connect, connectors } = useConnect();
   const { account } = useAccount();
@@ -42,6 +43,12 @@ export const useAutoConnect = (): void => {
     if (shouldReconnect) {
       connect({ connector });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connect, connectors, savedConnector, lastConnectionTime, account]);
+  }, [
+    connect,
+    connectors,
+    savedConnector,
+    lastConnectionTime,
+    account,
+    wasDisconnectedManually,
+  ]);
 };

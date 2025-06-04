@@ -76,12 +76,21 @@ export const AddressInfoDropdown = ({
       initializeWithValue: false,
     },
   );
+
+  const [, setWasDisconnectedManually] = useLocalStorage<boolean>(
+    "wasDisconnectedManually",
+    false,
+    {
+      initializeWithValue: false,
+    },
+  );
+
   const handleDisconnect = () => {
     try {
       disconnect();
       localStorage.removeItem("lastUsedConnector");
       localStorage.removeItem("lastConnectionTime");
-      localStorage.setItem("wasDisconnectedManually", "true");
+      setWasDisconnectedManually(true);
       window.dispatchEvent(new Event("manualDisconnect"));
       notification.success("Disconnect successfully!");
     } catch (err) {
@@ -89,7 +98,6 @@ export const AddressInfoDropdown = ({
       notification.success("Disconnect failure!");
     }
   };
-
   return (
     <>
       <details ref={dropdownRef} className="dropdown dropdown-end leading-3">

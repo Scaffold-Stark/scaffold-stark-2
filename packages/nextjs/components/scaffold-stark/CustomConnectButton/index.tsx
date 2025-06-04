@@ -12,6 +12,7 @@ import { useAutoConnect, useNetworkColor } from "~~/hooks/scaffold-stark";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { useAccount } from "~~/hooks/useAccount";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
+import { useReadLocalStorage } from "usehooks-ts";
 
 export const CustomConnectButton = () => {
   useAutoConnect();
@@ -20,25 +21,16 @@ export const CustomConnectButton = () => {
   const { targetNetwork } = useTargetNetwork();
   const { chain } = useNetwork();
   const { account, status, address: accountAddress } = useAccount();
-
-  const [accountChainId, setAccountChainId] = useState<bigint>(0n);
-  const [wasDisconnectedManually, setWasDisconnectedManually] = useState(
-    () => localStorage.getItem("wasDisconnectedManually") === "true",
+  const wasDisconnectedManually = useReadLocalStorage<boolean>(
+    "wasDisconnectedManually"
   );
+  const [accountChainId, setAccountChainId] = useState<bigint>(0n);
 
   const blockExplorerAddressLink = useMemo(() => {
     return accountAddress
       ? getBlockExplorerAddressLink(targetNetwork, accountAddress)
       : "";
   }, [accountAddress, targetNetwork]);
-
-  useEffect(() => {
-    const handleManualDisconnect = () => setWasDisconnectedManually(false);
-    window.addEventListener("manualDisconnect", handleManualDisconnect);
-    return () => {
-      window.removeEventListener("manualDisconnect", handleManualDisconnect);
-    };
-  }, []);
 
   useEffect(() => {
     if (!account) return;

@@ -1,22 +1,27 @@
-import { NetworkOptions } from "./NetworkOptions";
 import {
-  ArrowLeftEndOnRectangleIcon,
   ChevronDownIcon,
+  ArrowLeftEndOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import { useDisconnect } from "@starknet-react/core";
 import { notification } from "~~/utils/scaffold-stark";
+import { useLocalStorage } from "usehooks-ts";
 
 export const WrongNetworkDropdown = () => {
   const { disconnect } = useDisconnect();
+  const [, setWasDisconnectedManually] = useLocalStorage<boolean>(
+    "wasDisconnectedManually",
+    false,
+  );
+
   const handleDisconnect = () => {
     try {
       disconnect();
       localStorage.removeItem("lastConnectionTime");
-      localStorage.setItem("wasDisconnectedManually", "true");
+      setWasDisconnectedManually(true);
       window.dispatchEvent(new Event("manualDisconnect"));
       notification.success("Disconnect successfully!");
     } catch (err) {
-      console.log(err);
+      console.error(err);
       notification.success("Disconnect failure!");
     }
   };
