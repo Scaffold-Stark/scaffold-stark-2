@@ -366,7 +366,6 @@ export type UseScaffoldEventHistoryConfig<
   TBlockData extends boolean = false,
   TTransactionData extends boolean = false,
   TReceiptData extends boolean = false,
-  TUseWebsocket extends boolean = false,
 > = {
   contractName: TContractName;
   eventName: IsContractDeclarationMissing<string, TEventName>;

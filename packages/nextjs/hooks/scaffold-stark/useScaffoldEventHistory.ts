@@ -42,7 +42,6 @@ export const useScaffoldEventHistory = <
   TBlockData extends boolean = false,
   TTransactionData extends boolean = false,
   TReceiptData extends boolean = false,
-  TUseWebsocket extends boolean = false,
 >({
   contractName,
   eventName,
@@ -60,8 +59,7 @@ export const useScaffoldEventHistory = <
   TEventName,
   TBlockData,
   TTransactionData,
-  TReceiptData,
-  TUseWebsocket
+  TReceiptData
 >) => {
   const [events, setEvents] = useState<any[]>();
   const [isLoading, setIsLoading] = useState(false);
