@@ -22,6 +22,7 @@ import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
 import { composeEventFilterKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
 
 const MAX_KEYS_COUNT = 16;
+const MAX_EVENTS_LIMIT = 100;
 /**
  * Reads events from a deployed contract
  * @param config - The config settings
@@ -70,6 +71,7 @@ export const useScaffoldEventHistory = <
 
   const webSocketChannelRef = useRef<WebSocketChannel | null>(null);
   const subscriptionIdRef = useRef<string | null>(null);
+  const processingRef = useRef<boolean>(false)
 
   const { data: deployedContractData, isLoading: deployedContractLoading } =
     useDeployedContractInfo(contractName);
@@ -91,34 +93,93 @@ export const useScaffoldEventHistory = <
 
   const processNewEvents = useCallback(
     async (newLogs: any[]) => {
-      if (!deployedContractData) return;
+      if (!deployedContractData || processingRef.current || newLogs.length === 0) return;
 
-      const newEvents: any[] = [];
+      // const newEvents: any[] = [];
 
-      for (let i = newLogs.length - 1; i >= 0; i--) {
-        const log = newLogs[i];
+      // for (let i = newLogs.length - 1; i >= 0; i--) {
+      //   const log = newLogs[i];
 
-        newEvents.push({
-          event: (deployedContractData.abi as Abi).find(
-            (part) => part.type === "event" && part.name === eventName,
-          ),
-          log,
-          block:
-            blockData && log.block_hash !== null
-              ? await publicClient.getBlockWithTxHashes(log.block_hash)
-              : null,
-          transaction:
-            transactionData && log.transaction_hash !== null
-              ? await publicClient.getTransactionByHash(log.transaction_hash)
-              : null,
-          receipt:
-            receiptData && log.transaction_hash !== null
-              ? await publicClient.getTransactionReceipt(log.transaction_hash)
-              : null,
+      //   newEvents.push({
+      //     event: (deployedContractData.abi as Abi).find(
+      //       (part) => part.type === "event" && part.name === eventName,
+      //     ),
+      //     log,
+      //     block:
+      //       blockData && log.block_hash !== null
+      //         ? await publicClient.getBlockWithTxHashes(log.block_hash)
+      //         : null,
+      //     transaction:
+      //       transactionData && log.transaction_hash !== null
+      //         ? await publicClient.getTransactionByHash(log.transaction_hash)
+      //         : null,
+      //     receipt:
+      //       receiptData && log.transaction_hash !== null
+      //         ? await publicClient.getTransactionReceipt(log.transaction_hash)
+      //         : null,
+      //   });
+      // }
+      processingRef.current = true;
+
+      try {
+        const batchSize = 10;
+        const processedEvents: any[] = [];
+
+        for (let i = 0; i < newLogs.length; i += batchSize) {
+          const batch = newLogs.slice(i, batchSize + i);
+
+          const batchEvents = await Promise.all(batch.map(async log => {
+            try {
+              const [block, transaction, receipt] = await Promise.all([
+                blockData && log.block_hash ? publicClient.getBlockWithTxHashes(log.block_hash) : null,
+                transactionData && log.transaction_hash ? publicClient.getTransactionByHash(log.transaction_hash) : null,
+                receiptData && log.transaction_hash ? publicClient.getTransactionReceipt(log.transaction_hash) : null
+              ])
+
+              const event = (deployedContractData.abi as Abi).find(
+                (part) => part.type === "event" && part.name === eventName
+              )
+
+              return { event, log, block, transaction, receipt };
+            } catch (err) {
+              console.warn("Error processing event: ", err);
+              return null;
+            }
+          }));
+
+          processedEvents.push(...batchEvents.filter(event => event !== null));
+        }
+
+        setEvents(prev => {
+          const combined = [...processedEvents, prev];
+          return combined.slice(0, MAX_EVENTS_LIMIT);
         });
+      } catch (err) {
+        console.error("Error processing events: ", err);
+        setError(`Error processing events: ${err}`);
+      } finally {
+        processingRef.current = false;
       }
 
-      setEvents((prev) => [...newEvents, ...(prev || [])]);
+      // const newEvents = await Promise.all(newLogs.map(async log => {
+      //   const [block, transaction, receipt] = await Promise.all([
+      //     blockData && log.block_hash ? publicClient.getBlockWithTxHashes(log.block_hash) : null,
+      //     transactionData && log.transaction_hash ? publicClient.getTransactionByHash(log.transaction_hash) : null,
+      //     receiptData && log.transaction_hash ? publicClient.getTransactionReceipt(log.transaction_hash) : null
+      //   ])
+
+      //   const event = (deployedContractData.abi as Abi).find(
+      //     (part) => part.type === "event" && part.name === eventName
+      //   )
+
+      //   return { event, log, block, transaction, receipt };
+      // }))
+
+      // setEvents((prev) => [...newEvents, ...(prev || [])]);
+      // setEvents(prev => {
+      //   const combined = [...newEvents, ...(prev || [])];
+      //   return combined.slice(0, 100);
+      // });
     },
     [
       deployedContractData,
@@ -350,7 +411,7 @@ export const useScaffoldEventHistory = <
   }, [fromBlock, enabled, useWebsocket]);
 
   useEffect(() => {
-    if (!useWebsocket && !deployedContractLoading) {
+    if (!useWebsocket && !deployedContractLoading && deployedContractData && enabled) {
       readEvents().then();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -374,6 +435,7 @@ export const useScaffoldEventHistory = <
     setEvents([]);
     setFromBlockUpdated(fromBlock);
     setError(undefined);
+    processingRef.current = false;
 
     if (useWebsocket) {
       cleanUpWebsocket().then(() => {
@@ -381,6 +443,8 @@ export const useScaffoldEventHistory = <
           initializeWebSocket();
         }
       });
+    } else if (!deployedContractLoading && deployedContractData && enabled) {
+      readEvents(fromBlock);
     }
   }, [
     fromBlock,
@@ -393,7 +457,7 @@ export const useScaffoldEventHistory = <
 
   useInterval(
     async () => {
-      if (!useWebsocket && !deployedContractLoading) {
+      if (!useWebsocket && !deployedContractLoading && !processingRef.current) {
         readEvents();
       }
     },
@@ -405,26 +469,28 @@ export const useScaffoldEventHistory = <
   );
 
   const eventHistoryData = useMemo(() => {
-    if (deployedContractData) {
-      return (events || []).map((event) => {
-        const logs = [JSON.parse(JSON.stringify(event.log))];
-        const parsed = starknetEvents.parseEvents(
-          logs,
-          starknetEvents.getAbiEvents(deployedContractData.abi),
-          CallData.getAbiStruct(deployedContractData.abi),
-          CallData.getAbiEnum(deployedContractData.abi),
-        );
-        const args = parsed.length ? parsed[0][eventName] : {};
-        const { event: rawEvent, ...rest } = event;
-        return {
-          type: rawEvent.members,
-          args,
-          parsedArgs: format ? parseEventData(args, rawEvent.members) : null,
-          ...rest,
-        };
-      });
-    }
-    return [];
+    if (!deployedContractData) return []
+    // if (deployedContractData) {
+      
+    // }
+    return (events || []).map((event) => {
+        // const logs = [JSON.parse(JSON.stringify(event.log))];
+      const logs = [event.log]
+      const parsed = starknetEvents.parseEvents(
+        logs,
+        starknetEvents.getAbiEvents(deployedContractData.abi),
+        CallData.getAbiStruct(deployedContractData.abi),
+        CallData.getAbiEnum(deployedContractData.abi),
+      );
+      const args = parsed.length ? parsed[0][eventName] : {};
+      const { event: rawEvent, ...rest } = event;
+      return {
+        type: rawEvent.members,
+        args,
+        parsedArgs: format ? parseEventData(args, rawEvent.members) : null,
+        ...rest,
+      };
+    });
   }, [deployedContractData, events, eventName, format]);
 
   return {
