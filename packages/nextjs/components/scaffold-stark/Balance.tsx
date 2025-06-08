@@ -58,6 +58,11 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
   // Calculate the balance in USD
   const strkBalanceInUsd = parseFloat(strkFormatted) * strkPrice;
 
+
+  console.log(
+    `Balance: ${strkFormatted} ${strkSymbol} (${strkPrice} USD per STRK)`,
+  );
+
   return (
     <>
       <button
