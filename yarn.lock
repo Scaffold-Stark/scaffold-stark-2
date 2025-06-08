@@ -3921,7 +3921,7 @@ __metadata:
     react-dom: 19.0.0
     react-hot-toast: ^2.4.1
     shx: ^0.4.0
-    starknet: ^7.1.0
+    starknet: ^7.4.0
     tailwindcss: ^3.3.0
     type-fest: ^4.6.0
     typescript: ^5
@@ -3965,10 +3965,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@starknet-io/types-js@npm:^0.7.10, @starknet-io/types-js@npm:^0.7.7, starknet-types-07@npm:@starknet-io/types-js@~0.7.10":
+"@starknet-io/starknet-types-07@npm:@starknet-io/types-js@~0.7.10, @starknet-io/types-js@npm:^0.7.10, @starknet-io/types-js@npm:^0.7.7, starknet-types-07@npm:@starknet-io/types-js@~0.7.10":
   version: 0.7.10
   resolution: "@starknet-io/types-js@npm:0.7.10"
   checksum: 8f71c57d0f101ebbde91e3016b73ab70ce3329ccb7463764a27a61db42b9ea14b690bd620a6b2dd4303e890b4a9212bdd40626962e0320e82e0c600fd3be5abf
+  languageName: node
+  linkType: hard
+
+"@starknet-io/starknet-types-08@npm:@starknet-io/types-js@~0.8.4":
+  version: 0.8.4
+  resolution: "@starknet-io/types-js@npm:0.8.4"
+  checksum: 5c42eeb216c8e91051977e8ef4f7ffdf1c225c13057c29c10d5cce25b7fe25ec0ad1f33e061add1a299447cf8ca5e85fed173ceb74c186d649810ddcc36f9027
   languageName: node
   linkType: hard
 
@@ -12495,6 +12502,24 @@ __metadata:
     starknet-types-08: "npm:@starknet-io/types-js@~0.8.3"
     ts-mixer: ^6.0.3
   checksum: ce38d2d68d630473630de667002305a6bcc5863b3c17ce3ae2ef171c8ba8d7a8ce883250e6e7b3a0e71ec11e00d4f0c03f11e42d809d9364276686ec4b104e5e
+  languageName: node
+  linkType: hard
+
+"starknet@npm:^7.4.0":
+  version: 7.5.0
+  resolution: "starknet@npm:7.5.0"
+  dependencies:
+    "@noble/curves": 1.7.0
+    "@noble/hashes": 1.6.0
+    "@scure/base": 1.2.1
+    "@scure/starknet": 1.1.0
+    "@starknet-io/starknet-types-07": "npm:@starknet-io/types-js@~0.7.10"
+    "@starknet-io/starknet-types-08": "npm:@starknet-io/types-js@~0.8.4"
+    abi-wan-kanabi: 2.2.4
+    lossless-json: ^4.0.1
+    pako: ^2.0.4
+    ts-mixer: ^6.0.3
+  checksum: 9f75bd2de42d909ec90c494489fb219492bf6f34873b501bde7df13b654ae5c491f2fd157569d15bd3d3758188db641677ebdc1411c35213fddb11db2560a6f0
   languageName: node
   linkType: hard
 

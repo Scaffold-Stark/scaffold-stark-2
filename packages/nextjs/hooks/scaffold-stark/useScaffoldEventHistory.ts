@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTargetNetwork } from "./useTargetNetwork";
 import { useInterval } from "usehooks-ts";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
@@ -16,7 +16,7 @@ import {
 } from "~~/utils/scaffold-stark/contract";
 import { devnet } from "@starknet-react/chains";
 import { useProvider } from "@starknet-react/core";
-import { hash, RpcProvider } from "starknet";
+import { hash, RpcProvider, WebSocketChannel } from "starknet";
 import { events as starknetEvents, CallData } from "starknet";
 import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
 import { composeEventFilterKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
@@ -41,6 +41,7 @@ export const useScaffoldEventHistory = <
   TBlockData extends boolean = false,
   TTransactionData extends boolean = false,
   TReceiptData extends boolean = false,
+  TUseWebsocket extends boolean = false,
 >({
   contractName,
   eventName,
@@ -52,17 +53,23 @@ export const useScaffoldEventHistory = <
   watch,
   format = true,
   enabled = true,
+  useWebsocket = false
 }: UseScaffoldEventHistoryConfig<
   TContractName,
   TEventName,
   TBlockData,
   TTransactionData,
-  TReceiptData
+  TReceiptData,
+  TUseWebsocket
 >) => {
   const [events, setEvents] = useState<any[]>();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [fromBlockUpdated, setFromBlockUpdated] = useState<bigint>(fromBlock);
+  const [isWebsocketConnected, setIsWebsocketConnected] = useState(false)
+
+  const webSocketChannelRef = useRef<WebSocketChannel | null>(null);
+  const subscriptionIdRef = useRef<string | null>(null);
 
   const { data: deployedContractData, isLoading: deployedContractLoading } =
     useDeployedContractInfo(contractName);
@@ -74,6 +81,140 @@ export const useScaffoldEventHistory = <
       nodeUrl: targetNetwork.rpcUrls.public.http[0],
     });
   }, [targetNetwork.rpcUrls.public.http]);
+
+  const wsUrl = useMemo(() => {
+    if (!useWebsocket) return;
+
+    const url = targetNetwork.rpcUrls.public.websocket?.[0];
+    return url || null
+  }, [targetNetwork.rpcUrls.public.websocket])
+
+  const processNewEvents = useCallback(async (newLogs: any[]) => {
+    if (!deployedContractData) return;
+
+    const newEvents: any[] = [];
+
+    for (let i = newLogs.length - 1; i >= 0; i--) {
+      const log = newLogs[i]
+
+      newEvents.push({
+        event: (deployedContractData.abi as Abi).find(
+          (part) => part.type === "event" && part.name === eventName
+        ),
+        log,
+        block: blockData && log.block_hash !== null
+            ? await publicClient.getBlockWithTxHashes(log.block_hash)
+            : null,
+        transaction: transactionData && log.transaction_hash !== null
+            ? await publicClient.getTransactionByHash(log.transaction_hash)
+            : null,
+        receipt: receiptData && log.transaction_hash !== null
+            ? await publicClient.getTransactionReceipt(log.transaction_hash)
+            : null,
+      });
+    }
+
+    setEvents(prev => [...newEvents, ...(prev || [])])
+
+  }, [deployedContractData, eventName, blockData, transactionData, receiptData, publicClient])
+
+  const cleanUpWebsocket = useCallback(async () => {
+    if (webSocketChannelRef.current) {
+      try {
+        if (subscriptionIdRef.current) {
+          await webSocketChannelRef.current.unsubscribeEvents();
+          subscriptionIdRef.current = null;
+        }
+
+        webSocketChannelRef.current.disconnect();
+        webSocketChannelRef.current = null;
+        setIsWebsocketConnected(false);
+      } catch (err) {
+        console.error('Error cleaning up websocket: ', err);
+      }
+    }
+  }, [])
+
+  const initializeWebSocket = useCallback(async () => {
+    if (!useWebsocket || !wsUrl || !deployedContractData || !enabled) return;
+
+    try {
+      if (!webSocketChannelRef.current) {
+        // TODO: Implement this function
+        await cleanUpWebsocket()
+      }
+
+      const wsChannel = new WebSocketChannel({
+        nodeUrl: wsUrl
+      })
+
+      await wsChannel.waitForConnection();
+      webSocketChannelRef.current = wsChannel;
+      setIsWebsocketConnected(true);
+
+      const event = (deployedContractData.abi as Abi).find(
+        (part) => part.type === "event" && part.name === eventName,
+      ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
+
+      if (!event) {
+        throw new Error(`Event: ${eventName} not found in contract ABI`)
+      }
+
+      let keys: string[][] = [
+        [hash.getSelectorFromName(event.name.split("::").slice(-1)[0])],
+      ];
+
+      if (filters) {
+        keys = keys.concat(
+          composeEventFilterKeys(filters, event, deployedContractData.abi)
+        );
+      }
+
+      keys = keys.slice(0, MAX_KEYS_COUNT);
+
+      const blockNumber = (await publicClient.getBlockLatestAccepted())
+        .block_number;
+
+      const subscriptionId = await wsChannel.subscribeEvents(
+        deployedContractData.address,
+        keys,
+        fromBlock || blockNumber
+      )
+
+      if (!subscriptionId) {
+        throw new Error('Failed to initialize websocket connection');
+      }
+
+      subscriptionIdRef.current = subscriptionId;
+
+      wsChannel.onEvents = async (data) => {
+        console.log('New ws event entry: ', data);
+
+        if (data.result) {
+          await processNewEvents([data.result]);
+        }
+      }
+
+      wsChannel.onClose = (ev) => {
+        console.log('Web socket channel closed: ', ev);
+        setIsWebsocketConnected(false);
+        setError('Websocket connection closed');
+      };
+
+      wsChannel.onError = (ev) => {
+        console.error('Websocket connection error: ', ev);
+        setError('Websocket connection error');
+        setIsWebsocketConnected(false);
+      }
+
+      setError(undefined);
+
+    } catch (err: any) {
+      console.error('Failed to initialize websocket: ', err);
+      setError(`Websocket Initialization failed: ${err.message}`)
+      setIsWebsocketConnected(false);
+    }
+  }, [useWebsocket, wsUrl, deployedContractData, enabled, eventName, filters, processNewEvents])
 
   const readEvents = async (fromBlock?: bigint) => {
     if (!enabled) {
@@ -124,34 +265,35 @@ export const useScaffoldEventHistory = <
         const logs = rawEventResp.events;
         setFromBlockUpdated(BigInt(blockNumber + 1));
 
-        const newEvents = [];
-        for (let i = logs.length - 1; i >= 0; i--) {
-          newEvents.push({
-            event,
-            log: logs[i],
-            block:
-              blockData && logs[i].block_hash === null
-                ? null
-                : await publicClient.getBlockWithTxHashes(logs[i].block_hash),
-            transaction:
-              transactionData && logs[i].transaction_hash !== null
-                ? await publicClient.getTransactionByHash(
-                    logs[i].transaction_hash,
-                  )
-                : null,
-            receipt:
-              receiptData && logs[i].transaction_hash !== null
-                ? await publicClient.getTransactionReceipt(
-                    logs[i].transaction_hash,
-                  )
-                : null,
-          });
-        }
-        if (events && typeof fromBlock === "undefined") {
-          setEvents([...newEvents, ...events]);
-        } else {
-          setEvents(newEvents);
-        }
+        await processNewEvents(logs);
+        // const newEvents = [];
+        // for (let i = logs.length - 1; i >= 0; i--) {
+        //   newEvents.push({
+        //     event,
+        //     log: logs[i],
+        //     block:
+        //       blockData && logs[i].block_hash === null
+        //         ? null
+        //         : await publicClient.getBlockWithTxHashes(logs[i].block_hash),
+        //     transaction:
+        //       transactionData && logs[i].transaction_hash !== null
+        //         ? await publicClient.getTransactionByHash(
+        //             logs[i].transaction_hash,
+        //           )
+        //         : null,
+        //     receipt:
+        //       receiptData && logs[i].transaction_hash !== null
+        //         ? await publicClient.getTransactionReceipt(
+        //             logs[i].transaction_hash,
+        //           )
+        //         : null,
+        //   });
+        // }
+        // if (events && typeof fromBlock === "undefined") {
+        //   setEvents([...newEvents, ...events]);
+        // } else {
+        //   setEvents(newEvents);
+        // }
         setError(undefined);
       }
     } catch (e: any) {
@@ -164,12 +306,26 @@ export const useScaffoldEventHistory = <
   };
 
   useEffect(() => {
-    readEvents(fromBlock).then();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fromBlock, enabled]);
+    if (useWebsocket && !deployedContractLoading && deployedContractData) {
+      initializeWebSocket();
+    }
+
+    return () => {
+      if (useWebsocket) {
+        cleanUpWebsocket();
+      }
+    }
+  }, [useWebsocket, deployedContractData, deployedContractLoading, initializeWebSocket, cleanUpWebsocket])
 
   useEffect(() => {
-    if (!deployedContractLoading) {
+    if (!useWebsocket) {
+      readEvents(fromBlock).then();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fromBlock, enabled, useWebsocket]);
+
+  useEffect(() => {
+    if (!useWebsocket && !deployedContractLoading) {
       readEvents().then();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -185,6 +341,7 @@ export const useScaffoldEventHistory = <
     blockData,
     transactionData,
     receiptData,
+    useWebsocket
   ]);
 
   useEffect(() => {
@@ -192,15 +349,23 @@ export const useScaffoldEventHistory = <
     setEvents([]);
     setFromBlockUpdated(fromBlock);
     setError(undefined);
-  }, [fromBlock, targetNetwork.id]);
+
+    if (useWebsocket) {
+      cleanUpWebsocket().then(() => {
+        if (deployedContractData) {
+          initializeWebSocket();
+        }
+      });
+    }
+  }, [fromBlock, targetNetwork.id, useWebsocket, cleanUpWebsocket, deployedContractData, initializeWebSocket]);
 
   useInterval(
     async () => {
-      if (!deployedContractLoading) {
+      if (!useWebsocket && !deployedContractLoading) {
         readEvents();
       }
     },
-    watch
+    (!useWebsocket && watch)
       ? targetNetwork.id !== devnet.id
         ? scaffoldConfig.pollingInterval
         : 4_000
@@ -234,5 +399,7 @@ export const useScaffoldEventHistory = <
     data: eventHistoryData,
     isLoading: isLoading || deployedContractLoading,
     error: error,
+    isWebsocketConnected: useWebsocket ? isWebsocketConnected : undefined,
+    isUsingWebsocket: useWebsocket
   };
 };
