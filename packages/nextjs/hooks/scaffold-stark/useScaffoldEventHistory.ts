@@ -53,7 +53,7 @@ export const useScaffoldEventHistory = <
   watch,
   format = true,
   enabled = true,
-  useWebsocket = false
+  useWebsocket = false,
 }: UseScaffoldEventHistoryConfig<
   TContractName,
   TEventName,
@@ -66,7 +66,7 @@ export const useScaffoldEventHistory = <
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [fromBlockUpdated, setFromBlockUpdated] = useState<bigint>(fromBlock);
-  const [isWebsocketConnected, setIsWebsocketConnected] = useState(false)
+  const [isWebsocketConnected, setIsWebsocketConnected] = useState(false);
 
   const webSocketChannelRef = useRef<WebSocketChannel | null>(null);
   const subscriptionIdRef = useRef<string | null>(null);
@@ -86,37 +86,49 @@ export const useScaffoldEventHistory = <
     if (!useWebsocket) return;
 
     const url = targetNetwork.rpcUrls.public.websocket?.[0];
-    return url || null
-  }, [targetNetwork.rpcUrls.public.websocket])
+    return url || null;
+  }, [targetNetwork.rpcUrls.public.websocket]);
 
-  const processNewEvents = useCallback(async (newLogs: any[]) => {
-    if (!deployedContractData) return;
+  const processNewEvents = useCallback(
+    async (newLogs: any[]) => {
+      if (!deployedContractData) return;
 
-    const newEvents: any[] = [];
+      const newEvents: any[] = [];
 
-    for (let i = newLogs.length - 1; i >= 0; i--) {
-      const log = newLogs[i]
+      for (let i = newLogs.length - 1; i >= 0; i--) {
+        const log = newLogs[i];
 
-      newEvents.push({
-        event: (deployedContractData.abi as Abi).find(
-          (part) => part.type === "event" && part.name === eventName
-        ),
-        log,
-        block: blockData && log.block_hash !== null
-            ? await publicClient.getBlockWithTxHashes(log.block_hash)
-            : null,
-        transaction: transactionData && log.transaction_hash !== null
-            ? await publicClient.getTransactionByHash(log.transaction_hash)
-            : null,
-        receipt: receiptData && log.transaction_hash !== null
-            ? await publicClient.getTransactionReceipt(log.transaction_hash)
-            : null,
-      });
-    }
+        newEvents.push({
+          event: (deployedContractData.abi as Abi).find(
+            (part) => part.type === "event" && part.name === eventName,
+          ),
+          log,
+          block:
+            blockData && log.block_hash !== null
+              ? await publicClient.getBlockWithTxHashes(log.block_hash)
+              : null,
+          transaction:
+            transactionData && log.transaction_hash !== null
+              ? await publicClient.getTransactionByHash(log.transaction_hash)
+              : null,
+          receipt:
+            receiptData && log.transaction_hash !== null
+              ? await publicClient.getTransactionReceipt(log.transaction_hash)
+              : null,
+        });
+      }
 
-    setEvents(prev => [...newEvents, ...(prev || [])])
-
-  }, [deployedContractData, eventName, blockData, transactionData, receiptData, publicClient])
+      setEvents((prev) => [...newEvents, ...(prev || [])]);
+    },
+    [
+      deployedContractData,
+      eventName,
+      blockData,
+      transactionData,
+      receiptData,
+      publicClient,
+    ],
+  );
 
   const cleanUpWebsocket = useCallback(async () => {
     if (webSocketChannelRef.current) {
@@ -130,10 +142,10 @@ export const useScaffoldEventHistory = <
         webSocketChannelRef.current = null;
         setIsWebsocketConnected(false);
       } catch (err) {
-        console.error('Error cleaning up websocket: ', err);
+        console.error("Error cleaning up websocket: ", err);
       }
     }
-  }, [])
+  }, []);
 
   const initializeWebSocket = useCallback(async () => {
     if (!useWebsocket || !wsUrl || !deployedContractData || !enabled) return;
@@ -141,12 +153,12 @@ export const useScaffoldEventHistory = <
     try {
       if (!webSocketChannelRef.current) {
         // TODO: Implement this function
-        await cleanUpWebsocket()
+        await cleanUpWebsocket();
       }
 
       const wsChannel = new WebSocketChannel({
-        nodeUrl: wsUrl
-      })
+        nodeUrl: wsUrl,
+      });
 
       await wsChannel.waitForConnection();
       webSocketChannelRef.current = wsChannel;
@@ -157,7 +169,7 @@ export const useScaffoldEventHistory = <
       ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
 
       if (!event) {
-        throw new Error(`Event: ${eventName} not found in contract ABI`)
+        throw new Error(`Event: ${eventName} not found in contract ABI`);
       }
 
       let keys: string[][] = [
@@ -166,7 +178,7 @@ export const useScaffoldEventHistory = <
 
       if (filters) {
         keys = keys.concat(
-          composeEventFilterKeys(filters, event, deployedContractData.abi)
+          composeEventFilterKeys(filters, event, deployedContractData.abi),
         );
       }
 
@@ -178,43 +190,50 @@ export const useScaffoldEventHistory = <
       const subscriptionId = await wsChannel.subscribeEvents(
         deployedContractData.address,
         keys,
-        fromBlock || blockNumber
-      )
+        fromBlock || blockNumber,
+      );
 
       if (!subscriptionId) {
-        throw new Error('Failed to initialize websocket connection');
+        throw new Error("Failed to initialize websocket connection");
       }
 
       subscriptionIdRef.current = subscriptionId;
 
       wsChannel.onEvents = async (data) => {
-        console.log('New ws event entry: ', data);
+        console.log("New ws event entry: ", data);
 
         if (data.result) {
           await processNewEvents([data.result]);
         }
-      }
+      };
 
       wsChannel.onClose = (ev) => {
-        console.log('Web socket channel closed: ', ev);
+        console.log("Web socket channel closed: ", ev);
         setIsWebsocketConnected(false);
-        setError('Websocket connection closed');
+        setError("Websocket connection closed");
       };
 
       wsChannel.onError = (ev) => {
-        console.error('Websocket connection error: ', ev);
-        setError('Websocket connection error');
+        console.error("Websocket connection error: ", ev);
+        setError("Websocket connection error");
         setIsWebsocketConnected(false);
-      }
+      };
 
       setError(undefined);
-
     } catch (err: any) {
-      console.error('Failed to initialize websocket: ', err);
-      setError(`Websocket Initialization failed: ${err.message}`)
+      console.error("Failed to initialize websocket: ", err);
+      setError(`Websocket Initialization failed: ${err.message}`);
       setIsWebsocketConnected(false);
     }
-  }, [useWebsocket, wsUrl, deployedContractData, enabled, eventName, filters, processNewEvents])
+  }, [
+    useWebsocket,
+    wsUrl,
+    deployedContractData,
+    enabled,
+    eventName,
+    filters,
+    processNewEvents,
+  ]);
 
   const readEvents = async (fromBlock?: bigint) => {
     if (!enabled) {
@@ -314,8 +333,14 @@ export const useScaffoldEventHistory = <
       if (useWebsocket) {
         cleanUpWebsocket();
       }
-    }
-  }, [useWebsocket, deployedContractData, deployedContractLoading, initializeWebSocket, cleanUpWebsocket])
+    };
+  }, [
+    useWebsocket,
+    deployedContractData,
+    deployedContractLoading,
+    initializeWebSocket,
+    cleanUpWebsocket,
+  ]);
 
   useEffect(() => {
     if (!useWebsocket) {
@@ -341,7 +366,7 @@ export const useScaffoldEventHistory = <
     blockData,
     transactionData,
     receiptData,
-    useWebsocket
+    useWebsocket,
   ]);
 
   useEffect(() => {
@@ -357,7 +382,14 @@ export const useScaffoldEventHistory = <
         }
       });
     }
-  }, [fromBlock, targetNetwork.id, useWebsocket, cleanUpWebsocket, deployedContractData, initializeWebSocket]);
+  }, [
+    fromBlock,
+    targetNetwork.id,
+    useWebsocket,
+    cleanUpWebsocket,
+    deployedContractData,
+    initializeWebSocket,
+  ]);
 
   useInterval(
     async () => {
@@ -365,7 +397,7 @@ export const useScaffoldEventHistory = <
         readEvents();
       }
     },
-    (!useWebsocket && watch)
+    !useWebsocket && watch
       ? targetNetwork.id !== devnet.id
         ? scaffoldConfig.pollingInterval
         : 4_000
@@ -400,6 +432,6 @@ export const useScaffoldEventHistory = <
     isLoading: isLoading || deployedContractLoading,
     error: error,
     isWebsocketConnected: useWebsocket ? isWebsocketConnected : undefined,
-    isUsingWebsocket: useWebsocket
+    isUsingWebsocket: useWebsocket,
   };
 };

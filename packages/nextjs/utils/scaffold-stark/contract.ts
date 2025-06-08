@@ -378,7 +378,7 @@ export type UseScaffoldEventHistoryConfig<
   watch?: boolean;
   format?: boolean;
   enabled?: boolean;
-  useWebsocket?: boolean
+  useWebsocket?: boolean;
 };
 
 /// export all the types from kanabi
