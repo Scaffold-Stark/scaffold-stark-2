@@ -14,15 +14,18 @@ export function mergePackageJson(
   }
 
   const targetPackageJson = existsTarget ? fs.readFileSync(targetPackageJsonPath, "utf8") : '{}';
-
   const secondPackageJson = existsSecond ? fs.readFileSync(secondPackageJsonPath, "utf8") : '{}';
 
   const mergedPkgStr = mergeJsonStr.default(
     targetPackageJson,
     secondPackageJson
   );
-
-  fs.writeFileSync(targetPackageJsonPath, mergedPkgStr, "utf8");
+  
+  // Parse and reformat the merged JSON to ensure proper formatting
+  const mergedPkgObj = JSON.parse(mergedPkgStr);
+  const formattedPkgStr = JSON.stringify(mergedPkgObj, null, 2) + '\n';
+  
+  fs.writeFileSync(targetPackageJsonPath, formattedPkgStr, "utf8");
   if (isDev) {
     const devStr = `TODO: write relevant information for the contributor`
     fs.writeFileSync(`${targetPackageJsonPath}.dev`, devStr, "utf8");
