@@ -34,27 +34,37 @@ describe("useScaffoldMultiReadContract", () => {
     {
       data: {
         address: "0x123",
-        abi: [{ name: "getValue", type: "function", outputs: [{ type: "felt" }] }],
+        abi: [
+          { name: "getValue", type: "function", outputs: [{ type: "felt" }] },
+        ],
       },
     },
     {
       data: {
         address: "0x456",
-        abi: [{ name: "getName", type: "function", outputs: [{ type: "felt" }] }],
+        abi: [
+          { name: "getName", type: "function", outputs: [{ type: "felt" }] },
+        ],
       },
     },
   ];
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useDeployedContractInfo as Mock).mockImplementation((contractName: ContractName) => {
-      const index = mockCalls.findIndex((call) => call.contractName === contractName);
-      return mockDeployedContracts[index];
-    });
+    (useDeployedContractInfo as Mock).mockImplementation(
+      (contractName: ContractName) => {
+        const index = mockCalls.findIndex(
+          (call) => call.contractName === contractName,
+        );
+        return mockDeployedContracts[index];
+      },
+    );
   });
 
   it("should return loading state initially", () => {
-    const { result } = renderHook(() => useScaffoldMultiReadContract(mockCalls));
+    const { result } = renderHook(() =>
+      useScaffoldMultiReadContract(mockCalls),
+    );
     expect(result.current.isLoading).toBe(true);
     expect(result.current.data).toBeUndefined();
     expect(result.current.error).toBeNull();
@@ -69,7 +79,7 @@ describe("useScaffoldMultiReadContract", () => {
 
   it("should handle disabled state", () => {
     const { result } = renderHook(() =>
-      useScaffoldMultiReadContract(mockCalls, { enabled: false })
+      useScaffoldMultiReadContract(mockCalls, { enabled: false }),
     );
     expect(result.current.isLoading).toBe(false);
     expect(result.current.data).toBeUndefined();
@@ -81,14 +91,18 @@ describe("useScaffoldMultiReadContract", () => {
       data: undefined,
     }));
 
-    const { result } = renderHook(() => useScaffoldMultiReadContract(mockCalls));
+    const { result } = renderHook(() =>
+      useScaffoldMultiReadContract(mockCalls),
+    );
     expect(result.current.isLoading).toBe(false);
     expect(result.current.data).toBeUndefined();
     expect(result.current.error).toBeInstanceOf(Error);
   });
 
   it("should provide refetch function", () => {
-    const { result } = renderHook(() => useScaffoldMultiReadContract(mockCalls));
+    const { result } = renderHook(() =>
+      useScaffoldMultiReadContract(mockCalls),
+    );
     expect(typeof result.current.refetch).toBe("function");
   });
-}); 
+});

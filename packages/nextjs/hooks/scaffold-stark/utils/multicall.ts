@@ -61,7 +61,7 @@ interface AbiItem {
 export const parseMulticallResults = (
   rawResults: { block_number: bigint; return_data: bigint[] },
   abis: Abi[],
-  functionNames: string[]
+  functionNames: string[],
 ) => {
   const results: any[] = [];
   let currentIndex = 0;
@@ -70,17 +70,19 @@ export const parseMulticallResults = (
     const abi = abis[i];
     const functionName = functionNames[i];
     const functionAbi = abi.find(
-      (item: AbiItem) => item.type === "function" && item.name === functionName
+      (item: AbiItem) => item.type === "function" && item.name === functionName,
     );
 
     if (!functionAbi || !("outputs" in functionAbi)) {
       throw new Error(`Function ${functionName} not found in ABI`);
     }
 
-    const outputTypes = functionAbi.outputs!.map((output: { type: string }) => output.type);
+    const outputTypes = functionAbi.outputs!.map(
+      (output: { type: string }) => output.type,
+    );
     const result = decodeMulticallResult(
       rawResults.return_data.slice(currentIndex),
-      outputTypes
+      outputTypes,
     );
     results.push(result);
     currentIndex += outputTypes.length;
@@ -120,4 +122,4 @@ const decodeSingleValue = (value: bigint, type: string): any => {
     default:
       return value;
   }
-}; 
+};

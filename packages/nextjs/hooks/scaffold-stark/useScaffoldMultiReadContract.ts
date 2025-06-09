@@ -1,30 +1,42 @@
 import { useEffect, useState } from "react";
 import { useNetwork } from "@starknet-react/core";
-import { getMulticallContract, parseMulticallResults } from "../utils/multicall";
+import {
+  getMulticallContract,
+  parseMulticallResults,
+} from "../utils/multicall";
 import { useDeployedContractInfo } from "./useDeployedContractInfo";
 import { Abi, Call } from "starknet";
 import { useAccount } from "@starknet-react/core";
-import { 
-  ContractAbi, 
-  ContractName, 
+import {
+  ContractAbi,
+  ContractName,
   ExtractAbiFunctionNamesScaffold,
-  UseScaffoldReadConfig 
+  UseScaffoldReadConfig,
 } from "~~/utils/scaffold-stark/contract";
 
-type MultiReadCall<TAbi extends Abi, TContractName extends ContractName, TFunctionName extends ExtractAbiFunctionNamesScaffold<ContractAbi<TContractName>, "view">> = 
-  UseScaffoldReadConfig<TAbi, TContractName, TFunctionName>;
+type MultiReadCall<
+  TAbi extends Abi,
+  TContractName extends ContractName,
+  TFunctionName extends ExtractAbiFunctionNamesScaffold<
+    ContractAbi<TContractName>,
+    "view"
+  >,
+> = UseScaffoldReadConfig<TAbi, TContractName, TFunctionName>;
 
 export function useScaffoldMultiReadContract<
   TAbi extends Abi,
   TContractName extends ContractName,
-  TFunctionName extends ExtractAbiFunctionNamesScaffold<ContractAbi<TContractName>, "view">,
-  TResults extends any[] = any[]
+  TFunctionName extends ExtractAbiFunctionNamesScaffold<
+    ContractAbi<TContractName>,
+    "view"
+  >,
+  TResults extends any[] = any[],
 >(
   calls: MultiReadCall<TAbi, TContractName, TFunctionName>[],
-  options?: { enabled?: boolean }
-): { 
-  data: TResults | undefined; 
-  isLoading: boolean; 
+  options?: { enabled?: boolean },
+): {
+  data: TResults | undefined;
+  isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
 } {
@@ -43,14 +55,15 @@ export function useScaffoldMultiReadContract<
     try {
       // Get deployed contract info for each call
       const deployedContracts = await Promise.all(
-        calls.map(call => useDeployedContractInfo(call.contractName))
+        calls.map((call) => useDeployedContractInfo(call.contractName)),
       );
 
       // Prepare multicall
       const multicall = getMulticallContract(chain?.id);
       const callArray: Call[] = calls.map((call, index) => {
         const deployedContract = deployedContracts[index].data;
-        if (!deployedContract) throw new Error(`Contract ${call.contractName} not found`);
+        if (!deployedContract)
+          throw new Error(`Contract ${call.contractName} not found`);
         return {
           contractAddress: deployedContract.address,
           entrypoint: call.functionName,
@@ -65,7 +78,7 @@ export function useScaffoldMultiReadContract<
       const parsed = parseMulticallResults(
         rawResults,
         calls.map((call, index) => deployedContracts[index].data?.abi as Abi),
-        calls.map(call => call.functionName)
+        calls.map((call) => call.functionName),
       );
 
       setData(parsed as TResults);
@@ -82,11 +95,10 @@ export function useScaffoldMultiReadContract<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(calls), chain?.id, address]);
 
-  return { 
-    data, 
-    isLoading, 
+  return {
+    data,
+    isLoading,
     error,
-    refetch: fetchData
+    refetch: fetchData,
   };
 }
-
