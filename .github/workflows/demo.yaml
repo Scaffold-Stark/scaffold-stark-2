@@ -2,12 +2,12 @@ name: scaffold-stark-demo workflow
 
 on:
   push:
-    branches: [main, develop]
+    branches: [develop]
     paths:
       - "packages/nextjs/**"
   pull_request:
     types: [closed]
-    branches: [main, develop]
+    branches: [develop]
     paths:
       - "packages/nextjs/**"
 
