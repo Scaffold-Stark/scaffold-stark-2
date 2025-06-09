@@ -1,3 +1,7 @@
 {
-  "installCommand": "yarn install"
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "yarn install",
+  "git": {
+    "deploymentEnabled": false
+  }
 }
