@@ -1,15 +1,19 @@
 name: scaffold-stark-demo workflow
 
 on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "packages/nextjs/**"
   pull_request:
     types: [closed]
-    branches: [main]
+    branches: [main, develop]
     paths:
       - "packages/nextjs/**"
 
 jobs:
   version-bump-nextjs:
-    if: github.event.pull_request.merged == true
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout Source Repository
@@ -31,7 +35,7 @@ jobs:
           node-version: 20
           registry-url: "https://registry.yarnpkg.com"
 
-      - name: Deploy to vercel
+      - name: Deploy to Vercel
         if: success()
         id: deploy
         env:
@@ -49,7 +53,7 @@ jobs:
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: "GitHub deployed to vercel result: ${{ job.status }}\nRepository Name: ${{ github.repository }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+          slack-message: "GitHub deployed to Vercel\nResult: ${{ job.status }}\nRepository Name: ${{ github.repository }}\nLink: ${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
@@ -58,6 +62,6 @@ jobs:
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: "GitHub deployed to vercel result: ${{ job.status }}\nRepository Name: ${{ github.repository }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+          slack-message: "Deployment Failed\nResult: ${{ job.status }}\nRepository Name: ${{ github.repository }}\nLink: ${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
