@@ -119,65 +119,71 @@ export const useScaffoldEventHistory = <
       // }
       processingRef.current = true;
 
+      // try {
+      //   const batchSize = 10;
+      //   const processedEvents: any[] = [];
+
+      //   for (let i = 0; i < newLogs.length; i += batchSize) {
+      //     const batch = newLogs.slice(i, batchSize + i);
+
+      //     const batchEvents = await Promise.all(batch.map(async log => {
+      //       try {
+      //         const [block, transaction, receipt] = await Promise.all([
+      //           blockData && log.block_hash ? publicClient.getBlockWithTxHashes(log.block_hash) : null,
+      //           transactionData && log.transaction_hash ? publicClient.getTransactionByHash(log.transaction_hash) : null,
+      //           receiptData && log.transaction_hash ? publicClient.getTransactionReceipt(log.transaction_hash) : null
+      //         ])
+
+      //         const event = (deployedContractData.abi as Abi).find(
+      //           (part) => part.type === "event" && part.name === eventName
+      //         )
+
+      //         return { event, log, block, transaction, receipt };
+      //       } catch (err) {
+      //         console.warn("Error processing event: ", err);
+      //         return null;
+      //       }
+      //     }));
+
+      //     processedEvents.push(...batchEvents.filter(event => event !== null));
+      //   }
+
+      //   setEvents(prev => {
+      //     const combined = [...processedEvents, prev];
+      //     return combined.slice(0, MAX_EVENTS_LIMIT);
+      //   });
+      // } catch (err) {
+      //   console.error("Error processing events: ", err);
+      //   setError(`Error processing events: ${err}`);
+      // } finally {
+      //   processingRef.current = false;
+      // }
+
       try {
-        const batchSize = 10;
-        const processedEvents: any[] = [];
+        const newEvents = await Promise.all(newLogs.map(async log => {
+        const [block, transaction, receipt] = await Promise.all([
+          blockData && log.block_hash ? publicClient.getBlockWithTxHashes(log.block_hash) : null,
+          transactionData && log.transaction_hash ? publicClient.getTransactionByHash(log.transaction_hash) : null,
+          receiptData && log.transaction_hash ? publicClient.getTransactionReceipt(log.transaction_hash) : null
+        ])
 
-        for (let i = 0; i < newLogs.length; i += batchSize) {
-          const batch = newLogs.slice(i, batchSize + i);
+        const event = (deployedContractData.abi as Abi).find(
+          (part) => part.type === "event" && part.name === eventName
+        )
 
-          const batchEvents = await Promise.all(batch.map(async log => {
-            try {
-              const [block, transaction, receipt] = await Promise.all([
-                blockData && log.block_hash ? publicClient.getBlockWithTxHashes(log.block_hash) : null,
-                transactionData && log.transaction_hash ? publicClient.getTransactionByHash(log.transaction_hash) : null,
-                receiptData && log.transaction_hash ? publicClient.getTransactionReceipt(log.transaction_hash) : null
-              ])
+        return { event, log, block, transaction, receipt };
+        }))
 
-              const event = (deployedContractData.abi as Abi).find(
-                (part) => part.type === "event" && part.name === eventName
-              )
-
-              return { event, log, block, transaction, receipt };
-            } catch (err) {
-              console.warn("Error processing event: ", err);
-              return null;
-            }
-          }));
-
-          processedEvents.push(...batchEvents.filter(event => event !== null));
-        }
-
+        // setEvents((prev) => [...newEvents, ...(prev || [])]);
         setEvents(prev => {
-          const combined = [...processedEvents, prev];
-          return combined.slice(0, MAX_EVENTS_LIMIT);
+          const combined = [...newEvents, ...(prev || [])];
+          return combined.slice(0, 100);
         });
       } catch (err) {
-        console.error("Error processing events: ", err);
-        setError(`Error processing events: ${err}`);
+        console.error("Error processing events: ", err)
       } finally {
-        processingRef.current = false;
+        processingRef.current = false
       }
-
-      // const newEvents = await Promise.all(newLogs.map(async log => {
-      //   const [block, transaction, receipt] = await Promise.all([
-      //     blockData && log.block_hash ? publicClient.getBlockWithTxHashes(log.block_hash) : null,
-      //     transactionData && log.transaction_hash ? publicClient.getTransactionByHash(log.transaction_hash) : null,
-      //     receiptData && log.transaction_hash ? publicClient.getTransactionReceipt(log.transaction_hash) : null
-      //   ])
-
-      //   const event = (deployedContractData.abi as Abi).find(
-      //     (part) => part.type === "event" && part.name === eventName
-      //   )
-
-      //   return { event, log, block, transaction, receipt };
-      // }))
-
-      // setEvents((prev) => [...newEvents, ...(prev || [])]);
-      // setEvents(prev => {
-      //   const combined = [...newEvents, ...(prev || [])];
-      //   return combined.slice(0, 100);
-      // });
     },
     [
       deployedContractData,
@@ -198,10 +204,11 @@ export const useScaffoldEventHistory = <
         }
 
         webSocketChannelRef.current.disconnect();
-        webSocketChannelRef.current = null;
-        setIsWebsocketConnected(false);
       } catch (err) {
         console.error("Error cleaning up websocket: ", err);
+      } finally {
+        webSocketChannelRef.current = null;
+        setIsWebsocketConnected(false);
       }
     }
   }, []);
@@ -210,10 +217,7 @@ export const useScaffoldEventHistory = <
     if (!useWebsocket || !wsUrl || !deployedContractData || !enabled) return;
 
     try {
-      if (!webSocketChannelRef.current) {
-        // TODO: Implement this function
-        await cleanUpWebsocket();
-      }
+      await cleanUpWebsocket();
 
       const wsChannel = new WebSocketChannel({
         nodeUrl: wsUrl,
@@ -343,35 +347,39 @@ export const useScaffoldEventHistory = <
         const logs = rawEventResp.events;
         setFromBlockUpdated(BigInt(blockNumber + 1));
 
-        await processNewEvents(logs);
-        // const newEvents = [];
-        // for (let i = logs.length - 1; i >= 0; i--) {
-        //   newEvents.push({
-        //     event,
-        //     log: logs[i],
-        //     block:
-        //       blockData && logs[i].block_hash === null
-        //         ? null
-        //         : await publicClient.getBlockWithTxHashes(logs[i].block_hash),
-        //     transaction:
-        //       transactionData && logs[i].transaction_hash !== null
-        //         ? await publicClient.getTransactionByHash(
-        //             logs[i].transaction_hash,
-        //           )
-        //         : null,
-        //     receipt:
-        //       receiptData && logs[i].transaction_hash !== null
-        //         ? await publicClient.getTransactionReceipt(
-        //             logs[i].transaction_hash,
-        //           )
-        //         : null,
-        //   });
-        // }
-        // if (events && typeof fromBlock === "undefined") {
-        //   setEvents([...newEvents, ...events]);
-        // } else {
-        //   setEvents(newEvents);
-        // }
+        // await processNewEvents(logs);
+        const newEvents: any[] = [];
+        for (let i = logs.length - 1; i >= 0; i--) {
+          newEvents.push({
+            event,
+            log: logs[i],
+            block:
+              blockData && logs[i].block_hash === null
+                ? null
+                : await publicClient.getBlockWithTxHashes(logs[i].block_hash),
+            transaction:
+              transactionData && logs[i].transaction_hash !== null
+                ? await publicClient.getTransactionByHash(
+                    logs[i].transaction_hash,
+                  )
+                : null,
+            receipt:
+              receiptData && logs[i].transaction_hash !== null
+                ? await publicClient.getTransactionReceipt(
+                    logs[i].transaction_hash,
+                  )
+                : null,
+          });
+        }
+        if (events && typeof fromBlock === "undefined") {
+          // setEvents([...newEvents, ...events]);
+          setEvents(prev => {
+            const combined = [...newEvents, ...events]
+            return combined.slice(0, MAX_EVENTS_LIMIT)
+          })
+        } else {
+          setEvents(newEvents.slice(0, MAX_EVENTS_LIMIT));
+        }
         setError(undefined);
       }
     } catch (e: any) {
@@ -453,8 +461,16 @@ export const useScaffoldEventHistory = <
     initializeWebSocket,
   ]);
 
+  useEffect(() => {
+    return () => {
+      if (webSocketChannelRef.current) {
+        webSocketChannelRef.current.disconnect()
+      }
+    }
+  }, [])
+
   useInterval(
-    async () => {
+    () => {
       if (!useWebsocket && !deployedContractLoading && !processingRef.current) {
         readEvents();
       }
