@@ -51,7 +51,7 @@ export const ReadOnlyFunctionForm = ({
     blockIdentifier: "pending" as BlockNumber,
   });
 
-  console.log(data)
+  console.log(data);
 
   useEffect(() => {
     if (error) {
@@ -109,9 +109,10 @@ export const ReadOnlyFunctionForm = ({
         </div>
 
         <div
-          className={`flex ${isError(formErrorMessage) &&
+          className={`flex ${
+            isError(formErrorMessage) &&
             "tooltip before:content-[attr(data-tip)] before:right-[-10px] before:left-auto before:transform-none"
-            }`}
+          }`}
           data-tip={`${getTopErrorMessage(formErrorMessage)}`}
         >
           <button
