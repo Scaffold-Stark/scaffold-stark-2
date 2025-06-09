@@ -51,8 +51,6 @@ export const ReadOnlyFunctionForm = ({
     blockIdentifier: "pending" as BlockNumber,
   });
 
-  console.log(data);
-
   useEffect(() => {
     if (error) {
       console.error(error?.message);

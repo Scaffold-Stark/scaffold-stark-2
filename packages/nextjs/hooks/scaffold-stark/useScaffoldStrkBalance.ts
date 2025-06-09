@@ -22,8 +22,6 @@ const useScaffoldStrkBalance = ({ address }: UseScaffoldStrkBalanceProps) => {
     blockIdentifier: "pending" as BlockNumber,
   });
 
-  console.log(data, "useScaffoldStrkBalance");
-
   return {
     value: data as unknown as bigint,
     decimals: 18,
