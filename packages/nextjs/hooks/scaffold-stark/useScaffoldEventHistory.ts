@@ -53,7 +53,7 @@ export const useScaffoldEventHistory = <
   watch,
   format = true,
   enabled = true,
-  isWebsocket = false
+  isWebsocket = false,
 }: UseScaffoldEventHistoryConfig<
   TContractName,
   TEventName,
