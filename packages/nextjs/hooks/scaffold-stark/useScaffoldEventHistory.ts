@@ -53,7 +53,7 @@ export const useScaffoldEventHistory = <
   watch,
   format = true,
   enabled = true,
-  useWebsocket = false,
+  isWebsocket = false
 }: UseScaffoldEventHistoryConfig<
   TContractName,
   TEventName,
@@ -82,16 +82,16 @@ export const useScaffoldEventHistory = <
   }, [targetNetwork.rpcUrls.public.http]);
 
   const wsUrl = useMemo(() => {
-    if (!useWebsocket) return;
+    if (!isWebsocket) return;
 
     const url = targetNetwork.rpcUrls.public.websocket?.[0];
     if (!url) return "";
     return url;
-  }, [targetNetwork, useWebsocket]);
+  }, [targetNetwork, isWebsocket]);
 
   const websocketReadEvents = useCallback(
     async (fromBlock?: bigint) => {
-      if (!enabled || !useWebsocket || !deployedContractData) return;
+      if (!enabled || !isWebsocket || !deployedContractData) return;
 
       setIsLoading(true);
 
@@ -231,7 +231,7 @@ export const useScaffoldEventHistory = <
         setIsLoading(false);
       }
     },
-    [useWebsocket, wsUrl, deployedContractData, enabled, eventName, filters],
+    [isWebsocket, wsUrl, deployedContractData, enabled, eventName, filters],
   );
 
   const cleanUpWebsocket = useCallback(async () => {
@@ -349,7 +349,7 @@ export const useScaffoldEventHistory = <
   // effect for the history using useWebhook
   useEffect(() => {
     if (
-      !useWebsocket ||
+      !isWebsocket ||
       !deployedContractData ||
       !enabled ||
       deployedContractLoading
@@ -362,7 +362,7 @@ export const useScaffoldEventHistory = <
       cleanUpWebsocket();
     };
   }, [
-    useWebsocket,
+    isWebsocket,
     deployedContractData,
     deployedContractLoading,
     websocketReadEvents,
@@ -371,7 +371,7 @@ export const useScaffoldEventHistory = <
 
   useEffect(() => {
     if (
-      useWebsocket ||
+      isWebsocket ||
       !deployedContractData ||
       !enabled ||
       deployedContractLoading
@@ -382,13 +382,13 @@ export const useScaffoldEventHistory = <
   }, [
     fromBlock,
     enabled,
-    useWebsocket,
+    isWebsocket,
     deployedContractData,
     deployedContractLoading,
   ]);
 
   useEffect(() => {
-    if (!deployedContractLoading && enabled && !fromBlock && !useWebsocket) {
+    if (!deployedContractLoading && enabled && !fromBlock && !isWebsocket) {
       readEvents().then();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -404,7 +404,7 @@ export const useScaffoldEventHistory = <
     blockData,
     transactionData,
     receiptData,
-    useWebsocket,
+    isWebsocket,
   ]);
 
   useEffect(() => {
@@ -413,18 +413,18 @@ export const useScaffoldEventHistory = <
     setFromBlockUpdated(fromBlock);
     setError(undefined);
 
-    if (useWebsocket) {
+    if (isWebsocket) {
       cleanUpWebsocket();
     }
   }, [fromBlock, targetNetwork.id]);
 
   useInterval(
     async () => {
-      if (!deployedContractLoading && !useWebsocket) {
+      if (!deployedContractLoading && !isWebsocket) {
         readEvents();
       }
     },
-    !useWebsocket && watch
+    !isWebsocket && watch
       ? targetNetwork.id !== devnet.id
         ? scaffoldConfig.pollingInterval
         : 4_000
@@ -461,6 +461,6 @@ export const useScaffoldEventHistory = <
     isLoading: isLoading || deployedContractLoading,
     error: error,
     isWebsocketConnected,
-    isUsingWebsocket: useWebsocket,
+    isUsingWebsocket: isWebsocket,
   };
 };

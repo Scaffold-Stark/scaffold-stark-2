@@ -360,7 +360,7 @@ describe("useScaffoldEventHistory", () => {
         receiptData: false,
         watch: false,
         enabled: true,
-        useWebsocket: true,
+        isWebsocket: true,
       }),
     );
 
@@ -398,7 +398,7 @@ describe("useScaffoldEventHistory", () => {
         receiptData: true,
         watch: false,
         enabled: true,
-        useWebsocket: true,
+        isWebsocket: true,
       }),
     );
 
@@ -430,7 +430,7 @@ describe("useScaffoldEventHistory", () => {
         receiptData: false,
         watch: false,
         enabled: true,
-        useWebsocket: true,
+        isWebsocket: true,
       }),
     );
 
