@@ -3,7 +3,7 @@ import { useScaffoldEventHistory } from "../useScaffoldEventHistory";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { useTargetNetwork } from "../useTargetNetwork";
 import { useProvider } from "@starknet-react/core";
-import { RpcProvider } from "starknet";
+import { RpcProvider, WebSocketChannel } from "starknet";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockDeployedContractData } from "./seed/mockDeployedContractData";
 
@@ -20,6 +20,25 @@ vi.mock("@starknet-react/core", () => ({
   useProvider: vi.fn(),
 }));
 
+const mockWsChannel = {
+  waitForConnection: vi.fn().mockResolvedValue(undefined),
+  subscribeEvents: vi.fn().mockReturnValue("sub-id"),
+  unsubscribeEvents: vi.fn().mockResolvedValue(undefined),
+  disconnect: vi.fn(),
+  waitForDisconnection: vi.fn().mockResolvedValue(undefined),
+  onEvents: (_: any) => {},
+  onClose: (_: any) => {},
+  onError: (_: any) => {},
+};
+
+vi.mock("starknet", async () => {
+  const actual = await vi.importActual<any>("starknet");
+  return {
+    ...actual,
+    WebSocketChannel: vi.fn(() => mockWsChannel),
+  };
+});
+
 describe("useScaffoldEventHistory", () => {
   const mockContractName = "YourContract";
   const mockEventName = "contracts::YourContract::YourContract::EventParser";
@@ -28,6 +47,7 @@ describe("useScaffoldEventHistory", () => {
     rpcUrls: {
       public: {
         http: ["https://mock-rpc-url"],
+        websocket: ["wss://mock-rpc-url"],
       },
     },
   };
@@ -326,5 +346,97 @@ describe("useScaffoldEventHistory", () => {
       },
     ]);
     expect(result.current.error).toBeUndefined();
+  });
+
+   it("should establish a websocket connection and subscribe to events", async () => {
+    const { result } = renderHook(() =>
+      useScaffoldEventHistory({
+        contractName: mockContractName as any,
+        eventName: mockEventName as never,
+        fromBlock: BigInt(1),
+        filters: {},
+        blockData: false,
+        transactionData: false,
+        receiptData: false,
+        watch: false,
+        enabled: true,
+        useWebsocket: true,
+      }),
+    );
+
+    // Wait for websocket to connect
+    await waitFor(() => expect(mockWsChannel.waitForConnection).toHaveBeenCalled());
+    
+    await waitFor(() => expect(result.current.isWebsocketConnected).toBe(true));
+    // expect(result.current.isWebsocketConnected).toBe(true);
+    expect(WebSocketChannel).toHaveBeenCalledWith({
+      nodeUrl: mockTargetNetwork.rpcUrls.public.websocket[0],
+    });
+    expect(mockWsChannel.subscribeEvents).toHaveBeenCalled();
+  });
+
+  it("should receive events via websocket onEvents handler", async () => {
+    const sampleLog = {
+      transaction_hash: "0x1",
+      block_hash: "0x2",
+      block_number: 5,
+      from_address: "0x3",
+      keys: ["0xk"],
+      data: ["0x0"],
+    };
+
+    const { result } = renderHook(() =>
+      useScaffoldEventHistory({
+        contractName: mockContractName as any,
+        eventName: mockEventName as never,
+        fromBlock: BigInt(1),
+        filters: {},
+        blockData: true,
+        transactionData: true,
+        receiptData: true,
+        watch: false,
+        enabled: true,
+        useWebsocket: true,
+      }),
+    );
+
+    // Wait for subscription
+    await waitFor(() => expect(mockWsChannel.waitForConnection).toHaveBeenCalled());
+    expect(result.current.isWebsocketConnected).toBe(true)
+
+    // Simulate receiving an event
+    act(() => {
+      mockWsChannel.onEvents({ result: sampleLog });
+    });
+
+    // Ensure events are updated
+    await waitFor(() => expect(result.current.data.length).toBe(1));
+    expect(result.current.data[0].log).toEqual(sampleLog);
+  });
+
+  it("should cleanup websocket connection on unmount", async () => {
+    const { unmount } = renderHook(() =>
+      useScaffoldEventHistory({
+        contractName: mockContractName as any,
+        eventName: mockEventName as never,
+        fromBlock: BigInt(1),
+        filters: {},
+        blockData: false,
+        transactionData: false,
+        receiptData: false,
+        watch: false,
+        enabled: true,
+        useWebsocket: true,
+      }),
+    );
+
+    // Wait for subscription
+    await waitFor(() => expect(mockWsChannel.waitForConnection).toHaveBeenCalled());
+
+    // Unmount to trigger cleanup
+    unmount();
+
+    expect(mockWsChannel.unsubscribeEvents).toHaveBeenCalled();
+    expect(mockWsChannel.disconnect).toHaveBeenCalled();
   });
 });
