@@ -348,7 +348,7 @@ describe("useScaffoldEventHistory", () => {
     expect(result.current.error).toBeUndefined();
   });
 
-   it("should establish a websocket connection and subscribe to events", async () => {
+  it("should establish a websocket connection and subscribe to events", async () => {
     const { result } = renderHook(() =>
       useScaffoldEventHistory({
         contractName: mockContractName as any,
@@ -365,8 +365,10 @@ describe("useScaffoldEventHistory", () => {
     );
 
     // Wait for websocket to connect
-    await waitFor(() => expect(mockWsChannel.waitForConnection).toHaveBeenCalled());
-    
+    await waitFor(() =>
+      expect(mockWsChannel.waitForConnection).toHaveBeenCalled(),
+    );
+
     await waitFor(() => expect(result.current.isWebsocketConnected).toBe(true));
     // expect(result.current.isWebsocketConnected).toBe(true);
     expect(WebSocketChannel).toHaveBeenCalledWith({
@@ -401,8 +403,10 @@ describe("useScaffoldEventHistory", () => {
     );
 
     // Wait for subscription
-    await waitFor(() => expect(mockWsChannel.waitForConnection).toHaveBeenCalled());
-    expect(result.current.isWebsocketConnected).toBe(true)
+    await waitFor(() =>
+      expect(mockWsChannel.waitForConnection).toHaveBeenCalled(),
+    );
+    expect(result.current.isWebsocketConnected).toBe(true);
 
     // Simulate receiving an event
     act(() => {
@@ -431,7 +435,9 @@ describe("useScaffoldEventHistory", () => {
     );
 
     // Wait for subscription
-    await waitFor(() => expect(mockWsChannel.waitForConnection).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(mockWsChannel.waitForConnection).toHaveBeenCalled(),
+    );
 
     // Unmount to trigger cleanup
     unmount();
