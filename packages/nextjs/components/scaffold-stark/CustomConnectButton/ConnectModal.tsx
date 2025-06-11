@@ -8,42 +8,40 @@ import { BlockieAvatar } from "../BlockieAvatar";
 import GenericModal from "./GenericModal";
 import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
 
-const loader = ({ src }: { src: string }) => {
-  return src;
-};
+const loader = ({ src }: { src: string }) => src;
 
 const ConnectModal = () => {
   const modalRef = useRef<HTMLInputElement>(null);
   const [isBurnerWallet, setIsBurnerWallet] = useState(false);
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
-  const { connectors, connect, error, status, ...props } = useConnect();
-  const [_, setLastConnector] = useLocalStorage<{ id: string; ix?: number }>(
+  const { connectors, connect } = useConnect();
+  const [, setLastConnector] = useLocalStorage<{ id: string; ix?: number }>(
     "lastUsedConnector",
     { id: "" },
-    {
-      initializeWithValue: false,
-    },
   );
   const [, setLastConnectionTime] = useLocalStorage<number>(
     LAST_CONNECTED_TIME_LOCALSTORAGE_KEY,
     0,
   );
+  const [, setWasDisconnectedManually] = useLocalStorage<boolean>(
+    "wasDisconnectedManually",
+    false,
+  );
 
   const handleCloseModal = () => {
-    if (modalRef.current) {
-      modalRef.current.checked = false;
-    }
+    if (modalRef.current) modalRef.current.checked = false;
   };
 
   function handleConnectWallet(
     e: React.MouseEvent<HTMLButtonElement>,
     connector: Connector,
-  ): void {
+  ) {
     if (connector.id === "burner-wallet") {
       setIsBurnerWallet(true);
       return;
     }
+    setWasDisconnectedManually(false);
     connect({ connector });
     setLastConnector({ id: connector.id });
     setLastConnectionTime(Date.now());
@@ -57,6 +55,7 @@ const ConnectModal = () => {
     const connector = connectors.find((it) => it.id == "burner-wallet");
     if (connector && connector instanceof BurnerConnector) {
       connector.burnerAccount = burnerAccounts[ix];
+      setWasDisconnectedManually(false);
       connect({ connector });
       setLastConnector({ id: connector.id, ix });
       setLastConnectionTime(Date.now());
@@ -68,11 +67,10 @@ const ConnectModal = () => {
     <div>
       <label
         htmlFor="connect-modal"
-        className="rounded-[18px]  btn-sm font-bold px-8 bg-btn-wallet py-3 cursor-pointer"
+        className="rounded-[18px] btn-sm font-bold px-8 bg-btn-wallet py-3 cursor-pointer"
       >
         <span>Connect</span>
       </label>
-
       <input
         ref={modalRef}
         type="checkbox"
@@ -113,19 +111,14 @@ const ConnectModal = () => {
                         className="w-full flex flex-col"
                       >
                         <button
-                          className={`hover:bg-gradient-modal border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4 ${
-                            isDarkMode ? "border-[#385183]" : ""
-                          }`}
+                          className={`hover:bg-gradient-modal border rounded-md text-neutral py-[8px] pl-[10px] pr-16 flex items-center gap-4 ${isDarkMode ? "border-[#385183]" : ""}`}
                           onClick={(e) => handleConnectBurner(e, ix)}
                         >
                           <BlockieAvatar
                             address={burnerAcc.accountAddress}
                             size={35}
                           />
-                          {`${burnerAcc.accountAddress.slice(
-                            0,
-                            6,
-                          )}...${burnerAcc.accountAddress.slice(-4)}`}
+                          {`${burnerAcc.accountAddress.slice(0, 6)}...${burnerAcc.accountAddress.slice(-4)}`}
                         </button>
                       </div>
                     ))}

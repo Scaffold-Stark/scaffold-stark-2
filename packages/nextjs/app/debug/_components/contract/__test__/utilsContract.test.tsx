@@ -114,7 +114,7 @@ describe("utilsContract", () => {
         variant: {
           Quit: {
             type: "()",
-            value: "",
+            value: undefined,
           },
           Echo: {
             type: "core::felt252",
@@ -122,7 +122,7 @@ describe("utilsContract", () => {
           },
           Move: {
             type: "(core::integer::u128, core::integer::u128)",
-            value: "",
+            value: undefined,
           },
         },
       },
@@ -159,11 +159,11 @@ describe("utilsContract", () => {
             variant: {
               Quit: {
                 type: "()",
-                value: "",
+                value: undefined,
               },
               Echo: {
                 type: "core::felt252",
-                value: "",
+                value: undefined,
               },
               Move: {
                 type: "(core::integer::u128, core::integer::u128)",

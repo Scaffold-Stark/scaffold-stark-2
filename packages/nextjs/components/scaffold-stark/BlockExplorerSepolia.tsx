@@ -21,11 +21,6 @@ export const BlockExplorerSepolia = () => {
       img: "/voyager-icon.svg",
       link: "https://sepolia.voyager.online/",
     },
-    {
-      name: "Stark Compass",
-      img: "/starkcompass-icon.svg",
-      link: "https://starkcompass.com/sepolia/",
-    },
   ];
 
   const { resolvedTheme } = useTheme();
@@ -51,7 +46,7 @@ export const BlockExplorerSepolia = () => {
         className="modal-toggle"
       />
       <GenericModal modalId="sepolia-blockexplorer-modal">
-        <>
+        <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-bold">Sepolia Block Explorers</h3>
             <label
@@ -61,33 +56,33 @@ export const BlockExplorerSepolia = () => {
               ✕
             </label>
           </div>
-          <div className="mb-4 mt-6">
-            <div className="flex flex-col gap-4">
-              {sepoliaBlockExplorers.length &&
-                sepoliaBlockExplorers.map((blockexplorer, id) => (
-                  <a
-                    href={blockexplorer.link}
-                    target="_blank"
-                    className={`h-12 flex items-center btn-sm px-6 gap-4 rounded-[4px] transition-all modal-border ${
-                      isDarkMode ? "hover:bg-[#385183]" : "hover:bg-slate-200"
-                    } border `}
-                    key={id}
-                  >
-                    <div className="flex relative w-6 h-6">
-                      <Image
-                        alt="Starknet Developers Hub"
-                        className="cursor-pointer"
-                        fill
-                        sizes="1.5rem"
-                        src={blockexplorer.img}
-                      />
-                    </div>
-                    <p className="text-sm m-0">{blockexplorer.name}</p>
-                  </a>
-                ))}
-            </div>
+          <div className="flex flex-col space-y-2">
+            {sepoliaBlockExplorers.length &&
+              sepoliaBlockExplorers.map((blockexplorer, id) => (
+                <a
+                  href={blockexplorer.link}
+                  target="_blank"
+                  className={`h-10 flex items-center px-4 gap-3 rounded-[4px] transition-all ${
+                    isDarkMode
+                      ? "hover:bg-[#385183] border-gray-700"
+                      : "hover:bg-slate-200 border-gray-200"
+                  } border`}
+                  key={id}
+                >
+                  <div className="flex relative w-6 h-6">
+                    <Image
+                      alt={blockexplorer.name}
+                      className="cursor-pointer"
+                      fill
+                      sizes="1.5rem"
+                      src={blockexplorer.img}
+                    />
+                  </div>
+                  <p className="text-sm m-0">{blockexplorer.name}</p>
+                </a>
+              ))}
           </div>
-        </>
+        </div>
       </GenericModal>
     </div>
   );

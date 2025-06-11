@@ -9,7 +9,7 @@ const mainnetFork = {
   name: "Starknet Devnet",
   nativeCurrency: {
     address:
-      "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+      "0x4718F5A0FC34CC1AF16A1CDEE98FFB20C31F5CD61D6AB07201858F4287C938D",
     name: "Stark",
     symbol: "STRK",
     decimals: 18,
@@ -21,6 +21,11 @@ const mainnetFork = {
     },
     public: {
       http: [`${rpcUrlDevnet}/rpc`],
+    },
+  },
+  paymasterRpcUrls: {
+    default: {
+      http: [],
     },
   },
 } as chains.Chain;
