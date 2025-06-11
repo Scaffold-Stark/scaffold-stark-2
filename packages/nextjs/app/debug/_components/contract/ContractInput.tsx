@@ -18,6 +18,7 @@ import {
   isCairoTuple,
   isCairoType,
   isCairoU256,
+  isCairoVoid,
 } from "~~/utils/scaffold-stark";
 import { Struct } from "./Struct";
 import { Abi } from "abi-wan-kanabi";
@@ -98,6 +99,9 @@ export const ContractInput = ({
       !isCairoResult(paramType.type) &&
       !isCairoOption(paramType.type)
     ) {
+      if (isCairoVoid(paramType.type)) {
+        return <></>;
+      }
       return <InputBase {...inputProps} disabled={isDisabled} />;
     } else {
       return (
