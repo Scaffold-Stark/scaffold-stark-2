@@ -31,6 +31,26 @@ const mockWsChannel = {
   onError: (_: any) => {},
 };
 
+const mockSetIsWebsocketConnected = vi.fn();
+const mockCreateWsChannel = vi.fn(async () => {
+  mockSetIsWebsocketConnected(true);
+  return mockWsChannel;
+});
+const mockCleanUpWebsocket = vi.fn(async () => {
+  mockSetIsWebsocketConnected(false);
+});
+
+vi.mock("~~/context/WebsocketContext", () => ({
+  useWebsocket: () => ({
+    wsChannelRef: { current: mockWsChannel },
+    subscriptionIdRef: { current: null },
+    createWsChannel: mockCreateWsChannel,
+    cleanUpWebsocket: mockCleanUpWebsocket,
+    isWebsocketConnected: false,
+    setIsWebsocketConnected: mockSetIsWebsocketConnected,
+  }),
+}));
+
 vi.mock("starknet", async () => {
   const actual = await vi.importActual<any>("starknet");
   return {
@@ -365,15 +385,14 @@ describe("useScaffoldEventHistory", () => {
     );
 
     // Wait for websocket to connect
-    await waitFor(() =>
-      expect(mockWsChannel.waitForConnection).toHaveBeenCalled(),
-    );
+    await waitFor(() => expect(mockCreateWsChannel).toHaveBeenCalled());
 
-    await waitFor(() => expect(result.current.isWebsocketConnected).toBe(true));
+    // await waitFor(() => expect(result.current.isWebsocketConnected).toBe(true));
     // expect(result.current.isWebsocketConnected).toBe(true);
-    expect(WebSocketChannel).toHaveBeenCalledWith({
-      nodeUrl: mockTargetNetwork.rpcUrls.public.websocket[0],
-    });
+    // expect(WebSocketChannel).toHaveBeenCalledWith({
+    //   nodeUrl: mockTargetNetwork.rpcUrls.public.websocket[0],
+    // });
+    expect(mockSetIsWebsocketConnected).toHaveBeenCalledWith(true);
     expect(mockWsChannel.subscribeEvents).toHaveBeenCalled();
   });
 
@@ -403,10 +422,8 @@ describe("useScaffoldEventHistory", () => {
     );
 
     // Wait for subscription
-    await waitFor(() =>
-      expect(mockWsChannel.waitForConnection).toHaveBeenCalled(),
-    );
-    expect(result.current.isWebsocketConnected).toBe(true);
+    await waitFor(() => expect(mockCreateWsChannel).toHaveBeenCalled());
+    expect(mockSetIsWebsocketConnected).toHaveBeenCalledWith(true);
 
     // Simulate receiving an event
     act(() => {
@@ -435,14 +452,13 @@ describe("useScaffoldEventHistory", () => {
     );
 
     // Wait for subscription
-    await waitFor(() =>
-      expect(mockWsChannel.waitForConnection).toHaveBeenCalled(),
-    );
+    await waitFor(() => expect(mockCreateWsChannel).toHaveBeenCalled());
 
     // Unmount to trigger cleanup
     unmount();
 
-    expect(mockWsChannel.unsubscribeEvents).toHaveBeenCalled();
-    expect(mockWsChannel.disconnect).toHaveBeenCalled();
+    // expect(mockWsChannel.unsubscribeEvents).toHaveBeenCalled();
+    // expect(mockWsChannel.disconnect).toHaveBeenCalled();
+    expect(mockCleanUpWebsocket).toHaveBeenCalled();
   });
 });

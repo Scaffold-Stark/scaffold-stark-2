@@ -20,6 +20,7 @@ import { hash, RpcProvider, WebSocketChannel } from "starknet";
 import { events as starknetEvents, CallData } from "starknet";
 import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
 import { composeEventFilterKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
+import { useWebsocket } from "~~/context/WebsocketContext";
 
 const MAX_KEYS_COUNT = 16;
 const MAX_EVENTS_LIMIT = 100;
@@ -65,10 +66,19 @@ export const useScaffoldEventHistory = <
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [fromBlockUpdated, setFromBlockUpdated] = useState<bigint>(fromBlock);
-  const [isWebsocketConnected, setIsWebsocketConnected] = useState(false);
+  // const [isWebsocketConnected, setIsWebsocketConnected] = useState(false);
 
-  const wsChannelRef = useRef<WebSocketChannel | null>(null);
-  const subscriptionIdRef = useRef<string | null>(null);
+  // const wsChannelRef = useRef<WebSocketChannel | null>(null);
+  // const subscriptionIdRef = useRef<string | null>(null);
+
+  const {
+    wsChannelRef,
+    subscriptionIdRef,
+    createWsChannel,
+    cleanUpWebsocket,
+    isWebsocketConnected,
+    setIsWebsocketConnected,
+  } = useWebsocket();
 
   const { data: deployedContractData, isLoading: deployedContractLoading } =
     useDeployedContractInfo(contractName);
@@ -96,13 +106,17 @@ export const useScaffoldEventHistory = <
       setIsLoading(true);
 
       try {
-        const wsChannel = new WebSocketChannel({
-          nodeUrl: wsUrl,
-        });
+        // const wsChannel = new WebSocketChannel({
+        //   nodeUrl: wsUrl,
+        // });
 
-        await wsChannel.waitForConnection();
-        setIsWebsocketConnected(true);
-        wsChannelRef.current = wsChannel;
+        // await wsChannel.waitForConnection();
+        // setIsWebsocketConnected(true);
+        // wsChannelRef.current = wsChannel;
+        const wsChannel = await createWsChannel();
+        if (!wsChannel) {
+          throw new Error("Error in connection");
+        }
         // setIsWebsocketConnected(true);
 
         const event = (deployedContractData.abi as Abi).find(
@@ -192,35 +206,6 @@ export const useScaffoldEventHistory = <
             setError("Websocket connection error");
             setIsWebsocketConnected(false);
           };
-
-          // for (let i = newLogs.length - 1; i >= 0; i--) {
-          //   newEvents.push({
-          //     event: (deployedContractData.abi as Abi).find(
-          //       (part) => part.type === "event" && part.name === eventName,
-          //     ),
-          //     log: newLogs[i],
-          //     block:
-          //       blockData && newLogs[i].block_hash !== null
-          //         ? await publicClient.getBlockWithTxHashes(newLogs[i].block_hash)
-          //         : null,
-          //     transaction:
-          //       transactionData && newLogs[i].transaction_hash !== null
-          //         ? await publicClient.getTransactionByHash(newLogs[i].transaction_hash)
-          //         : null,
-          //     receipt:
-          //       receiptData && newLogs[i].transaction_hash !== null
-          //         ? await publicClient.getTransactionReceipt(
-          //           newLogs[i].transaction_hash
-          //         )
-          //         : null,
-          //   });
-          // }
-
-          // if (events && typeof fromBlock !== "undefined") {
-          //   setEvents([...newEvents, ...events]);
-          // } else {
-          //   setEvents(newEvents)
-          // }
           setError(undefined);
         }
       } catch (err: any) {
@@ -233,25 +218,6 @@ export const useScaffoldEventHistory = <
     },
     [isWebsocket, wsUrl, deployedContractData, enabled, eventName, filters],
   );
-
-  const cleanUpWebsocket = useCallback(async () => {
-    if (wsChannelRef.current) {
-      try {
-        if (subscriptionIdRef.current) {
-          await wsChannelRef.current.unsubscribeEvents();
-          subscriptionIdRef.current = null;
-        }
-
-        wsChannelRef.current.disconnect();
-
-        await wsChannelRef.current.waitForDisconnection();
-        wsChannelRef.current = null;
-        setIsWebsocketConnected(false);
-      } catch (err) {
-        console.error("Error cleaning up websocket: ", err);
-      }
-    }
-  }, []);
 
   const readEvents = async (fromBlock?: bigint) => {
     if (!enabled) {
