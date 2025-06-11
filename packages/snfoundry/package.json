@@ -2,7 +2,7 @@
   "name": "@ss-2/snfoundry",
   "version": "0.0.1",
   "scripts": {
-    "chain": "starknet-devnet --seed 0 --account-class cairo1",
+    "chain": "starknet-devnet --seed 0",
     "deploy": "ts-node scripts-ts/helpers/deploy-wrapper.ts",
     "deploy:clear": "cd deployments && node clear.mjs $* && cd .. && ts-node scripts-ts/helpers/deploy-wrapper.ts $*",
     "deploy:no-reset": "yarn workspace @ss-2/snfoundry deploy --no-reset",
@@ -15,7 +15,7 @@
     "verify": "ts-node scripts-ts/verify-contracts.ts"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^22",
     "@types/prettier": "^2",
     "@types/yargs": "^17.0.32",
     "globals": "^15.8.0",
@@ -29,7 +29,7 @@
     "dotenv": "^16.3.1",
     "envfile": "^6.18.0",
     "prettier": "^2.8.8",
-    "starknet": "^7.1.0",
+    "starknet": "^7.5.0",
     "toml": "^3.0.0",
     "tslib": "^2.6.2"
   },
