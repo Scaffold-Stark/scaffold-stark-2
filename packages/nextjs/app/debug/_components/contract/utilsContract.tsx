@@ -193,11 +193,6 @@ export const getArgsAsStringInputFromForm = (form: Record<string, any>) => {
             }
           : {};
 
-        if (enumVariants.includes("Some") && enumVariants.includes("None")) {
-          console.log("options", { restructuredEnum });
-          console.log("options", "we found an option");
-        }
-
         return new CairoCustomEnum(restructuredEnum);
       }
 
