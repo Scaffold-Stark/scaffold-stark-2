@@ -1,45 +1,58 @@
-import { useReadLocalStorage } from "usehooks-ts";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useConnect } from "@starknet-react/core";
-import scaffoldConfig from "~~/scaffold.config";
+import { useReadLocalStorage } from "usehooks-ts";
 import { BurnerConnector, burnerAccounts } from "@scaffold-stark/stark-burner";
+import scaffoldConfig from "~~/scaffold.config";
 import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
+import { useAccount } from "~~/hooks/useAccount";
 
-/**
- * Automatically connect to a wallet/connector based on config and prior wallet
- */
 export const useAutoConnect = (): void => {
   const savedConnector = useReadLocalStorage<{ id: string; ix?: number }>(
     "lastUsedConnector",
   );
-
   const lastConnectionTime = useReadLocalStorage<number>(
     LAST_CONNECTED_TIME_LOCALSTORAGE_KEY,
   );
+  const wasDisconnectedManually = useReadLocalStorage<boolean>(
+    "wasDisconnectedManually",
+  );
 
   const { connect, connectors } = useConnect();
+  const { account } = useAccount();
+
+  const hasAutoConnected = useRef(false);
 
   useEffect(() => {
-    if (scaffoldConfig.walletAutoConnect) {
-      const currentTime = Date.now();
-      const ttlExpired =
-        currentTime - (lastConnectionTime || 0) > scaffoldConfig.autoConnectTTL;
-      if (!ttlExpired) {
-        const connector = connectors.find(
-          (conn) => conn.id == savedConnector?.id,
-        );
+    if (hasAutoConnected.current) return;
+    if (!scaffoldConfig.walletAutoConnect || wasDisconnectedManually) return;
 
-        if (connector) {
-          if (
-            connector.id == "burner-wallet" &&
-            savedConnector?.ix !== undefined &&
-            connector instanceof BurnerConnector
-          ) {
-            connector.burnerAccount = burnerAccounts[savedConnector.ix];
-          }
-          connect({ connector });
-        }
-      }
+    const now = Date.now();
+    const ttlExpired =
+      now - (lastConnectionTime || 0) > scaffoldConfig.autoConnectTTL;
+
+    const connector = connectors.find((c) => c.id === savedConnector?.id);
+    if (!connector || !connector.ready) return;
+
+    const shouldReconnect = !account || ttlExpired;
+
+    if (
+      connector.id === "burner-wallet" &&
+      savedConnector?.ix !== undefined &&
+      connector instanceof BurnerConnector
+    ) {
+      connector.burnerAccount = burnerAccounts[savedConnector.ix];
     }
-  }, [connect, connectors, lastConnectionTime, savedConnector]);
+
+    if (shouldReconnect) {
+      hasAutoConnected.current = true;
+      connect({ connector });
+    }
+  }, [
+    connect,
+    connectors,
+    savedConnector,
+    lastConnectionTime,
+    account,
+    wasDisconnectedManually,
+  ]);
 };
