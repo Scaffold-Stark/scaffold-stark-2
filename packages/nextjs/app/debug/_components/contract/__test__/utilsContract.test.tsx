@@ -112,17 +112,17 @@ describe("utilsContract", () => {
       "echo_enum_u_input_u8_core::integer::u8": "1",
       "echo_enum_u_input_contracts::YourModel::Message": {
         variant: {
-          //   Quit: {
-          //     type: "()",
-          //     value: "",
-          //   },
+          Quit: {
+            type: "()",
+            value: undefined,
+          },
           Echo: {
             type: "core::felt252",
             value: "32",
           },
           Move: {
             type: "(core::integer::u128, core::integer::u128)",
-            value: "",
+            value: undefined,
           },
         },
       },
@@ -153,25 +153,25 @@ describe("utilsContract", () => {
           type: "core::integer::u8",
           value: "24",
         },
-        // msg: {
-        //   type: "contracts::YourModel::Message",
-        //   value: {
-        //     variant: {
-        //       Quit: {
-        //         type: "()",
-        //         value: "",
-        //       },
-        //       Echo: {
-        //         type: "core::felt252",
-        //         value: "",
-        //       },
-        //       Move: {
-        //         type: "(core::integer::u128, core::integer::u128)",
-        //         value: "(1,2)",
-        //       },
-        //     },
-        //   },
-        // },
+        msg: {
+          type: "contracts::YourModel::Message",
+          value: {
+            variant: {
+              Quit: {
+                type: "()",
+                value: undefined,
+              },
+              Echo: {
+                type: "core::felt252",
+                value: undefined,
+              },
+              Move: {
+                type: "(core::integer::u128, core::integer::u128)",
+                value: "(1,2)",
+              },
+            },
+          },
+        },
       },
     };
     const result = getArgsAsStringInputFromForm(form);
@@ -179,14 +179,14 @@ describe("utilsContract", () => {
       {
         name: "john",
         age: 24n,
-        // msg: {
-        //   variant: {
-        //     Move: {
-        //       "0": 1n,
-        //       "1": 2n,
-        //     },
-        //   },
-        // },
+        msg: {
+          variant: {
+            Move: {
+              "0": 1n,
+              "1": 2n,
+            },
+          },
+        },
       },
     ]);
   });
