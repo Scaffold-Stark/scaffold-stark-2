@@ -103,31 +103,31 @@ Otherwise, you can install Scarb `2.11.4` following the [instructions](https://d
 
 #### Starknet Foundry version
 
-To ensure the proper functioning of the tests on scaffold-stark, your `Starknet Foundry` version must be `0.41.0`. To accomplish this, first check your `Starknet Foundry` version:
+To ensure the proper functioning of the tests on scaffold-stark, your `Starknet Foundry` version must be `0.44.0`. To accomplish this, first check your `Starknet Foundry` version:
 
 ```sh
 snforge --version
 ```
 
-If your `Starknet Foundry` version is not `0.41.0`, you need to install it. If you already have installed `Starknet Foundry` via `starkup`, you can setup this specific version with the following command:
+If your `Starknet Foundry` version is not `0.44.0`, you need to install it. If you already have installed `Starknet Foundry` via `starkup`, you can setup this specific version with the following command:
 
 ```sh
-asdf install starknet-foundry 0.41.0 && asdf set starknet-foundry 0.41.0
+asdf install starknet-foundry 0.44.0 && asdf set starknet-foundry 0.44.0
 ```
 
-Otherwise, you can install Starknet Foundry `0.41.0` following the [instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf).
+Otherwise, you can install Starknet Foundry `0.44.0` following the [instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf).
 
 #### Starknet-devnet version
 
-To ensure the proper functioning of scaffold-stark, your `starknet-devnet` version must be `0.4.0`. To accomplish this, first check your `starknet-devnet` version:
+To ensure the proper functioning of scaffold-stark, your `starknet-devnet` version must be `0.4.1`. To accomplish this, first check your `starknet-devnet` version:
 
 ```sh
 starknet-devnet --version
 ```
 
-If your `starknet-devnet` version is not `0.4.0`, you need to install it.
+If your `starknet-devnet` version is not `0.4.1`, you need to install it.
 
-- Install starknet-devnet `0.4.0` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
+- Install starknet-devnet `0.4.1` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
 
 </details>
 
@@ -164,9 +164,9 @@ Now you are ready!!!
 
 ## Compatible versions
 
-- Starknet-devnet - v0.4.0
+- Starknet-devnet - v0.4.1
 - Scarb - v2.11.4
-- Snforge - v0.41.0
+- Snforge - v0.44.0
 - Cairo - v2.11.4
 - Rpc - v0.8.0
 

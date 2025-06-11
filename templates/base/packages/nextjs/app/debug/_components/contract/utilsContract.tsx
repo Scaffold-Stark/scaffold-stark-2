@@ -176,22 +176,22 @@ export const getArgsAsStringInputFromForm = (form: Record<string, any>) => {
           }
         }
 
-        const restructuredEnum = Object.fromEntries(
-          enumVariants.map((variant) => [
-            variant,
-            (enumObject[variant].value || "").trim().length > 0
-              ? _encodeValueFromKey(
-                  (enumObject[variant] as FormStructValue).type,
-                  (enumObject[variant] as FormStructValue).value,
-                )
-              : undefined,
-          ]),
-        );
+        const activeVariant = enumVariants.find((variant) => {
+          const v = enumObject[variant];
+          return v && (v.value !== undefined || v.value === "");
+        });
 
-        if (enumVariants.includes("Some") && enumVariants.includes("None")) {
-          console.log("options", { restructuredEnum });
-          console.log("options", "we found an option");
-        }
+        const restructuredEnum = activeVariant
+          ? {
+              [activeVariant]:
+                enumObject[activeVariant].value !== undefined
+                  ? _encodeValueFromKey(
+                      enumObject[activeVariant].type,
+                      enumObject[activeVariant].value,
+                    )
+                  : undefined,
+            }
+          : {};
 
         return new CairoCustomEnum(restructuredEnum);
       }

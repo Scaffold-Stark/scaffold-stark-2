@@ -8,6 +8,7 @@ on:
   pull_request:
     branches:
       - main
+      - develop
     paths:
       - "packages/nextjs/**"
       - "packages/snfoundry/contracts/**"
@@ -30,7 +31,6 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: "yarn"
-          #cache-dependency-path: packages/nextjs/yarn.lock
 
       - name: Install dependencies (Next.js)
         run: yarn install --immutable
