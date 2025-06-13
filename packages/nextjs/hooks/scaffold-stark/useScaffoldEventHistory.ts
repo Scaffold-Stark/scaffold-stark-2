@@ -92,7 +92,10 @@ export const useScaffoldEventHistory = <
       }
 
       const event = (deployedContractData.abi as Abi).find(
-        (part) => part.type === "event" && part.name === eventName,
+        (part) =>
+          part.type === "event" &&
+          (part.name.split("::").slice(-1)[0] === eventName ||
+            part.name === eventName),
       ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
 
       const blockNumber = (await publicClient.getBlockLatestAccepted())
