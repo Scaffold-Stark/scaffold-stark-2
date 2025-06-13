@@ -76,18 +76,20 @@ export const useScaffoldEventHistory = <
   }, [targetNetwork.rpcUrls.public.http]);
 
   // Get back event full name
-  const matchingAbiEvents = (deployedContractData?.abi as Abi)
-    .filter(
-      (part) => part.type === "event" && 
-        part.name.split("::").slice(-1)[0] === (eventName as string)
-    ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>[];
+  const matchingAbiEvents = (deployedContractData?.abi as Abi).filter(
+    (part) =>
+      part.type === "event" &&
+      part.name.split("::").slice(-1)[0] === (eventName as string),
+  ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>[];
 
   if (matchingAbiEvents.length === 0) {
     throw new Error(`Event ${eventName as string} not found in contract ABI`);
   }
 
   if (matchingAbiEvents.length > 1) {
-    throw new Error(`Ambiguous event "${eventName as string}". ABI contains ${matchingAbiEvents.length} events with that name`);
+    throw new Error(
+      `Ambiguous event "${eventName as string}". ABI contains ${matchingAbiEvents.length} events with that name`,
+    );
   }
 
   const eventAbi = matchingAbiEvents[0];
@@ -112,7 +114,7 @@ export const useScaffoldEventHistory = <
       const event = (deployedContractData.abi as Abi).find(
         (part) =>
           part.type === "event" &&
-          part.name.split("::").slice(-1)[0] === eventName
+          part.name.split("::").slice(-1)[0] === eventName,
       ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
 
       const blockNumber = (await publicClient.getBlockLatestAccepted())
@@ -122,9 +124,7 @@ export const useScaffoldEventHistory = <
         (fromBlock && blockNumber >= fromBlock) ||
         blockNumber >= fromBlockUpdated
       ) {
-        let keys: string[][] = [
-          [hash.getSelectorFromName(eventName)],
-        ];
+        let keys: string[][] = [[hash.getSelectorFromName(eventName)]];
         if (filters) {
           keys = keys.concat(
             composeEventFilterKeys(filters, event, deployedContractData.abi),
