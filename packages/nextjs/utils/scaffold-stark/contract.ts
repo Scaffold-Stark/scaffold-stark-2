@@ -373,7 +373,7 @@ export type UseScaffoldEventHistoryConfig<
 > = {
   contractName: TContractName;
   eventName:
-    | IsContractDeclarationMissing<string, TEventName>
+    // | IsContractDeclarationMissing<string, TEventName>
     | BaseName<IsContractDeclarationMissing<string, TEventName>>;
   fromBlock: bigint;
   filters?: { [key: string]: any };

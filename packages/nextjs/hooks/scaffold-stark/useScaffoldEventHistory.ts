@@ -75,6 +75,24 @@ export const useScaffoldEventHistory = <
     });
   }, [targetNetwork.rpcUrls.public.http]);
 
+  // Get back event full name
+  const matchingAbiEvents = (deployedContractData?.abi as Abi)
+    .filter(
+      (part) => part.type === "event" && 
+        part.name.split("::").slice(-1)[0] === (eventName as string)
+    ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>[];
+
+  if (matchingAbiEvents.length === 0) {
+    throw new Error(`Event ${eventName as string} not found in contract ABI`);
+  }
+
+  if (matchingAbiEvents.length > 1) {
+    throw new Error(`Ambiguous event "${eventName as string}". ABI contains ${matchingAbiEvents.length} events with that name`);
+  }
+
+  const eventAbi = matchingAbiEvents[0];
+  const fullName = eventAbi.name;
+
   const readEvents = async (fromBlock?: bigint) => {
     if (!enabled) {
       setIsLoading(false);
@@ -94,8 +112,7 @@ export const useScaffoldEventHistory = <
       const event = (deployedContractData.abi as Abi).find(
         (part) =>
           part.type === "event" &&
-          (part.name.split("::").slice(-1)[0] === eventName ||
-            part.name === eventName),
+          part.name.split("::").slice(-1)[0] === eventName
       ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
 
       const blockNumber = (await publicClient.getBlockLatestAccepted())
@@ -106,7 +123,7 @@ export const useScaffoldEventHistory = <
         blockNumber >= fromBlockUpdated
       ) {
         let keys: string[][] = [
-          [hash.getSelectorFromName(event.name.split("::").slice(-1)[0])],
+          [hash.getSelectorFromName(eventName)],
         ];
         if (filters) {
           keys = keys.concat(
@@ -220,7 +237,7 @@ export const useScaffoldEventHistory = <
           CallData.getAbiStruct(deployedContractData.abi),
           CallData.getAbiEnum(deployedContractData.abi),
         );
-        const args = parsed.length ? parsed[0][eventName] : {};
+        const args = parsed.length ? parsed[0][fullName] : {};
         const { event: rawEvent, ...rest } = event;
         return {
           type: rawEvent.members,
