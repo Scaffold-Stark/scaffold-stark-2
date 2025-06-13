@@ -47,6 +47,7 @@ export function getTopErrorMessage(state: FormErrorMessageState): string {
 const baseNumberType = new Set([
   "core::integer::u512",
   "core::integer::u256",
+  "core::zeroable::NonZero::<core::integer::u256>",
   "core::integer::u128",
   "core::integer::u64",
   "core::integer::u32",
@@ -67,6 +68,7 @@ const baseType = new Set([
   "core::felt252",
   "core::integer::u512",
   "core::integer::u256",
+  "core::zeroable::NonZero::<core::integer::u256>",
   "core::integer::u128",
   "core::integer::u64",
   "core::integer::u32",
