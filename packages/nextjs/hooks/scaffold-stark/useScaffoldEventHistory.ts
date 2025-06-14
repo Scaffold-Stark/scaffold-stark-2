@@ -78,12 +78,12 @@ export const useScaffoldEventHistory = <
   // Get back event full name
   const matchingAbiEvents = useMemo(() => {
     return (deployedContractData?.abi as Abi)?.filter(
-    (part) =>
-      part.type === "event" &&
-      part.name.split("::").slice(-1)[0] === (eventName as string),
-  ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>[];
-  }, [deployedContractData, deployedContractLoading])
-  // const matchingAbiEvents = 
+      (part) =>
+        part.type === "event" &&
+        part.name.split("::").slice(-1)[0] === (eventName as string),
+    ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>[];
+  }, [deployedContractData, deployedContractLoading]);
+  // const matchingAbiEvents =
 
   if (matchingAbiEvents?.length === 0) {
     throw new Error(`Event ${eventName as string} not found in contract ABI`);
