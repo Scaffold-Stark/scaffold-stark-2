@@ -360,6 +360,10 @@ export type EventFilters<
     }
 >;*/
 
+type BaseName<S extends string> = S extends `${infer _Prefix}::${infer Rest}`
+  ? BaseName<Rest>
+  : S;
+
 export type UseScaffoldEventHistoryConfig<
   TContractName extends ContractName,
   TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
@@ -368,7 +372,8 @@ export type UseScaffoldEventHistoryConfig<
   TReceiptData extends boolean = false,
 > = {
   contractName: TContractName;
-  eventName: IsContractDeclarationMissing<string, TEventName>;
+  eventName: // | IsContractDeclarationMissing<string, TEventName>
+  BaseName<IsContractDeclarationMissing<string, TEventName>>;
   fromBlock: bigint;
   filters?: { [key: string]: any };
   blockData?: TBlockData;
