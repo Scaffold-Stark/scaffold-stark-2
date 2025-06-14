@@ -76,24 +76,27 @@ export const useScaffoldEventHistory = <
   }, [targetNetwork.rpcUrls.public.http]);
 
   // Get back event full name
-  const matchingAbiEvents = (deployedContractData?.abi as Abi).filter(
+  const matchingAbiEvents = useMemo(() => {
+    return (deployedContractData?.abi as Abi)?.filter(
     (part) =>
       part.type === "event" &&
       part.name.split("::").slice(-1)[0] === (eventName as string),
   ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>[];
+  }, [deployedContractData, deployedContractLoading])
+  // const matchingAbiEvents = 
 
-  if (matchingAbiEvents.length === 0) {
+  if (matchingAbiEvents?.length === 0) {
     throw new Error(`Event ${eventName as string} not found in contract ABI`);
   }
 
-  if (matchingAbiEvents.length > 1) {
+  if (matchingAbiEvents?.length > 1) {
     throw new Error(
       `Ambiguous event "${eventName as string}". ABI contains ${matchingAbiEvents.length} events with that name`,
     );
   }
 
-  const eventAbi = matchingAbiEvents[0];
-  const fullName = eventAbi.name;
+  const eventAbi = matchingAbiEvents?.[0];
+  const fullName = eventAbi?.name;
 
   const readEvents = async (fromBlock?: bigint) => {
     if (!enabled) {
