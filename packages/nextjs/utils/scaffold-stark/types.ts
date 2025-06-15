@@ -23,7 +23,8 @@ export const isCairoBigInt = (type: string): type is CairoBigInt =>
   /core::integer::(u|i)(64|128)$/.test(type);
 
 export const isCairoU256 = (type: string): type is CairoU256 =>
-  /core::integer::u256$/.test(type) || /core::zeroable::NonZero::<core::integer::u256>$/.test(type);
+  /core::integer::u256$/.test(type) ||
+  /core::zeroable::NonZero::<core::integer::u256>$/.test(type);
 
 export const isCairoContractAddress = (
   type: string,
