@@ -4,8 +4,6 @@ pub trait IYourContract<TContractState> {
     fn set_greeting(ref self: TContractState, new_greeting: ByteArray, amount_strk: Option<u256>);
     fn withdraw(ref self: TContractState);
     fn premium(self: @TContractState) -> bool;
-    fn get_var_non_zero(self: @TContractState) -> NonZero<u256>;
-    fn set_var_non_zero(ref self: TContractState, value: NonZero<u256>);
 }
 
 #[starknet::contract]
@@ -52,7 +50,6 @@ pub mod YourContract {
         premium: bool,
         total_counter: u256,
         user_greeting_counter: Map<ContractAddress, u256>,
-        var_non_zero: NonZero<u256>,
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
     }
@@ -61,7 +58,6 @@ pub mod YourContract {
     fn constructor(ref self: ContractState, owner: ContractAddress) {
         self.greeting.write("Building Unstoppable Apps!!!");
         self.ownable.initializer(owner);
-        //self.var_non_zero.write(42);
     }
 
     #[abi(embed_v0)]
@@ -112,12 +108,6 @@ pub mod YourContract {
         }
         fn premium(self: @ContractState) -> bool {
             self.premium.read()
-        }
-        fn get_var_non_zero(self: @ContractState) -> NonZero<u256> {
-            self.var_non_zero.read()
-        }
-        fn set_var_non_zero(ref self: ContractState, value: NonZero<u256>) {
-            self.var_non_zero.write(value);
         }
     }
 }
