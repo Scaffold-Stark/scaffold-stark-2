@@ -66,10 +66,6 @@ export const useScaffoldEventHistory = <
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>();
   const [fromBlockUpdated, setFromBlockUpdated] = useState<bigint>(fromBlock);
-  // const [isWebsocketConnected, setIsWebsocketConnected] = useState(false);
-
-  // const wsChannelRef = useRef<WebSocketChannel | null>(null);
-  // const subscriptionIdRef = useRef<string | null>(null);
 
   const {
     wsChannelRef,
@@ -106,18 +102,10 @@ export const useScaffoldEventHistory = <
       setIsLoading(true);
 
       try {
-        // const wsChannel = new WebSocketChannel({
-        //   nodeUrl: wsUrl,
-        // });
-
-        // await wsChannel.waitForConnection();
-        // setIsWebsocketConnected(true);
-        // wsChannelRef.current = wsChannel;
         const wsChannel = await createWsChannel();
         if (!wsChannel) {
           throw new Error("Error in connection");
         }
-        // setIsWebsocketConnected(true);
 
         const event = (deployedContractData.abi as Abi).find(
           (part) => part.type === "event" && part.name === eventName,
@@ -130,8 +118,6 @@ export const useScaffoldEventHistory = <
         const blockNumber = (await publicClient.getBlockLatestAccepted())
           .block_number;
 
-        const newLogs: any[] = [];
-        const newEvents: any[] = [];
         if (
           (fromBlock && blockNumber >= fromBlock) ||
           blockNumber >= fromBlockUpdated
@@ -162,7 +148,6 @@ export const useScaffoldEventHistory = <
             console.log("New ws event entry: ", data);
 
             if (data.result) {
-              // newLogs.push(data.result)
               const log = data.result;
 
               const responseObject = {
