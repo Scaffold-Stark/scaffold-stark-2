@@ -278,7 +278,6 @@ export const useScaffoldEventHistory = <
           });
         }
         if (events && typeof fromBlock === "undefined") {
-          // setEvents([...newEvents, ...events]);
           setEvents((prev) => {
             const combined = [...newEvents, ...events];
             return combined.slice(0, MAX_EVENTS_LIMIT);
@@ -384,11 +383,7 @@ export const useScaffoldEventHistory = <
 
   const eventHistoryData = useMemo(() => {
     if (!deployedContractData) return [];
-    // if (deployedContractData) {
-
-    // }
     return (events || []).map((event) => {
-      // const logs = [JSON.parse(JSON.stringify(event.log))];
       const logs = [event.log];
       const parsed = starknetEvents.parseEvents(
         logs,

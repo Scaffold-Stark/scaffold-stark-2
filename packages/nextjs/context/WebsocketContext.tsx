@@ -87,7 +87,6 @@ export const WebsocketProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsWebsocketConnected,
     wsChannelRef,
     subscriptionIdRef,
-    // useWebsocket
   };
 
   return (
