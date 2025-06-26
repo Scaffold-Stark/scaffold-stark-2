@@ -131,8 +131,10 @@ export const useScaffoldEventHistory = <
         }
 
         const event = (deployedContractData.abi as Abi).find(
-          (part) => part.type === "event" && part.name === eventName,
-        ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
+        (part) =>
+          part.type === "event" &&
+          part.name.split("::").slice(-1)[0] === eventName,
+      ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
 
         if (!event) {
           throw new Error(`Event ${eventName} not found in contract ABI`);
@@ -146,7 +148,7 @@ export const useScaffoldEventHistory = <
           blockNumber >= fromBlockUpdated
         ) {
           let keys: string[][] = [
-            [hash.getSelectorFromName(event.name.split("::").slice(-1)[0])],
+            [hash.getSelectorFromName(eventName)],
           ];
           if (filters) {
             keys = keys.concat(
@@ -175,8 +177,10 @@ export const useScaffoldEventHistory = <
 
               const responseObject = {
                 event: (deployedContractData.abi as Abi).find(
-                  (part) => part.type === "event" && part.name === eventName,
-                ),
+                    (part) =>
+                      part.type === "event" &&
+                      part.name.split("::").slice(-1)[0] === eventName,
+                  ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>,
                 log,
                 block:
                   blockData && log?.block_hash !== null
