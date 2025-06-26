@@ -61,7 +61,7 @@ vi.mock("starknet", async () => {
 
 describe("useScaffoldEventHistory", () => {
   const mockContractName = "YourContract";
-  const mockEventName = "contracts::YourContract::YourContract::EventParser";
+  const mockEventName = "EventParser";
   const mockTargetNetwork = {
     id: "testnet",
     rpcUrls: {
