@@ -17,7 +17,7 @@ import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { BlockNumber } from "starknet";
 import { useContract, useReadContract } from "@starknet-react/core";
 import { ContractInput } from "./ContractInput";
-import { isValidContractArgs } from "~~/utils/scaffold-stark/isValidContractArgs";
+import { isValidContractArgs } from "~~/utils/scaffold-stark/common";
 
 type ReadOnlyFunctionFormProps = {
   contractAddress: Address;
@@ -87,6 +87,9 @@ export const ReadOnlyFunctionForm = ({
     const isValidInput = isValidContractArgs(newInputValue, expectedArgCount);
 
     if (!isValidInput) {
+      /**
+       * Todo: add extra logging in future release.
+       */
       console.warn(
         `Read blocked: Expected ${expectedArgCount} args, got ${newInputValue.length}`
       );
