@@ -21,18 +21,27 @@ const getContractDataFromDeployments = (): Record<
     Record<string, { address: string; abi: Abi; classHash: string }>
   > = {};
 
-  // Extract package name from the target/dev directory
+  // Extract package name from Scarb.toml
   const getPackageName = (): string => {
-    const targetDevDir = path.join(__dirname, "../../contracts/target/dev/");
+    const scarbTomlPath = path.join(__dirname, "../../contracts/Scarb.toml");
     try {
-      const files = fs.readdirSync(targetDevDir);
-      const artifactFile = files.find(file => file.endsWith('.starknet_artifacts.json'));
-      if (artifactFile) {
-        // Extract package name from filename (remove .starknet_artifacts.json)
-        return artifactFile.replace('.starknet_artifacts.json', '');
+      const tomlContent = fs.readFileSync(scarbTomlPath, "utf8");
+
+      // Use regex to find the package name in the [package] section
+      // This approach is more reliable than full TOML parsing for our simple use case
+      const packageNameMatch = tomlContent.match(
+        /\[package\][\s\S]*?name\s*=\s*"([^"]+)"/
+      );
+
+      if (packageNameMatch && packageNameMatch[1]) {
+        const packageName = packageNameMatch[1];
+        console.log(`📦 Found package name in Scarb.toml: ${packageName}`);
+        return packageName;
+      } else {
+        console.warn("Could not find package name in Scarb.toml");
       }
     } catch (e) {
-      console.warn("Could not read contracts/target/dev directory");
+      console.warn("Could not read Scarb.toml file:", e);
     }
   };
 
@@ -77,7 +86,7 @@ const getContractDataFromDeployments = (): Record<
   return allContractsData;
 };
 
-const generateTsAbis = () => {
+const generateTsAbis = async () => {
   const allContractsData = getContractDataFromDeployments();
 
   const fileContent = Object.entries(allContractsData).reduce(
@@ -92,14 +101,16 @@ const generateTsAbis = () => {
     fs.mkdirSync(TARGET_DIR);
   }
 
+  const formattedContent = await prettier.format(
+    `${generatedContractComment}\n\nconst deployedContracts = {${fileContent}} as const;\n\nexport default deployedContracts;`,
+    {
+      parser: "typescript",
+    }
+  );
+
   fs.writeFileSync(
     path.join(TARGET_DIR, "deployedContracts.ts"),
-    prettier.format(
-      `${generatedContractComment}\n\nconst deployedContracts = {${fileContent}} as const;\n\nexport default deployedContracts;`,
-      {
-        parser: "typescript",
-      }
-    )
+    formattedContent
   );
 
   console.log(
