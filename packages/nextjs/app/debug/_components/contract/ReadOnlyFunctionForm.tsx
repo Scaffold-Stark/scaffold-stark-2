@@ -31,7 +31,7 @@ export const ReadOnlyFunctionForm = ({
   abi,
 }: ReadOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
-    getInitialFormState(abiFunction)
+    getInitialFormState(abiFunction),
   );
   const [inputValue, setInputValue] = useState<any | undefined>(undefined);
   const [formErrorMessage, setFormErrorMessage] =
@@ -45,7 +45,7 @@ export const ReadOnlyFunctionForm = ({
 
   const inputIsValidArray = isValidContractArgs(
     inputValue,
-    abiFunction.inputs.length
+    abiFunction.inputs.length,
   );
 
   const { isFetching, data, refetch, error } = useReadContract({
@@ -91,7 +91,7 @@ export const ReadOnlyFunctionForm = ({
        * Todo: add extra logging in future release.
        */
       console.warn(
-        `Read blocked: Expected ${expectedArgCount} args, got ${newInputValue.length}`
+        `Read blocked: Expected ${expectedArgCount} args, got ${newInputValue.length}`,
       );
       return;
     }
