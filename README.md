@@ -71,7 +71,7 @@ We are almost done, now we need to install `Starknet Devnet`. First let's regist
 asdf plugin add starknet-devnet
 ```
 
-Now open your new created project. Since we have the required dependencies listed on a `.tool-versions` file, simply running the below command on the root folder will install `starknet-devnet`(and other dependencies such as `scarb` and `starknet-foundry`) with the version SPECIFIED on the `.tool-versions` file (not necessarily the latest):
+Now open your new created project. Since we have the required dependencies listed on a `.tool-versions` file, simply running the  command on the root folder will install `starknet-devnet`(and other dependencies such as `scarb` and `starknet-foundry`) with the version SPECIFIED on the `.tool-versions` file (not necessarily the latest):
 
 ```bash
 asdf install
