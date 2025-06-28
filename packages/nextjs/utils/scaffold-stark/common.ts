@@ -29,7 +29,7 @@ export function isJsonString(str: string) {
 
 export function isValidContractArgs(
   args: unknown,
-  expectedLength: number
+  expectedLength: number,
 ): boolean {
   return (
     Array.isArray(args) &&
