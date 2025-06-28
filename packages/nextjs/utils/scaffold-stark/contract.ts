@@ -384,6 +384,15 @@ export type UseScaffoldEventHistoryConfig<
   enabled?: boolean;
 };
 
+export type UseScaffoldWatchContractEventConfig<
+  TContractName extends ContractName,
+  TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
+> = {
+  contractName: TContractName;
+  eventName: BaseName<IsContractDeclarationMissing<string, TEventName>>;
+  onLogs: (log: any) => void;
+};
+
 /// export all the types from kanabi
 
 export function getFunctionsByStateMutability(
