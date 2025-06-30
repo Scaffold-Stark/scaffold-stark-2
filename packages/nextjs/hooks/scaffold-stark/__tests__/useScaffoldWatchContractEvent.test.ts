@@ -57,9 +57,9 @@ describe("useScaffoldWatchContractEvent", () => {
     from_address: "0xfrom",
   };
 
-  const fakeBlock = { block_hash: "0xblock" }
-  const fakeTx   = { transaction_hash: "0xtx" }
-  const fakeReceipt = { transaction_hash: "0xtx" }
+  const fakeBlock = { block_hash: "0xblock" };
+  const fakeTx = { transaction_hash: "0xtx" };
+  const fakeReceipt = { transaction_hash: "0xtx" };
 
   beforeEach(() => {
     // By default, simulate a loaded contract with the mock ABI
@@ -85,9 +85,15 @@ describe("useScaffoldWatchContractEvent", () => {
       events: [mockLog],
     });
 
-    RpcProvider.prototype.getBlockWithTxHashes = vi.fn().mockResolvedValue(fakeBlock);
-    RpcProvider.prototype.getTransactionByHash    = vi.fn().mockResolvedValue(fakeTx);
-    RpcProvider.prototype.getTransactionReceipt   = vi.fn().mockResolvedValue(fakeReceipt);
+    RpcProvider.prototype.getBlockWithTxHashes = vi
+      .fn()
+      .mockResolvedValue(fakeBlock);
+    RpcProvider.prototype.getTransactionByHash = vi
+      .fn()
+      .mockResolvedValue(fakeTx);
+    RpcProvider.prototype.getTransactionReceipt = vi
+      .fn()
+      .mockResolvedValue(fakeReceipt);
 
     // spy on parseEvents & parseEventData
     vi.spyOn(starknet.events, "parseEvents").mockReturnValue([
@@ -95,7 +101,7 @@ describe("useScaffoldWatchContractEvent", () => {
     ]);
     vi.spyOn(starknet.events, "getAbiEvents").mockReturnValue(
       // @ts-ignore
-      (mockDeployedContractData.abi as any).filter((x) => x.type === "event")
+      (mockDeployedContractData.abi as any).filter((x) => x.type === "event"),
     );
     vi.spyOn(eventsData, "parseEventData").mockReturnValue({ parsed: true });
   });
@@ -122,7 +128,7 @@ describe("useScaffoldWatchContractEvent", () => {
     await waitFor(() => {
       expect(onLogs).toHaveBeenCalledWith(
         expect.objectContaining({
-          type: "event",             // or whatever your ABI’s `type` is
+          type: "event", // or whatever your ABI’s `type` is
           args: { foo: "bar" },
           parsedArgs: { parsed: true },
           block: fakeBlock,
