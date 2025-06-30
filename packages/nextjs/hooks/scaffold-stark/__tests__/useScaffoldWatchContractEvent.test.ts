@@ -5,8 +5,24 @@ import { useTargetNetwork } from "../useTargetNetwork";
 import { useProvider } from "@starknet-react/core";
 import { RpcProvider } from "starknet";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import { events as starknetEvents } from "starknet";
+import * as eventsData from "~~/utils/scaffold-stark/eventsData";
+import * as starknet from "starknet";
 
 // Mock dependencies
+vi.mock("starknet", async () => {
+  const actual: typeof import("starknet") = await vi.importActual("starknet");
+  return {
+    ...actual,
+    // replace only the `parseEvents` function, keep the rest intact
+    events: {
+      ...actual.events,
+      parseEvents: vi.fn(),
+      getAbiEvents: vi.fn(),
+    },
+  };
+});
+
 vi.mock("../useDeployedContractInfo", () => ({
   useDeployedContractInfo: vi.fn(),
 }));
@@ -41,6 +57,10 @@ describe("useScaffoldWatchContractEvent", () => {
     from_address: "0xfrom",
   };
 
+  const fakeBlock = { block_hash: "0xblock" }
+  const fakeTx   = { transaction_hash: "0xtx" }
+  const fakeReceipt = { transaction_hash: "0xtx" }
+
   beforeEach(() => {
     // By default, simulate a loaded contract with the mock ABI
     // @ts-ignore
@@ -64,6 +84,20 @@ describe("useScaffoldWatchContractEvent", () => {
     RpcProvider.prototype.getEvents = vi.fn().mockResolvedValue({
       events: [mockLog],
     });
+
+    RpcProvider.prototype.getBlockWithTxHashes = vi.fn().mockResolvedValue(fakeBlock);
+    RpcProvider.prototype.getTransactionByHash    = vi.fn().mockResolvedValue(fakeTx);
+    RpcProvider.prototype.getTransactionReceipt   = vi.fn().mockResolvedValue(fakeReceipt);
+
+    // spy on parseEvents & parseEventData
+    vi.spyOn(starknet.events, "parseEvents").mockReturnValue([
+      { [mockEventName]: { foo: "bar" } },
+    ]);
+    vi.spyOn(starknet.events, "getAbiEvents").mockReturnValue(
+      // @ts-ignore
+      (mockDeployedContractData.abi as any).filter((x) => x.type === "event")
+    );
+    vi.spyOn(eventsData, "parseEventData").mockReturnValue({ parsed: true });
   });
 
   afterEach(() => {
@@ -86,7 +120,16 @@ describe("useScaffoldWatchContractEvent", () => {
 
     // Wait for the effect to fetch events and call onLogs
     await waitFor(() => {
-      expect(onLogs).toHaveBeenCalledWith(mockLog);
+      expect(onLogs).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "event",             // or whatever your ABI’s `type` is
+          args: { foo: "bar" },
+          parsedArgs: { parsed: true },
+          block: fakeBlock,
+          transaction: fakeTx,
+          receipt: fakeReceipt,
+        }),
+      );
     });
 
     // After processing, loading should be false and no error should be set
