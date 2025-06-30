@@ -3,6 +3,7 @@ import {
   executeDeployCalls,
   exportDeployments,
   deployer,
+  assertDeployerDefined,
 } from "./deploy-contract";
 import { green } from "./helpers/colorize-log";
 
@@ -52,6 +53,7 @@ const deployScript = async (): Promise<void> => {
 
 const main = async (): Promise<void> => {
   try {
+    assertDeployerDefined();
     await deployScript();
     await executeDeployCalls();
     exportDeployments();

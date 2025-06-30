@@ -319,6 +319,14 @@ const exportDeployments = () => {
   fs.writeFileSync(networkPath, JSON.stringify(deployments, null, 2));
 };
 
+const assertDeployerDefined = () => {
+  if (!deployer) {
+    const errorMessage = `Deployment failed: deployer account is not defined - missing environment variables.\nPlease check your \`.env\` file for \`ACCOUNT_ADDRESS_${networkName.toUpperCase()}\` and \`PRIVATE_KEY_${networkName.toUpperCase()}\`.`;
+    console.error(red(errorMessage));
+    throw new Error(errorMessage);
+  }
+}
+
 export {
   deployContract,
   provider,
@@ -327,4 +335,5 @@ export {
   exportDeployments,
   executeDeployCalls,
   resetDeployments,
+  assertDeployerDefined,
 };
