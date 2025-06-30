@@ -28,7 +28,7 @@ export const useScaffoldWatchContractEvent = <
   onLogs,
 }: UseScaffoldWatchContractEventConfig<TContractName, TEventName>) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [currentBlockNumber, setCurrentBlockNumber] = useState(0);
+  const [currentBlockNumber, setCurrentBlockNumber] = useState<number>();
   const [error, setError] = useState<Error | null>();
 
   const { data: deployedContractData, isLoading: deployedContractLoading } =
@@ -112,7 +112,13 @@ export const useScaffoldWatchContractEvent = <
         ?.block_number;
       setCurrentBlockNumber(latestBlock + 1);
     }
-  }, [eventName, contractName, deployedContractData?.address, targetNetwork, onLogs]);
+  }, [
+    eventName,
+    contractName,
+    deployedContractData?.address,
+    targetNetwork,
+    onLogs,
+  ]);
 
   useEffect(() => {
     respondToEvents().then();
@@ -151,6 +157,6 @@ export const useScaffoldWatchContractEvent = <
 
   return {
     isLoading: isLoading || deployedContractLoading,
-    error: error
-  }
+    error: error,
+  };
 };

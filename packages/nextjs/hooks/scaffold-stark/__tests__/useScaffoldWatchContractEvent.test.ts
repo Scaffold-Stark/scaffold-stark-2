@@ -1,111 +1,183 @@
 import { renderHook, act, waitFor } from "@testing-library/react";
-import { useScaffoldEventHistory } from "../useScaffoldEventHistory";
-import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
+import { useScaffoldWatchContractEvent } from "../useScaffoldWatchContractEvent";
+import { useDeployedContractInfo } from "../useDeployedContractInfo";
 import { useTargetNetwork } from "../useTargetNetwork";
 import { useProvider } from "@starknet-react/core";
 import { RpcProvider } from "starknet";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { mockDeployedContractData } from "./seed/mockDeployedContractData";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 
 // Mock dependencies
-vi.mock("~~/hooks/scaffold-stark", () => ({
+vi.mock("../useDeployedContractInfo", () => ({
   useDeployedContractInfo: vi.fn(),
 }));
-
 vi.mock("../useTargetNetwork", () => ({
   useTargetNetwork: vi.fn(),
 }));
-
 vi.mock("@starknet-react/core", () => ({
   useProvider: vi.fn(),
 }));
 
-describe("UseScaffoldWatchContractEvent", () => {
-  const mockContractName = "YourContract";
-  const mockEventName = "EventParser";
+describe("useScaffoldWatchContractEvent", () => {
+  const mockContractName = "MyContract";
+  const mockEventName = "MyEvent";
   const mockTargetNetwork = {
     id: "testnet",
-    rpcUrls: {
-      public: {
-        http: ["https://mock-rpc-url"],
-      }
-    }
+    rpcUrls: { public: { http: ["https://mock-rpc-url"] } },
   };
 
-  const mockEvents = [
-    {
-      transaction_hash:
-        "0x32fd3f52de430871452ba8f0e919df62d62371ae14854970751bb218f907043",
-      block_hash:
-        "0x3b2711fe29eba45f2a0250c34901d15e37b495599fac1a74960a09cc83e1234",
-      block_number: 4,
-      from_address:
-        "0x4157387adde0a8300c484badd9dcae316f3ce4aef745d724774c775201ae7a6",
-      keys: [
-        "0x5bd809fd302dcb761cc197e17ab97cea5927a14a155597700cd4780ce32953",
-        "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
-        "0x0",
-        "0x68656c6c6f20776f726c64",
-        "0xb",
-      ],
-      data: [
-        "0x1",
-        "0x400",
-        "0x0",
-        "0x1",
-        "0x2",
-        "0x3",
-        "0x4",
-        "0x5",
-        "0x2",
-        "0xa",
-        "0x14",
-      ],
-    },
-  ];
+  // A mock deployed contract with one event in its ABI
+  const mockDeployedContractData = {
+    address: "0x123",
+    abi: [{ type: "event", name: "Module::MyEvent" }],
+  };
+
+  // A mock event log returned by the provider
+  const mockLog = {
+    data: ["0x01"],
+    keys: ["0xabc"],
+    block_number: 1,
+    block_hash: "0xblock",
+    transaction_hash: "0xtx",
+    from_address: "0xfrom",
+  };
 
   beforeEach(() => {
+    // By default, simulate a loaded contract with the mock ABI
     // @ts-ignore
     (useDeployedContractInfo as vi.Mock).mockReturnValue({
       data: mockDeployedContractData,
       isLoading: false,
     });
     // @ts-ignore
-    (useTargetNetwork as Vi.Mock).mockReturnValue({
+    (useTargetNetwork as vi.Mock).mockReturnValue({
       targetNetwork: mockTargetNetwork,
     });
     // @ts-ignore
     (useProvider as vi.Mock).mockReturnValue({
-      provider: new RpcProvider({
-        nodeUrl: mockTargetNetwork.rpcUrls.public.http[0],
-      }),
+      provider: {}, // Not used directly in hook logic
     });
 
-    // Mock RpcProvider methods
+    // Mock the StarkNet RPC provider behavior
     RpcProvider.prototype.getBlockLatestAccepted = vi.fn().mockResolvedValue({
-      block_number: 1000,
+      block_number: 10,
     });
-
     RpcProvider.prototype.getEvents = vi.fn().mockResolvedValue({
-      events: mockEvents,
-    });
-
-    RpcProvider.prototype.getBlockWithTxHashes = vi.fn().mockResolvedValue({
-      block_hash: "0xabc",
-    });
-
-    RpcProvider.prototype.getTransactionByHash = vi.fn().mockResolvedValue({
-      transaction_hash: "0xdef",
-    });
-
-    RpcProvider.prototype.getTransactionReceipt = vi.fn().mockResolvedValue({
-      transaction_hash: "0xdef",
+      events: [mockLog],
     });
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+    vi.useRealTimers();
   });
 
-  
-})
+  it("calls onLogs when events are fetched after mount", async () => {
+    const onLogs = vi.fn();
+    const { result } = renderHook(() =>
+      useScaffoldWatchContractEvent({
+        contractName: mockContractName as any,
+        eventName: mockEventName as never,
+        onLogs,
+      }),
+    );
+
+    // Initially, loading should be false (no operations yet)
+    expect(result.current.isLoading).toBe(false);
+
+    // Wait for the effect to fetch events and call onLogs
+    await waitFor(() => {
+      expect(onLogs).toHaveBeenCalledWith(mockLog);
+    });
+
+    // After processing, loading should be false and no error should be set
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.error).toBeUndefined();
+  });
+
+  it("does not call onLogs if no events are returned", async () => {
+    // Simulate the provider returning an empty events array
+    // @ts-ignore
+    (RpcProvider.prototype.getEvents as vi.Mock).mockResolvedValueOnce({
+      events: [],
+    });
+
+    const onLogs = vi.fn();
+    renderHook(() =>
+      useScaffoldWatchContractEvent({
+        contractName: mockContractName as any,
+        eventName: mockEventName as never,
+        onLogs,
+      }),
+    );
+
+    // Wait a short time to ensure the effect has run
+    await waitFor(() => {
+      // onLogs should not have been called since there are no events
+      expect(onLogs).not.toHaveBeenCalled();
+    });
+  });
+
+  it("throws error if the event is not found in the contract ABI", () => {
+    // @ts-ignore
+    (useDeployedContractInfo as vi.Mock).mockReturnValue({
+      data: { address: "0x123", abi: [] }, // empty ABI
+      isLoading: false,
+    });
+
+    expect(() =>
+      renderHook(() =>
+        useScaffoldWatchContractEvent({
+          contractName: mockContractName as any,
+          eventName: mockEventName as never,
+          onLogs: () => {},
+        }),
+      ),
+    ).toThrow(`Event ${mockEventName} not found in contract ABI`);
+  });
+
+  it("throws error if multiple matching events are found in the ABI", () => {
+    // @ts-ignore
+    (useDeployedContractInfo as vi.Mock).mockReturnValue({
+      data: {
+        address: "0x123",
+        abi: [
+          { type: "event", name: "Module::MyEvent" },
+          { type: "event", name: "Other::MyEvent" },
+        ],
+      },
+      isLoading: false,
+    });
+
+    expect(() =>
+      renderHook(() =>
+        useScaffoldWatchContractEvent({
+          contractName: mockContractName as any,
+          eventName: mockEventName as never,
+          onLogs: () => {},
+        }),
+      ),
+    ).toThrow(/Ambiguous event/);
+  });
+
+  it("sets an error if contract data is not found after loading", async () => {
+    // @ts-ignore
+    (useDeployedContractInfo as vi.Mock).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+    });
+    const onLogs = vi.fn();
+    const { result } = renderHook(() =>
+      useScaffoldWatchContractEvent({
+        contractName: mockContractName as any,
+        eventName: mockEventName as never,
+        onLogs,
+      }),
+    );
+
+    // Wait for the effect to detect the missing contract data and set the error
+    await waitFor(() => expect(result.current.error).toBeDefined());
+    expect(result.current.error).toBeInstanceOf(Error);
+    expect(result.current.error?.message).toContain("Contract not found");
+    expect(onLogs).not.toHaveBeenCalled();
+  });
+});
