@@ -12,12 +12,7 @@ import { useDeployedContractInfo } from "./useDeployedContractInfo";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useProvider } from "@starknet-react/core";
 import { useTargetNetwork } from "./useTargetNetwork";
-import {
-  CallData,
-  hash,
-  RpcProvider,
-  events as starknetEvents,
-} from "starknet";
+import { CallData, hash, RpcProvider, events as starknetEvents } from "starknet";
 import { useInterval } from "usehooks-ts";
 import { devnet } from "@starknet-react/chains";
 import scaffoldConfig from "~~/scaffold.config";
@@ -34,8 +29,8 @@ export const useScaffoldWatchContractEvent = <
   onLogs,
 }: UseScaffoldWatchContractEventConfig<TContractName, TEventName>) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [currentBlockNumber, setCurrentBlockNumber] = useState<number>();
   const [error, setError] = useState<Error | null>();
+  const [previousBlock, setPreviousBlock] = useState<number>()
 
   const { data: deployedContractData, isLoading: deployedContractLoading } =
     useDeployedContractInfo(contractName);
@@ -73,7 +68,6 @@ export const useScaffoldWatchContractEvent = <
   const respondToEvents = useCallback(async () => {
     const blockNumber = (await publicClient.getBlockLatestAccepted())
       ?.block_number;
-    setCurrentBlockNumber(blockNumber);
 
     setIsLoading(true);
     try {
@@ -107,23 +101,14 @@ export const useScaffoldWatchContractEvent = <
 
       const logs = rawResponseObject.events;
 
-      const eventsArray = [];
+      const eventsArray = []
       for (const log of logs) {
         eventsArray.push({
           event,
           log: log,
-          block:
-            log.block_hash !== null
-              ? await publicClient.getBlockWithTxHashes(log.block_hash)
-              : null,
-          transaction:
-            log.transaction_hash !== null
-              ? await publicClient.getTransactionByHash(log.transaction_hash)
-              : null,
-          receipt:
-            log.transaction_hash !== null
-              ? await publicClient.getTransactionReceipt(log.transaction_hash)
-              : null,
+          block: log.block_hash !== null ? await publicClient.getBlockWithTxHashes(log.block_hash) : null,
+          transaction: log.transaction_hash !== null ? await publicClient.getTransactionByHash(log.transaction_hash) : null,
+          receipt: log.transaction_hash !== null ? await publicClient.getTransactionReceipt(log.transaction_hash) : null,
         });
       }
 
@@ -133,31 +118,30 @@ export const useScaffoldWatchContractEvent = <
           log,
           starknetEvents.getAbiEvents(deployedContractData?.abi),
           CallData.getAbiStruct(deployedContractData?.abi),
-          CallData.getAbiEnum(deployedContractData?.abi),
+          CallData.getAbiEnum(deployedContractData?.abi)
         );
 
-        const args =
-          parsed.length && parsed[0][eventName] ? parsed[0][eventName] : {};
+        const args = parsed.length && parsed[0][eventName]
+        ? parsed[0][eventName]
+        : {};
         const { event: rawEvent, ...rest } = event;
-
+        
         const responseObject = {
           type: rawEvent.type,
           args,
           parsedArgs: parseEventData(args, rawEvent.name as any),
           ...rest,
-        };
+        }
+        setPreviousBlock(responseObject.log.block_number);
+
+        if (responseObject.log.block_number === previousBlock) return;
         onLogs(responseObject);
-      }
-      // if (responseObject?.events?.length) {
-      // }
+      } 
     } catch (err: any) {
       console.error(err);
       setError(err);
     } finally {
       setIsLoading(false);
-      const latestBlock = (await publicClient.getBlockLatestAccepted())
-        ?.block_number;
-      setCurrentBlockNumber(latestBlock + 1);
     }
   }, [
     eventName,
@@ -168,13 +152,13 @@ export const useScaffoldWatchContractEvent = <
   ]);
 
   useEffect(() => {
-    respondToEvents().then();
+    respondToEvents();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (!deployedContractLoading) {
-      respondToEvents().then();
+      respondToEvents();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
