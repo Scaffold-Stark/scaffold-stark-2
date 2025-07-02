@@ -17,6 +17,7 @@ import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { BlockNumber } from "starknet";
 import { useContract, useReadContract } from "@starknet-react/core";
 import { ContractInput } from "./ContractInput";
+import { isValidContractArgs } from "~~/utils/scaffold-stark/common";
 
 type ReadOnlyFunctionFormProps = {
   contractAddress: Address;
@@ -42,11 +43,16 @@ export const ReadOnlyFunctionForm = ({
     address: contractAddress,
   });
 
+  const inputIsValidArray = isValidContractArgs(
+    inputValue,
+    abiFunction.inputs.length,
+  );
+
   const { isFetching, data, refetch, error } = useReadContract({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
-    args: inputValue || [],
+    args: inputIsValidArray ? inputValue : undefined,
     enabled: !!inputValue && !!contractInstance,
     blockIdentifier: "pending" as BlockNumber,
   });
@@ -76,10 +82,25 @@ export const ReadOnlyFunctionForm = ({
 
   const handleRead = () => {
     const newInputValue = getArgsAsStringInputFromForm(form);
+    const expectedArgCount = abiFunction.inputs.length;
+
+    const isValidInput = isValidContractArgs(newInputValue, expectedArgCount);
+
+    if (!isValidInput) {
+      /**
+       * Todo: add extra logging in future release.
+       */
+      console.warn(
+        `Read blocked: Expected ${expectedArgCount} args, got ${newInputValue.length}`,
+      );
+      return;
+    }
+
     if (JSON.stringify(form) !== JSON.stringify(lastForm.current)) {
       setInputValue(newInputValue);
       lastForm.current = form;
     }
+
     refetch();
   };
 
