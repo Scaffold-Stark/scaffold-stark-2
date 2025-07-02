@@ -39,12 +39,8 @@ const ConnectModal = () => {
   let mainConnectors = connectors;
   let otherConnectors: typeof connectors = [];
   if (isDevnet) {
-    mainConnectors = connectors.filter(
-      (c) => c.id === "burner-wallet"
-    );
-    otherConnectors = connectors.filter(
-      (c) => c.id !== "burner-wallet"
-    );
+    mainConnectors = connectors.filter((c) => c.id === "burner-wallet");
+    otherConnectors = connectors.filter((c) => c.id !== "burner-wallet");
   }
 
   const handleCloseModal = () => {
