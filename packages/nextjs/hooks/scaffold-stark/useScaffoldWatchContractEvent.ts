@@ -136,13 +136,13 @@ export const useScaffoldWatchContractEvent = <
         );
 
         const args =
-          parsed.length && parsed[0][eventName] ? parsed[0][eventName] : {};
+          parsed.length && parsed[0][fullName] ? parsed[0][fullName] : {};
         const { event: rawEvent, ...rest } = event;
 
         const responseObject = {
-          type: rawEvent.type,
+          type: (rawEvent as any).members,
           args,
-          parsedArgs: parseEventData(args, rawEvent.name as any),
+          parsedArgs: parseEventData(args, (rawEvent as any).members),
           ...rest,
         };
         setPreviousBlock(responseObject.log.block_number);
