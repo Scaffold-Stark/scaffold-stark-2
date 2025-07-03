@@ -127,7 +127,7 @@ const ConnectModal = () => {
                     ))}
                     {isDevnet && otherConnectors.length > 0 && (
                       <button
-                        className="btn btn-outline mt-4"
+                        className="btn btn-ghost rounded-md mt-4 font-[400] text-base"
                         onClick={() => setShowOtherOptions(true)}
                       >
                         Other Options
@@ -145,7 +145,7 @@ const ConnectModal = () => {
                       />
                     ))}
                     <button
-                      className="btn  mt-4"
+                      className="btn font-[400] text-base mt-4 rounded-md"
                       onClick={() => setShowOtherOptions(false)}
                     >
                       Back
