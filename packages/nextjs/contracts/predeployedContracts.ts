@@ -4,34 +4,89 @@
  */
 
 import {
-  devnetStrkClassHash,
-  universalStrkAddress,
-  sepoliaMainnetStrkClassHash,
-  universalErc20Abi,
+    devnetStrkClassHash,
+    universalStrkAddress,
+    sepoliaMainnetStrkClassHash,
+    universalErc20Abi,
 } from "../utils/Constants";
 
+// Multicall ABI - this would typically be generated from the contract
+const multicallAbi = [
+    {
+        type: "interface",
+        name: "IMulticall",
+        items: [
+            {
+                type: "function",
+                name: "call_contracts",
+                inputs: [
+                    {
+                        name: "contracts",
+                        type: "core::array::Array::<core::starknet::contract_address::ContractAddress>",
+                    },
+                    {
+                        name: "entry_point_selectors",
+                        type: "core::array::Array::<core::felt252>",
+                    },
+                    {
+                        name: "calldata",
+                        type: "core::array::Array::<core::array::Array::<core::felt252>>",
+                    },
+                ],
+                outputs: [
+                    {
+                        type: "core::array::Array::<core::array::Array::<core::felt252>>",
+                    },
+                ],
+                state_mutability: "view",
+            },
+        ],
+    },
+];
+
 const preDeployedContracts = {
-  devnet: {
-    Strk: {
-      address: universalStrkAddress,
-      abi: universalErc20Abi,
-      classHash: devnetStrkClassHash,
+    devnet: {
+        Strk: {
+            address: universalStrkAddress,
+            abi: universalErc20Abi,
+            classHash: devnetStrkClassHash,
+        },
+        Multicall: {
+            address:
+                "0x05754af3760f3356da99aea5c3ec39ccac7783d925a19666ebbeca58ff0087f4",
+            abi: multicallAbi,
+            classHash:
+                "0x05754af3760f3356da99aea5c3ec39ccac7783d925a19666ebbeca58ff0087f4",
+        },
     },
-  },
-  sepolia: {
-    Strk: {
-      address: universalStrkAddress,
-      abi: universalErc20Abi,
-      classHash: sepoliaMainnetStrkClassHash,
+    sepolia: {
+        Strk: {
+            address: universalStrkAddress,
+            abi: universalErc20Abi,
+            classHash: sepoliaMainnetStrkClassHash,
+        },
+        Multicall: {
+            address:
+                "0x05754af3760f3356da99aea5c3ec39ccac7783d925a19666ebbeca58ff0087f4",
+            abi: multicallAbi,
+            classHash:
+                "0x05754af3760f3356da99aea5c3ec39ccac7783d925a19666ebbeca58ff0087f4",
+        },
     },
-  },
-  mainnet: {
-    Strk: {
-      address: universalStrkAddress,
-      abi: universalErc20Abi,
-      classHash: sepoliaMainnetStrkClassHash,
+    mainnet: {
+        Strk: {
+            address: universalStrkAddress,
+            abi: universalErc20Abi,
+            classHash: sepoliaMainnetStrkClassHash,
+        },
+        Multicall: {
+            address:
+                "0x05754af3760f3356da99aea5c3ec39ccac7783d925a19666ebbeca58ff0087f4",
+            abi: multicallAbi,
+            classHash:
+                "0x05754af3760f3356da99aea5c3ec39ccac7783d925a19666ebbeca58ff0087f4",
+        },
     },
-  },
 } as const;
 
 export default preDeployedContracts;
