@@ -145,7 +145,7 @@ const ConnectModal = () => {
                       />
                     ))}
                     <button
-                      className="btn font-[400] text-base mt-4 rounded-md"
+                      className="btn btn-ghost font-[400] text-base mt-4 rounded-md"
                       onClick={() => setShowOtherOptions(false)}
                     >
                       Back
