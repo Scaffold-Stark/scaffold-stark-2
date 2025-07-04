@@ -153,13 +153,13 @@ export const notification = {
     const logId = `tx-error-${Date.now()}`;
     console.error(`[${logId}] Transaction error:`, content);
 
-    const fallbackContent = (
-      <div className="p-4 flex flex-col gap-2 rounded-xl shadow-md bg-base-100 text-base-content">
-        <p className="font-semibold text-red-500 text-base">
+    const fallbackContent: React.ReactNode = (
+      <div>
+        <div className="font-semibold text-red-500 text-base">
           ❌ Transaction failed
-        </p>
-        <p className="text-sm">Check the console for more details.</p>
-        <p className="text-sm">
+        </div>
+        <div className="text-sm">Check the console for more details.</div>
+        <div className="text-sm">
           <a
             href={`#${logId}`}
             className="text-blue-500 underline"
@@ -167,7 +167,7 @@ export const notification = {
           >
             View log: {logId}
           </a>
-        </p>
+        </div>
       </div>
     );
 
