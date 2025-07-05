@@ -8,6 +8,7 @@ import {
   InformationCircleIcon,
 } from "@heroicons/react/24/solid";
 import { useScrollLock } from "~~/hooks/useScrollLock";
+import { getUserFriendlyError } from "./errors";
 
 type NotificationProps = {
   content: React.ReactNode;
@@ -150,7 +151,32 @@ export const notification = {
     return Notification({ content, status: "warning", ...options });
   },
   error: (content: React.ReactNode, options?: NotificationOptions) => {
-    return Notification({ content, status: "error", ...options });
+    const logId = `tx-error-${Date.now()}`;
+    console.error(`[${logId}] Transaction error:`, content);
+
+    const fallbackContent: React.ReactNode = getUserFriendlyError(content) ?? (
+      <div className="p-4 flex flex-col gap-1 rounded-xl shadow-md text-base-content">
+        <div className="font-semibold text-red-500 text-base">
+          ❌ Transaction failed
+        </div>
+        <div className="text-sm">Check the console for more details.</div>
+        <p className="text-sm">
+          <a
+            href={`#${logId}`}
+            className="text-blue-500 underline"
+            onClick={() => console.log(`Navigate to log ID: ${logId}`)}
+          >
+            View log: {logId}
+          </a>
+        </p>
+      </div>
+    );
+
+    return Notification({
+      content: fallbackContent,
+      status: "error",
+      ...options,
+    });
   },
   loading: (content: React.ReactNode, options?: NotificationOptions) => {
     return Notification({ content, status: "loading", ...options });
