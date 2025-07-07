@@ -31,6 +31,23 @@ jobs:
           node-version: 22
           registry-url: "https://registry.yarnpkg.com"
 
+      # TODO: setup yarn cache
+      - name: Install dependencies
+        run: |
+          cd source_repo
+          yarn install
+
+      - name: Deploy contracts to Sepolia
+        if: success()
+        id: deploy-contract
+        env:
+          PRIVATE_KEY_SEPOLIA: ${{ secrets.PRIVATE_KEY_SEPOLIA }}
+          ACCOUNT_ADDRESS_SEPOLIA: ${{ secrets.ACCOUNT_ADDRESS_SEPOLIA }}
+          RPC_URL_SEPOLIA: ${{ secrets.RPC_URL_SEPOLIA }}
+        run: |
+          cd source_repo
+          yarn deploy --network sepolia
+
       - name: Deploy to vercel
         if: success()
         id: deploy
@@ -40,7 +57,6 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
           cd source_repo
-          yarn install
           vercel link --yes --project $VERCEL_PROJECT_ID --token $VERCEL_TOKEN --scope $VERCEL_ORG_ID
           vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true --build-env NEXT_PUBLIC_SEPOLIA_PROVIDER_URL=https://starknet-sepolia.blastapi.io/64168c77-3fa5-4e1e-9fe4-41675d212522/rpc/v0_8 --prod --token $VERCEL_TOKEN --scope $VERCEL_ORG_ID
 
