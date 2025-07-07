@@ -55,10 +55,11 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          RPC_URL_SEPOLIA: ${{ secrets.RPC_URL_SEPOLIA }}
         run: |
           cd source_repo
           vercel link --yes --project $VERCEL_PROJECT_ID --token $VERCEL_TOKEN --scope $VERCEL_ORG_ID
-          vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true --build-env NEXT_PUBLIC_SEPOLIA_PROVIDER_URL=https://starknet-sepolia.blastapi.io/64168c77-3fa5-4e1e-9fe4-41675d212522/rpc/v0_8 --prod --token $VERCEL_TOKEN --scope $VERCEL_ORG_ID
+          vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true --build-env NEXT_PUBLIC_SEPOLIA_PROVIDER_URL=$RPC_URL_SEPOLIA --prod --token $VERCEL_TOKEN --scope $VERCEL_ORG_ID
 
       - name: Notify Slack on Success
         if: success()
