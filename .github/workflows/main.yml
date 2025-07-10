@@ -65,7 +65,7 @@ jobs:
         working-directory: ./packages/nextjs
 
       - name: Run Next.js tests
-        run: yarn test run
+        run: yarn test
         working-directory: ./packages/nextjs
 
       - name: Build Next.js project
