@@ -56,7 +56,6 @@
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
-    "@types/minimatch": "^6.0.0",
     "@types/next-pwa": "^5",
     "@types/node": "^22",
     "@types/nprogress": "^0",
