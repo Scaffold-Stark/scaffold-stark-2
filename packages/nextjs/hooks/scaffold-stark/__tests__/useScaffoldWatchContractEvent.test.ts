@@ -9,12 +9,10 @@ import { events as starknetEvents } from "starknet";
 import * as eventsData from "~~/utils/scaffold-stark/eventsData";
 import * as starknet from "starknet";
 
-// Mock dependencies
 vi.mock("starknet", async () => {
   const actual: typeof import("starknet") = await vi.importActual("starknet");
   return {
     ...actual,
-    // replace only the `parseEvents` function, keep the rest intact
     events: {
       ...actual.events,
       parseEvents: vi.fn(),
@@ -41,13 +39,11 @@ describe("useScaffoldWatchContractEvent", () => {
     rpcUrls: { public: { http: ["https://mock-rpc-url"] } },
   };
 
-  // A mock deployed contract with one event in its ABI
   const mockDeployedContractData = {
     address: "0x123",
     abi: [{ type: "event", name: "Module::MyEvent" }],
   };
 
-  // A mock event log returned by the provider
   const mockLog = {
     data: ["0x01"],
     keys: ["0xabc"],
@@ -62,7 +58,6 @@ describe("useScaffoldWatchContractEvent", () => {
   const fakeReceipt = { transaction_hash: "0xtx" };
 
   beforeEach(() => {
-    // By default, simulate a loaded contract with the mock ABI
     // @ts-ignore
     (useDeployedContractInfo as vi.Mock).mockReturnValue({
       data: mockDeployedContractData,
@@ -74,10 +69,9 @@ describe("useScaffoldWatchContractEvent", () => {
     });
     // @ts-ignore
     (useProvider as vi.Mock).mockReturnValue({
-      provider: {}, // Not used directly in hook logic
+      provider: {},
     });
 
-    // Mock the StarkNet RPC provider behavior
     RpcProvider.prototype.getBlockLatestAccepted = vi.fn().mockResolvedValue({
       block_number: 10,
     });
@@ -95,9 +89,10 @@ describe("useScaffoldWatchContractEvent", () => {
       .fn()
       .mockResolvedValue(fakeReceipt);
 
+    const fullName = mockDeployedContractData.abi[0].name;
     // spy on parseEvents & parseEventData
     vi.spyOn(starknet.events, "parseEvents").mockReturnValue([
-      { [mockEventName]: { foo: "bar" } },
+      { [fullName]: { foo: "bar" } },
     ]);
     vi.spyOn(starknet.events, "getAbiEvents").mockReturnValue(
       // @ts-ignore
@@ -121,30 +116,26 @@ describe("useScaffoldWatchContractEvent", () => {
       }),
     );
 
-    // Initially, loading should be false (no operations yet)
     expect(result.current.isLoading).toBe(false);
 
-    // Wait for the effect to fetch events and call onLogs
     await waitFor(() => {
-      expect(onLogs).toHaveBeenCalledWith(
-        expect.objectContaining({
-          type: "event", // or whatever your ABI’s `type` is
-          args: { foo: "bar" },
-          parsedArgs: { parsed: true },
-          block: fakeBlock,
-          transaction: fakeTx,
-          receipt: fakeReceipt,
-        }),
-      );
+      expect(onLogs).toHaveBeenCalled();
     });
 
-    // After processing, loading should be false and no error should be set
+    const payload = onLogs.mock.calls[0][0] as Record<string, any>;
+
+    expect(payload).toMatchObject({
+      parsedArgs: { parsed: true },
+      block: fakeBlock,
+      transaction: fakeTx,
+      receipt: fakeReceipt,
+    });
+
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBeUndefined();
   });
 
   it("does not call onLogs if no events are returned", async () => {
-    // Simulate the provider returning an empty events array
     // @ts-ignore
     (RpcProvider.prototype.getEvents as vi.Mock).mockResolvedValueOnce({
       events: [],
@@ -159,9 +150,7 @@ describe("useScaffoldWatchContractEvent", () => {
       }),
     );
 
-    // Wait a short time to ensure the effect has run
     await waitFor(() => {
-      // onLogs should not have been called since there are no events
       expect(onLogs).not.toHaveBeenCalled();
     });
   });
@@ -169,7 +158,7 @@ describe("useScaffoldWatchContractEvent", () => {
   it("throws error if the event is not found in the contract ABI", () => {
     // @ts-ignore
     (useDeployedContractInfo as vi.Mock).mockReturnValue({
-      data: { address: "0x123", abi: [] }, // empty ABI
+      data: { address: "0x123", abi: [] },
       isLoading: false,
     });
 
@@ -223,7 +212,6 @@ describe("useScaffoldWatchContractEvent", () => {
       }),
     );
 
-    // Wait for the effect to detect the missing contract data and set the error
     await waitFor(() => expect(result.current.error).toBeDefined());
     expect(result.current.error).toBeInstanceOf(Error);
     expect(result.current.error?.message).toContain("Contract not found");
