@@ -11,6 +11,7 @@ import {
   DeclareContractPayload,
   UniversalDetails,
   constants,
+  TypedData,
 } from "starknet";
 import { DeployContractParams, Network } from "./types";
 import { green, red, yellow } from "./helpers/colorize-log";
@@ -158,20 +159,6 @@ const deployContract = async (
   address: string;
 }> => {
   const { contract, constructorArgs, contractName, options } = params;
-
-  try {
-    await deployer.getContractVersion(deployer.address);
-  } catch (e) {
-    if (e.toString().includes("Contract not found")) {
-      const errorMessage = `The wallet you're using to deploy the contract is not deployed in the ${networkName} network.`;
-      console.error(red(errorMessage));
-      throw new Error(errorMessage);
-    } else {
-      console.error(red("Error getting contract version: "), e);
-      throw e;
-    }
-  }
-
   let compiledContractCasm;
   let compiledContractSierra;
 
@@ -319,6 +306,61 @@ const exportDeployments = () => {
   fs.writeFileSync(networkPath, JSON.stringify(deployments, null, 2));
 };
 
+const assertDeployerDefined = () => {
+  if (!deployer) {
+    const errorMessage = `Deployer account is not defined. \`ACCOUNT_ADDRESS_${networkName.toUpperCase()}\` or \`PRIVATE_KEY_${networkName.toUpperCase()}\` is missing from \`.env\`.`;
+    console.error(red(errorMessage));
+    throw new Error(errorMessage);
+  }
+};
+
+const assertDeployerSignable = async () => {
+  const typedData: TypedData = {
+    types: {
+      StarkNetDomain: [
+        { name: "name", type: "felt" },
+        { name: "version", type: "felt" },
+      ],
+      Message: [{ name: "content", type: "felt" }],
+    },
+    primaryType: "Message",
+    domain: {
+      name: "snfoundry",
+      version: "1",
+    },
+    message: {
+      content: "Hello, StarkNet!",
+    },
+  };
+  let isValidSig = false;
+
+  try {
+    const signature = await deployer.signMessage(typedData);
+    isValidSig = await deployer.verifyMessageInStarknet(
+      typedData,
+      signature,
+      deployer.address
+    );
+  } catch (e) {
+    if (e.toString().includes("Contract not found")) {
+      const errorMessage = `Deployer account at \`${deployer.address}\` hasn't been deployed on ${networkName} network.`;
+      console.error(red(errorMessage), e);
+      throw new Error(errorMessage);
+    }
+
+    const errorMessage =
+      "Unable to verify signature from the deployer account. Possible causes: network latency, RPC timeout.";
+    console.error(red(errorMessage), e);
+    throw new Error(errorMessage);
+  }
+
+  if (!isValidSig) {
+    const errorMessage = `Invalid signature. \`ACCOUNT_ADDRESS_${networkName.toUpperCase()}\` is not match with \`PRIVATE_KEY_${networkName.toUpperCase()}\`.`;
+    console.error(red(errorMessage));
+    throw new Error(errorMessage);
+  }
+};
+
 export {
   deployContract,
   provider,
@@ -327,4 +369,6 @@ export {
   exportDeployments,
   executeDeployCalls,
   resetDeployments,
+  assertDeployerDefined,
+  assertDeployerSignable,
 };
