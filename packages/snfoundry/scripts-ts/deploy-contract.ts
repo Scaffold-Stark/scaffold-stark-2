@@ -258,7 +258,6 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
         const revertReason = receiptAny.revert_reason;
         throw new Error(red(`Deploy Calls Failed: ${revertReason}`));
       }
-      console.log("Recipient:",receiptAny)
       console.log(green("Deploy Calls Executed at "), transaction_hash);
       // logging links beatifully.
       logDeploymentSummary({
