@@ -47,7 +47,7 @@ export const postDeploymentBalanceSummary = async({
   }[];
 }) => {
   console.log(chalk.blue("💰 Deployer Balance Summary:"));
-  console.log(`Address: ${deployer.address}`);
+  console.log(`Deployer-Address: ${deployer.address}`);
  
   if (!feeToken || feeToken.length === 0) {
     console.log(chalk.red("Error: No fee token information provided. Cannot fetch balance."));
@@ -83,7 +83,7 @@ export const postDeploymentBalanceSummary = async({
 
 
     // Log the final formatted balance.
-    console.log(`Balance: ${formattedBalance.toFixed(decimals)} ${tokenInfo.name}`);
+    console.log(`💰Post-Deployer-Balance: ${formattedBalance.toFixed(decimals)} ${tokenInfo.name}`);
   } catch (error) {
     console.error(chalk.red(`Error fetching deployer balance for ${tokenInfo.name}:`), error);
     if (error instanceof Error) {
