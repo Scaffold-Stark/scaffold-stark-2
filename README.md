@@ -22,7 +22,7 @@
 
 Before you begin, you need to install the following tools:
 
-- [Node (>= v18.17)](https://nodejs.org/en/download/)
+- [Node (>= v22)](https://nodejs.org/en/download/)
 - Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
 - [Git](https://git-scm.com/downloads)
 
@@ -40,8 +40,7 @@ Tool for installing all the Starknet essentials for development. [Starkup](https
 - [Starknet Foundry](https://foundry-rs.github.io/starknet-foundry/index.html) - Development toolchain for testing on Starknet
 - [asdf](https://asdf-vm.com/guide/getting-started.html) - Version manager to easily switch between tool versions
 - [Cairo 1.0 extension](https://marketplace.visualstudio.com/items?itemName=starkware.cairo1) for VSCode - Syntax highlighting and language support
-
->Currently, [starknet-devnet](https://0xspaceshard.github.io/starknet-devnet/) is not supported by `starkup` and needs to be installed separately (see instructions below).
+- [Starknet Devnet](https://0xspaceshard.github.io/starknet-devnet/) - Starknet Devnet
 
 To install `starkup`, run the following command:
 
@@ -61,29 +60,21 @@ yarn install
 
 Now you have a new project with the basic structure.
 
-#### 1.3 Install Starknet Devnet using ASDF Fast Install
+#### 1.3 Troubleshooting
 
-- Install [asdf](https://asdf-vm.com/guide/getting-started.html) in case you don't have it installed yet. It allows you to manage the other dependencies with ease.
+- If you run into version errors after using `starkup` or `asdf`, you can try to install the dependencies manually. Check the details below.
 
-We are almost done, now we need to install `Starknet Devnet`. First let's register the Starknet Devnet plugin on `asdf`.
+<details>
 
-```bash
-asdf plugin add starknet-devnet
-```
+#### Installing with ASDF
 
-Now open your new created project. Since we have the required dependencies listed on a `.tool-versions` file, simply running the  command on the root folder will install `starknet-devnet`(and other dependencies such as `scarb` and `starknet-foundry`) with the version SPECIFIED on the `.tool-versions` file (not necessarily the latest):
+Using ASDF, you can install the required dependencies of Scaffold Stark 2 in a single command. You can do so by doing
 
 ```bash
 asdf install
 ```
 
-Now you are ready!!!. You can jump to [Quickstart 1](#quickstart-1-deploying-a-smart-contract-to-starknet-devnet) to start developing your dapp.
-
-#### 1.4 Troubleshooting
-
-- If you run into version errors after using `starkup` or `asdf`, you can try to install the dependencies manually. Check the details below.
-
-<details>
+You can refer to the guide of manual installation of asdf [here](https://asdf-vm.com/guide/getting-started.html).
 
 #### Scarb version
 
