@@ -162,31 +162,6 @@ Now you are ready!!!
 - Cairo - v2.11.4
 - Rpc - v0.8.0
 
-## Dependency Resolution
-
-If you encounter dependency version conflicts when running `scarb build`, this is typically due to incompatible version requirements between packages. Common issues include:
-
-### OpenZeppelin Testing Compatibility
-
-The project uses `openzeppelin_testing = "4.3.0"` which is compatible with `snforge_std = "0.46.0"`. If you see errors about version conflicts between these packages:
-
-1. **Check your Scarb.toml**: Ensure you're using compatible versions:
-   ```toml
-   [dev-dependencies]
-   openzeppelin_testing = "4.3.0"
-   snforge_std = "0.46.0"
-   ```
-
-2. **Update dependencies**: If using older versions, update to the compatible versions listed above.
-
-3. **Clear cache**: Sometimes clearing the Scarb cache helps:
-   ```bash
-   scarb clean
-   scarb build
-   ```
-
-For more detailed troubleshooting, refer to the [Scarb documentation](https://docs.swmansion.com/scarb/docs.html).
-
 ## Quickstart 1: Deploying a Smart Contract to Starknet-Devnet
 
 To get started with Scaffold-Stark, follow the steps below:
