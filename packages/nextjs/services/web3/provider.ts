@@ -16,8 +16,32 @@ const containsDevnet = (networks: readonly chains.Chain[]) => {
 const currentNetwork = scaffoldConfig.targetNetworks[0];
 const currentNetworkName = currentNetwork.network;
 
+const getRpcUrl = (networkName: string): string => {
+  const devnetRpcUrl = process.env.NEXT_PUBLIC_DEVNET_PROVIDER_URL;
+  const sepoliaRpcUrl = process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER_URL;
+  const mainnetRpcUrl = process.env.NEXT_PUBLIC_MAINNET_PROVIDER_URL;
+  const fallBack = process.env.NEXT_PUBLIC_PROVIDER_URL;
+
+  let rpcUrl = "";
+
+  switch (networkName) {
+    case "devnet":
+      rpcUrl = devnetRpcUrl || fallBack || "";
+      break;
+    case "sepolia":
+      rpcUrl = sepoliaRpcUrl || fallBack || "";
+    case "mainnet":
+      rpcUrl = mainnetRpcUrl || fallBack || "";
+    default:
+      rpcUrl = "";
+      break;
+  }
+
+  return rpcUrl;
+};
+
 // Get RPC URL for the current network
-const rpcUrl = scaffoldConfig.rpcProviderUrl[currentNetworkName] || "";
+const rpcUrl = getRpcUrl(currentNetworkName);
 
 // Important: if the rpcUrl is empty (not configed in .env), we use the publicProvider
 // which randomly choose a provider from the chain list of public providers.
