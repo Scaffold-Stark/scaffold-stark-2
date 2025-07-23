@@ -63,6 +63,7 @@ Now you have a new project with the basic structure.
 #### 1.3 Troubleshooting
 
 - If you run into version errors after using `starkup` or `asdf`, you can try to install the dependencies manually. Check the details below.
+- If you encounter dependency version conflicts during `scarb build`, see the [Dependency Resolution](#dependency-resolution) section below.
 
 <details>
 
@@ -94,19 +95,19 @@ Otherwise, you can install Scarb `2.11.4` following the [instructions](https://d
 
 #### Starknet Foundry version
 
-To ensure the proper functioning of the tests on scaffold-stark, your `Starknet Foundry` version must be `0.45.0`. To accomplish this, first check your `Starknet Foundry` version:
+To ensure the proper functioning of the tests on scaffold-stark, your `Starknet Foundry` version must be `0.46.0`. To accomplish this, first check your `Starknet Foundry` version:
 
 ```sh
 snforge --version
 ```
 
-If your `Starknet Foundry` version is not `0.45.0`, you need to install it. If you already have installed `Starknet Foundry` via `starkup`, you can setup this specific version with the following command:
+If your `Starknet Foundry` version is not `0.46.0`, you need to install it. If you already have installed `Starknet Foundry` via `starkup`, you can setup this specific version with the following command:
 
 ```sh
-asdf install starknet-foundry 0.45.0 && asdf set starknet-foundry 0.45.0
+asdf install starknet-foundry 0.46.0 && asdf set starknet-foundry 0.46.0
 ```
 
-Otherwise, you can install Starknet Foundry `0.45.0` following the [instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf).
+Otherwise, you can install Starknet Foundry `0.46.0` following the [instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf).
 
 #### Starknet-devnet version
 
@@ -157,9 +158,34 @@ Now you are ready!!!
 
 - Starknet-devnet - 0.4.3
 - Scarb - v2.11.4
-- Snforge - v0.45.0
+- Snforge - v0.46.0
 - Cairo - v2.11.4
 - Rpc - v0.8.0
+
+## Dependency Resolution
+
+If you encounter dependency version conflicts when running `scarb build`, this is typically due to incompatible version requirements between packages. Common issues include:
+
+### OpenZeppelin Testing Compatibility
+
+The project uses `openzeppelin_testing = "4.3.0"` which is compatible with `snforge_std = "0.46.0"`. If you see errors about version conflicts between these packages:
+
+1. **Check your Scarb.toml**: Ensure you're using compatible versions:
+   ```toml
+   [dev-dependencies]
+   openzeppelin_testing = "4.3.0"
+   snforge_std = "0.46.0"
+   ```
+
+2. **Update dependencies**: If using older versions, update to the compatible versions listed above.
+
+3. **Clear cache**: Sometimes clearing the Scarb cache helps:
+   ```bash
+   scarb clean
+   scarb build
+   ```
+
+For more detailed troubleshooting, refer to the [Scarb documentation](https://docs.swmansion.com/scarb/docs.html).
 
 ## Quickstart 1: Deploying a Smart Contract to Starknet-Devnet
 
