@@ -42,7 +42,7 @@ export const ClassHash = ({
 
   return (
     <div className="flex items-center">
-      <div className="flex-shrink-0">
+      <div className="shrink-0">
         <span className={`text-${size} font-normal`}>class hash: </span>
       </div>
       {targetNetwork.network === devnet.network ? (

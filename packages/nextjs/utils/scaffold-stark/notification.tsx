@@ -79,7 +79,7 @@ const ToastContent = ({
               ${
                 isExpanded
                   ? "max-h-[600px] overflow-y-auto"
-                  : "line-clamp-[10] overflow-hidden"
+                  : "line-clamp-10 overflow-hidden"
               }`}
           >
             {content}
@@ -87,7 +87,7 @@ const ToastContent = ({
         </div>
 
         <div
-          className={`cursor-pointer text-lg flex-shrink-0 ${icon ? "mt-1" : ""}`}
+          className={`cursor-pointer text-lg shrink-0 ${icon ? "mt-1" : ""}`}
           onClick={() => toast.dismiss(t.id)}
         >
           <XMarkIcon
