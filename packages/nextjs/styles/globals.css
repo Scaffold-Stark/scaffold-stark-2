@@ -1,6 +1,4 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import "tailwindcss";
 
 :root,
 [data-theme] {
@@ -40,7 +38,7 @@ body {
 }
 
 .modal-box {
-  @apply min-h-[20rem] max-w-[25rem] overflow-hidden;
+  @apply min-h-80 max-w-100 overflow-hidden;
   transform: translateZ(0);
 }
 
@@ -92,12 +90,9 @@ body {
   pointer-events: none !important;
 }
 
-@layer utilities {
-  .clip-corner {
-    clip-path: polygon(0 0, calc(100% - 1rem) 0, 100% 1rem, 100% 100%, 0 100%);
-  }
-
-  .clip-corner::before {
+@custom-variant clip-corner {
+  clip-path: polygon(0 0, calc(100% - 1rem) 0, 100% 1rem, 100% 100%, 0 100%);
+  :before {
     content: "";
     position: absolute;
     top: -1px;
@@ -112,7 +107,7 @@ body {
   }
 }
 
-.circle-gradient-dark {
+@custom-variant circle-gradient-dark {
   position: absolute;
   top: 0;
   left: 60px;
@@ -121,7 +116,7 @@ body {
   filter: blur(229px);
 }
 
-.circle-gradient-blue-dark {
+@custom-variant circle-gradient-blue-dark {
   border-radius: 630px;
   background: #0ea9ff;
   filter: blur(250px);

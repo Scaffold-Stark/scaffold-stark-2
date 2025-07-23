@@ -148,7 +148,7 @@ export default function DownloadContracts() {
                 />
               </div>
               <button
-                className="btn btn-sm mt-12 max-w-56 bg-gradient-nav !text-white shadow-md flex gap-2"
+                className="btn btn-sm mt-12 max-w-56 bg-gradient-nav text-white! shadow-md flex gap-2"
                 onClick={handleDownload}
               >
                 Download Contract File

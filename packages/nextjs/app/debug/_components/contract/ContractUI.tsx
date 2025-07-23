@@ -81,7 +81,7 @@ export const ContractUI = ({
                   <span className="font-bold text-sm">Balance:</span>
                   <Balance
                     address={deployedContractData.address}
-                    className="px-0 h-1.5 min-h-[0.375rem] text-network"
+                    className="px-0 h-1.5 min-h-1.5 text-network"
                   />
                 </div>
               </div>
@@ -108,7 +108,7 @@ export const ContractUI = ({
                 key={tab.id}
                 className={`tab h-10 ${
                   activeTab === tab.id
-                    ? "tab-active !bg-[#8A45FC] !rounded-[5px] !text-white"
+                    ? "tab-active bg-[#8A45FC]! rounded-[5px]! text-white!"
                     : ""
                 }`}
                 onClick={() => setActiveTab(tab.id)}

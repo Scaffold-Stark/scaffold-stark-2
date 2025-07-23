@@ -145,7 +145,7 @@ export const StarkInput = ({
           data-tip="Unable to fetch price"
         >
           <button
-            className="btn btn-primary h-[2rem] min-h-[2rem] mt-[.1rem]"
+            className="btn btn-primary h-8 min-h-8 mt-[.1rem]"
             onClick={toggleMode}
             disabled={!internalUsdMode && !currencyPrice}
           >
