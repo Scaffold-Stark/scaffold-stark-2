@@ -5,7 +5,7 @@ const createHyperlink = (url: string, text?: string) => {
   const displayText = text || url;
   return `\u001b]8;;${url}\u0007${displayText}\u001b]8;;\u0007`;
 };
-
+// logDeploymentSummary function logs the deployment summary of contracts on a given network.
 export const logDeploymentSummary = ({
   network,
   transactionHash,
@@ -31,7 +31,7 @@ export const logDeploymentSummary = ({
     console.log(createHyperlink(contractUrl) + "\n");
   }
 };
-
+// postDeploymentBalanceSummary function logs the balance of the deployer after deployment.
 export const postDeploymentBalanceSummary = async({
   provider,
   deployer,
