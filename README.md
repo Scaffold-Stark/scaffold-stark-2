@@ -63,7 +63,6 @@ Now you have a new project with the basic structure.
 #### 1.3 Troubleshooting
 
 - If you run into version errors after using `starkup` or `asdf`, you can try to install the dependencies manually. Check the details below.
-- If you encounter dependency version conflicts during `scarb build`, see the [Dependency Resolution](#dependency-resolution) section below.
 
 <details>
 
