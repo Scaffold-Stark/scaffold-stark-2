@@ -85,12 +85,12 @@ export const useScaffoldMultiWriteContract = <
             // we convert to starknetjs contract instance here since deployed data may be undefined if contract is not deployed
             const contractInstance = new StarknetJsContract(
               contract.abi,
-              contract.address
+              contract.address,
             );
 
             return contractInstance.populate(
               functionName,
-              unParsedArgs as any[]
+              unParsedArgs as any[],
             );
           });
         } else {
@@ -120,7 +120,7 @@ export function createContractCall<
 >(
   contractName: TContractName,
   functionName: TFunctionName,
-  args: UseScaffoldArgsParam<TAbi, TContractName, TFunctionName>["args"]
+  args: UseScaffoldArgsParam<TAbi, TContractName, TFunctionName>["args"],
 ) {
   return { contractName, functionName, args };
 }

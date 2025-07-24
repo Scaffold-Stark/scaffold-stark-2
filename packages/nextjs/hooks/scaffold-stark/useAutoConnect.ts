@@ -15,13 +15,13 @@ import { useAccount } from "~~/hooks/useAccount";
  */
 export const useAutoConnect = (): void => {
   const savedConnector = useReadLocalStorage<{ id: string; ix?: number }>(
-    "lastUsedConnector"
+    "lastUsedConnector",
   );
   const lastConnectionTime = useReadLocalStorage<number>(
-    LAST_CONNECTED_TIME_LOCALSTORAGE_KEY
+    LAST_CONNECTED_TIME_LOCALSTORAGE_KEY,
   );
   const wasDisconnectedManually = useReadLocalStorage<boolean>(
-    "wasDisconnectedManually"
+    "wasDisconnectedManually",
   );
 
   const { connect, connectors } = useConnect();

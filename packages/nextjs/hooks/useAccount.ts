@@ -60,12 +60,12 @@ export function useAccount(): UseAccountResult {
         address,
         execute: async () => {
           throw new Error(
-            "Wallet connection issue. Please refresh and reconnect."
+            "Wallet connection issue. Please refresh and reconnect.",
           );
         },
         estimateInvokeFee: async () => {
           throw new Error(
-            "Wallet connection issue. Please refresh and reconnect."
+            "Wallet connection issue. Please refresh and reconnect.",
           );
         },
         getChainId: async () => {
