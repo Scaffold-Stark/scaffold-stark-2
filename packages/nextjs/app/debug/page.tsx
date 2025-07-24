@@ -1,4 +1,4 @@
-import { DebugContracts } from "./_components/DebugContracts";
+import DebugContractsClient from "./DebugContractsClient";
 import type { NextPage } from "next";
 import { getMetadata } from "~~/utils/scaffold-stark/getMetadata";
 
@@ -9,7 +9,7 @@ export const metadata = getMetadata({
 });
 
 const Debug: NextPage = () => {
-  return <DebugContracts />;
+  return <DebugContractsClient />;
 };
 
 export default Debug;
