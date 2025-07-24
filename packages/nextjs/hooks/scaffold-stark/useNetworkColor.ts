@@ -6,7 +6,7 @@ export const DEFAULT_NETWORK_COLOR: [string, string] = ["#666666", "#bbbbbb"];
 
 export function getNetworkColor(
   network: ChainWithAttributes,
-  isDarkMode: boolean,
+  isDarkMode: boolean
 ) {
   const colorConfig = network.color ?? DEFAULT_NETWORK_COLOR;
   return Array.isArray(colorConfig)
@@ -17,7 +17,12 @@ export function getNetworkColor(
 }
 
 /**
- * Gets the color of the target network
+ * Returns a color string representing the current network for UI theming.
+ *
+ * @param networkId - The network ID
+ * @returns {string} The color associated with the network
+ *
+ * @see https://scaffoldstark.com/docs/hooks/
  */
 export const useNetworkColor = () => {
   const { resolvedTheme } = useTheme();

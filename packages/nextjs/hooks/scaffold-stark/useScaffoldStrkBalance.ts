@@ -9,6 +9,17 @@ type UseScaffoldStrkBalanceProps = {
   address?: Address | string;
 };
 
+/**
+ * Fetches and returns the STRK token balance for a given address.
+ *
+ * @param address - The address to fetch the balance for
+ * @returns {Object} An object containing:
+ *   - balance: The STRK token balance
+ *   - isLoading: Boolean indicating if the balance is loading
+ *   - error: Any error encountered
+ *
+ * @see https://scaffoldstark.com/docs/hooks/
+ */
 const useScaffoldStrkBalance = ({ address }: UseScaffoldStrkBalanceProps) => {
   const { data: deployedContract } = useDeployedContractInfo("Strk");
 

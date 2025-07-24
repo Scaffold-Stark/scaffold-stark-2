@@ -6,7 +6,14 @@ import { useEffect, useState, useMemo } from "react";
 import { AccountInterface, constants } from "starknet";
 
 /**
- * Wrapper around starknet react's useAccount hook to fix inconsistencies
+ * Returns the current user's account information from the connected wallet.
+ *
+ * @returns {Object} An object containing:
+ *   - address: The user's wallet address
+ *   - isConnected: Boolean indicating if the user is connected
+ *   - error: Any error encountered
+ *
+ * @see https://scaffoldstark.com/docs/hooks/
  */
 export function useAccount(): UseAccountResult {
   const starknetAccount = useStarknetReactAccount();
@@ -53,12 +60,12 @@ export function useAccount(): UseAccountResult {
         address,
         execute: async () => {
           throw new Error(
-            "Wallet connection issue. Please refresh and reconnect.",
+            "Wallet connection issue. Please refresh and reconnect."
           );
         },
         estimateInvokeFee: async () => {
           throw new Error(
-            "Wallet connection issue. Please refresh and reconnect.",
+            "Wallet connection issue. Please refresh and reconnect."
           );
         },
         getChainId: async () => {

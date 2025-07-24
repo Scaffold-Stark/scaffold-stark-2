@@ -2,9 +2,19 @@ import { useEffect, useRef } from "react";
 import { useGlobalState } from "~~/services/store/store";
 import { priceService } from "~~/services/web3/PriceService";
 
+/**
+ * Fetches the current price of the native currency (ETH/STRK) for the connected network.
+ *
+ * @returns {Object} An object containing:
+ *   - price: The current price of the native currency
+ *   - isLoading: Boolean indicating if the price is loading
+ *   - error: Any error encountered
+ *
+ * @see https://scaffoldstark.com/docs/hooks/
+ */
 export const useNativeCurrencyPrice = () => {
   const setNativeCurrencyPrice = useGlobalState(
-    (state) => state.setNativeCurrencyPrice,
+    (state) => state.setNativeCurrencyPrice
   );
   const ref = useRef<string>(priceService.getNextId().toString());
   useEffect(() => {

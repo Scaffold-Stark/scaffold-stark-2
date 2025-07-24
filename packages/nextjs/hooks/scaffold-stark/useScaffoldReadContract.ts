@@ -9,6 +9,21 @@ import {
   UseScaffoldReadConfig,
 } from "~~/utils/scaffold-stark/contract";
 
+/**
+ * Reads data from a contract by calling a read-only method.
+ *
+ * @param config - Configuration object for the hook
+ * @param config.contractName - The deployed contract name
+ * @param config.methodName - The contract method to call
+ * @param config.args - Arguments for the method call
+ * @param config.enabled - If false, disables the hook (default: true)
+ * @returns {Object} An object containing:
+ *   - data: The result of the contract call
+ *   - isLoading: Boolean indicating if the call is in progress
+ *   - error: Any error encountered
+ *
+ * @see https://scaffoldstark.com/docs/hooks/
+ */
 export const useScaffoldReadContract = <
   TAbi extends Abi,
   TContractName extends ContractName,

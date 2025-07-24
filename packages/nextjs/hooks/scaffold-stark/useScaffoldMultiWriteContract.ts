@@ -21,6 +21,21 @@ function isRawCall(value: Call | any): value is Call {
   return "entrypoint" in value;
 }
 
+/**
+ * Allows batching multiple write operations to a contract in a single transaction.
+ *
+ * @param config - Configuration object for the hook
+ * @param config.contractName - The deployed contract name
+ * @param config.methodNames - Array of contract method names to call
+ * @param config.args - Arguments for each method call
+ * @param config.enabled - If false, disables the hook (default: true)
+ * @returns {Object} An object containing:
+ *   - write: Function to execute the batch transaction
+ *   - isLoading: Boolean indicating if the transaction is in progress
+ *   - error: Any error encountered
+ *
+ * @see https://scaffoldstark.com/docs/hooks/
+ */
 export const useScaffoldMultiWriteContract = <
   TAbi extends Abi,
   TContractName extends ContractName,
@@ -70,12 +85,12 @@ export const useScaffoldMultiWriteContract = <
             // we convert to starknetjs contract instance here since deployed data may be undefined if contract is not deployed
             const contractInstance = new StarknetJsContract(
               contract.abi,
-              contract.address,
+              contract.address
             );
 
             return contractInstance.populate(
               functionName,
-              unParsedArgs as any[],
+              unParsedArgs as any[]
             );
           });
         } else {
@@ -105,7 +120,7 @@ export function createContractCall<
 >(
   contractName: TContractName,
   functionName: TFunctionName,
-  args: UseScaffoldArgsParam<TAbi, TContractName, TFunctionName>["args"],
+  args: UseScaffoldArgsParam<TAbi, TContractName, TFunctionName>["args"]
 ) {
   return { contractName, functionName, args };
 }
