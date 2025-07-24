@@ -22,7 +22,7 @@ export function getNetworkColor(
  * @param networkId - The network ID
  * @returns {string} The color associated with the network
  *
- * @see https://scaffoldstark.com/docs/hooks/
+ * @see https://scaffoldstark.com/docs/
  */
 export const useNetworkColor = () => {
   const { resolvedTheme } = useTheme();

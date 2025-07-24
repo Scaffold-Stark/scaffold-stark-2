@@ -20,7 +20,7 @@ import { ContractClassHashCache } from "./ContractClassHashCache";
  *   - isLoading: Boolean indicating if data is loading
  *   - error: Any error encountered
  *
- * @see https://scaffoldstark.com/docs/hooks/
+ * @see https://scaffoldstark.com/docs/
  */
 export const useDeployedContractInfo = <TContractName extends ContractName>(
   contractName: TContractName

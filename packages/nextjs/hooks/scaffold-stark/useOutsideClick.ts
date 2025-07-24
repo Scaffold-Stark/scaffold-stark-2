@@ -6,7 +6,7 @@ import React, { useEffect } from "react";
  * @param ref - React ref to the element to monitor
  * @param handler - Callback function to call on outside click
  *
- * @see https://scaffoldstark.com/docs/hooks/
+ * @see https://scaffoldstark.com/docs/
  */
 export const useOutsideClick = (
   ref: React.RefObject<HTMLElement | null>,

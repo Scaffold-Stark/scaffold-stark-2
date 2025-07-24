@@ -3,7 +3,7 @@
  *
  * @returns {Function} Function to call to switch networks
  *
- * @see https://scaffoldstark.com/docs/hooks/
+ * @see https://scaffoldstark.com/docs/
  */
 export const useSwitchNetwork = () => {
   return {

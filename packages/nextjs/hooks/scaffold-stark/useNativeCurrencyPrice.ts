@@ -10,7 +10,7 @@ import { priceService } from "~~/services/web3/PriceService";
  *   - isLoading: Boolean indicating if the price is loading
  *   - error: Any error encountered
  *
- * @see https://scaffoldstark.com/docs/hooks/
+ * @see https://scaffoldstark.com/docs/
  */
 export const useNativeCurrencyPrice = () => {
   const setNativeCurrencyPrice = useGlobalState(

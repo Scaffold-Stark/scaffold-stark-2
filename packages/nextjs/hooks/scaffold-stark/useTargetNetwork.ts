@@ -11,7 +11,7 @@ import { ChainWithAttributes } from "~~/utils/scaffold-stark";
  * @returns {Object} An object containing:
  *   - targetNetwork: The current target network object
  *
- * @see https://scaffoldstark.com/docs/hooks/
+ * @see https://scaffoldstark.com/docs/
  */
 export function useTargetNetwork(): { targetNetwork: ChainWithAttributes } {
   const { chainId } = useAccount();
