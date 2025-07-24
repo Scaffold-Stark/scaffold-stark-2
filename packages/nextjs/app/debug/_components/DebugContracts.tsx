@@ -7,9 +7,9 @@ import dynamic from "next/dynamic";
 const ContractUI = dynamic(
   () =>
     import("~~/app/debug/_components/contract/ContractUI").then(
-      (mod) => mod.ContractUI
+      (mod) => mod.ContractUI,
     ),
-  { ssr: false }
+  { ssr: false },
 );
 
 import { ContractName } from "~~/utils/scaffold-stark/contract";
@@ -23,7 +23,7 @@ export function DebugContracts() {
   const [selectedContract, setSelectedContract] = useLocalStorage<ContractName>(
     selectedContractStorageKey,
     contractNames[0],
-    { initializeWithValue: false }
+    { initializeWithValue: false },
   );
 
   useEffect(() => {

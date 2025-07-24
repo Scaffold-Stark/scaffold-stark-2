@@ -15,14 +15,14 @@ const Footer = dynamic(
   () => import("~~/components/Footer").then((mod) => mod.Footer),
   {
     ssr: false,
-  }
+  },
 );
 const ProgressBar = dynamic(
   () =>
     import("~~/components/scaffold-stark/ProgressBar").then(
-      (mod) => mod.ProgressBar
+      (mod) => mod.ProgressBar,
     ),
-  { ssr: false }
+  { ssr: false },
 );
 
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
