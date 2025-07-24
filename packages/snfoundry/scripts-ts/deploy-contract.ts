@@ -25,6 +25,41 @@ interface Arguments {
   $0: string;
 }
 
+const validateConstructorArgsWithStarknetJS = (
+  abi: any[],
+  constructorArgs: any
+): { isValid: boolean; error?: string } => {
+  try {
+    const contractCalldata = new CallData(abi);
+    contractCalldata.compile("constructor", constructorArgs);
+    return { isValid: true };
+  } catch (error: any) {
+    const originalError = error.message || "Invalid constructor arguments";
+    let userFriendlyMessage = originalError;
+    
+    if (originalError.includes("felt") || originalError.includes("Felt")) {
+      userFriendlyMessage = "Invalid felt252 value. Expected: hex string (0x123...), decimal string ('123'), or number.";
+    } else if (originalError.includes("address") || originalError.includes("Address")) {
+      userFriendlyMessage = "Invalid ContractAddress. Expected: valid hex address (0x123...abc).";
+    } else if (originalError.includes("uint256") || originalError.includes("u256")) {
+      userFriendlyMessage = "Invalid u256 value. Expected: number, bigint, hex string, or {low: '123', high: '0'} object.";
+    } else if (originalError.includes("bool") || originalError.includes("Bool")) {
+      userFriendlyMessage = "Invalid boolean value. Expected: true, false, 0, or 1.";
+    } else if (originalError.includes("ByteArray") || originalError.includes("string")) {
+      userFriendlyMessage = "Invalid ByteArray value. Expected: string.";
+    } else if (originalError.includes("Array") || originalError.includes("array")) {
+      userFriendlyMessage = "Invalid array value. Expected: array format [item1, item2, ...].";
+    } else if (originalError.includes("missing") || originalError.includes("expected")) {
+      userFriendlyMessage = originalError;
+    }
+    
+    return { 
+      isValid: false, 
+      error: `${userFriendlyMessage}${originalError !== userFriendlyMessage ? ` (Details: ${originalError})` : ''}`
+    };
+  }
+};
+
 const argv = yargs(process.argv.slice(2))
   .option("network", {
     type: "string",
@@ -232,6 +267,45 @@ const deployContract = async (
       classHash: "",
       address: "",
     };
+  }
+
+  const abi = compiledContractSierra.abi;
+  const constructorAbi = abi.find((item: any) => item.type === "constructor");
+  if (constructorAbi) {
+    const requiredArgs = constructorAbi.inputs || [];
+    if (!constructorArgs) {
+      throw new Error(
+        red(
+          `Missing constructor arguments: expected ${requiredArgs.length} (${requiredArgs
+            .map((a: any) => `${a.name}: ${a.type}`)
+            .join(", ")}), but got none.`
+        )
+      );
+    }
+    
+    for (const arg of requiredArgs) {
+      if (
+        !(arg.name in constructorArgs) ||
+        constructorArgs[arg.name] === undefined ||
+        constructorArgs[arg.name] === null ||
+        constructorArgs[arg.name] === ""
+      ) {
+        throw new Error(
+          red(
+            `Missing value for constructor argument '${arg.name}' of type '${arg.type}'.`
+          )
+        );
+      }
+    }
+    
+    const validationResult = validateConstructorArgsWithStarknetJS(abi, constructorArgs);
+    if (!validationResult.isValid) {
+      throw new Error(
+        red(
+          `Constructor validation failed: ${validationResult.error}`
+        )
+      );
+    }
   }
 
   const contractCalldata = new CallData(compiledContractSierra.abi);
