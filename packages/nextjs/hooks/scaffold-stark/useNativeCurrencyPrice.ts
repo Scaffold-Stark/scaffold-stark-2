@@ -14,7 +14,7 @@ import { priceService } from "~~/services/web3/PriceService";
  */
 export const useNativeCurrencyPrice = () => {
   const setNativeCurrencyPrice = useGlobalState(
-    (state) => state.setNativeCurrencyPrice
+    (state) => state.setNativeCurrencyPrice,
   );
   const ref = useRef<string>(priceService.getNextId().toString());
   useEffect(() => {
