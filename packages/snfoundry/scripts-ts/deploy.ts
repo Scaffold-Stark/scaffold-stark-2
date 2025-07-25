@@ -4,6 +4,7 @@ import {
   exportDeployments,
   deployer,
   assertDeployerDefined,
+  assertRpcNetworkActive,
   assertDeployerSignable,
 } from "./deploy-contract";
 import { green } from "./helpers/colorize-log";
@@ -55,6 +56,7 @@ const deployScript = async (): Promise<void> => {
 const main = async (): Promise<void> => {
   try {
     assertDeployerDefined();
+    await assertRpcNetworkActive();
     await assertDeployerSignable();
     await deployScript();
     await executeDeployCalls();
