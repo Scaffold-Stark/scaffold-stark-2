@@ -23,17 +23,25 @@ import { composeEventFilterKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
 
 const MAX_KEYS_COUNT = 16;
 /**
- * Reads events from a deployed contract
- * @param config - The config settings
- * @param config.contractName - deployed contract name
- * @param config.eventName - name of the event to listen for
- * @param config.fromBlock - the block number to start reading events from
- * @param config.filters - filters to be applied to the event (parameterName: value)
- * @param config.blockData - if set to true it will return the block data for each event (default: false)
- * @param config.transactionData - if set to true it will return the transaction data for each event (default: false)
- * @param config.receiptData - if set to true it will return the receipt data for each event (default: false)
- * @param config.watch - if set to true, the events will be updated every pollingInterval milliseconds set at scaffoldConfig (default: false)
- * @param config.enabled - if set to false, disable the hook from running (default: true)
+ * Reads events from a deployed contract and returns their history, with optional block, transaction, and receipt data. Supports filtering and polling.
+ *
+ * @param config - Configuration object for the hook
+ * @param config.contractName - The deployed contract name
+ * @param config.eventName - The name of the event to listen for
+ * @param config.fromBlock - The block number to start reading events from
+ * @param config.filters - Filters to be applied to the event (parameterName: value)
+ * @param config.blockData - If true, includes block data for each event (default: false)
+ * @param config.transactionData - If true, includes transaction data for each event (default: false)
+ * @param config.receiptData - If true, includes receipt data for each event (default: false)
+ * @param config.watch - If true, events will be updated every pollingInterval milliseconds (default: false)
+ * @param config.enabled - If false, disables the hook (default: true)
+ * @param config.format - If true, parses and formats event arguments (default: true)
+ * @returns {Object} An object containing:
+ *   - data: Array of parsed event history objects
+ *   - isLoading: Boolean indicating if events are loading
+ *   - error: Any error encountered
+ *
+ * @see https://scaffoldstark.com/docs/hooks/
  */
 export const useScaffoldEventHistory = <
   TContractName extends ContractName,

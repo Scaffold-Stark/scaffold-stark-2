@@ -6,6 +6,13 @@ import scaffoldConfig from "~~/scaffold.config";
 import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
 import { useAccount } from "~~/hooks/useAccount";
 
+/**
+ * Automatically connects the user's wallet if possible, based on previous connection and configuration.
+ *
+ * @returns {void}
+ *
+ * @see https://scaffoldstark.com/docs/hooks/
+ */
 export const useAutoConnect = (): void => {
   const savedConnector = useReadLocalStorage<{ id: string; ix?: number }>(
     "lastUsedConnector",

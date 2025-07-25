@@ -27,7 +27,21 @@ interface UseTransactorReturn {
 }
 
 /**
- * Custom notification content for TXs.
+ * Handles sending transactions to Starknet contracts, managing transaction state and notifications.
+ *
+ * @param config - Configuration object for the hook
+ * @param config.contractName - The contract name to interact with
+ * @param config.method - The contract method to call
+ * @param config.args - Arguments for the contract method
+ * @param config.onSuccess - Callback for successful transaction
+ * @param config.onError - Callback for failed transaction
+ * @returns {Object} An object containing:
+ *   - sendTransaction: Function to send the transaction
+ *   - isLoading: Boolean indicating if the transaction is in progress
+ *   - error: Any error encountered
+ *   - status: The current status of the transaction
+ *
+ * @see https://scaffoldstark.com/docs/hooks/
  */
 const TxnNotification = ({
   message,

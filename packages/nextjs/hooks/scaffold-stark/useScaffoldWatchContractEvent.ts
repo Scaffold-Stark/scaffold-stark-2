@@ -25,6 +25,19 @@ import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
 
 const MAX_EVENT_KEYS = 16;
 
+/**
+ * Watches for a specific contract event and triggers a callback when the event occurs.
+ *
+ * @param config - Configuration object for the hook
+ * @param config.contractName - The deployed contract name
+ * @param config.eventName - The name of the event to watch
+ * @param config.filters - Filters to be applied to the event (parameterName: value)
+ * @param config.onEvent - Callback function to execute when the event is detected
+ * @param config.enabled - If false, disables the hook (default: true)
+ * @returns {void}
+ *
+ * @see https://scaffoldstark.com/docs/hooks/
+ */
 export const useScaffoldWatchContractEvent = <
   TContractName extends ContractName,
   TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,

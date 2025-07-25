@@ -11,6 +11,17 @@ import { BlockIdentifier } from "starknet";
 import { useProvider } from "@starknet-react/core";
 import { ContractClassHashCache } from "./ContractClassHashCache";
 
+/**
+ * Fetches and returns deployment information for a given contract name.
+ *
+ * @param contractName - The name of the deployed contract
+ * @returns {Object} An object containing:
+ *   - data: Deployment info (address, ABI, etc.)
+ *   - isLoading: Boolean indicating if data is loading
+ *   - error: Any error encountered
+ *
+ * @see https://scaffoldstark.com/docs/
+ */
 export const useDeployedContractInfo = <TContractName extends ContractName>(
   contractName: TContractName,
 ) => {

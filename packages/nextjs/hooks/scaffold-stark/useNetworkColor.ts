@@ -17,7 +17,12 @@ export function getNetworkColor(
 }
 
 /**
- * Gets the color of the target network
+ * Returns a color string representing the current network for UI theming.
+ *
+ * @param networkId - The network ID
+ * @returns {string} The color associated with the network
+ *
+ * @see https://scaffoldstark.com/docs/
  */
 export const useNetworkColor = () => {
   const { resolvedTheme } = useTheme();
