@@ -16,6 +16,7 @@ import {
 } from "starknet";
 import { DeployContractParams, Network } from "./types";
 import { green, red, yellow } from "./helpers/colorize-log";
+import { logDeploymentSummary, postDeploymentBalanceSummary } from "./helpers/log";
 
 interface Arguments {
   network: string;
@@ -44,7 +45,7 @@ const resetDeployments: boolean = argv.reset;
 let deployments = {};
 let deployCalls = [];
 
-const { provider, deployer }: Network = networks[networkName];
+const { provider, deployer,feeToken }: Network = networks[networkName];
 
 const declareIfNot_NotWait = async (
   payload: DeclareContractPayload,
@@ -287,15 +288,29 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
       ...options,
       version: constants.TRANSACTION_VERSION.V3,
     });
+    console.log(green("Deploy Calls Executed at "), transaction_hash);
     if (networkName === "sepolia" || networkName === "mainnet") {
       const receipt = await provider.waitForTransaction(transaction_hash);
       const receiptAny = receipt as any;
       if (receiptAny.execution_status !== "SUCCEEDED") {
         const revertReason = receiptAny.revert_reason;
         throw new Error(red(`Deploy Calls Failed: ${revertReason}`));
-      }
+      } 
+      // logging links beatifully.
+      logDeploymentSummary({
+      network: networkName,
+      transactionHash: transaction_hash,
+      deployments,
+      });
+      // check recipient and if unit of feeToken is FRI its stark if WEI its ether
+      await postDeploymentBalanceSummary({
+        provider,
+        deployer,   
+        reciept: receiptAny,
+        feeToken: feeToken,
+      });
     }
-    console.log(green("Deploy Calls Executed at "), transaction_hash);
+
   } catch (e) {
     // split the calls in half and try again recursively
     if (deployCalls.length > 100) {
