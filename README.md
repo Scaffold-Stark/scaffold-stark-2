@@ -94,19 +94,19 @@ Otherwise, you can install Scarb `2.11.4` following the [instructions](https://d
 
 #### Starknet Foundry version
 
-To ensure the proper functioning of the tests on scaffold-stark, your `Starknet Foundry` version must be `0.45.0`. To accomplish this, first check your `Starknet Foundry` version:
+To ensure the proper functioning of the tests on scaffold-stark, your `Starknet Foundry` version must be `0.46.0`. To accomplish this, first check your `Starknet Foundry` version:
 
 ```sh
 snforge --version
 ```
 
-If your `Starknet Foundry` version is not `0.45.0`, you need to install it. If you already have installed `Starknet Foundry` via `starkup`, you can setup this specific version with the following command:
+If your `Starknet Foundry` version is not `0.46.0`, you need to install it. If you already have installed `Starknet Foundry` via `starkup`, you can setup this specific version with the following command:
 
 ```sh
-asdf install starknet-foundry 0.45.0 && asdf set starknet-foundry 0.45.0
+asdf install starknet-foundry 0.46.0 && asdf set starknet-foundry 0.46.0
 ```
 
-Otherwise, you can install Starknet Foundry `0.45.0` following the [instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf).
+Otherwise, you can install Starknet Foundry `0.46.0` following the [instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf).
 
 #### Starknet-devnet version
 
@@ -157,7 +157,7 @@ Now you are ready!!!
 
 - Starknet-devnet - 0.4.3
 - Scarb - v2.11.4
-- Snforge - v0.45.0
+- Snforge - v0.46.0
 - Cairo - v2.11.4
 - Rpc - v0.8.0
 
