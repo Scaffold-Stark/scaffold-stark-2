@@ -1,13 +1,18 @@
 import { Connector, useConnect } from "@starknet-react/core";
+import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
-import Wallet from "~~/components/scaffold-stark/CustomConnectButton/Wallet";
 import { useLocalStorage } from "usehooks-ts";
 import { BurnerConnector, burnerAccounts } from "@scaffold-stark/stark-burner";
 import { useTheme } from "next-themes";
 import { BlockieAvatar } from "../BlockieAvatar";
-import GenericModal from "./GenericModal";
 import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
+
+const GenericModal = dynamic(() => import("./GenericModal"), { ssr: false });
+const Wallet = dynamic(
+  () => import("~~/components/scaffold-stark/CustomConnectButton/Wallet"),
+  { ssr: false },
+);
 
 const loader = ({ src }: { src: string }) => src;
 
