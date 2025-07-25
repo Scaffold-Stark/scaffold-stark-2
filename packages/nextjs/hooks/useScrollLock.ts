@@ -1,5 +1,12 @@
 import { useEffect } from "react";
 
+/**
+ * Locks or unlocks scrolling on the page, useful for modals and overlays.
+ *
+ * @param isLocked - Boolean to lock (true) or unlock (false) scrolling
+ *
+ * @see https://scaffoldstark.com/docs/hooks/
+ */
 export const useScrollLock = (isLocked: boolean) => {
   useEffect(() => {
     if (isLocked) {
