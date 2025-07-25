@@ -50,6 +50,10 @@ const deployScript = async (): Promise<void> => {
       owner: deployer.address,
     },
   });
+  await deployContract({
+    contract: "Multicall",
+    contractName: "Multicall",
+  });
 };
 
 const main = async (): Promise<void> => {
