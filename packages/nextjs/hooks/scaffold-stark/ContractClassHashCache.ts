@@ -17,7 +17,7 @@ export class ContractClassHashCache {
   public async getClassHash(
     publicClient: ProviderInterface,
     address: string,
-    blockIdentifier: BlockIdentifier = "pending",
+    blockIdentifier: BlockIdentifier = "pending"
   ): Promise<string | undefined> {
     const cacheKey = `${address}-${blockIdentifier}`;
 
@@ -33,7 +33,7 @@ export class ContractClassHashCache {
       publicClient,
       address,
       blockIdentifier,
-      cacheKey,
+      cacheKey
     );
     this.pendingRequests.set(cacheKey, pendingRequest);
 
@@ -48,12 +48,12 @@ export class ContractClassHashCache {
     publicClient: ProviderInterface,
     address: string,
     blockIdentifier: BlockIdentifier,
-    cacheKey: string,
+    cacheKey: string
   ): Promise<string | undefined> {
     try {
       const classHash = await publicClient.getClassHashAt(
         address,
-        blockIdentifier,
+        blockIdentifier
       );
       this.cache.set(cacheKey, classHash);
       return classHash;

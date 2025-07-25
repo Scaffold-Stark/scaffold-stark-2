@@ -25,6 +25,19 @@ import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
 
 const MAX_EVENT_KEYS = 16;
 
+/**
+ * Watches for a specific contract event and triggers a callback when the event occurs.
+ *
+ * @param config - Configuration object for the hook
+ * @param config.contractName - The deployed contract name
+ * @param config.eventName - The name of the event to watch
+ * @param config.filters - Filters to be applied to the event (parameterName: value)
+ * @param config.onEvent - Callback function to execute when the event is detected
+ * @param config.enabled - If false, disables the hook (default: true)
+ * @returns {void}
+ *
+ * @see https://scaffoldstark.com/docs/hooks/
+ */
 export const useScaffoldWatchContractEvent = <
   TContractName extends ContractName,
   TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
@@ -53,7 +66,7 @@ export const useScaffoldWatchContractEvent = <
     return (deployedContractData?.abi as Abi)?.filter(
       (part) =>
         part.type === "event" &&
-        part.name.split("::").slice(-1)[0] === (eventName as string),
+        part.name.split("::").slice(-1)[0] === (eventName as string)
     ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>[];
   }, [deployedContractData, deployedContractLoading]);
 
@@ -63,7 +76,7 @@ export const useScaffoldWatchContractEvent = <
 
   if (matchingAbiEvents?.length > 1) {
     throw new Error(
-      `Ambiguous event "${eventName as string}". ABI contains ${matchingAbiEvents?.length} events with that name`,
+      `Ambiguous event "${eventName as string}". ABI contains ${matchingAbiEvents?.length} events with that name`
     );
   }
 
@@ -85,7 +98,7 @@ export const useScaffoldWatchContractEvent = <
       }
 
       const event = (deployedContractData?.abi as Abi).find(
-        (part) => part?.type === "event" && part?.name === fullName,
+        (part) => part?.type === "event" && part?.name === fullName
       ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
 
       if (!event) {
@@ -132,7 +145,7 @@ export const useScaffoldWatchContractEvent = <
           log,
           starknetEvents.getAbiEvents(deployedContractData?.abi),
           CallData.getAbiStruct(deployedContractData?.abi),
-          CallData.getAbiEnum(deployedContractData?.abi),
+          CallData.getAbiEnum(deployedContractData?.abi)
         );
 
         const args =
@@ -188,7 +201,7 @@ export const useScaffoldWatchContractEvent = <
         respondToEvents();
       }
     },
-    targetNetwork.id !== devnet.id ? scaffoldConfig.pollingInterval : 4_000,
+    targetNetwork.id !== devnet.id ? scaffoldConfig.pollingInterval : 4_000
   );
 
   return {

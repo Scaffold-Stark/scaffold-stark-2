@@ -23,17 +23,25 @@ import { composeEventFilterKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
 
 const MAX_KEYS_COUNT = 16;
 /**
- * Reads events from a deployed contract
- * @param config - The config settings
- * @param config.contractName - deployed contract name
- * @param config.eventName - name of the event to listen for
- * @param config.fromBlock - the block number to start reading events from
- * @param config.filters - filters to be applied to the event (parameterName: value)
- * @param config.blockData - if set to true it will return the block data for each event (default: false)
- * @param config.transactionData - if set to true it will return the transaction data for each event (default: false)
- * @param config.receiptData - if set to true it will return the receipt data for each event (default: false)
- * @param config.watch - if set to true, the events will be updated every pollingInterval milliseconds set at scaffoldConfig (default: false)
- * @param config.enabled - if set to false, disable the hook from running (default: true)
+ * Reads events from a deployed contract and returns their history, with optional block, transaction, and receipt data. Supports filtering and polling.
+ *
+ * @param config - Configuration object for the hook
+ * @param config.contractName - The deployed contract name
+ * @param config.eventName - The name of the event to listen for
+ * @param config.fromBlock - The block number to start reading events from
+ * @param config.filters - Filters to be applied to the event (parameterName: value)
+ * @param config.blockData - If true, includes block data for each event (default: false)
+ * @param config.transactionData - If true, includes transaction data for each event (default: false)
+ * @param config.receiptData - If true, includes receipt data for each event (default: false)
+ * @param config.watch - If true, events will be updated every pollingInterval milliseconds (default: false)
+ * @param config.enabled - If false, disables the hook (default: true)
+ * @param config.format - If true, parses and formats event arguments (default: true)
+ * @returns {Object} An object containing:
+ *   - data: Array of parsed event history objects
+ *   - isLoading: Boolean indicating if events are loading
+ *   - error: Any error encountered
+ *
+ * @see https://scaffoldstark.com/docs/hooks/
  */
 export const useScaffoldEventHistory = <
   TContractName extends ContractName,
@@ -80,7 +88,7 @@ export const useScaffoldEventHistory = <
     return (deployedContractData?.abi as Abi)?.filter(
       (part) =>
         part.type === "event" &&
-        part.name.split("::").slice(-1)[0] === (eventName as string),
+        part.name.split("::").slice(-1)[0] === (eventName as string)
     ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>[];
   }, [deployedContractData, deployedContractLoading]);
   // const matchingAbiEvents =
@@ -91,7 +99,7 @@ export const useScaffoldEventHistory = <
 
   if (matchingAbiEvents?.length > 1) {
     throw new Error(
-      `Ambiguous event "${eventName as string}". ABI contains ${matchingAbiEvents.length} events with that name`,
+      `Ambiguous event "${eventName as string}". ABI contains ${matchingAbiEvents.length} events with that name`
     );
   }
 
@@ -117,7 +125,7 @@ export const useScaffoldEventHistory = <
       const event = (deployedContractData.abi as Abi).find(
         (part) =>
           part.type === "event" &&
-          part.name.split("::").slice(-1)[0] === eventName,
+          part.name.split("::").slice(-1)[0] === eventName
       ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
 
       const blockNumber = (await publicClient.getBlockLatestAccepted())
@@ -130,7 +138,7 @@ export const useScaffoldEventHistory = <
         let keys: string[][] = [[hash.getSelectorFromName(eventName)]];
         if (filters) {
           keys = keys.concat(
-            composeEventFilterKeys(filters, event, deployedContractData.abi),
+            composeEventFilterKeys(filters, event, deployedContractData.abi)
           );
         }
         keys = keys.slice(0, MAX_KEYS_COUNT);
@@ -159,13 +167,13 @@ export const useScaffoldEventHistory = <
             transaction:
               transactionData && logs[i].transaction_hash !== null
                 ? await publicClient.getTransactionByHash(
-                    logs[i].transaction_hash,
+                    logs[i].transaction_hash
                   )
                 : null,
             receipt:
               receiptData && logs[i].transaction_hash !== null
                 ? await publicClient.getTransactionReceipt(
-                    logs[i].transaction_hash,
+                    logs[i].transaction_hash
                   )
                 : null,
           });
@@ -227,7 +235,7 @@ export const useScaffoldEventHistory = <
       ? targetNetwork.id !== devnet.id
         ? scaffoldConfig.pollingInterval
         : 4_000
-      : null,
+      : null
   );
 
   const eventHistoryData = useMemo(() => {
@@ -238,7 +246,7 @@ export const useScaffoldEventHistory = <
           logs,
           starknetEvents.getAbiEvents(deployedContractData.abi),
           CallData.getAbiStruct(deployedContractData.abi),
-          CallData.getAbiEnum(deployedContractData.abi),
+          CallData.getAbiEnum(deployedContractData.abi)
         );
         const args = parsed.length ? parsed[0][fullName] : {};
         const { event: rawEvent, ...rest } = event;

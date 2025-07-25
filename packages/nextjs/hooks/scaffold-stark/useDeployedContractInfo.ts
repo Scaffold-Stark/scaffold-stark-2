@@ -11,8 +11,19 @@ import { BlockIdentifier } from "starknet";
 import { useProvider } from "@starknet-react/core";
 import { ContractClassHashCache } from "./ContractClassHashCache";
 
+/**
+ * Fetches and returns deployment information for a given contract name.
+ *
+ * @param contractName - The name of the deployed contract
+ * @returns {Object} An object containing:
+ *   - data: Deployment info (address, ABI, etc.)
+ *   - isLoading: Boolean indicating if data is loading
+ *   - error: Any error encountered
+ *
+ * @see https://scaffoldstark.com/docs/
+ */
 export const useDeployedContractInfo = <TContractName extends ContractName>(
-  contractName: TContractName,
+  contractName: TContractName
 ) => {
   const isMounted = useIsMounted();
   const { targetNetwork } = useTargetNetwork();
@@ -20,7 +31,7 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
     contractName as ContractName
   ] as Contract<TContractName>;
   const [status, setStatus] = useState<ContractCodeStatus>(
-    ContractCodeStatus.LOADING,
+    ContractCodeStatus.LOADING
   );
   const { provider: publicClient } = useProvider();
 
@@ -35,7 +46,7 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
       const contractClassHash = await classHashCache.getClassHash(
         publicClient,
         deployedContract.address,
-        "pending" as BlockIdentifier,
+        "pending" as BlockIdentifier
       );
 
       if (!isMounted()) {

@@ -14,6 +14,21 @@ import { useSendTransaction, useNetwork, Abi } from "@starknet-react/core";
 import { notification } from "~~/utils/scaffold-stark";
 import { Contract as StarknetJsContract } from "starknet";
 
+/**
+ * Provides a function to write (send transactions) to a contract method.
+ *
+ * @param config - Configuration object for the hook
+ * @param config.contractName - The deployed contract name
+ * @param config.methodName - The contract method to call
+ * @param config.args - Arguments for the method call
+ * @param config.enabled - If false, disables the hook (default: true)
+ * @returns {Object} An object containing:
+ *   - write: Function to execute the transaction
+ *   - isLoading: Boolean indicating if the transaction is in progress
+ *   - error: Any error encountered
+ *
+ * @see https://scaffoldstark.com/docs/hooks/
+ */
 export const useScaffoldWriteContract = <
   TAbi extends Abi,
   TContractName extends ContractName,
@@ -44,7 +59,7 @@ export const useScaffoldWriteContract = <
 
       if (!deployedContractData) {
         console.error(
-          "Target Contract is not deployed, did you forget to run `yarn deploy`?",
+          "Target Contract is not deployed, did you forget to run `yarn deploy`?"
         );
         return;
       }
@@ -60,7 +75,7 @@ export const useScaffoldWriteContract = <
       // we convert to starknetjs contract instance here since deployed data may be undefined if contract is not deployed
       const contractInstance = new StarknetJsContract(
         deployedContractData.abi,
-        deployedContractData.address,
+        deployedContractData.address
       );
 
       const newCalls = deployedContractData
@@ -81,7 +96,7 @@ export const useScaffoldWriteContract = <
       sendTransactionInstance,
       sendTxnWrapper,
       targetNetwork.id,
-    ],
+    ]
   );
 
   return {

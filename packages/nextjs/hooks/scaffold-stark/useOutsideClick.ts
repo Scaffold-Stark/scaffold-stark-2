@@ -1,13 +1,16 @@
 import React, { useEffect } from "react";
 
 /**
- * Handles clicks outside of passed ref element
- * @param ref - react ref of the element
- * @param callback - callback function to call when clicked outside
+ * Detects clicks outside a specified element and triggers a callback.
+ *
+ * @param ref - React ref to the element to monitor
+ * @param handler - Callback function to call on outside click
+ *
+ * @see https://scaffoldstark.com/docs/
  */
 export const useOutsideClick = (
   ref: React.RefObject<HTMLElement | null>,
-  callback: { (): void },
+  callback: { (): void }
 ) => {
   useEffect(() => {
     function handleOutsideClick(event: MouseEvent) {

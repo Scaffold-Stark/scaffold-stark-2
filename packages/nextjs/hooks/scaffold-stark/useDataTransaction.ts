@@ -20,6 +20,22 @@ interface BlockData {
   averageFeeUSD: string;
 }
 
+/**
+ * Provides a helper for sending data transactions to contracts, with state and error management.
+ *
+ * @param config - Configuration object for the hook
+ * @param config.contractName - The contract name to interact with
+ * @param config.method - The contract method to call
+ * @param config.args - Arguments for the contract method
+ * @param config.enabled - If false, disables the hook (default: true)
+ * @returns {Object} An object containing:
+ *   - send: Function to send the data transaction
+ *   - isLoading: Boolean indicating if the transaction is in progress
+ *   - error: Any error encountered
+ *   - status: The current status of the transaction
+ *
+ * @see https://scaffoldstark.com/docs/hooks/
+ */
 export const useDataTransaction = (blockNumber: number) => {
   const { targetNetwork } = useTargetNetwork();
   const [blockData, setBlockData] = useState<BlockData | null>(null);
@@ -54,7 +70,7 @@ export const useDataTransaction = (blockNumber: number) => {
         return null;
       }
     },
-    [publicClient],
+    [publicClient]
   );
 
   const calculateAverageFee = useCallback(
@@ -86,7 +102,7 @@ export const useDataTransaction = (blockNumber: number) => {
         return 0;
       }
     },
-    [publicClient],
+    [publicClient]
   );
 
   const fetchBlockData = useCallback(async () => {
