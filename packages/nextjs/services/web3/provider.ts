@@ -16,7 +16,7 @@ const containsDevnet = (networks: readonly chains.Chain[]) => {
 const currentNetwork = scaffoldConfig.targetNetworks[0];
 const currentNetworkName = currentNetwork.network;
 
-const getRpcUrl = (networkName: string): string => {
+export const getRpcUrl = (networkName: string): string => {
   const devnetRpcUrl = process.env.NEXT_PUBLIC_DEVNET_PROVIDER_URL;
   const sepoliaRpcUrl = process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER_URL;
   const mainnetRpcUrl = process.env.NEXT_PUBLIC_MAINNET_PROVIDER_URL;
@@ -30,8 +30,10 @@ const getRpcUrl = (networkName: string): string => {
       break;
     case "sepolia":
       rpcUrl = sepoliaRpcUrl || fallBack || "";
+      break;
     case "mainnet":
       rpcUrl = mainnetRpcUrl || fallBack || "";
+      break;
     default:
       rpcUrl = "";
       break;
