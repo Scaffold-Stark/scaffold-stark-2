@@ -1,15 +1,215 @@
 @import "tailwindcss";
-@plugin "daisyui";
 @config '../tailwind.config.ts';
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+@plugin "daisyui";
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
+@plugin "daisyui/theme" {
+  name: "dark";
+  prefersdark: true;
+  color-scheme: dark;
+
+  --color-base-content: #fff9fb;
+  --color-base-100: #1c223b;
+  --color-base-200: #2a3655;
+  --color-base-300: #141a30;
+  --color-primary: #212638;
+  --color-primary-content: #dae8ff;
+  --color-secondary: #8b45fd;
+  --color-secondary-content: #0ff;
+  --color-accent: #4969a6;
+  --color-accent-content: #f9fbff;
+  --color-neutral: #f9fbff;
+  --color-neutral-content: #385183;
+  --color-info: #385183;
+  --color-success: #34eeb6;
+  --color-warning: #ffcf72;
+  --color-error: #ff8863;
+  --rounded-btn: 9999rem;
+}
+
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  color-scheme: light;
+
+  --color-base-content: #212638;
+  --color-base-100: #ffffff;
+  --color-base-200: #f4f8ff;
+  --color-base-300: #ffffff;
+  --color-neutral: #212638;
+  --color-primary: #93bbfb;
+  --color-primary-content: #2a3655;
+  --color-secondary: #8b45fd;
+  --color-secondary-content: #7800ff;
+  --color-accent: #93bbfb;
+  --color-accent-content: #212638;
+  --color-neutral: #212638;
+  --color-neutral-content: #ffffff;
+  --color-info: #93bbfb;
+  --color-success: #34eeb6;
+  --color-warning: #ffcf72;
+  --color-error: #ff8863;
+  --rounded-btn: 9999rem;
+}
+
+/* Shared Utilities */
+
+[data-theme="light"] {
+  .bg-gradient-modal {
+    background-image: linear-gradient(270deg, #a7ecff -17.42%, #e8b6ff 109.05%);
+  }
+
+  .bg-modal {
+    background: linear-gradient(270deg, #ece9fb -17.42%, #e3f4fd 109.05%);
+  }
+
+  .modal-border {
+    border: 1px solid #5c4fe5;
+  }
+
+  .bg-gradient-nav {
+    background: #000000;
+  }
+
+  .my-btn-z {
+    background-color: #f11eb5;
+    border-color: #f11e80;
+  }
+  .my-btn-z:hover {
+    background-color: #e11c50;
+    border-color: #1c96e1;
+  }
+
+  .bg-main {
+    background: #ffffff;
+  }
+
+  .bg-underline {
+    background: linear-gradient(270deg, #a7ecff -17.42%, #e8b6ff 109.05%);
+  }
+
+  .bg-container {
+    background: transparent;
+  }
+
+  .bg-btn-wallet {
+    background-image: linear-gradient(270deg, #a7ecff -17.42%, #e8b6ff 109.05%);
+  }
+
+  .bg-input {
+    background: rgba(0, 0, 0, 0.07);
+  }
+
+  .bg-component {
+    background: rgba(255, 255, 255, 0.55);
+  }
+
+  .bg-function {
+    background: linear-gradient(270deg, #a7ecff -17.42%, #e8b6ff 109.05%);
+  }
+
+  .text-function {
+    color: #3c1dff;
+  }
+
+  .text-network {
+    color: #7800ff;
+  }
+
+  .tooltip {
+    --tooltip-tail: 6px;
+  }
+
+  .link {
+    text-underline-offset: 2px;
+  }
+
+  .link:hover {
+    opacity: 80%;
+  }
+
+  .contract-content {
+    background: white;
+  }
+}
+
+/* === DARK-THEME-SPECIFIC CUSTOM UTILITIES === */
+
+[data-theme="dark"] {
+  .bg-gradient-modal {
+    background: #385183;
+  }
+
+  .bg-modal {
+    background: linear-gradient(90deg, #2b2243 0%, #253751 100%);
+  }
+
+  .modal-border {
+    border: 1px solid #4f4ab7;
+  }
+
+  .bg-gradient-nav {
+    background-image: linear-gradient(90deg, #42d2f1 0%, #b248dd 100%);
+  }
+
+  .bg-main {
+    background: #141a31;
+  }
+
+  .bg-underline {
+    background: #5368b4;
+  }
+  .bg-container {
+    background: #141a30;
+  }
+
+  .bg-btn-wallet {
+    background-image: linear-gradient(180deg, #3457d1 0%, #8a45fc 100%);
+  }
+
+  .bg-input {
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  .bg-component {
+    background: linear-gradient(
+      113deg,
+      rgba(43, 34, 67, 0.6) 20.48%,
+      rgba(37, 55, 81, 0.6) 99.67%
+    );
+  }
+
+  .bg-function {
+    background: rgba(139, 69, 253, 0.37);
+  }
+
+  .text-function {
+    color: #1dd6ff;
+  }
+
+  .text-network {
+    color: #d0a6ff;
+  }
+
+  .contract-content {
+    background: linear-gradient(
+      113.34deg,
+      rgba(43, 34, 67, 0.6) 20.48%,
+      rgba(37, 55, 81, 0.6) 99.67%
+    );
+  }
+}
+
+@layer utilities {
+  [data-theme="light"] .hover\:bg-gradient-nav:hover {
+    background: #000000;
+  }
+
+  [data-theme="dark"] .hover\:bg-gradient-nav:hover {
+    background-image: linear-gradient(90deg, #42d2f1 0%, #b248dd 100%);
+  }
+}
+
 @layer base {
   *,
   ::after,
@@ -56,6 +256,14 @@
     background: inherit;
     clip-path: polygon(100% 100%, 100% 0, 90% 100%);
   }
+}
+
+@utility btn {
+  @apply rounded-full;
+}
+
+@utility btn-sm {
+  @apply text-sm;
 }
 
 @layer utilities {

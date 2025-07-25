@@ -51,7 +51,7 @@ export const HeaderMenuLinks = () => {
               passHref
               className={`${
                 isActive
-                  ? "!bg-gradient-nav text-white! active:bg-gradient-nav shadow-md"
+                  ? "bg-gradient-nav text-white! active:bg-gradient-nav shadow-md"
                   : ""
               } py-1.5 px-3 text-sm rounded-full gap-2 grid grid-flow-col hover:bg-gradient-nav hover:text-white`}
             >
@@ -74,7 +74,7 @@ export const Header = () => {
 
   useOutsideClick(
     burgerMenuRef,
-    useCallback(() => setIsDrawerOpen(false), []),
+    useCallback(() => setIsDrawerOpen(false), [])
   );
 
   const { targetNetwork } = useTargetNetwork();
