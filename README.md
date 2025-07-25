@@ -267,12 +267,12 @@ You have to paste the endpoint and body in the API platform and click on the `Se
 
 <details>
 
-By default, Network settings are centralized in `scaffold.config.ts` with all RPC URLs defined in the `rpcProviderUrl` object. We strongly recommend to use environment variables to configure the networks, otherwise the framework will choose a random provider for you.
+By default, Network settings are centralized in `scaffold.config.ts` with all RPC URLs defined in the `provider.ts` file, aith the values pulled from environment variables, otherwise the framework will choose a random provider for you.
 
 **How to Change Networks:**
 
 - Update the `targetNetworks` array in `scaffold.config.ts` (first network is the primary target)
-- Ensure each network has a corresponding RPC URL in the `rpcProviderUrl` object
+- Ensure each network has a corresponding RPC URL in the `provider.ts` file
 
 ### Required Environment Variables
 
