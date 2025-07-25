@@ -101,10 +101,7 @@ export const AddressInfoDropdown = ({
   return (
     <>
       <details ref={dropdownRef} className="dropdown dropdown-end leading-3">
-        <summary
-          tabIndex={0}
-          className="btn bg-transparent btn-sm px-2 py-[0.35rem] dropdown-toggle gap-0 h-auto! border border-[#5c4fe5] "
-        >
+        <summary className="btn bg-transparent btn-sm px-2 py-[0.35rem] dropdown-toggle gap-0 !h-auto border border-[#5c4fe5] ">
           <div className="hidden [@media(min-width:412px)]:block">
             {getStarknetPFPIfExists(profile?.profilePicture) ? (
               <NextImage
@@ -128,12 +125,12 @@ export const AddressInfoDropdown = ({
         </summary>
         <ul
           tabIndex={0}
-          className={`dropdown-content menu z-2 p-2 mt-2 rounded-[5px] gap-1 border border-[#5c4fe5] bg-base-100`}
+          className={`dropdown-content menu z-[2] p-2 mt-2 rounded-[5px] gap-1 border border-[#5c4fe5] bg-base-100`}
         >
           <NetworkOptions hidden={!selectingNetwork} />
           <li className={selectingNetwork ? "hidden" : ""}>
             {addressCopied ? (
-              <div className="btn-sm rounded-xl! flex gap-3 py-3">
+              <div className="btn-sm !rounded-xl flex gap-3">
                 <CheckCircleIcon
                   className="text-xl font-normal h-6 w-4 cursor-pointer ml-2 sm:ml-0"
                   aria-hidden="true"
@@ -151,7 +148,7 @@ export const AddressInfoDropdown = ({
                   }, 800);
                 }}
               >
-                <div className="btn-sm rounded-xl! flex gap-3 py-3">
+                <div className="btn-sm !rounded-xl flex gap-3">
                   <DocumentDuplicateIcon
                     className="text-xl font-normal h-6 w-4 cursor-pointer ml-2 sm:ml-0"
                     aria-hidden="true"
@@ -164,7 +161,7 @@ export const AddressInfoDropdown = ({
           <li className={selectingNetwork ? "hidden" : ""}>
             <label
               htmlFor="qrcode-modal"
-              className="btn-sm rounded-xl! flex gap-3 py-3"
+              className="btn-sm !rounded-xl flex gap-3"
             >
               <QrCodeIcon className="h-6 w-4 ml-2 sm:ml-0" />
               <span className="whitespace-nowrap">View QR Code</span>
@@ -173,7 +170,7 @@ export const AddressInfoDropdown = ({
           {chain.network != "devnet" ? (
             <li className={selectingNetwork ? "hidden" : ""}>
               <button
-                className="menu-item btn-sm rounded-xl! flex gap-3 py-3"
+                className="menu-item btn-sm !rounded-xl flex gap-3"
                 type="button"
               >
                 <ArrowTopRightOnSquareIcon className="h-6 w-4 ml-2 sm:ml-0" />
@@ -192,7 +189,7 @@ export const AddressInfoDropdown = ({
           {chain.network == "devnet" ? (
             <li className={selectingNetwork ? "hidden" : ""}>
               <button
-                className="menu-item btn-sm rounded-xl! flex gap-3 py-3"
+                className="menu-item btn-sm !rounded-xl flex gap-3 "
                 type="button"
                 onClick={() => {
                   setShowBurnerAccounts(true);
@@ -207,9 +204,9 @@ export const AddressInfoDropdown = ({
           {showBurnerAccounts &&
             createPortal(
               <>
-                <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-hidden focus:outline-hidden">
+                <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
                   <div className="relative w-auto my-6 mx-auto max-w-5xl">
-                    <div className="border border-[#4f4ab7] rounded-lg shadow-lg relative w-full mx-auto md:max-h-120 md:max-w-100 bg-base-100 outline-hidden focus:outline-hidden">
+                    <div className="border border-[#4f4ab7] rounded-lg shadow-lg relative w-full mx-auto md:max-h-[30rem] md:max-w-[25rem] bg-base-100 outline-none focus:outline-none">
                       <div className="flex items-start justify-between p-4 pt-8 rounded-t">
                         <div className="flex justify-center items-center w-11/12">
                           <h2 className="text-lg text-center text-neutral m-0">
@@ -265,7 +262,7 @@ export const AddressInfoDropdown = ({
                     </div>
                   </div>
                 </div>
-                <div className="backdrop-blur-sm fixed inset-0 z-40"></div>
+                <div className="backdrop-blur fixed inset-0 z-40"></div>
               </>,
               document.body
             )}
@@ -274,7 +271,7 @@ export const AddressInfoDropdown = ({
           {/* {allowedNetworks.length > 1 ? (
             <li className={selectingNetwork ? "hidden" : ""}>
               <button
-                className="btn-sm rounded-xl! flex gap-3 py-3"
+                className="btn-sm !rounded-xl flex gap-3 py-3"
                 type="button"
                 onClick={() => {
                   setSelectingNetwork(true);
@@ -285,9 +282,9 @@ export const AddressInfoDropdown = ({
               </button>
             </li>
           ) : null} */}
-          <li className={selectingNetwork ? "hidden" : ""}>
+          <li className={selectingNetwork ? "hidden" : "p-0"}>
             <button
-              className="menu-item text-secondary-content btn-sm rounded-xl! flex gap-3 py-3"
+              className="menu-item text-secondary-content btn-sm text-sm !rounded-xl flex gap-3"
               type="button"
               onClick={handleDisconnect}
             >

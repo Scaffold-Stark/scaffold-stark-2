@@ -22,7 +22,7 @@ const ContractWriteMethods = dynamic(
     import("./ContractWriteMethods").then((mod) => mod.ContractWriteMethods),
   {
     loading: () => <p>Loading Write Methods...</p>,
-  },
+  }
 );
 
 type ContractUIProps = {
@@ -40,7 +40,7 @@ export const ContractUI = ({
   const [activeTab, setActiveTab] = useState("read");
   const [refreshDisplayVariables, triggerRefreshDisplayVariables] = useReducer(
     (value) => !value,
-    false,
+    false
   );
   const { targetNetwork } = useTargetNetwork();
   const {
@@ -102,13 +102,13 @@ export const ContractUI = ({
         </div>
 
         <div className="col-span-1 lg:col-span-2 flex flex-col gap-6">
-          <div className="tabs tabs-boxed border border-[#8A45FC] rounded-[5px] bg-transparent">
+          <div className="tabs tabs-box  border border-[#8A45FC] rounded-[5px] bg-transparent">
             {tabs.map((tab) => (
               <a
                 key={tab.id}
-                className={`tab h-10 ${
+                className={`tab h-10 w-1/2 ${
                   activeTab === tab.id
-                    ? "tab-active bg-[#8A45FC]! rounded-[5px]! text-white!"
+                    ? "tab-active bg-[#8A45FC]! rounded-[5px]! text-white! w-1/2"
                     : ""
                 }`}
                 onClick={() => setActiveTab(tab.id)}

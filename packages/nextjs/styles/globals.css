@@ -208,6 +208,10 @@
   [data-theme="dark"] .hover\:bg-gradient-nav:hover {
     background-image: linear-gradient(90deg, #42d2f1 0%, #b248dd 100%);
   }
+
+  .bg-gradient-dark {
+    background-image: linear-gradient(90deg, #42d2f1 0%, #b248dd 100%);
+  }
 }
 
 @layer base {
