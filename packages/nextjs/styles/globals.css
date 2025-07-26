@@ -263,7 +263,7 @@
 }
 
 @utility btn {
-  @apply rounded-full;
+  @apply rounded-full hover:border-transparent;
 }
 
 @utility btn-sm {
