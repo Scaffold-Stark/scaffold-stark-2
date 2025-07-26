@@ -19,15 +19,15 @@ const ConnectModal = () => {
   const { connectors, connect } = useConnect();
   const [, setLastConnector] = useLocalStorage<{ id: string; ix?: number }>(
     "lastUsedConnector",
-    { id: "" },
+    { id: "" }
   );
   const [, setLastConnectionTime] = useLocalStorage<number>(
     LAST_CONNECTED_TIME_LOCALSTORAGE_KEY,
-    0,
+    0
   );
   const [, setWasDisconnectedManually] = useLocalStorage<boolean>(
     "wasDisconnectedManually",
-    false,
+    false
   );
   const { targetNetwork } = useTargetNetwork();
   const [showOtherOptions, setShowOtherOptions] = useState(false);
@@ -49,7 +49,7 @@ const ConnectModal = () => {
 
   function handleConnectWallet(
     e: React.MouseEvent<HTMLButtonElement>,
-    connector: Connector,
+    connector: Connector
   ) {
     if (connector.id === "burner-wallet") {
       setIsBurnerWallet(true);
@@ -64,7 +64,7 @@ const ConnectModal = () => {
 
   function handleConnectBurner(
     e: React.MouseEvent<HTMLButtonElement>,
-    ix: number,
+    ix: number
   ) {
     const connector = connectors.find((it) => it.id == "burner-wallet");
     if (connector && connector instanceof BurnerConnector) {
@@ -81,7 +81,7 @@ const ConnectModal = () => {
     <div>
       <label
         htmlFor="connect-modal"
-        className="rounded-[18px] btn-sm font-bold px-8 bg-btn-wallet py-3 cursor-pointer"
+        className="rounded-[18px] btn-sm  font-bold px-8 bg-btn-wallet py-3 cursor-pointer"
       >
         <span>Connect</span>
       </label>
@@ -127,7 +127,7 @@ const ConnectModal = () => {
                     ))}
                     {isDevnet && otherConnectors.length > 0 && (
                       <button
-                        className="btn btn-ghost rounded-md mt-4 font-[400] text-base"
+                        className="btn btn-ghost rounded-md mt-4 font-normal text-base"
                         onClick={() => setShowOtherOptions(true)}
                       >
                         Other Options
@@ -145,7 +145,7 @@ const ConnectModal = () => {
                       />
                     ))}
                     <button
-                      className="btn btn-ghost font-[400] text-base mt-4 rounded-md"
+                      className="btn btn-ghost font-normal text-base mt-4 rounded-md"
                       onClick={() => setShowOtherOptions(false)}
                     >
                       Back

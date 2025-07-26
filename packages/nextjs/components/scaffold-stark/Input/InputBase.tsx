@@ -41,7 +41,7 @@ export const InputBase = <
     (e: ChangeEvent<HTMLInputElement>) => {
       onChange(e.target.value as unknown as T);
     },
-    [onChange],
+    [onChange]
   );
 
   // Runs only when reFocus prop is passed, useful for setting the cursor
@@ -50,7 +50,7 @@ export const InputBase = <
     if (reFocus !== undefined) {
       e.currentTarget.setSelectionRange(
         e.currentTarget.value.length,
-        e.currentTarget.value.length,
+        e.currentTarget.value.length
       );
     }
   };
@@ -62,7 +62,7 @@ export const InputBase = <
     <div className={`flex bg-input text-accent ${modifier}`}>
       {prefix}
       <input
-        className="input input-ghost focus-within:border-transparent focus:outline-none focus:bg-transparent h-[2.2rem] min-h-[2.2rem] px-4 border w-full text-xs placeholder:text-[#9596BF] text-neutral rounded-none"
+        className="input input-ghost focus-within:border-transparent focus:outline-hidden focus:bg-transparent h-[2.2rem] min-h-[2.2rem] px-4 border w-full text-xs placeholder:text-[#9596BF] text-neutral rounded-none"
         placeholder={placeholder}
         name={name}
         value={value?.toString() || ""}
