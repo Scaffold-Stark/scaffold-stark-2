@@ -19,6 +19,17 @@ jobs:
           token: ${{ secrets.ORG_GITHUB_TOKEN }}
           path: source_repo
 
+      - name: Install scarb
+        uses: software-mansion/setup-scarb@v1
+        with:
+          tool-versions: ./.tool-versions
+          scarb-lock: ./packages/snfoundry/contracts/Scarb.lock
+
+      - name: Install snfoundryup
+        uses: foundry-rs/setup-snfoundry@v3
+        with:
+          tool-versions: ./.tool-versions
+
       - name: Modify scaffoldConfig in Source Repository
         run: |
           cd source_repo
