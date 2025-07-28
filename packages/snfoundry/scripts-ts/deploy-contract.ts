@@ -30,32 +30,81 @@ const validateConstructorArgsWithStarknetJS = (
   constructorArgs: any
 ): { isValid: boolean; error?: string } => {
   try {
+    const constructorAbi = abi.find((item: any) => item.type === "constructor");
+    if (constructorAbi) {
+      const requiredArgs = constructorAbi.inputs || [];
+      for (const arg of requiredArgs) {
+        if (
+          arg.type === "core::starknet::contract_address::ContractAddress" &&
+          constructorArgs[arg.name]
+        ) {
+          const addressValue = constructorArgs[arg.name];
+          try {
+            const addressBigInt = BigInt(addressValue);
+            if (addressBigInt === BigInt(0)) {
+              return {
+                isValid: false,
+                error: `Invalid ContractAddress for '${arg.name}': Zero address (${addressValue}) is not allowed. Please provide a valid non-zero address.`,
+              };
+            }
+          } catch (parseError) {}
+        }
+      }
+    }
+
     const contractCalldata = new CallData(abi);
     contractCalldata.compile("constructor", constructorArgs);
     return { isValid: true };
   } catch (error: any) {
     const originalError = error.message || "Invalid constructor arguments";
     let userFriendlyMessage = originalError;
-    
+
     if (originalError.includes("felt") || originalError.includes("Felt")) {
-      userFriendlyMessage = "Invalid felt252 value. Expected: hex string (0x123...), decimal string ('123'), or number.";
-    } else if (originalError.includes("address") || originalError.includes("Address")) {
-      userFriendlyMessage = "Invalid ContractAddress. Expected: valid hex address (0x123...abc).";
-    } else if (originalError.includes("uint256") || originalError.includes("u256")) {
-      userFriendlyMessage = "Invalid u256 value. Expected: number, bigint, hex string, or {low: '123', high: '0'} object.";
-    } else if (originalError.includes("bool") || originalError.includes("Bool")) {
-      userFriendlyMessage = "Invalid boolean value. Expected: true, false, 0, or 1.";
-    } else if (originalError.includes("ByteArray") || originalError.includes("string")) {
+      userFriendlyMessage =
+        "Invalid felt252 value. Expected: hex string (0x123...), decimal string ('123'), or number.";
+    } else if (
+      originalError.includes("address") ||
+      originalError.includes("Address")
+    ) {
+      userFriendlyMessage =
+        "Invalid ContractAddress. Expected: valid hex address (0x123...abc).";
+    } else if (
+      originalError.includes("uint256") ||
+      originalError.includes("u256")
+    ) {
+      userFriendlyMessage =
+        "Invalid u256 value. Expected: number, bigint, hex string, or {low: '123', high: '0'} object.";
+    } else if (
+      originalError.includes("bool") ||
+      originalError.includes("Bool")
+    ) {
+      userFriendlyMessage =
+        "Invalid boolean value. Expected: true, false, 0, or 1.";
+    } else if (
+      originalError.includes("ByteArray") ||
+      originalError.includes("string")
+    ) {
       userFriendlyMessage = "Invalid ByteArray value. Expected: string.";
-    } else if (originalError.includes("Array") || originalError.includes("array")) {
-      userFriendlyMessage = "Invalid array value. Expected: array format [item1, item2, ...].";
-    } else if (originalError.includes("missing") || originalError.includes("expected")) {
+    } else if (
+      originalError.includes("Array") ||
+      originalError.includes("array")
+    ) {
+      userFriendlyMessage =
+        "Invalid array value. Expected: array format [item1, item2, ...].";
+    } else if (
+      originalError.includes("missing") ||
+      originalError.includes("expected")
+    ) {
       userFriendlyMessage = originalError;
     }
-    
-    return { 
-      isValid: false, 
-      error: `${userFriendlyMessage}${originalError !== userFriendlyMessage ? ` (Details: ${originalError})` : ''}`
+
+    return {
+      isValid: false,
+      error: `${userFriendlyMessage}${
+        originalError !== userFriendlyMessage
+          ? ` (Details: ${originalError})`
+          : ""
+      }`,
     };
   }
 };
@@ -276,13 +325,15 @@ const deployContract = async (
     if (!constructorArgs) {
       throw new Error(
         red(
-          `Missing constructor arguments: expected ${requiredArgs.length} (${requiredArgs
+          `Missing constructor arguments: expected ${
+            requiredArgs.length
+          } (${requiredArgs
             .map((a: any) => `${a.name}: ${a.type}`)
             .join(", ")}), but got none.`
         )
       );
     }
-    
+
     for (const arg of requiredArgs) {
       if (
         !(arg.name in constructorArgs) ||
@@ -297,13 +348,14 @@ const deployContract = async (
         );
       }
     }
-    
-    const validationResult = validateConstructorArgsWithStarknetJS(abi, constructorArgs);
+
+    const validationResult = validateConstructorArgsWithStarknetJS(
+      abi,
+      constructorArgs
+    );
     if (!validationResult.isValid) {
       throw new Error(
-        red(
-          `Constructor validation failed: ${validationResult.error}`
-        )
+        red(`Constructor validation failed: ${validationResult.error}`)
       );
     }
   }
