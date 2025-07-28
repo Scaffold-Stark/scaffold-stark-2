@@ -37,7 +37,7 @@ export const WriteOnlyFunctionForm = ({
   contractAddress,
 }: WriteOnlyFunctionFormProps) => {
   const [form, setForm] = useState<Record<string, any>>(() =>
-    getInitialFormState(abiFunction)
+    getInitialFormState(abiFunction),
   );
   const [formErrorMessage, setFormErrorMessage] =
     useState<FormErrorMessageState>({});
@@ -56,7 +56,7 @@ export const WriteOnlyFunctionForm = ({
       !chain ||
       chain?.network !== targetNetwork.network ||
       walletStatus === "disconnected",
-    [chain, targetNetwork.network, walletStatus]
+    [chain, targetNetwork.network, walletStatus],
   );
 
   const { contract: contractInstance } = useContract({
@@ -81,10 +81,10 @@ export const WriteOnlyFunctionForm = ({
           ? [
               contractInstance.populate(
                 abiFunction.name,
-                getArgsAsStringInputFromForm(form)
+                getArgsAsStringInputFromForm(form),
               ),
             ]
-          : []
+          : [],
       );
     } catch (e: any) {
       const errorPattern = /Contract (.*?)"}/;
@@ -93,7 +93,7 @@ export const WriteOnlyFunctionForm = ({
 
       console.error(
         "⚡️ ~ file: WriteOnlyFunctionForm.tsx:handleWrite ~ error",
-        message
+        message,
       );
     }
   };
@@ -102,7 +102,7 @@ export const WriteOnlyFunctionForm = ({
     useState<InvokeTransactionReceiptResponse>();
   useEffect(() => {
     setDisplayedTxResult(
-      txResult as unknown as InvokeTransactionReceiptResponse
+      txResult as unknown as InvokeTransactionReceiptResponse,
     );
     onChange();
   }, [txResult, onChange]);

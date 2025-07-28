@@ -58,7 +58,7 @@ export const AddressInfoDropdown = ({
 
   function handleConnectBurner(
     e: React.MouseEvent<HTMLButtonElement>,
-    ix: number
+    ix: number,
   ) {
     const connector = connectors.find((it) => it.id == "burner-wallet");
     if (connector && connector instanceof BurnerConnector) {
@@ -74,7 +74,7 @@ export const AddressInfoDropdown = ({
     { id: "" },
     {
       initializeWithValue: false,
-    }
+    },
   );
 
   const [, setWasDisconnectedManually] = useLocalStorage<boolean>(
@@ -82,7 +82,7 @@ export const AddressInfoDropdown = ({
     false,
     {
       initializeWithValue: false,
-    }
+    },
   );
 
   const handleDisconnect = () => {
@@ -252,7 +252,7 @@ export const AddressInfoDropdown = ({
                                 ></BlockieAvatar>
                                 {`${burnerAcc.accountAddress.slice(
                                   0,
-                                  6
+                                  6,
                                 )}...${burnerAcc.accountAddress.slice(-4)}`}
                               </button>
                             </div>
@@ -264,7 +264,7 @@ export const AddressInfoDropdown = ({
                 </div>
                 <div className="backdrop-blur fixed inset-0 z-40"></div>
               </>,
-              document.body
+              document.body,
             )}
 
           {/* TODO: reinstate if needed */}
