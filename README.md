@@ -268,6 +268,8 @@ You have to paste the endpoint and body in the API platform and click on the `Se
 <details>
 
 By default, majority of the Network settings are centralized in `scaffold.config.ts`, the exception being the RPC urls which are configured from your environment variables. In the absence of the proper settings, the framework will choose a random provider for you.
+In the env file also, the lines configuring the networks (devnet, sepolia or mainnet) need to be uncommented, depending on what
+network you want activated for you.
 
 **How to Change Networks:**
 
