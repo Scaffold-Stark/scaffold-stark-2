@@ -15,9 +15,16 @@ export const logDeploymentSummary = ({
   transactionHash: string;
   deployments: Record<string, { address: string }>;
 }) => {
-  if (network !== "sepolia" && network !== "mainnet") return;
-
-  const baseUrl = `https://${network}.starkscan.co`;
+  
+  let baseUrl: any;
+  if (network === "sepolia") {
+    baseUrl = `https://sepolia.starkscan.co`;
+  } else if (network === "mainnet") {
+    baseUrl = `https://starkscan.co`;
+  } else {
+    console.error(chalk.red(`Unsupported network: ${network}`));
+    return;
+  }
   
   console.log(chalk.green("\n📦 Deployment Summary\n"));
   console.log(`${chalk.blue('🌐 Network:')} ${chalk.white(network)}\n`);
