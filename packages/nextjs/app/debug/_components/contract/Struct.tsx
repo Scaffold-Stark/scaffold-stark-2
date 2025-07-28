@@ -70,7 +70,7 @@ export const Struct = ({
   return (
     <div>
       <div
-        className={`collapse bg-base-200 pl-4 pt-1.5 pb-2 border-2 ${
+        className={`collapse bg-base-200 pl-4 pt-1.5  border-2 ${
           isDisabled ? "border-base-100 cursor-not-allowed" : "border-secondary"
         } custom-after`}
       >

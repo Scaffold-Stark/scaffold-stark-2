@@ -270,6 +270,10 @@
   @apply text-sm;
 }
 
+@utility collapse {
+  @apply rounded-[1rem];
+}
+
 @layer utilities {
   :root,
   [data-theme] {
