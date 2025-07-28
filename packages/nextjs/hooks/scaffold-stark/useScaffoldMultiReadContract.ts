@@ -5,51 +5,61 @@ import {
   ExtractAbiFunctionNamesScaffold,
   UseScaffoldReadConfig,
   Contract,
+  AbiFunctionOutputs,
 } from "~~/utils/scaffold-stark/contract";
-import {
-  Abi,
-  Address,
-  useProvider,
-  UseReadContractProps,
-} from "@starknet-react/core";
+import { Abi, Address, useProvider } from "@starknet-react/core";
 import {
   hash,
   CallData,
   Contract as StarknetContract,
-  BlockIdentifier,
   BlockNumber,
-  Result,
 } from "starknet";
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { useTargetNetwork } from "./useTargetNetwork";
 import { multicallAbi } from "~~/utils/Constants";
+import { Tuple } from "~~/types/utils";
+
+type ViewFunctionName<TContractName extends ContractName> =
+  ExtractAbiFunctionNamesScaffold<ContractAbi<TContractName>, "view">;
 
 type ScaffoldReadCall<
   TAbi extends Abi,
   TContractName extends ContractName,
-  TFunctionName extends ExtractAbiFunctionNamesScaffold<
-    ContractAbi<TContractName>,
-    "view"
-  >,
+  TFunctionName extends ViewFunctionName<TContractName>,
 > = Pick<
   UseScaffoldReadConfig<TAbi, TContractName, TFunctionName>,
   "functionName" | "contractName" | "args"
 >;
 
-type UseScaffoldMultiReadProps<
+type ScaffoldReadResults<TCalls extends readonly any[]> = {
+  readonly [K in keyof TCalls]: TCalls[K] extends {
+    contractName: infer TContractName;
+    functionName: infer TFunctionName;
+  }
+    ? TContractName extends ContractName
+      ? TFunctionName extends ViewFunctionName<TContractName>
+        ? AbiFunctionOutputs<ContractAbi<TContractName>, TFunctionName>
+        : never
+      : never
+    : never;
+};
+
+type UseScaffoldMultiReadParams<
   TAbi extends Abi,
   TContractName extends ContractName,
-  TFunctionName extends ExtractAbiFunctionNamesScaffold<
-    ContractAbi<TContractName>,
-    "view"
-  >,
+  TFunctionName extends ViewFunctionName<TContractName>,
+  TCall extends Tuple<ScaffoldReadCall<TAbi, TContractName, TFunctionName>>,
 > = {
-  calls: Array<ScaffoldReadCall<TAbi, TContractName, TFunctionName>>;
+  calls: TCall;
   multicallAddress: Address;
   blockIdentifier?: BlockNumber;
   watch?: boolean;
   queryConfig?: Omit<
-    UseQueryOptions<unknown, Error, Result[]>,
+    UseQueryOptions<
+      ScaffoldReadResults<TCall>,
+      Error,
+      ScaffoldReadResults<TCall>
+    >,
     "queryKey" | "queryFn"
   >;
 };
@@ -57,15 +67,14 @@ type UseScaffoldMultiReadProps<
 export const useScaffoldMultiReadContract = <
   TAbi extends Abi,
   TContractName extends ContractName,
-  TFunctionName extends ExtractAbiFunctionNamesScaffold<
-    ContractAbi<TContractName>,
-    "view"
-  >,
+  TFunctionName extends ViewFunctionName<TContractName>,
+  TCall extends Tuple<ScaffoldReadCall<TAbi, TContractName, TFunctionName>>,
 >(
-  props: UseScaffoldMultiReadProps<TAbi, TContractName, TFunctionName>,
+  params: UseScaffoldMultiReadParams<TAbi, TContractName, TFunctionName, TCall>,
 ) => {
   const { calls, multicallAddress, blockIdentifier, watch, queryConfig } =
-    props;
+    params;
+
   const { enabled: enabledParam = true, ...restQueryConfig } =
     queryConfig || {};
 
@@ -81,7 +90,8 @@ export const useScaffoldMultiReadContract = <
     blockIdentifier,
     watch,
   ];
-  const queryFn = async (): Promise<Result[]> => {
+
+  const queryFn = async () => {
     const parsedCalls = calls.map((c) => {
       const { functionName, contractName, args } = c;
       const contract = contracts?.[targetNetwork.network]?.[
@@ -125,18 +135,17 @@ export const useScaffoldMultiReadContract = <
       },
     )) as bigint[][];
 
-    const parsedResult = result.map((raw, index) => {
+    const parsedResults = result.map((raw, index) => {
       const { functionName } = calls[index];
       const callDataHelper = callDataHelpers[index];
-      const parsedData = callDataHelper.parse(
+
+      return callDataHelper.parse(
         functionName,
         raw.map((b) => b.toString()),
       );
-
-      return parsedData;
     });
 
-    return parsedResult;
+    return parsedResults as ScaffoldReadResults<TCall>;
   };
 
   return useQuery({
