@@ -325,7 +325,7 @@ const assertRpcNetworkActive = async () => {
     const block = await provider.getBlock("latest");
     console.log(green(`✓ RPC connected (Block #${block.block_number})`));
   } catch (e) {
-    const errorMessage = `RPC provider is not active. \`RPC_URL_${networkName.toUpperCase()}\` is not reachable.`;
+    const errorMessage = `RPC provider is not active. \`RPC_URL_${networkName.toUpperCase()}\` is not reachable.\n`;
     console.error(red(errorMessage), e);
     throw new Error(errorMessage);
   }
