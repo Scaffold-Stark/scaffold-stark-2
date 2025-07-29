@@ -58,7 +58,7 @@ export const ArrayInput = ({
         <div className="collapse-title p-0 min-h-fit peer-checked:mb-2 text-primary-content/50">
           <p className="m-0 p-0 text-[1rem]">array (length: {arrLength + 1})</p>
         </div>
-        <div className="ml-3 flex-col space-y-4 border-secondary/80 border-l-2 pl-4 collapse-content">
+        <div className="ml-3 flex-col space-y-4 border-secondary/80 peer-checked:mb-3 border-l-2 pl-4 collapse-content">
           {/*  do note here that the "index" are basically array keys */}
           {Object.keys(inputArr).map((index) => {
             return (
