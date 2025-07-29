@@ -12,9 +12,14 @@ import {
   UniversalDetails,
   constants,
   TypedData,
+  RpcError,
 } from "starknet";
 import { DeployContractParams, Network } from "./types";
 import { green, red, yellow } from "./helpers/colorize-log";
+import {
+  logDeploymentSummary,
+  postDeploymentBalanceSummary,
+} from "./helpers/log";
 
 interface Arguments {
   network: string;
@@ -43,52 +48,89 @@ const resetDeployments: boolean = argv.reset;
 let deployments = {};
 let deployCalls = [];
 
-const { provider, deployer }: Network = networks[networkName];
+const { provider, deployer, feeToken }: Network = networks[networkName];
 
 const declareIfNot_NotWait = async (
   payload: DeclareContractPayload,
   options?: UniversalDetails
 ) => {
-  const declareContractPayload = extractContractHashes(payload);
-  try {
-    await provider.getClassByHash(declareContractPayload.classHash);
-  } catch (error) {
-    try {
-      const { transaction_hash } = await deployer.declare(payload, {
-        ...options,
-        version: constants.TRANSACTION_VERSION.V3,
-      });
-      if (networkName === "sepolia" || networkName === "mainnet") {
-        console.log(
-          yellow("Waiting for declaration transaction to be accepted...")
-        );
-        const receipt = await provider.waitForTransaction(transaction_hash);
-        console.log(
-          yellow("Declaration transaction receipt:"),
-          JSON.stringify(
-            receipt,
-            (_, v) => (typeof v === "bigint" ? v.toString() : v),
-            2
-          )
-        );
+  const { classHash } = extractContractHashes(payload);
 
-        const receiptAny = receipt as any;
-        if (receiptAny.execution_status !== "SUCCEEDED") {
-          const revertReason = receiptAny.revert_reason || "Unknown reason";
-          throw new Error(
-            red(`Declaration failed or reverted. Reason: ${revertReason}`)
-          );
-        }
-        console.log(green("Declaration successful"));
-      }
-    } catch (e) {
-      console.error(red("Error declaring contract:"), e);
+  try {
+    await provider.getClassByHash(classHash);
+    console.log(
+      green("Skipping declare - class hash"),
+      classHash,
+      green("already exists on-chain.")
+    );
+
+    return {
+      classHash,
+    };
+  } catch (e) {
+    if (e instanceof RpcError && e.isType("CLASS_HASH_NOT_FOUND")) {
+      console.log(
+        yellow("Class hash"),
+        classHash,
+        yellow("not found, proceeding with declaration...")
+      );
+    } else {
+      console.error(red("Error while checking classHash"), classHash);
       throw e;
     }
   }
-  return {
-    classHash: declareContractPayload.classHash,
-  };
+
+  try {
+    const { transaction_hash } = await deployer.declare(payload, {
+      ...options,
+      version: constants.TRANSACTION_VERSION.V3,
+    });
+
+    if (networkName === "sepolia" || networkName === "mainnet") {
+      console.log(
+        yellow("Waiting for declaration transaction to be accepted...")
+      );
+      const receipt = await provider.waitForTransaction(transaction_hash);
+      console.log(
+        yellow("Declaration transaction receipt:"),
+        JSON.stringify(
+          receipt,
+          (_, v) => (typeof v === "bigint" ? v.toString() : v),
+          2
+        )
+      );
+
+      const receiptAny = receipt as any;
+      if (receiptAny.execution_status !== "SUCCEEDED") {
+        const revertReason = receiptAny.revert_reason || "Unknown reason";
+        throw new Error(
+          red(`Declaration failed or reverted. Reason: ${revertReason}`)
+        );
+      }
+      console.log(green("Declaration successful"));
+    }
+
+    return {
+      classHash: classHash,
+    };
+  } catch (e) {
+    if (
+      e instanceof RpcError &&
+      e.isType("VALIDATION_FAILURE") &&
+      e.baseError.data.includes("exceed balance")
+    ) {
+      console.error(
+        red("Class declaration failed: deployer"),
+        deployer.address,
+        red("has insufficient balance.")
+      );
+      throw "Class declaration failed: insufficient balance";
+    }
+
+    console.error(red("Class declaration failed: error details below"));
+    console.error(e);
+    throw "Class declaration failed";
+  }
 };
 
 const deployContract_NotWait = async (payload: {
@@ -249,6 +291,7 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
       ...options,
       version: constants.TRANSACTION_VERSION.V3,
     });
+    console.log(green("Deploy Calls Executed at "), transaction_hash);
     if (networkName === "sepolia" || networkName === "mainnet") {
       const receipt = await provider.waitForTransaction(transaction_hash);
       const receiptAny = receipt as any;
@@ -256,9 +299,21 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
         const revertReason = receiptAny.revert_reason;
         throw new Error(red(`Deploy Calls Failed: ${revertReason}`));
       }
+      // logging links beatifully.
+      logDeploymentSummary({
+        network: networkName,
+        transactionHash: transaction_hash,
+        deployments,
+      });
+      // check recipient and if unit of feeToken is FRI its stark if WEI its ether
+      await postDeploymentBalanceSummary({
+        provider,
+        deployer,
+        reciept: receiptAny,
+        feeToken: feeToken,
+      });
     }
-    console.log(green("Deploy Calls Executed at "), transaction_hash);
-  } catch (error) {
+  } catch (e) {
     // split the calls in half and try again recursively
     if (deployCalls.length > 100) {
       let half = Math.ceil(deployCalls.length / 2);
@@ -268,9 +323,26 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
       await executeDeployCalls(options);
       deployCalls = secondHalf;
       await executeDeployCalls(options);
-    } else {
-      throw error;
+
+      return;
     }
+
+    if (
+      e instanceof RpcError &&
+      e.isType("VALIDATION_FAILURE") &&
+      e.baseError.data.includes("exceed balance")
+    ) {
+      console.error(
+        red("Deployment tx execution failed: deployer"),
+        deployer.address,
+        red("has insufficient balance.")
+      );
+      throw "Deployment tx execution failed: insufficient balance";
+    }
+
+    console.error(red("Deployment tx execution failed: error details below"));
+    console.error(e);
+    throw "Deployment tx execution failed";
   }
 };
 
