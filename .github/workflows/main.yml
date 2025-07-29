@@ -11,7 +11,7 @@ on:
       - develop
     paths:
       - "packages/nextjs/**"
-      - "packages/snfoundry/contracts/**"
+      - "packages/snfoundry/**"
 
 jobs:
   ci:
