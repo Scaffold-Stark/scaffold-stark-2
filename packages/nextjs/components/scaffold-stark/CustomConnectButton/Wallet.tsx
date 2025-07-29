@@ -44,7 +44,7 @@ const Wallet = ({
         handleConnectWallet(e, connector);
       }}
     >
-      <div className="h-[1.5rem] w-[1.5rem] rounded-[5px]">
+      <div className="h-6 w-6 rounded-[5px]">
         <Image
           alt={connector.name}
           loader={loader}
