@@ -3934,7 +3934,7 @@ __metadata:
     "@starknet-react/chains": ^4.0.1-beta.2
     "@starknet-react/core": 4.0.1-beta.3
     "@starknet-react/typescript-config": 0.0.2
-    "@tailwindcss/postcss": ^4.1.11
+    "@tailwindcss/postcss": ^4
     "@testing-library/dom": ^10.4.0
     "@testing-library/jest-dom": ^6.6.3
     "@testing-library/react": ^16.2.0
@@ -3949,7 +3949,7 @@ __metadata:
     "@vitest/coverage-v8": ^2.1.1
     abi-wan-kanabi: ^2.2.4
     blo: ^1.1.1
-    daisyui: ^5.0.46
+    daisyui: latest
     eslint: ^8
     eslint-config-next: 15.2.3
     ethers: ^6.12.0
@@ -3970,7 +3970,7 @@ __metadata:
     react-hot-toast: ^2.4.1
     shx: ^0.4.0
     starknet: ^7.5.0
-    tailwindcss: ^4.1.11
+    tailwindcss: ^4
     type-fest: ^4.6.0
     typescript: ^5
     usehooks-ts: ^2.13.0
@@ -4250,7 +4250,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailwindcss/postcss@npm:^4.1.11":
+"@tailwindcss/postcss@npm:^4":
   version: 4.1.11
   resolution: "@tailwindcss/postcss@npm:4.1.11"
   dependencies:
@@ -6942,10 +6942,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"daisyui@npm:^5.0.46":
-  version: 5.0.46
-  resolution: "daisyui@npm:5.0.46"
-  checksum: eef1b2293c1aba0fbab7dfab872c0328b115d6d7ad8157592237df56bead3492751115c1cc8376182d31da597e87511c0bd08bc9e6e148e5743af817457942ad
+"daisyui@npm:latest":
+  version: 5.0.50
+  resolution: "daisyui@npm:5.0.50"
+  checksum: 1de03bc8da1b920ce4bd0f41721fd8aac7929f159af3808cc76a1c89d974e6f809fb235502ebf64a89e24eab185ad6a33e2a98bb7604029e4d84b3f5b8afff8b
   languageName: node
   linkType: hard
 
@@ -13017,7 +13017,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwindcss@npm:4.1.11, tailwindcss@npm:^4.1.11":
+"tailwindcss@npm:4.1.11, tailwindcss@npm:^4":
   version: 4.1.11
   resolution: "tailwindcss@npm:4.1.11"
   checksum: db5883219aa7b4192aa13a028547867c5d6c18b3438b99c25ac7af64c3f9475d1b96970cb27f52f6f53789bb91d8fc4ed8e7f181c73ba7dda721cf5a44983804
