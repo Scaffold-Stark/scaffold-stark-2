@@ -11,9 +11,7 @@ on:
       - develop
     paths:
       - "packages/nextjs/**"
-      - "packages/snfoundry/contracts/**"
-      - "packages/snfoundry/scripts-ts/**"
-      - "packages/snfoundry/scripts-cairo/**"
+      - "packages/snfoundry/**"
 
 jobs:
   ci:
