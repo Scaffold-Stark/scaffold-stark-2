@@ -17,13 +17,6 @@ const Footer = dynamic(
     ssr: false,
   },
 );
-const ProgressBar = dynamic(
-  () =>
-    import("~~/components/scaffold-stark/ProgressBar").then(
-      (mod) => mod.ProgressBar,
-    ),
-  { ssr: false },
-);
 
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
   useNativeCurrencyPrice();
@@ -72,7 +65,6 @@ export const ScaffoldStarkAppWithProviders = ({
       connectors={connectors}
       explorer={starkscan}
     >
-      <ProgressBar />
       <ScaffoldStarkApp>{children}</ScaffoldStarkApp>
     </StarknetConfig>
   );

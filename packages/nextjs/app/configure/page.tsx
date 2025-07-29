@@ -1,4 +1,4 @@
-import DownloadContractsClient from "./DownloadContractsClient";
+import DownloadContracts from "./_components/DownloadContracts";
 import type { NextPage } from "next";
 import { getMetadata } from "~~/utils/scaffold-stark/getMetadata";
 
@@ -8,7 +8,7 @@ export const metadata = getMetadata({
 });
 
 const Configure: NextPage = () => {
-  return <DownloadContractsClient />;
+  return <DownloadContracts />;
 };
 
 export default Configure;

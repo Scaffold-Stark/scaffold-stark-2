@@ -7,9 +7,7 @@ import configExternalContracts from "~~/contracts/configExternalContracts";
 import { deepMergeContracts } from "~~/utils/scaffold-stark/contract";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import prettier from "prettier/standalone";
-import parserTypescript from "prettier/plugins/typescript";
-import prettierPluginEstree from "prettier/plugins/estree";
+// Prettier imports moved to lazy loading for better performance
 
 export default function DownloadContracts() {
   const { provider } = useProvider();
@@ -53,13 +51,21 @@ export default function DownloadContracts() {
     * You should not edit it manually or your changes might be overwritten.
     */`;
 
-    const configExternalContracts = await prettier.format(
+    // Lazy load prettier and plugins only when needed
+    const [prettier, parserTypescript, prettierPluginEstree] =
+      await Promise.all([
+        import("prettier/standalone"),
+        import("prettier/plugins/typescript"),
+        import("prettier/plugins/estree"),
+      ]);
+
+    const configExternalContracts = await prettier.default.format(
       `${generatedContractComment}\n\nconst configExternalContracts = ${JSON.stringify(
         contractsData,
       )} as const;\n\nexport default configExternalContracts;`,
       {
         parser: "typescript",
-        plugins: [parserTypescript, prettierPluginEstree],
+        plugins: [parserTypescript.default, prettierPluginEstree.default],
       },
     );
     const blob = new Blob([configExternalContracts], {
