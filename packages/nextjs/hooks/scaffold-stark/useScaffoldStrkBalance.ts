@@ -10,16 +10,22 @@ type UseScaffoldStrkBalanceProps = {
 };
 
 /**
- * Fetches and returns the STRK token balance for a given address.
+ * Fetches STRK token balance for a given address.
+ * This hook reads the balance_of function from the STRK token contract
+ * and provides both raw and formatted balance values.
  *
- * @param address - The address to fetch the balance for
+ * @param config - Configuration object for the hook
+ * @param config.address - The address to check STRK balance for (optional)
  * @returns {Object} An object containing:
- *   - balance: The STRK token balance
- *   - isLoading: Boolean indicating if the balance is loading
- *   - error: Any error encountered
- *
- * @see https://scaffoldstark.com/docs/hooks/
+ *   - value: The raw balance as bigint
+ *   - decimals: Token decimals (18)
+ *   - symbol: Token symbol ("STRK")
+ *   - formatted: Formatted balance as string, defaults to "0" if no data
+ *   - error: Any error encountered during the read operation
+ *   - (All other properties from useReadContract)
+ * @see {@link https://scaffoldstark.com/docs/hooks/useScaffoldStrkBalance}
  */
+
 const useScaffoldStrkBalance = ({ address }: UseScaffoldStrkBalanceProps) => {
   const { data: deployedContract } = useDeployedContractInfo("Strk");
 

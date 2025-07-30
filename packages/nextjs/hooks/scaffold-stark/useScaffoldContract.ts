@@ -6,18 +6,19 @@ import { useProvider, useAccount } from "@starknet-react/core";
 import { useMemo } from "react";
 
 /**
- * Provides contract instance and ABI for a given contract name.
+ * Provides a contract instance for interacting with deployed contracts.
+ * This hook creates a Starknet contract instance with the deployed contract data,
+ * automatically connects the user's account if available, and provides a fallback
+ * mechanism for contract calls with response parsing.
  *
- * @param contractName - The deployed contract name
+ * @param config - Configuration object for the hook
+ * @param {TContractName} config.contractName - The name of the contract to get an instance for
  * @returns {Object} An object containing:
- *   - contract: The contract instance
- *   - abi: The contract ABI
- *   - address: The contract address
- *   - isLoading: Boolean indicating if contract data is loading
- *   - error: Any error encountered
- *
- * @see https://scaffoldstark.com/docs/hooks/
+ *   - data: The contract instance (type Contract) with connected account and fallback call mechanism, or undefined if not deployed
+ *   - isLoading: Boolean indicating if the contract data is loading
+ * @see {@link https://scaffoldstark.com/docs/hooks/useScaffoldContract}
  */
+
 export const useScaffoldContract = <TContractName extends ContractName>({
   contractName,
 }: {

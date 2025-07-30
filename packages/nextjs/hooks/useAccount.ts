@@ -6,15 +6,21 @@ import { useEffect, useState, useMemo } from "react";
 import { AccountInterface, constants } from "starknet";
 
 /**
- * Returns the current user's account information from the connected wallet.
+ * Wrapper around starknet-react's useAccount hook to fix inconsistencies and provide workarounds.
+ * This hook addresses issues with the original starknet-react useAccount hook, including
+ * status inconsistencies and connection problems. It provides a more reliable account interface
+ * with fallback mechanisms for various wallet connection scenarios.
  *
- * @returns {Object} An object containing:
+ * @returns {UseAccountResult} An object containing:
+ *   - account: The account interface with workarounds for connection issues
  *   - address: The user's wallet address
+ *   - status: The corrected connection status (fixed inconsistencies)
+ *   - chainId: The chain ID of the connected network
  *   - isConnected: Boolean indicating if the user is connected
- *   - error: Any error encountered
- *
- * @see https://scaffoldstark.com/docs/hooks/
+ *   - error: Any error encountered during account operations
+ *   - All other properties from starknet-react's useAccount
  */
+
 export function useAccount(): UseAccountResult {
   const starknetAccount = useStarknetReactAccount();
   const { account, address, status } = starknetAccount;

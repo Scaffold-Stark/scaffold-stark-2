@@ -23,25 +23,26 @@ import { composeEventFilterKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
 
 const MAX_KEYS_COUNT = 16;
 /**
- * Reads events from a deployed contract and returns their history, with optional block, transaction, and receipt data. Supports filtering and polling.
+ * Reads historical events from a deployed contract.
+ * This hook fetches and parses events from a specific block onwards, with optional
+ * filtering, data inclusion, and continuous watching capabilities.
  *
- * @param config - Configuration object for the hook
- * @param config.contractName - The deployed contract name
- * @param config.eventName - The name of the event to listen for
- * @param config.fromBlock - The block number to start reading events from
- * @param config.filters - Filters to be applied to the event (parameterName: value)
- * @param config.blockData - If true, includes block data for each event (default: false)
- * @param config.transactionData - If true, includes transaction data for each event (default: false)
- * @param config.receiptData - If true, includes receipt data for each event (default: false)
- * @param config.watch - If true, events will be updated every pollingInterval milliseconds (default: false)
- * @param config.enabled - If false, disables the hook (default: true)
- * @param config.format - If true, parses and formats event arguments (default: true)
+ * @param config - Configuration object for the hook, typed with generics for contract and event names
+ * @param {TContractName} config.contractName - The deployed contract name to read events from
+ * @param {TEventName} config.eventName - The name of the event to read (must exist in contract ABI)
+ * @param {bigint} config.fromBlock - The block number to start reading events from
+ * @param {Object} [config.filters] - Optional filters to apply to events (parameterName: value)
+ * @param {boolean} [config.blockData=false] - If true, includes block data for each event (default: false)
+ * @param {boolean} [config.transactionData=false] - If true, includes transaction data for each event (default: false)
+ * @param {boolean} [config.receiptData=false] - If true, includes receipt data for each event (default: false)
+ * @param {boolean} [config.watch=false] - If true, continuously watches for new events (default: false)
+ * @param {boolean} [config.format=true] - If true, formats the event data (default: true)
+ * @param {boolean} [config.enabled=true] - If false, disables the hook (default: true)
  * @returns {Object} An object containing:
- *   - data: Array of parsed event history objects
- *   - isLoading: Boolean indicating if events are loading
- *   - error: Any error encountered
- *
- * @see https://scaffoldstark.com/docs/hooks/
+ *   - data: Array of parsed event data with type, args, parsedArgs (if format is true), and optional block/transaction/receipt data if respective flags are enabled
+ *   - isLoading: Boolean indicating if the hook is loading or processing events
+ *   - error: Any error encountered during event reading, or undefined if successful
+ * @see {@link https://scaffoldstark.com/docs/hooks/useScaffoldEventHistory}
  */
 export const useScaffoldEventHistory = <
   TContractName extends ContractName,

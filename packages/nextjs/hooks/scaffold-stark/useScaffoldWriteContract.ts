@@ -16,18 +16,18 @@ import { Contract as StarknetJsContract } from "starknet";
 
 /**
  * Provides a function to write (send transactions) to a contract method.
+ * This hook creates a transaction function that can be called to execute
+ * external (write) functions on a deployed contract, with built-in validation
+ * for contract deployment, wallet connection, and network compatibility.
  *
  * @param config - Configuration object for the hook
- * @param config.contractName - The deployed contract name
- * @param config.methodName - The contract method to call
+ * @param config.contractName - The deployed contract name to interact with
+ * @param config.functionName - The contract method to call (must be an external function)
  * @param config.args - Arguments for the method call
- * @param config.enabled - If false, disables the hook (default: true)
  * @returns {Object} An object containing:
- *   - write: Function to execute the transaction
- *   - isLoading: Boolean indicating if the transaction is in progress
- *   - error: Any error encountered
- *
- * @see https://scaffoldstark.com/docs/hooks/
+ *   - sendAsync: Function to execute the transaction with optional override arguments
+ *   - All properties from sendTransactionInstance (isLoading, error, status, etc.)
+ * @see {@link https://scaffoldstark.com/docs/hooks/useScaffoldWriteContract}
  */
 export const useScaffoldWriteContract = <
   TAbi extends Abi,

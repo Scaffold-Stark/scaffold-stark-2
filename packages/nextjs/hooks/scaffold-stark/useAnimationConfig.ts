@@ -3,13 +3,13 @@ import { useEffect, useState } from "react";
 const ANIMATION_TIME = 2000;
 
 /**
- * Provides animation state for UI elements when the input data changes.
+ * Tracks changes in data and provides animation state for UI feedback when data updates.
+ * When the input data changes, this hook returns true for showAnimation for a brief period
+ * to allow UI components to display visual feedback (like highlighting or pulsing effects).
  *
- * @param data - The data to watch for changes
+ * @param data - The data value to track for changes. Can be any type.
  * @returns {Object} An object containing:
- *   - showAnimation: Boolean indicating if the animation should be shown
- *
- * @see https://scaffoldstark.com/docs/
+ *   - showAnimation: Boolean indicating if the animation should be shown (true when data has changed, false after animation period)
  */
 export function useAnimationConfig(data: any) {
   const [showAnimation, setShowAnimation] = useState(false);

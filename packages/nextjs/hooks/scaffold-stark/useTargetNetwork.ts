@@ -6,12 +6,12 @@ import { ChainWithAttributes } from "~~/utils/scaffold-stark";
 // import { NETWORKS_EXTRA_DATA } from "~~/utils/scaffold-stark";
 
 /**
- * Returns the currently selected target network and related info.
+ * Retrieves the target network based on the connected wallet or defaults to the first network.
+ * This hook gets the network from the connected wallet's chainId and updates the global state
+ * when the network changes. If no wallet is connected, it defaults to the first network in the config.
  *
  * @returns {Object} An object containing:
- *   - targetNetwork: The current target network object
- *
- * @see https://scaffoldstark.com/docs/
+ *   - targetNetwork: The target network with all its attributes and configuration
  */
 export function useTargetNetwork(): { targetNetwork: ChainWithAttributes } {
   const { chainId } = useAccount();

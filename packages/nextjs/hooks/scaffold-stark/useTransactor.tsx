@@ -26,23 +26,6 @@ interface UseTransactorReturn {
   sendTransactionInstance: UseSendTransactionResult;
 }
 
-/**
- * Handles sending transactions to Starknet contracts, managing transaction state and notifications.
- *
- * @param config - Configuration object for the hook
- * @param config.contractName - The contract name to interact with
- * @param config.method - The contract method to call
- * @param config.args - Arguments for the contract method
- * @param config.onSuccess - Callback for successful transaction
- * @param config.onError - Callback for failed transaction
- * @returns {Object} An object containing:
- *   - sendTransaction: Function to send the transaction
- *   - isLoading: Boolean indicating if the transaction is in progress
- *   - error: Any error encountered
- *   - status: The current status of the transaction
- *
- * @see https://scaffoldstark.com/docs/hooks/
- */
 const TxnNotification = ({
   message,
   blockExplorerLink,
@@ -68,9 +51,19 @@ const TxnNotification = ({
 };
 
 /**
- * Runs Transaction passed in to returned function showing UI feedback.
- * @param _walletClient - Optional wallet client to use. If not provided, will use the one from useWalletClient.
- * @returns An object with the writeTransaction function, transaction status, and other transaction-related properties
+ * Handles sending transactions to Starknet contracts with comprehensive UI feedback and state management.
+ * This hook provides a complete transaction experience including fee estimation, notifications,
+ * transaction state tracking, and block explorer integration. It supports both prepared transactions
+ * (using starknet-react's sendTransaction) and direct execution with automatic fee estimation.
+ *
+ * @param _walletClient - Optional wallet client to use. If not provided, will use the connected account from useAccount
+ * @returns {UseTransactorReturn} An object containing:
+ *   - writeTransaction: Async function that sends transactions with fee estimation, notifications, and state management
+ *     - Parameters: tx (Call[]), withSendTransaction (boolean, default: true)
+ *     - Returns: Promise<string | undefined> - transaction hash or undefined on error
+ *   - transactionReceiptInstance: Transaction receipt data and status from useTransactionReceipt
+ *   - sendTransactionInstance: Send transaction state and methods from useSendTransaction
+ * @see {@link https://scaffoldstark.com/docs/hooks/useTransactor}
  */
 export const useTransactor = (
   _walletClient?: AccountInterface,

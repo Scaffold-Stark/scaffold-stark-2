@@ -12,15 +12,16 @@ import { useProvider } from "@starknet-react/core";
 import { ContractClassHashCache } from "./ContractClassHashCache";
 
 /**
- * Fetches and returns deployment information for a given contract name.
+ * Checks if a contract is deployed and provides contract information.
+ * This hook verifies the deployment status of a contract by checking its class hash
+ * on the blockchain and returns the contract data if it's successfully deployed.
  *
- * @param contractName - The name of the deployed contract
+ * @param contractName - The name of the contract to check for deployment
  * @returns {Object} An object containing:
- *   - data: Deployment info (address, ABI, etc.)
- *   - isLoading: Boolean indicating if data is loading
- *   - error: Any error encountered
- *
- * @see https://scaffoldstark.com/docs/
+ *   - data: The deployed contract data (address, abi, classHash) if deployed, undefined otherwise
+ *   - isLoading: Boolean indicating if the deployment check is in progress
+ *   - raw: The raw contract configuration data regardless of deployment status
+ *   - status: The deployment status (LOADING, DEPLOYED, NOT_FOUND)
  */
 export const useDeployedContractInfo = <TContractName extends ContractName>(
   contractName: TContractName,

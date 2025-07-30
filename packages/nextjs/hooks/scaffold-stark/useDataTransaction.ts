@@ -21,20 +21,18 @@ interface BlockData {
 }
 
 /**
- * Provides a helper for sending data transactions to contracts, with state and error management.
+ * Fetches detailed block data for a specific block number, including transaction statistics and network metrics.
+ * This hook retrieves comprehensive information about a block including transaction count, gas prices,
+ * TPS (transactions per second), average fees in USD, and other block metadata.
  *
- * @param config - Configuration object for the hook
- * @param config.contractName - The contract name to interact with
- * @param config.method - The contract method to call
- * @param config.args - Arguments for the contract method
- * @param config.enabled - If false, disables the hook (default: true)
+ * @param blockNumber - The block number to fetch data for
  * @returns {Object} An object containing:
- *   - send: Function to send the data transaction
- *   - isLoading: Boolean indicating if the transaction is in progress
- *   - error: Any error encountered
- *   - status: The current status of the transaction
- *
- * @see https://scaffoldstark.com/docs/hooks/
+ *   - blockData: The fetched block data with transaction stats and network metrics, or null if not loaded
+ *   - error: Any error encountered during data fetching, or null if successful
+ *   - refetch: Function to manually refetch the block data
+ *   - isEnabled: Boolean indicating if automatic fetching is enabled
+ *   - toggleFetching: Function to toggle automatic fetching on/off
+ * @see {@link https://scaffoldstark.com/docs/hooks/useDataTransaction}
  */
 export const useDataTransaction = (blockNumber: number) => {
   const { targetNetwork } = useTargetNetwork();

@@ -1,9 +1,10 @@
 /**
- * Provides a function to switch the connected network in the dApp.
+ * Provides a function to switch the connected network.
+ * This hook returns a function that can be used to request the connected wallet
+ * to switch to a different Starknet network.
  *
- * @returns {Function} Function to call to switch networks
- *
- * @see https://scaffoldstark.com/docs/
+ * @returns {Object} An object containing:
+ *   - switchNetwork: Async function that takes a network name and requests the wallet to switch to it
  */
 export const useSwitchNetwork = () => {
   return {
