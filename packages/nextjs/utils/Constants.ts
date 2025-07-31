@@ -1133,9 +1133,89 @@ const strkAbi = [
 
 export const LAST_CONNECTED_TIME_LOCALSTORAGE_KEY = "lastConnectedTime";
 
+const multicallAbi = [
+  {
+    type: "impl",
+    name: "MulticallImpl",
+    interface_name: "contracts::Multicall::IMulticall",
+  },
+  {
+    type: "struct",
+    name: "core::array::Span::<core::starknet::contract_address::ContractAddress>",
+    members: [
+      {
+        name: "snapshot",
+        type: "@core::array::Array::<core::starknet::contract_address::ContractAddress>",
+      },
+    ],
+  },
+  {
+    type: "struct",
+    name: "core::array::Span::<core::felt252>",
+    members: [
+      {
+        name: "snapshot",
+        type: "@core::array::Array::<core::felt252>",
+      },
+    ],
+  },
+  {
+    type: "struct",
+    name: "core::array::Span::<core::array::Span::<core::felt252>>",
+    members: [
+      {
+        name: "snapshot",
+        type: "@core::array::Array::<core::array::Span::<core::felt252>>",
+      },
+    ],
+  },
+  {
+    type: "interface",
+    name: "contracts::Multicall::IMulticall",
+    items: [
+      {
+        type: "function",
+        name: "call_contracts",
+        inputs: [
+          {
+            name: "contracts",
+            type: "core::array::Span::<core::starknet::contract_address::ContractAddress>",
+          },
+          {
+            name: "entry_point_selectors",
+            type: "core::array::Span::<core::felt252>",
+          },
+          {
+            name: "calldata",
+            type: "core::array::Span::<core::array::Span::<core::felt252>>",
+          },
+        ],
+        outputs: [
+          {
+            type: "core::array::Array::<core::array::Span::<core::felt252>>",
+          },
+        ],
+        state_mutability: "view",
+      },
+    ],
+  },
+  {
+    type: "constructor",
+    name: "constructor",
+    inputs: [],
+  },
+  {
+    type: "event",
+    name: "contracts::Multicall::Multicall::Event",
+    kind: "enum",
+    variants: [],
+  },
+] as const;
+
 export {
   devnetStrkClassHash,
   universalStrkAddress,
   sepoliaMainnetStrkClassHash,
   strkAbi,
+  multicallAbi,
 };

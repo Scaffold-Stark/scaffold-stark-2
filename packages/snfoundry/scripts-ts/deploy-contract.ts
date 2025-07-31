@@ -31,7 +31,7 @@ interface Arguments {
 
 const validateConstructorArgsWithStarknetJS = (
   abi: any[],
-  constructorArgs: any
+  constructorArgs: any,
 ): { isValid: boolean; error?: string } => {
   try {
     const constructorAbi = abi.find((item: any) => item.type === "constructor");
@@ -136,7 +136,7 @@ const { provider, deployer, feeToken }: Network = networks[networkName];
 
 const declareIfNot_NotWait = async (
   payload: DeclareContractPayload,
-  options?: UniversalDetails
+  options?: UniversalDetails,
 ) => {
   const { classHash } = extractContractHashes(payload);
 
@@ -145,7 +145,7 @@ const declareIfNot_NotWait = async (
     console.log(
       green("Skipping declare - class hash"),
       classHash,
-      green("already exists on-chain.")
+      green("already exists on-chain."),
     );
 
     return {
@@ -156,7 +156,7 @@ const declareIfNot_NotWait = async (
       console.log(
         yellow("Class hash"),
         classHash,
-        yellow("not found, proceeding with declaration...")
+        yellow("not found, proceeding with declaration..."),
       );
     } else {
       console.error(red("Error while checking classHash"), classHash);
@@ -172,7 +172,7 @@ const declareIfNot_NotWait = async (
 
     if (networkName === "sepolia" || networkName === "mainnet") {
       console.log(
-        yellow("Waiting for declaration transaction to be accepted...")
+        yellow("Waiting for declaration transaction to be accepted..."),
       );
       const receipt = await provider.waitForTransaction(transaction_hash);
       console.log(
@@ -180,15 +180,15 @@ const declareIfNot_NotWait = async (
         JSON.stringify(
           receipt,
           (_, v) => (typeof v === "bigint" ? v.toString() : v),
-          2
-        )
+          2,
+        ),
       );
 
       const receiptAny = receipt as any;
       if (receiptAny.execution_status !== "SUCCEEDED") {
         const revertReason = receiptAny.revert_reason || "Unknown reason";
         throw new Error(
-          red(`Declaration failed or reverted. Reason: ${revertReason}`)
+          red(`Declaration failed or reverted. Reason: ${revertReason}`),
         );
       }
       console.log(green("Declaration successful"));
@@ -206,7 +206,7 @@ const declareIfNot_NotWait = async (
       console.error(
         red("Class declaration failed: deployer"),
         deployer.address,
-        red("has insufficient balance.")
+        red("has insufficient balance."),
       );
       throw "Class declaration failed: insufficient balance";
     }
@@ -225,7 +225,7 @@ const deployContract_NotWait = async (payload: {
   try {
     const { calls, addresses } = transaction.buildUDCCall(
       payload,
-      deployer.address
+      deployer.address,
     );
     deployCalls.push(...calls);
     return {
@@ -239,7 +239,7 @@ const deployContract_NotWait = async (payload: {
 
 const findContractFile = (
   contract: string,
-  fileType: "compiled_contract_class" | "contract_class"
+  fileType: "compiled_contract_class" | "contract_class",
 ): string => {
   const targetDir = path.resolve(__dirname, "../contracts/target/dev");
   const files = fs.readdirSync(targetDir);
@@ -250,7 +250,7 @@ const findContractFile = (
   if (!matchingFile) {
     throw new Error(
       `Could not find ${fileType} file for contract "${contract}". ` +
-        `Try removing snfoundry/contracts/target, then run 'yarn compile' and check if your contract name is correct inside the contracts/target/dev directory.`
+        `Try removing snfoundry/contracts/target, then run 'yarn compile' and check if your contract name is correct inside the contracts/target/dev directory.`,
     );
   }
 
@@ -279,7 +279,7 @@ const findContractFile = (
  */
 
 const deployContract = async (
-  params: DeployContractParams
+  params: DeployContractParams,
 ): Promise<{
   classHash: string;
   address: string;
@@ -292,12 +292,12 @@ const deployContract = async (
     compiledContractCasm = JSON.parse(
       fs
         .readFileSync(findContractFile(contract, "compiled_contract_class"))
-        .toString("ascii")
+        .toString("ascii"),
     );
   } catch (error) {
     if (error.message.includes("Could not find")) {
       console.error(
-        red(`The contract "${contract}" doesn't exist or is not compiled`)
+        red(`The contract "${contract}" doesn't exist or is not compiled`),
       );
     } else {
       console.error(red("Error reading compiled contract class file: "), error);
@@ -312,7 +312,7 @@ const deployContract = async (
     compiledContractSierra = JSON.parse(
       fs
         .readFileSync(findContractFile(contract, "contract_class"))
-        .toString("ascii")
+        .toString("ascii"),
     );
   } catch (error) {
     console.error(red("Error reading contract class file: "), error);
@@ -333,8 +333,8 @@ const deployContract = async (
             requiredArgs.length
           } (${requiredArgs
             .map((a: any) => `${a.name}: ${a.type}`)
-            .join(", ")}), but got none.`
-        )
+            .join(", ")}), but got none.`,
+        ),
       );
     }
 
@@ -347,19 +347,19 @@ const deployContract = async (
       ) {
         throw new Error(
           red(
-            `Missing value for constructor argument '${arg.name}' of type '${arg.type}'.`
-          )
+            `Missing value for constructor argument '${arg.name}' of type '${arg.type}'.`,
+          ),
         );
       }
     }
 
     const validationResult = validateConstructorArgsWithStarknetJS(
       abi,
-      constructorArgs
+      constructorArgs,
     );
     if (!validationResult.isValid) {
       throw new Error(
-        red(`Constructor validation failed: ${validationResult.error}`)
+        red(`Constructor validation failed: ${validationResult.error}`),
       );
     }
   }
@@ -376,7 +376,7 @@ const deployContract = async (
       contract: compiledContractSierra,
       casm: compiledContractCasm,
     },
-    options
+    options,
   );
 
   let randomSalt = stark.randomAddress();
@@ -407,8 +407,8 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
   if (deployCalls.length < 1) {
     throw new Error(
       red(
-        "Aborted: No contract to deploy. Please prepare the contracts with `deployContract`"
-      )
+        "Aborted: No contract to deploy. Please prepare the contracts with `deployContract`",
+      ),
     );
   }
 
@@ -439,6 +439,7 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
         feeToken: feeToken,
       });
     }
+    console.log(green("Deploy Calls Executed at "), transaction_hash);
   } catch (e) {
     // split the calls in half and try again recursively
     if (deployCalls.length > 100) {
@@ -461,7 +462,7 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
       console.error(
         red("Deployment tx execution failed: deployer"),
         deployer.address,
-        red("has insufficient balance.")
+        red("has insufficient balance."),
       );
       throw "Deployment tx execution failed: insufficient balance";
     }
@@ -475,7 +476,7 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
 const loadExistingDeployments = () => {
   const networkPath = path.resolve(
     __dirname,
-    `../deployments/${networkName}_latest.json`
+    `../deployments/${networkName}_latest.json`,
   );
   if (fs.existsSync(networkPath)) {
     return JSON.parse(fs.readFileSync(networkPath, "utf8"));
@@ -486,14 +487,14 @@ const loadExistingDeployments = () => {
 const exportDeployments = () => {
   const networkPath = path.resolve(
     __dirname,
-    `../deployments/${networkName}_latest.json`
+    `../deployments/${networkName}_latest.json`,
   );
 
   if (!resetDeployments && fs.existsSync(networkPath)) {
     const currentTimestamp = new Date().getTime();
     fs.renameSync(
       networkPath,
-      networkPath.replace("_latest.json", `_${currentTimestamp}.json`)
+      networkPath.replace("_latest.json", `_${currentTimestamp}.json`),
     );
   }
 
@@ -537,7 +538,7 @@ const assertDeployerSignable = async () => {
     isValidSig = await deployer.verifyMessageInStarknet(
       typedData,
       signature,
-      deployer.address
+      deployer.address,
     );
   } catch (e) {
     if (e.toString().includes("Contract not found")) {
