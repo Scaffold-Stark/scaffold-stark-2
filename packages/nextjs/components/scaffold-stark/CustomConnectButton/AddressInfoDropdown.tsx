@@ -16,7 +16,7 @@ import { useLocalStorage } from "usehooks-ts";
 import { BlockieAvatar, isENS } from "~~/components/scaffold-stark";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { BurnerConnector, burnerAccounts } from "@scaffold-stark/stark-burner";
-import { getTargetNetworks } from "~~/utils/scaffold-stark";
+import { getTargetNetworks, notification } from "~~/utils/scaffold-stark";
 import { Address } from "@starknet-react/chains";
 import { useDisconnect, useNetwork, useConnect } from "@starknet-react/core";
 import { getStarknetPFPIfExists } from "~~/utils/profile";
@@ -77,6 +77,27 @@ export const AddressInfoDropdown = ({
     },
   );
 
+  const [, setWasDisconnectedManually] = useLocalStorage<boolean>(
+    "wasDisconnectedManually",
+    false,
+    {
+      initializeWithValue: false,
+    },
+  );
+
+  const handleDisconnect = () => {
+    try {
+      disconnect();
+      localStorage.removeItem("lastUsedConnector");
+      localStorage.removeItem("lastConnectionTime");
+      setWasDisconnectedManually(true);
+      window.dispatchEvent(new Event("manualDisconnect"));
+      notification.success("Disconnect successfully!");
+    } catch (err) {
+      console.log(err);
+      notification.success("Disconnect failure!");
+    }
+  };
   return (
     <>
       <details ref={dropdownRef} className="dropdown dropdown-end leading-3">
@@ -268,7 +289,7 @@ export const AddressInfoDropdown = ({
             <button
               className="menu-item text-secondary-content btn-sm !rounded-xl flex gap-3 py-3"
               type="button"
-              onClick={() => disconnect()}
+              onClick={handleDisconnect}
             >
               <ArrowLeftEndOnRectangleIcon className="h-6 w-4 ml-2 sm:ml-0" />{" "}
               <span>Disconnect</span>
