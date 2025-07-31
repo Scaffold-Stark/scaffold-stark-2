@@ -5,3 +5,5 @@ mod structs;
 mod tuples;
 mod types;
 mod vars;
+
+mod multicall;
