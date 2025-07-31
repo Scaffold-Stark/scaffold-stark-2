@@ -64,11 +64,17 @@ const deployScript = async (): Promise<void> => {
     contract: "Tuples",
     constructorArgs: {},
   });
-   // TODO: Uncomment this when we events contract is ready
-//   await deployContract({
-//     contract: "Events",
-//     constructorArgs: {},
-//   });
+
+  // TODO: Uncomment this when we events contract is ready
+  //   await deployContract({
+  //     contract: "Events",
+  //     constructorArgs: {},
+  //   });
+
+  await deployContract({
+    contract: "Multicall",
+    constructorArgs: {},
+  });
 };
 
 const main = async (): Promise<void> => {
