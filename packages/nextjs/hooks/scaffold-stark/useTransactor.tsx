@@ -78,6 +78,8 @@ export const useTransactor = (
   );
   const transactionReceiptInstance = useTransactionReceipt({
     hash: transactionHash,
+    enabled: !!transactionHash,
+    watch: true,
   });
   const { data: txResult, status: txStatus } = transactionReceiptInstance;
 
