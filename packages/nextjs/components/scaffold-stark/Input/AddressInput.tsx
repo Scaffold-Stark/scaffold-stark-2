@@ -4,21 +4,19 @@ import { CommonInputProps, InputBase } from "~~/components/scaffold-stark";
 import { Address } from "@starknet-react/chains";
 import { isAddress } from "~~/utils/scaffold-stark/common";
 import Image from "next/image";
+import { blo } from "blo";
 
 /**
- * Lazy-loaded avatar component for address input
+ * Avatar component for address input
  */
 const AddressAvatar = ({ address }: { address: string }) => {
   const [avatarSrc, setAvatarSrc] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Lazy load blo library only when needed
-    import("blo").then((bloModule) => {
-      const avatarUrl = bloModule.blo(address as `0x${string}`);
-      setAvatarSrc(avatarUrl);
-      setIsLoading(false);
-    });
+    const avatarUrl = blo(address as `0x${string}`);
+    setAvatarSrc(avatarUrl);
+    setIsLoading(false);
   }, [address]);
 
   if (isLoading) {

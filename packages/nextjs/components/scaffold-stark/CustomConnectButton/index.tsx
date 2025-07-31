@@ -1,23 +1,17 @@
 "use client";
-import dynamic from "next/dynamic";
-
 import { useEffect, useMemo, useState } from "react";
 import { useConnect, useNetwork } from "@starknet-react/core";
 import { Address } from "@starknet-react/chains";
 import { Balance } from "../Balance";
 import { AddressInfoDropdown } from "./AddressInfoDropdown";
 import { WrongNetworkDropdown } from "./WrongNetworkDropdown";
+import ConnectModal from "./ConnectModal";
+import { AddressQRCodeModal } from "./AddressQRCodeModal";
 import { useAutoConnect, useNetworkColor } from "~~/hooks/scaffold-stark";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { useAccount } from "~~/hooks/useAccount";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
 import { useReadLocalStorage } from "usehooks-ts";
-
-const ConnectModal = dynamic(() => import("./ConnectModal"), { ssr: false });
-const AddressQRCodeModal = dynamic(
-  () => import("./AddressQRCodeModal").then((mod) => mod.AddressQRCodeModal),
-  { ssr: false },
-);
 
 export const CustomConnectButton = () => {
   useAutoConnect();

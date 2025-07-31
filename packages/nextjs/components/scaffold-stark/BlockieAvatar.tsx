@@ -23,12 +23,9 @@ export const BlockieAvatar = ({
       setAvatarSrc(ensImage);
       setIsLoading(false);
     } else {
-      // Lazy load blo library only when needed
-      import("blo").then((bloModule) => {
-        const avatarUrl = bloModule.blo(address as `0x${string}`);
-        setAvatarSrc(avatarUrl);
-        setIsLoading(false);
-      });
+      const avatarUrl = blo(address as `0x${string}`);
+      setAvatarSrc(avatarUrl);
+      setIsLoading(false);
     }
   }, [address, ensImage]);
 
