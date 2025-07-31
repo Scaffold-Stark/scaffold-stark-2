@@ -1,7 +1,5 @@
-"use client";
-
 // @refresh reset
-import { useReducer, useState, useMemo } from "react";
+import { useReducer, useState } from "react";
 import dynamic from "next/dynamic";
 import { Address, Balance } from "~~/components/scaffold-stark";
 import {
@@ -13,21 +11,16 @@ import {
   ContractCodeStatus,
   ContractName,
 } from "~~/utils/scaffold-stark/contract";
+import { ContractVariables } from "./ContractVariables";
 import { ClassHash } from "~~/components/scaffold-stark/ClassHash";
 
-const ContractReadMethods = dynamic(
-  () => import("./ContractReadMethods").then((mod) => mod.ContractReadMethods),
-  {
-    loading: () => <p>Loading Read Methods...</p>,
-  },
-);
-
 const ContractWriteMethods = dynamic(() =>
-  import("./ContractWriteMethods").then((mod) => mod.ContractWriteMethods),
+  import("./ContractWriteMethods").then((mod) => mod.ContractWriteMethods)
 );
 
-const ContractVariables = dynamic(() =>
-  import("./ContractVariables").then((mod) => mod.ContractVariables),
+
+const ContractReadMethods = dynamic(() =>
+  import("./ContractReadMethods").then((mod) => mod.ContractReadMethods)
 );
 
 type ContractUIProps = {
@@ -45,7 +38,7 @@ export const ContractUI = ({
   const [activeTab, setActiveTab] = useState("read");
   const [refreshDisplayVariables, triggerRefreshDisplayVariables] = useReducer(
     (value) => !value,
-    false,
+    false
   );
   const { targetNetwork } = useTargetNetwork();
   const {
@@ -54,31 +47,10 @@ export const ContractUI = ({
     status,
   } = useDeployedContractInfo(contractName);
 
-  const tabs = useMemo(
-    () => [
-      { id: "read", label: "Read" },
-      { id: "write", label: "Write" },
-    ],
-    [],
-  );
-
-  // Memoize active tab content to prevent unnecessary re-renders
-  const activeTabContent = useMemo(() => {
-    if (activeTab === "read") {
-      return (
-        <ContractReadMethods deployedContractData={deployedContractData} />
-      );
-    }
-    if (activeTab === "write") {
-      return (
-        <ContractWriteMethods
-          deployedContractData={deployedContractData}
-          onChange={triggerRefreshDisplayVariables}
-        />
-      );
-    }
-    return null;
-  }, [activeTab, deployedContractData, triggerRefreshDisplayVariables]);
+  const tabs = [
+    { id: "read", label: "Read" },
+    { id: "write", label: "Write" },
+  ];
 
   if (status === ContractCodeStatus.NOT_FOUND) {
     return (
@@ -146,7 +118,17 @@ export const ContractUI = ({
           <div className="z-10">
             <div className="rounded-[5px] border border-[#8A45FC] flex flex-col relative bg-component">
               <div className="p-5 divide-y divide-secondary">
-                {activeTabContent}
+                {activeTab === "read" && (
+                  <ContractReadMethods
+                    deployedContractData={deployedContractData}
+                  />
+                )}
+                {activeTab === "write" && (
+                  <ContractWriteMethods
+                    deployedContractData={deployedContractData}
+                    onChange={triggerRefreshDisplayVariables}
+                  />
+                )}
               </div>
               {deployedContractLoading && (
                 <div className="absolute inset-0 rounded-[5px] bg-white/20 z-10">
