@@ -8,38 +8,38 @@ const targetNetworks = scaffoldConfig.targetNetworks;
 
 export const appChains = getTargetNetworks();
 
-export type WalletConnectorType = 
-  | 'argent' 
-  | 'braavos' 
-  | 'keplr' 
-  | 'burner';
+export type WalletConnectorType = "argent" | "braavos" | "keplr" | "burner";
 
-export async function loadConnector(type: WalletConnectorType): Promise<InjectedConnector> {
+export async function loadConnector(
+  type: WalletConnectorType,
+): Promise<InjectedConnector> {
   const isDevnet = targetNetworks.some(
     (network) => (network.network as string) === "devnet",
   );
 
   switch (type) {
-    case 'argent':
-    case 'braavos': {
+    case "argent":
+    case "braavos": {
       const core = await importReactCore();
       return type === "argent" ? core.argent() : core.braavos();
     }
-    case 'keplr': {
+    case "keplr": {
       if (!isDevnet) {
         const { KeplrConnector } = await import("./keplr");
         return new KeplrConnector();
       }
-      throw new Error('Keplr not supported in devnet');
+      throw new Error("Keplr not supported in devnet");
     }
-    case 'burner': {
+    case "burner": {
       if (isDevnet) {
-        const { BurnerConnector } = await import("@scaffold-stark/stark-burner");
+        const { BurnerConnector } = await import(
+          "@scaffold-stark/stark-burner"
+        );
         const burnerConnector = new BurnerConnector();
         burnerConnector.chain = supportedChains.devnet;
         return burnerConnector as unknown as InjectedConnector;
       }
-      throw new Error('Burner connector only supported in devnet');
+      throw new Error("Burner connector only supported in devnet");
     }
     default:
       throw new Error(`Unsupported connector type: ${type}`);
