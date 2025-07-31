@@ -1,8 +1,85 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { ConnectedAddress } from "~~/components/ConnectedAddress";
+import { useScaffoldMultiReadContract } from "~~/hooks/scaffold-stark/useScaffoldMultiReadContract";
+import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
+import { Address } from "@starknet-react/core";
 
 const Home = () => {
+  const { data: multicallContract } = useDeployedContractInfo("Multicall");
+
+  const { data: readData, error: readError } = useScaffoldMultiReadContract({
+    calls: [
+      {
+        contractName: "Structs",
+        functionName: "get_sample_struct",
+      },
+      {
+        contractName: "Complex",
+        functionName: "get_complex_struct",
+      },
+      {
+        contractName: "Structs",
+        functionName: "get_sample_nested_struct",
+      },
+      // {
+      //   contractName: "ArraysSpans",
+      //   functionName: "get_array_sample_nested_struct",
+      //   args: [
+      //     [
+      //       {
+      //         layer4_element: {
+      //           layer3_element: {
+      //             layer2_element: {
+      //               layer1_element: "0",
+      //             },
+      //           },
+      //         },
+      //       },
+      //       {
+      //         layer4_element: {
+      //           layer3_element: {
+      //             layer2_element: {
+      //               layer1_element: "0",
+      //             },
+      //           },
+      //         },
+      //       },
+      //       {
+      //         layer4_element: {
+      //           layer3_element: {
+      //             layer2_element: {
+      //               layer1_element: "0",
+      //             },
+      //           },
+      //         },
+      //       },
+      //     ],
+      //   ],
+      // },
+      {
+        contractName: "ArraysSpans",
+        functionName: "get_array_felt252",
+        args: [1, 2, 3],
+      },
+    ],
+    multicallAddress: multicallContract?.address as Address,
+  });
+
+  console.log(
+    JSON.stringify(
+      readData,
+      (key, value) => (typeof value === "bigint" ? value.toString() : value),
+      2,
+    ),
+  );
+
+  if (readError) {
+    console.error(readError);
+  }
+
   return (
     <div className="flex items-center flex-col flex-grow pt-10">
       <div className="px-5">
