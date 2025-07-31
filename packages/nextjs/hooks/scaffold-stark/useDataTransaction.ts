@@ -68,7 +68,7 @@ export const useDataTransaction = (blockNumber: number) => {
         return null;
       }
     },
-    [publicClient]
+    [publicClient],
   );
 
   const calculateAverageFee = useCallback(
@@ -100,7 +100,7 @@ export const useDataTransaction = (blockNumber: number) => {
         return 0;
       }
     },
-    [publicClient]
+    [publicClient],
   );
 
   const fetchBlockData = useCallback(async () => {
