@@ -4,7 +4,7 @@
  * to switch to a different Starknet network.
  *
  * @returns {Object} An object containing:
- *   - switchNetwork: Async function that takes a network name and requests the wallet to switch to it
+ *   - switchNetwork: (network: string) => Promise<void> - Async function that takes a network name and requests the wallet to switch to it
  */
 export const useSwitchNetwork = () => {
   return {

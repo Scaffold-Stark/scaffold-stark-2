@@ -25,8 +25,11 @@ import { Contract as StarknetJsContract } from "starknet";
  * @param config.functionName - The contract method to call (must be an external function)
  * @param config.args - Arguments for the method call
  * @returns {Object} An object containing:
- *   - sendAsync: Function to execute the transaction with optional override arguments
- *   - All properties from sendTransactionInstance (isLoading, error, status, etc.)
+ *   - sendAsync: (params?: { args?: any[] }) => Promise<string | undefined> - Function to execute the transaction with optional override arguments
+ *   - isLoading: boolean - Boolean indicating if the transaction is in progress
+ *   - error: Error | null - Any error encountered during the transaction
+ *   - status: "idle" | "loading" | "success" | "error" - The transaction status
+ *   - All other properties from sendTransactionInstance
  * @see {@link https://scaffoldstark.com/docs/hooks/useScaffoldWriteContract}
  */
 export const useScaffoldWriteContract = <

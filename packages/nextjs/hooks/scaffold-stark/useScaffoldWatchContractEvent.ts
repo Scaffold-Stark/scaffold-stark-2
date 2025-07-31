@@ -35,8 +35,8 @@ const MAX_EVENT_KEYS = 16;
  * @param config.eventName - The name of the event to watch (must exist in contract ABI)
  * @param config.onLogs - Callback function to execute when events are detected, receives parsed event data
  * @returns {Object} An object containing:
- *   - isLoading: Boolean indicating if the hook is currently loading or processing events
- *   - error: Any error encountered during event watching, or null if successful
+ *   - isLoading: boolean - Boolean indicating if the hook is currently loading or processing events
+ *   - error: Error | null - Any error encountered during event watching, or null if successful
  * @see {@link https://scaffoldstark.com/docs/hooks/useScaffoldWatchContractEvent}
  */
 

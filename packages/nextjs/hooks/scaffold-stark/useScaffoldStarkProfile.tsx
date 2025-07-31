@@ -23,7 +23,7 @@ const starknetIdApiBaseUrl =
 export const fetchProfileFromApi = async (address: string) => {
   try {
     const addrToDomainRes = await fetch(
-      `${starknetIdApiBaseUrl}/addr_to_domain?addr=${address}`,
+      `${starknetIdApiBaseUrl}/addr_to_domain?addr=${address}`
     );
 
     if (!addrToDomainRes.ok) {
@@ -35,7 +35,7 @@ export const fetchProfileFromApi = async (address: string) => {
     const domain = addrToDomainJson.domain;
 
     const profileRes = await fetch(
-      `${starknetIdApiBaseUrl}/domain_to_data?domain=${domain}`,
+      `${starknetIdApiBaseUrl}/domain_to_data?domain=${domain}`
     );
 
     if (!profileRes.ok) throw new Error(await profileRes.text());
@@ -63,7 +63,7 @@ export const fetchProfileFromApi = async (address: string) => {
     // Suppress known "no data" error, log all others
     if (error.message.includes("No data found")) {
       console.log(
-        `The above error is because there is no profile for address: ${address}`,
+        `The above error is because there is no profile for address: ${address}`
       );
     } else {
       console.error("Error fetching profile from API: ", error);
@@ -84,12 +84,12 @@ export const fetchProfileFromApi = async (address: string) => {
  *
  * @param address - The Starknet address to fetch profile information for, typed as chains.Address | undefined
  * @returns {Object} An object containing:
- *   - data: The profile data of type StarkProfile with name and profilePicture, or undefined if an error occurred; defaults to { name: "", profilePicture: "" } if disabled or no address
- *   - isLoading: Boolean indicating if the profile is currently loading
+ *   - data: StarkProfile | undefined - The profile data with name and profilePicture, or undefined if an error occurred; defaults to { name: "", profilePicture: "" } if disabled or no address
+ *   - isLoading: boolean - Boolean indicating if the profile is currently loading
  * @see {@link https://scaffoldstark.com/docs/hooks/useScaffoldStarkProfile}
  */
 export const useScaffoldStarkProfile = (
-  address: chains.Address | undefined,
+  address: chains.Address | undefined
 ) => {
   const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState<StarkProfile | undefined>();

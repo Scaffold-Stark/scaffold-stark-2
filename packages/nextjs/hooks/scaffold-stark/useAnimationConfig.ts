@@ -9,7 +9,7 @@ const ANIMATION_TIME = 2000;
  *
  * @param data - The data value to track for changes. Can be any type.
  * @returns {Object} An object containing:
- *   - showAnimation: Boolean indicating if the animation should be shown (true when data has changed, false after animation period)
+ *   - showAnimation: boolean - Boolean indicating if the animation should be shown (true when data has changed, false after animation period)
  */
 export function useAnimationConfig(data: any) {
   const [showAnimation, setShowAnimation] = useState(false);

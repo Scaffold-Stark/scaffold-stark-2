@@ -12,12 +12,12 @@ import { AccountInterface, constants } from "starknet";
  * with fallback mechanisms for various wallet connection scenarios.
  *
  * @returns {UseAccountResult} An object containing:
- *   - account: The account interface with workarounds for connection issues
- *   - address: The user's wallet address
- *   - status: The corrected connection status (fixed inconsistencies)
- *   - chainId: The chain ID of the connected network
- *   - isConnected: Boolean indicating if the user is connected
- *   - error: Any error encountered during account operations
+ *   - account: AccountInterface | undefined - The account interface with workarounds for connection issues
+ *   - address: `0x${string}` | undefined - The user's wallet address
+ *   - status: "disconnected" | "connecting" | "connected" - The corrected connection status (fixed inconsistencies)
+ *   - chainId: bigint - The chain ID of the connected network
+ *   - isConnected: boolean - Boolean indicating if the user is connected
+ *   - error: Error | null - Any error encountered during account operations
  *   - All other properties from starknet-react's useAccount
  */
 
@@ -66,12 +66,12 @@ export function useAccount(): UseAccountResult {
         address,
         execute: async () => {
           throw new Error(
-            "Wallet connection issue. Please refresh and reconnect.",
+            "Wallet connection issue. Please refresh and reconnect."
           );
         },
         estimateInvokeFee: async () => {
           throw new Error(
-            "Wallet connection issue. Please refresh and reconnect.",
+            "Wallet connection issue. Please refresh and reconnect."
           );
         },
         getChainId: async () => {

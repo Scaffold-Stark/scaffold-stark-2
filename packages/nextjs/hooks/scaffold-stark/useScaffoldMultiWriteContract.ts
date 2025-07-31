@@ -30,8 +30,11 @@ function isRawCall(value: Call | any): value is Call {
  * @param config.calls - Array of contract calls to execute (scaffold config or raw Call objects)
  * @param config.options - Optional invocation details for the transaction
  * @returns {Object} An object containing:
- *   - sendAsync: Function to execute the batch of transactions
- *   - All properties from sendTransactionInstance (isLoading, error, status, etc.)
+ *   - sendAsync: () => Promise<string | undefined> - Function to execute the batch of transactions
+ *   - isLoading: boolean - Boolean indicating if the transaction is in progress
+ *   - error: Error | null - Any error encountered during the transaction
+ *   - status: "idle" | "loading" | "success" | "error" - The transaction status
+ *   - All other properties from sendTransactionInstance
  * @see {@link https://scaffoldstark.com/docs/hooks/useScaffoldMultiWriteContract}
  */
 
@@ -84,12 +87,12 @@ export const useScaffoldMultiWriteContract = <
             // we convert to starknetjs contract instance here since deployed data may be undefined if contract is not deployed
             const contractInstance = new StarknetJsContract(
               contract.abi,
-              contract.address,
+              contract.address
             );
 
             return contractInstance.populate(
               functionName,
-              unParsedArgs as any[],
+              unParsedArgs as any[]
             );
           });
         } else {
@@ -119,7 +122,7 @@ export function createContractCall<
 >(
   contractName: TContractName,
   functionName: TFunctionName,
-  args: UseScaffoldArgsParam<TAbi, TContractName, TFunctionName>["args"],
+  args: UseScaffoldArgsParam<TAbi, TContractName, TFunctionName>["args"]
 ) {
   return { contractName, functionName, args };
 }

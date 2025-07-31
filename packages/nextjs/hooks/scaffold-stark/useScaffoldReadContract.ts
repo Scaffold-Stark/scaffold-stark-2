@@ -21,10 +21,10 @@ import {
  * @param {boolean} [config.enabled] - If false, disables the read (default: true if all args are defined)
  * @param {Object} [config.readConfig] - Additional configuration options for useReadContract
  * @returns {Object} An object containing:
- *   - data: The function output data of type AbiFunctionOutputs<ContractAbi, TFunctionName> | undefined
- *   - isLoading: Boolean indicating if the read is in progress
- *   - error: Any error encountered during the read operation
- *   - refetch: Function to manually refetch the data
+ *   - data: AbiFunctionOutputs<ContractAbi, TFunctionName> | undefined - The function output data
+ *   - isLoading: boolean - Boolean indicating if the read is in progress
+ *   - error: Error | null - Any error encountered during the read operation
+ *   - refetch: () => void - Function to manually refetch the data
  *   - (All other properties from starknet-react's useReadContract)
  * @see {@link https://scaffoldstark.com/docs/hooks/useScaffoldReadContract}
  */

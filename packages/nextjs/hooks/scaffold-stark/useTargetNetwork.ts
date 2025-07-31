@@ -11,7 +11,7 @@ import { ChainWithAttributes } from "~~/utils/scaffold-stark";
  * when the network changes. If no wallet is connected, it defaults to the first network in the config.
  *
  * @returns {Object} An object containing:
- *   - targetNetwork: The target network with all its attributes and configuration
+ *   - targetNetwork: ChainWithAttributes - The target network with all its attributes and configuration
  */
 export function useTargetNetwork(): { targetNetwork: ChainWithAttributes } {
   const { chainId } = useAccount();

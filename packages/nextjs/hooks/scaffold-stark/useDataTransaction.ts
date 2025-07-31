@@ -27,11 +27,11 @@ interface BlockData {
  *
  * @param blockNumber - The block number to fetch data for
  * @returns {Object} An object containing:
- *   - blockData: The fetched block data with transaction stats and network metrics, or null if not loaded
- *   - error: Any error encountered during data fetching, or null if successful
- *   - refetch: Function to manually refetch the block data
- *   - isEnabled: Boolean indicating if automatic fetching is enabled
- *   - toggleFetching: Function to toggle automatic fetching on/off
+ *   - blockData: BlockData | null - The fetched block data with transaction stats and network metrics, or null if not loaded
+ *   - error: string | null - Any error encountered during data fetching, or null if successful
+ *   - refetch: () => void - Function to manually refetch the block data
+ *   - isEnabled: boolean - Boolean indicating if automatic fetching is enabled
+ *   - toggleFetching: () => void - Function to toggle automatic fetching on/off
  * @see {@link https://scaffoldstark.com/docs/hooks/useDataTransaction}
  */
 export const useDataTransaction = (blockNumber: number) => {
@@ -68,7 +68,7 @@ export const useDataTransaction = (blockNumber: number) => {
         return null;
       }
     },
-    [publicClient],
+    [publicClient]
   );
 
   const calculateAverageFee = useCallback(
@@ -100,7 +100,7 @@ export const useDataTransaction = (blockNumber: number) => {
         return 0;
       }
     },
-    [publicClient],
+    [publicClient]
   );
 
   const fetchBlockData = useCallback(async () => {

@@ -18,13 +18,13 @@ import { ContractClassHashCache } from "./ContractClassHashCache";
  *
  * @param contractName - The name of the contract to check for deployment
  * @returns {Object} An object containing:
- *   - data: The deployed contract data (address, abi, classHash) if deployed, undefined otherwise
- *   - isLoading: Boolean indicating if the deployment check is in progress
- *   - raw: The raw contract configuration data regardless of deployment status
- *   - status: The deployment status (LOADING, DEPLOYED, NOT_FOUND)
+ *   - data: Contract<TContractName> | undefined - The deployed contract data (address, abi, classHash) if deployed, undefined otherwise
+ *   - isLoading: boolean - Boolean indicating if the deployment check is in progress
+ *   - raw: Contract<TContractName> | undefined - The raw contract configuration data regardless of deployment status
+ *   - status: ContractCodeStatus - The deployment status (LOADING, DEPLOYED, NOT_FOUND)
  */
 export const useDeployedContractInfo = <TContractName extends ContractName>(
-  contractName: TContractName,
+  contractName: TContractName
 ) => {
   const isMounted = useIsMounted();
   const { targetNetwork } = useTargetNetwork();
@@ -32,7 +32,7 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
     contractName as ContractName
   ] as Contract<TContractName>;
   const [status, setStatus] = useState<ContractCodeStatus>(
-    ContractCodeStatus.LOADING,
+    ContractCodeStatus.LOADING
   );
   const { provider: publicClient } = useProvider();
 
@@ -47,7 +47,7 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
       const contractClassHash = await classHashCache.getClassHash(
         publicClient,
         deployedContract.address,
-        "pending" as BlockIdentifier,
+        "pending" as BlockIdentifier
       );
 
       if (!isMounted()) {

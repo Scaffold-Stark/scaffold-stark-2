@@ -14,8 +14,8 @@ import { useMemo } from "react";
  * @param config - Configuration object for the hook
  * @param {TContractName} config.contractName - The name of the contract to get an instance for
  * @returns {Object} An object containing:
- *   - data: The contract instance (type Contract) with connected account and fallback call mechanism, or undefined if not deployed
- *   - isLoading: Boolean indicating if the contract data is loading
+ *   - data: Contract | undefined - The contract instance with connected account and fallback call mechanism, or undefined if not deployed
+ *   - isLoading: boolean - Boolean indicating if the contract data is loading
  * @see {@link https://scaffoldstark.com/docs/hooks/useScaffoldContract}
  */
 
@@ -36,7 +36,7 @@ export const useScaffoldContract = <TContractName extends ContractName>({
     const contractInstance = new Contract(
       deployedContractData.abi as Abi,
       deployedContractData.address,
-      publicClient,
+      publicClient
     );
 
     if (account) {

@@ -58,11 +58,9 @@ const TxnNotification = ({
  *
  * @param _walletClient - Optional wallet client to use. If not provided, will use the connected account from useAccount
  * @returns {UseTransactorReturn} An object containing:
- *   - writeTransaction: Async function that sends transactions with fee estimation, notifications, and state management
- *     - Parameters: tx (Call[]), withSendTransaction (boolean, default: true)
- *     - Returns: Promise<string | undefined> - transaction hash or undefined on error
- *   - transactionReceiptInstance: Transaction receipt data and status from useTransactionReceipt
- *   - sendTransactionInstance: Send transaction state and methods from useSendTransaction
+ *   - writeTransaction: (tx: Call[], withSendTransaction?: boolean) => Promise<string | undefined> - Async function that sends transactions with fee estimation, notifications, and state management
+ *   - transactionReceiptInstance: UseTransactionReceiptResult - Transaction receipt data and status from useTransactionReceipt
+ *   - sendTransactionInstance: UseSendTransactionResult - Send transaction state and methods from useSendTransaction
  * @see {@link https://scaffoldstark.com/docs/hooks/useTransactor}
  */
 export const useTransactor = (

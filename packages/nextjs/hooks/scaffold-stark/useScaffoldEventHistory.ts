@@ -39,9 +39,9 @@ const MAX_KEYS_COUNT = 16;
  * @param {boolean} [config.format=true] - If true, formats the event data (default: true)
  * @param {boolean} [config.enabled=true] - If false, disables the hook (default: true)
  * @returns {Object} An object containing:
- *   - data: Array of parsed event data with type, args, parsedArgs (if format is true), and optional block/transaction/receipt data if respective flags are enabled
- *   - isLoading: Boolean indicating if the hook is loading or processing events
- *   - error: Any error encountered during event reading, or undefined if successful
+ *   - data: Array<EventData> | undefined - Array of parsed event data with type, args, parsedArgs (if format is true), and optional block/transaction/receipt data if respective flags are enabled
+ *   - isLoading: boolean - Boolean indicating if the hook is loading or processing events
+ *   - error: string | undefined - Any error encountered during event reading, or undefined if successful
  * @see {@link https://scaffoldstark.com/docs/hooks/useScaffoldEventHistory}
  */
 export const useScaffoldEventHistory = <
@@ -89,7 +89,7 @@ export const useScaffoldEventHistory = <
     return (deployedContractData?.abi as Abi)?.filter(
       (part) =>
         part.type === "event" &&
-        part.name.split("::").slice(-1)[0] === (eventName as string),
+        part.name.split("::").slice(-1)[0] === (eventName as string)
     ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>[];
   }, [deployedContractData, deployedContractLoading]);
   // const matchingAbiEvents =
@@ -100,7 +100,7 @@ export const useScaffoldEventHistory = <
 
   if (matchingAbiEvents?.length > 1) {
     throw new Error(
-      `Ambiguous event "${eventName as string}". ABI contains ${matchingAbiEvents.length} events with that name`,
+      `Ambiguous event "${eventName as string}". ABI contains ${matchingAbiEvents.length} events with that name`
     );
   }
 
@@ -126,7 +126,7 @@ export const useScaffoldEventHistory = <
       const event = (deployedContractData.abi as Abi).find(
         (part) =>
           part.type === "event" &&
-          part.name.split("::").slice(-1)[0] === eventName,
+          part.name.split("::").slice(-1)[0] === eventName
       ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
 
       const blockNumber = (await publicClient.getBlockLatestAccepted())
@@ -139,7 +139,7 @@ export const useScaffoldEventHistory = <
         let keys: string[][] = [[hash.getSelectorFromName(eventName)]];
         if (filters) {
           keys = keys.concat(
-            composeEventFilterKeys(filters, event, deployedContractData.abi),
+            composeEventFilterKeys(filters, event, deployedContractData.abi)
           );
         }
         keys = keys.slice(0, MAX_KEYS_COUNT);
@@ -168,13 +168,13 @@ export const useScaffoldEventHistory = <
             transaction:
               transactionData && logs[i].transaction_hash !== null
                 ? await publicClient.getTransactionByHash(
-                    logs[i].transaction_hash,
+                    logs[i].transaction_hash
                   )
                 : null,
             receipt:
               receiptData && logs[i].transaction_hash !== null
                 ? await publicClient.getTransactionReceipt(
-                    logs[i].transaction_hash,
+                    logs[i].transaction_hash
                   )
                 : null,
           });
@@ -236,7 +236,7 @@ export const useScaffoldEventHistory = <
       ? targetNetwork.id !== devnet.id
         ? scaffoldConfig.pollingInterval
         : 4_000
-      : null,
+      : null
   );
 
   const eventHistoryData = useMemo(() => {
@@ -247,7 +247,7 @@ export const useScaffoldEventHistory = <
           logs,
           starknetEvents.getAbiEvents(deployedContractData.abi),
           CallData.getAbiStruct(deployedContractData.abi),
-          CallData.getAbiEnum(deployedContractData.abi),
+          CallData.getAbiEnum(deployedContractData.abi)
         );
         const args = parsed.length ? parsed[0][fullName] : {};
         const { event: rawEvent, ...rest } = event;
