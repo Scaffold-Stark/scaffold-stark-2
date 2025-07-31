@@ -4,10 +4,11 @@ import React, { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Toaster } from "react-hot-toast";
 import { StarknetConfig, starkscan } from "@starknet-react/core";
+import { InjectedConnector } from "@starknet-react/core";
 import { Header } from "~~/components/Header";
 import { Footer } from "~~/components/Footer";
 import { ProgressBar } from "~~/components/scaffold-stark/ProgressBar";
-import { appChains, connectors } from "~~/services/web3/connectors";
+import { appChains, getConnectors } from "~~/services/web3/connectors";
 import provider from "~~/services/web3/provider";
 import { useNativeCurrencyPrice } from "~~/hooks/scaffold-stark/useNativeCurrencyPrice";
 
@@ -44,9 +45,16 @@ export const ScaffoldStarkAppWithProviders = ({
   children: React.ReactNode;
 }) => {
   const [mounted, setMounted] = useState(false);
+  const [connectors, setConnectors] = useState<InjectedConnector[]>([]);
 
   useEffect(() => {
-    setMounted(true);
+    const initConnectors = async () => {
+      const loadedConnectors = await getConnectors();
+      setConnectors(loadedConnectors);
+      setMounted(true);
+    };
+
+    initConnectors();
   }, []);
 
   if (!mounted) return null;
