@@ -512,6 +512,23 @@ const assertDeployerDefined = () => {
   }
 };
 
+const assertRpcNetworkActive = async () => {
+  if (!provider) {
+    const errorMessage = `RPC provider is not defined. \`RPC_URL_${networkName.toUpperCase()}\` is missing from \`.env\`.`;
+    console.error(red(errorMessage));
+    throw new Error(errorMessage);
+  }
+
+  try {
+    const block = await provider.getBlock("latest");
+    console.log(green(`✓ RPC connected (Block #${block.block_number})`));
+  } catch (e) {
+    const errorMessage = `RPC provider is not active. \`RPC_URL_${networkName.toUpperCase()}\` is not reachable.\n`;
+    console.error(red(errorMessage), e);
+    throw new Error(errorMessage);
+  }
+};
+
 const assertDeployerSignable = async () => {
   const typedData: TypedData = {
     types: {
@@ -569,4 +586,5 @@ export {
   resetDeployments,
   assertDeployerDefined,
   assertDeployerSignable,
+  assertRpcNetworkActive,
 };
