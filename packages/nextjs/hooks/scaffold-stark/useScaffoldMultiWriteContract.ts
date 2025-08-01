@@ -21,6 +21,23 @@ function isRawCall(value: Call | any): value is Call {
   return "entrypoint" in value;
 }
 
+/**
+ * Provides a function to execute multiple contract write transactions in a single batch.
+ * This hook allows you to execute multiple contract calls (either scaffold config or raw Call objects)
+ * in a single transaction, which is useful for complex operations that require multiple contract interactions.
+ *
+ * @param config - Configuration object for the hook
+ * @param config.calls - Array of contract calls to execute (scaffold config or raw Call objects)
+ * @param config.options - Optional invocation details for the transaction
+ * @returns {Object} An object containing:
+ *   - sendAsync: () => Promise<string | undefined> - Function to execute the batch of transactions
+ *   - isLoading: boolean - Boolean indicating if the transaction is in progress
+ *   - error: Error | null - Any error encountered during the transaction
+ *   - status: "idle" | "loading" | "success" | "error" - The transaction status
+ *   - All other properties from sendTransactionInstance
+ * @see {@link https://scaffoldstark.com/docs/hooks/useScaffoldMultiWriteContract}
+ */
+
 export const useScaffoldMultiWriteContract = <
   TAbi extends Abi,
   TContractName extends ContractName,
