@@ -15,11 +15,11 @@ import { ContractVariables } from "./ContractVariables";
 import { ClassHash } from "~~/components/scaffold-stark/ClassHash";
 
 const ContractWriteMethods = dynamic(() =>
-  import("./ContractWriteMethods").then((mod) => mod.ContractWriteMethods)
+  import("./ContractWriteMethods").then((mod) => mod.ContractWriteMethods),
 );
 
 const ContractReadMethods = dynamic(() =>
-  import("./ContractReadMethods").then((mod) => mod.ContractReadMethods)
+  import("./ContractReadMethods").then((mod) => mod.ContractReadMethods),
 );
 
 type ContractUIProps = {
@@ -37,7 +37,7 @@ export const ContractUI = ({
   const [activeTab, setActiveTab] = useState("read");
   const [refreshDisplayVariables, triggerRefreshDisplayVariables] = useReducer(
     (value) => !value,
-    false
+    false,
   );
   const { targetNetwork } = useTargetNetwork();
   const {
@@ -127,9 +127,7 @@ export const ContractUI = ({
           </div>
           <div className="z-10">
             <div className="rounded-[5px] border border-[#8A45FC] flex flex-col relative bg-component">
-              <div className="p-5 divide-y divide-secondary">
-                {tabContent}
-              </div>
+              <div className="p-5 divide-y divide-secondary">{tabContent}</div>
               {deployedContractLoading && (
                 <div className="absolute inset-0 rounded-[5px] bg-white/20 z-10">
                   <div className="animate-spin h-4 w-4 border-2 border-purple-500 border-t-transparent rounded-full absolute top-4 right-4" />
