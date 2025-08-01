@@ -76,7 +76,18 @@ export const fetchProfileFromApi = async (address: string) => {
   }
 };
 
-// this hook is a workaround, basically a re-implement of the starknet react hook with conditional rendering.
+/**
+ * Fetches Starknet profile information for a given address.
+ * This hook is a workaround that re-implements the starknet-react profile hook with conditional rendering.
+ * It only works on mainnet and sepolia networks (not devnet) and fetches profile data from the Starknet ID API.
+ * Use this hook instead of the starknet-react version when conditional rendering or specific network support is needed.
+ *
+ * @param address - The Starknet address to fetch profile information for, typed as chains.Address | undefined
+ * @returns {Object} An object containing:
+ *   - data: StarkProfile | undefined - The profile data with name and profilePicture, or undefined if an error occurred; defaults to { name: "", profilePicture: "" } if disabled or no address
+ *   - isLoading: boolean - Boolean indicating if the profile is currently loading
+ * @see {@link https://scaffoldstark.com/docs/hooks/useScaffoldStarkProfile}
+ */
 export const useScaffoldStarkProfile = (
   address: chains.Address | undefined,
 ) => {

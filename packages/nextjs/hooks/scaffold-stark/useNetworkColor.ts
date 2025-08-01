@@ -17,7 +17,11 @@ export function getNetworkColor(
 }
 
 /**
- * Gets the color of the target network
+ * Gets the color of the target network based on the current theme.
+ * This hook returns the appropriate color for the target network, taking into account
+ * whether the current theme is light or dark mode.
+ *
+ * @returns {string} The network color as a CSS color value (hex, rgb, etc.)
  */
 export const useNetworkColor = () => {
   const { resolvedTheme } = useTheme();
