@@ -56,11 +56,8 @@ const deployScript = async (): Promise<void> => {
 const main = async (): Promise<void> => {
   try {
     assertDeployerDefined();
-    
-    await Promise.all([
-      assertRpcNetworkActive(),
-      assertDeployerSignable()
-    ]);
+
+    await Promise.all([assertRpcNetworkActive(), assertDeployerSignable()]);
 
     await deployScript();
     await executeDeployCalls();
