@@ -1,5 +1,5 @@
 // @refresh reset
-import { useReducer, useState } from "react";
+import { useMemo, useReducer, useState } from "react";
 import dynamic from "next/dynamic";
 import { Address, Balance } from "~~/components/scaffold-stark";
 import {
@@ -17,7 +17,6 @@ import { ClassHash } from "~~/components/scaffold-stark/ClassHash";
 const ContractWriteMethods = dynamic(() =>
   import("./ContractWriteMethods").then((mod) => mod.ContractWriteMethods)
 );
-
 
 const ContractReadMethods = dynamic(() =>
   import("./ContractReadMethods").then((mod) => mod.ContractReadMethods)
@@ -51,6 +50,17 @@ export const ContractUI = ({
     { id: "read", label: "Read" },
     { id: "write", label: "Write" },
   ];
+
+  const tabContent = useMemo(() => {
+    return activeTab === "write" ? (
+      <ContractWriteMethods
+        deployedContractData={deployedContractData}
+        onChange={triggerRefreshDisplayVariables}
+      />
+    ) : (
+      <ContractReadMethods deployedContractData={deployedContractData} />
+    );
+  }, [activeTab, deployedContractData, triggerRefreshDisplayVariables]);
 
   if (status === ContractCodeStatus.NOT_FOUND) {
     return (
@@ -118,17 +128,7 @@ export const ContractUI = ({
           <div className="z-10">
             <div className="rounded-[5px] border border-[#8A45FC] flex flex-col relative bg-component">
               <div className="p-5 divide-y divide-secondary">
-                {activeTab === "read" && (
-                  <ContractReadMethods
-                    deployedContractData={deployedContractData}
-                  />
-                )}
-                {activeTab === "write" && (
-                  <ContractWriteMethods
-                    deployedContractData={deployedContractData}
-                    onChange={triggerRefreshDisplayVariables}
-                  />
-                )}
+                {tabContent}
               </div>
               {deployedContractLoading && (
                 <div className="absolute inset-0 rounded-[5px] bg-white/20 z-10">
