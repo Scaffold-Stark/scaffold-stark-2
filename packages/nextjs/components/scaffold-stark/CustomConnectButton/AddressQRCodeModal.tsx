@@ -1,6 +1,7 @@
-import { QRCodeSVG } from "qrcode.react";
+import { useState } from "react";
 import { Address as AddressType } from "@starknet-react/chains";
 import { Address } from "~~/components/scaffold-stark";
+import { QRCodeSVG } from "qrcode.react";
 
 type AddressQRCodeModalProps = {
   address: AddressType;
@@ -11,10 +12,21 @@ export const AddressQRCodeModal = ({
   address,
   modalId,
 }: AddressQRCodeModalProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleModalToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsModalOpen(e.target.checked);
+  };
+
   return (
     <>
       <div>
-        <input type="checkbox" id={`${modalId}`} className="modal-toggle" />
+        <input
+          type="checkbox"
+          id={`${modalId}`}
+          className="modal-toggle"
+          onChange={handleModalToggle}
+        />
         <label htmlFor={`${modalId}`} className="modal cursor-pointer">
           <label className="modal-box relative">
             {/* dummy input to capture event onclick on modal box */}

@@ -1,10 +1,40 @@
-import { useCallback } from "react";
-import { blo } from "blo";
+import { useCallback, useState, useEffect } from "react";
 import { useDebounceValue } from "usehooks-ts";
 import { CommonInputProps, InputBase } from "~~/components/scaffold-stark";
 import { Address } from "@starknet-react/chains";
 import { isAddress } from "~~/utils/scaffold-stark/common";
 import Image from "next/image";
+import { blo } from "blo";
+
+/**
+ * Avatar component for address input
+ */
+const AddressAvatar = ({ address }: { address: string }) => {
+  const [avatarSrc, setAvatarSrc] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const avatarUrl = blo(address as `0x${string}`);
+    setAvatarSrc(avatarUrl);
+    setIsLoading(false);
+  }, [address]);
+
+  if (isLoading) {
+    return (
+      <div className="w-[35px] h-[35px] rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+    );
+  }
+
+  return (
+    <Image
+      alt=""
+      className="!rounded-full"
+      src={avatarSrc}
+      width="35"
+      height="35"
+    />
+  );
+};
 
 /**
  * Address input with ENS name resolution
@@ -46,18 +76,7 @@ export const AddressInput = ({
       onChange={handleChange}
       disabled={disabled}
       prefix={null}
-      suffix={
-        // eslint-disable-next-line @next/next/no-img-element
-        value && (
-          <Image
-            alt=""
-            className="!rounded-full"
-            src={blo(value as `0x${string}`)}
-            width="35"
-            height="35"
-          />
-        )
-      }
+      suffix={value && <AddressAvatar address={value as string} />}
     />
   );
 };

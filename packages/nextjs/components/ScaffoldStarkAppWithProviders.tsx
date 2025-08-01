@@ -1,15 +1,22 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 import { Toaster } from "react-hot-toast";
 import { StarknetConfig, starkscan } from "@starknet-react/core";
 import { Header } from "~~/components/Header";
-import { Footer } from "~~/components/Footer";
-import { ProgressBar } from "~~/components/scaffold-stark/ProgressBar";
+
 import { appChains, connectors } from "~~/services/web3/connectors";
 import provider from "~~/services/web3/provider";
 import { useNativeCurrencyPrice } from "~~/hooks/scaffold-stark/useNativeCurrencyPrice";
+
+const Footer = dynamic(
+  () => import("~~/components/Footer").then((mod) => mod.Footer),
+  {
+    ssr: false,
+  },
+);
 
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
   useNativeCurrencyPrice();
@@ -58,7 +65,6 @@ export const ScaffoldStarkAppWithProviders = ({
       connectors={connectors}
       explorer={starkscan}
     >
-      <ProgressBar />
       <ScaffoldStarkApp>{children}</ScaffoldStarkApp>
     </StarknetConfig>
   );
