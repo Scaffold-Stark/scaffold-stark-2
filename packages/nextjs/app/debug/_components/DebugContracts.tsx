@@ -2,7 +2,16 @@
 
 import { useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import { ContractUI } from "~~/app/debug/_components/contract";
+import dynamic from "next/dynamic";
+
+const ContractUI = dynamic(
+  () =>
+    import("~~/app/debug/_components/contract/ContractUI").then(
+      (mod) => mod.ContractUI,
+    ),
+  { ssr: false },
+);
+
 import { ContractName } from "~~/utils/scaffold-stark/contract";
 import { getAllContracts } from "~~/utils/scaffold-stark/contractsData";
 

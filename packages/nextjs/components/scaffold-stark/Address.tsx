@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { CopyToClipboard } from "react-copy-to-clipboard";
+// CopyToClipboard moved to lazy loading for better performance
 import { Address as AddressType } from "@starknet-react/chains";
 import { getChecksumAddress, StarkProfile } from "starknet";
 import { devnet } from "@starknet-react/chains";
@@ -15,6 +15,7 @@ import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
 import { BlockieAvatar } from "~~/components/scaffold-stark/BlockieAvatar";
 import { getStarknetPFPIfExists } from "~~/utils/profile";
 import { default as NextImage } from "next/image";
+import CopyToClipboard from "react-copy-to-clipboard";
 
 type AddressProps = {
   address?: AddressType;
