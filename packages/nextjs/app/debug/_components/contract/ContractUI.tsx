@@ -1,9 +1,6 @@
-"use client";
-
 // @refresh reset
-import { useReducer, useState } from "react";
+import { useMemo, useReducer, useState } from "react";
 import dynamic from "next/dynamic";
-import { ContractReadMethods } from "./ContractReadMethods";
 import { Address, Balance } from "~~/components/scaffold-stark";
 import {
   useDeployedContractInfo,
@@ -17,12 +14,12 @@ import {
 import { ContractVariables } from "./ContractVariables";
 import { ClassHash } from "~~/components/scaffold-stark/ClassHash";
 
-const ContractWriteMethods = dynamic(
-  () =>
-    import("./ContractWriteMethods").then((mod) => mod.ContractWriteMethods),
-  {
-    loading: () => <p>Loading Write Methods...</p>,
-  },
+const ContractWriteMethods = dynamic(() =>
+  import("./ContractWriteMethods").then((mod) => mod.ContractWriteMethods),
+);
+
+const ContractReadMethods = dynamic(() =>
+  import("./ContractReadMethods").then((mod) => mod.ContractReadMethods),
 );
 
 type ContractUIProps = {
@@ -53,6 +50,17 @@ export const ContractUI = ({
     { id: "read", label: "Read" },
     { id: "write", label: "Write" },
   ];
+
+  const tabContent = useMemo(() => {
+    return activeTab === "write" ? (
+      <ContractWriteMethods
+        deployedContractData={deployedContractData}
+        onChange={triggerRefreshDisplayVariables}
+      />
+    ) : (
+      <ContractReadMethods deployedContractData={deployedContractData} />
+    );
+  }, [activeTab, deployedContractData, triggerRefreshDisplayVariables]);
 
   if (status === ContractCodeStatus.NOT_FOUND) {
     return (
@@ -119,19 +127,7 @@ export const ContractUI = ({
           </div>
           <div className="z-10">
             <div className="rounded-[5px] border border-[#8A45FC] flex flex-col relative bg-component">
-              <div className="p-5 divide-y divide-secondary">
-                {activeTab === "read" && (
-                  <ContractReadMethods
-                    deployedContractData={deployedContractData}
-                  />
-                )}
-                {activeTab === "write" && (
-                  <ContractWriteMethods
-                    deployedContractData={deployedContractData}
-                    onChange={triggerRefreshDisplayVariables}
-                  />
-                )}
-              </div>
+              <div className="p-5 divide-y divide-secondary">{tabContent}</div>
               {deployedContractLoading && (
                 <div className="absolute inset-0 rounded-[5px] bg-white/20 z-10">
                   <div className="animate-spin h-4 w-4 border-2 border-purple-500 border-t-transparent rounded-full absolute top-4 right-4" />

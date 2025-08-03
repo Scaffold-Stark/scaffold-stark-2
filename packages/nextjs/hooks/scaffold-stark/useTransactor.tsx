@@ -26,9 +26,6 @@ interface UseTransactorReturn {
   sendTransactionInstance: UseSendTransactionResult;
 }
 
-/**
- * Custom notification content for TXs.
- */
 const TxnNotification = ({
   message,
   blockExplorerLink,
@@ -54,9 +51,17 @@ const TxnNotification = ({
 };
 
 /**
- * Runs Transaction passed in to returned function showing UI feedback.
- * @param _walletClient - Optional wallet client to use. If not provided, will use the one from useWalletClient.
- * @returns An object with the writeTransaction function, transaction status, and other transaction-related properties
+ * Handles sending transactions to Starknet contracts with comprehensive UI feedback and state management.
+ * This hook provides a complete transaction experience including fee estimation, notifications,
+ * transaction state tracking, and block explorer integration. It supports both prepared transactions
+ * (using starknet-react's sendTransaction) and direct execution with automatic fee estimation.
+ *
+ * @param _walletClient - Optional wallet client to use. If not provided, will use the connected account from useAccount
+ * @returns {UseTransactorReturn} An object containing:
+ *   - writeTransaction: (tx: Call[], withSendTransaction?: boolean) => Promise<string | undefined> - Async function that sends transactions with fee estimation, notifications, and state management
+ *   - transactionReceiptInstance: UseTransactionReceiptResult - Transaction receipt data and status from useTransactionReceipt
+ *   - sendTransactionInstance: UseSendTransactionResult - Send transaction state and methods from useSendTransaction
+ * @see {@link https://scaffoldstark.com/docs/hooks/useTransactor}
  */
 export const useTransactor = (
   _walletClient?: AccountInterface,
@@ -78,6 +83,8 @@ export const useTransactor = (
   );
   const transactionReceiptInstance = useTransactionReceipt({
     hash: transactionHash,
+    enabled: !!transactionHash,
+    watch: true,
   });
   const { data: txResult, status: txStatus } = transactionReceiptInstance;
 

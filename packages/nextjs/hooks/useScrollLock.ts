@@ -1,5 +1,14 @@
 import { useEffect } from "react";
 
+/**
+ * Locks or unlocks scrolling on the page, useful for modals and overlays.
+ * This hook prevents or restores page scrolling by manipulating the document body styles.
+ * When locked, it preserves the current scroll position and prevents further scrolling.
+ * When unlocked, it restores the original scroll position and re-enables scrolling.
+ *
+ * @param isLocked - Boolean to lock (true) or unlock (false) scrolling
+ * @returns {void} This hook doesn't return any value
+ */
 export const useScrollLock = (isLocked: boolean) => {
   useEffect(() => {
     if (isLocked) {

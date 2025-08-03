@@ -4,7 +4,12 @@ import { Address as AddressType, mainnet } from "@starknet-react/chains";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useNetwork } from "@starknet-react/core";
 import Image from "next/image";
-import GenericModal from "./CustomConnectButton/GenericModal";
+import dynamic from "next/dynamic";
+
+const GenericModal = dynamic(
+  () => import("./CustomConnectButton/GenericModal"),
+  { ssr: false },
+);
 import { useTheme } from "next-themes";
 
 export const BlockExplorer = () => {
