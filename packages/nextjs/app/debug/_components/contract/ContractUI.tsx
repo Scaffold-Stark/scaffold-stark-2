@@ -89,7 +89,7 @@ export const ContractUI = ({
                   <span className="font-bold text-sm">Balance:</span>
                   <Balance
                     address={deployedContractData.address}
-                    className="px-0 h-1.5 min-h-[0.375rem] text-network"
+                    className="px-0 h-1.5 min-h-1.5 text-network"
                   />
                 </div>
               </div>
@@ -110,13 +110,13 @@ export const ContractUI = ({
         </div>
 
         <div className="col-span-1 lg:col-span-2 flex flex-col gap-6">
-          <div className="tabs tabs-boxed border border-[#8A45FC] rounded-[5px] bg-transparent">
+          <div className="tabs tabs-box  border border-[#8A45FC] rounded-[5px] bg-transparent">
             {tabs.map((tab) => (
               <a
                 key={tab.id}
-                className={`tab h-10 ${
+                className={`tab h-10 w-1/2 ${
                   activeTab === tab.id
-                    ? "tab-active !bg-[#8A45FC] !rounded-[5px] !text-white"
+                    ? "tab-active bg-[#8A45FC]! rounded-[5px]! text-white! w-1/2"
                     : ""
                 }`}
                 onClick={() => setActiveTab(tab.id)}

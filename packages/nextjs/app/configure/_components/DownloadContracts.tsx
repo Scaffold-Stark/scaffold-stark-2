@@ -136,7 +136,7 @@ export default function DownloadContracts() {
                 value={contractName}
                 onChange={(e) => setContractName(e.target.value)}
                 list="symbols"
-                className="input bg-input input-ghost rounded-none focus-within:border-transparent focus:outline-none h-[2.2rem] min-h-[2.2rem] px-4 border w-full text-sm placeholder:text-[#9596BF] text-neutral"
+                className="input bg-input input-ghost rounded-none focus-within:border-transparent focus:outline-hidden h-[2.2rem] min-h-[2.2rem] px-4 border w-full text-sm placeholder:text-[#9596BF] text-neutral"
                 placeholder="Enter contract name"
               />
             </div>
@@ -146,7 +146,7 @@ export default function DownloadContracts() {
               </div>
               <div className="flex flex-1 gap-4">
                 <input
-                  className="input bg-input input-ghost rounded-none focus-within:border-transparent focus:outline-none h-[2.2rem] min-h-[2.2rem] px-4 border w-full text-sm placeholder:text-[#9596BF] text-neutral"
+                  className="input bg-input input-ghost rounded-none focus-within:border-transparent focus:outline-hidden h-[2.2rem] min-h-[2.2rem] px-4 border w-full text-sm placeholder:text-[#9596BF] text-neutral"
                   type="text"
                   placeholder="Enter contract address"
                   value={address}
@@ -154,7 +154,7 @@ export default function DownloadContracts() {
                 />
               </div>
               <button
-                className="btn btn-sm mt-12 max-w-56 bg-gradient-nav !text-white shadow-md flex gap-2"
+                className="btn btn-sm mt-12 border-none! max-w-56 bg-gradient-nav text-white! shadow-md flex gap-2"
                 onClick={handleDownload}
               >
                 Download Contract File

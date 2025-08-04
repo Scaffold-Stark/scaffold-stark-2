@@ -70,19 +70,19 @@ export const Struct = ({
   return (
     <div>
       <div
-        className={`collapse bg-base-200 pl-4 pt-1.5 pb-2 border-2 ${
+        className={`collapse bg-base-200 pl-4 pt-1.5  border-2 ${
           isDisabled ? "border-base-100 cursor-not-allowed" : "border-secondary"
         } custom-after`}
       >
         {!isDisabled && <input type="checkbox" className="min-h-fit peer" />}
         <div
           className={`collapse-title p-0 min-h-fit peer-checked:mb-2 text-primary-content/50 ${
-            isDisabled && "cursor-not-allowed"
+            isDisabled && "cursor-not-allowed pb-2"
           } `}
         >
           <p className="m-0 p-0 text-[1rem]">{abiMember.type}</p>
         </div>
-        <div className="ml-3 flex-col space-y-4 border-secondary/80 border-l-2 pl-4 collapse-content">
+        <div className="ml-3 flex-col space-y-4 border-secondary/80 peer-checked:mb-3 border-l-2 pl-4 collapse-content">
           {abiMember.type === "struct"
             ? abiMember.members.map((member, index) => {
                 const key = getFunctionInputKey(

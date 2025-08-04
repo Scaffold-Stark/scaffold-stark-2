@@ -147,7 +147,7 @@ export const DisplayVariable = ({
         <div>
           <div
             className={`break-all block transition bg-transparent ${
-              showAnimation ? "bg-warning rounded-sm animate-pulse-fast" : ""
+              showAnimation ? "bg-warning rounded-xs animate-pulse-fast" : ""
             }`}
           >
             {decodeContractResponse({
