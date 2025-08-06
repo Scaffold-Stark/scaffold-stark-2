@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { CopyToClipboard } from "react-copy-to-clipboard";
+// CopyToClipboard moved to lazy loading for better performance
 import { Address as AddressType } from "@starknet-react/chains";
 import { getChecksumAddress, StarkProfile } from "starknet";
 import { devnet } from "@starknet-react/chains";
@@ -15,6 +15,7 @@ import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
 import { BlockieAvatar } from "~~/components/scaffold-stark/BlockieAvatar";
 import { getStarknetPFPIfExists } from "~~/utils/profile";
 import { default as NextImage } from "next/image";
+import CopyToClipboard from "react-copy-to-clipboard";
 
 type AddressProps = {
   address?: AddressType;
@@ -103,7 +104,7 @@ export const Address = ({
       <div className="animate-pulse flex space-x-4">
         <div className="rounded-md bg-slate-300 h-6 w-6"></div>
         <div className="flex items-center space-y-6">
-          <div className="h-2 w-28 bg-slate-300 rounded"></div>
+          <div className="h-2 w-28 bg-slate-300 rounded-sm"></div>
         </div>
       </div>
     );
@@ -121,7 +122,7 @@ export const Address = ({
 
   return (
     <div className="flex items-center">
-      <div className="flex-shrink-0">
+      <div className="shrink-0">
         {getStarknetPFPIfExists(profile?.profilePicture) ? (
           <NextImage
             src={profile?.profilePicture || ""}

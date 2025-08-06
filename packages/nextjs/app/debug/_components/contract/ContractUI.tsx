@@ -1,9 +1,6 @@
-"use client";
-
 // @refresh reset
-import { useReducer, useState } from "react";
+import { useMemo, useReducer, useState } from "react";
 import dynamic from "next/dynamic";
-import { ContractReadMethods } from "./ContractReadMethods";
 import { Address, Balance } from "~~/components/scaffold-stark";
 import {
   useDeployedContractInfo,
@@ -17,12 +14,12 @@ import {
 import { ContractVariables } from "./ContractVariables";
 import { ClassHash } from "~~/components/scaffold-stark/ClassHash";
 
-const ContractWriteMethods = dynamic(
-  () =>
-    import("./ContractWriteMethods").then((mod) => mod.ContractWriteMethods),
-  {
-    loading: () => <p>Loading Write Methods...</p>,
-  },
+const ContractWriteMethods = dynamic(() =>
+  import("./ContractWriteMethods").then((mod) => mod.ContractWriteMethods),
+);
+
+const ContractReadMethods = dynamic(() =>
+  import("./ContractReadMethods").then((mod) => mod.ContractReadMethods),
 );
 
 type ContractUIProps = {
@@ -54,6 +51,17 @@ export const ContractUI = ({
     { id: "write", label: "Write" },
   ];
 
+  const tabContent = useMemo(() => {
+    return activeTab === "write" ? (
+      <ContractWriteMethods
+        deployedContractData={deployedContractData}
+        onChange={triggerRefreshDisplayVariables}
+      />
+    ) : (
+      <ContractReadMethods deployedContractData={deployedContractData} />
+    );
+  }, [activeTab, deployedContractData, triggerRefreshDisplayVariables]);
+
   if (status === ContractCodeStatus.NOT_FOUND) {
     return (
       <p className="text-3xl mt-14">
@@ -81,7 +89,7 @@ export const ContractUI = ({
                   <span className="font-bold text-sm">Balance:</span>
                   <Balance
                     address={deployedContractData.address}
-                    className="px-0 h-1.5 min-h-[0.375rem] text-network"
+                    className="px-0 h-1.5 min-h-1.5 text-network"
                   />
                 </div>
               </div>
@@ -102,13 +110,13 @@ export const ContractUI = ({
         </div>
 
         <div className="col-span-1 lg:col-span-2 flex flex-col gap-6">
-          <div className="tabs tabs-boxed border border-[#8A45FC] rounded-[5px] bg-transparent">
+          <div className="tabs tabs-box  border border-[#8A45FC] rounded-[5px] bg-transparent">
             {tabs.map((tab) => (
               <a
                 key={tab.id}
-                className={`tab h-10 ${
+                className={`tab h-10 w-1/2 ${
                   activeTab === tab.id
-                    ? "tab-active !bg-[#8A45FC] !rounded-[5px] !text-white"
+                    ? "tab-active bg-[#8A45FC]! rounded-[5px]! text-white! w-1/2"
                     : ""
                 }`}
                 onClick={() => setActiveTab(tab.id)}
@@ -119,19 +127,7 @@ export const ContractUI = ({
           </div>
           <div className="z-10">
             <div className="rounded-[5px] border border-[#8A45FC] flex flex-col relative bg-component">
-              <div className="p-5 divide-y divide-secondary">
-                {activeTab === "read" && (
-                  <ContractReadMethods
-                    deployedContractData={deployedContractData}
-                  />
-                )}
-                {activeTab === "write" && (
-                  <ContractWriteMethods
-                    deployedContractData={deployedContractData}
-                    onChange={triggerRefreshDisplayVariables}
-                  />
-                )}
-              </div>
+              <div className="p-5 divide-y divide-secondary">{tabContent}</div>
               {deployedContractLoading && (
                 <div className="absolute inset-0 rounded-[5px] bg-white/20 z-10">
                   <div className="animate-spin h-4 w-4 border-2 border-purple-500 border-t-transparent rounded-full absolute top-4 right-4" />

@@ -6,7 +6,12 @@ import { BanknotesIcon } from "@heroicons/react/24/outline";
 import { useNetwork, useProvider } from "@starknet-react/core";
 import { notification } from "~~/utils/scaffold-stark";
 import Image from "next/image";
-import GenericModal from "./CustomConnectButton/GenericModal";
+import dynamic from "next/dynamic";
+
+const GenericModal = dynamic(
+  () => import("./CustomConnectButton/GenericModal"),
+  { ssr: false },
+);
 import { useTheme } from "next-themes";
 
 /**

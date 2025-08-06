@@ -94,19 +94,19 @@ Otherwise, you can install Scarb `2.11.4` following the [instructions](https://d
 
 #### Starknet Foundry version
 
-To ensure the proper functioning of the tests on scaffold-stark, your `Starknet Foundry` version must be `0.45.0`. To accomplish this, first check your `Starknet Foundry` version:
+To ensure the proper functioning of the tests on scaffold-stark, your `Starknet Foundry` version must be `0.46.0`. To accomplish this, first check your `Starknet Foundry` version:
 
 ```sh
 snforge --version
 ```
 
-If your `Starknet Foundry` version is not `0.45.0`, you need to install it. If you already have installed `Starknet Foundry` via `starkup`, you can setup this specific version with the following command:
+If your `Starknet Foundry` version is not `0.46.0`, you need to install it. If you already have installed `Starknet Foundry` via `starkup`, you can setup this specific version with the following command:
 
 ```sh
-asdf install starknet-foundry 0.45.0 && asdf set starknet-foundry 0.45.0
+asdf install starknet-foundry 0.46.0 && asdf set starknet-foundry 0.46.0
 ```
 
-Otherwise, you can install Starknet Foundry `0.45.0` following the [instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf).
+Otherwise, you can install Starknet Foundry `0.46.0` following the [instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf).
 
 #### Starknet-devnet version
 
@@ -157,7 +157,7 @@ Now you are ready!!!
 
 - Starknet-devnet - 0.4.3
 - Scarb - v2.11.4
-- Snforge - v0.45.0
+- Snforge - v0.46.0
 - Cairo - v2.11.4
 - Rpc - v0.8.0
 
@@ -267,12 +267,13 @@ You have to paste the endpoint and body in the API platform and click on the `Se
 
 <details>
 
-By default, Network settings are centralized in `scaffold.config.ts` with all RPC URLs defined in the `rpcProviderUrl` object. We strongly recommend to use environment variables to configure the networks, otherwise the framework will choose a random provider for you.
+By default, majority of the Network settings are centralized in `scaffold.config.ts`, the exception being the RPC urls which are configured from your environment variables. In the absence of the proper settings, the framework will choose a random provider for you.
+In the env file also, the lines configuring the networks (devnet, sepolia or mainnet) need to be uncommented, depending on what
+network you want activated for you.
 
 **How to Change Networks:**
 
 - Update the `targetNetworks` array in `scaffold.config.ts` (first network is the primary target)
-- Ensure each network has a corresponding RPC URL in the `rpcProviderUrl` object
 
 ### Required Environment Variables
 
@@ -285,9 +286,9 @@ Set these in your `.env` file:
 Configuration uses these variables with fallbacks:
 
 ```typescript
-"devnet": process.env.NEXT_PUBLIC_DEVNET_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || "",
-"sepolia": process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || "",
-"mainnet": process.env.NEXT_PUBLIC_MAINNET_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || ""
+"devnet": process.env.NEXT_PUBLIC_DEVNET_PROVIDER_URL || "defaultRpcValue",
+"sepolia": process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER_URL || "defaultRpcValue",
+"mainnet": process.env.NEXT_PUBLIC_MAINNET_PROVIDER_URL || "defaultRpcValue"
 ```
 
 </details>

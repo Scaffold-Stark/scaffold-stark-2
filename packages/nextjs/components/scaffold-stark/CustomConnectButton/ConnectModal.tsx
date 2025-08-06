@@ -1,11 +1,11 @@
 import { Connector, useConnect } from "@starknet-react/core";
 import { useRef, useState } from "react";
-import Wallet from "~~/components/scaffold-stark/CustomConnectButton/Wallet";
 import { useLocalStorage } from "usehooks-ts";
 import { BurnerConnector, burnerAccounts } from "@scaffold-stark/stark-burner";
 import { useTheme } from "next-themes";
 import { BlockieAvatar } from "../BlockieAvatar";
 import GenericModal from "./GenericModal";
+import Wallet from "~~/components/scaffold-stark/CustomConnectButton/Wallet";
 import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 
@@ -81,7 +81,7 @@ const ConnectModal = () => {
     <div>
       <label
         htmlFor="connect-modal"
-        className="rounded-[18px] btn-sm font-bold px-8 bg-btn-wallet py-3 cursor-pointer"
+        className="rounded-[18px] btn-sm  font-bold px-8 bg-btn-wallet py-3 cursor-pointer"
       >
         <span>Connect</span>
       </label>
@@ -127,7 +127,7 @@ const ConnectModal = () => {
                     ))}
                     {isDevnet && otherConnectors.length > 0 && (
                       <button
-                        className="btn btn-ghost rounded-md mt-4 font-[400] text-base"
+                        className="btn btn-ghost rounded-md mt-4 font-normal text-base"
                         onClick={() => setShowOtherOptions(true)}
                       >
                         Other Options
@@ -145,7 +145,7 @@ const ConnectModal = () => {
                       />
                     ))}
                     <button
-                      className="btn btn-ghost font-[400] text-base mt-4 rounded-md"
+                      className="btn btn-ghost font-normal text-base mt-4 rounded-md"
                       onClick={() => setShowOtherOptions(false)}
                     >
                       Back

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CopyToClipboard } from "react-copy-to-clipboard";
+// CopyToClipboard moved to lazy loading for better performance
 import { Address as AddressType } from "@starknet-react/chains";
 import { devnet } from "@starknet-react/chains";
 import {
@@ -11,6 +11,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { getBlockExplorerClasshashLink } from "~~/utils/scaffold-stark";
+import CopyToClipboard from "react-copy-to-clipboard";
 
 type ClasshashProps = {
   classHash: AddressType;
@@ -42,7 +43,7 @@ export const ClassHash = ({
 
   return (
     <div className="flex items-center">
-      <div className="flex-shrink-0">
+      <div className="shrink-0">
         <span className={`text-${size} font-normal`}>class hash: </span>
       </div>
       {targetNetwork.network === devnet.network ? (

@@ -20,6 +20,20 @@ interface BlockData {
   averageFeeUSD: string;
 }
 
+/**
+ * Fetches detailed block data for a specific block number, including transaction statistics and network metrics.
+ * This hook retrieves comprehensive information about a block including transaction count, gas prices,
+ * TPS (transactions per second), average fees in USD, and other block metadata.
+ *
+ * @param blockNumber - The block number to fetch data for
+ * @returns {Object} An object containing:
+ *   - blockData: BlockData | null - The fetched block data with transaction stats and network metrics, or null if not loaded
+ *   - error: string | null - Any error encountered during data fetching, or null if successful
+ *   - refetch: () => void - Function to manually refetch the block data
+ *   - isEnabled: boolean - Boolean indicating if automatic fetching is enabled
+ *   - toggleFetching: () => void - Function to toggle automatic fetching on/off
+ * @see {@link https://scaffoldstark.com/docs/hooks/useDataTransaction}
+ */
 export const useDataTransaction = (blockNumber: number) => {
   const { targetNetwork } = useTargetNetwork();
   const [blockData, setBlockData] = useState<BlockData | null>(null);
