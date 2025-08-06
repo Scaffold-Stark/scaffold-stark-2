@@ -20,25 +20,20 @@ export const getRpcUrl = (networkName: string): string => {
   const devnetRpcUrl = process.env.NEXT_PUBLIC_DEVNET_PROVIDER_URL;
   const sepoliaRpcUrl = process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER_URL;
   const mainnetRpcUrl = process.env.NEXT_PUBLIC_MAINNET_PROVIDER_URL;
-  const fallBack = process.env.NEXT_PUBLIC_PROVIDER_URL;
 
   let rpcUrl = "";
 
   switch (networkName) {
     case "devnet":
-      rpcUrl = devnetRpcUrl || fallBack || "http://127.0.0.1:5050";
+      rpcUrl = devnetRpcUrl || "http://127.0.0.1:5050";
       break;
     case "sepolia":
       rpcUrl =
-        sepoliaRpcUrl ||
-        fallBack ||
-        "https://starknet-sepolia.public.blastapi.io/rpc/v0_8";
+        sepoliaRpcUrl || "https://starknet-sepolia.public.blastapi.io/rpc/v0_8";
       break;
     case "mainnet":
       rpcUrl =
-        mainnetRpcUrl ||
-        fallBack ||
-        "https://starknet-mainnet.public.blastapi.io/rpc/v0_8";
+        mainnetRpcUrl || "https://starknet-mainnet.public.blastapi.io/rpc/v0_8";
       break;
     default:
       rpcUrl = "http://127.0.0.1:5050";
