@@ -286,9 +286,9 @@ Set these in your `.env` file:
 Configuration uses these variables with fallbacks:
 
 ```typescript
-"devnet": process.env.NEXT_PUBLIC_DEVNET_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || "",
-"sepolia": process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || "",
-"mainnet": process.env.NEXT_PUBLIC_MAINNET_PROVIDER_URL || process.env.NEXT_PUBLIC_PROVIDER_URL || ""
+"devnet": process.env.NEXT_PUBLIC_DEVNET_PROVIDER_URL || "defaultRpcValue",
+"sepolia": process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER_URL || "defaultRpcValue",
+"mainnet": process.env.NEXT_PUBLIC_MAINNET_PROVIDER_URL || "defaultRpcValue"
 ```
 
 </details>
