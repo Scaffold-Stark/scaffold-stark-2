@@ -11,15 +11,15 @@ import {
 import { Address } from "~~/components/scaffold-stark";
 
 // Helper function to convert ETH to wei (BigInt)
-const strkToFri = (ethAmount: string): bigint => {
-  const ethValue = parseFloat(ethAmount);
-  return BigInt(Math.round(ethValue * 1e18));
+const strkToFri = (friAmount: string): bigint => {
+  const strkValue = parseFloat(friAmount);
+  return BigInt(Math.round(strkValue * 1e18));
 };
 
 // Helper function to format wei to readable ETH
-const friToStrk = (weiValue: bigint): string => {
-  const ethValue = Number(weiValue) / 1e18;
-  return ethValue.toFixed(4).replace(/\.?0+$/, "");
+const friToStrk = (friValue: bigint): string => {
+  const strkValue = Number(friValue) / 1e18;
+  return strkValue.toFixed(4).replace(/\.?0+$/, "");
 };
 
 // Mock transaction data for demonstration
