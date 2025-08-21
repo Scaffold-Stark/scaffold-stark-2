@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import Link from "next/link";
 import {
   MagnifyingGlassIcon,
   ChevronLeftIcon,
@@ -252,9 +253,12 @@ export default function BlockExplorer() {
                     >
                       <td className="py-4 px-4">
                         <div className="flex items-center space-x-2">
-                          <code className="text-sm font-mono text-accent">
+                          <Link
+                            href={`/blockexplorer/tx/${tx.hash}`}
+                            className="text-sm font-mono text-accent hover:text-accent/80 transition-colors"
+                          >
                             {tx.hash.slice(0, 5)}...{tx.hash.slice(-5)}
-                          </code>
+                          </Link>
                           <button
                             onClick={() => handleCopyHash(tx.hash)}
                             className="p-1 rounded hover:bg-base-300/50 transition-colors"
