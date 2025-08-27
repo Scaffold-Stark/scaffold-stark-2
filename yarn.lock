@@ -4001,7 +4001,7 @@ __metadata:
     globals: ^15.8.0
     prettier: ^2.8.8
     shx: ^0.4.0
-    starknet: ^7.5.0
+    starknet: ^7.6.4
     toml: ^3.0.0
     ts-node: ^10.9.2
     tslib: ^2.6.2
@@ -12674,7 +12674,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"starknet@npm:^7.5.0":
+"starknet@npm:^7.5.0, starknet@npm:^7.6.4":
   version: 7.6.4
   resolution: "starknet@npm:7.6.4"
   dependencies:
