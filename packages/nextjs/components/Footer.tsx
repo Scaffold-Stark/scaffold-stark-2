@@ -7,6 +7,7 @@ import { FaucetSepolia } from "~~/components/scaffold-stark/FaucetSepolia";
 import { BlockExplorerSepolia } from "./scaffold-stark/BlockExplorerSepolia";
 import { BlockExplorer } from "./scaffold-stark/BlockExplorer";
 import Link from "next/link";
+import { BlockExplorerDevnet } from "./scaffold-stark/BlockExplorerDevnet";
 
 /**
  * Site footer
@@ -41,6 +42,7 @@ export const Footer = () => {
             {isLocalNetwork && (
               <>
                 <Faucet />
+                <BlockExplorerDevnet />
               </>
             )}
             {isMainnetNetwork && (
