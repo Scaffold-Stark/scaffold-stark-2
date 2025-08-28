@@ -106,8 +106,6 @@ export function getFunctionNameFromSelector(
       try {
         const computedSelector = `0x${hash.starknetKeccak(functionName).toString(16)}`;
 
-        console.log("computedSelector", computedSelector);
-
         if (
           computedSelector.toLowerCase() === normalizedSelector.toLowerCase()
         ) {

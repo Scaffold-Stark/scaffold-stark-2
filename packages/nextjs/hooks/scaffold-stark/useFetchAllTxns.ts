@@ -44,26 +44,16 @@ const convertCalldataToReadable = (
   const calls: { to: string; selector: string; args: string[] }[] = [];
   let currentPointer = 1;
   while (currentPointer < calldata.length) {
-    // obtain the  to value
     const to = calldata[currentPointer];
-
-    // obtain the selector
     const selector = calldata[currentPointer + 1];
-
-    // obtain args length
     const argsLength = parseInt(calldata[currentPointer + 2], 16);
-
-    // obtain the args
     const args = calldata.slice(
       currentPointer + 3,
       currentPointer + 3 + argsLength,
     );
-
     calls.push({ to, selector, args });
-
-    currentPointer += 4 + argsLength;
+    currentPointer += 3 + argsLength;
   }
-
   return calls;
 };
 
@@ -152,6 +142,12 @@ export function useFetchAllTxns(options: PaginationOptions = {}) {
           txCalls.push(txData);
         } else if (txInstance.type === "INVOKE") {
           // get calls
+
+          console.log(
+            "calldata",
+            (txInstance as unknown as INVOKE_TXN_V3).calldata,
+          );
+
           const calls = convertCalldataToReadable(
             (txInstance as unknown as INVOKE_TXN_V3).calldata,
           );
