@@ -78,35 +78,35 @@ You can refer to the guide of manual installation of asdf [here](https://asdf-vm
 
 #### Scarb version
 
-To ensure the proper functioning of scaffold-stark, your `Scarb` version must be `2.11.4`. To accomplish this, first check Scarb version:
+To ensure the proper functioning of scaffold-stark, your `Scarb` version must be `2.12.0`. To accomplish this, first check Scarb version:
 
 ```sh
 scarb --version
 ```
 
-If your `Scarb` version is not `2.11.4`, you need to install it. If you already have installed `Scarb` via `starkup`, you can setup this specific version with the following command:
+If your `Scarb` version is not `2.12.0`, you need to install it. If you already have installed `Scarb` via `starkup`, you can setup this specific version with the following command:
 
 ```sh
-asdf install scarb 2.11.4 && asdf set scarb 2.11.4
+asdf install scarb 2.12.0 && asdf set scarb 2.12.0
 ```
 
-Otherwise, you can install Scarb `2.11.4` following the [instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf).
+Otherwise, you can install Scarb `2.12.0` following the [instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf).
 
 #### Starknet Foundry version
 
-To ensure the proper functioning of the tests on scaffold-stark, your `Starknet Foundry` version must be `0.46.0`. To accomplish this, first check your `Starknet Foundry` version:
+To ensure the proper functioning of the tests on scaffold-stark, your `Starknet Foundry` version must be `0.48.1`. To accomplish this, first check your `Starknet Foundry` version:
 
 ```sh
 snforge --version
 ```
 
-If your `Starknet Foundry` version is not `0.46.0`, you need to install it. If you already have installed `Starknet Foundry` via `starkup`, you can setup this specific version with the following command:
+If your `Starknet Foundry` version is not `0.48.1`, you need to install it. If you already have installed `Starknet Foundry` via `starkup`, you can setup this specific version with the following command:
 
 ```sh
-asdf install starknet-foundry 0.46.0 && asdf set starknet-foundry 0.46.0
+asdf install starknet-foundry 0.48.1 && asdf set starknet-foundry 0.48.1
 ```
 
-Otherwise, you can install Starknet Foundry `0.46.0` following the [instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf).
+Otherwise, you can install Starknet Foundry `0.48.1` following the [instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf).
 
 #### Starknet-devnet version
 
@@ -156,9 +156,9 @@ Now you are ready!!!
 ## Compatible versions
 
 - Starknet-devnet - 0.4.3
-- Scarb - v2.11.4
-- Snforge - v0.46.0
-- Cairo - v2.11.4
+- Scarb - v2.12.0
+- Snforge - v0.48.1
+- Cairo - v2.12.0
 - Rpc - v0.8.0
 
 ## Quickstart 1: Deploying a Smart Contract to Starknet-Devnet
