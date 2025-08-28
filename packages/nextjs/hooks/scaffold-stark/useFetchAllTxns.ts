@@ -62,7 +62,9 @@ const convertCalldataToReadable = (
 // NOTE: This hook is intended to help devnet explorer, not a good idea to use in sepolia or mainnet.
 export function useFetchAllTxns(options: PaginationOptions = {}) {
   const { page = 1, pageSize = 5 } = options;
-  const { data: totalBlocks } = useBlockNumber();
+  const { data: totalBlocks } = useBlockNumber({
+    refetchInterval: 500,
+  });
   const { targetNetwork } = useTargetNetwork();
 
   const provider = useMemo(() => {
@@ -247,8 +249,7 @@ export function useFetchAllTxns(options: PaginationOptions = {}) {
     ],
     queryFn: fetchPaginatedTxns,
     enabled: !!totalBlocks && !!provider,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 5 * 1000, // 5 minutes
   });
 
   const totalPages = data ? Math.ceil(data.totalTxns / pageSize) : 0;
