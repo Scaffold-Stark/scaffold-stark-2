@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, use } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeftIcon,
@@ -8,6 +8,7 @@ import {
   CheckIcon,
 } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-stark";
+import { useFetchTxnDetail } from "~~/hooks/scaffold-stark";
 
 // Helper function to convert STRK to fri (BigInt)
 const strkToFri = (friAmount: string): bigint => {
@@ -21,31 +22,10 @@ const friToStrk = (friValue: bigint): string => {
   return strkValue.toFixed(4).replace(/\.?0+$/, "");
 };
 
-// Mock transaction details data
-const MOCK_TRANSACTION_DETAILS = {
-  hash: "0x7020938dfa5121817945d9d2640971cadbf1f78ad30adfac6df70e21126890ce1",
-  blockNumber: 4,
-  from: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-  to: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-  value: strkToFri("1.5"),
-  functionCalled: "setGreeting(string _newGreeting = hello world)",
-  selector: "0xa4136862",
-  gasPrice: 1673320887,
-  data: "0xa41368620000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000c68656c6c6f20776f726c6400000000000000000000000000000000000000000000000000000000000000000000",
-  logs: [
-    "0x94cbd7e04dca26a7667654f6448b2ca0a40fec60218dc5fd8c82b9cf3c645ad",
-    "0x0000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8",
-  ],
-  timestamp: "2025-01-20T15:15:06Z",
-  status: "Success",
-  gasUsed: "21000",
-  nonce: 42,
-};
-
 interface TransactionDetailsProps {
-  params: {
+  params: Promise<{
     hash: string;
-  };
+  }>;
 }
 
 export default function TransactionDetails({
@@ -53,6 +33,14 @@ export default function TransactionDetails({
 }: TransactionDetailsProps) {
   const router = useRouter();
   const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  // Unwrap the params Promise
+  const resolvedParams = use(params);
+
+  // Fetch transaction details using the custom hook
+  const { transactionDetail, isLoading, error } = useFetchTxnDetail(
+    resolvedParams.hash,
+  );
 
   const handleCopy = async (text: string, fieldName: string) => {
     try {
@@ -86,6 +74,22 @@ export default function TransactionDetails({
     </button>
   );
 
+  // Helper function to format transaction fees
+  const formatFee = (fee?: string) => {
+    if (!fee) return "0";
+    try {
+      return friToStrk(BigInt(fee));
+    } catch {
+      return fee;
+    }
+  };
+
+  // Helper function to format timestamp
+  const formatTimestamp = (timestamp?: number) => {
+    if (!timestamp) return "Unknown";
+    return new Date(timestamp * 1000).toLocaleString();
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-base-200">
       {/* Header with gradient background */}
@@ -108,198 +112,515 @@ export default function TransactionDetails({
       {/* Main content */}
       <div className="flex-1 px-6 lg:px-10 py-8">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-base-100 rounded-lg shadow-lg border border-base-300 p-8">
-            <div className="space-y-8">
-              {/* Transaction Hash */}
-              <div className="flex flex-col space-y-2">
-                <label className="text-lg font-semibold text-base-content">
-                  Transaction Hash:
-                </label>
-                <div className="flex items-center">
-                  <code className="text-base font-mono text-accent bg-base-200 px-3 py-2 rounded">
-                    {MOCK_TRANSACTION_DETAILS.hash}
-                  </code>
-                  <CopyButton
-                    text={MOCK_TRANSACTION_DETAILS.hash}
-                    fieldName="hash"
-                  />
-                </div>
-              </div>
-
-              {/* Block Number */}
-              <div className="flex flex-col space-y-2">
-                <label className="text-lg font-semibold text-base-content">
-                  Block Number:
-                </label>
-                <span className="text-base text-base-content">
-                  {MOCK_TRANSACTION_DETAILS.blockNumber}
+          {/* Loading state */}
+          {isLoading && (
+            <div className="bg-base-100 rounded-lg shadow-lg border border-base-300 p-8">
+              <div className="flex items-center justify-center py-12">
+                <div className="loading loading-spinner loading-lg"></div>
+                <span className="ml-4 text-lg">
+                  Loading transaction details...
                 </span>
               </div>
+            </div>
+          )}
 
-              {/* From Address */}
-              <div className="flex flex-col space-y-2">
-                <label className="text-lg font-semibold text-base-content">
-                  From:
-                </label>
-                <div className="flex items-center">
-                  <Address
-                    address={MOCK_TRANSACTION_DETAILS.from as `0x${string}`}
-                    format="long"
-                    size="base"
-                  />
-                  <CopyButton
-                    text={MOCK_TRANSACTION_DETAILS.from}
-                    fieldName="from"
-                  />
-                </div>
+          {/* Error state */}
+          {error && (
+            <div className="bg-base-100 rounded-lg shadow-lg border border-base-300 p-8">
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className="text-error text-6xl mb-4">⚠️</div>
+                <h2 className="text-2xl font-bold text-error mb-2">
+                  Error Loading Transaction
+                </h2>
+                <p className="text-base-content/70 text-center max-w-md">
+                  {error.message ||
+                    "Failed to load transaction details. Please check the transaction hash and try again."}
+                </p>
               </div>
+            </div>
+          )}
 
-              {/* To Address */}
-              <div className="flex flex-col space-y-2">
-                <label className="text-lg font-semibold text-base-content">
-                  To:
-                </label>
-                <div className="flex items-center">
-                  <Address
-                    address={MOCK_TRANSACTION_DETAILS.to as `0x${string}`}
-                    format="long"
-                    size="base"
-                  />
-                  <CopyButton
-                    text={MOCK_TRANSACTION_DETAILS.to}
-                    fieldName="to"
-                  />
-                </div>
+          {/* Transaction not found */}
+          {!isLoading && !error && !transactionDetail && (
+            <div className="bg-base-100 rounded-lg shadow-lg border border-base-300 p-8">
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className="text-warning text-6xl mb-4">🔍</div>
+                <h2 className="text-2xl font-bold text-warning mb-2">
+                  Transaction Not Found
+                </h2>
+                <p className="text-base-content/70 text-center max-w-md">
+                  The transaction with hash{" "}
+                  <code className="bg-base-200 px-2 py-1 rounded">
+                    {resolvedParams.hash}
+                  </code>{" "}
+                  could not be found.
+                </p>
               </div>
+            </div>
+          )}
 
-              {/* Value */}
-              <div className="flex flex-col space-y-2">
-                <label className="text-lg font-semibold text-base-content">
-                  Value:
-                </label>
-                <span className="text-base text-base-content">
-                  {friToStrk(MOCK_TRANSACTION_DETAILS.value)} STRK
-                </span>
-              </div>
-
-              {/* Function Called */}
-              <div className="flex flex-col space-y-2">
-                <label className="text-lg font-semibold text-base-content">
-                  Function called:
-                </label>
-                <div className="flex items-start">
-                  <div className="flex flex-col space-y-1">
-                    <span className="text-base text-base-content">
-                      {MOCK_TRANSACTION_DETAILS.functionCalled}
-                    </span>
-                    <code className="text-sm text-base-content/60 bg-base-200 px-2 py-1 rounded w-fit">
-                      {MOCK_TRANSACTION_DETAILS.selector}
+          {/* Transaction details */}
+          {!isLoading && !error && transactionDetail && (
+            <div className="bg-base-100 rounded-lg shadow-lg border border-base-300 p-8">
+              <div className="space-y-8">
+                {/* Transaction Hash */}
+                <div className="flex flex-col space-y-2">
+                  <label className="text-lg font-semibold text-base-content">
+                    Transaction Hash:
+                  </label>
+                  <div className="flex items-center">
+                    <code className="text-base font-mono text-accent bg-base-200 px-3 py-2 rounded">
+                      {transactionDetail.transactionHash}
                     </code>
+                    <CopyButton
+                      text={transactionDetail.transactionHash}
+                      fieldName="hash"
+                    />
                   </div>
                 </div>
-              </div>
 
-              {/* Gas Price */}
-              <div className="flex flex-col space-y-2">
-                <label className="text-lg font-semibold text-base-content">
-                  Gas Price:
-                </label>
-                <span className="text-base text-base-content">
-                  {friToStrk(BigInt(MOCK_TRANSACTION_DETAILS.gasPrice))} STRK
-                </span>
-              </div>
-
-              {/* Data */}
-              <div className="flex flex-col space-y-2">
-                <label className="text-lg font-semibold text-base-content">
-                  Data:
-                </label>
-                <div className="relative">
-                  <div className="bg-base-200 p-4 rounded-lg max-h-40 overflow-y-auto">
-                    <code className="text-sm font-mono text-base-content break-all whitespace-pre-wrap">
-                      {MOCK_TRANSACTION_DETAILS.data}
-                    </code>
-                  </div>
-                  <CopyButton
-                    text={MOCK_TRANSACTION_DETAILS.data}
-                    fieldName="data"
-                  />
+                {/* Transaction Type */}
+                <div className="flex flex-col space-y-2">
+                  <label className="text-lg font-semibold text-base-content">
+                    Transaction Type:
+                  </label>
+                  <span className="text-base text-base-content font-mono bg-base-200 px-3 py-1 rounded w-fit">
+                    {transactionDetail.type}
+                  </span>
                 </div>
-              </div>
 
-              {/* Logs */}
-              <div className="flex flex-col space-y-2">
-                <label className="text-lg font-semibold text-base-content">
-                  Logs:
-                </label>
-                <div className="bg-base-200 p-4 rounded-lg">
-                  <div className="space-y-2">
-                    <div className="text-sm text-base-content">
-                      Log 0 topics: [
-                      {MOCK_TRANSACTION_DETAILS.logs.map((log, index) => (
-                        <div key={index} className="ml-4">
-                          <code className="text-sm font-mono text-accent">
-                            &quot;{log}&quot;
-                            {index < MOCK_TRANSACTION_DETAILS.logs.length - 1
-                              ? ","
-                              : ""}
-                          </code>
-                        </div>
-                      ))}
-                      ]
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Additional Transaction Info */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-base-300">
+                {/* Status */}
                 <div className="flex flex-col space-y-2">
                   <label className="text-lg font-semibold text-base-content">
                     Status:
                   </label>
                   <span
                     className={`text-base px-3 py-1 rounded w-fit ${
-                      MOCK_TRANSACTION_DETAILS.status === "Success"
+                      transactionDetail.status === "SUCCEEDED"
                         ? "bg-success/20 text-success"
-                        : "bg-error/20 text-error"
+                        : transactionDetail.status === "REVERTED"
+                          ? "bg-error/20 text-error"
+                          : "bg-warning/20 text-warning"
                     }`}
                   >
-                    {MOCK_TRANSACTION_DETAILS.status}
+                    {transactionDetail.status}
                   </span>
                 </div>
 
-                <div className="flex flex-col space-y-2">
-                  <label className="text-lg font-semibold text-base-content">
-                    Gas Used:
-                  </label>
-                  <span className="text-base text-base-content">
-                    {MOCK_TRANSACTION_DETAILS.gasUsed}
-                  </span>
-                </div>
+                {/* Block Number */}
+                {transactionDetail.blockNumber && (
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-lg font-semibold text-base-content">
+                      Block Number:
+                    </label>
+                    <span className="text-base text-base-content">
+                      {transactionDetail.blockNumber}
+                    </span>
+                  </div>
+                )}
 
-                <div className="flex flex-col space-y-2">
-                  <label className="text-lg font-semibold text-base-content">
-                    Nonce:
-                  </label>
-                  <span className="text-base text-base-content">
-                    {MOCK_TRANSACTION_DETAILS.nonce}
-                  </span>
-                </div>
+                {/* Timestamp */}
+                {transactionDetail.timestamp && (
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-lg font-semibold text-base-content">
+                      Timestamp:
+                    </label>
+                    <span className="text-base text-base-content">
+                      {formatTimestamp(transactionDetail.timestamp)}
+                    </span>
+                  </div>
+                )}
 
-                <div className="flex flex-col space-y-2">
-                  <label className="text-lg font-semibold text-base-content">
-                    Timestamp:
-                  </label>
-                  <span className="text-base text-base-content">
-                    {new Date(
-                      MOCK_TRANSACTION_DETAILS.timestamp,
-                    ).toLocaleString()}
-                  </span>
-                </div>
+                {/* Sender Address */}
+                {transactionDetail.senderAddress && (
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-lg font-semibold text-base-content">
+                      Sender Address:
+                    </label>
+                    <div className="flex items-center">
+                      <Address
+                        address={
+                          transactionDetail.senderAddress as `0x${string}`
+                        }
+                        format="long"
+                        size="base"
+                      />
+                      <CopyButton
+                        text={transactionDetail.senderAddress}
+                        fieldName="sender"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Contract Address (for deploy/deploy account) */}
+                {transactionDetail.contractAddress && (
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-lg font-semibold text-base-content">
+                      Contract Address:
+                    </label>
+                    <div className="flex items-center">
+                      <Address
+                        address={
+                          transactionDetail.contractAddress as `0x${string}`
+                        }
+                        format="long"
+                        size="base"
+                      />
+                      <CopyButton
+                        text={transactionDetail.contractAddress}
+                        fieldName="contract"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Nonce */}
+                {transactionDetail.nonce && (
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-lg font-semibold text-base-content">
+                      Nonce:
+                    </label>
+                    <span className="text-base text-base-content">
+                      {transactionDetail.nonce}
+                    </span>
+                  </div>
+                )}
+
+                {/* Function Calls (for INVOKE transactions) */}
+                {transactionDetail.functionCalls &&
+                  transactionDetail.functionCalls.length > 0 && (
+                    <div className="flex flex-col space-y-2">
+                      <label className="text-lg font-semibold text-base-content">
+                        Function Calls:
+                      </label>
+                      <div className="space-y-4">
+                        {transactionDetail.functionCalls.map((call, index) => (
+                          <div
+                            key={index}
+                            className="bg-base-200 p-4 rounded-lg"
+                          >
+                            <div className="space-y-2">
+                              <div>
+                                <span className="text-sm font-semibold text-base-content/70">
+                                  Contract:
+                                </span>
+                                <div className="flex items-center mt-1">
+                                  <Address
+                                    address={
+                                      call.contractAddress as `0x${string}`
+                                    }
+                                    format="long"
+                                    size="sm"
+                                  />
+                                  <CopyButton
+                                    text={call.contractAddress}
+                                    fieldName={`contract-${index}`}
+                                  />
+                                </div>
+                              </div>
+                              <div>
+                                <span className="text-sm font-semibold text-base-content/70">
+                                  Entrypoint:
+                                </span>
+                                <code className="text-sm text-accent bg-base-300 px-2 py-1 rounded ml-2">
+                                  {call.entrypoint}
+                                </code>
+                              </div>
+                              {call.calldata.length > 0 && (
+                                <div>
+                                  <span className="text-sm font-semibold text-base-content/70">
+                                    Arguments:
+                                  </span>
+                                  <div className="mt-1 max-h-32 overflow-y-auto">
+                                    {call.calldata.map((arg, argIndex) => (
+                                      <div
+                                        key={argIndex}
+                                        className="text-xs font-mono text-base-content/60 break-all"
+                                      >
+                                        [{argIndex}] {arg}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                {/* Max Fee */}
+                {transactionDetail.maxFee && (
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-lg font-semibold text-base-content">
+                      Max Fee:
+                    </label>
+                    <span className="text-base text-base-content">
+                      {formatFee(transactionDetail.maxFee)} STRK
+                    </span>
+                  </div>
+                )}
+
+                {/* Actual Fee */}
+                {transactionDetail.actualFee && (
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-lg font-semibold text-base-content">
+                      Actual Fee:
+                    </label>
+                    <span className="text-base text-base-content">
+                      {formatFee(transactionDetail.actualFee)} STRK
+                    </span>
+                  </div>
+                )}
+
+                {/* Calldata (Raw) */}
+                {transactionDetail.calldata &&
+                  transactionDetail.calldata.length > 0 && (
+                    <div className="flex flex-col space-y-2">
+                      <label className="text-lg font-semibold text-base-content">
+                        Calldata:
+                      </label>
+                      <div className="relative">
+                        <div className="bg-base-200 p-4 rounded-lg max-h-40 overflow-y-auto">
+                          <div className="space-y-1">
+                            {transactionDetail.calldata.map((data, index) => (
+                              <div
+                                key={index}
+                                className="text-sm font-mono text-base-content break-all"
+                              >
+                                [{index}] {data}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        <CopyButton
+                          text={JSON.stringify(
+                            transactionDetail.calldata,
+                            null,
+                            2,
+                          )}
+                          fieldName="calldata"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                {/* Signature */}
+                {transactionDetail.signature &&
+                  transactionDetail.signature.length > 0 && (
+                    <div className="flex flex-col space-y-2">
+                      <label className="text-lg font-semibold text-base-content">
+                        Signature:
+                      </label>
+                      <div className="relative">
+                        <div className="bg-base-200 p-4 rounded-lg max-h-32 overflow-y-auto">
+                          <div className="space-y-1">
+                            {transactionDetail.signature.map((sig, index) => (
+                              <div
+                                key={index}
+                                className="text-sm font-mono text-base-content break-all"
+                              >
+                                [{index}] {sig}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        <CopyButton
+                          text={JSON.stringify(
+                            transactionDetail.signature,
+                            null,
+                            2,
+                          )}
+                          fieldName="signature"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                {/* Events */}
+                {transactionDetail.events &&
+                  transactionDetail.events.length > 0 && (
+                    <div className="flex flex-col space-y-2">
+                      <label className="text-lg font-semibold text-base-content">
+                        Events:
+                      </label>
+                      <div className="space-y-4">
+                        {transactionDetail.events.map((event, index) => (
+                          <div
+                            key={index}
+                            className="bg-base-200 p-4 rounded-lg"
+                          >
+                            <div className="space-y-2">
+                              <div>
+                                <span className="text-sm font-semibold text-base-content/70">
+                                  From Contract:
+                                </span>
+                                <div className="flex items-center mt-1">
+                                  <Address
+                                    address={
+                                      event.from_address as `0x${string}`
+                                    }
+                                    format="long"
+                                    size="sm"
+                                  />
+                                  <CopyButton
+                                    text={event.from_address}
+                                    fieldName={`event-from-${index}`}
+                                  />
+                                </div>
+                              </div>
+                              {event.keys.length > 0 && (
+                                <div>
+                                  <span className="text-sm font-semibold text-base-content/70">
+                                    Keys:
+                                  </span>
+                                  <div className="mt-1 max-h-24 overflow-y-auto">
+                                    {event.keys.map((key, keyIndex) => (
+                                      <div
+                                        key={keyIndex}
+                                        className="text-xs font-mono text-base-content/60 break-all"
+                                      >
+                                        [{keyIndex}] {key}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              {event.data.length > 0 && (
+                                <div>
+                                  <span className="text-sm font-semibold text-base-content/70">
+                                    Data:
+                                  </span>
+                                  <div className="mt-1 max-h-24 overflow-y-auto">
+                                    {event.data.map((data, dataIndex) => (
+                                      <div
+                                        key={dataIndex}
+                                        className="text-xs font-mono text-base-content/60 break-all"
+                                      >
+                                        [{dataIndex}] {data}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                {/* Logs (simplified view) */}
+                {transactionDetail.logs &&
+                  transactionDetail.logs.length > 0 && (
+                    <div className="flex flex-col space-y-2">
+                      <label className="text-lg font-semibold text-base-content">
+                        Transaction Logs:
+                      </label>
+                      <div className="bg-base-200 p-4 rounded-lg max-h-40 overflow-y-auto">
+                        <div className="space-y-1">
+                          {transactionDetail.logs.map((log, index) => (
+                            <div
+                              key={index}
+                              className="text-sm font-mono text-accent break-all"
+                            >
+                              [{index}] {log}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                {/* Execution Resources */}
+                {transactionDetail.executionResources && (
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-lg font-semibold text-base-content">
+                      Execution Resources:
+                    </label>
+                    <div className="bg-base-200 p-4 rounded-lg">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {transactionDetail.gasUsed && (
+                          <div>
+                            <span className="text-sm font-semibold text-base-content/70">
+                              Steps:
+                            </span>
+                            <div className="text-base text-base-content">
+                              {transactionDetail.gasUsed}
+                            </div>
+                          </div>
+                        )}
+                        {transactionDetail.l1GasConsumed && (
+                          <div>
+                            <span className="text-sm font-semibold text-base-content/70">
+                              L1 Gas:
+                            </span>
+                            <div className="text-base text-base-content">
+                              {transactionDetail.l1GasConsumed}
+                            </div>
+                          </div>
+                        )}
+                        {transactionDetail.l2GasConsumed && (
+                          <div>
+                            <span className="text-sm font-semibold text-base-content/70">
+                              L2 Gas:
+                            </span>
+                            <div className="text-base text-base-content">
+                              {transactionDetail.l2GasConsumed}
+                            </div>
+                          </div>
+                        )}
+                        {transactionDetail.executionResources
+                          .builtin_instance_counter && (
+                          <div className="md:col-span-2">
+                            <span className="text-sm font-semibold text-base-content/70">
+                              Built-in Counters:
+                            </span>
+                            <div className="text-xs font-mono text-base-content/60 mt-1">
+                              {JSON.stringify(
+                                transactionDetail.executionResources
+                                  .builtin_instance_counter,
+                                null,
+                                2,
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Version */}
+                {transactionDetail.version && (
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-lg font-semibold text-base-content">
+                      Version:
+                    </label>
+                    <span className="text-base text-base-content font-mono bg-base-200 px-3 py-1 rounded w-fit">
+                      {transactionDetail.version}
+                    </span>
+                  </div>
+                )}
+
+                {/* Revert Reason (if applicable) */}
+                {transactionDetail.revertReason && (
+                  <div className="flex flex-col space-y-2">
+                    <label className="text-lg font-semibold text-error">
+                      Revert Reason:
+                    </label>
+                    <div className="bg-error/10 border border-error/20 p-4 rounded-lg">
+                      <code className="text-sm font-mono text-error break-all">
+                        {transactionDetail.revertReason}
+                      </code>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

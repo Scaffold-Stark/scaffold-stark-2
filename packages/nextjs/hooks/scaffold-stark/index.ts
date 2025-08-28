@@ -5,3 +5,5 @@ export * from "./useAnimationConfig";
 export * from "./useTransactor";
 export * from "./useAutoConnect";
 export * from "./useSwitchNetwork";
+export * from "./useFetchTxnDetail";
+export * from "./useFetchAllTxns";
