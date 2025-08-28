@@ -15,6 +15,7 @@ import {
   DEPLOY_TXN,
 } from "@starknet-io/types-js";
 import deployedContracts from "../../contracts/deployedContracts";
+import { getFunctionNameFromSelector } from "../../utils/scaffold-stark/selectorUtils";
 
 interface PaginationOptions {
   page?: number;
@@ -60,7 +61,7 @@ const convertCalldataToReadable = (
 
     calls.push({ to, selector, args });
 
-    currentPointer += 3 + argsLength;
+    currentPointer += 4 + argsLength;
   }
 
   return calls;
@@ -163,7 +164,10 @@ export function useFetchAllTxns(options: PaginationOptions = {}) {
 
             _txData.toAddress = call.to;
             _txData.functionSelector = call.selector;
-            _txData.functionCalled = call.selector;
+            _txData.functionCalled = getFunctionNameFromSelector(
+              call.selector,
+              targetNetwork.network,
+            );
             txCalls.push(_txData);
           }
         }
@@ -175,7 +179,7 @@ export function useFetchAllTxns(options: PaginationOptions = {}) {
 
       return parsedTxns;
     },
-    [provider],
+    [provider, targetNetwork.network],
   );
 
   // Efficiently fetch transactions with lazy loading

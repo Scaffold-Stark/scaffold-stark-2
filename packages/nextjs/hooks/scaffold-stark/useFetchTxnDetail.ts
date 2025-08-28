@@ -20,6 +20,7 @@ import {
   DEPLOY_TXN,
 } from "@starknet-io/types-js";
 import { useTargetNetwork } from "./useTargetNetwork";
+import { getFunctionNameFromSelector } from "../../utils/scaffold-stark/selectorUtils";
 
 /**
  * Comprehensive transaction detail interface that includes all relevant information
@@ -238,7 +239,10 @@ export const useFetchTxnDetail = (txHash?: string) => {
                 const calls = convertCalldataToReadable(invokeTxn.calldata);
                 transactionDetail.functionCalls = calls.map((call) => ({
                   contractAddress: call.to,
-                  entrypoint: call.selector,
+                  entrypoint: getFunctionNameFromSelector(
+                    call.selector,
+                    targetNetwork.network,
+                  ),
                   calldata: call.args,
                 }));
               } catch (error) {

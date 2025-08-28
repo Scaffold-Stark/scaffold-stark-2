@@ -78,6 +78,7 @@ export default function BlockExplorer() {
   });
 
   // Transform data from the hook into our TxnEntry format
+  debugger;
   const currentTransactions = useMemo(
     () =>
       txns.map(
