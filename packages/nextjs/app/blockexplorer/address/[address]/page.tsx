@@ -2,12 +2,16 @@
 
 import React, { useState, use } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   ArrowLeftIcon,
   DocumentDuplicateIcon,
   CheckIcon,
 } from "@heroicons/react/24/outline";
-import { Address } from "~~/components/scaffold-stark";
+import { Address, Balance } from "~~/components/scaffold-stark";
+import { useFetchAddressDetails } from "~~/hooks/scaffold-stark";
+import { useScaffoldStarkProfile } from "~~/hooks/scaffold-stark/useScaffoldStarkProfile";
+import useScaffoldStrkBalance from "~~/hooks/scaffold-stark/useScaffoldStrkBalance";
 
 interface AddressDetailsProps {
   params: Promise<{
@@ -22,6 +26,19 @@ export default function AddressDetails({ params }: AddressDetailsProps) {
 
   // Unwrap the params Promise
   const resolvedParams = use(params);
+
+  // Fetch address details using scaffold hooks
+  const {
+    addressDetails,
+    isLoading: isAddressLoading,
+    error: addressError,
+  } = useFetchAddressDetails(resolvedParams.address as `0x${string}`);
+  const { data: profileData, isLoading: isProfileLoading } =
+    useScaffoldStarkProfile(resolvedParams.address as `0x${string}`);
+  const { formatted: strkBalance, isLoading: isBalanceLoading } =
+    useScaffoldStrkBalance({
+      address: resolvedParams.address as `0x${string}`,
+    });
 
   const handleCopy = async (text: string, fieldName: string) => {
     try {
@@ -55,18 +72,19 @@ export default function AddressDetails({ params }: AddressDetailsProps) {
     </button>
   );
 
-  // Mock data - replace with actual data fetching
+  // Use fetched data or fallback to loading states
   const addressData = {
     contractAddress: resolvedParams.address,
-    classHash:
-      "0x079a9a12fdfa0481e8d8d46599b90226cd7247b2667358bb00636dd864002314",
-    ethBalance: "0.001998119207217959",
-    type: "ACCOUNT",
-    deployedByContractAddress: resolvedParams.address,
+    classHash: addressDetails.classHash || "Not available",
+    strkBalance: strkBalance || "0",
+    type: addressDetails.type,
+    deployedByContractAddress:
+      addressDetails.deployedByContractAddress || resolvedParams.address,
     deployedAtTransactionHash:
-      "0x03659c858c1f2f813cd8de66c71f7d236a5a233b1b71dc9449ef3e0d92403ec",
-    deployedAt: "April 2, 2025 at 4:48:46 PM GMT+7",
-    classVersion: "Cairo 2",
+      addressDetails.deployedAtTransactionHash || "Not available",
+    deployedAt: addressDetails.deployedAt || "Not available",
+    classVersion: addressDetails.classVersion || "Unknown",
+    profileName: profileData?.name || "",
   };
 
   const tabs = [
@@ -75,11 +93,88 @@ export default function AddressDetails({ params }: AddressDetailsProps) {
     { id: "events", label: "Events", count: 2 },
   ];
 
+  // Show error state if address details failed to load
+  if (addressError) {
+    return (
+      <div className="flex flex-col min-h-screen bg-base-200">
+        <div className="bg-primary py-8 px-6 lg:px-10">
+          <div className="max-w-7xl mx-auto">
+            <button
+              onClick={() => router.back()}
+              className="flex items-center space-x-2 text-primary-content hover:text-primary-content/80 transition-colors mb-6"
+            >
+              <ArrowLeftIcon className="h-5 w-5" />
+              <span className="font-medium">Back</span>
+            </button>
+            <h1 className="text-4xl font-bold text-primary-content">
+              Address Details
+            </h1>
+          </div>
+        </div>
+        <div className="flex-1 px-6 lg:px-10 py-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="bg-base-100 rounded-lg shadow-lg border border-base-300 p-6">
+              <div className="text-center">
+                <div className="text-6xl mb-4">⚠️</div>
+                <h3 className="text-xl font-semibold text-error mb-2">
+                  Error Loading Address Details
+                </h3>
+                <p className="text-base-content/70 mb-4">{addressError}</p>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => window.location.reload()}
+                >
+                  Retry
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const renderTabContent = () => {
     switch (activeTab) {
       case "overview":
         return (
           <div className="space-y-6">
+            {/* Starknet Profile (if available) */}
+            {(profileData?.name || isProfileLoading) && (
+              <div className="flex items-center justify-between py-4 border-b border-base-300">
+                <div className="flex items-center">
+                  <span className="text-base-content/70 mr-2">👤</span>
+                  <span className="font-medium text-base-content">
+                    Starknet Profile
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  {isProfileLoading ? (
+                    <span className="loading loading-spinner loading-sm"></span>
+                  ) : profileData?.name ? (
+                    <div className="flex items-center">
+                      {profileData.profilePicture && (
+                        <Image
+                          src={profileData.profilePicture}
+                          alt="Profile"
+                          width={24}
+                          height={24}
+                          className="w-6 h-6 rounded-full mr-2"
+                        />
+                      )}
+                      <span className="text-blue-400 font-medium">
+                        {profileData.name}
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-base-content/70">
+                      No profile found
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Contract Address */}
             <div className="flex items-center justify-between py-4 border-b border-base-300">
               <div className="flex items-center">
@@ -108,31 +203,43 @@ export default function AddressDetails({ params }: AddressDetailsProps) {
                 </span>
               </div>
               <div className="flex items-center">
-                <code className="text-blue-400 font-mono text-sm">
-                  {addressData.classHash}
-                </code>
-                <CopyButton
-                  text={addressData.classHash}
-                  fieldName="class-hash"
-                />
+                {isAddressLoading ? (
+                  <span className="loading loading-spinner loading-sm"></span>
+                ) : (
+                  <>
+                    <code className="text-blue-400 font-mono text-sm">
+                      {addressData.classHash}
+                    </code>
+                    {addressData.classHash !== "Not available" && (
+                      <CopyButton
+                        text={addressData.classHash}
+                        fieldName="class-hash"
+                      />
+                    )}
+                  </>
+                )}
               </div>
             </div>
 
-            {/* ETH Balance */}
+            {/* STRK Balance */}
             <div className="flex items-center justify-between py-4 border-b border-base-300">
               <div className="flex items-center">
                 <span className="text-base-content/70 mr-2">💰</span>
                 <span className="font-medium text-base-content">
-                  ETH Balance
+                  STRK Balance
                 </span>
               </div>
               <div className="flex items-center">
-                <span className="text-base-content">
-                  {addressData.ethBalance} ETH
-                </span>
-                <button className="ml-2 text-blue-400 hover:text-blue-300 text-sm">
-                  View All Tokens →
-                </button>
+                {isBalanceLoading ? (
+                  <span className="loading loading-spinner loading-sm"></span>
+                ) : (
+                  <>
+                    <Balance
+                      address={resolvedParams.address as `0x${string}`}
+                      className="text-base-content"
+                    />
+                  </>
+                )}
               </div>
             </div>
 
@@ -143,9 +250,21 @@ export default function AddressDetails({ params }: AddressDetailsProps) {
                 <span className="font-medium text-base-content">Type</span>
               </div>
               <div className="flex items-center">
-                <span className="bg-green-500 text-white px-2 py-1 rounded text-sm font-medium">
-                  {addressData.type}
-                </span>
+                {isAddressLoading ? (
+                  <span className="loading loading-spinner loading-sm"></span>
+                ) : (
+                  <span
+                    className={`text-white px-2 py-1 rounded text-sm font-medium ${
+                      addressData.type === "ACCOUNT"
+                        ? "bg-green-500"
+                        : addressData.type === "CONTRACT"
+                          ? "bg-blue-500"
+                          : "bg-gray-500"
+                    }`}
+                  >
+                    {addressData.type}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -177,13 +296,22 @@ export default function AddressDetails({ params }: AddressDetailsProps) {
                 </span>
               </div>
               <div className="flex items-center">
-                <code className="text-blue-400 font-mono text-sm">
-                  {addressData.deployedAtTransactionHash}
-                </code>
-                <CopyButton
-                  text={addressData.deployedAtTransactionHash}
-                  fieldName="deployed-tx"
-                />
+                {isAddressLoading ? (
+                  <span className="loading loading-spinner loading-sm"></span>
+                ) : (
+                  <>
+                    <code className="text-blue-400 font-mono text-sm">
+                      {addressData.deployedAtTransactionHash}
+                    </code>
+                    {addressData.deployedAtTransactionHash !==
+                      "Not available" && (
+                      <CopyButton
+                        text={addressData.deployedAtTransactionHash}
+                        fieldName="deployed-tx"
+                      />
+                    )}
+                  </>
+                )}
               </div>
             </div>
 
@@ -196,9 +324,13 @@ export default function AddressDetails({ params }: AddressDetailsProps) {
                 </span>
               </div>
               <div className="flex items-center">
-                <span className="text-base-content">
-                  {addressData.deployedAt}
-                </span>
+                {isAddressLoading ? (
+                  <span className="loading loading-spinner loading-sm"></span>
+                ) : (
+                  <span className="text-base-content">
+                    {addressData.deployedAt}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -211,9 +343,21 @@ export default function AddressDetails({ params }: AddressDetailsProps) {
                 </span>
               </div>
               <div className="flex items-center">
-                <span className="bg-orange-500 text-white px-2 py-1 rounded text-sm font-medium">
-                  {addressData.classVersion}
-                </span>
+                {isAddressLoading ? (
+                  <span className="loading loading-spinner loading-sm"></span>
+                ) : (
+                  <span
+                    className={`text-white px-2 py-1 rounded text-sm font-medium ${
+                      addressData.classVersion === "Cairo 2"
+                        ? "bg-orange-500"
+                        : addressData.classVersion === "Cairo 1"
+                          ? "bg-purple-500"
+                          : "bg-gray-500"
+                    }`}
+                  >
+                    {addressData.classVersion}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -263,9 +407,21 @@ export default function AddressDetails({ params }: AddressDetailsProps) {
             <span className="font-medium">Back</span>
           </button>
 
-          <h1 className="text-4xl font-bold text-primary-content">
-            Address Details
-          </h1>
+          <div className="space-y-4">
+            <h1 className="text-4xl font-bold text-primary-content">
+              Address Details
+            </h1>
+            <div className="flex items-center space-x-2">
+              <span className="text-primary-content/80 text-lg">Address:</span>
+              <Address
+                address={resolvedParams.address as `0x${string}`}
+                format="long"
+                profile={profileData}
+                isLoading={isProfileLoading}
+                size="lg"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
