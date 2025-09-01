@@ -5,6 +5,7 @@ import {
   TransactionStatusReceiptSets,
   TransactionWithHash,
   RpcProvider,
+  BlockTag,
 } from "starknet";
 import { useQuery } from "@tanstack/react-query";
 import { useTargetNetwork } from "./useTargetNetwork";
@@ -61,11 +62,16 @@ const convertCalldataToReadable = (
 // It lazily loads blocks to avoid fetching all data at once.
 // NOTE: This hook is intended to help devnet explorer, not a good idea to use in sepolia or mainnet.
 export function useFetchAllTxns(options: PaginationOptions = {}) {
-  const { page = 1, pageSize = 5 } = options;
-  const { data: totalBlocks } = useBlockNumber({
+  const { page = 1, pageSize = 7 } = options;
+
+  const { targetNetwork } = useTargetNetwork();
+
+  // this is a workaround since if we don't add one, the next block won't be visible.
+  const { data: _totalBlocks } = useBlockNumber({
+    blockIdentifier: BlockTag.LATEST,
     refetchInterval: 500,
   });
-  const { targetNetwork } = useTargetNetwork();
+  const totalBlocks = useMemo(() => (_totalBlocks || 0) + 1, [_totalBlocks]);
 
   const provider = useMemo(() => {
     return new RpcProvider({
