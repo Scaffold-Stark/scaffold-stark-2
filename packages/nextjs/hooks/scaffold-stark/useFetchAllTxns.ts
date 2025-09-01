@@ -15,13 +15,15 @@ import {
   INVOKE_TXN_V3,
   DEPLOY_TXN,
 } from "@starknet-io/types-js";
-import deployedContracts from "../../contracts/deployedContracts";
 import { getFunctionNameFromSelector } from "../../utils/scaffold-stark/selectorUtils";
 import { devnetUDCAddress } from "~~/utils/Constants";
+import { encode } from "starknet";
 
-interface PaginationOptions {
+interface UseFetchAllTxnsOptions {
   page?: number;
   pageSize?: number;
+  bySenderAddress?: string;
+  byReceiverAddress?: string;
 }
 
 type ExplorerReturnType = {
@@ -62,8 +64,13 @@ const convertCalldataToReadable = (
 // This hook fetches transactions from the Starknet network with pagination support.
 // It lazily loads blocks to avoid fetching all data at once.
 // NOTE: This hook is intended to help devnet explorer, not a good idea to use in sepolia or mainnet.
-export function useFetchAllTxns(options: PaginationOptions = {}) {
-  const { page = 1, pageSize = 7 } = options;
+export function useFetchAllTxns(options: UseFetchAllTxnsOptions = {}) {
+  const {
+    page = 1,
+    pageSize = 7,
+    bySenderAddress,
+    byReceiverAddress,
+  } = options;
 
   const { targetNetwork } = useTargetNetwork();
 
@@ -112,7 +119,7 @@ export function useFetchAllTxns(options: PaginationOptions = {}) {
           valueInSTRK: BigInt(0),
         };
 
-        const txCalls: ExplorerReturnType["txCalls"] = [];
+        let txCalls: ExplorerReturnType["txCalls"] = [];
 
         // since devnet uses UDC and its treated as invoke, we record that case here
         if (txInstance.type === "DECLARE") {
@@ -132,23 +139,25 @@ export function useFetchAllTxns(options: PaginationOptions = {}) {
           ).contract_address_salt
             ? `0x${(txInstance as unknown as DEPLOY_ACCOUNT_TXN_V3).contract_address_salt}`
             : null;
+
           txData.toAddress = (
             txInstance as unknown as DEPLOY_ACCOUNT_TXN_V3
           ).contract_address_salt;
+
           txData.functionCalled = "Deploy Account";
           txData.functionSelector = "Deploy Account";
 
           txCalls.push(txData);
         } else if (txInstance.type === "INVOKE") {
-          const calls = convertCalldataToReadable(
-            (txInstance as unknown as INVOKE_TXN_V3).calldata,
-          );
           explorerEntry.fromAddress = (
             txInstance as unknown as INVOKE_TXN_V3
           ).sender_address;
 
-          // since devnet uses UDC and its treated as invoke, we record that case here
+          const calls = convertCalldataToReadable(
+            (txInstance as unknown as INVOKE_TXN_V3).calldata,
+          );
 
+          // since devnet uses UDC and its treated as invoke, we record that case here
           for (const call of calls) {
             const _txData = { ...txData };
 
@@ -172,15 +181,52 @@ export function useFetchAllTxns(options: PaginationOptions = {}) {
           }
         }
 
-        parsedTxns.push({
-          ...explorerEntry,
-          txCalls,
-        });
+        // Apply filtering logic AFTER processing all transaction data
+        let shouldIncludeTransaction = true;
+        if (
+          (bySenderAddress || "").toLowerCase() !== "" ||
+          (byReceiverAddress || "").toLowerCase() !== ""
+        ) {
+          shouldIncludeTransaction = false;
+
+          // Check sender address filter
+          const matchesSender = !!bySenderAddress
+            ? encode
+                .sanitizeHex(explorerEntry.fromAddress || "")
+                .toLowerCase() === (bySenderAddress || "").toLowerCase()
+            : true;
+
+          // Check receiver address filter - need to check if any of the txCalls has matching toAddress
+          const matchesReceiver = !!byReceiverAddress
+            ? txCalls.filter(
+                (call) =>
+                  encode.sanitizeHex(call.toAddress || "").toLowerCase() ===
+                  (byReceiverAddress || "").toLowerCase(),
+              ).length > 0
+            : true;
+
+          // If both filters are specified, it's a union (OR condition)
+          // If only one filter is specified, check that one
+          if (bySenderAddress && byReceiverAddress) {
+            shouldIncludeTransaction = matchesSender || matchesReceiver;
+          } else if (bySenderAddress) {
+            shouldIncludeTransaction = matchesSender;
+          } else if (byReceiverAddress) {
+            shouldIncludeTransaction = matchesReceiver;
+          }
+        }
+
+        if (shouldIncludeTransaction) {
+          parsedTxns.push({
+            ...explorerEntry,
+            txCalls,
+          });
+        }
       }
 
       return parsedTxns;
     },
-    [provider, targetNetwork.network],
+    [provider, targetNetwork.network, bySenderAddress, byReceiverAddress],
   );
 
   // Efficiently fetch transactions with lazy loading
@@ -240,7 +286,16 @@ export function useFetchAllTxns(options: PaginationOptions = {}) {
       totalTxns,
       hasMore: allTxns.length >= pageSize * page,
     };
-  }, [totalBlocks, provider, processBlockToTxns, page, pageSize]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    totalBlocks,
+    provider,
+    processBlockToTxns,
+    page,
+    pageSize,
+    bySenderAddress,
+    byReceiverAddress,
+  ]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: [
@@ -249,6 +304,8 @@ export function useFetchAllTxns(options: PaginationOptions = {}) {
       targetNetwork.rpcUrls.public.http[0],
       page,
       pageSize,
+      bySenderAddress,
+      byReceiverAddress,
     ],
     queryFn: fetchPaginatedTxns,
     enabled: !!totalBlocks && !!provider,

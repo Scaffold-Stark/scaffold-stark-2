@@ -9,7 +9,10 @@ import {
   CheckIcon,
 } from "@heroicons/react/24/outline";
 import { Address, Balance } from "~~/components/scaffold-stark";
-import { useFetchAddressDetails } from "~~/hooks/scaffold-stark";
+import {
+  useFetchAddressDetails,
+  useFetchAllTxns,
+} from "~~/hooks/scaffold-stark";
 import { useScaffoldStarkProfile } from "~~/hooks/scaffold-stark/useScaffoldStarkProfile";
 import useScaffoldStrkBalance from "~~/hooks/scaffold-stark/useScaffoldStrkBalance";
 
@@ -38,6 +41,14 @@ export default function AddressDetails({ params }: AddressDetailsProps) {
   const { formatted: strkBalance, isLoading: isBalanceLoading } =
     useScaffoldStrkBalance({
       address: resolvedParams.address as `0x${string}`,
+    });
+
+  const { txns: transactionsData, isLoading: isTransactionsLoading } =
+    useFetchAllTxns({
+      page: 1,
+      pageSize: 10,
+      bySenderAddress: resolvedParams.address as `0x${string}`,
+      byReceiverAddress: resolvedParams.address as `0x${string}`,
     });
 
   const handleCopy = async (text: string, fieldName: string) => {
@@ -89,7 +100,11 @@ export default function AddressDetails({ params }: AddressDetailsProps) {
 
   const tabs = [
     { id: "overview", label: "Overview", count: null },
-    { id: "transactions", label: "Transactions", count: 130533 },
+    {
+      id: "transactions",
+      label: "Transactions",
+      count: transactionsData?.length || 0,
+    },
     { id: "events", label: "Events", count: 2 },
   ];
 
@@ -364,15 +379,169 @@ export default function AddressDetails({ params }: AddressDetailsProps) {
         );
 
       case "transactions":
+        if (isTransactionsLoading) {
+          return (
+            <div className="py-8 text-center">
+              <div className="flex items-center justify-center space-x-2">
+                <span className="loading loading-spinner loading-lg"></span>
+                <span className="text-base-content/70">
+                  Loading transactions...
+                </span>
+              </div>
+            </div>
+          );
+        }
+
+        if (!transactionsData || transactionsData.length === 0) {
+          return (
+            <div className="py-8 text-center">
+              <div className="text-6xl mb-4">📭</div>
+              <h3 className="text-xl font-semibold text-base-content mb-2">
+                No Transactions Found
+              </h3>
+              <p className="text-base-content/70">
+                This address has no transaction history yet.
+              </p>
+            </div>
+          );
+        }
+
         return (
-          <div className="py-8 text-center">
-            <div className="text-6xl mb-4">📊</div>
-            <h3 className="text-xl font-semibold text-base-content mb-2">
-              Transactions Tab
-            </h3>
-            <p className="text-base-content/70">
-              Transaction history for this address will be displayed here.
-            </p>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-base-content">
+                Transactions ({transactionsData.length})
+              </h3>
+            </div>
+
+            {/* Transactions Table */}
+            <div className="overflow-x-auto">
+              <table className="table w-full">
+                <thead>
+                  <tr className="border-b border-base-300">
+                    <th className="text-left text-base-content/70 font-medium">
+                      Tx Hash
+                    </th>
+                    <th className="text-left text-base-content/70 font-medium">
+                      Block
+                    </th>
+                    <th className="text-left text-base-content/70 font-medium">
+                      Age
+                    </th>
+                    <th className="text-left text-base-content/70 font-medium">
+                      From
+                    </th>
+                    <th className="text-left text-base-content/70 font-medium">
+                      Method
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {transactionsData.map((txn, index) => {
+                    const age = txn.timestamp
+                      ? Math.floor((Date.now() / 1000 - txn.timestamp) / 60)
+                      : null;
+
+                    return (
+                      <tr
+                        key={txn.transactionHash || index}
+                        className="border-b border-base-300/50 hover:bg-base-200/50"
+                      >
+                        <td className="py-4">
+                          <div className="flex items-center space-x-2">
+                            {txn.transactionHash ? (
+                              <button
+                                onClick={() =>
+                                  router.push(
+                                    `/blockexplorer/tx/${txn.transactionHash}`,
+                                  )
+                                }
+                                className="text-blue-400 font-mono text-sm hover:text-blue-300 hover:underline transition-colors"
+                              >
+                                {`${txn.transactionHash.slice(0, 10)}...${txn.transactionHash.slice(-8)}`}
+                              </button>
+                            ) : (
+                              <span className="text-base-content/50 font-mono text-sm">
+                                N/A
+                              </span>
+                            )}
+                            {txn.transactionHash && (
+                              <CopyButton
+                                text={txn.transactionHash}
+                                fieldName={`tx-${index}`}
+                              />
+                            )}
+                          </div>
+                        </td>
+                        <td className="py-4">
+                          <span className="text-blue-400 font-medium">
+                            {txn.blockNumber || "N/A"}
+                          </span>
+                        </td>
+                        <td className="py-4">
+                          <span className="text-base-content/70 text-sm">
+                            {age !== null ? `${age} mins ago` : "N/A"}
+                          </span>
+                        </td>
+                        <td className="py-4">
+                          {txn.fromAddress ? (
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() =>
+                                  router.push(
+                                    `/blockexplorer/address/${txn.fromAddress}`,
+                                  )
+                                }
+                                className="text-blue-400 font-mono text-sm hover:text-blue-300 hover:underline transition-colors"
+                              >
+                                {`${txn.fromAddress.slice(0, 6)}...${txn.fromAddress.slice(-4)}`}
+                              </button>
+                              <CopyButton
+                                text={txn.fromAddress}
+                                fieldName={`from-${index}`}
+                              />
+                            </div>
+                          ) : (
+                            <span className="text-base-content/50">N/A</span>
+                          )}
+                        </td>
+                        <td className="py-4">
+                          {txn.txCalls && txn.txCalls.length > 0 ? (
+                            <div className="space-y-1">
+                              {txn.txCalls
+                                .slice(0, 2)
+                                .map((call, callIndex) => (
+                                  <div key={callIndex}>
+                                    <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                                      {call.functionCalled || "Unknown"}
+                                    </span>
+                                  </div>
+                                ))}
+                              {txn.txCalls.length > 2 && (
+                                <div className="text-xs text-base-content/50">
+                                  +{txn.txCalls.length - 2} more
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-base-content/50">N/A</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination would go here if needed */}
+            {transactionsData.length === 0 && (
+              <div className="text-center py-8">
+                <p className="text-base-content/70">
+                  No more transactions to display
+                </p>
+              </div>
+            )}
           </div>
         );
 
