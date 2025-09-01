@@ -17,6 +17,7 @@ import {
 } from "@starknet-io/types-js";
 import deployedContracts from "../../contracts/deployedContracts";
 import { getFunctionNameFromSelector } from "../../utils/scaffold-stark/selectorUtils";
+import { devnetUDCAddress } from "~~/utils/Constants";
 
 interface PaginationOptions {
   page?: number;
@@ -113,25 +114,15 @@ export function useFetchAllTxns(options: PaginationOptions = {}) {
 
         const txCalls: ExplorerReturnType["txCalls"] = [];
 
-        if (txInstance.type === "DEPLOY") {
-          // For deploy transactions
-
-          // TODO: check from address
-          explorerEntry.fromAddress = (
-            txInstance as unknown as DEPLOY_TXN
-          ).constructor_calldata[0];
-          txData.functionCalled = "Contract Deployment";
-          txData.functionSelector = "Contract Deployment";
-
-          txCalls.push(txData);
-        } else if (txInstance.type === "DECLARE") {
+        // since devnet uses UDC and its treated as invoke, we record that case here
+        if (txInstance.type === "DECLARE") {
           // For declare transactions
           explorerEntry.fromAddress = (
             txInstance as unknown as DECLARE_TXN_V3
           ).sender_address;
 
-          txData.functionCalled = "Class Declaration";
-          txData.functionSelector = "Class Declaration";
+          txData.functionCalled = "Declare";
+          txData.functionSelector = "Declare";
 
           txCalls.push(txData);
         } else if (txInstance.type === "DEPLOY_ACCOUNT") {
@@ -144,18 +135,11 @@ export function useFetchAllTxns(options: PaginationOptions = {}) {
           txData.toAddress = (
             txInstance as unknown as DEPLOY_ACCOUNT_TXN_V3
           ).contract_address_salt;
-          txData.functionCalled = "Account Deployment";
-          txData.functionSelector = "Account Deployment";
+          txData.functionCalled = "Deploy Account";
+          txData.functionSelector = "Deploy Account";
 
           txCalls.push(txData);
         } else if (txInstance.type === "INVOKE") {
-          // get calls
-
-          console.log(
-            "calldata",
-            (txInstance as unknown as INVOKE_TXN_V3).calldata,
-          );
-
           const calls = convertCalldataToReadable(
             (txInstance as unknown as INVOKE_TXN_V3).calldata,
           );
@@ -163,18 +147,31 @@ export function useFetchAllTxns(options: PaginationOptions = {}) {
             txInstance as unknown as INVOKE_TXN_V3
           ).sender_address;
 
+          // since devnet uses UDC and its treated as invoke, we record that case here
+
           for (const call of calls) {
             const _txData = { ...txData };
 
+            const isContractDeployment =
+              call.to.toLowerCase() === devnetUDCAddress.toLowerCase();
+
             _txData.toAddress = call.to;
             _txData.functionSelector = call.selector;
-            _txData.functionCalled = getFunctionNameFromSelector(
-              call.selector,
-              targetNetwork.network,
-            );
+
+            // we manually append deployment name
+            if (isContractDeployment) {
+              _txData.functionCalled = "Deploy Contract";
+            } else {
+              _txData.functionCalled = getFunctionNameFromSelector(
+                call.selector,
+                targetNetwork.network,
+              );
+            }
+
             txCalls.push(_txData);
           }
         }
+
         parsedTxns.push({
           ...explorerEntry,
           txCalls,

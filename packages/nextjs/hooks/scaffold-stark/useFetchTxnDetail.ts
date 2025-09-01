@@ -21,6 +21,7 @@ import {
 } from "@starknet-io/types-js";
 import { useTargetNetwork } from "./useTargetNetwork";
 import { getFunctionNameFromSelector } from "../../utils/scaffold-stark/selectorUtils";
+import { devnetUDCAddress } from "~~/utils/Constants";
 
 /**
  * Comprehensive transaction detail interface that includes all relevant information
@@ -237,14 +238,28 @@ export const useFetchTxnDetail = (txHash?: string) => {
             if (invokeTxn.calldata && invokeTxn.calldata.length > 0) {
               try {
                 const calls = convertCalldataToReadable(invokeTxn.calldata);
-                transactionDetail.functionCalls = calls.map((call) => ({
-                  contractAddress: call.to,
-                  entrypoint: getFunctionNameFromSelector(
-                    call.selector,
-                    targetNetwork.network,
-                  ),
-                  calldata: call.args,
-                }));
+                transactionDetail.functionCalls = calls.map((call) => {
+                  // detect UDC deployment invocations
+                  if (
+                    call.to.toLowerCase() === devnetUDCAddress.toLowerCase()
+                  ) {
+                    transactionDetail.type = "DEPLOY";
+                    return {
+                      contractAddress: call.to,
+                      entrypoint: "Deploy Contract",
+                      calldata: call.args,
+                    };
+                  }
+
+                  return {
+                    contractAddress: call.to,
+                    entrypoint: getFunctionNameFromSelector(
+                      call.selector,
+                      targetNetwork.network,
+                    ),
+                    calldata: call.args,
+                  };
+                });
               } catch (error) {
                 console.warn("Failed to parse calldata:", error);
               }

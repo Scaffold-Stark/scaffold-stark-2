@@ -10,6 +10,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-stark";
 import { useFetchAllTxns } from "~~/hooks/scaffold-stark/useFetchAllTxns";
+import { devnetUDCAddress } from "~~/utils/Constants";
 
 // Type definition for transaction data
 interface TxnEntry {
@@ -21,6 +22,7 @@ interface TxnEntry {
   type: string;
   age: string;
   calls: string[];
+  isDeploy?: boolean;
 }
 
 // Helper function to calculate time difference in a readable format
@@ -54,7 +56,6 @@ const getStatusBadge = (status: string) => {
 const getTypeBadge = (type: string) => {
   switch (type) {
     case "INVOKE":
-    case "INVOKE_FUNCTION":
       return "bg-blue-100 text-blue-800 border-blue-200";
     case "DEPLOY":
     case "DEPLOY_ACCOUNT":
@@ -78,27 +79,28 @@ export default function BlockExplorer() {
   });
 
   // Transform data from the hook into our TxnEntry format
-  debugger;
-  const currentTransactions = useMemo(
-    () =>
-      txns.map(
-        (tx): TxnEntry => ({
-          hash: tx.transactionHash || "",
-          blockNumber: tx.blockNumber || 0,
-          timeMined:
-            new Date((tx.timestamp || 0) * 1000).toLocaleString() || "",
-          from: tx.fromAddress || "",
-          status:
-            (tx.txReceipt as any)?.execution_status ||
-            (tx.txReceipt as any)?.finality_status ||
-            "UNKNOWN",
-          type: tx.txInstance?.type || "UNKNOWN",
-          age: getTimeAgo(tx.timestamp || 0),
-          calls: tx.txCalls.map((call) => call.functionCalled || ""),
-        }),
-      ),
-    [txns],
-  );
+  const currentTransactions = useMemo(() => {
+    return txns.map((tx): TxnEntry => {
+      const isDeploy = tx.txCalls.some(
+        (call) => (call.functionCalled || "") === "Deploy Contract",
+      );
+
+      return {
+        hash: tx.transactionHash || "",
+        blockNumber: tx.blockNumber || 0,
+        timeMined: new Date((tx.timestamp || 0) * 1000).toLocaleString() || "",
+        from: tx.fromAddress || "",
+        status:
+          (tx.txReceipt as any)?.execution_status ||
+          (tx.txReceipt as any)?.finality_status ||
+          "UNKNOWN",
+        type: isDeploy ? "DEPLOY" : tx.txInstance?.type || "UNKNOWN",
+        age: getTimeAgo(tx.timestamp || 0),
+        calls: tx.txCalls.map((call) => call.functionCalled || ""),
+        isDeploy,
+      };
+    });
+  }, [txns]);
 
   const goToPage = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -225,7 +227,7 @@ export default function BlockExplorer() {
                           <span
                             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getTypeBadge(tx.type)}`}
                           >
-                            {tx.type === "INVOKE" ? "INVOKE_FUNCTION" : tx.type}
+                            {tx.type}
                           </span>
                         </td>
                         <td className="py-4 px-4">
