@@ -8,7 +8,7 @@ import {
   DocumentDuplicateIcon,
   CheckIcon,
 } from "@heroicons/react/24/outline";
-import { Address } from "~~/components/scaffold-stark";
+import { Address, SearchBar } from "~~/components/scaffold-stark";
 import { useFetchAllTxns } from "~~/hooks/scaffold-stark/useFetchAllTxns";
 import { devnetUDCAddress } from "~~/utils/Constants";
 
@@ -128,9 +128,14 @@ export default function BlockExplorer() {
           <h1 className="text-4xl font-bold text-primary-content mb-8">
             Block Explorer
           </h1>
-          <p className="text-primary-content/80 text-lg">
-            Explore recent transactions on the Starknet network
-          </p>
+
+          {/* Search Bar - Left aligned */}
+          <div className="flex justify-start">
+            <SearchBar
+              placeholder="Search by transaction hash or contract address..."
+              className="w-full max-w-2xl"
+            />
+          </div>
         </div>
       </div>
 

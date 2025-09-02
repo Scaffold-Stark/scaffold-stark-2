@@ -45,8 +45,6 @@ const getContractDeployerAndHash = async (
       return eventAddress === targetAddress;
     });
 
-    console.log({ deploymentEvent });
-
     return {
       deployer: deploymentEvent?.data[1],
       hash: deploymentEvent?.transaction_hash,
@@ -93,8 +91,6 @@ export const useFetchAddressDetails = (address?: Address | string) => {
           address as Address,
           provider,
         );
-
-        console.log({ contractData });
 
         if (classHash && classHash !== "0x0") {
           addressDetails.classHash = classHash;
