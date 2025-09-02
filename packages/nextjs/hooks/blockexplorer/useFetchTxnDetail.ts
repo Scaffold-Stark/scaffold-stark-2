@@ -21,7 +21,7 @@ import {
   INVOKE_TXN_V3,
   DEPLOY_TXN,
 } from "@starknet-io/types-js";
-import { useTargetNetwork } from "./useTargetNetwork";
+import { useTargetNetwork } from "../scaffold-stark/useTargetNetwork";
 import { getFunctionNameFromSelector } from "../../utils/scaffold-stark/selectorUtils";
 import { devnetUDCAddress } from "~~/utils/Constants";
 import deployedContracts from "~~/contracts/deployedContracts";

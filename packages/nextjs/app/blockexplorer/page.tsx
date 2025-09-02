@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import {
   ChevronLeftIcon,
@@ -9,8 +9,7 @@ import {
   CheckIcon,
 } from "@heroicons/react/24/outline";
 import { Address, SearchBar } from "~~/components/scaffold-stark";
-import { useFetchAllTxns } from "~~/hooks/scaffold-stark/useFetchAllTxns";
-import { devnetUDCAddress } from "~~/utils/Constants";
+import { useFetchAllTxns } from "~~/hooks/blockexplorer/useFetchAllTxns";
 
 // Type definition for transaction data
 interface TxnEntry {

@@ -8,7 +8,7 @@ import {
   CallData,
   num,
 } from "starknet";
-import { useTargetNetwork } from "./useTargetNetwork";
+import { useTargetNetwork } from "../scaffold-stark/useTargetNetwork";
 import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
 import { devnet } from "@starknet-react/chains";
 import deployedContracts from "~~/contracts/deployedContracts";

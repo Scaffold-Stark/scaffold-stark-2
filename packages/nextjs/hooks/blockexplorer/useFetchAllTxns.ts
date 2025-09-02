@@ -8,7 +8,7 @@ import {
   BlockTag,
 } from "starknet";
 import { useQuery } from "@tanstack/react-query";
-import { useTargetNetwork } from "./useTargetNetwork";
+import { useTargetNetwork } from "../scaffold-stark/useTargetNetwork";
 import {
   DECLARE_TXN_V3,
   DEPLOY_ACCOUNT_TXN_V3,

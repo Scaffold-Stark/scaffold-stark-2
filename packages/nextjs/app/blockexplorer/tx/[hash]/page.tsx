@@ -10,7 +10,7 @@ import {
   ChevronRightIcon,
 } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-stark";
-import { useFetchTxnDetail, useFetchEvents } from "~~/hooks/scaffold-stark";
+import { useFetchTxnDetail, useFetchEvents } from "~~/hooks/blockexplorer";
 
 // Helper function to convert STRK to fri (BigInt)
 const strkToFri = (friAmount: string): bigint => {

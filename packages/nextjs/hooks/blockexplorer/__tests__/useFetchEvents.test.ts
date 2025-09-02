@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
-import { useFetchEvents } from "../useFetchEvents";
+import { useFetchEvents } from "../../blockexplorer/useFetchEvents";
 import { useProvider } from "@starknet-react/core";
 import { useTargetNetwork } from "../useTargetNetwork";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

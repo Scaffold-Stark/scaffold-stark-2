@@ -15,7 +15,7 @@ import {
   useFetchAddressDetails,
   useFetchAllTxns,
   useFetchEvents,
-} from "~~/hooks/scaffold-stark";
+} from "~~/hooks/blockexplorer";
 import { useScaffoldStarkProfile } from "~~/hooks/scaffold-stark/useScaffoldStarkProfile";
 import useScaffoldStrkBalance from "~~/hooks/scaffold-stark/useScaffoldStrkBalance";
 
