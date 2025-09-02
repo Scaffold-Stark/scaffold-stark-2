@@ -322,25 +322,94 @@ export function useFetchEvents(
               (receipt as any).block_hash,
             );
 
-            events = (receipt as any).events.map(
-              (event: any, index: number) => ({
-                blockHash: (receipt as any).block_hash,
-                blockNumber: (receipt as any).block_number,
-                transactionHash: (receipt as any).transaction_hash,
-                eventName: "Unknown", // We'll try to decode this later
-                contractAddress: event.from_address,
-                args: event.data
-                  ? Object.fromEntries(
-                      event.data.map((data: any, i: number) => [
-                        `arg${i}`,
-                        data,
-                      ]),
-                    )
-                  : {},
-                parsedArgs: {},
-                argTypes: {},
-                timestamp: block.timestamp,
-                eventIndex: index,
+            // Get merged contracts for ABI-based parsing
+            const mergedContracts = getMergedContracts(targetNetwork);
+
+            events = await Promise.all(
+              (receipt as any).events.map(async (event: any, index: number) => {
+                try {
+                  // Initialize event data
+                  const eventData: EventData = {
+                    blockHash: (receipt as any).block_hash,
+                    blockNumber: (receipt as any).block_number,
+                    transactionHash: (receipt as any).transaction_hash,
+                    eventName: "Event",
+                    contractAddress: event.from_address,
+                    args: {},
+                    parsedArgs: {},
+                    argTypes: {},
+                    timestamp: block.timestamp,
+                    eventIndex: index,
+                  };
+
+                  // Parse event using ABI-based approach (same logic as address-based)
+                  if (event.keys && event.keys.length > 0) {
+                    const selector = event.keys[0];
+                    eventData.args.selector = selector;
+
+                    // Find event definition from merged contracts
+                    const eventInfo = findEventDefinition(
+                      selector,
+                      mergedContracts,
+                    );
+
+                    if (eventInfo) {
+                      eventData.eventName = eventInfo.eventName;
+
+                      // Decode arguments using ABI definition
+                      const { decodedArgs, argTypes } = decodeEventArguments(
+                        eventInfo.eventDef,
+                        event.keys,
+                        event.data || [],
+                      );
+
+                      // Store decoded arguments and their types
+                      eventData.parsedArgs = { ...decodedArgs };
+                      eventData.argTypes = { ...argTypes };
+
+                      // Also store raw keys and data for raw view
+                      event.keys.slice(1).forEach((key: any, i: number) => {
+                        eventData.args[`key${i}`] = key;
+                      });
+
+                      if (event.data) {
+                        event.data.forEach((data: any, i: number) => {
+                          eventData.args[`data${i}`] = data;
+                        });
+                      }
+                    } else {
+                      // Fallback: store raw keys and data
+                      event.keys.slice(1).forEach((key: any, i: number) => {
+                        eventData.args[`key${i}`] = key;
+                      });
+
+                      if (event.data) {
+                        event.data.forEach((data: any, i: number) => {
+                          eventData.args[`data${i}`] = data;
+                        });
+                      }
+
+                      eventData.parsedArgs = { ...eventData.args };
+                      eventData.argTypes = {};
+                    }
+                  }
+
+                  return eventData;
+                } catch (error) {
+                  console.warn("Failed to process transaction event:", error);
+                  return {
+                    blockHash: (receipt as any).block_hash,
+                    blockNumber: (receipt as any).block_number,
+                    transactionHash: (receipt as any).transaction_hash,
+                    eventName: "Unknown",
+                    contractAddress: event.from_address,
+                    args: {},
+                    parsedArgs: {},
+                    argTypes: {},
+                    timestamp: block.timestamp,
+                    eventIndex: index,
+                  } as EventData;
+                }
               }),
             );
           }

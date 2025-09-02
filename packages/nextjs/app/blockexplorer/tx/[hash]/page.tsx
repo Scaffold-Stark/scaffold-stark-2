@@ -6,9 +6,11 @@ import {
   ArrowLeftIcon,
   DocumentDuplicateIcon,
   CheckIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
 } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-stark";
-import { useFetchTxnDetail } from "~~/hooks/scaffold-stark";
+import { useFetchTxnDetail, useFetchEvents } from "~~/hooks/scaffold-stark";
 
 // Helper function to convert STRK to fri (BigInt)
 const strkToFri = (friAmount: string): bigint => {
@@ -33,6 +35,8 @@ export default function TransactionDetails({
 }: TransactionDetailsProps) {
   const router = useRouter();
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
+  const [showRawEventData, setShowRawEventData] = useState(false);
 
   // Unwrap the params Promise
   const resolvedParams = use(params);
@@ -41,6 +45,13 @@ export default function TransactionDetails({
   const { transactionDetail, isLoading, error } = useFetchTxnDetail(
     resolvedParams.hash,
   );
+
+  // Fetch events for this transaction using the enhanced hook
+  const { events: eventsData, isLoading: isEventsLoading } = useFetchEvents({
+    transactionHash: resolvedParams.hash,
+    pageSize: 50,
+    page: 1,
+  });
 
   const handleCopy = async (text: string, fieldName: string) => {
     try {
@@ -52,6 +63,16 @@ export default function TransactionDetails({
     } catch (err) {
       console.error("Failed to copy: ", err);
     }
+  };
+
+  const toggleEventExpansion = (eventId: string) => {
+    const newExpandedEvents = new Set(expandedEvents);
+    if (newExpandedEvents.has(eventId)) {
+      newExpandedEvents.delete(eventId);
+    } else {
+      newExpandedEvents.add(eventId);
+    }
+    setExpandedEvents(newExpandedEvents);
   };
 
   const CopyButton = ({
@@ -375,38 +396,6 @@ export default function TransactionDetails({
                   </div>
                 )}
 
-                {/* Calldata (Raw) */}
-                {transactionDetail.calldata &&
-                  transactionDetail.calldata.length > 0 && (
-                    <div className="flex flex-col space-y-2">
-                      <label className="text-lg font-semibold text-base-content">
-                        Calldata:
-                      </label>
-                      <div className="relative">
-                        <div className="bg-base-200 p-4 rounded-lg max-h-40 overflow-y-auto">
-                          <div className="space-y-1">
-                            {transactionDetail.calldata.map((data, index) => (
-                              <div
-                                key={index}
-                                className="text-sm font-mono text-base-content break-all"
-                              >
-                                [{index}] {data}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                        <CopyButton
-                          text={JSON.stringify(
-                            transactionDetail.calldata,
-                            null,
-                            2,
-                          )}
-                          fieldName="calldata"
-                        />
-                      </div>
-                    </div>
-                  )}
-
                 {/* Signature */}
                 {transactionDetail.signature &&
                   transactionDetail.signature.length > 0 && (
@@ -439,100 +428,454 @@ export default function TransactionDetails({
                     </div>
                   )}
 
-                {/* Events */}
-                {transactionDetail.events &&
-                  transactionDetail.events.length > 0 && (
-                    <div className="flex flex-col space-y-2">
+                {/* Events - Enhanced Version */}
+                {((eventsData && eventsData.length > 0) || isEventsLoading) && (
+                  <div className="flex flex-col space-y-4">
+                    <div className="flex items-center justify-between">
                       <label className="text-lg font-semibold text-base-content">
-                        Events:
+                        Events ({eventsData?.length || 0})
                       </label>
-                      <div className="space-y-4">
-                        {transactionDetail.events.map((event, index) => (
-                          <div
-                            key={index}
-                            className="bg-base-200 p-4 rounded-lg"
-                          >
-                            <div className="space-y-2">
-                              <div>
-                                <span className="text-sm font-semibold text-base-content/70">
-                                  From Contract:
-                                </span>
-                                <div className="flex items-center mt-1">
-                                  <Address
-                                    address={
-                                      event.from_address as `0x${string}`
-                                    }
-                                    format="long"
-                                    size="sm"
-                                  />
-                                  <CopyButton
-                                    text={event.from_address}
-                                    fieldName={`event-from-${index}`}
-                                  />
-                                </div>
-                              </div>
-                              {event.keys.length > 0 && (
-                                <div>
-                                  <span className="text-sm font-semibold text-base-content/70">
-                                    Keys:
-                                  </span>
-                                  <div className="mt-1 max-h-24 overflow-y-auto">
-                                    {event.keys.map((key, keyIndex) => (
-                                      <div
-                                        key={keyIndex}
-                                        className="text-xs font-mono text-base-content/60 break-all"
-                                      >
-                                        [{keyIndex}] {key}
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-                              {event.data.length > 0 && (
-                                <div>
-                                  <span className="text-sm font-semibold text-base-content/70">
-                                    Data:
-                                  </span>
-                                  <div className="mt-1 max-h-24 overflow-y-auto">
-                                    {event.data.map((data, dataIndex) => (
-                                      <div
-                                        key={dataIndex}
-                                        className="text-xs font-mono text-base-content/60 break-all"
-                                      >
-                                        [{dataIndex}] {data}
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm text-base-content/70">
+                          Raw Data:
+                        </span>
+                        <input
+                          type="checkbox"
+                          className="toggle toggle-primary toggle-sm"
+                          checked={showRawEventData}
+                          onChange={(e) =>
+                            setShowRawEventData(e.target.checked)
+                          }
+                        />
                       </div>
                     </div>
-                  )}
 
-                {/* Logs (simplified view) */}
-                {transactionDetail.logs &&
-                  transactionDetail.logs.length > 0 && (
-                    <div className="flex flex-col space-y-2">
-                      <label className="text-lg font-semibold text-base-content">
-                        Transaction Logs:
-                      </label>
-                      <div className="bg-base-200 p-4 rounded-lg max-h-40 overflow-y-auto">
-                        <div className="space-y-1">
-                          {transactionDetail.logs.map((log, index) => (
-                            <div
-                              key={index}
-                              className="text-sm font-mono text-accent break-all"
-                            >
-                              [{index}] {log}
-                            </div>
-                          ))}
+                    {isEventsLoading ? (
+                      <div className="bg-base-200 rounded-lg p-8">
+                        <div className="flex items-center justify-center">
+                          <div className="loading loading-spinner loading-lg"></div>
+                          <span className="ml-4 text-base-content/70">
+                            Loading events...
+                          </span>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    ) : eventsData && eventsData.length > 0 ? (
+                      <div className="bg-base-200 rounded-lg overflow-hidden">
+                        {/* Events Table */}
+                        <div className="overflow-x-auto">
+                          <table className="table w-full">
+                            <thead>
+                              <tr className="border-b border-base-300 bg-base-100">
+                                <th className="text-left text-base-content/70 font-medium py-3 px-4">
+                                  Name
+                                </th>
+                                <th className="text-left text-base-content/70 font-medium py-3 px-4">
+                                  From Address
+                                </th>
+                                <th className="text-left text-base-content/70 font-medium py-3 px-4">
+                                  Block Num.
+                                </th>
+                                <th className="text-left text-base-content/70 font-medium py-3 px-4">
+                                  Event Index
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {eventsData.map((event, index) => {
+                                const eventId = `${event.transactionHash}-${event.eventIndex}`;
+                                const isExpanded = expandedEvents.has(eventId);
+
+                                return (
+                                  <React.Fragment key={eventId}>
+                                    {/* Main Event Row */}
+                                    <tr className="border-b border-base-300/30 hover:bg-base-50/50">
+                                      <td className="py-3 px-4">
+                                        <div className="flex items-center space-x-2">
+                                          <button
+                                            onClick={() =>
+                                              toggleEventExpansion(eventId)
+                                            }
+                                            className="flex items-center space-x-1 text-blue-400 hover:text-blue-300 transition-colors"
+                                          >
+                                            {isExpanded ? (
+                                              <ChevronDownIcon className="h-4 w-4" />
+                                            ) : (
+                                              <ChevronRightIcon className="h-4 w-4" />
+                                            )}
+                                            <span className="font-medium">
+                                              {event.eventName || "Event"}
+                                            </span>
+                                          </button>
+                                        </div>
+                                      </td>
+                                      <td className="py-3 px-4">
+                                        <div className="flex items-center space-x-2">
+                                          <button
+                                            onClick={() =>
+                                              router.push(
+                                                `/blockexplorer/address/${event.contractAddress}`,
+                                              )
+                                            }
+                                            className="text-blue-400 font-mono text-sm hover:text-blue-300 hover:underline transition-colors"
+                                          >
+                                            {`${event.contractAddress.slice(0, 6)}...${event.contractAddress.slice(-4)}`}
+                                          </button>
+                                          <CopyButton
+                                            text={event.contractAddress}
+                                            fieldName={`event-contract-${index}`}
+                                          />
+                                        </div>
+                                      </td>
+                                      <td className="py-3 px-4">
+                                        <span className="text-blue-400 font-medium">
+                                          {event.blockNumber}
+                                        </span>
+                                      </td>
+                                      <td className="py-3 px-4">
+                                        <span className="text-base-content/70 text-sm">
+                                          {event.eventIndex}
+                                        </span>
+                                      </td>
+                                    </tr>
+
+                                    {/* Expanded Event Arguments Row */}
+                                    {isExpanded && (
+                                      <tr className="bg-base-50/30">
+                                        <td colSpan={4} className="py-4 px-4">
+                                          <div className="bg-base-100 rounded-lg p-4 border border-base-300">
+                                            <div className="flex items-center justify-between mb-3">
+                                              <h4 className="font-semibold text-base-content">
+                                                Event Arguments
+                                              </h4>
+                                              <div className="flex items-center space-x-2">
+                                                <span className="text-xs text-base-content/50">
+                                                  {showRawEventData
+                                                    ? "Raw"
+                                                    : "Decoded"}
+                                                </span>
+                                              </div>
+                                            </div>
+
+                                            {showRawEventData ? (
+                                              // Raw event data display
+                                              <div className="space-y-3">
+                                                <div className="flex flex-col space-y-1 border-b border-base-300/30 pb-2">
+                                                  <div className="flex items-center space-x-2">
+                                                    <span className="font-medium text-base-content/70 text-sm">
+                                                      keys:
+                                                    </span>
+                                                    <span className="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">
+                                                      array
+                                                    </span>
+                                                  </div>
+                                                  <div className="flex items-center space-x-2">
+                                                    <code className="text-sm font-mono text-base-content bg-base-200 px-2 py-1 rounded break-all">
+                                                      {JSON.stringify([
+                                                        event.args.selector,
+                                                        ...Object.keys(
+                                                          event.args,
+                                                        )
+                                                          .filter((k) =>
+                                                            k.startsWith("key"),
+                                                          )
+                                                          .map(
+                                                            (k) =>
+                                                              event.args[k],
+                                                          ),
+                                                      ])}
+                                                    </code>
+                                                    <CopyButton
+                                                      text={JSON.stringify([
+                                                        event.args.selector,
+                                                        ...Object.keys(
+                                                          event.args,
+                                                        )
+                                                          .filter((k) =>
+                                                            k.startsWith("key"),
+                                                          )
+                                                          .map(
+                                                            (k) =>
+                                                              event.args[k],
+                                                          ),
+                                                      ])}
+                                                      fieldName={`event-keys-${index}`}
+                                                    />
+                                                  </div>
+                                                </div>
+                                                <div className="flex flex-col space-y-1">
+                                                  <div className="flex items-center space-x-2">
+                                                    <span className="font-medium text-base-content/70 text-sm">
+                                                      data:
+                                                    </span>
+                                                    <span className="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">
+                                                      array
+                                                    </span>
+                                                  </div>
+                                                  <div className="flex items-center space-x-2">
+                                                    <code className="text-sm font-mono text-base-content bg-base-200 px-2 py-1 rounded break-all">
+                                                      {JSON.stringify(
+                                                        Object.keys(event.args)
+                                                          .filter((k) =>
+                                                            k.startsWith(
+                                                              "data",
+                                                            ),
+                                                          )
+                                                          .map(
+                                                            (k) =>
+                                                              event.args[k],
+                                                          ),
+                                                      )}
+                                                    </code>
+                                                    <CopyButton
+                                                      text={JSON.stringify(
+                                                        Object.keys(event.args)
+                                                          .filter((k) =>
+                                                            k.startsWith(
+                                                              "data",
+                                                            ),
+                                                          )
+                                                          .map(
+                                                            (k) =>
+                                                              event.args[k],
+                                                          ),
+                                                      )}
+                                                      fieldName={`event-data-${index}`}
+                                                    />
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            ) : // Decoded event arguments display using parsedArgs from the new implementation
+                                            Object.keys(event.parsedArgs)
+                                                .length > 0 &&
+                                              !Object.keys(
+                                                event.parsedArgs,
+                                              ).every(
+                                                (key) =>
+                                                  key.startsWith("key") ||
+                                                  key.startsWith("data"),
+                                              ) ? (
+                                              <div className="bg-base-200 rounded-lg overflow-hidden">
+                                                {/* Table Header */}
+                                                <div className="grid grid-cols-12 gap-4 px-4 py-2 bg-base-300 text-base-content/70 text-sm font-medium">
+                                                  <div className="col-span-3">
+                                                    INPUT
+                                                  </div>
+                                                  <div className="col-span-5">
+                                                    TYPE
+                                                  </div>
+                                                  <div className="col-span-4">
+                                                    DATA
+                                                  </div>
+                                                </div>
+
+                                                {/* Table Body */}
+                                                <div className="divide-y divide-base-300/50">
+                                                  {Object.entries(
+                                                    event.parsedArgs,
+                                                  ).map(
+                                                    (
+                                                      [key, value],
+                                                      argIndex,
+                                                    ) => {
+                                                      // Format the display value
+                                                      const getDisplayValue = (
+                                                        val: any,
+                                                      ) => {
+                                                        if (
+                                                          typeof val ===
+                                                          "bigint"
+                                                        ) {
+                                                          // Convert to hex for display
+                                                          return `0x${val.toString(16)}`;
+                                                        }
+                                                        if (
+                                                          typeof val ===
+                                                          "boolean"
+                                                        ) {
+                                                          return val
+                                                            ? "true"
+                                                            : "false";
+                                                        }
+                                                        if (
+                                                          typeof val ===
+                                                          "string"
+                                                        ) {
+                                                          // If it's already hex, keep it, otherwise convert
+                                                          return val.startsWith(
+                                                            "0x",
+                                                          )
+                                                            ? val
+                                                            : `"${val}"`;
+                                                        }
+                                                        return String(val);
+                                                      };
+
+                                                      // Get the Cairo type from ABI or infer it
+                                                      const getCairoType = (
+                                                        val: any,
+                                                        paramName: string,
+                                                      ) => {
+                                                        // First try to get the actual ABI type
+                                                        if (
+                                                          event.argTypes &&
+                                                          event.argTypes[
+                                                            paramName
+                                                          ]
+                                                        ) {
+                                                          return event.argTypes[
+                                                            paramName
+                                                          ];
+                                                        }
+
+                                                        // Fallback to inference
+                                                        if (
+                                                          typeof val ===
+                                                          "boolean"
+                                                        ) {
+                                                          return "core::bool";
+                                                        }
+                                                        if (
+                                                          typeof val ===
+                                                          "string"
+                                                        ) {
+                                                          if (
+                                                            val.startsWith(
+                                                              "0x",
+                                                            ) &&
+                                                            val.length === 66
+                                                          ) {
+                                                            return "core::starknet::contract_address::ContractAddress";
+                                                          }
+                                                          if (
+                                                            val.startsWith("0x")
+                                                          ) {
+                                                            return "core::felt252";
+                                                          }
+                                                          return "core::byte_array::ByteArray";
+                                                        }
+                                                        if (
+                                                          typeof val ===
+                                                          "bigint"
+                                                        ) {
+                                                          return "core::integer::u256";
+                                                        }
+                                                        return "core::felt252";
+                                                      };
+
+                                                      const displayValue =
+                                                        getDisplayValue(value);
+                                                      const cairoType =
+                                                        getCairoType(
+                                                          value,
+                                                          key,
+                                                        );
+                                                      const copyValue =
+                                                        typeof value ===
+                                                        "bigint"
+                                                          ? `0x${value.toString(16)}`
+                                                          : String(value);
+
+                                                      return (
+                                                        <div
+                                                          key={argIndex}
+                                                          className="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-base-100/50"
+                                                        >
+                                                          {/* INPUT Column */}
+                                                          <div className="col-span-3">
+                                                            <span className="text-base-content font-medium">
+                                                              {key}
+                                                            </span>
+                                                          </div>
+
+                                                          {/* TYPE Column */}
+                                                          <div className="col-span-5">
+                                                            <code className="text-orange-600 text-sm font-mono">
+                                                              {cairoType}
+                                                            </code>
+                                                          </div>
+
+                                                          {/* DATA Column */}
+                                                          <div className="col-span-4">
+                                                            <div className="flex items-center space-x-2">
+                                                              <code className="text-blue-600 text-sm font-mono break-all">
+                                                                {displayValue}
+                                                              </code>
+                                                              <CopyButton
+                                                                text={copyValue}
+                                                                fieldName={`event-arg-${index}-${argIndex}`}
+                                                              />
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                      );
+                                                    },
+                                                  )}
+                                                </div>
+                                              </div>
+                                            ) : Object.keys(event.parsedArgs)
+                                                .length > 0 ? (
+                                              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                                                <p className="text-amber-800 text-sm mb-2">
+                                                  <strong>
+                                                    Raw event data (ABI decoding
+                                                    unavailable):
+                                                  </strong>
+                                                </p>
+                                                <div className="space-y-2">
+                                                  {Object.entries(
+                                                    event.parsedArgs,
+                                                  ).map(
+                                                    (
+                                                      [key, value],
+                                                      argIndex,
+                                                    ) => (
+                                                      <div
+                                                        key={argIndex}
+                                                        className="flex items-center justify-between"
+                                                      >
+                                                        <span className="text-amber-700 font-mono text-sm">
+                                                          {key}:
+                                                        </span>
+                                                        <code className="text-amber-900 bg-amber-100 px-2 py-1 rounded text-sm">
+                                                          {String(value)}
+                                                        </code>
+                                                      </div>
+                                                    ),
+                                                  )}
+                                                </div>
+                                              </div>
+                                            ) : (
+                                              <p className="text-base-content/50 text-sm">
+                                                No decoded arguments available
+                                                for this event
+                                              </p>
+                                            )}
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    )}
+                                  </React.Fragment>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-base-200 rounded-lg p-8">
+                        <div className="text-center">
+                          <div className="text-6xl mb-4">⚡</div>
+                          <h3 className="text-xl font-semibold text-base-content mb-2">
+                            No Events Found
+                          </h3>
+                          <p className="text-base-content/70">
+                            This transaction has no events.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Execution Resources */}
                 {transactionDetail.executionResources && (
