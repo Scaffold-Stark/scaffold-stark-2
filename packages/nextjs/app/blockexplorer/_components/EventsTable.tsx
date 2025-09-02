@@ -115,7 +115,9 @@ export const EventsTable: React.FC<EventsTableProps> = ({
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() =>
-                            router.push(`/blockexplorer/tx/${event.transactionHash}`)
+                            router.push(
+                              `/blockexplorer/tx/${event.transactionHash}`,
+                            )
                           }
                           className="text-blue-400 font-mono text-sm hover:text-blue-300 hover:underline transition-colors"
                         >
@@ -134,7 +136,9 @@ export const EventsTable: React.FC<EventsTableProps> = ({
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() =>
-                          router.push(`/blockexplorer/address/${event.contractAddress}`)
+                          router.push(
+                            `/blockexplorer/address/${event.contractAddress}`,
+                          )
                         }
                         className="text-blue-400 font-mono text-sm hover:text-blue-300 hover:underline transition-colors"
                       >
@@ -165,7 +169,10 @@ export const EventsTable: React.FC<EventsTableProps> = ({
                 {/* Expanded Event Arguments Row */}
                 {isExpanded && (
                   <tr className="bg-base-50/30">
-                    <td colSpan={showTransactionColumn ? 5 : 4} className="py-4 px-4">
+                    <td
+                      colSpan={showTransactionColumn ? 5 : 4}
+                      className="py-4 px-4"
+                    >
                       <div className="bg-base-100 rounded-lg p-4 border border-base-300">
                         <div className="flex items-center justify-between mb-3">
                           <h4 className="font-semibold text-base-content">
@@ -195,7 +202,9 @@ export const EventsTable: React.FC<EventsTableProps> = ({
                                   {JSON.stringify(extractEventKeys(event.args))}
                                 </code>
                                 <CopyButton
-                                  text={JSON.stringify(extractEventKeys(event.args))}
+                                  text={JSON.stringify(
+                                    extractEventKeys(event.args),
+                                  )}
                                   fieldName={`event-keys-${index}`}
                                   copiedField={copiedField}
                                   onCopy={onCopy}
@@ -216,7 +225,9 @@ export const EventsTable: React.FC<EventsTableProps> = ({
                                   {JSON.stringify(extractEventData(event.args))}
                                 </code>
                                 <CopyButton
-                                  text={JSON.stringify(extractEventData(event.args))}
+                                  text={JSON.stringify(
+                                    extractEventData(event.args),
+                                  )}
                                   fieldName={`event-data-${index}`}
                                   copiedField={copiedField}
                                   onCopy={onCopy}

@@ -1,6 +1,11 @@
 import React from "react";
 import { Address } from "~~/components/scaffold-stark";
-import { DecodedFunctionCall, getDisplayValue, getCairoType, getCopyValue } from "~~/utils/blockexplorer";
+import {
+  DecodedFunctionCall,
+  getDisplayValue,
+  getCairoType,
+  getCopyValue,
+} from "~~/utils/blockexplorer";
 import { CopyButton } from "./CopyButton";
 
 interface FunctionCallsDisplayProps {
@@ -69,14 +74,17 @@ export const FunctionCallsDisplay: React.FC<FunctionCallsDisplayProps> = ({
               </div>
             )}
             {(call.calldata.length > 0 ||
-              (call.decodedArgs && Object.keys(call.decodedArgs).length > 0)) && (
+              (call.decodedArgs &&
+                Object.keys(call.decodedArgs).length > 0)) && (
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-semibold text-base-content/70">
                     Arguments:
                   </span>
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs text-base-content/50">Raw Data:</span>
+                    <span className="text-xs text-base-content/50">
+                      Raw Data:
+                    </span>
                     <input
                       type="checkbox"
                       className="toggle toggle-primary toggle-xs"
@@ -98,7 +106,8 @@ export const FunctionCallsDisplay: React.FC<FunctionCallsDisplayProps> = ({
                       </div>
                     ))}
                   </div>
-                ) : call.decodedArgs && Object.keys(call.decodedArgs).length > 0 ? (
+                ) : call.decodedArgs &&
+                  Object.keys(call.decodedArgs).length > 0 ? (
                   // Decoded arguments display
                   <div className="bg-base-300 rounded-lg overflow-hidden">
                     {/* Table Header */}
@@ -110,47 +119,53 @@ export const FunctionCallsDisplay: React.FC<FunctionCallsDisplayProps> = ({
 
                     {/* Table Body */}
                     <div className="divide-y divide-base-200/50">
-                      {Object.entries(call.decodedArgs).map(([key, value], argIndex) => {
-                        const displayValue = getDisplayValue(value);
-                        const cairoType = getCairoType(value, key, call.argTypes);
-                        const copyValue = getCopyValue(value);
+                      {Object.entries(call.decodedArgs).map(
+                        ([key, value], argIndex) => {
+                          const displayValue = getDisplayValue(value);
+                          const cairoType = getCairoType(
+                            value,
+                            key,
+                            call.argTypes,
+                          );
+                          const copyValue = getCopyValue(value);
 
-                        return (
-                          <div
-                            key={argIndex}
-                            className="grid grid-cols-12 gap-4 px-3 py-2 hover:bg-base-100/50"
-                          >
-                            {/* INPUT Column */}
-                            <div className="col-span-3">
-                              <span className="text-base-content font-medium text-xs">
-                                {key}
-                              </span>
-                            </div>
+                          return (
+                            <div
+                              key={argIndex}
+                              className="grid grid-cols-12 gap-4 px-3 py-2 hover:bg-base-100/50"
+                            >
+                              {/* INPUT Column */}
+                              <div className="col-span-3">
+                                <span className="text-base-content font-medium text-xs">
+                                  {key}
+                                </span>
+                              </div>
 
-                            {/* TYPE Column */}
-                            <div className="col-span-5">
-                              <code className="text-orange-600 text-xs font-mono">
-                                {cairoType}
-                              </code>
-                            </div>
-
-                            {/* DATA Column */}
-                            <div className="col-span-4">
-                              <div className="flex items-center space-x-1">
-                                <code className="text-blue-600 text-xs font-mono break-all">
-                                  {displayValue}
+                              {/* TYPE Column */}
+                              <div className="col-span-5">
+                                <code className="text-orange-600 text-xs font-mono">
+                                  {cairoType}
                                 </code>
-                                <CopyButton
-                                  text={copyValue}
-                                  fieldName={`func-arg-${index}-${argIndex}`}
-                                  copiedField={copiedField}
-                                  onCopy={onCopy}
-                                />
+                              </div>
+
+                              {/* DATA Column */}
+                              <div className="col-span-4">
+                                <div className="flex items-center space-x-1">
+                                  <code className="text-blue-600 text-xs font-mono break-all">
+                                    {displayValue}
+                                  </code>
+                                  <CopyButton
+                                    text={copyValue}
+                                    fieldName={`func-arg-${index}-${argIndex}`}
+                                    copiedField={copiedField}
+                                    onCopy={onCopy}
+                                  />
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        },
+                      )}
                     </div>
                   </div>
                 ) : (

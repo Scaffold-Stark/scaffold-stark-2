@@ -17,7 +17,9 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
     <div className="flex flex-col items-center justify-center py-12">
       <div className="text-error text-6xl mb-4">{emoji}</div>
       <h2 className="text-2xl font-bold text-error mb-2">{title}</h2>
-      <p className="text-base-content/70 text-center max-w-md mb-4">{message}</p>
+      <p className="text-base-content/70 text-center max-w-md mb-4">
+        {message}
+      </p>
       {onRetry && (
         <button className="btn btn-primary" onClick={onRetry}>
           Retry
