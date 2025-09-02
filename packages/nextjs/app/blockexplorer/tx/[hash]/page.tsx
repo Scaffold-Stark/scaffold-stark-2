@@ -348,21 +348,186 @@ export default function TransactionDetails({
                                   {call.entrypoint}
                                 </code>
                               </div>
-                              {call.calldata.length > 0 && (
+                              {call.selector && (
                                 <div>
                                   <span className="text-sm font-semibold text-base-content/70">
-                                    Arguments:
+                                    Selector:
                                   </span>
-                                  <div className="mt-1 max-h-32 overflow-y-auto">
-                                    {call.calldata.map((arg, argIndex) => (
-                                      <div
-                                        key={argIndex}
-                                        className="text-xs font-mono text-base-content/60 break-all"
-                                      >
-                                        [{argIndex}] {arg}
-                                      </div>
-                                    ))}
+                                  <div className="flex items-center mt-1">
+                                    <code className="text-xs font-mono text-base-content bg-base-200 px-2 py-1 rounded break-all">
+                                      {call.selector}
+                                    </code>
+                                    <CopyButton
+                                      text={call.selector}
+                                      fieldName={`selector-${index}`}
+                                    />
                                   </div>
+                                </div>
+                              )}
+                              {(call.calldata.length > 0 ||
+                                (call.decodedArgs &&
+                                  Object.keys(call.decodedArgs).length >
+                                    0)) && (
+                                <div>
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="text-sm font-semibold text-base-content/70">
+                                      Arguments:
+                                    </span>
+                                    <div className="flex items-center space-x-2">
+                                      <span className="text-xs text-base-content/50">
+                                        Raw Data:
+                                      </span>
+                                      <input
+                                        type="checkbox"
+                                        className="toggle toggle-primary toggle-xs"
+                                        checked={showRawEventData}
+                                        onChange={(e) =>
+                                          setShowRawEventData(e.target.checked)
+                                        }
+                                      />
+                                    </div>
+                                  </div>
+
+                                  {showRawEventData ? (
+                                    // Raw arguments display
+                                    <div className="mt-1 max-h-32 overflow-y-auto">
+                                      {call.calldata.map((arg, argIndex) => (
+                                        <div
+                                          key={argIndex}
+                                          className="text-xs font-mono text-base-content/60 break-all"
+                                        >
+                                          [{argIndex}] {arg}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  ) : call.decodedArgs &&
+                                    Object.keys(call.decodedArgs).length > 0 ? (
+                                    // Decoded arguments display
+                                    <div className="bg-base-300 rounded-lg overflow-hidden">
+                                      {/* Table Header */}
+                                      <div className="grid grid-cols-12 gap-4 px-3 py-2 bg-base-200 text-base-content/70 text-xs font-medium">
+                                        <div className="col-span-3">INPUT</div>
+                                        <div className="col-span-5">TYPE</div>
+                                        <div className="col-span-4">DATA</div>
+                                      </div>
+
+                                      {/* Table Body */}
+                                      <div className="divide-y divide-base-200/50">
+                                        {Object.entries(call.decodedArgs).map(
+                                          ([key, value], argIndex) => {
+                                            // Format the display value
+                                            const getDisplayValue = (
+                                              val: any,
+                                            ) => {
+                                              if (typeof val === "bigint") {
+                                                return `0x${val.toString(16)}`;
+                                              }
+                                              if (typeof val === "boolean") {
+                                                return val ? "true" : "false";
+                                              }
+                                              if (typeof val === "string") {
+                                                return val.startsWith("0x")
+                                                  ? val
+                                                  : `"${val}"`;
+                                              }
+                                              return String(val);
+                                            };
+
+                                            // Get the Cairo type from ABI or infer it
+                                            const getCairoType = (
+                                              val: any,
+                                              paramName: string,
+                                            ) => {
+                                              if (
+                                                call.argTypes &&
+                                                call.argTypes[paramName]
+                                              ) {
+                                                return call.argTypes[paramName];
+                                              }
+
+                                              // Fallback to inference
+                                              if (typeof val === "boolean") {
+                                                return "core::bool";
+                                              }
+                                              if (typeof val === "string") {
+                                                if (
+                                                  val.startsWith("0x") &&
+                                                  val.length === 66
+                                                ) {
+                                                  return "core::starknet::contract_address::ContractAddress";
+                                                }
+                                                if (val.startsWith("0x")) {
+                                                  return "core::felt252";
+                                                }
+                                                return "core::byte_array::ByteArray";
+                                              }
+                                              if (typeof val === "bigint") {
+                                                return "core::integer::u256";
+                                              }
+                                              return "core::felt252";
+                                            };
+
+                                            const displayValue =
+                                              getDisplayValue(value);
+                                            const cairoType = getCairoType(
+                                              value,
+                                              key,
+                                            );
+                                            const copyValue =
+                                              typeof value === "bigint"
+                                                ? `0x${value.toString(16)}`
+                                                : String(value);
+
+                                            return (
+                                              <div
+                                                key={argIndex}
+                                                className="grid grid-cols-12 gap-4 px-3 py-2 hover:bg-base-100/50"
+                                              >
+                                                {/* INPUT Column */}
+                                                <div className="col-span-3">
+                                                  <span className="text-base-content font-medium text-xs">
+                                                    {key}
+                                                  </span>
+                                                </div>
+
+                                                {/* TYPE Column */}
+                                                <div className="col-span-5">
+                                                  <code className="text-orange-600 text-xs font-mono">
+                                                    {cairoType}
+                                                  </code>
+                                                </div>
+
+                                                {/* DATA Column */}
+                                                <div className="col-span-4">
+                                                  <div className="flex items-center space-x-1">
+                                                    <code className="text-blue-600 text-xs font-mono break-all">
+                                                      {displayValue}
+                                                    </code>
+                                                    <CopyButton
+                                                      text={copyValue}
+                                                      fieldName={`func-arg-${index}-${argIndex}`}
+                                                    />
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            );
+                                          },
+                                        )}
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    // Fallback: raw arguments display
+                                    <div className="mt-1 max-h-32 overflow-y-auto">
+                                      {call.calldata.map((arg, argIndex) => (
+                                        <div
+                                          key={argIndex}
+                                          className="text-xs font-mono text-base-content/60 break-all"
+                                        >
+                                          [{argIndex}] {arg}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
                                 </div>
                               )}
                             </div>
