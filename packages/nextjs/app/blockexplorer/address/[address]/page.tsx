@@ -111,7 +111,7 @@ export default function AddressDetails({ params }: AddressDetailsProps) {
     strkBalance: strkBalance || "0",
     type: addressDetails.type,
     deployedByContractAddress:
-      addressDetails.deployedByContractAddress || resolvedParams.address,
+      addressDetails.deployedByContractAddress || "Not available",
     deployedAtTransactionHash:
       addressDetails.deployedAtTransactionHash || "Not available",
     deployedAt: addressDetails.deployedAt || "Not available",

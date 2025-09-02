@@ -55,22 +55,18 @@ export const useFetchAddressDetails = (address?: Address | string) => {
           provider,
         );
 
+        console.log({ contractData });
+
         if (classHash && classHash !== "0x0") {
           addressDetails.classHash = classHash;
 
           try {
             // Determine if it's Cairo 1.0 or Cairo 2.0 based on the class structure
             if (contractAbi && typeof contractAbi === "object") {
-              if ("sierra_program" in contractAbi) {
-                addressDetails.classVersion = "Cairo 2";
-                addressDetails.type = "ACCOUNT"; // Most Cairo 2 contracts are accounts
-              } else if ("program" in contractAbi) {
-                addressDetails.classVersion = "Cairo 1";
-                addressDetails.type = "CONTRACT";
-              } else {
-                addressDetails.classVersion = "Unknown";
-                addressDetails.type = "CONTRACT";
-              }
+              const version = (await provider.getContractVersion(address))
+                .cairo;
+              addressDetails.classVersion = `Cairo ${version}`;
+              addressDetails.type = "CONTRACT";
             }
           } catch (classError) {
             console.warn("Could not fetch class details:", classError);
