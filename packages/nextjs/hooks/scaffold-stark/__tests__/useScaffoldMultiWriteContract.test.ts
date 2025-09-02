@@ -29,6 +29,7 @@ vi.mock("~~/utils/scaffold-stark/contract", () => ({
   },
   // Add any other exports that might be needed
   ContractName: {},
+  deepMergeContracts: (a: unknown, b: unknown) => ({ ...(a as object), ...(b as object) }),
 }));
 
 // Mock the external dependencies
