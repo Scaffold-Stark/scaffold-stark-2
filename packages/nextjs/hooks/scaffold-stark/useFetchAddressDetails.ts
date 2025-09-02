@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Contract, RpcProvider } from "starknet";
+import { Contract, hash, num, RpcProvider } from "starknet";
 import { Address } from "@starknet-react/chains";
 import { useTargetNetwork } from "./useTargetNetwork";
 import { useContract } from "@starknet-react/core";
+import { devnetUDCAddress } from "~~/utils/Constants";
 
 interface AddressDetails {
   contractAddress: string;
@@ -18,6 +19,44 @@ interface AddressDetails {
   isLoading: boolean;
   error?: string;
 }
+
+const getContractDeployerAndHash = async (
+  address: Address,
+  provider: RpcProvider,
+) => {
+  try {
+    // Search for Deployed events from UDC that match our target address
+    const events = await provider.getEvents({
+      address: devnetUDCAddress,
+      keys: [
+        ["0x26b160f10156dea0639bec90696772c640b9706a47f5b8c52ea1abe5858b34d"],
+      ], // Deployed event selector
+      chunk_size: 1000,
+    });
+
+    // Find the deployment event for our specific address
+    const deploymentEvent = events.events.find((event) => {
+      if (!event.data || !event.data[0]) return false;
+
+      // Normalize both addresses for comparison
+      const eventAddress = num.toHex(event.data[0]);
+      const targetAddress = num.toHex(address);
+
+      return eventAddress === targetAddress;
+    });
+
+    console.log({ deploymentEvent });
+
+    return {
+      deployer: deploymentEvent?.data[1],
+      hash: deploymentEvent?.transaction_hash,
+      blockNumber: deploymentEvent?.block_number,
+    };
+  } catch (error) {
+    console.error("Error fetching deployment hash from UDC:", error);
+    return undefined;
+  }
+};
 
 /**
  * Hook to fetch comprehensive address details from the Starknet blockchain.
@@ -79,12 +118,15 @@ export const useFetchAddressDetails = (address?: Address | string) => {
           addressDetails.deployedByContractAddress = address;
 
           // Placeholder values - in production you'd fetch these from deployment events or transaction history
-          addressDetails.deployedAtTransactionHash =
-            contractData.deployTransactionHash;
+          const deploymentInfo = await getContractDeployerAndHash(
+            address as Address,
+            provider,
+          );
+          addressDetails.deployedAtTransactionHash = deploymentInfo?.hash;
+          addressDetails.deployedByContractAddress = deploymentInfo?.deployer;
           addressDetails.deployedAt = await (async () => {
             try {
-              const blockIdentifier =
-                contractData.contractOptions?.blockIdentifier;
+              const blockIdentifier = deploymentInfo?.blockNumber;
               if (blockIdentifier) {
                 const block = await provider.getBlock(blockIdentifier);
                 return new Date(block.timestamp * 1000).toLocaleDateString(
