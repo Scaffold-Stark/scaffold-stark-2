@@ -165,8 +165,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         {/* Helper text */}
         {!error && (
           <div className="mt-2 text-xs text-base-content/60">
-            Enter a transaction hash or contract address starting with 0x. We'll
-            automatically detect the type.
+            Enter a transaction hash or contract address starting with 0x.
+            We&apos;ll automatically detect the type.
           </div>
         )}
       </div>
