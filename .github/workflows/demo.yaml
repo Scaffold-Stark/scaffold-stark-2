@@ -1,4 +1,4 @@
-name: scaffold-stark-demo workflow
+name: Deploy Demo Page
 
 on:
   pull_request:
@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - "packages/nextjs/**"
+  workflow_dispatch:
 
 jobs:
   version-bump-nextjs:
@@ -21,9 +22,6 @@ jobs:
 
       - name: Install scarb
         uses: software-mansion/setup-scarb@v1
-        with:
-          tool-versions: ./.tool-versions
-          scarb-lock: ./packages/snfoundry/contracts/Scarb.lock
 
       - name: Install snfoundryup
         uses: foundry-rs/setup-snfoundry@v3
