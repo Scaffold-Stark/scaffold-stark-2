@@ -5,15 +5,14 @@
 /**
  * Helper function to calculate time difference in a readable format
  */
-export const getTimeAgo = (timestamp: number): string => {
+export const getTimeAgo = (timestampInSeconds: number): string => {
   const now = Math.floor(Date.now() / 1000);
-  const diff = now - timestamp;
+  const diffInSeconds = now - timestampInSeconds;
 
-  if (diff < 60) return `${diff}s`;
-  if (diff < 3600) return `${Math.floor(diff / 60)}m`;
-  if (diff < 86400)
-    return `${Math.floor(diff / 3600)}h${Math.floor((diff % 3600) / 60)}m`;
-  return `${Math.floor(diff / 86400)}d`;
+  if (diffInSeconds < 60) return `${diffInSeconds}s`;
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m`;
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h`;
+  return `${Math.floor(diffInSeconds / 86400)}d`;
 };
 
 /**

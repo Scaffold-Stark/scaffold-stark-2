@@ -29,7 +29,6 @@ describe("utils/blockexplorer/formatters", () => {
     expect(getTimeAgo(nowSec - 5 * 60)).toBe("5m");
     expect(getTimeAgo(nowSec - 2 * 3600)).toBe("2h");
     expect(getTimeAgo(nowSec - 3 * 86400)).toBe("3d");
-    expect(getTimeAgo(nowSec - 3 * 86400 + 60 * 24 * 2)).toBe("3h2m");
   });
 
   it("formatTimestamp returns Unknown if missing and formats when present", () => {
