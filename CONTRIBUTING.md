@@ -60,7 +60,9 @@ We follow the ["fork-and-pull" Git workflow](https://github.com/Scaffold-Stark/s
 3. Create a new branch with a descriptive name
 4. Commit your changes to the new branch
 5. Push changes to your fork
-6. Open a PR in our repository and tag one of the maintainers to review your PR
+6. Open a PR in our repository to `develop` branch.
+7. Make sure all CI is green before you tag the reviewers, we will not merge PRs that don't pass the CI, overcommunicate always!
+8. Tag the reviewers.
 
 ### Tips for Pull Requests
 
