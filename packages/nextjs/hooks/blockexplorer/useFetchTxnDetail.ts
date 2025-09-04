@@ -528,8 +528,7 @@ export const useFetchTxnDetail = (txHash?: string) => {
     queryKey: ["txn-detail", txHash, targetNetwork.rpcUrls.public.http[0]],
     queryFn: fetchTransactionDetail,
     enabled: !!txHash && !!provider,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 5 * 1000, // 5 seconds
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });

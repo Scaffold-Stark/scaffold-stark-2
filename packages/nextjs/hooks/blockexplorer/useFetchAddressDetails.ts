@@ -165,7 +165,7 @@ export const useFetchAddressDetails = (address?: Address | string) => {
     ],
     queryFn: fetchAddressDetails,
     enabled: !!address && !!provider,
-    staleTime: 5 * 1000, // 5 minutes
+    staleTime: 5 * 1000, // 5 seconds
     retry: 2,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });

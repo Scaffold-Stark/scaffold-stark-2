@@ -309,7 +309,7 @@ export function useFetchAllTxns(options: UseFetchAllTxnsOptions = {}) {
     ],
     queryFn: fetchPaginatedTxns,
     enabled: !!totalBlocks && !!provider,
-    staleTime: 5 * 1000, // 5 minutes
+    staleTime: 5 * 1000, // 5 seconds
   });
 
   const totalPages = data ? Math.ceil(data.totalTxns / pageSize) : 0;
