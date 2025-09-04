@@ -1,9 +1,9 @@
-name: Sync Main to v3-bulletproof-contracts for E2E Tests
+name: Sync Develop to v3-bulletproof-contracts for E2E Tests
 
 on:
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   sync-and-update:
@@ -13,11 +13,11 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout main branch
+      - name: Checkout develop branch
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          ref: main
+          ref: develop
 
       - name: Configure Git
         run: |
@@ -58,7 +58,7 @@ jobs:
           git add ui-automation/Dockerfile.nextjs ui-automation/docker-compose.yml || echo "No files to add"
           git commit -m "chore: update Docker versions from .tool-versions [CI]" || echo "No commit needed"
 
-      - name: Merge main into v3-bulletproof-contracts
+      - name: Merge develop into v3-bulletproof-contracts
         run: |
-          git merge origin/main --no-edit || echo "No changes to merge"
+          git merge origin/develop --no-edit || echo "No changes to merge"
           git push origin v3-bulletproof-contracts
