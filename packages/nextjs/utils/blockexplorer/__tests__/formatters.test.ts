@@ -5,8 +5,6 @@ import {
   strkToFri,
   friToStrk,
   formatFee,
-  formatAge,
-  calculateAge,
   truncateHash,
   truncateAddress,
 } from "../formatters";
@@ -31,6 +29,7 @@ describe("utils/blockexplorer/formatters", () => {
     expect(getTimeAgo(nowSec - 5 * 60)).toBe("5m");
     expect(getTimeAgo(nowSec - 2 * 3600)).toBe("2h");
     expect(getTimeAgo(nowSec - 3 * 86400)).toBe("3d");
+    expect(getTimeAgo(nowSec - 3 * 86400 + 60 * 24 * 2)).toBe("3h2m");
   });
 
   it("formatTimestamp returns Unknown if missing and formats when present", () => {
@@ -60,20 +59,6 @@ describe("utils/blockexplorer/formatters", () => {
     expect(formatFee("1500000000000000000")).toBe("1.5");
     // If not bigint, returns raw
     expect(formatFee("not-a-number")).toBe("not-a-number");
-  });
-
-  it("formatAge handles null, seconds, minutes, days", () => {
-    expect(formatAge(null)).toBe("N/A");
-    expect(formatAge(30)).toBe("30s");
-    expect(formatAge(90)).toBe("1m");
-    // formatAge expects minutes, so 2 days => 60 * 24 * 2 minutes
-    expect(formatAge(60 * 24 * 2)).toBe("2d");
-  });
-
-  it("calculateAge returns null if no timestamp and computes minutes otherwise", () => {
-    expect(calculateAge(undefined)).toBeNull();
-    const frozenNowSec = Math.floor(Date.now() / 1000);
-    expect(calculateAge(frozenNowSec - 120)).toBe(2);
   });
 
   it("truncateHash shortens long strings and leaves short as-is", () => {

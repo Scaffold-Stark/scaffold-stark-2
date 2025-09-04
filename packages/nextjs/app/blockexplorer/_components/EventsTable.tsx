@@ -8,8 +8,7 @@ import {
   hasMeaningfulDecodedArgs,
   extractEventKeys,
   extractEventData,
-  formatAge,
-  calculateAge,
+  getTimeAgo,
 } from "~~/utils/blockexplorer";
 import { CopyButton } from "./CopyButton";
 
@@ -82,7 +81,6 @@ export const EventsTable: React.FC<EventsTableProps> = ({
           {events.map((event, index) => {
             const eventId = `${event.transactionHash}-${event.eventIndex}`;
             const isExpanded = expandedEvents.has(eventId);
-            const age = calculateAge(event.timestamp);
 
             return (
               <React.Fragment key={eventId}>
@@ -161,7 +159,7 @@ export const EventsTable: React.FC<EventsTableProps> = ({
                   </td>
                   <td className="py-3 px-4">
                     <span className="text-base-content/70 text-sm">
-                      {formatAge(age)}
+                      {getTimeAgo(event.timestamp || 0)}
                     </span>
                   </td>
                 </tr>

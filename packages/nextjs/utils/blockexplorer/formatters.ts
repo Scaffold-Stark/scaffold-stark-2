@@ -11,7 +11,8 @@ export const getTimeAgo = (timestamp: number): string => {
 
   if (diff < 60) return `${diff}s`;
   if (diff < 3600) return `${Math.floor(diff / 60)}m`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
+  if (diff < 86400)
+    return `${Math.floor(diff / 3600)}h${Math.floor((diff % 3600) / 60)}m`;
   return `${Math.floor(diff / 86400)}d`;
 };
 
@@ -49,24 +50,6 @@ export const formatFee = (fee?: string): string => {
   } catch {
     return fee;
   }
-};
-
-/**
- * Format age in minutes to human readable format
- */
-export const formatAge = (ageInMinutes: number | null): string => {
-  if (ageInMinutes === null) return "N/A";
-  if (ageInMinutes < 60) return `${ageInMinutes}s`;
-  if (ageInMinutes < 60 * 24) return `${Math.floor(ageInMinutes / 60)}m`;
-  return `${Math.floor(ageInMinutes / (60 * 24))}d`;
-};
-
-/**
- * Calculate age in minutes from timestamp
- */
-export const calculateAge = (timestamp?: number): number | null => {
-  if (!timestamp) return null;
-  return Math.floor((Date.now() / 1000 - timestamp) / 60);
 };
 
 /**
