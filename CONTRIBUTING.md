@@ -1,40 +1,87 @@
-# Contributing to Scaffold-Stark
+---
+sidebar_position: 7
+---
 
-Thank you for your interest in contributing to Scaffold-Stark! Your support enhances this Starknet-focused framework that bridges smart contract integration with web applications.
+# 🙏 Contributing to Scaffold-Stark
 
-## About the Project
+We welcome contributions to Scaffold-Stark!
 
-**Scaffold-Stark** provides a full DApp development template, offering seamless integration of Starket smart contracts with web applications. **SpeedrunStark.com** offers interactive challenges that serve to practice your Cairo and Starknet skills, learn how to use the provided hooks, and launch your applications swiftly with potential rewards.
+This section aims to provide an overview of the contribution workflow to help us make the contribution process effective for everyone involved.
 
-## Project Vision
+:::caution
+The project is under active development. You can view the open Issues, follow the development process, and contribute to the project.
+:::caution
 
-Our goal is to simplify the DApp development and learning process, enabling developers to launch applications efficiently while understanding the intricacies of Starknet.
+## Getting Started
 
-## How to Get Involved
+You can contribute to this repo in many ways:
 
-1. **Understand the Code**: Begin by familiarizing yourself with the architecture and flow by reading through the documentation provided in the README.md.
-2. **Check Issues and Discussions**: Look through existing issues and discussions to understand ongoing problems or feature requests.
-3. **Start Contributing**:
-   - **Fix Issues**: Choose an existing issue and work towards a solution.
-   - **Enhance Documentation**: Improve instructions, examples, or explanations.
-   - **Develop New Features**: Contribute new features that align with our project's goals.
+- Solve open issues
+- Report bugs or feature requests
+- Improve the documentation
 
-## Making Changes
+Contributions are made via Issues and Pull Requests (PRs). A few general guidelines for contributions:
 
-- **Branch Out**: Always work in a separate branch to avoid conflicts.
-- **Coding Standards**: Follow the coding conventions and maintain the code quality as described in our documentation.
-- **Commit Messages**: Write clear, concise commit messages that describe your changes and their impact.
+- Search for existing Issues and PRs before creating your own.
+- Contributions should only fix/add the functionality in the issue OR address style issues, _not both_.
+- If you're running into an error, please give context. Explain what you're trying to do and how to reproduce the error.
+- Please use the same formatting in the code repository. You can configure your IDE to do this by using the prettier / linting config files included in each package.
+- If applicable, please edit the README.md file to reflect changes.
 
-## Submitting Contributions
+## Issues
 
-1. **Pull Requests**: Submit a PR to the main repository with a detailed description of your changes.
-2. **Review Process**: Engage with any feedback from maintainers to refine your PR.
-3. **Tests**: Ensure all tests pass and, if necessary, add new tests relevant to your changes.
+Issues should be used to report problems, request a new feature, or discuss potential changes before a PR is created.
 
-## Documentation
+### Solve an Issue
 
-If your changes involve updates to how users interact with Scaffold-Stark or SpeedrunStark, update the relevant sections of the documentation to reflect these changes.
+Scan through our [existing issues](https://github.com/Scaffold-Stark/scaffold-stark-2/issues) to find one that interests you.
 
-## Need Help?
+If a contributor is working on the issue, they will be assigned to that individual. If you find an issue to work on, you are welcome to assign it to yourself and open a PR with a fix for it.
 
-Reach out via our community channels if you encounter issues or need clarification on contributing [here](https://t.me/+wO3PtlRAreo4MDI9).
+### Create a New Issue
+
+If a related issue doesn't exist, you can open a new issue.
+
+Please refer to the following when you are creating an issue:
+
+- Provide as much context as possible. Over-communicate to give the most detail to the reader.
+- Include the steps to reproduce the issue or the reason for adding the feature.
+- Screenshots, videos, etc., are highly appreciated.
+- Assign appropriate tags.
+
+## Pull Requests
+
+### Pull Request Process
+
+We follow the ["fork-and-pull" Git workflow](https://github.com/Scaffold-Stark/scaffold-stark-2)
+
+1. Fork the repo
+2. Clone the project
+3. Create a new branch with a descriptive name
+4. Commit your changes to the new branch
+5. Push changes to your fork
+6. Open a PR in our repository and tag one of the maintainers to review your PR
+
+### Tips for Pull Requests
+
+- Create a title for the PR that accurately defines the work done with conventional commits with proper prefix. Make sure we can tell what you have done in the title.
+
+```
+fix: useScaffoldReadContract unable to read error
+feat: switch buttons within debug page
+chore: bump version of starknetjs
+docs: update README.md for new dependencies
+build: update CI for branch sync
+```
+
+- Structure the description neatly to make it easy to consume by the readers. For example, you can include bullet points and screenshots instead of having one large paragraph.
+- If the PR is an attempt that solves an issue, include `Fixes #XXX` or `Closes #XXX`in your description so that GitHub can link the issue and close it.
+- Have a good commit message that summarises the work done, use conventional commits like the above example as well.
+- Make sure to tag maintainers for review, reach out in the Telegram group if not sure!
+
+Once you submit your PR:
+
+- We may ask questions, request additional information, or ask for changes to be made before a PR can be merged. Please note that these are to make the PR clear for everyone involved and aims to create a frictionless interaction process.
+- As you update your PR and apply changes, mark each conversation resolved.
+
+Once the PR is approved, we'll "squash-and-merge" to keep the git commit history clean.
