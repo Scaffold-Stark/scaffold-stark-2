@@ -290,7 +290,7 @@ const _decodeContractResponseItem = (
             (item: any) => item.name === enumKey,
           );
           if (enumItemDef && enumItemDef.type) {
-            if (abiType.name === "contracts::YourContract::TransactionState") {
+            if (abiType.name === "contracts::your_contract::TransactionState") {
               return enumKey;
             }
 
@@ -309,7 +309,7 @@ const _decodeContractResponseItem = (
         const enumKey = enumKeys[0];
         const enumValue = respItem[enumKey];
 
-        if (abiType.name === "contracts::YourContract::TransactionState") {
+        if (abiType.name === "contracts::your_contract::TransactionState") {
           return enumKey;
         }
 
@@ -405,9 +405,9 @@ export const displayType = (type: string) => {
     const arrayType = Array.isArray(parsed)
       ? parsed[0].split("::").pop()
       : `(${parsed
-          .split(",")
-          .map((t) => t.split("::").pop())
-          .join(",")}`;
+        .split(",")
+        .map((t) => t.split("::").pop())
+        .join(",")}`;
     return `${kindOfArray}<${arrayType}>`;
   }
 

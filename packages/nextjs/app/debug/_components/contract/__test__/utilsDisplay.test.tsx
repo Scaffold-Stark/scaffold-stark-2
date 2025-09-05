@@ -194,7 +194,7 @@ describe("utilsDisplay", () => {
         abi,
         functionOutputs: [
           {
-            type: "contracts::YourContract::SomeStruct",
+            type: "contracts::your_contract::SomeStruct",
           },
         ],
         asText: true,
@@ -221,7 +221,7 @@ describe("utilsDisplay", () => {
         abi,
         functionOutputs: [
           {
-            type: "contracts::YourContract::ComplexStruct",
+            type: "contracts::your_contract::ComplexStruct",
           },
         ],
         asText: true,
@@ -246,7 +246,7 @@ describe("utilsDisplay", () => {
         abi,
         functionOutputs: [
           {
-            type: "contracts::YourContract::ComplexStruct",
+            type: "contracts::your_contract::ComplexStruct",
           },
         ],
         asText: true,
@@ -320,7 +320,7 @@ it("should parse enum TransactionState response successfully", () => {
       abi,
       functionOutputs: [
         {
-          type: "contracts::YourContract::TransactionState",
+          type: "contracts::your_contract::TransactionState",
         },
       ],
       asText: true,

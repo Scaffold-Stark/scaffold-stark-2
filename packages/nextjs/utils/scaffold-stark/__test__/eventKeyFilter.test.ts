@@ -13,7 +13,7 @@ const abiStruct = CallData.getAbiStruct(mockDeployedContractAbi.abi);
 const event = mockDeployedContractAbi.abi.find(
   (part) =>
     part.type === "event" &&
-    part.name === "contracts::YourContract::YourContract::GreetingChanged",
+    part.name === "contracts::your_contract::YourContract::GreetingChanged",
 );
 
 describe("serializeEventKey", () => {
@@ -136,7 +136,7 @@ describe("serializeEventKey", () => {
         },
         {
           name: "test",
-          type: "contracts::YourContract::SomeStruct",
+          type: "contracts::your_contract::SomeStruct",
         },
         abiStruct,
         abiEnum,
@@ -155,7 +155,7 @@ describe("serializeEventKey", () => {
 
     const result = serializeEventKey(
       simpleEnum,
-      { name: "enum_param", type: "contracts::YourContract::SimpleEnum" },
+      { name: "enum_param", type: "contracts::your_contract::SimpleEnum" },
       abiStruct,
       abiEnum,
     );
@@ -176,7 +176,7 @@ describe("serializeEventKey", () => {
         someEnum,
         {
           name: "test",
-          type: "contracts::YourContract::SomeEnum",
+          type: "contracts::your_contract::SomeEnum",
         },
         abiStruct,
         abiEnum,
