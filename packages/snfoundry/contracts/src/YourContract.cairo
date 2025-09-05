@@ -85,7 +85,9 @@ pub mod YourContract {
                             contract_address: strk_contract_address,
                         };
                         strk_dispatcher
-                            .transfer_from(get_caller_address(), get_contract_address(), amount_strk);
+                            .transfer_from(
+                                get_caller_address(), get_contract_address(), amount_strk,
+                            );
                         self.premium.write(true);
                     }
                 },
