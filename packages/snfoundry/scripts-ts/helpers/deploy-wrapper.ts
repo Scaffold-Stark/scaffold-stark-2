@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import yargs from "yargs";
 import { execSync } from "child_process";
+import { smartCompile } from "../compile";
 
 interface CommandLineOptions {
   _: string[]; // Non-hyphenated arguments are usually under the `_` key
@@ -36,7 +37,7 @@ function main() {
 
   if (argv._.length > 0) {
     console.error(
-      `❌ Invalid arguments, only --network or --no-reset can be passed in`
+      `❌ Invalid arguments, only --network or --no-reset can be passed in`,
     );
     return;
   }
@@ -44,11 +45,13 @@ function main() {
   const resetFlag = argv.reset === false ? "--no-reset" : "";
 
   try {
+    smartCompile();
+
     const command =
-      `cd contracts && scarb build && ts-node ../scripts-ts/deploy.ts` +
+      `ts-node scripts-ts/deploy.ts` +
       ` --network ${argv.network || "devnet"}` +
       `${resetFlag ? " " + resetFlag : ""}` +
-      ` && ts-node ../scripts-ts/helpers/parse-deployments.ts && cd ..`;
+      ` && ts-node scripts-ts/helpers/parse-deployments.ts`;
 
     execSync(command, { stdio: "inherit" });
   } catch (error) {
