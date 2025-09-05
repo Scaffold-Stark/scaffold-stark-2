@@ -3,7 +3,7 @@ export const mockDeployedContractData = {
     {
       type: "impl",
       name: "YourContractImpl",
-      interface_name: "contracts::YourContract::IYourContract",
+      interface_name: "contracts::your_contract::IYourContract",
     },
     {
       type: "struct",
@@ -53,7 +53,7 @@ export const mockDeployedContractData = {
     },
     {
       type: "interface",
-      name: "contracts::YourContract::IYourContract",
+      name: "contracts::your_contract::IYourContract",
       items: [
         {
           type: "function",
@@ -213,7 +213,7 @@ export const mockDeployedContractData = {
     },
     {
       type: "event",
-      name: "contracts::YourContract::YourContract::GreetingChanged",
+      name: "contracts::your_contract::YourContract::GreetingChanged",
       kind: "struct",
       members: [
         {
@@ -240,7 +240,7 @@ export const mockDeployedContractData = {
     },
     {
       type: "event",
-      name: "contracts::YourContract::YourContract::EventParser",
+      name: "contracts::your_contract::YourContract::EventParser",
       kind: "struct",
       members: [
         {
@@ -277,7 +277,7 @@ export const mockDeployedContractData = {
     },
     {
       type: "event",
-      name: "contracts::YourContract::YourContract::Event",
+      name: "contracts::your_contract::YourContract::Event",
       kind: "enum",
       variants: [
         {
@@ -287,12 +287,12 @@ export const mockDeployedContractData = {
         },
         {
           name: "GreetingChanged",
-          type: "contracts::YourContract::YourContract::GreetingChanged",
+          type: "contracts::your_contract::YourContract::GreetingChanged",
           kind: "nested",
         },
         {
           name: "EventParser",
-          type: "contracts::YourContract::YourContract::EventParser",
+          type: "contracts::your_contract::YourContract::EventParser",
           kind: "nested",
         },
       ],

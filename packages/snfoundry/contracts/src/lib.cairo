@@ -1,2 +1,2 @@
-pub mod YourContract;
+pub mod your_contract;
 
