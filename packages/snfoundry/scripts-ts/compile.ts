@@ -53,7 +53,7 @@ export function shouldRecompile(options: CompileOptions = {}): boolean {
 function needsRecompilation(
   srcDir: string,
   targetDevDir: string,
-  verbose: boolean,
+  verbose: boolean
 ): boolean {
   const scarbInfo = readScarbToml(srcDir);
   if (!scarbInfo) {
@@ -92,7 +92,7 @@ function needsRecompilation(
     if (cairoFile.mtime > targetFile.mtime) {
       if (verbose) {
         console.log(
-          `📅 ${cairoFile.relativePath} is newer than ${expectedJsonName}`,
+          `📅 ${cairoFile.relativePath} is newer than ${expectedJsonName}`
         );
         console.log(`   Cairo: ${new Date(cairoFile.mtime).toISOString()}`);
         console.log(`   JSON:  ${new Date(targetFile.mtime).toISOString()}`);
@@ -111,7 +111,7 @@ function needsRecompilation(
  * Reads Scarb.toml once and caches the package name and timestamp
  */
 function readScarbToml(
-  srcDir: string,
+  srcDir: string
 ): { packageName: string; mtime: number } | null {
   try {
     const scarbTomlPath = resolve(srcDir, "..", "Scarb.toml");
