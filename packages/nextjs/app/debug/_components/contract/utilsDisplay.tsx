@@ -405,9 +405,9 @@ export const displayType = (type: string) => {
     const arrayType = Array.isArray(parsed)
       ? parsed[0].split("::").pop()
       : `(${parsed
-        .split(",")
-        .map((t) => t.split("::").pop())
-        .join(",")}`;
+          .split(",")
+          .map((t) => t.split("::").pop())
+          .join(",")}`;
     return `${kindOfArray}<${arrayType}>`;
   }
 
