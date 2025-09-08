@@ -9,6 +9,7 @@ import { Header } from "~~/components/Header";
 
 import { appChains, connectors } from "~~/services/web3/connectors";
 import provider from "~~/services/web3/provider";
+import paymasterProvider from "~~/services/web3/paymaster";
 import { useNativeCurrencyPrice } from "~~/hooks/scaffold-stark/useNativeCurrencyPrice";
 
 const Footer = dynamic(
@@ -64,6 +65,7 @@ export const ScaffoldStarkAppWithProviders = ({
       provider={provider}
       connectors={connectors}
       explorer={starkscan}
+      paymasterProvider={paymasterProvider}
     >
       <ScaffoldStarkApp>{children}</ScaffoldStarkApp>
     </StarknetConfig>
