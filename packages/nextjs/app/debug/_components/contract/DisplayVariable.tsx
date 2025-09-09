@@ -99,7 +99,7 @@ export const DisplayVariable = ({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
-    blockIdentifier: "pending" as BlockNumber, // TODO : notify when failed - add error
+    blockIdentifier: "pre_confirmed" as BlockNumber, // TODO : notify when failed - add error
   });
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const { showAnimation } = useAnimationConfig(result);

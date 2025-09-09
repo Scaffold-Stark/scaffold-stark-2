@@ -13,6 +13,8 @@ import {
   constants,
   TypedData,
   RpcError,
+  ETransactionVersion,
+  defaultDeployer,
 } from "starknet";
 import { DeployContractParams, Network } from "./types";
 import { green, red, yellow } from "./helpers/colorize-log";
@@ -167,7 +169,7 @@ const declareIfNot_NotWait = async (
   try {
     const { transaction_hash } = await deployer.declare(payload, {
       ...options,
-      version: constants.TRANSACTION_VERSION.V3,
+      version: ETransactionVersion.V3,
     });
 
     if (networkName === "sepolia" || networkName === "mainnet") {
@@ -223,7 +225,7 @@ const deployContract_NotWait = async (payload: {
   constructorCalldata: RawArgs;
 }) => {
   try {
-    const { calls, addresses } = transaction.buildUDCCall(
+    const { calls, addresses } = defaultDeployer.buildDeployerCall(
       payload,
       deployer.address
     );
@@ -415,7 +417,7 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
   try {
     let { transaction_hash } = await deployer.execute(deployCalls, {
       ...options,
-      version: constants.TRANSACTION_VERSION.V3,
+      version: ETransactionVersion.V3,
     });
     console.log(green("Deploy Calls Executed at "), transaction_hash);
     if (networkName === "sepolia" || networkName === "mainnet") {

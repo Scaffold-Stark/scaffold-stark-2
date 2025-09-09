@@ -20,17 +20,17 @@ describe("getRpcUrl", () => {
 
   it("should return sepolia RPC URL when available", () => {
     process.env.NEXT_PUBLIC_SEPOLIA_PROVIDER_URL =
-      "https://starknet-sepolia.blastapi.io/64168c77-3fa5-4e1e-9fe4-41675d212522/rpc/v0_8";
+      "https://starknet-sepolia.blastapi.io/64168c77-3fa5-4e1e-9fe4-41675d212522/rpc/v0_9";
     expect(getRpcUrl("sepolia")).toBe(
-      "https://starknet-sepolia.blastapi.io/64168c77-3fa5-4e1e-9fe4-41675d212522/rpc/v0_8",
+      "https://starknet-sepolia.blastapi.io/64168c77-3fa5-4e1e-9fe4-41675d212522/rpc/v0_9",
     );
   });
 
   it("should return mainnet RPC URL when available", () => {
     process.env.NEXT_PUBLIC_MAINNET_PROVIDER_URL =
-      "https://starknet-mainnet.blastapi.io/64168c77-3fa5-4e1e-9fe4-41675d212522/rpc/v0_8";
+      "https://starknet-mainnet.blastapi.io/64168c77-3fa5-4e1e-9fe4-41675d212522/rpc/v0_9";
     expect(getRpcUrl("mainnet")).toBe(
-      "https://starknet-mainnet.blastapi.io/64168c77-3fa5-4e1e-9fe4-41675d212522/rpc/v0_8",
+      "https://starknet-mainnet.blastapi.io/64168c77-3fa5-4e1e-9fe4-41675d212522/rpc/v0_9",
     );
   });
 
@@ -41,10 +41,10 @@ describe("getRpcUrl", () => {
 
     expect(getRpcUrl("devnet")).toBe("http://127.0.0.1:5050");
     expect(getRpcUrl("sepolia")).toBe(
-      "https://starknet-sepolia.public.blastapi.io/rpc/v0_8",
+      "https://starknet-sepolia.public.blastapi.io/rpc/v0_9",
     );
     expect(getRpcUrl("mainnet")).toBe(
-      "https://starknet-mainnet.public.blastapi.io/rpc/v0_8",
+      "https://starknet-mainnet.public.blastapi.io/rpc/v0_9",
     );
   });
 

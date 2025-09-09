@@ -470,7 +470,7 @@ const decodeParamsWithType = (paramType: string, param: any): unknown => {
       return option.isNone()
         ? "None"
         : `Some(${parseParamWithType(
-            paramType.split("<").pop()!,
+            (paramType as string).split("<").pop()!,
             option.unwrap(),
             isRead,
           )})`;

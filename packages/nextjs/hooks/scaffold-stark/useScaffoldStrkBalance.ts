@@ -36,7 +36,7 @@ const useScaffoldStrkBalance = ({ address }: UseScaffoldStrkBalanceProps) => {
     watch: true,
     enabled: true,
     args: address ? [address] : [],
-    blockIdentifier: "pending" as BlockNumber,
+    blockIdentifier: "pre_confirmed" as BlockNumber,
   });
 
   return {

@@ -3986,7 +3986,7 @@ __metadata:
     react-dom: 19.0.0
     react-hot-toast: ^2.4.1
     shx: ^0.4.0
-    starknet: ^7.6.4
+    starknet: 8.5.3
     tailwindcss: ^4
     type-fest: ^4.6.0
     typescript: ^5
@@ -4018,7 +4018,7 @@ __metadata:
     globals: ^15.8.0
     prettier: ^2.8.8
     shx: ^0.4.0
-    starknet: ^7.6.4
+    starknet: 8.5.3
     toml: ^3.0.0
     ts-node: ^10.9.2
     tslib: ^2.6.2
@@ -4030,17 +4030,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@starknet-io/starknet-types-07@npm:@starknet-io/types-js@~0.7.10, @starknet-io/types-js@npm:^0.7.10, @starknet-io/types-js@npm:^0.7.7":
-  version: 0.7.10
-  resolution: "@starknet-io/types-js@npm:0.7.10"
-  checksum: 8f71c57d0f101ebbde91e3016b73ab70ce3329ccb7463764a27a61db42b9ea14b690bd620a6b2dd4303e890b4a9212bdd40626962e0320e82e0c600fd3be5abf
-  languageName: node
-  linkType: hard
-
 "@starknet-io/starknet-types-08@npm:@starknet-io/types-js@~0.8.4, @starknet-io/types-js@npm:^0.8.4":
   version: 0.8.4
   resolution: "@starknet-io/types-js@npm:0.8.4"
   checksum: 5c42eeb216c8e91051977e8ef4f7ffdf1c225c13057c29c10d5cce25b7fe25ec0ad1f33e061add1a299447cf8ca5e85fed173ceb74c186d649810ddcc36f9027
+  languageName: node
+  linkType: hard
+
+"@starknet-io/starknet-types-09@npm:@starknet-io/types-js@~0.9.1":
+  version: 0.9.1
+  resolution: "@starknet-io/types-js@npm:0.9.1"
+  checksum: aa4a38dcbcd29bff536424845e442cf01425bb655bc97db213ad6f1c62c8b3a652b19877f5fce72625c8a83985b8ca932b65b69267d9d63b5f9863196aa2e55b
+  languageName: node
+  linkType: hard
+
+"@starknet-io/types-js@npm:^0.7.10, @starknet-io/types-js@npm:^0.7.7":
+  version: 0.7.10
+  resolution: "@starknet-io/types-js@npm:0.7.10"
+  checksum: 8f71c57d0f101ebbde91e3016b73ab70ce3329ccb7463764a27a61db42b9ea14b690bd620a6b2dd4303e890b4a9212bdd40626962e0320e82e0c600fd3be5abf
   languageName: node
   linkType: hard
 
@@ -12666,21 +12673,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"starknet@npm:^7.6.4":
-  version: 7.6.4
-  resolution: "starknet@npm:7.6.4"
+"starknet@npm:8.5.3":
+  version: 8.5.3
+  resolution: "starknet@npm:8.5.3"
   dependencies:
     "@noble/curves": 1.7.0
     "@noble/hashes": 1.6.0
     "@scure/base": 1.2.1
     "@scure/starknet": 1.1.0
-    "@starknet-io/starknet-types-07": "npm:@starknet-io/types-js@~0.7.10"
     "@starknet-io/starknet-types-08": "npm:@starknet-io/types-js@~0.8.4"
+    "@starknet-io/starknet-types-09": "npm:@starknet-io/types-js@~0.9.1"
     abi-wan-kanabi: 2.2.4
     lossless-json: ^4.0.1
     pako: ^2.0.4
     ts-mixer: ^6.0.3
-  checksum: a7c6de5ee93d77a4cc6bc7c7a7f882193ddce4279c4e94b0d7861403fedded243ff1c147685e0fea03e52b77198fa45cc950ce504149dd9e141a56cc19cdbca2
+  checksum: c9799210b57438256dff39fc9ac625a80aab3d79159d0df18facd086b1222452cbbf543613990c9f6bc1a188196748166e9c6089e7dfea385dd2999ec137566d
   languageName: node
   linkType: hard
 
