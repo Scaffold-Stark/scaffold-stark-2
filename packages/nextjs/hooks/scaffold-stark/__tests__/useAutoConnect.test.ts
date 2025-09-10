@@ -2,28 +2,36 @@ import { renderHook } from "@testing-library/react";
 import { useAutoConnect } from "../useAutoConnect";
 import { useConnect } from "@starknet-react/core";
 import { useReadLocalStorage } from "usehooks-ts";
-import scaffoldConfig from "~~/scaffold.config";
 import { burnerAccounts } from "@scaffold-stark/stark-burner";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-// Mock the dependencies
 vi.mock("usehooks-ts", () => ({
   useReadLocalStorage: vi.fn(),
 }));
 
-vi.mock("@starknet-react/core", () => ({
-  useConnect: vi.fn(),
+vi.mock("@starknet-react/core", async (importOriginal) => {
+  const actual = (await import("@starknet-react/core")) as Record<string, any>;
+  return {
+    ...actual,
+    useConnect: vi.fn(),
+    useAccount: () => ({
+      account: null,
+      address: undefined,
+      status: "disconnected",
+    }),
+  };
+});
+
+vi.mock("@scaffold-stark/stark-burner", () => ({
+  burnerAccounts: [{ address: "0x123" }, { address: "0x456" }],
+  BurnerConnector: class {},
 }));
 
 vi.mock("~~/scaffold.config", () => ({
   default: {
     walletAutoConnect: true,
+    autoConnectTTL: 10000,
   },
-}));
-
-vi.mock("@scaffold-stark/stark-burner", () => ({
-  burnerAccounts: [{ address: "0x123" }, { address: "0x456" }],
-  BurnerConnector: vi.fn(),
 }));
 
 describe("useAutoConnect", () => {
@@ -33,22 +41,29 @@ describe("useAutoConnect", () => {
   beforeEach(() => {
     mockConnect = vi.fn();
     mockConnectors = [
-      { id: "wallet-1" },
-      { id: "burner-wallet", burnerAccount: null },
+      { id: "wallet-1", ready: true },
+      {
+        id: "burner-wallet",
+        ready: true,
+        burnerAccount: undefined,
+      },
     ];
+
     (useConnect as ReturnType<typeof vi.fn>).mockReturnValue({
       connect: mockConnect,
       connectors: mockConnectors,
     });
-    vi.spyOn(scaffoldConfig, "walletAutoConnect", "get").mockReturnValue(true);
-  });
 
-  afterEach(() => {
     vi.clearAllMocks();
   });
 
   it("should auto-connect if walletAutoConnect is enabled and a saved connector exists", () => {
-    vi.mocked(useReadLocalStorage).mockReturnValue({ id: "wallet-1" });
+    vi.mocked(useReadLocalStorage).mockImplementation((key) => {
+      if (key === "lastUsedConnector") return { id: "wallet-1" };
+      if (key === "lastConnectedTime") return Date.now() - 20000;
+      if (key === "wasDisconnectedManually") return false;
+      return null;
+    });
 
     renderHook(() => useAutoConnect());
 
@@ -57,11 +72,13 @@ describe("useAutoConnect", () => {
     });
   });
 
-  it("should not auto-connect if walletAutoConnect is disabled", () => {
-    vi.spyOn(scaffoldConfig, "walletAutoConnect", "get").mockReturnValue(
-      false as true,
-    );
-    vi.mocked(useReadLocalStorage).mockReturnValue({ id: "wallet-1" });
+  it("should not auto-connect if wasDisconnectedManually is true", () => {
+    vi.mocked(useReadLocalStorage).mockImplementation((key) => {
+      if (key === "lastUsedConnector") return { id: "wallet-1" };
+      if (key === "lastConnectedTime") return Date.now() - 20000;
+      if (key === "wasDisconnectedManually") return true;
+      return null;
+    });
 
     renderHook(() => useAutoConnect());
 
@@ -69,21 +86,19 @@ describe("useAutoConnect", () => {
   });
 
   it("should auto-connect to the burner wallet and set burnerAccount if savedConnector exists", () => {
-    vi.mocked(useReadLocalStorage).mockReturnValue({
-      id: "burner-wallet",
-      ix: 1,
+    vi.mocked(useReadLocalStorage).mockImplementation((key) => {
+      if (key === "lastUsedConnector") return { id: "burner-wallet", ix: 1 };
+      if (key === "lastConnectedTime") return Date.now() - 20000;
+      if (key === "wasDisconnectedManually") return false;
+      return null;
     });
-    mockConnectors = [
-      { id: "wallet-1" },
-      {
-        id: "burner-wallet",
-        burnerAccount: burnerAccounts[1],
-      },
-    ];
-    (useConnect as ReturnType<typeof vi.fn>).mockReturnValue({
-      connect: mockConnect,
-      connectors: mockConnectors,
-    });
+
+    const burnerConnector = mockConnectors.find(
+      (c) => c.id === "burner-wallet",
+    );
+    if (burnerConnector) {
+      burnerConnector.burnerAccount = burnerAccounts[1];
+    }
 
     renderHook(() => useAutoConnect());
 
@@ -96,7 +111,10 @@ describe("useAutoConnect", () => {
   });
 
   it("should not connect if there is no saved connector", () => {
-    vi.mocked(useReadLocalStorage).mockReturnValue(null);
+    vi.mocked(useReadLocalStorage).mockImplementation((key) => {
+      if (key === "wasDisconnectedManually") return false;
+      return null;
+    });
 
     renderHook(() => useAutoConnect());
 
@@ -104,8 +122,11 @@ describe("useAutoConnect", () => {
   });
 
   it("should not connect if saved connector is not found in the connectors list", () => {
-    vi.mocked(useReadLocalStorage).mockReturnValue({
-      id: "non-existent-connector",
+    vi.mocked(useReadLocalStorage).mockImplementation((key) => {
+      if (key === "lastUsedConnector") return { id: "non-existent-connector" };
+      if (key === "lastConnectedTime") return Date.now() - 20000;
+      if (key === "wasDisconnectedManually") return false;
+      return null;
     });
 
     renderHook(() => useAutoConnect());
