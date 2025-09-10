@@ -290,7 +290,7 @@ const _decodeContractResponseItem = (
             (item: any) => item.name === enumKey,
           );
           if (enumItemDef && enumItemDef.type) {
-            if (abiType.name === "contracts::YourContract::TransactionState") {
+            if (abiType.name === "contracts::your_contract::TransactionState") {
               return enumKey;
             }
 
@@ -309,7 +309,7 @@ const _decodeContractResponseItem = (
         const enumKey = enumKeys[0];
         const enumValue = respItem[enumKey];
 
-        if (abiType.name === "contracts::YourContract::TransactionState") {
+        if (abiType.name === "contracts::your_contract::TransactionState") {
           return enumKey;
         }
 

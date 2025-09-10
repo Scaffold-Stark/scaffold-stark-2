@@ -1026,7 +1026,7 @@ Visit your app on `http://localhost:3000`. You can interact with your smart cont
 #### What's Next:
 
 - Edit your smart contract:
-  - `YourContract.cairo` in `packages/snfoundry/contracts/src`
+  - `your_contract.cairo` in `packages/snfoundry/contracts/src`
 - Edit your deployment scripts:
   - `packages/snfoundry/scripts-ts/deploy.ts`
 - Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.

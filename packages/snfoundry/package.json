@@ -8,11 +8,21 @@
     "deploy:no-reset": "yarn workspace @ss-2/snfoundry deploy --no-reset",
     "test": "cd contracts && snforge test",
     "test-eslint": "node eslint-contract-name/eslint-plugin-contract-names.test.js",
-    "compile": "cd contracts && scarb build",
+    "compile": "ts-node scripts-ts/compile.ts",
     "format": "prettier --write 'scripts-ts/**/*.{ts,tsx}' && cd contracts && scarb fmt",
     "format:check": "prettier --check 'scripts-ts/**/*.{ts,tsx}' && cd contracts && scarb fmt --check",
     "postinstall": "shx cp -n .env.example .env",
-    "verify": "ts-node scripts-ts/verify-contracts.ts"
+    "verify": "ts-node scripts-ts/verify-contracts.ts",
+    "clean": "cd contracts && scarb clean && cd ../deployments && node clear.mjs"
+  },
+  "overrides": {
+    "chalk": "5.3.0",
+    "strip-ansi": "7.1.0",
+    "color-convert": "2.0.1",
+    "color-name": "1.1.4",
+    "is-core-module": "2.13.1",
+    "error-ex": "1.3.2",
+    "has-ansi": "5.0.1"
   },
   "devDependencies": {
     "@types/node": "^22",

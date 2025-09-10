@@ -2,7 +2,7 @@ export const abi: any = [
   {
     type: "impl",
     name: "YourContractImpl",
-    interface_name: "contracts::YourContract::IYourContract",
+    interface_name: "contracts::your_contract::IYourContract",
   },
   {
     type: "struct",
@@ -52,7 +52,7 @@ export const abi: any = [
   },
   {
     type: "enum",
-    name: "contracts::YourContract::SimpleEnum",
+    name: "contracts::your_contract::SimpleEnum",
     variants: [
       {
         name: "val1",
@@ -66,11 +66,11 @@ export const abi: any = [
   },
   {
     type: "enum",
-    name: "contracts::YourContract::SomeEnum",
+    name: "contracts::your_contract::SomeEnum",
     variants: [
       {
         name: "val1",
-        type: "contracts::YourContract::SimpleEnum",
+        type: "contracts::your_contract::SimpleEnum",
       },
       {
         name: "val2",
@@ -84,7 +84,7 @@ export const abi: any = [
   },
   {
     type: "struct",
-    name: "contracts::YourContract::SomeStruct",
+    name: "contracts::your_contract::SomeStruct",
     members: [
       {
         name: "addr",
@@ -98,7 +98,7 @@ export const abi: any = [
   },
   {
     type: "enum",
-    name: "contracts::YourContract::ComplexStruct",
+    name: "contracts::your_contract::ComplexStruct",
     variants: [
       {
         name: "val1",
@@ -110,13 +110,13 @@ export const abi: any = [
       },
       {
         name: "val3",
-        type: "core::array::Array::<contracts::YourContract::SomeStruct>",
+        type: "core::array::Array::<contracts::your_contract::SomeStruct>",
       },
     ],
   },
   {
     type: "interface",
-    name: "contracts::YourContract::IYourContract",
+    name: "contracts::your_contract::IYourContract",
     items: [
       {
         type: "function",
@@ -169,12 +169,12 @@ export const abi: any = [
         inputs: [
           {
             name: "input",
-            type: "contracts::YourContract::SomeEnum",
+            type: "contracts::your_contract::SomeEnum",
           },
         ],
         outputs: [
           {
-            type: "contracts::YourContract::SomeEnum",
+            type: "contracts::your_contract::SomeEnum",
           },
         ],
         state_mutability: "view",
@@ -201,12 +201,12 @@ export const abi: any = [
         inputs: [
           {
             name: "input",
-            type: "contracts::YourContract::SomeStruct",
+            type: "contracts::your_contract::SomeStruct",
           },
         ],
         outputs: [
           {
-            type: "contracts::YourContract::SomeStruct",
+            type: "contracts::your_contract::SomeStruct",
           },
         ],
         state_mutability: "view",
@@ -265,12 +265,12 @@ export const abi: any = [
         inputs: [
           {
             name: "input",
-            type: "contracts::YourContract::ComplexStruct",
+            type: "contracts::your_contract::ComplexStruct",
           },
         ],
         outputs: [
           {
-            type: "contracts::YourContract::ComplexStruct",
+            type: "contracts::your_contract::ComplexStruct",
           },
         ],
         state_mutability: "view",
@@ -334,7 +334,7 @@ export const abi: any = [
         ],
         outputs: [
           {
-            type: "contracts::YourContract::ComplexStruct",
+            type: "contracts::your_contract::ComplexStruct",
           },
         ],
         state_mutability: "view",
@@ -350,7 +350,7 @@ export const abi: any = [
         ],
         outputs: [
           {
-            type: "contracts::YourContract::TransactionState",
+            type: "contracts::your_contract::TransactionState",
           },
         ],
         state_mutability: "view",
@@ -461,7 +461,7 @@ export const abi: any = [
   },
   {
     type: "event",
-    name: "contracts::YourContract::YourContract::GreetingChanged",
+    name: "contracts::your_contract::YourContract::GreetingChanged",
     kind: "struct",
     members: [
       {
@@ -488,7 +488,7 @@ export const abi: any = [
   },
   {
     type: "event",
-    name: "contracts::YourContract::YourContract::Event",
+    name: "contracts::your_contract::YourContract::Event",
     kind: "enum",
     variants: [
       {
@@ -498,7 +498,7 @@ export const abi: any = [
       },
       {
         name: "GreetingChanged",
-        type: "contracts::YourContract::YourContract::GreetingChanged",
+        type: "contracts::your_contract::YourContract::GreetingChanged",
         kind: "nested",
       },
     ],
@@ -533,7 +533,7 @@ export const abi: any = [
   },
   {
     type: "enum",
-    name: "contracts::YourContract::TransactionState",
+    name: "contracts::your_contract::TransactionState",
     variants: [
       {
         name: "NotFound",
