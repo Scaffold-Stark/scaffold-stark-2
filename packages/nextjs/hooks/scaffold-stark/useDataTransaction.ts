@@ -136,7 +136,7 @@ export const useDataTransaction = (blockNumber: number) => {
         blockVersion: currentBlock.starknet_version,
         blockTimestamp: currentBlock.timestamp,
         blockTransactions: currentBlock.transactions || [],
-        parentBlockHash: currentBlock.parent_hash,
+        parentBlockHash: currentBlock.parent_hash || "",
         totalTransactions: currentBlock.transactions?.length || 0,
         tps,
         gasprice: currentBlock.l1_gas_price.price_in_wei,

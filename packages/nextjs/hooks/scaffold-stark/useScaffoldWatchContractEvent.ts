@@ -14,6 +14,7 @@ import { useProvider } from "@starknet-react/core";
 import { useTargetNetwork } from "./useTargetNetwork";
 import {
   CallData,
+  createAbiParser,
   hash,
   RpcProvider,
   events as starknetEvents,
@@ -148,6 +149,7 @@ export const useScaffoldWatchContractEvent = <
           starknetEvents.getAbiEvents(deployedContractData?.abi),
           CallData.getAbiStruct(deployedContractData?.abi),
           CallData.getAbiEnum(deployedContractData?.abi),
+          createAbiParser(deployedContractData?.abi),
         );
 
         const args =

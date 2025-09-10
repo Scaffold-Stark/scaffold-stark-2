@@ -102,11 +102,11 @@ describe("useScaffoldContract", () => {
 
   it("should create a contract instance with the correct parameters", () => {
     const { result } = renderHook(() => useScaffoldContract({ contractName }));
-    expect(MockedContract).toHaveBeenCalledWith(
-      mockAbi,
-      mockAddress,
-      expect.anything(),
-    );
+    expect(MockedContract).toHaveBeenCalledWith({
+      abi: mockAbi,
+      address: mockAddress,
+      providerOrAccount: expect.anything(),
+    });
   });
 
   it("should return undefined when deployedContractData is not available", () => {
@@ -121,11 +121,11 @@ describe("useScaffoldContract", () => {
 
   it("should create a contract instance with the correct parameters", () => {
     const { result } = renderHook(() => useScaffoldContract({ contractName }));
-    expect(MockedContract).toHaveBeenCalledWith(
-      mockAbi,
-      mockAddress,
-      expect.anything(),
-    );
+    expect(MockedContract).toHaveBeenCalledWith({
+      abi: mockAbi,
+      address: mockAddress,
+      providerOrAccount: expect.anything(),
+    });
   });
 
   it("should return original result if first call succeeds", async () => {
