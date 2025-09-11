@@ -101,7 +101,7 @@ describe("ContractClassHashCache", () => {
     const result1 = await cache.getClassHash(
       mockProvider as ProviderInterface,
       address,
-      "pending",
+      "pre_confirmed",
     );
 
     const result2 = await cache.getClassHash(

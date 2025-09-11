@@ -77,15 +77,19 @@ pub mod YourContract {
                 Option::Some(amount_strk) => {
                     // In `Debug Contract` or UI implementation, call `approve` on STRK contract
                     // before invoking fn set_greeting()
-                    let strk_contract_address: ContractAddress = FELT_STRK_CONTRACT
-                        .try_into()
-                        .unwrap();
-                    let strk_dispatcher = IERC20Dispatcher {
-                        contract_address: strk_contract_address,
-                    };
-                    strk_dispatcher
-                        .transfer_from(get_caller_address(), get_contract_address(), amount_strk);
-                    self.premium.write(true);
+                    if amount_strk > 0 {
+                        let strk_contract_address: ContractAddress = FELT_STRK_CONTRACT
+                            .try_into()
+                            .unwrap();
+                        let strk_dispatcher = IERC20Dispatcher {
+                            contract_address: strk_contract_address,
+                        };
+                        strk_dispatcher
+                            .transfer_from(
+                                get_caller_address(), get_contract_address(), amount_strk,
+                            );
+                        self.premium.write(true);
+                    }
                 },
                 Option::None => { self.premium.write(false); },
             }
@@ -94,7 +98,7 @@ pub mod YourContract {
                     GreetingChanged {
                         greeting_setter: get_caller_address(),
                         new_greeting: self.greeting.read(),
-                        premium: true,
+                        premium: self.premium.read(),
                         value: amount_strk,
                     },
                 );

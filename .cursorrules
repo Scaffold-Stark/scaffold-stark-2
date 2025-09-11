@@ -1,0 +1,2325 @@
+# Scaffold-Stark 2 Development Assistant
+
+<project_overview>
+Everything you need to build dApps on Starknet. A modern, clean version of Scaffold-Stark with NextJS, Starknet-React, Starknet.js and TypeScript. Supports Starknet Foundry for Cairo smart contracts.
+</project_overview>
+
+<smart_contract_patterns>
+<read_operations>
+
+- Read: useScaffoldReadContract (packages/nextjs/hooks/scaffold-stark/useScaffoldReadContract.ts)
+  </read_operations>
+
+<write_operations>
+
+- Write: useScaffoldWriteContract (packages/nextjs/hooks/scaffold-stark/useScaffoldWriteContract.ts)
+- Multi-Write: useScaffoldMultiWriteContract (packages/nextjs/hooks/scaffold-stark/useScaffoldMultiWriteContract.ts)
+  </write_operations>
+
+<event_operations>
+
+- Event Listening: useScaffoldWatchContractEvent for real-time events (packages/nextjs/hooks/scaffold-stark/useScaffoldWatchContractEvent.ts)
+- Event History: useScaffoldEventHistory for historical data (packages/nextjs/hooks/scaffold-stark/useScaffoldEventHistory.ts)
+  </event_operations>
+
+<note>
+You have all the details of our custom hooks in the Hooks section from this file.
+</note>
+</smart_contract_patterns>
+
+<component_guidelines>
+<instruction>
+Use Scaffold-Stark 2 components whenever it makes sense, they are located in `packages/nextjs/components/scaffold-stark`. You have all the details about components in the Components section from this file.
+</instruction>
+</component_guidelines>
+
+<ui_design_system>
+<styling_framework>
+
+- Base: Tailwind CSS v3
+- Components: daisyUI v4
+- DaisyUI Documentation: https://daisyui.com/llms.txt
+  </styling_framework>
+
+<implementation>
+- Core theme configuration: packages/nextjs/tailwind.config.ts
+- Base styling: packages/nextjs/styles/globals.css
+- Component-specific styling in individual component files
+</implementation>
+</ui_design_system>
+
+<wallet_connection>
+<supported>Starknet-React with multiple wallet connectors (packages/nextjs/services/web3/connectors.tsx)</supported>
+<custom_connect_button>packages/nextjs/components/scaffold-stark/CustomConnectButton/index.tsx</custom_connect_button>
+</wallet_connection>
+
+<deployment_and_network_setup>
+<default_chains>devnet, sepolia, mainnet (from @starknet-react/chains)</default_chains>
+<configuration>
+
+- Chains: Configured in packages/nextjs/scaffold.config.ts via the targetNetworks array
+- RPC: Configured via environment variables (NEXT_PUBLIC_DEVNET_PROVIDER_URL, NEXT_PUBLIC_SEPOLIA_PROVIDER_URL, NEXT_PUBLIC_MAINNET_PROVIDER_URL)
+- Provider setup: packages/nextjs/services/web3/provider.ts
+  </configuration>
+
+<network_config_example>
+
+```typescript
+// In scaffold.config.ts
+import { Chain } from "@starknet-react/chains";
+import { supportedChains as chains } from "./supportedChains";
+
+const scaffoldConfig = {
+  targetNetworks: [chains.devnet], // Can be devnet, sepolia, mainnet
+  pollingInterval: 30000,
+  onlyLocalBurnerWallet: true,
+  walletAutoConnect: true,
+  autoConnectTTL: 86_400_000, // 24 hours
+} as const satisfies ScaffoldConfig;
+```
+
+</network_config_example>
+</deployment_and_network_setup>
+
+<disable_type_linting_error_checks>
+
+<source>https://www.scaffoldstark.com/docs/disable-type-linting-error-checks</source>
+
+<overview>
+TypeScript helps you catch errors at compile time, which can save time and improve code quality, but can be challenging for those who are new to the language or who are used to the more dynamic nature of JavaScript. These sections show the steps required to disable type & lint checks on different levels.
+</overview>
+
+<disabling_commit_checks>
+<description>
+We run the `pre-commit` git hook which lints the staged files and doesn't let you commit if there is an linting error.
+</description>
+
+<instructions>
+To disable this, go to the `.husky/pre-commit` file and comment out `yarn lint-staged --verbose`
+
+```diff
+- yarn lint-staged --verbose
++ # yarn lint-staged --verbose
+```
+
+</instructions>
+</disabling_commit_checks>
+
+<deploying_to_vercel_without_checks>
+<description>
+By default, Vercel runs type and lint checks before building your app. The deployment will fail if there are any type or lint errors.
+</description>
+
+<cli_deployment>
+To ignore these checks while deploying from the CLI, use:
+
+```shell
+yarn vercel:yolo
+```
+
+</cli_deployment>
+
+<environment_variable>
+If your repo is connected to Vercel, you can set `NEXT_PUBLIC_IGNORE_BUILD_ERROR` to `true` in an environment variable.
+</environment_variable>
+</deploying_to_vercel_without_checks>
+
+<disabling_github_workflow>
+<description>
+We have a GitHub workflow setup checkout `.github/workflows/lint.yaml` which runs type and lint error checks every time code is pushed to `main` branch or pull request is made to `main` branch.
+</description>
+
+<instructions>
+To disable it, delete `.github` directory.
+</instructions>
+</disabling_github_workflow>
+</disable_type_linting_error_checks>
+
+<components>
+<overview>
+Scaffold-Stark 2 provides a set of pre-built components for common Starknet use cases. You can make use of them to accelerate and simplify your dapp development.
+</overview>
+
+<address_component>
+
+<source>https://www.scaffoldstark.com/docs/components/Address</source>
+
+<description>
+Display a Starknet address along with a utility icon to copy the address. If the address is associated with a Starknet ID that has an avatar, this avatar will be displayed. If not, a blockie image representation of the address will be shown.
+
+By default, the component will show the Starknet ID name (if available) and the address.
+
+You can also choose to display only the Starknet ID name (if available) or the address, by setting the `onlyEnsOrAddress` prop to `true`.
+
+Clicking on the address redirects to the connected wallet's network block explorer. If the wallet is not connected, it redirects to the block explorer of `targetNetworks[0]`. You can disable this behaviour with the `disableAddressLink` prop.
+</description>
+
+<import_statement>
+
+```tsx
+import { Address } from "~~/components/scaffold-stark";
+```
+
+</import_statement>
+
+<usage_example>
+
+```tsx
+<Address address="0x034aA3F359A9D614239015126635CE7732c18fDF3" />
+```
+
+</usage_example>
+
+<props>
+| Prop | Type | Default Value | Description |
+|------|------|---------------|-------------|
+| **address** | `string` | `undefined` | Address in `0x___` format, it will resolve its Starknet ID if it has one associated. |
+| **disableAddressLink** (optional) | `boolean` | `false` | Set it to `true` to disable the blockexplorer link behaviour when clicking on the address. |
+| **format** (optional) | `string` | `"short"` | By default, only the first five characters of the address are displayed. Set this to `"long"` to display the entire address. |
+| **size** (optional) | `string` | `"base"` | Size for the displayed Address component. `base` by default but you can pass in `xs`, `sm`, `base`, `lg`, `xl`, `2xl`, `3xl`. |
+| **onlyEnsOrAddress** (optional) | `boolean` | `false` | When `true`, displays only the Starknet ID name (if available) or the address, not both. |
+</props>
+</address_component>
+
+<address_input_component>
+
+<source>https://www.scaffoldstark.com/docs/components/AddressInput</source>
+
+<description>
+Display a Starknet address input that validates the address format, resolves Starknet ID domains, and shows their avatars.
+
+Also shows a blockie image for each address.
+</description>
+
+<import_statement>
+
+```tsx
+import { AddressInput } from "~~/components/scaffold-stark";
+```
+
+</import_statement>
+
+<usage_example>
+
+```tsx
+const [address, setAddress] = useState("");
+```
+
+```tsx
+<AddressInput
+  onChange={setAddress}
+  value={address}
+  placeholder="Input your address"
+/>
+```
+
+</usage_example>
+
+<props>
+| Prop | Type | Default Value | Description |
+|------|------|---------------|-------------|
+| **value** | `string` | `undefined` | A Starknet address in (`0x___` format) or a Starknet ID domain. |
+| **onChange** | `function` | `undefined` | A callback invoked when the data in the address input changes. |
+| **placeholder** (optional) | `string` | `undefined` | The string that will be rendered before address input has been entered. |
+| **name** (optional) | `string` | `undefined` | Helps identify the data being sent if AddressInput is submitted into a form. |
+| **disabled** (optional) | `boolean` | `false` | If `true`, sets the address input un-clickable and unusable. |
+</props>
+</address_input_component>
+
+<balance_component>
+
+<source>https://www.scaffoldstark.com/docs/components/Balance</source>
+
+<description>
+Displays the balance of a given address in both STRK and US dollars (USD).
+</description>
+
+<import_statement>
+
+```tsx
+import { Balance } from "~~/components/scaffold-stark";
+```
+
+</import_statement>
+
+<usage_example>
+
+```tsx
+<Balance address="0x034aA3F359A9D614239015126635CE7732c18fDF3" />
+```
+
+</usage_example>
+
+<props>
+| Prop | Type | Default Value | Description |
+|------|------|---------------|-------------|
+| **address** | `string` | `undefined` | Address in `0x___` format, it will resolve its Starknet ID if it has one associated. |
+| **className** (optional) | `string` | `""` | Prop to pass additional CSS styling to the component. You can use Tailwind / daisyUI classes like `text-3xl` for styling. |
+</props>
+</balance_component>
+
+<blockie_avatar_component>
+
+<source>https://www.scaffoldstark.com/docs/components/BlockieAvatar</source>
+
+<description>
+Show a blockie (bar code profile icon) component for a given Starknet address.
+
+The autogenerated blockie can be manually replaced by another image that we pass through the `ensImage` prop.
+
+If you want more control over styling the blockie, you can directly use blo (pre-installed in Scaffold-Stark 2) and internally used by `BlockieAvatar` component to get the image URL.
+</description>
+
+<import_statement>
+
+```tsx
+import { BlockieAvatar } from "~~/components/scaffold-stark";
+```
+
+</import_statement>
+
+<usage_example>
+
+```tsx
+<BlockieAvatar
+  address="0x034aA3F359A9D614239015126635CE7732c18fDF3"
+  size={24}
+/>
+```
+
+</usage_example>
+
+<props>
+| Prop | Type | Default Value | Description |
+|------|------|---------------|-------------|
+| `address` | `string` | `undefined` | The address for which you want to display its blockie. Ensure it's in the `0x___` format. |
+| `size` | `number` | `undefined` | Width and Height in pixels (square). |
+| `ensImage` (optional) | `string` | `undefined` | An arbitrary image url to render instead of the blockie. |
+</props>
+</blockie_avatar_component>
+
+<stark_input_component>
+
+<source>https://www.scaffoldstark.com/docs/components/StarkInput</source>
+
+<description>
+Displays an input field for STRK/USD amount, with an option to convert between STRK and USD.
+</description>
+
+<import_statement>
+
+```tsx
+import { StarkInput } from "~~/components/scaffold-stark";
+```
+
+</import_statement>
+
+<usage_example>
+
+```tsx
+const [strkAmount, setStrkAmount] = useState("");
+```
+
+```tsx
+<StarkInput value={strkAmount} onChange={(amount) => setStrkAmount(amount)} />
+```
+
+</usage_example>
+
+<props>
+| Prop | Type | Default Value | Description |
+|------|------|---------------|-------------|
+| **value** | `string` | `undefined` | You can enter STRK quantity or USD quantity, but value will always be stored in STRK. |
+| **onChange** | `function` | `undefined` | A callback invoked when the amount in the StarkInput changes. |
+| **placeholder** (optional) | `string` | `undefined` | The string that will be rendered when there is no input value. |
+| **name** (optional) | `string` | `undefined` | Helps identify the data being sent if StarkInput is submitted into a form. |
+| **disabled** (optional) | `boolean` | `false` | When set to `true`, changes input background color and border to have disabled styling. |
+</props>
+</stark_input_component>
+
+<input_base_component>
+
+<source>https://www.scaffoldstark.com/docs/components/InputBase</source>
+
+<description>
+Simple building block for creating an input which comes with basic default styles (colors, rounded borders).
+</description>
+
+<import_statement>
+
+```tsx
+import { InputBase } from "~~/components/scaffold-stark";
+```
+
+</import_statement>
+
+<usage_example>
+
+```tsx
+const [url, setUrl] = useState<string>();
+```
+
+```tsx
+<InputBase name="url" placeholder="url" value={url} onChange={setUrl} />
+```
+
+</usage_example>
+
+<props>
+| Prop | Type | Default Value | Description |
+|------|------|---------------|-------------|
+| **value** | `string` | `undefined` | The data that your input will show. |
+| **onChange** | `function` | `undefined` | A callback invoked when the data in the input changes. |
+| **placeholder** (optional) | `string` | `undefined` | The string that will be rendered before input data has been entered. |
+| **name** (optional) | `string` | `undefined` | Helps identify the data being sent if InputBase is submitted into a form. |
+| **error** (optional) | `boolean` | `false` | When set to `true`, changes input border to have error styling. |
+| **disabled** (optional) | `boolean` | `false` | When set to `true`, changes input background color and border to have disabled styling. |
+</props>
+</input_base_component>
+
+<integer_input_component>
+
+<source>https://www.scaffoldstark.com/docs/components/IntegerInput</source>
+
+<description>
+Provides an input field for integer values, validating that user input is a valid integer, and showing error if not.
+Shows by default a small button to multiply input's value * 10^18 to transform to wei.
+</description>
+
+<import_statement>
+
+```tsx
+import { IntegerInput } from "~~/components/scaffold-stark";
+```
+
+</import_statement>
+
+<usage_example>
+
+```tsx
+const [txValue, setTxValue] = useState<string | bigint>("");
+```
+
+```tsx
+<IntegerInput
+  value={txValue}
+  onChange={(updatedTxValue) => {
+    setTxValue(updatedTxValue);
+  }}
+  placeholder="value (wei)"
+/>
+```
+
+</usage_example>
+
+<props>
+| Prop | Type | Default Value | Description |
+|------|------|---------------|-------------|
+| **value** | `string` | `undefined` | The data that your input will show. |
+| **onChange** | `function` | `undefined` | A callback invoked when the amount in the input changes. |
+| **placeholder** (optional) | `string` | `undefined` | The string that will be rendered before input data has been entered. |
+| **name** (optional) | `string` | `undefined` | Helps identify the data being sent if InputBase is submitted into a form. |
+| **error** (optional) | `boolean` | `false` | When set to `true`, changes input border to have error styling. |
+| **disabled** (optional) | `boolean` | `false` | When set to `true`, changes input background color and border to have disabled styling. |
+</props>
+</integer_input_component>
+
+<custom_connect_button>
+
+<source>https://www.scaffoldstark.com/docs/components/CustomConnectButton</source>
+
+<description>
+Scaffold-Stark 2 uses a custom "Connect Button", based on Starknet-React, that is enhanced with several useful features:
+
+- **Balance Display**: Shows the balance of STRK from the connected address.
+- **Chain Name and Color**: Displays the name of the connected Starknet network and uses a distinct color for each chain.
+- **Custom Modal**: Includes copy address feature, view its QR code, access address details in blockexplorer, and disconnect.
+
+You can extend this component to suit your app's needs.
+</description>
+
+<import_statement>
+
+```tsx
+import { CustomConnectButton } from "~~/components/scaffold-stark";
+```
+
+</import_statement>
+
+<usage_example>
+
+```tsx
+<CustomConnectButton />
+```
+
+</usage_example>
+</custom_connect_button>
+</components>
+
+<hooks>
+<overview>
+Scaffold-Stark 2 provides a collection of custom React hooks designed to simplify interactions with your deployed smart contracts. These hooks are wrappers around Starknet-React, an easy-to-use interface with typescript autocompletions for reading from, writing to, and monitoring events emitted by your smart contracts.
+
+To ensure autocompletions function correctly, always update the `targetNetworks` in `scaffold.config.ts` to include the relevant network/chain whenever you deploy your contract using `yarn deploy --network`.
+</overview>
+
+<important_files>
+The custom hooks rely on three main files for their functionality and TypeScript autocompletion:
+
+- `packages/nextjs/contracts/deployedContracts.ts`
+- `packages/nextjs/contracts/externalContracts.ts`
+- `scaffold.config.ts`
+
+The `deployedContracts.ts` file is auto-generated/updated whenever you run `yarn deploy --network`. It organizes contract addresses and abi's based on chainId.
+</important_files>
+
+<multiple_chains_note>
+When having multiple chains configured in `targetNetworks`, make sure to have same contractName's on other chains as `targetNetworks[0].id`. This ensures proper functionality and autocompletion of custom hooks, as the current setup and types assumes that same contract's are present on other chains as `targetNetworks[0]`.
+</multiple_chains_note>
+
+<use_deployed_contract_info>
+
+<source>https://www.scaffoldstark.com/docs/hooks/useDeployedContractInfo</source>
+
+<description>
+Use this hook to fetch details about a deployed smart contract, including the ABI and address.
+</description>
+
+<usage_example>
+
+```ts
+const { data: deployedContractData } = useDeployedContractInfo({
+  contractName: "YourContract",
+});
+```
+
+This example retrieves the details of the deployed contract with the specified name and stores the details in the `deployedContractData` object.
+</usage_example>
+
+<configuration>
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| **contractName** | `string` | Name of the contract. |
+| **chainId** (optional) | `string` | Id of the chain the contract lives on. Defaults to `targetNetworks[0].id` |
+</configuration>
+
+<return_value>
+
+- `data`: Object containing `address` and `abi` of contract.
+  </return_value>
+  </use_deployed_contract_info>
+
+<use_scaffold_contract>
+
+<source>https://www.scaffoldstark.com/docs/hooks/useScaffoldContract</source>
+
+<description>
+Use this hook to get your contract instance by providing the contract name. It enables you to interact with your contract methods.
+For reading data or sending transactions, it's recommended to use `useScaffoldReadContract` and `useScaffoldWriteContract`.
+</description>
+
+<usage_example>
+
+```ts
+const { data: yourContract } = useScaffoldContract({
+  contractName: "YourContract",
+});
+// Returns the greeting and can be called in any function, unlike useScaffoldReadContract
+await yourContract?.call("greeting");
+
+// Used to write to a contract and can be called in any function
+import { useAccount } from "@starknet-react/core";
+
+const { account } = useAccount();
+const { data: yourContract } = useScaffoldContract({
+  contractName: "YourContract",
+});
+
+const setGreeting = async () => {
+  if (account && yourContract) {
+    yourContract.connect(account);
+    // Call the method in any function
+    await yourContract.invoke("set_greeting", ["the greeting here"]);
+  }
+};
+```
+
+This example uses the `useScaffoldContract` hook to obtain a contract instance for the `YourContract` smart contract.
+</usage_example>
+
+<configuration>
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| **contractName** | `string` | Name of the contract. |
+</configuration>
+
+<return_value>
+
+- `data` : Object representing Starknet.js's contract instance. Which can be used to call `call` and `invoke` methods of the contract.
+- `isLoading` : Boolean indicating if the contract is being loaded.
+  </return_value>
+  </use_scaffold_contract>
+
+<use_scaffold_event_history>
+
+<source>https://www.scaffoldstark.com/docs/hooks/useScaffoldEventHistory</source>
+
+<description>
+Use this hook to retrieve historical event logs for your smart contract, providing past activity data, with the option to watch for new events.
+</description>
+
+<usage_example>
+
+```ts
+const {
+  data: events,
+  isLoading: isLoadingEvents,
+  error: errorReadingEvents,
+} = useScaffoldEventHistory({
+  contractName: "YourContract",
+  eventName: "GreetingChanged",
+  fromBlock: 31231n,
+  watch: true,
+  filters: { greeting_setter: "0x9eB2C4866aAe575bC88d00DE5061d5063a1bb3aF" },
+  blockData: true,
+  transactionData: true,
+  receiptData: true,
+});
+```
+
+This example retrieves the historical event logs for the `GreetingChanged` event of the `YourContract` smart contract, starting from block number 31231 and filtering events where the `greeting_setter` parameter is `0x9eB2C4866aAe575bC88d00DE5061d5063a1bb3aF`.
+</usage_example>
+
+<configuration>
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| **contractName** | `string` | Name of the contract to read from. |
+| **eventName** | `string` | Name of the event to read. |
+| **fromBlock** | `bigint` | Block number from which to start reading events. |
+| **toBlock** | `bigint` | block number to stop reading events at (if not provided, reads until current block) |
+| **filters** (optional) | `object` | Apply filters to the event based on **indexed** parameter names and values `{ [parameterName]: value }`. |
+| **blockData** (optional) | `boolean` | If set to true it will return the block data for each event (default: false). |
+| **transactionData** (optional) | `boolean` | If set to true it will return the transaction data for each event (default: false). |
+| **receiptData** (optional) | `boolean` | If set to true it will return the receipt data for each event (default: false). |
+| **watch** (optional) | `boolean` | If set to true, the events will be refetched every `pollingInterval` set at `scaffold.config.ts`. (default: false). |
+| **enabled** (optional) | `boolean` | If set to false, the hook will not fetch any data (default: true). |
+| **chainId** (optional) | `string` | Id of the chain the contract lives on. Defaults to `targetNetworks[0].id` |
+| **blocksBatchSize** (optional) | `number` | batch size for fetching events. If specified, each batch will contain at most this many blocks (default: 500) |
+</configuration>
+
+<return_values>
+
+- `data` property of the returned object contains an array of event objects, each containing the event parameters and (optionally) the block, transaction, and receipt data.
+- `isLoading` property indicates whether the event logs are currently being fetched.
+- `error` property contains any error that occurred during the fetching process (if applicable).
+  </return_values>
+  </use_scaffold_event_history>
+
+<use_scaffold_read_contract>
+
+<source>https://www.scaffoldstark.com/docs/hooks/useScaffoldReadContract</source>
+
+<description>
+Use this hook to read public variables and get data from read-only functions of your smart contract.
+</description>
+
+<usage_example>
+
+```ts
+const { data: totalCounter } = useScaffoldReadContract({
+  contractName: "YourContract",
+  functionName: "user_greeting_counter",
+  args: ["0xd8da6bf26964af9d7eed9e03e53415d37aa96045"],
+});
+```
+
+This example retrieves the data returned by the `user_greeting_counter` function of the `YourContract` smart contract.
+</usage_example>
+
+<configuration>
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| **contractName** | `string` | Name of the contract to read from. |
+| **functionName** | `string` | Name of the function to call. |
+| **args** (optional) | `unknown[]` | Array of arguments to pass to the function (if accepts any). Types are inferred from contract's function parameters |
+| **watch** (optional) | `boolean` | Watches and refreshes data on new blocks. (default : `true`) |
+| **chainId** (optional) | `string` | Id of the chain the contract lives on. Defaults to `targetNetworks[0].id` |
+</configuration>
+
+<additional_parameters>
+You can also pass other arguments accepted by useReadContract starknet-react hook.
+</additional_parameters>
+
+<return_values>
+
+- The retrieved data is stored in the `data` property of the returned object.
+- You can refetch the data by calling the `refetch` function.
+- The extended object includes properties inherited from starknet-react useReadContract. You can check the useReadContract return values documentation to check the types.
+  </return_values>
+  </use_scaffold_read_contract>
+
+<use_scaffold_watch_contract_event>
+
+<source>https://www.scaffoldstark.com/docs/hooks/useScaffoldWatchContractEvent</source>
+
+<description>
+Use this hook to subscribe to events emitted by your smart contract, and receive real-time updates when these events are emitted.
+</description>
+
+<usage_example>
+
+```ts
+useScaffoldWatchContractEvent({
+  contractName: "YourContract",
+  eventName: "GreetingChanged",
+  // The onLogs function is called whenever a GreetingChanged event is emitted by the contract.
+  // Parameters emitted by the event can be destructed using the below example
+  // for this example: event GreetingChanged(greeting_setter: ContractAddress, new_greeting: felt252, premium: bool, value: u256);
+  onLogs: (logs) => {
+    logs.map((log) => {
+      const { greeting_setter, value, premium, new_greeting } = log.args;
+      console.log(
+        "📡 GreetingChanged event",
+        greeting_setter,
+        value,
+        premium,
+        new_greeting,
+      );
+    });
+  },
+});
+```
+
+This example subscribes to the `GreetingChanged` event emitted by the `YourContract` smart contract and logs the parameters from the event to the console when it's emitted.
+
+This hook is a wrapper around starknet-react's useWatchContractEvent.
+</usage_example>
+
+<rpc_provider_note>
+Due to shortcomings of some RPC providers, this hook may or may not fire events always. To update the RPC link checkout the RPC configuration section.
+</rpc_provider_note>
+
+<configuration>
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| **contractName** | `string` | Name of the contract to read from. |
+| **eventName** | `string` | Name of the event to read. |
+| **onLogs** | `function` | Callback function to execute when the event is emitted. Accepts an array of `logs` that occurred during the `pollingInterval` set at `scaffold.config.ts`. Each array item contains an `args` property, which can be destructured to get the parameters emitted by the event. This function can customized according to your needs. |
+| **chainId** (optional) | `string` | Id of the chain the contract lives on. Defaults to `targetNetworks[0].id` |
+</configuration>
+
+<state_management_note>
+It is recommended to `setState` using updater function in the `onLogs` function to avoid problems due to caching.
+</state_management_note>
+</use_scaffold_watch_contract_event>
+
+<use_scaffold_write_contract>
+
+<source>https://www.scaffoldstark.com/docs/hooks/useScaffoldWriteContract</source>
+
+<description>
+Use this hook to send a transaction to your smart contract to write data or perform an action.
+</description>
+
+<usage_example>
+
+```ts
+const { sendAsync: writeYourContractAsync } = useScaffoldWriteContract({
+  contractName: "YourContract",
+  functionName: "set_greeting",
+  args: ["Hello World!"],
+});
+```
+
+The following configuration options can be passed to the hook:
+</usage_example>
+
+<configuration>
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| **contractName** | `string` | Name of the contract to write to. |
+| **functionName** | `string` | Name of the function to call. |
+| **args** (optional) | `unknown[]` | Array of arguments to pass to the function (if accepts any). Types are inferred from contract's function parameters. |
+| **chainId** (optional) | `string` | Id of the chain the contract lives on. Defaults to `targetNetworks[0].id` |
+</configuration>
+
+<send_transaction_example>
+To send the transaction, you can call the `sendAsync` function returned by the hook (which we instance as `writeYourContractAsync`). Here's an example usage:
+
+```tsx
+<button
+  className="btn btn-primary"
+  onClick={async () => {
+    try {
+      await writeYourContractAsync();
+    } catch (e) {
+      console.error("Error setting greeting:", e);
+    }
+  }}
+>
+  Set Greeting
+</button>
+```
+
+This example sends a transaction to the `YourContract` smart contract to call the `set_greeting` function with the arguments passed to the hook. The `sendAsync` function (`writeYourContractAsync` instance) sends the transaction to the smart contract.
+
+You can also override arguments when calling:
+
+```tsx
+await writeYourContractAsync({ args: ["New Greeting!"] });
+```
+
+</send_transaction_example>
+
+<return_values>
+
+- `sendAsync` function sends the transaction to the smart contract.
+- `isLoading` property indicates whether the transaction is currently being processed.
+- The extended object includes properties inherited from starknet-react useSendTransaction. You can check the useSendTransaction return values documentation to check the types.
+  </return_values>
+  </use_scaffold_write_contract>
+
+<use_transactor>
+
+<source>https://www.scaffoldstark.com/docs/hooks/useTransactor</source>
+
+<description>
+Use this hook to interact with the Starknet network and give UI feedback on the transaction status.
+
+Any error will show a popup with nice error message.
+</description>
+
+<usage_example>
+
+```ts
+const transactor = useTransactor();
+const writeTx = transactor.writeTransaction;
+const calls = [
+  {
+    contractAddress: "0x97843608a00e2bbc75ab0C1911387E002565DEDE",
+    entrypoint: "transfer",
+    calldata: ["0x123...", "1000000000000000000", "0"],
+  },
+];
+await writeTx(calls);
+```
+
+This example tries to send a transaction with the provided calls, prompting the connected wallet for a signature. And in the case of a successful transaction, it will show a popup in the UI with the message: "🎉 Transaction completed successfully!".
+
+You can pass in an array of calls to be executed in a single transaction. It also supports Cairo 1.0 multicall functionality.
+</usage_example>
+
+<configuration_use_transactor>
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| **\_walletClient** (optional) | `AccountInterface` | The wallet client that should sign the transaction. Defaults to the connected account from useAccount |
+</configuration_use_transactor>
+
+<configuration_write_transaction>
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| **calls** | `Call[]` | Array of calls to execute in the transaction. Each call should contain contractAddress, entrypoint, and calldata. |
+| **options** (optional) | `object` | Additional options for the transaction. |
+</configuration_write_transaction>
+
+<return_values_use_transactor>
+
+- `writeTransaction`: Function that is used to send transactions with UI feedback.
+- `sendTransactionInstance`: The underlying useSendTransaction instance.
+- `transactionReceiptInstance`: The transaction receipt data.
+  </return_values_use_transactor>
+
+<return_values_write_transaction>
+
+- A promise that resolves with the transaction hash once the transaction is submitted.
+  </return_values_write_transaction>
+  </use_transactor>
+  </hooks>
+
+<recipes>
+<overview>
+Explore a collection of practical recipes to implement common web3 use-cases with Scaffold-Stark 2. Learn how to interact with smart contracts, read and display data, manage account balances, and more. Each recipe offers step-by-step guidance, making it easy to implement different blockchain features into your dApps.
+</overview>
+
+<add_custom_chain_recipe>
+
+<source>https://www.scaffoldstark.com/docs/recipes/add-custom-chain</source>
+
+<title>Add a custom chain</title>
+
+<description>
+This recipe demonstrates how to add a custom chain to your project. We'll use a custom Starknet network as an example, but you can apply this process to any other Starknet-compatible network you want to add.
+
+Scaffold-Stark 2 uses @starknet-react/chains as a list of chains.
+Normally, devnet, sepolia, and mainnet already exist in @starknet-react/chains and you can import them and use them, but we're going to add a custom network manually to show you how to do it.
+</description>
+
+<note>
+Scaffold-Stark 2 consists of two parts:
+
+- `packages/nextjs`: nextjs frontend
+- `packages/snfoundry`: starknet foundry to deploy smart contracts
+
+The frontend and the snfoundry project use a different set of chains.
+You should add the chain to both the frontend and your snfoundry config. Checkout deploying your smart contract section on how to deploy to different chains.
+
+By doing this, you will be able to deploy the contracts to the chain you added and interact with them from the frontend.
+</note>
+
+<step_1>
+
+<title>Define the chain</title>
+
+<instructions>
+First, create a new file called `customChains.ts` in your `packages/nextjs/utils/` directory.
+
+Open the file with your favorite editor and add the following code to define the chain.
+</instructions>
+
+<code_example>
+
+```typescript title="packages/nextjs/utils/customChains.ts"
+import { Chain } from "@starknet-react/chains";
+
+// Custom Starknet chain
+export const customStarknet: Chain = {
+  id: "0x534e5f43555354444d", // SN_CUSTOM in hex
+  network: "custom",
+  name: "Custom Starknet",
+  nativeCurrency: {
+    name: "Ether",
+    symbol: "ETH",
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: ["https://your-custom-rpc-endpoint.com"],
+    },
+    public: {
+      http: ["https://your-custom-rpc-endpoint.com"],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "Custom Explorer",
+      url: "https://your-custom-explorer.com",
+    },
+  },
+  testnet: true, // or false if it's mainnet
+};
+```
+
+In this file, we're defining a custom Starknet chain. You can add as many chains as you want to the `customChains.ts` file.
+</code_example>
+</step_1>
+
+<step_2>
+
+<title>Update `scaffold.config.ts`</title>
+
+<instructions>
+Next, update your `scaffold.config.ts` file to include the new chain:
+</instructions>
+
+<code_example>
+
+```typescript title="packages/nextjs/scaffold.config.ts"
+import { customStarknet } from "./utils/customChains";
+// ... other imports and type definitions
+
+const scaffoldConfig = {
+  targetNetworks: [customStarknet],
+  // ... other configuration options
+} as const satisfies ScaffoldConfig;
+
+export default scaffoldConfig;
+```
+
+If you'd like to add multiple chains, you can do so by adding them to the `targetNetworks` array. Below is a simple example of how to add multiple chains.
+
+```typescript title="packages/nextjs/scaffold.config.ts"
+import { customStarknet, anotherCustomChain } from "./utils/customChains";
+
+const scaffoldConfig = {
+  targetNetworks: [customStarknet, anotherCustomChain],
+  // ... other configuration options
+} as const satisfies ScaffoldConfig;
+```
+
+</code_example>
+</step_2>
+</add_custom_chain_recipe>
+
+<get_current_balance_recipe>
+
+<source>https://www.scaffoldstark.com/docs/recipes/GetCurrentBalanceFromAccount</source>
+
+<title>Get the Current Balance of the Connected Account</title>
+
+<description>
+This recipe shows how to fetch and display the STRK balance of the currently connected account.
+</description>
+
+<full_code_example>
+
+```tsx title="components/ConnectedAddressBalance.tsx"
+import { useAccount } from "@starknet-react/core";
+import { Address, Balance } from "~~/components/scaffold-stark";
+
+export const ConnectedAddressBalance = () => {
+  const { address: connectedAddress } = useAccount();
+
+  return (
+    <div className="bg-base-300 p-6 rounded-lg max-w-md mx-auto mt-6">
+      <h2 className="text-lg font-bold mb-2">Your Starknet Balance</h2>
+
+      <div className="text-sm font-semibold mb-2">
+        Address: <Address address={connectedAddress} />
+      </div>
+
+      <div className="text-sm font-semibold">
+        Balance: <Balance address={connectedAddress} />
+      </div>
+    </div>
+  );
+};
+```
+
+</full_code_example>
+
+<implementation_guide>
+<step_1>
+
+<title>Create a new Component</title>
+
+<instructions>
+Begin by creating a new component in the "components" folder of your application.
+</instructions>
+
+<code_example>
+
+```tsx title="components/ConnectedAddressBalance.tsx"
+export const ConnectedAddressBalance = () => {
+  return (
+    <div>
+      <h2>Your Starknet Balance</h2>
+    </div>
+  );
+};
+```
+
+</code_example>
+</step_1>
+
+<step_2>
+
+<title>Retrieve the Connected Account</title>
+
+<instructions>
+Fetch the Starknet address of the currently connected account using the useAccount starknet-react hook and easily display them using Scaffold-Stark 2 Address and Balance components.
+</instructions>
+
+<code_example>
+
+```tsx title="components/ConnectedAddressBalance.tsx"
+// highlight-start
+import { useAccount } from "@starknet-react/core";
+import { Address, Balance } from "~~/components/scaffold-stark";
+// highlight-end
+
+export const ConnectedAddressBalance = () => {
+  // highlight-start
+  const { address: connectedAddress } = useAccount();
+  // highlight-end
+
+  return (
+    <div>
+      <h2>Your Starknet Balance</h2>
+      {/* highlight-start */}
+      Address: <Address address={connectedAddress} />
+      Balance: <Balance address={connectedAddress} />
+      {/* highlight-end */}
+    </div>
+  );
+};
+```
+
+</code_example>
+</step_2>
+</implementation_guide>
+</get_current_balance_recipe>
+
+<read_uint_from_contract_recipe>
+
+<source>https://www.scaffoldstark.com/docs/recipes/ReadUintFromContract</source>
+
+<title>Read a `u256` from a contract</title>
+
+<description>
+This recipe demonstrates how to read data from contract functions and display it on the UI. We'll showcase an example that accepts some arguments (parameters), and another with no arguments at all.
+</description>
+
+<full_code_example>
+
+```tsx title="components/GreetingsCount.tsx"
+import { useAccount } from "@starknet-react/core";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-stark";
+
+export const GreetingsCount = () => {
+  const { address: connectedAddress } = useAccount();
+
+  const { data: totalCounter, isLoading: isTotalCounterLoading } =
+    useScaffoldReadContract({
+      contractName: "YourContract",
+      functionName: "total_counter",
+    });
+
+  const {
+    data: connectedAddressCounter,
+    isLoading: isConnectedAddressCounterLoading,
+  } = useScaffoldReadContract({
+    contractName: "YourContract",
+    functionName: "user_greeting_counter",
+    args: [connectedAddress], // passing args to function
+  });
+
+  return (
+    <div className="card card-compact w-64 bg-secondary text-primary-content shadow-xl m-4">
+      <div className="card-body items-center text-center">
+        <h2 className="card-title">Greetings Count</h2>
+        <div className="card-actions items-center flex-col gap-1 text-lg">
+          <h2 className="font-bold m-0">Total Greetings count:</h2>
+          {isTotalCounterLoading ? (
+            <span className="loading loading-spinner"></span>
+          ) : (
+            <p className="m-0">{totalCounter ? totalCounter.toString() : 0}</p>
+          )}
+          <h2 className="font-bold m-0">Your Greetings count:</h2>
+          {isConnectedAddressCounterLoading ? (
+            <span className="loading loading-spinner"></span>
+          ) : (
+            <p className="m-0">
+              {connectedAddressCounter ? connectedAddressCounter.toString() : 0}
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+```
+
+</full_code_example>
+
+<implementation_guide>
+<step_1>
+
+<title>Create a new Component</title>
+
+<instructions>
+Begin by creating a new component in the "components" folder of your application.
+</instructions>
+
+<code_example>
+
+```tsx title="components/GreetingsCount.tsx"
+export const GreetingsCount = () => {
+  return (
+    <div>
+      <h2 className="font-bold m-0">Total Greetings count:</h2>
+      <h2 className="font-bold m-0">Your Greetings count:</h2>
+    </div>
+  );
+};
+```
+
+</code_example>
+</step_1>
+
+<step_2>
+
+<title>Retrieve total greetings count</title>
+
+<instructions>
+Initialize the useScaffoldReadContract hook to read from the contract. This hook provides the `data` which contains the return value of the function.
+</instructions>
+
+<code_example>
+
+```tsx title="components/GreetingsCount.tsx"
+//highlight-start
+import { useScaffoldReadContract } from "~~/hooks/scaffold-stark";
+// highlight-end
+
+export const GreetingsCount = () => {
+  // highlight-start
+  const { data: totalCounter } = useScaffoldReadContract({
+    contractName: "YourContract",
+    functionName: "total_counter",
+  });
+  // highlight-end
+
+  return (
+    <div>
+      <h2 className="font-bold m-0">Total Greetings count:</h2>
+      //highlight-start
+      <p>{totalCounter ? totalCounter.toString() : 0}</p>
+      //highlight-end
+      <h2 className="font-bold m-0">Your Greetings count:</h2>
+    </div>
+  );
+};
+```
+
+In the line `const {data: totalCounter} = useScaffoldReadContract({...})` we are using destructuring assignment to assign `data` to a new name `totalCounter`.
+
+In the contract, `total_counter` returns a `u256` value, which is represented as a `BigInt` in javascript and can be converted to a readable string using `.toString()`.
+</code_example>
+</step_2>
+
+<step_3>
+
+<title>Retrieve connected address greetings count</title>
+
+<instructions>
+We can get the connected address using the useAccount hook and pass it to `args` key in the `useScaffoldReadContract` hook configuration. This will be used as an argument to read the contract function.
+</instructions>
+
+<code_example>
+
+```tsx title="components/GreetingsCount.tsx"
+import { useScaffoldReadContract } from "~~/hooks/scaffold-stark";
+//highlight-start
+import { useAccount } from "@starknet-react/core";
+//highlight-end
+
+export const GreetingsCount = () => {
+  //highlight-start
+  const { address: connectedAddress } = useAccount();
+  //highlight-end
+
+  const { data: totalCounter } = useScaffoldReadContract({
+    contractName: "YourContract",
+    functionName: "total_counter",
+  });
+
+  //highlight-start
+  const { data: connectedAddressCounter } = useScaffoldReadContract({
+    contractName: "YourContract",
+    functionName: "user_greeting_counter",
+    args: [connectedAddress], // passing args to function
+  });
+  //highlight-end
+
+  return (
+    <div>
+      <h2>Total Greetings count:</h2>
+      <p>{totalCounter ? totalCounter.toString() : 0}</p>
+      <h2>Your Greetings count:</h2>
+      //highlight-start
+      <p>{connectedAddressCounter ? connectedAddressCounter.toString() : 0}</p>
+      //highlight-end
+    </div>
+  );
+};
+```
+
+</code_example>
+</step_3>
+
+<step_4>
+
+<title>Bonus adding loading state</title>
+
+<instructions>
+We can use `isLoading` returned from the `useScaffoldReadContract` hook. This variable is set to `true` while fetching data from the contract.
+</instructions>
+
+<code_example>
+
+```tsx title="components/GreetingsCount.tsx"
+import { useScaffoldReadContract } from "~~/hooks/scaffold-stark";
+import { useAccount } from "@starknet-react/core";
+
+export const GreetingsCount = () => {
+  const { address: connectedAddress } = useAccount();
+
+  // highlight-start
+  const { data: totalCounter, isLoading: isTotalCounterLoading } =
+    useScaffoldReadContract({
+      // highlight-end
+      contractName: "YourContract",
+      functionName: "total_counter",
+    });
+
+  // highlight-start
+  const {
+    data: connectedAddressCounter,
+    isLoading: isConnectedAddressCounterLoading,
+  } = useScaffoldReadContract({
+    // highlight-end
+    contractName: "YourContract",
+    functionName: "user_greeting_counter",
+    args: [connectedAddress], // passing args to function
+  });
+
+  return (
+    <div>
+      <h2>Total Greetings count:</h2>
+      // highlight-start
+      {isTotalCounterLoading ? (
+        <span className="loading loading-spinner"></span>
+      ) : (
+        <p className="m-0">{totalCounter ? totalCounter.toString() : 0}</p>
+      )}
+      // highlight-end
+      <h2>Your Greetings count:</h2>
+      // highlight-start
+      {isConnectedAddressCounterLoading ? (
+        <span className="loading loading-spinner"></span>
+      ) : (
+        <p className="m-0">
+          {connectedAddressCounter ? connectedAddressCounter.toString() : 0}
+        </p>
+      )}
+      // highlight-end
+    </div>
+  );
+};
+```
+
+</code_example>
+</step_4>
+</implementation_guide>
+</read_uint_from_contract_recipe>
+
+<starknet_contract_write_with_feedback_recipe>
+
+<source>https://www.scaffoldstark.com/docs/recipes/StarknetContractWriteWithFeedback</source>
+
+<title>Starknet contract write with transaction status</title>
+
+<description>
+This recipe demonstrates how to create a button for contract interaction using the "useTransactor" and "useSendTransaction" hooks from the "starknet-react" library. The interaction includes the capability to provide feedback on the transaction status when using starknet-react `useSendTransaction`.
+</description>
+
+<full_code_example>
+
+```tsx title="components/ContractInteraction.tsx"
+import * as React from "react";
+import { useSendTransaction } from "@starknet-react/core";
+import { useTransactor } from "~~/hooks/scaffold-stark";
+
+export const ContractInteraction = () => {
+  const { sendAsync, isPending } = useSendTransaction({
+    calls: [
+      {
+        contractAddress: "0x034aA3F359A9D614239015126635CE7732c18fDF3",
+        entrypoint: "set_greeting",
+        calldata: ["0x48656c6c6f20576f726c6421"], // "Hello World!" in hex
+      },
+    ],
+  });
+
+  const writeTx = useTransactor();
+
+  const handleSetGreeting = async () => {
+    try {
+      await writeTx.writeTransaction(sendAsync);
+    } catch (e) {
+      console.log("Unexpected error in writeTx", e);
+    }
+  };
+
+  return (
+    <button
+      className="btn btn-primary"
+      onClick={handleSetGreeting}
+      disabled={isPending}
+    >
+      {isPending ? (
+        <span className="loading loading-spinner loading-sm"></span>
+      ) : (
+        "Send"
+      )}
+    </button>
+  );
+};
+```
+
+</full_code_example>
+
+<implementation_steps>
+<step_1>
+
+<title>Set Up Your Component</title>
+
+<instructions>
+Create a new component in the "components" folder. The component will show a button that will allow users to interact with your smart contract.
+</instructions>
+
+<code_example>
+
+```tsx title="components/ContractInteraction.tsx"
+import * as React from "react";
+
+export const ContractInteraction = () => {
+  return <button>Send</button>;
+};
+```
+
+</code_example>
+</step_1>
+
+<step_2>
+
+<title>Configure starknet-react's `useSendTransaction` hook</title>
+
+<instructions>
+Add starknet-react's `useSendTransaction` hook and configure it with the transaction calls.
+</instructions>
+
+<code_example>
+
+```tsx
+import * as React from "react";
+// highlight-start
+import { useSendTransaction } from "@starknet-react/core";
+// highlight-end
+
+export const ContractInteraction = () => {
+  // highlight-start
+  const { sendAsync } = useSendTransaction({
+    calls: [
+      {
+        contractAddress: "0x034aA3F359A9D614239015126635CE7732c18fDF3",
+        entrypoint: "set_greeting",
+        calldata: ["0x48656c6c6f20576f726c6421"], // "Hello World!" in hex
+      },
+    ],
+  });
+  // highlight-end
+  return <button>Send</button>;
+};
+```
+
+</code_example>
+</step_2>
+
+<step_3>
+
+<title>Initialize `useTransactor` hook and send transaction</title>
+
+<instructions>
+Initialize the `useTransactor` hook, and use it to wrap the `sendAsync` function to show feedback transaction status to user.
+</instructions>
+
+<code_example>
+
+```tsx
+import * as React from "react";
+import { useSendTransaction } from "@starknet-react/core";
+// highlight-start
+import { useTransactor } from "~~/hooks/scaffold-stark";
+// highlight-end
+
+export const ContractInteraction = () => {
+  const { sendAsync } = useSendTransaction({
+    calls: [
+      {
+        contractAddress: "0x034aA3F359A9D614239015126635CE7732c18fDF3",
+        entrypoint: "set_greeting",
+        calldata: ["0x48656c6c6f20576f726c6421"],
+      },
+    ],
+  });
+
+  // highlight-start
+  const writeTx = useTransactor();
+  // highlight-end
+
+  // highlight-start
+  return (
+    <button onClick={() => writeTx.writeTransaction(sendAsync)}>Send</button>
+  );
+  // highlight-end
+};
+```
+
+</code_example>
+</step_3>
+
+<step_4>
+
+<title>Wrap `useTransactor` in a handler async function</title>
+
+<instructions>
+Wrap the `writeTx.writeTransaction` function in a handler function to start the transaction when the user clicks the button.
+</instructions>
+
+<code_example>
+
+```tsx
+import * as React from "react";
+import { useSendTransaction } from "@starknet-react/core";
+import { useTransactor } from "~~/hooks/scaffold-stark";
+
+export const ContractInteraction = () => {
+  const { sendAsync, isPending } = useSendTransaction({
+    calls: [
+      {
+        contractAddress: "0x034aA3F359A9D614239015126635CE7732c18fDF3",
+        entrypoint: "set_greeting",
+        calldata: ["0x48656c6c6f20576f726c6421"],
+      },
+    ],
+  });
+
+  const writeTx = useTransactor();
+
+  // highlight-start
+  const handleSetGreeting = async () => {
+    try {
+      await writeTx.writeTransaction(sendAsync);
+    } catch (e) {
+      console.log("Unexpected error in writeTx", e);
+    }
+  };
+  // highlight-end
+
+  return (
+    // highlight-start
+    <button className="btn btn-primary" onClick={handleSetGreeting}>
+      Send
+    </button>
+    // highlight-end
+  );
+};
+```
+
+</code_example>
+</step_4>
+
+<step_5>
+
+<title>Bonus adding loading state</title>
+
+<instructions>
+We can use `isPending` returned from `useSendTransaction` while the transaction is being processed and also `disable` the button.
+</instructions>
+
+<code_example>
+
+```tsx
+import * as React from "react";
+import { useSendTransaction } from "@starknet-react/core";
+import { useTransactor } from "~~/hooks/scaffold-stark";
+
+export const ContractInteraction = () => {
+  // highlight-start
+  const { sendAsync, isPending } = useSendTransaction({
+    // highlight-end
+    calls: [
+      {
+        contractAddress: "0x034aA3F359A9D614239015126635CE7732c18fDF3",
+        entrypoint: "set_greeting",
+        calldata: ["0x48656c6c6f20576f726c6421"],
+      },
+    ],
+  });
+
+  const writeTx = useTransactor();
+
+  const handleSetGreeting = async () => {
+    try {
+      await writeTx.writeTransaction(sendAsync);
+    } catch (e) {
+      console.log("Unexpected error in writeTx", e);
+    }
+  };
+
+  return (
+    // highlight-start
+    <button
+      className="btn btn-primary"
+      onClick={handleSetGreeting}
+      disabled={isPending}
+    >
+      {isPending ? (
+        <span className="loading loading-spinner loading-sm"></span>
+      ) : (
+        "Send"
+      )}
+    </button>
+    // highlight-end
+  );
+};
+```
+
+</code_example>
+</step_5>
+</implementation_steps>
+</starknet_contract_write_with_feedback_recipe>
+
+<write_to_contract_async_button_recipe>
+
+<source>https://www.scaffoldstark.com/docs/recipes/WriteToContractWriteAsyncButton</source>
+
+<title>Write to a Contract with `sendAsync` button</title>
+
+<description>
+This recipe shows how to implement a button that allows users to interact with a smart contract by executing the `sendAsync` function returned by useScaffoldWriteContract. By following this guide, you can create a user interface for writing data to a contract.
+</description>
+
+<full_code_example>
+
+```tsx title="components/Greetings.tsx"
+import { useState } from "react";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark";
+
+export const Greetings = () => {
+  const [newGreeting, setNewGreeting] = useState("");
+
+  const { sendAsync, isPending } = useScaffoldWriteContract({
+    contractName: "YourContract",
+    functionName: "set_greeting",
+    args: [newGreeting],
+  });
+
+  const handleSetGreeting = async () => {
+    try {
+      await sendAsync();
+    } catch (e) {
+      console.error("Error setting greeting", e);
+    }
+  };
+
+  return (
+    <>
+      <input
+        type="text"
+        placeholder="Write your greeting"
+        className="input border border-primary"
+        onChange={(e) => setNewGreeting(e.target.value)}
+      />
+      <button
+        className="btn btn-primary"
+        onClick={handleSetGreeting}
+        disabled={isPending}
+      >
+        {isPending ? (
+          <span className="loading loading-spinner loading-sm"></span>
+        ) : (
+          "Send"
+        )}
+      </button>
+    </>
+  );
+};
+```
+
+</full_code_example>
+
+<implementation_steps>
+<step_1>
+
+<title>Set Up Your Component</title>
+
+<instructions>
+Create a new component in the "components" folder. This component will enable users to write data to a smart contract.
+</instructions>
+
+<code_example>
+
+```tsx title="components/Greetings.tsx"
+export const Greetings = () => {
+  return (
+    <>
+      <input
+        type="text"
+        placeholder="Write your greeting"
+        className="input border border-primary"
+      />
+      <button>Send</button>
+    </>
+  );
+};
+```
+
+</code_example>
+</step_1>
+
+<step_2>
+
+<title>Initialize `useScaffoldWriteContract` hook</title>
+
+<instructions>
+Initialize the `useScaffoldWriteContract` hook. This hook provides the `sendAsync` function for sending transactions, we'll create `handleSetGreeting` function in which we'll call `sendAsync` required to perform contract interaction.
+</instructions>
+
+<code_example>
+
+```tsx
+// highlight-start
+import { useState } from "react";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark";
+// highlight-end
+
+export const Greetings = () => {
+  // highlight-start
+  const [newGreeting, setNewGreeting] = useState("");
+  // highlight-end
+
+  // highlight-start
+  const { sendAsync } = useScaffoldWriteContract({
+    contractName: "YourContract",
+    functionName: "set_greeting",
+    args: [newGreeting],
+  });
+  // highlight-end
+
+  // highlight-start
+  const handleSetGreeting = async () => {
+    try {
+      await sendAsync();
+    } catch (e) {
+      console.error("Error setting greeting", e);
+    }
+  };
+  // highlight-end
+
+  return (
+    <>
+      <input
+        type="text"
+        placeholder="Write your greeting"
+        className="input border border-primary"
+      />
+      <button>Send</button>
+    </>
+  );
+};
+```
+
+</code_example>
+</step_2>
+
+<step_3>
+
+<title>Add input change logic and send transaction when users click the button</title>
+
+<instructions>
+Wire up the input field to update the `newGreeting` state when the user types in a new greeting and call `handleSetGreeting` function when user click on the button.
+</instructions>
+
+<code_example>
+
+```tsx
+import { useState } from "react";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark";
+
+export const Greetings = () => {
+  const [newGreeting, setNewGreeting] = useState("");
+
+  const { sendAsync } = useScaffoldWriteContract({
+    contractName: "YourContract",
+    functionName: "set_greeting",
+    args: [newGreeting],
+  });
+
+  const handleSetGreeting = async () => {
+    try {
+      await sendAsync();
+    } catch (e) {
+      console.error("Error setting greeting", e);
+    }
+  };
+
+  return (
+    <>
+      <input
+        type="text"
+        placeholder="Write your greeting"
+        className="input border border-primary"
+        // highlight-start
+        onChange={(e) => setNewGreeting(e.target.value)}
+        // highlight-end
+      />
+      <button
+        className="btn btn-primary"
+        // highlight-start
+        onClick={handleSetGreeting}
+        // highlight-end
+      >
+        Send
+      </button>
+    </>
+  );
+};
+```
+
+</code_example>
+</step_3>
+
+<step_4>
+
+<title>Bonus adding loading state</title>
+
+<instructions>
+We can use `isPending` returned from `useScaffoldWriteContract` while the transaction is being processed and also disable the button.
+</instructions>
+
+<code_example>
+
+```tsx
+import { useState } from "react";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark";
+
+export const Greetings = () => {
+  const [newGreeting, setNewGreeting] = useState("");
+  // highlight-start
+  const { sendAsync, isPending } = useScaffoldWriteContract({
+    contractName: "YourContract",
+    functionName: "set_greeting",
+    args: [newGreeting],
+  });
+  // highlight-end
+
+  const handleSetGreeting = async () => {
+    try {
+      await sendAsync();
+    } catch (e) {
+      console.error("Error setting greeting", e);
+    }
+  };
+
+  return (
+    <>
+      <input
+        type="text"
+        placeholder="Write your greeting"
+        className="input border border-primary"
+        onChange={(e) => setNewGreeting(e.target.value)}
+      />
+
+      <button
+        className="btn btn-primary"
+        onClick={handleSetGreeting}
+        // highlight-start
+        disabled={isPending}
+      >
+        {isPending ? (
+          <span className="loading loading-spinner loading-sm"></span>
+        ) : (
+          "Send"
+        )}
+      </button>
+    </>
+    // highlight-end
+  );
+};
+```
+
+</code_example>
+</step_4>
+</implementation_steps>
+</write_to_contract_async_button_recipe>
+</recipes>
+
+<external_contracts>
+
+<title>📡 Interacting with External Contracts</title>
+
+<description>
+If you need to interact with external contracts (i.e. not deployed with your Scaffold-Stark 2 instance, e.g ERC20 contract) you can add external contract data to your `packages/nextjs/contracts/externalContracts.ts` file, which would let you use Scaffold-Stark 2 custom hooks.
+
+To achieve this, include the contract name, its `address`, and `abi` in `externalContracts.ts` for each chain ID. Ensure to update the `targetNetworks` in `scaffold.config.ts` to your preferred chains to enable hooks typescript autocompletion.
+</description>
+
+<structure_example>
+This is the structure of `externalContracts` object:
+
+```ts
+const externalContracts = {
+  "0x534e5f4d41494e": { // Starknet Mainnet
+    DAI: {
+      address: "0x00da114221cb83fa859dbdb4c44beeaa0bb37c7537ad5ae66fe5e0efd20e6eb3",
+      abi: [...],
+    },
+    STRK: {
+      address: "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+      abi: [...],
+    },
+  },
+  "0x534e5f5345504f4c4941": { // Starknet Sepolia
+    DAI: {
+      address: "0x...",
+      abi: [...],
+    },
+    STRK: {
+      address: "0x...",
+      abi: [...],
+    },
+  },
+} as const;
+```
+
+</structure_example>
+</external_contracts>
+
+<deployment_instructions>
+<nextjs_app_deployment>
+
+<source>https://www.scaffoldstark.com/docs/deploying/deploy-nextjs-app</source>
+
+<title>Deploy Your NextJS App</title>
+
+<recommendation>
+We recommend connecting your GitHub repo to Vercel (through the Vercel UI) so it gets automatically deployed when pushing to `main`.
+</recommendation>
+
+<cli_deployment>
+If you want to deploy directly from the CLI, run this and follow the steps to deploy to Vercel:
+
+```
+yarn vercel
+```
+
+You might need to log in to Vercel first by running:
+
+```
+yarn vercel:login
+```
+
+Once you log in (email, GitHub, etc), the default options should work. It'll give you a public URL.
+
+If you want to redeploy to the same production URL you can run:
+
+```
+yarn vercel --prod
+```
+
+If you omit the `--prod` flag it will deploy it to a preview/test URL.
+</cli_deployment>
+
+<configuration_check>
+**Make sure to check the values of your Scaffold Configuration before deploying your NextJS App.**
+</configuration_check>
+
+<scaffold_app_configuration>
+
+<title>Scaffold App Configuration</title>
+
+<description>
+You can configure different settings for your dapp at `packages/nextjs/scaffold.config.ts`.
+</description>
+
+<config_type>
+
+```ts
+export type ScaffoldConfig = {
+  targetNetworks: readonly Chain[];
+  pollingInterval: number;
+  onlyLocalBurnerWallet: boolean;
+  walletAutoConnect: boolean;
+  autoConnectTTL: number;
+};
+```
+
+</config_type>
+
+<parameters>
+The configuration parameters are described below. Make sure to update the values according to your needs:
+
+<target_networks>
+**targetNetworks**
+
+Array of Starknet networks where your dapp is deployed. Use values from `@starknet-react/chains` eg: `targetNetworks: [chains.sepolia]`
+</target_networks>
+
+<polling_interval>
+**pollingInterval**
+
+The interval in milliseconds at which your front-end application polls the RPC servers for fresh data. _Note that this setting does not affect the local network._
+</polling_interval>
+
+<only_local_burner_wallet>
+**onlyLocalBurnerWallet**
+
+Controls the networks where the Burner Wallet feature is available. This feature provides a lightweight wallet for users.
+
+- `true` => Use Burner Wallet only on devnet network.
+- `false` => Use Burner Wallet on all networks.
+  </only_local_burner_wallet>
+
+<wallet_auto_connect>
+**walletAutoConnect**
+
+Set it to `true` to activate automatic wallet connection behavior:
+
+- If the user was connected into a wallet before, on page reload it reconnects automatically.
+- If the user is not connected to any wallet, on reload, it connects to the burner wallet _if it is enabled for the current network_. See `onlyLocalBurnerWallet`
+  </wallet_auto_connect>
+
+<auto_connect_ttl>
+**autoConnectTTL**
+
+Time-to-live for the auto-connect feature in milliseconds. Default is 24 hours (86_400_000).
+</auto_connect_ttl>
+</parameters>
+
+<extending_configuration>
+You can extend this configuration file, adding new parameters that you need to use across your dapp **(make sure you update the above type `ScaffoldConfig`)**:
+
+```ts
+  tokenIcon: "🪙",
+```
+
+To use the values from the `ScaffoldConfig` in any other file of your application, you first need to import it in those files:
+
+```ts
+import scaffoldConfig from "~~/scaffold.config";
+```
+
+</extending_configuration>
+</scaffold_app_configuration>
+</nextjs_app_deployment>
+
+<smart_contracts_deployment>
+
+<source>https://www.scaffoldstark.com/docs/deploying/deploy-smart-contracts</source>
+
+<title>Deploy Your Smart Contracts</title>
+
+<description>
+To deploy your smart contracts to a live network, there are a few things you need to adjust.
+</description>
+
+<configure_network>
+
+<title>1. Configure your network</title>
+
+<description>
+Scaffold-Stark 2 comes with a selection of predefined networks (devnet, sepolia, mainnet). The networks are configured in:
+
+- `packages/nextjs/scaffold.config.ts` - for frontend
+- `packages/snfoundry/scripts-ts/helpers/networks.ts` - for deployment scripts
+  </description>
+  </configure_network>
+
+<setup_environment_variables>
+
+<title>2. Setup environment variables</title>
+
+<instructions>
+Create a `.env` file in `packages/snfoundry/` and add your deployer account details:
+
+```
+# Devnet
+ACCOUNT_ADDRESS_DEVNET=0x...
+PRIVATE_KEY_DEVNET=0x...
+
+# Sepolia
+ACCOUNT_ADDRESS_SEPOLIA=0x...
+PRIVATE_KEY_SEPOLIA=0x...
+
+# Mainnet
+ACCOUNT_ADDRESS_MAINNET=0x...
+PRIVATE_KEY_MAINNET=0x...
+```
+
+Also configure RPC URLs in `packages/nextjs/.env`:
+
+```
+NEXT_PUBLIC_DEVNET_PROVIDER_URL=http://127.0.0.1:5050
+NEXT_PUBLIC_SEPOLIA_PROVIDER_URL=https://starknet-sepolia.public.blastapi.io/rpc/v0_9
+NEXT_PUBLIC_MAINNET_PROVIDER_URL=https://starknet-mainnet.public.blastapi.io/rpc/v0_9
+```
+
+</instructions>
+</setup_environment_variables>
+
+<deploy_contracts>
+
+<title>3. Deploy your smart contract(s)</title>
+
+<instructions>
+By default `yarn deploy` will deploy all the contracts from your `packages/snfoundry/contracts/src` folder to devnet.
+
+To deploy to a specific network:
+
+```
+yarn deploy --network sepolia
+```
+
+This command deploys contracts using the deploy script located in `packages/snfoundry/scripts-ts/deploy.ts`. You can customize the deployment script to suit your needs.
+</instructions>
+</deploy_contracts>
+
+<verify_contracts>
+
+<title>4. Verify your smart contract</title>
+
+<instructions>
+You can verify your smart contract on the appropriate block explorer by running:
+
+```
+yarn verify --network network_name
+```
+
+eg: `yarn verify --network sepolia`
+</instructions>
+</verify_contracts>
+
+<third_party_services>
+
+<title>Configuration of Third-Party Services for Production-Grade Apps.</title>
+
+<description>
+By default, Scaffold-Stark 2 provides predefined RPC endpoints. For production-grade applications, it's recommended to obtain your own RPC endpoints to prevent rate limiting issues.
+
+It's recommended to store envs for nextjs in Vercel/system env config for live apps and use .env.local for local testing.
+</description>
+</third_party_services>
+</smart_contracts_deployment>
+</deployment_instructions>
+
+<quick_start>
+<environment_setup>
+
+<source>https://www.scaffoldstark.com/docs/quick-start/environment</source>
+
+<title>Environment Setup</title>
+
+<description>
+Now that our installation is complete, let's configure the development environment for Scaffold-Stark 2.
+</description>
+
+<initialize_local_blockchain>
+
+<title>1. Initialize a Local Blockchain</title>
+
+<instructions>
+In the first terminal, run a local network:
+
+```
+yarn chain
+```
+
+This command starts a local Starknet network using starknet-devnet. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `scaffold.config.ts` for your nextjs app.
+</instructions>
+</initialize_local_blockchain>
+
+<deploy_smart_contract>
+
+<title>2. Deploy Your Smart Contract</title>
+
+<instructions>
+In the second terminal, deploy the test contract:
+
+```
+yarn deploy
+```
+
+This command deploys a test smart contract to the local network. The contract can be modified to suit your needs and can be found in:
+
+```sh
+packages/snfoundry/contracts/src
+```
+
+The `yarn deploy` command uses a deploy script to deploy the contract to the network. You can customize the deployment script located in:
+
+```sh
+packages/snfoundry/scripts-ts/deploy.ts
+```
+
+</instructions>
+</deploy_smart_contract>
+
+<launch_nextjs_app>
+
+<title>3. Launch your NextJS Application</title>
+
+<instructions>
+In the third terminal, start your NextJS app:
+
+```
+yarn start
+```
+
+Visit your app on `http://localhost:3000`. You can interact with your smart contract using the contract component or the example ui in the frontend.
+</instructions>
+</launch_nextjs_app>
+
+<whats_next>
+
+<title>What's Next:</title>
+
+<list>
+- Edit your smart contract:
+  - `your_contract.cairo` in `packages/snfoundry/contracts/src`
+- Edit your deployment scripts:
+  - `packages/snfoundry/scripts-ts/deploy.ts`
+- Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on routing and configuring pages/layouts checkout the Next.js documentation.
+- Edit the app config in `packages/nextjs/scaffold.config.ts`
+- Edit your smart contract test in:
+  - `packages/snfoundry/contracts/tests` to run test use `yarn test`
+</list>
+</whats_next>
+</environment_setup>
+
+<installation>
+<source>https://www.scaffoldstark.com/docs/quick-start/installation</source>
+
+<title>Installation</title>
+
+<requirements>
+<title>Requirements</title>
+
+<description>
+Before you begin, you need to install the following tools:
+
+- Node (>= v22)
+- Yarn (v1 or v2+)
+- Git
+  </description>
+  </requirements>
+
+<setup>
+<title>Setup</title>
+
+<description>
+For a simplified setup, Scaffold-Stark 2 offers a npx tool that guides you interactively through the setup:
+
+```
+npx create-stark@latest
+```
+
+You will be presented with a series of prompts:
+
+- **Project Name:** Enter a name for your project, e.g., my-dapp-example.
+- **Development Tools:** Choose your preferred development environment (native tools or Dev Containers)
+
+Once the setup is complete, navigate to the project directory:
+
+```
+cd project-name
+```
+
+If you want to use extensions, you can add the -e flag followed by the extension name:
+
+```
+npx create-stark@latest -e extension-name
+```
+
+For more information about available extensions and how to use them, check out the Extensions section.
+</description>
+</setup>
+</installation>
+</quick_start>
+
+<contributing>
+<overview>
+<title>🙏 Contributing to Scaffold-Stark 2</title>
+
+<description>
+We welcome contributions to Scaffold-Stark 2!
+
+This section aims to provide an overview of the contribution workflow to help us make the contribution process effective for everyone involved.
+
+The project is under active development. You can view the open Issues, follow the development process, and contribute to the project.
+</description>
+</overview>
+
+<getting_started>
+
+<title>Getting Started</title>
+
+<description>
+You can contribute to this repo in many ways:
+
+- Solve open issues
+- Report bugs or feature requests
+- Improve the documentation
+
+Contributions are made via Issues and Pull Requests (PRs). A few general guidelines for contributions:
+
+- Search for existing Issues and PRs before creating your own.
+- Contributions should only fix/add the functionality in the issue OR address style issues, _not both_.
+- If you're running into an error, please give context. Explain what you're trying to do and how to reproduce the error.
+- Please use the same formatting in the code repository. You can configure your IDE to do this by using the prettier / linting config files included in each package.
+- If applicable, please edit the README.md file to reflect changes.
+  </description>
+  </getting_started>
+
+<issues>
+<source>https://www.scaffoldstark.com/docs/contributing/Issues</source>
+
+<description>
+Issues should be used to report problems, request a new feature, or discuss potential changes before a PR is created.
+</description>
+
+<solve_issue>
+
+<title>Solve an Issue</title>
+
+<instructions>
+Scan through our existing issues to find one that interests you.
+
+If a contributor is working on the issue, they will be assigned to that individual. If you find an issue to work on, you are welcome to assign it to yourself and open a PR with a fix for it.
+</instructions>
+</solve_issue>
+
+<create_new_issue>
+
+<title>Create a New Issue</title>
+
+<instructions>
+If a related issue doesn't exist, you can open a new issue.
+
+Some tips to follow when you are creating an issue:
+
+- Provide as much context as possible. Over-communicate to give the most detail to the reader.
+- Include the steps to reproduce the issue or the reason for adding the feature.
+- Screenshots, videos, etc., are highly appreciated.
+  </instructions>
+  </create_new_issue>
+  </issues>
+
+<pull_requests>
+
+<source>https://www.scaffoldstark.com/docs/contributing/pullRequests</source>
+
+<title>Pull Requests</title>
+
+<pull_request_process>
+
+<title>Pull Request Process</title>
+
+<description>
+We follow the "fork-and-pull" Git workflow
+
+1. Fork the repo
+2. Clone the project
+3. Create a new branch with a descriptive name
+4. Commit your changes to the new branch
+5. Push changes to your fork
+6. Open a PR in our repository and tag one of the maintainers to review your PR
+
+Here are some tips for a high-quality pull request:
+
+- Create a title for the PR that accurately defines the work done.
+- Structure the description neatly to make it easy to consume by the readers. For example, you can include bullet points and screenshots instead of having one large paragraph.
+- Add the link to the issue if applicable.
+- Have a good commit message that summarises the work done.
+
+Once you submit your PR:
+
+- We may ask questions, request additional information, or ask for changes to be made before a PR can be merged. Please note that these are to make the PR clear for everyone involved and aims to create a frictionless interaction process.
+- As you update your PR and apply changes, mark each conversation resolved.
+
+Once the PR is approved, we'll "squash-and-merge" to keep the git commit history clean.
+</description>
+</pull_request_process>
+</pull_requests>
+</contributing>

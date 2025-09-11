@@ -30,7 +30,7 @@ vi.mock("~~/utils/scaffold-stark/contract", () => ({
           {
             type: "impl",
             name: "YourContractImpl",
-            interface_name: "contracts::YourContract::IYourContract",
+            interface_name: "contracts::your_contract::IYourContract",
           },
           {
             type: "struct",
@@ -80,7 +80,7 @@ vi.mock("~~/utils/scaffold-stark/contract", () => ({
           },
           {
             type: "interface",
-            name: "contracts::YourContract::IYourContract",
+            name: "contracts::your_contract::IYourContract",
             items: [
               {
                 type: "function",
@@ -233,7 +233,7 @@ vi.mock("~~/utils/scaffold-stark/contract", () => ({
           },
           {
             type: "event",
-            name: "contracts::YourContract::YourContract::GreetingChanged",
+            name: "contracts::your_contract::YourContract::GreetingChanged",
             kind: "struct",
             members: [
               {
@@ -260,7 +260,7 @@ vi.mock("~~/utils/scaffold-stark/contract", () => ({
           },
           {
             type: "event",
-            name: "contracts::YourContract::YourContract::Event",
+            name: "contracts::your_contract::YourContract::Event",
             kind: "enum",
             variants: [
               {
@@ -270,7 +270,7 @@ vi.mock("~~/utils/scaffold-stark/contract", () => ({
               },
               {
                 name: "GreetingChanged",
-                type: "contracts::YourContract::YourContract::GreetingChanged",
+                type: "contracts::your_contract::YourContract::GreetingChanged",
                 kind: "nested",
               },
             ],
@@ -298,7 +298,7 @@ describe("useDeployedContractInfo", () => {
           {
             type: "impl",
             name: "YourContractImpl",
-            interface_name: "contracts::YourContract::IYourContract",
+            interface_name: "contracts::your_contract::IYourContract",
           },
           {
             type: "struct",
@@ -348,7 +348,7 @@ describe("useDeployedContractInfo", () => {
           },
           {
             type: "interface",
-            name: "contracts::YourContract::IYourContract",
+            name: "contracts::your_contract::IYourContract",
             items: [
               {
                 type: "function",
@@ -501,7 +501,7 @@ describe("useDeployedContractInfo", () => {
           },
           {
             type: "event",
-            name: "contracts::YourContract::YourContract::GreetingChanged",
+            name: "contracts::your_contract::YourContract::GreetingChanged",
             kind: "struct",
             members: [
               {
@@ -528,7 +528,7 @@ describe("useDeployedContractInfo", () => {
           },
           {
             type: "event",
-            name: "contracts::YourContract::YourContract::Event",
+            name: "contracts::your_contract::YourContract::Event",
             kind: "enum",
             variants: [
               {
@@ -538,7 +538,7 @@ describe("useDeployedContractInfo", () => {
               },
               {
                 name: "GreetingChanged",
-                type: "contracts::YourContract::YourContract::GreetingChanged",
+                type: "contracts::your_contract::YourContract::GreetingChanged",
                 kind: "nested",
               },
             ],

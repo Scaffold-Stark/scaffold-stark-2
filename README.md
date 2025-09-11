@@ -78,47 +78,47 @@ You can refer to the guide of manual installation of asdf [here](https://asdf-vm
 
 #### Scarb version
 
-To ensure the proper functioning of scaffold-stark, your `Scarb` version must be `2.11.4`. To accomplish this, first check Scarb version:
+To ensure the proper functioning of scaffold-stark, your `Scarb` version must be `2.12.0`. To accomplish this, first check Scarb version:
 
 ```sh
 scarb --version
 ```
 
-If your `Scarb` version is not `2.11.4`, you need to install it. If you already have installed `Scarb` via `starkup`, you can setup this specific version with the following command:
+If your `Scarb` version is not `2.12.0`, you need to install it. If you already have installed `Scarb` via `starkup`, you can setup this specific version with the following command:
 
 ```sh
-asdf install scarb 2.11.4 && asdf set scarb 2.11.4
+asdf install scarb 2.12.0 && asdf set scarb 2.12.0
 ```
 
-Otherwise, you can install Scarb `2.11.4` following the [instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf).
+Otherwise, you can install Scarb `2.12.0` following the [instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf).
 
 #### Starknet Foundry version
 
-To ensure the proper functioning of the tests on scaffold-stark, your `Starknet Foundry` version must be `0.46.0`. To accomplish this, first check your `Starknet Foundry` version:
+To ensure the proper functioning of the tests on scaffold-stark, your `Starknet Foundry` version must be `0.49.0`. To accomplish this, first check your `Starknet Foundry` version:
 
 ```sh
 snforge --version
 ```
 
-If your `Starknet Foundry` version is not `0.46.0`, you need to install it. If you already have installed `Starknet Foundry` via `starkup`, you can setup this specific version with the following command:
+If your `Starknet Foundry` version is not `0.49.0`, you need to install it. If you already have installed `Starknet Foundry` via `starkup`, you can setup this specific version with the following command:
 
 ```sh
-asdf install starknet-foundry 0.46.0 && asdf set starknet-foundry 0.46.0
+asdf install starknet-foundry 0.49.0 && asdf set starknet-foundry 0.49.0
 ```
 
-Otherwise, you can install Starknet Foundry `0.46.0` following the [instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf).
+Otherwise, you can install Starknet Foundry `0.49.0` following the [instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf).
 
 #### Starknet-devnet version
 
-To ensure the proper functioning of scaffold-stark, your `starknet-devnet` version must be ` 0.4.3`. To accomplish this, first check your `starknet-devnet` version:
+To ensure the proper functioning of scaffold-stark, your `starknet-devnet` version must be `0.5.1`. To accomplish this, first check your `starknet-devnet` version:
 
 ```sh
 starknet-devnet --version
 ```
 
-If your `starknet-devnet` version is not ` 0.4.3`, you need to install it.
+If your `starknet-devnet` version is not `0.5.1`, you need to install it.
 
-- Install starknet-devnet ` 0.4.3` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
+- Install starknet-devnet `0.5.1` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
 
 </details>
 
@@ -137,7 +137,7 @@ As an alternative to installing the tools locally (Scarb, Starknet Foundry, Star
 
 4. Check your project folder contains a `devcontainer.json` file. This file is used to set up the environment:
 
-- The configuration uses the `starknetfoundation/starknet-dev:2.11.4` image.
+- The configuration uses the `starknetfoundation/starknet-dev:2.12.0` image.
 - This includes all required tools pre-installed, such as Scarb, Starknet Foundry, Starknet Devnet and other dependencies.
 
 #### 2.2 Getting Started with Docker Setup
@@ -155,11 +155,11 @@ Now you are ready!!!
 
 ## Compatible versions
 
-- Starknet-devnet - 0.4.3
-- Scarb - v2.11.4
-- Snforge - v0.46.0
-- Cairo - v2.11.4
-- Rpc - v0.8.0
+- Starknet-devnet - 0.5.1
+- Scarb - v2.12.0
+- Snforge - v0.49.0
+- Cairo - v2.12.0
+- Rpc - v0.9.x
 
 ## Quickstart 1: Deploying a Smart Contract to Starknet-Devnet
 
@@ -247,7 +247,7 @@ Visit your app on: `http://localhost:3000`. You can interact with your smart con
 
 <details>
 
-To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, your RPC version must be `0.8.0`. This repository contains `.env.example` files, where we provided the default RPC URL for the Starknet Testnet: `RPC_URL_SEPOLIA=https://starknet-sepolia.public.blastapi.io/rpc/v0_8`. Let's verify this RPC version is `0.8.x` by calling a `POST` request in an API platform like `Postman` or `Insommia` . Your API endpoint should be `https://starknet-sepolia.public.blastapi.io/rpc/v0_8` and the body should be:
+To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, your RPC version must be `0.9.0`. This repository contains `.env.example` files, where we provided the default RPC URL for the Starknet Testnet: `RPC_URL_SEPOLIA=https://starknet-sepolia.public.blastapi.io/rpc/v0_9`. Let's verify this RPC version is `0.9.x` by calling a `POST` request in an API platform like `Postman` or `Insommia` . Your API endpoint should be `https://starknet-sepolia.public.blastapi.io/rpc/v0_9` and the body should be:
 
 ```json
 {
@@ -257,7 +257,7 @@ To ensure the proper functioning of the scaffold-stark with Testnet or Mainnet, 
 }
 ```
 
-You have to paste the endpoint and body in the API platform and click on the `Send` button. If the response is `0.8.x`, then you are good to go. Otherwise, you have to get the correct RPC URL endpoint.
+You have to paste the endpoint and body in the API platform and click on the `Send` button. If the response is `0.9.x`, then you are good to go. Otherwise, you have to get the correct RPC URL endpoint.
 
 ![rpc-version](./packages/nextjs/public/rpc-version.png)
 
@@ -337,7 +337,7 @@ Commands:
 
 ## **What's next**
 
-- Edit your smart contract `YourContract.cairo` in `packages/snfoundry/contracts/src`
+- Edit your smart contract `your_contract.cairo` in `packages/snfoundry/contracts/src`
 - Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
 - Edit your deployment scripts in `packages/snfoundry/script-ts/deploy.ts`
 - Edit your smart contract tests in `packages/snfoundry/contracts/src/test`. To run tests use `yarn test`

@@ -3869,16 +3869,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@scaffold-stark/stark-burner@npm:^0.1.11":
-  version: 0.1.11
-  resolution: "@scaffold-stark/stark-burner@npm:0.1.11"
+"@scaffold-stark/stark-burner@npm:^0.1.13":
+  version: 0.1.13
+  resolution: "@scaffold-stark/stark-burner@npm:0.1.13"
   dependencies:
     "@starknet-io/types-js": ^0.8.4
   peerDependencies:
-    "@starknet-react/chains": ^4.0.1-beta.2
-    "@starknet-react/core": ^4.0.1-beta.3
-    starknet: ^7.5.0
-  checksum: 6d48f7cb490f877ff5a037cf23b4a1649a752d77cd31ab91f7a21fdd0ff09e626b6ae26f1c867471e0a7e8a3809538927c372600e8b0783f2643018a7cd96483
+    "@starknet-react/chains": ^5.0.1
+    "@starknet-react/core": ^5.0.1
+    starknet: ^8.5.3
+  checksum: c74b9cc9eb6b5fa31a2c6d363391f13112bbc6d6ff04973172f5f7309341208016bc4a15597ecf08d9b5e1a0c6f47b45d4b10db6b4fd8515edf984244cc200fa
   languageName: node
   linkType: hard
 
@@ -3946,10 +3946,10 @@ __metadata:
     "@keplr-wallet/unit": ^0.12.175
     "@radix-ui/react-icons": 1.3.0
     "@radix-ui/themes": 2.0.3
-    "@scaffold-stark/stark-burner": ^0.1.11
+    "@scaffold-stark/stark-burner": ^0.1.13
     "@starknet-io/types-js": ^0.8.4
-    "@starknet-react/chains": ^4.0.1-beta.2
-    "@starknet-react/core": 4.0.1-beta.3
+    "@starknet-react/chains": ^5.0.1
+    "@starknet-react/core": ^5.0.1
     "@starknet-react/typescript-config": 0.0.2
     "@tailwindcss/postcss": ^4
     "@testing-library/dom": ^10.4.0
@@ -3986,7 +3986,7 @@ __metadata:
     react-dom: 19.0.0
     react-hot-toast: ^2.4.1
     shx: ^0.4.0
-    starknet: ^7.5.0
+    starknet: 8.5.3
     tailwindcss: ^4
     type-fest: ^4.6.0
     typescript: ^5
@@ -4018,7 +4018,7 @@ __metadata:
     globals: ^15.8.0
     prettier: ^2.8.8
     shx: ^0.4.0
-    starknet: ^7.5.0
+    starknet: 8.5.3
     toml: ^3.0.0
     ts-node: ^10.9.2
     tslib: ^2.6.2
@@ -4030,13 +4030,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@starknet-io/starknet-types-07@npm:@starknet-io/types-js@~0.7.10, @starknet-io/types-js@npm:^0.7.10, @starknet-io/types-js@npm:^0.7.7":
-  version: 0.7.10
-  resolution: "@starknet-io/types-js@npm:0.7.10"
-  checksum: 8f71c57d0f101ebbde91e3016b73ab70ce3329ccb7463764a27a61db42b9ea14b690bd620a6b2dd4303e890b4a9212bdd40626962e0320e82e0c600fd3be5abf
-  languageName: node
-  linkType: hard
-
 "@starknet-io/starknet-types-08@npm:@starknet-io/types-js@~0.8.4, @starknet-io/types-js@npm:^0.8.4":
   version: 0.8.4
   resolution: "@starknet-io/types-js@npm:0.8.4"
@@ -4044,19 +4037,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@starknet-react/chains@npm:^4.0.1-beta.2":
-  version: 4.0.4
-  resolution: "@starknet-react/chains@npm:4.0.4"
-  checksum: 4967cd83e515bb85946dad32a864f39ba8cc4ac4e64350e31c9555f9b6304d1fb6f041db627ed76fda1f183bffecec241a61db2cedac67e3766fea3eab1075b6
+"@starknet-io/starknet-types-09@npm:@starknet-io/types-js@~0.9.1":
+  version: 0.9.1
+  resolution: "@starknet-io/types-js@npm:0.9.1"
+  checksum: aa4a38dcbcd29bff536424845e442cf01425bb655bc97db213ad6f1c62c8b3a652b19877f5fce72625c8a83985b8ca932b65b69267d9d63b5f9863196aa2e55b
   languageName: node
   linkType: hard
 
-"@starknet-react/core@npm:4.0.1-beta.3":
-  version: 4.0.1-beta.3
-  resolution: "@starknet-react/core@npm:4.0.1-beta.3"
+"@starknet-io/types-js@npm:^0.7.10, @starknet-io/types-js@npm:^0.7.7":
+  version: 0.7.10
+  resolution: "@starknet-io/types-js@npm:0.7.10"
+  checksum: 8f71c57d0f101ebbde91e3016b73ab70ce3329ccb7463764a27a61db42b9ea14b690bd620a6b2dd4303e890b4a9212bdd40626962e0320e82e0c600fd3be5abf
+  languageName: node
+  linkType: hard
+
+"@starknet-react/chains@npm:^5.0.1":
+  version: 5.0.2
+  resolution: "@starknet-react/chains@npm:5.0.2"
+  checksum: 674b238a81bec2cad0667914015e3ab4e350dc4857cb99e119212acaa1255079f02147dd282f23a6fe951924021b10bd9e53b435cfe3884ceb81d9ae47f128b7
+  languageName: node
+  linkType: hard
+
+"@starknet-react/core@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "@starknet-react/core@npm:5.0.1"
   dependencies:
     "@starknet-io/types-js": ^0.7.10
-    "@starknet-react/chains": ^4.0.1-beta.2
+    "@starknet-react/chains": ^5.0.1
     "@tanstack/react-query": ^5.25.0
     abi-wan-kanabi: ^2.2.4
     eventemitter3: ^5.0.1
@@ -4065,8 +4072,8 @@ __metadata:
   peerDependencies:
     get-starknet-core: ^4.0.0
     react: ^18.0
-    starknet: ^7.5.0
-  checksum: 1b1d78eae92c3456f8e74a997d614b6dd84b6f36bebe52e46fedaeaf39ecd956c6882d135ca9453a10722184b4156615452d1d078665f101ca4fd70ac8fd9eac
+    starknet: ^8.1.2
+  checksum: 47bfec581b03a9f6f692510107aa55f59557dce5e336b532210371d8294303e5b8d6cd9fc1f9f678746341414a274023e9313148d608861c8d5c5f8cab96eac5
   languageName: node
   linkType: hard
 
@@ -12666,21 +12673,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"starknet@npm:^7.5.0":
-  version: 7.6.4
-  resolution: "starknet@npm:7.6.4"
+"starknet@npm:8.5.3":
+  version: 8.5.3
+  resolution: "starknet@npm:8.5.3"
   dependencies:
     "@noble/curves": 1.7.0
     "@noble/hashes": 1.6.0
     "@scure/base": 1.2.1
     "@scure/starknet": 1.1.0
-    "@starknet-io/starknet-types-07": "npm:@starknet-io/types-js@~0.7.10"
     "@starknet-io/starknet-types-08": "npm:@starknet-io/types-js@~0.8.4"
+    "@starknet-io/starknet-types-09": "npm:@starknet-io/types-js@~0.9.1"
     abi-wan-kanabi: 2.2.4
     lossless-json: ^4.0.1
     pako: ^2.0.4
     ts-mixer: ^6.0.3
-  checksum: a7c6de5ee93d77a4cc6bc7c7a7f882193ddce4279c4e94b0d7861403fedded243ff1c147685e0fea03e52b77198fa45cc950ce504149dd9e141a56cc19cdbca2
+  checksum: c9799210b57438256dff39fc9ac625a80aab3d79159d0df18facd086b1222452cbbf543613990c9f6bc1a188196748166e9c6089e7dfea385dd2999ec137566d
   languageName: node
   linkType: hard
 
