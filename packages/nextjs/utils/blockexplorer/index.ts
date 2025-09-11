@@ -6,3 +6,4 @@ export * from "./formatters";
 export * from "./badges";
 export * from "./types";
 export * from "./eventUtils";
+export * from "./parser";

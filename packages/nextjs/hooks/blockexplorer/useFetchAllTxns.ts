@@ -18,6 +18,7 @@ import {
 import { getFunctionNameFromSelector } from "../../utils/scaffold-stark/selectorUtils";
 import { devnetUDCAddress } from "~~/utils/Constants";
 import { encode } from "starknet";
+import { convertCalldataToReadable } from "~~/utils/blockexplorer";
 
 interface UseFetchAllTxnsOptions {
   page?: number;
@@ -40,25 +41,6 @@ type ExplorerReturnType = {
     toAddress: string | null;
     valueInSTRK: bigint;
   }[];
-};
-
-const convertCalldataToReadable = (
-  calldata: string[],
-): { to: string; selector: string; args: string[] }[] => {
-  const calls: { to: string; selector: string; args: string[] }[] = [];
-  let currentPointer = 1;
-  while (currentPointer < calldata.length) {
-    const to = calldata[currentPointer];
-    const selector = calldata[currentPointer + 1];
-    const argsLength = parseInt(calldata[currentPointer + 2], 16);
-    const args = calldata.slice(
-      currentPointer + 3,
-      currentPointer + 3 + argsLength,
-    );
-    calls.push({ to, selector, args });
-    currentPointer += 3 + argsLength;
-  }
-  return calls;
 };
 
 // This hook fetches transactions from the Starknet network with pagination support.
