@@ -79,25 +79,35 @@ function needsRecompilation(
 
   // Check each Cairo file against its corresponding target file
   for (const cairoFile of cairoFiles) {
-    const expectedJsonName = `${scarbInfo.packageName}_${cairoFile.name}.contract_class.json`;
-    const targetFile = targetFiles.get(expectedJsonName);
+    const moduleNames = extractContractModuleNames(cairoFile.fullPath);
+    // If no contract modules found, fall back to previous behavior (legacy single-output)
+    const expectedNames =
+      moduleNames.length > 0
+        ? moduleNames.map(
+            (m) => `${scarbInfo.packageName}_${m}.contract_class.json`
+          )
+        : [`${scarbInfo.packageName}_${cairoFile.name}.contract_class.json`];
 
-    if (!targetFile) {
-      if (verbose) {
-        console.log(`📄 Missing compiled file: ${expectedJsonName}`);
-      }
-      return true;
-    }
+    for (const expectedJsonName of expectedNames) {
+      const targetFile = targetFiles.get(expectedJsonName);
 
-    if (cairoFile.mtime > targetFile.mtime) {
-      if (verbose) {
-        console.log(
-          `📅 ${cairoFile.relativePath} is newer than ${expectedJsonName}`
-        );
-        console.log(`   Cairo: ${new Date(cairoFile.mtime).toISOString()}`);
-        console.log(`   JSON:  ${new Date(targetFile.mtime).toISOString()}`);
+      if (!targetFile) {
+        if (verbose) {
+          console.log(`📄 Missing compiled file: ${expectedJsonName}`);
+        }
+        return true;
       }
-      return true;
+
+      if (cairoFile.mtime > targetFile.mtime) {
+        if (verbose) {
+          console.log(
+            `📅 ${cairoFile.relativePath} is newer than ${expectedJsonName}`
+          );
+          console.log(`   Cairo: ${new Date(cairoFile.mtime).toISOString()}`);
+          console.log(`   JSON:  ${new Date(targetFile.mtime).toISOString()}`);
+        }
+        return true;
+      }
     }
   }
 
@@ -202,6 +212,29 @@ function getCairoFiles(srcDir: string, verbose: boolean): FileInfo[] {
 
   scanDirectory(srcDir);
   return files;
+}
+
+/**
+ * Extracts all contract module names declared with #[starknet::contract] pub mod <Name>
+ * from a Cairo source file. Returns an empty array if none found.
+ */
+function extractContractModuleNames(filePath: string): string[] {
+  try {
+    const content = readFileSync(filePath, "utf-8");
+    const names: string[] = [];
+    const regex =
+      /#\s*\[\s*starknet::contract\s*\][\s\S]{0,300}?pub\s+mod\s+([A-Za-z0-9_]+)/g;
+    let match: RegExpExecArray | null;
+    while ((match = regex.exec(content)) !== null) {
+      const modName = match[1];
+      if (modName && !names.includes(modName)) {
+        names.push(modName);
+      }
+    }
+    return names;
+  } catch {
+    return [];
+  }
 }
 
 /**
