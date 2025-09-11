@@ -83,7 +83,7 @@ const useTargetNetworkMock = useTargetNetwork as Mock;
 const useSendTransactionMock = useSendTransaction as Mock;
 const useTransactorMock = useTransactor as Mock;
 const useDeployedContractInfoMock = useDeployedContractInfo as Mock;
-const ContractMock = Contract as Mock;
+const ContractMock = Contract as unknown as Mock;
 const useNetworkMock = useNetwork as Mock;
 
 // Using the test without skipping as it has been updated for the new structure

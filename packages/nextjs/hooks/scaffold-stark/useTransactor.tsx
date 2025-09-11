@@ -4,6 +4,7 @@ import {
   InvokeFunctionResponse,
   constants,
   Call,
+  ETransactionVersion,
 } from "starknet";
 import { getBlockExplorerTxLink, notification } from "~~/utils/scaffold-stark";
 import { useTargetNetwork } from "./useTargetNetwork";
@@ -152,7 +153,7 @@ export const useTransactor = (
 
           // Set RPC 0.8 compatible parameters with estimated fees
           const txOptions = {
-            version: constants.TRANSACTION_VERSION.V3,
+            version: ETransactionVersion.V3,
             maxFee: "0x" + maxFee.toString(16),
           };
 
@@ -166,24 +167,23 @@ export const useTransactor = (
 
           // Fallback to safe default values if estimation fails
           const txOptions = {
-            version: constants.TRANSACTION_VERSION.V3,
+            version: ETransactionVersion.V3,
             // Use a reasonable maxFee value that won't exceed account balance
             maxFee: "0x1000000000",
             // Set resource bounds for RPC 0.8 compatibility
             resourceBounds: {
               l1_gas: {
-                max_amount: "0x1000000",
-                max_price_per_unit: "0x1",
+                max_amount: 0x1000000n,
+                max_price_per_unit: 0x1n,
               },
               l2_gas: {
-                max_amount: "0x1000000",
-                max_price_per_unit: "0x1",
+                max_amount: 0x1000000n,
+                max_price_per_unit: 0x1n,
               },
-            },
-            // Add l1_data_gas field for RPC 0.8 compatibility
-            l1_data_gas: {
-              max_amount: "0x1000000",
-              max_price_per_unit: "0x1",
+              l1_data_gas: {
+                max_amount: 0x1000000n,
+                max_price_per_unit: 0x1n,
+              },
             },
           };
 

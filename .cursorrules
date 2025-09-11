@@ -2032,8 +2032,8 @@ Also configure RPC URLs in `packages/nextjs/.env`:
 
 ```
 NEXT_PUBLIC_DEVNET_PROVIDER_URL=http://127.0.0.1:5050
-NEXT_PUBLIC_SEPOLIA_PROVIDER_URL=https://starknet-sepolia.public.blastapi.io/rpc/v0_8
-NEXT_PUBLIC_MAINNET_PROVIDER_URL=https://starknet-mainnet.public.blastapi.io/rpc/v0_8
+NEXT_PUBLIC_SEPOLIA_PROVIDER_URL=https://starknet-sepolia.public.blastapi.io/rpc/v0_9
+NEXT_PUBLIC_MAINNET_PROVIDER_URL=https://starknet-mainnet.public.blastapi.io/rpc/v0_9
 ```
 
 </instructions>

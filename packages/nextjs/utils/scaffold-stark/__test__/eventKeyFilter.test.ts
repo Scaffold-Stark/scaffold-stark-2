@@ -24,6 +24,7 @@ describe("serializeEventKey", () => {
         { name: "", type: "core::byte_array::ByteArray" },
         {},
         {},
+        mockDeployedContractAbi.abi,
       ),
     ).toEqual(["0x0", "0x68656c6c6f20776f726c64", "0xb"]);
   });
@@ -35,6 +36,7 @@ describe("serializeEventKey", () => {
         { name: "", type: "core::byte_array::ByteArray" },
         {},
         {},
+        mockDeployedContractAbi.abi,
       ),
     ).toEqual([
       "0x1",
@@ -51,6 +53,7 @@ describe("serializeEventKey", () => {
         { name: "", type: "core::integer::u256" },
         abiStruct,
         abiEnum,
+        mockDeployedContractAbi.abi,
       ),
     ).toEqual(["0x2702", "0x0"]);
   });
@@ -62,6 +65,7 @@ describe("serializeEventKey", () => {
         { name: "", type: "core::integer::u512" },
         abiStruct,
         abiEnum,
+        mockDeployedContractAbi.abi,
       ),
     ).toEqual(["0x2702", "0x0", "0x0", "0x0"]);
   });
@@ -73,6 +77,7 @@ describe("serializeEventKey", () => {
         { name: "", type: "core::starknet::contract_address::ContractAddress" },
         abiStruct,
         abiEnum,
+        mockDeployedContractAbi.abi,
       ),
     ).toEqual([
       "0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691",
@@ -92,6 +97,7 @@ describe("serializeEventKey", () => {
         },
         abiStruct,
         abiEnum,
+        mockDeployedContractAbi.abi,
       ),
     ).toEqual([
       "0x2",
@@ -115,6 +121,7 @@ describe("serializeEventKey", () => {
         },
         abiStruct,
         abiEnum,
+        mockDeployedContractAbi.abi,
       ),
     ).toEqual([
       "0x1",
@@ -140,6 +147,7 @@ describe("serializeEventKey", () => {
         },
         abiStruct,
         abiEnum,
+        mockDeployedContractAbi.abi,
       ),
     ).toEqual([
       "0x0",
@@ -158,6 +166,7 @@ describe("serializeEventKey", () => {
       { name: "enum_param", type: "contracts::your_contract::SimpleEnum" },
       abiStruct,
       abiEnum,
+      mockDeployedContractAbi.abi,
     );
 
     expect(result).toEqual(["0x0", "0x7b"]);
@@ -180,6 +189,7 @@ describe("serializeEventKey", () => {
         },
         abiStruct,
         abiEnum,
+        mockDeployedContractAbi.abi,
       ),
     ).toEqual(["0x0", "0x0", "0xc"]);
   });

@@ -18,6 +18,7 @@ vi.mock("starknet", async () => {
       parseEvents: vi.fn(),
       getAbiEvents: vi.fn(),
     },
+    createAbiParser: vi.fn(() => ({})),
   };
 });
 
