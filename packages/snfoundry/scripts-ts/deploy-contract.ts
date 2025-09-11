@@ -167,10 +167,12 @@ const declareIfNot_NotWait = async (
   }
 
   try {
-    const { transaction_hash } = await deployer.declare(payload, {
-      ...options,
-      version: ETransactionVersion.V3,
-    });
+    const declareOptions =
+      networkName === "devnet" ? { ...options, tip: 1000n } : { ...options };
+    const { transaction_hash } = await deployer.declare(
+      payload,
+      declareOptions
+    );
 
     if (networkName === "sepolia" || networkName === "mainnet") {
       console.log(
@@ -415,10 +417,12 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
   }
 
   try {
-    let { transaction_hash } = await deployer.execute(deployCalls, {
-      ...options,
-      version: ETransactionVersion.V3,
-    });
+    const executeOptions =
+      networkName === "devnet" ? { ...options, tip: 1000n } : { ...options };
+    let { transaction_hash } = await deployer.execute(
+      deployCalls,
+      executeOptions
+    );
     console.log(green("Deploy Calls Executed at "), transaction_hash);
     if (networkName === "sepolia" || networkName === "mainnet") {
       const receipt = await provider.waitForTransaction(transaction_hash);
