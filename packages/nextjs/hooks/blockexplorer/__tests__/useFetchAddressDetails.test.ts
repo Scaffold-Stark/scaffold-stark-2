@@ -36,6 +36,9 @@ vi.mock("starknet", () => ({
   num: {
     toHex: vi.fn((value) => `0x${value.toString(16)}`),
   },
+  encode: {
+    sanitizeHex: vi.fn((hex) => hex?.toLowerCase() || ""),
+  },
 }));
 
 const createWrapper = () => {

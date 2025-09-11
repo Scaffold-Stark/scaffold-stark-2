@@ -1,4 +1,4 @@
-import { num, hash } from "starknet";
+import { num, hash, encode } from "starknet";
 import configExternalContracts from "~~/contracts/configExternalContracts";
 import deployedContracts from "~~/contracts/deployedContracts";
 import predeployedContracts from "~~/contracts/predeployedContracts";
@@ -202,4 +202,11 @@ export const decodeFunctionArguments = (
     console.warn("Error decoding function arguments:", error);
     return { decodedArgs: {}, argTypes: {} };
   }
+};
+
+export const checkSanitizedEquals = (a: string, b: string) => {
+  return (
+    encode.sanitizeHex(a || "").toLowerCase() ===
+    encode.sanitizeHex(b || "").toLowerCase()
+  );
 };

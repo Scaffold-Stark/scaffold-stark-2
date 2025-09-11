@@ -18,7 +18,10 @@ import {
 import { getFunctionNameFromSelector } from "../../utils/scaffold-stark/selectorUtils";
 import { devnetUDCAddress } from "~~/utils/Constants";
 import { encode } from "starknet";
-import { convertCalldataToReadable } from "~~/utils/blockexplorer";
+import {
+  checkSanitizedEquals,
+  convertCalldataToReadable,
+} from "~~/utils/blockexplorer";
 
 interface UseFetchAllTxnsOptions {
   page?: number;
@@ -33,7 +36,7 @@ type ExplorerReturnType = {
   timestamp?: number;
   transactionHash?: string;
   txInstance?: TransactionWithHash;
-  txReceipt?: GetTransactionReceiptResponse<keyof TransactionStatusReceiptSets>;
+  txReceipt?: GetTransactionReceiptResponse;
   fromAddress?: string | null;
   txCalls: {
     functionCalled: string | null;
@@ -143,8 +146,10 @@ export function useFetchAllTxns(options: UseFetchAllTxnsOptions = {}) {
           for (const call of calls) {
             const _txData = { ...txData };
 
-            const isContractDeployment =
-              call.to.toLowerCase() === devnetUDCAddress.toLowerCase();
+            const isContractDeployment = checkSanitizedEquals(
+              call.to,
+              devnetUDCAddress,
+            );
 
             _txData.toAddress = call.to;
             _txData.functionSelector = call.selector;
@@ -173,17 +178,16 @@ export function useFetchAllTxns(options: UseFetchAllTxnsOptions = {}) {
 
           // Check sender address filter
           const matchesSender = !!bySenderAddress
-            ? encode
-                .sanitizeHex(explorerEntry.fromAddress || "")
-                .toLowerCase() === (bySenderAddress || "").toLowerCase()
+            ? checkSanitizedEquals(
+                explorerEntry.fromAddress || "",
+                bySenderAddress,
+              )
             : true;
 
           // Check receiver address filter - need to check if any of the txCalls has matching toAddress
           const matchesReceiver = !!byReceiverAddress
-            ? txCalls.filter(
-                (call) =>
-                  encode.sanitizeHex(call.toAddress || "").toLowerCase() ===
-                  (byReceiverAddress || "").toLowerCase(),
+            ? txCalls.filter((call) =>
+                checkSanitizedEquals(call.toAddress || "", byReceiverAddress),
               ).length > 0
             : true;
 

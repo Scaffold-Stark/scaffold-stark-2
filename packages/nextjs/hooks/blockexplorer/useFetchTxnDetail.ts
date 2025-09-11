@@ -18,6 +18,7 @@ import { useTargetNetwork } from "../scaffold-stark/useTargetNetwork";
 import { getFunctionNameFromSelector } from "../../utils/scaffold-stark/selectorUtils";
 import { devnetUDCAddress } from "~~/utils/Constants";
 import {
+  checkSanitizedEquals,
   convertCalldataToReadable,
   decodeFunctionArguments,
   findFunctionDefinition,
@@ -62,7 +63,7 @@ export interface TransactionDetail {
   logs?: string[];
 
   // Receipt data
-  txReceipt?: GetTransactionReceiptResponse<keyof TransactionStatusReceiptSets>;
+  txReceipt?: GetTransactionReceiptResponse;
 
   // Block context
   blockDetails?: GetBlockResponse;
@@ -227,9 +228,7 @@ export const useFetchTxnDetail = (txHash?: string) => {
 
                 transactionDetail.functionCalls = calls.map((call) => {
                   // detect UDC deployment invocations
-                  if (
-                    call.to.toLowerCase() === devnetUDCAddress.toLowerCase()
-                  ) {
+                  if (checkSanitizedEquals(call.to, devnetUDCAddress)) {
                     transactionDetail.type = "DEPLOY";
                     return {
                       contractAddress: call.to,

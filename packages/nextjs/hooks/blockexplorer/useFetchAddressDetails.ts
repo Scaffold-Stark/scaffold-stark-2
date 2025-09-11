@@ -7,6 +7,7 @@ import { Address } from "@starknet-react/chains";
 import { useTargetNetwork } from "../scaffold-stark/useTargetNetwork";
 import { useContract } from "@starknet-react/core";
 import { devnetUDCAddress } from "~~/utils/Constants";
+import { checkSanitizedEquals } from "~~/utils/blockexplorer";
 
 interface AddressDetails {
   contractAddress: string;
@@ -34,15 +35,17 @@ const getContractDeployerAndHash = async (
       chunk_size: 1000,
     });
 
+    console.log("events", events);
+
     // Find the deployment event for our specific address
     const deploymentEvent = events.events.find((event) => {
-      if (!event.data || !event.data[0]) return false;
+      if (!event.data) return false;
 
       // Normalize both addresses for comparison
       const eventAddress = num.toHex(event.data[0]);
       const targetAddress = num.toHex(address);
 
-      return eventAddress === targetAddress;
+      return checkSanitizedEquals(eventAddress, targetAddress);
     });
 
     return {
@@ -86,11 +89,6 @@ export const useFetchAddressDetails = (address?: Address | string) => {
         // Try to get class hash (indicates this is a deployed contract)
         const { abi: contractAbi } = await provider.getClassAt(address);
         const classHash = await provider.getClassHashAt(address);
-        const contractData = new Contract(
-          contractAbi,
-          address as Address,
-          provider,
-        );
 
         if (classHash && classHash !== "0x0") {
           addressDetails.classHash = classHash;
@@ -110,10 +108,8 @@ export const useFetchAddressDetails = (address?: Address | string) => {
           }
 
           // For now, set deployed by as the same address since we don't have deployment transaction info
-          // In a production app, you'd want to fetch the actual deployment transaction
           addressDetails.deployedByContractAddress = address;
 
-          // Placeholder values - in production you'd fetch these from deployment events or transaction history
           const deploymentInfo = await getContractDeployerAndHash(
             address as Address,
             provider,

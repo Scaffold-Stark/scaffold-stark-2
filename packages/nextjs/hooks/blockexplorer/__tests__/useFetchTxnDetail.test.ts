@@ -4,6 +4,7 @@ import { useFetchTxnDetail } from "../useFetchTxnDetail";
 import { useTargetNetwork } from "../../scaffold-stark/useTargetNetwork";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
+import { devnetUDCAddress } from "~~/utils/Constants";
 
 // Mock dependencies
 vi.mock("../../scaffold-stark/useTargetNetwork", () => ({
@@ -53,6 +54,9 @@ vi.mock("starknet", () => ({
   },
   num: {
     toHex: vi.fn((value) => `0x${value.toString(16)}`),
+  },
+  encode: {
+    sanitizeHex: vi.fn((hex) => hex?.toLowerCase() || ""),
   },
 }));
 
@@ -308,8 +312,7 @@ describe("useFetchTxnDetail", () => {
 
   it("should handle UDC deployment detection in INVOKE transactions", async () => {
     const txHash = "0x123456789abcdef";
-    const udcAddress =
-      "0x041a78e741e5af2fec34b695679bc6891742439f7afb8484ecd7766661ad02bf";
+    const udcAddress = devnetUDCAddress;
     const mockTxInstance = {
       type: "INVOKE",
       version: "0x3",
