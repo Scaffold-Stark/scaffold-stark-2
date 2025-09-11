@@ -8,6 +8,12 @@ const sepoliaMainnetStrkClassHash =
 const devnetStrkClassHash =
   "0x046ded64ae2dead6448e247234bab192a9c483644395b66f2155f2614e5804b0" as const;
 
+const devnetUDCAddress =
+  "0x02ceed65a4bd731034c01113685c831b01c15d7d432f71afb1cf1634b53a2125" as const;
+
+const devnetUDCClassHash =
+  "0x01b2df6d8861670d4a8ca4670433b2418d78169c2947f46dc614e69f333745c8" as const;
+
 const strkAbi = [
   {
     type: "impl",
@@ -1138,4 +1144,6 @@ export {
   universalStrkAddress,
   sepoliaMainnetStrkClassHash,
   strkAbi,
+  devnetUDCAddress,
+  devnetUDCClassHash,
 };
