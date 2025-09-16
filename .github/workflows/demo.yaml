@@ -3,7 +3,7 @@ name: Deploy Demo Page
 on:
   pull_request:
     types: [closed]
-    branches: [main]
+    branches: [main, develop]
     paths:
       - "packages/nextjs/**"
   workflow_dispatch:
@@ -25,8 +25,6 @@ jobs:
 
       - name: Install snfoundryup
         uses: foundry-rs/setup-snfoundry@v3
-        with:
-          tool-versions: ./.tool-versions
 
       - name: Modify scaffoldConfig in Source Repository
         run: |
