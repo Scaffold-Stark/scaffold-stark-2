@@ -78,19 +78,19 @@ You can refer to the guide of manual installation of asdf [here](https://asdf-vm
 
 #### Scarb version
 
-To ensure the proper functioning of scaffold-stark, your `Scarb` version must be `2.12.0`. To accomplish this, first check Scarb version:
+To ensure the proper functioning of scaffold-stark, your `Scarb` version must be `2.12.2`. To accomplish this, first check Scarb version:
 
 ```sh
 scarb --version
 ```
 
-If your `Scarb` version is not `2.12.0`, you need to install it. If you already have installed `Scarb` via `starkup`, you can setup this specific version with the following command:
+If your `Scarb` version is not `2.12.2`, you need to install it. If you already have installed `Scarb` via `starkup`, you can setup this specific version with the following command:
 
 ```sh
-asdf install scarb 2.12.0 && asdf set scarb 2.12.0
+asdf install scarb 2.12.2 && asdf set scarb 2.12.2
 ```
 
-Otherwise, you can install Scarb `2.12.0` following the [instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf).
+Otherwise, you can install Scarb `2.12.2` following the [instructions](https://docs.swmansion.com/scarb/download.html#install-via-asdf).
 
 #### Starknet Foundry version
 
@@ -137,7 +137,7 @@ As an alternative to installing the tools locally (Scarb, Starknet Foundry, Star
 
 4. Check your project folder contains a `devcontainer.json` file. This file is used to set up the environment:
 
-- The configuration uses the `starknetfoundation/starknet-dev:2.12.0` image.
+- The configuration uses the `starknetfoundation/starknet-dev:2.12.2` image.
 - This includes all required tools pre-installed, such as Scarb, Starknet Foundry, Starknet Devnet and other dependencies.
 
 #### 2.2 Getting Started with Docker Setup
@@ -156,9 +156,9 @@ Now you are ready!!!
 ## Compatible versions
 
 - Starknet-devnet - 0.5.1
-- Scarb - v2.12.0
+- Scarb - v2.12.2
 - Snforge - v0.49.0
-- Cairo - v2.12.0
+- Cairo - v2.12.2
 - Rpc - v0.9.x
 
 ## Quickstart 1: Deploying a Smart Contract to Starknet-Devnet
