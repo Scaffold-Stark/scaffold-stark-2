@@ -57,13 +57,13 @@ export const postDeploymentBalanceSummary = async ({
 
   if (!feeToken || feeToken.length === 0) {
     console.log(
-      red("Error: No fee token information provided. Cannot fetch balance."),
+      red("Error: No fee token information provided. Cannot fetch balance.")
     );
     return;
   }
   const symbol = reciept.actual_fee.unit === "FRI" ? "strk" : "eth";
   const tokenInfo = feeToken.find(
-    (token) => token.name.toLowerCase() === symbol,
+    (token) => token.name.toLowerCase() === symbol
   );
 
   try {
@@ -91,8 +91,8 @@ export const postDeploymentBalanceSummary = async ({
     } catch (e) {
       console.warn(
         yellow(
-          `Could not fetch decimals for ${tokenInfo.name}. Assuming 18 decimals.`,
-        ),
+          `Could not fetch decimals for ${tokenInfo.name}. Assuming 18 decimals.`
+        )
       );
     }
 
@@ -103,12 +103,12 @@ export const postDeploymentBalanceSummary = async ({
     console.log(
       `💰Post-Deployer-Balance: ${formattedBalance.toFixed(decimals)} ${
         tokenInfo.name
-      }`,
+      }`
     );
   } catch (error) {
     console.error(
       red(`Error fetching deployer balance for ${tokenInfo.name}:`),
-      error,
+      error
     );
     if (error instanceof Error) {
       console.error(red("Error message:"), error.message);
