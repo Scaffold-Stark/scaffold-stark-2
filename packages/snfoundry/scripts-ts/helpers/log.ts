@@ -57,9 +57,7 @@ export const postDeploymentBalanceSummary = async ({
 
   if (!feeToken || feeToken.length === 0) {
     console.log(
-      chalk.red(
-        "Error: No fee token information provided. Cannot fetch balance."
-      )
+      red("Error: No fee token information provided. Cannot fetch balance.")
     );
     return;
   }
@@ -92,7 +90,7 @@ export const postDeploymentBalanceSummary = async ({
       }
     } catch (e) {
       console.warn(
-        chalk.yellow(
+        yellow(
           `Could not fetch decimals for ${tokenInfo.name}. Assuming 18 decimals.`
         )
       );
@@ -109,7 +107,7 @@ export const postDeploymentBalanceSummary = async ({
     );
   } catch (error) {
     console.error(
-      chalk.red(`Error fetching deployer balance for ${tokenInfo.name}:`),
+      red(`Error fetching deployer balance for ${tokenInfo.name}:`),
       error
     );
     if (error instanceof Error) {
