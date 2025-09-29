@@ -57,7 +57,7 @@ jobs:
       - name: Sync Base Branch
         run: |
           cd destination_repo
-          git checkout main
+          git checkout develop
           cp -f ../source_repo/.tool-versions ./.tool-versions
           rsync -av ../source_repo/packages/snfoundry/ ./packages/snfoundry/
           if ! git apply -p1 ./.github/rn.patch; then
@@ -67,7 +67,7 @@ jobs:
 
           git add .
           git commit -m "chore: sync files from scaffold-stark-2"
-          git push origin main
+          git push origin develop
 
       - name: Notify Slack on Success
         if: success()
