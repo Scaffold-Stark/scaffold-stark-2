@@ -63,6 +63,7 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           RPC_URL_SEPOLIA: ${{ secrets.RPC_URL_SEPOLIA }}
+          NEXT_PUBLIC_SEPOLIA_PROVIDER_URL: ${{ secrets.NEXT_PUBLIC_SEPOLIA_PROVIDER_URL }}
         run: |
           cd source_repo
           vercel link --yes --project $VERCEL_PROJECT_ID --token $VERCEL_TOKEN --scope $VERCEL_ORG_ID
