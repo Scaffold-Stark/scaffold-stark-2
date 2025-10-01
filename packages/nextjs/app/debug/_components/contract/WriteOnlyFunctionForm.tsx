@@ -173,11 +173,11 @@ export const WriteOnlyFunctionForm = ({
           </div>
         </div>
       </div>
-      {zeroInputs && txResult ? (
+      {txResult && (
         <div className="grow basis-0">
           <TxReceipt txResult={txResult} />
         </div>
-      ) : null}
+      )}
     </div>
   );
 };
