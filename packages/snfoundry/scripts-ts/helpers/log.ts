@@ -1,5 +1,5 @@
-import chalk from "chalk";
-import { Account, Contract, RpcProvider, shortString } from "starknet";
+import { Account, Contract, RpcProvider } from "starknet";
+import { blue, cyan, green, red, yellow } from "./colorize-log";
 
 const createHyperlink = (url: string, text?: string) => {
   const displayText = text || url;
@@ -21,18 +21,18 @@ export const logDeploymentSummary = ({
   } else if (network === "mainnet") {
     baseUrl = `https://starkscan.co`;
   } else {
-    console.error(chalk.red(`Unsupported network: ${network}`));
+    console.error(red(`Unsupported network: ${network}`));
     return;
   }
 
-  console.log(chalk.green("\n📦 Deployment Summary\n"));
-  console.log(`${chalk.blue("🌐 Network:")} ${chalk.white(network)}\n`);
-  console.log(chalk.cyan("🔗 Transaction:"));
+  console.log(green("\n📦 Deployment Summary\n"));
+  console.log(`${blue("🌐 Network:")} ${network}\n`);
+  console.log(cyan("🔗 Transaction:"));
   const txUrl = `${baseUrl}/tx/${transactionHash}`;
   console.log(createHyperlink(txUrl) + "\n");
 
   for (const [name, { address }] of Object.entries(deployments)) {
-    console.log(chalk.yellow(`📄 ${name} Contract:`));
+    console.log(yellow(`📄 ${name} Contract:`));
     const contractUrl = `${baseUrl}/contract/${address}`;
     console.log(createHyperlink(contractUrl) + "\n");
   }
@@ -52,14 +52,12 @@ export const postDeploymentBalanceSummary = async ({
     address: string;
   }[];
 }) => {
-  console.log(chalk.blue("💰 Deployer Balance Summary:"));
+  console.log(blue("💰 Deployer Balance Summary:"));
   console.log(`Deployer-Address: ${deployer.address}`);
 
   if (!feeToken || feeToken.length === 0) {
     console.log(
-      chalk.red(
-        "Error: No fee token information provided. Cannot fetch balance."
-      )
+      red("Error: No fee token information provided. Cannot fetch balance.")
     );
     return;
   }
@@ -92,7 +90,7 @@ export const postDeploymentBalanceSummary = async ({
       }
     } catch (e) {
       console.warn(
-        chalk.yellow(
+        yellow(
           `Could not fetch decimals for ${tokenInfo.name}. Assuming 18 decimals.`
         )
       );
@@ -109,11 +107,11 @@ export const postDeploymentBalanceSummary = async ({
     );
   } catch (error) {
     console.error(
-      chalk.red(`Error fetching deployer balance for ${tokenInfo.name}:`),
+      red(`Error fetching deployer balance for ${tokenInfo.name}:`),
       error
     );
     if (error instanceof Error) {
-      console.error(chalk.red("Error message:"), error.message);
+      console.error(red("Error message:"), error.message);
     }
   }
 };
