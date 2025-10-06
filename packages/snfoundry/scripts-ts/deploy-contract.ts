@@ -167,8 +167,7 @@ const declareIfNot_NotWait = async (
   }
 
   try {
-    const declareOptions =
-      networkName === "devnet" ? { ...options, tip: 1000n } : { ...options };
+    const declareOptions = { ...options, tip: 10000n };
     const { transaction_hash } = await deployer.declare(
       payload,
       declareOptions
