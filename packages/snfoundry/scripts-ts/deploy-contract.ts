@@ -136,6 +136,25 @@ let deployCalls = [];
 
 const { provider, deployer, feeToken }: Network = networks[networkName];
 
+/**
+ * Calculate estimated tip for declaration transaction with fee escalation
+ */
+const estimateTransactionTip = async (
+  payload: DeclareContractPayload,
+  classHash: string
+): Promise<bigint> => {
+  const { overall_fee } = await deployer.estimateDeclareFee({
+    contract: payload.contract,
+    compiledClassHash: classHash,
+  });
+
+  const feeBuffer = (overall_fee * 120n) / 100n; // 20% buffer
+  const minimumTip = 100000000000000000n; // 0.1 STRK
+  const finalTip = feeBuffer > minimumTip ? feeBuffer : minimumTip;
+
+  return finalTip;
+};
+
 const declareIfNot_NotWait = async (
   payload: DeclareContractPayload,
   options?: UniversalDetails
@@ -167,7 +186,13 @@ const declareIfNot_NotWait = async (
   }
 
   try {
-    const declareOptions = { ...options, tip: 10000n };
+    const estimatedTip = await estimateTransactionTip(payload, classHash);
+
+    const declareOptions = {
+      ...options,
+      estimated_tip: estimatedTip,
+    };
+
     const { transaction_hash } = await deployer.declare(
       payload,
       declareOptions
