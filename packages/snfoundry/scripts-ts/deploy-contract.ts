@@ -148,9 +148,8 @@ const estimateTransactionTip = async (
     compiledClassHash: classHash,
   });
 
-  const feeBuffer = (overall_fee * 120n) / 100n; // 20% buffer
-  const minimumTip = 100000000000000000n; // 0.1 STRK
-  const finalTip = feeBuffer > minimumTip ? feeBuffer : minimumTip;
+  const minimumTip = 500000000000000000n; // 0.1 STRK
+  const finalTip = overall_fee > minimumTip ? overall_fee : minimumTip;
 
   return finalTip;
 };
@@ -171,7 +170,7 @@ const estimateRetryInterval = (payload: DeclareContractPayload): number => {
   const contractSize = getContractSize(payload);
 
   const baseInterval = 5000;
-  const sizeMultiplier = Math.ceil(contractSize / 100000); // 1 second per 100KB
+  const sizeMultiplier = Math.ceil(contractSize / 100000) * 1.5; // 1.5 seconds per 100KB
 
   return Math.min(baseInterval + sizeMultiplier * 1000, 30000);
 };
@@ -209,6 +208,10 @@ const declareIfNot_NotWait = async (
   try {
     const estimatedTip = await estimateTransactionTip(payload, classHash);
     const retryInterval = estimateRetryInterval(payload);
+    console.log(yellow(`Estimated tip: ${estimatedTip.toString()}`));
+    console.log(
+      yellow(`Estimated retry interval: ${retryInterval.toString()}`)
+    );
 
     const declareOptions = {
       ...options,
@@ -245,6 +248,7 @@ const declareIfNot_NotWait = async (
         );
       }
       console.log(green("Declaration successful"));
+      console.log(yellow("Declaration fee:"), receiptAny.actual_fee);
     }
 
     return {
