@@ -155,6 +155,27 @@ const estimateTransactionTip = async (
   return finalTip;
 };
 
+/**
+ * Get contract size for logging purposes
+ */
+const getContractSize = (payload: DeclareContractPayload): number => {
+  return typeof payload.contract === "string"
+    ? payload.contract.length
+    : JSON.stringify(payload.contract).length;
+};
+
+/**
+ * Calculate retry interval based on contract size
+ */
+const estimateRetryInterval = (payload: DeclareContractPayload): number => {
+  const contractSize = getContractSize(payload);
+
+  const baseInterval = 5000;
+  const sizeMultiplier = Math.ceil(contractSize / 100000); // 1 second per 100KB
+
+  return Math.min(baseInterval + sizeMultiplier * 1000, 30000);
+};
+
 const declareIfNot_NotWait = async (
   payload: DeclareContractPayload,
   options?: UniversalDetails
@@ -187,6 +208,7 @@ const declareIfNot_NotWait = async (
 
   try {
     const estimatedTip = await estimateTransactionTip(payload, classHash);
+    const retryInterval = estimateRetryInterval(payload);
 
     const declareOptions = {
       ...options,
@@ -202,7 +224,9 @@ const declareIfNot_NotWait = async (
       console.log(
         yellow("Waiting for declaration transaction to be accepted...")
       );
-      const receipt = await provider.waitForTransaction(transaction_hash);
+      const receipt = await provider.waitForTransaction(transaction_hash, {
+        retryInterval,
+      });
 
       const receiptAny = receipt as any;
       if (receiptAny.execution_status !== "SUCCEEDED") {
