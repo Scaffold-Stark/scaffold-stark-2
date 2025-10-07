@@ -5,29 +5,19 @@ import { useState, useEffect } from "react";
 
 interface BlockieAvatarProps {
   address: string;
-  ensImage?: string | null;
   size: number;
 }
 
 // Custom Avatar for RainbowKit
-export const BlockieAvatar = ({
-  address,
-  ensImage,
-  size,
-}: BlockieAvatarProps) => {
+export const BlockieAvatar = ({ address, size }: BlockieAvatarProps) => {
   const [avatarSrc, setAvatarSrc] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (ensImage) {
-      setAvatarSrc(ensImage);
-      setIsLoading(false);
-    } else {
-      const avatarUrl = blo(address as `0x${string}`);
-      setAvatarSrc(avatarUrl);
-      setIsLoading(false);
-    }
-  }, [address, ensImage]);
+    const avatarUrl = blo(address as `0x${string}`);
+    setAvatarSrc(avatarUrl);
+    setIsLoading(false);
+  }, [address]);
 
   if (isLoading) {
     return (

@@ -135,7 +135,6 @@ export const Address = ({
           <BlockieAvatar
             address={checkSumAddress}
             size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
-            ensImage={ensAvatar}
           />
         )}
       </div>

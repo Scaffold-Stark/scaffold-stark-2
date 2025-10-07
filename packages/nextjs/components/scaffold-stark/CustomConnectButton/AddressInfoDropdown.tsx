@@ -12,7 +12,7 @@ import {
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import { useLocalStorage } from "usehooks-ts";
-import { BlockieAvatar, isENS } from "~~/components/scaffold-stark";
+import { BlockieAvatar, isStarknetName } from "~~/components/scaffold-stark";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { BurnerConnector, burnerAccounts } from "@scaffold-stark/stark-burner";
 import { getTargetNetworks, notification } from "~~/utils/scaffold-stark";
@@ -29,12 +29,10 @@ type AddressInfoDropdownProps = {
   address: Address;
   blockExplorerAddressLink: string | undefined;
   displayName: string;
-  ensAvatar?: string;
 };
 
 export const AddressInfoDropdown = ({
   address,
-  ensAvatar,
   displayName,
   blockExplorerAddressLink,
 }: AddressInfoDropdownProps) => {
@@ -111,11 +109,11 @@ export const AddressInfoDropdown = ({
                 height={30}
               />
             ) : (
-              <BlockieAvatar address={address} size={28} ensImage={ensAvatar} />
+              <BlockieAvatar address={address} size={28} />
             )}
           </div>
           <span className="ml-2 mr-2 text-sm">
-            {isENS(displayName)
+            {isStarknetName(displayName)
               ? displayName
               : profile?.name ||
                 address?.slice(0, 6) + "..." + address?.slice(-4)}
