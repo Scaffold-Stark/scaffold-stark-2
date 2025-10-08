@@ -4,11 +4,7 @@ import { useInterval } from "usehooks-ts";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import scaffoldConfig from "~~/scaffold.config";
 import { replacer } from "~~/utils/scaffold-stark/common";
-import {
-  Abi,
-  ExtractAbiEvent,
-  ExtractAbiEventNames,
-} from "abi-wan-kanabi/dist/kanabi";
+import { Abi, ExtractAbiEventNames } from "abi-wan-kanabi/dist/kanabi";
 import {
   ContractAbi,
   ContractName,
@@ -17,7 +13,6 @@ import {
 import { devnet } from "@starknet-react/chains";
 import { useProvider } from "@starknet-react/core";
 import { RpcProvider } from "starknet";
-import { events as starknetEvents, CallData, createAbiParser } from "starknet";
 import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
 import { buildEventKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
 import {

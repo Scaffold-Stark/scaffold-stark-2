@@ -5,7 +5,11 @@ import { Abi, ExtractAbiEventNames } from "abi-wan-kanabi/dist/kanabi";
 import { RpcProvider, WebSocketChannel } from "starknet";
 import { buildEventKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
 import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
-import { ContractAbi, ContractName } from "~~/utils/scaffold-stark/contract";
+import {
+  ContractAbi,
+  ContractName,
+  UseScaffoldWebSocketEventsConfig,
+} from "~~/utils/scaffold-stark/contract";
 import { getSharedWebSocketChannel } from "~~/services/web3/websocket";
 import {
   enrichLog,
@@ -18,16 +22,7 @@ type OnEvent<T> = (event: T) => void;
 export type WebSocketEventsConfig<
   TContractName extends ContractName,
   TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
-> = {
-  contractName: TContractName;
-  eventName: TEventName;
-  fromBlock?: bigint;
-  filters?: Record<string, unknown>;
-  // If true, also enrich each event with optional block/tx/receipt via HTTP provider
-  enrich?: boolean;
-  enabled?: boolean;
-  onEvent?: OnEvent<any>;
-};
+> = UseScaffoldWebSocketEventsConfig<TContractName, TEventName>;
 
 export const useWebSocketEvents = <
   TContractName extends ContractName,
