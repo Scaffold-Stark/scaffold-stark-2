@@ -1,24 +1,14 @@
-import { renderHook, act, waitFor } from "@testing-library/react";
+import { renderHook, waitFor } from "@testing-library/react";
 import { useScaffoldWatchContractEvent } from "../useScaffoldWatchContractEvent";
 import { useDeployedContractInfo } from "../useDeployedContractInfo";
 import { useTargetNetwork } from "../useTargetNetwork";
 import { useProvider } from "@starknet-react/core";
-import { RpcProvider } from "starknet";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { events as starknetEvents } from "starknet";
-import * as eventsData from "~~/utils/scaffold-stark/eventsData";
-import * as starknet from "starknet";
 
 vi.mock("starknet", async () => {
   const actual: typeof import("starknet") = await vi.importActual("starknet");
   return {
     ...actual,
-    events: {
-      ...actual.events,
-      parseEvents: vi.fn(),
-      getAbiEvents: vi.fn(),
-    },
-    createAbiParser: vi.fn(() => ({})),
   };
 });
 
@@ -30,6 +20,9 @@ vi.mock("../useTargetNetwork", () => ({
 }));
 vi.mock("@starknet-react/core", () => ({
   useProvider: vi.fn(),
+}));
+vi.mock("../useScaffoldWebSocketEvents", () => ({
+  useScaffoldWebSocketEvents: vi.fn(),
 }));
 
 describe("useScaffoldWatchContractEvent", () => {
@@ -58,7 +51,7 @@ describe("useScaffoldWatchContractEvent", () => {
   const fakeTx = { transaction_hash: "0xtx" };
   const fakeReceipt = { transaction_hash: "0xtx" };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     // @ts-ignore
     (useDeployedContractInfo as vi.Mock).mockReturnValue({
       data: mockDeployedContractData,
@@ -73,33 +66,14 @@ describe("useScaffoldWatchContractEvent", () => {
       provider: {},
     });
 
-    RpcProvider.prototype.getBlockLatestAccepted = vi.fn().mockResolvedValue({
-      block_number: 10,
-    });
-    RpcProvider.prototype.getEvents = vi.fn().mockResolvedValue({
-      events: [mockLog],
-    });
-
-    RpcProvider.prototype.getBlockWithTxHashes = vi
-      .fn()
-      .mockResolvedValue(fakeBlock);
-    RpcProvider.prototype.getTransactionByHash = vi
-      .fn()
-      .mockResolvedValue(fakeTx);
-    RpcProvider.prototype.getTransactionReceipt = vi
-      .fn()
-      .mockResolvedValue(fakeReceipt);
-
-    const fullName = mockDeployedContractData.abi[0].name;
-    // spy on parseEvents & parseEventData
-    vi.spyOn(starknet.events, "parseEvents").mockReturnValue([
-      { [fullName]: { foo: "bar" } },
-    ]);
-    vi.spyOn(starknet.events, "getAbiEvents").mockReturnValue(
-      // @ts-ignore
-      (mockDeployedContractData.abi as any).filter((x) => x.type === "event"),
+    const { useScaffoldWebSocketEvents } = await import(
+      "../useScaffoldWebSocketEvents"
     );
-    vi.spyOn(eventsData, "parseEventData").mockReturnValue({ parsed: true });
+    (useScaffoldWebSocketEvents as unknown as any).mockImplementation(() => ({
+      isLoading: false,
+      error: null,
+      events: [],
+    }));
   });
 
   afterEach(() => {
@@ -107,7 +81,29 @@ describe("useScaffoldWatchContractEvent", () => {
     vi.useRealTimers();
   });
 
-  it("calls onLogs when events are fetched after mount", async () => {
+  it("calls onLogs when WS events arrive", async () => {
+    const { useScaffoldWebSocketEvents } = await import(
+      "../useScaffoldWebSocketEvents"
+    );
+    (useScaffoldWebSocketEvents as unknown as any).mockImplementationOnce(
+      ({ onEvent }: any) => {
+        const eventAbi = {
+          name: mockDeployedContractData.abi[0].name,
+          members: [{ name: "foo", type: "core::felt252", kind: "data" }],
+        } as any;
+        const payload = {
+          event: eventAbi,
+          log: mockLog,
+          block: fakeBlock,
+          transaction: fakeTx,
+          receipt: fakeReceipt,
+          args: { foo: "bar" },
+          parsedArgs: { parsed: true },
+        };
+        onEvent?.(payload);
+        return { isLoading: false, error: null, events: [payload] };
+      },
+    );
     const onLogs = vi.fn();
     const { result } = renderHook(() =>
       useScaffoldWatchContractEvent({
@@ -136,12 +132,14 @@ describe("useScaffoldWatchContractEvent", () => {
     expect(result.current.error).toBeUndefined();
   });
 
-  it("does not call onLogs if no events are returned", async () => {
-    // @ts-ignore
-    (RpcProvider.prototype.getEvents as vi.Mock).mockResolvedValueOnce({
-      events: [],
+  it("does not call onLogs if WS doesn't emit", async () => {
+    const { useScaffoldWebSocketEvents } = await import(
+      "../useScaffoldWebSocketEvents"
+    );
+    (useScaffoldWebSocketEvents as unknown as any).mockReturnValueOnce({
+      isLoading: false,
+      error: null,
     });
-
     const onLogs = vi.fn();
     renderHook(() =>
       useScaffoldWatchContractEvent({
@@ -150,10 +148,7 @@ describe("useScaffoldWatchContractEvent", () => {
         onLogs,
       }),
     );
-
-    await waitFor(() => {
-      expect(onLogs).not.toHaveBeenCalled();
-    });
+    await waitFor(() => expect(onLogs).not.toHaveBeenCalled());
   });
 
   it("throws error if the event is not found in the contract ABI", () => {
@@ -203,6 +198,14 @@ describe("useScaffoldWatchContractEvent", () => {
     (useDeployedContractInfo as vi.Mock).mockReturnValue({
       data: undefined,
       isLoading: false,
+    });
+    const { useScaffoldWebSocketEvents } = await import(
+      "../useScaffoldWebSocketEvents"
+    );
+    (useScaffoldWebSocketEvents as unknown as any).mockReturnValueOnce({
+      isLoading: false,
+      error: new Error("Contract not found"),
+      events: [],
     });
     const onLogs = vi.fn();
     const { result } = renderHook(() =>
