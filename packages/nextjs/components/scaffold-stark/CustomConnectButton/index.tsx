@@ -101,7 +101,6 @@ export const CustomConnectButton = () => {
       <AddressInfoDropdown
         address={accountAddress as Address}
         displayName=""
-        ensAvatar=""
         blockExplorerAddressLink={blockExplorerAddressLink}
       />
       <AddressQRCodeModal
