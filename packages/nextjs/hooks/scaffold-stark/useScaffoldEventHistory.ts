@@ -20,6 +20,7 @@ import { hash, RpcProvider } from "starknet";
 import { events as starknetEvents, CallData, createAbiParser } from "starknet";
 import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
 import { composeEventFilterKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
+import { useWebSocketEvents } from "./useWebSocketEvents";
 
 const MAX_KEYS_COUNT = 16;
 /**
@@ -226,9 +227,36 @@ export const useScaffoldEventHistory = <
     setError(undefined);
   }, [fromBlock, targetNetwork.id]);
 
+  // WebSocket stream for live updates; keep polling as fallback or for initial batch
+  const { events: wsEvents, error: wsError } = useWebSocketEvents({
+    contractName,
+    eventName: eventName as any,
+    filters,
+    enrich: true,
+    enabled: !!watch,
+    fromBlock: fromBlockUpdated,
+  });
+
+  useEffect(() => {
+    if (!wsError && wsEvents && wsEvents.length) {
+      // Prepend latest ws events to current list without duplicating
+      const existing = events || [];
+      const incoming = wsEvents.filter((we: any) =>
+        existing.every(
+          (e: any) =>
+            e.log.transaction_hash !== we.log.transaction_hash ||
+            e.log.event_index !== we.log.event_index,
+        ),
+      );
+      if (incoming.length) {
+        setEvents([...incoming, ...existing]);
+      }
+    }
+  }, [wsEvents]);
+
   useInterval(
     async () => {
-      if (!deployedContractLoading) {
+      if (!deployedContractLoading && (!!wsError || !watch)) {
         readEvents();
       }
     },

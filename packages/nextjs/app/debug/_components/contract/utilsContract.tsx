@@ -245,6 +245,17 @@ export const getArgsAsStringInputFromForm = (form: Record<string, any>) => {
       return num.toBigInt(value);
     }
 
+    // Handle empty or invalid u256 values - return 0 for empty strings
+    if (
+      (isCairoBigInt(key) ||
+        isCairoInt(key) ||
+        isCairoFelt(key) ||
+        isCairoU256(key)) &&
+      (value === "" || value === undefined || value === null)
+    ) {
+      return 0n;
+    }
+
     return value;
   };
 
