@@ -18,14 +18,7 @@ import {
   parseLogsArgs,
 } from "~~/utils/scaffold-stark/eventsUtils";
 
-type OnEvent<T> = (event: T) => void;
-
-export type WebSocketEventsConfig<
-  TContractName extends ContractName,
-  TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
-> = UseScaffoldWebSocketEventsConfig<TContractName, TEventName>;
-
-export const useWebSocketEvents = <
+export const useScaffoldWebSocketEvents = <
   TContractName extends ContractName,
   TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
 >({
@@ -36,7 +29,7 @@ export const useWebSocketEvents = <
   enrich,
   enabled = true,
   onEvent,
-}: WebSocketEventsConfig<TContractName, TEventName>) => {
+}: UseScaffoldWebSocketEventsConfig<TContractName, TEventName>) => {
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -74,7 +67,7 @@ export const useWebSocketEvents = <
       }
 
       console.log(
-        "🔌 [useWebSocketEvents] WebSocket channel connected successfully",
+        "🔌 [useScaffoldWebSocketEvents] WebSocket channel connected successfully",
       );
 
       const keys = buildEventKeys(
@@ -97,7 +90,7 @@ export const useWebSocketEvents = <
 
       sub.on(async (evt: any) => {
         console.log(
-          "📡 [useWebSocketEvents] New event received via WebSocket:",
+          "📡 [useScaffoldWebSocketEvents] New event received via WebSocket:",
           evt,
         );
         const base = { event: eventAbi, log: evt } as any;

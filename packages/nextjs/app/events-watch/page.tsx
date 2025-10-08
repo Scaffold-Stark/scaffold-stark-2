@@ -3,7 +3,10 @@
 import type { NextPage } from "next";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { Address } from "~~/components/scaffold-stark";
-import { normalizeToHexAddress, formatStrk } from "~~/utils/scaffold-stark/common";
+import {
+  normalizeToHexAddress,
+  formatStrk,
+} from "~~/utils/scaffold-stark/common";
 import { useScaffoldWatchContractEvent } from "~~/hooks/scaffold-stark/useScaffoldWatchContractEvent";
 
 type LiveEventItem = {

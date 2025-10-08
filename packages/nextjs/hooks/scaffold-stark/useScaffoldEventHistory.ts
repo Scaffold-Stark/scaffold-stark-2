@@ -21,7 +21,7 @@ import {
   parseLogsArgs,
   resolveEventAbi,
 } from "~~/utils/scaffold-stark/eventsUtils";
-import { useWebSocketEvents } from "./useWebSocketEvents";
+import { useScaffoldWebSocketEvents } from "./useScaffoldWebSocketEvents";
 
 const MAX_KEYS_COUNT = 16;
 /**
@@ -191,7 +191,7 @@ export const useScaffoldEventHistory = <
     events: wsEvents,
     error: wsError,
     isConnected: wsConnected,
-  } = useWebSocketEvents({
+  } = useScaffoldWebSocketEvents({
     contractName,
     eventName: eventName as any,
     filters,

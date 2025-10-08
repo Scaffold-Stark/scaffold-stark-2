@@ -7,7 +7,7 @@ import { ExtractAbiEventNames } from "abi-wan-kanabi/dist/kanabi";
 import { useEffect, useState } from "react";
 import { useProvider } from "@starknet-react/core";
 import { useTargetNetwork } from "./useTargetNetwork";
-import { useWebSocketEvents } from "./useWebSocketEvents";
+import { useScaffoldWebSocketEvents } from "./useScaffoldWebSocketEvents";
 import scaffoldConfig from "~~/scaffold.config";
 
 const MAX_EVENT_KEYS = 16;
@@ -44,7 +44,7 @@ export const useScaffoldWatchContractEvent = <
     events,
     isLoading: wsLoading,
     error: wsError,
-  } = useWebSocketEvents({
+  } = useScaffoldWebSocketEvents({
     contractName,
     eventName: eventName,
     enrich: true,
