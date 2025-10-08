@@ -40,6 +40,11 @@ export const menuLinks: HeaderMenuLink[] = [
     href: "/events-watch",
     icon: <BugAntIcon className="h-4 w-4" />,
   },
+  {
+    label: "WebSocket Test",
+    href: "/ws-test",
+    icon: <BugAntIcon className="h-4 w-4" />,
+  },
 ];
 
 export const HeaderMenuLinks = () => {
