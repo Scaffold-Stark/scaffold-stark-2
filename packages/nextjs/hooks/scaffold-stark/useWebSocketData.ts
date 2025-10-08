@@ -35,6 +35,7 @@ export const useWebSocketData = ({
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<any[]>([]);
   const subscriptionRef = useRef<any>(null);
+  const connectTimeoutRef = useRef<any>(null);
   const { targetNetwork } = useTargetNetwork();
 
   const start = useCallback(async () => {
@@ -66,9 +67,14 @@ export const useWebSocketData = ({
       const elapsed = Date.now() - startTs;
       const minConnecting = 150; // ms to avoid flicker
       const setConnected = () => setStatus("connected");
-      if (elapsed < minConnecting)
-        setTimeout(setConnected, minConnecting - elapsed);
-      else setConnected();
+      if (elapsed < minConnecting) {
+        connectTimeoutRef.current = setTimeout(
+          setConnected,
+          minConnecting - elapsed,
+        );
+      } else {
+        setConnected();
+      }
 
       sub.on((msg: any) => {
         setData((prev) => [msg, ...prev]);
@@ -91,6 +97,10 @@ export const useWebSocketData = ({
           s.unsubscribe();
         } catch {}
         subscriptionRef.current = null;
+      }
+      if (connectTimeoutRef.current) {
+        clearTimeout(connectTimeoutRef.current);
+        connectTimeoutRef.current = null;
       }
       setStatus("idle");
     };
