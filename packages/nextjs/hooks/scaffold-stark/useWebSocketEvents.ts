@@ -1,23 +1,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTargetNetwork } from "./useTargetNetwork";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
-import {
-  Abi,
-  ExtractAbiEvent,
-  ExtractAbiEventNames,
-} from "abi-wan-kanabi/dist/kanabi";
-import {
-  CallData,
-  createAbiParser,
-  events as starknetEvents,
-  hash,
-  RpcProvider,
-  WebSocketChannel,
-} from "starknet";
-import { composeEventFilterKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
+import { Abi, ExtractAbiEventNames } from "abi-wan-kanabi/dist/kanabi";
+import { RpcProvider, WebSocketChannel } from "starknet";
+import { buildEventKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
 import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
 import { ContractAbi, ContractName } from "~~/utils/scaffold-stark/contract";
 import { getSharedWebSocketChannel } from "~~/services/web3/websocket";
+import {
+  enrichLog,
+  resolveEventAbi,
+  parseLogsArgs,
+} from "~~/utils/scaffold-stark/eventsUtils";
 
 type OnEvent<T> = (event: T) => void;
 
@@ -61,16 +55,11 @@ export const useWebSocketEvents = <
   }, [targetNetwork.rpcUrls.public.http]);
 
   const eventAbi = useMemo(() => {
-    const matches = (deployedContractData?.abi as Abi)?.filter(
-      (part) =>
-        part.type === "event" &&
-        part.name.split("::").slice(-1)[0] === (eventName as string),
-    ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>[];
-    if (!matches?.length) return undefined;
-    if (matches.length > 1)
-      throw new Error(`Ambiguous event "${eventName as string}"`);
-    return matches[0];
-  }, [deployedContractData, deployedContractLoading]);
+    return resolveEventAbi<TContractName, TEventName>(
+      deployedContractData?.abi as Abi,
+      eventName as string,
+    );
+  }, [deployedContractData, deployedContractLoading, eventName]);
 
   const start = useCallback(async () => {
     if (!enabled || deployedContractLoading) {
@@ -92,14 +81,13 @@ export const useWebSocketEvents = <
         "🔌 [useWebSocketEvents] WebSocket channel connected successfully",
       );
 
-      const selector = hash.getSelectorFromName(eventName as string);
-      let keys: string[][] = [[selector]];
-      if (filters) {
-        keys = keys.concat(
-          composeEventFilterKeys(filters, eventAbi, deployedContractData.abi),
-        );
-      }
-      keys = keys.slice(0, 16);
+      const keys = buildEventKeys(
+        eventName as string,
+        filters as any,
+        eventAbi as any,
+        deployedContractData.abi as any,
+        16,
+      );
 
       const sub = await channel.subscribeEvents({
         // starknet.js expects contract_address
@@ -126,17 +114,15 @@ export const useWebSocketEvents = <
           return;
         }
         // Optionally enrich via HTTP for details
-        const [block, transaction, receipt] = await Promise.all([
-          evt.block_hash
-            ? httpClient.getBlockWithTxHashes(evt.block_hash)
-            : Promise.resolve(null),
-          evt.transaction_hash
-            ? httpClient.getTransactionByHash(evt.transaction_hash)
-            : Promise.resolve(null),
-          evt.transaction_hash
-            ? httpClient.getTransactionReceipt(evt.transaction_hash)
-            : Promise.resolve(null),
-        ]);
+        const { block, transaction, receipt } = await enrichLog(
+          httpClient,
+          evt,
+          {
+            block: true,
+            transaction: true,
+            receipt: true,
+          },
+        );
         const enriched = { ...base, block, transaction, receipt };
         setEvents((prev) => [enriched, ...prev]);
         onEvent?.(enriched);
@@ -181,15 +167,11 @@ export const useWebSocketEvents = <
   const parsedEvents = useMemo(() => {
     if (!deployedContractData || !eventAbi) return [];
     return events.map((e) => {
-      const logs = [JSON.parse(JSON.stringify(e.log))];
-      const parsed = starknetEvents.parseEvents(
-        logs,
-        starknetEvents.getAbiEvents(deployedContractData.abi),
-        CallData.getAbiStruct(deployedContractData.abi),
-        CallData.getAbiEnum(deployedContractData.abi),
-        createAbiParser(deployedContractData.abi),
+      const args = parseLogsArgs(
+        deployedContractData.abi as Abi,
+        eventAbi.name,
+        [e.log],
       );
-      const args = parsed.length ? parsed[0][eventAbi.name] : {};
       const { event: rawEvent, ...rest } = e;
       return {
         type: (rawEvent as any).members,

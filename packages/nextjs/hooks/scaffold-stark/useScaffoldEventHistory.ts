@@ -16,10 +16,16 @@ import {
 } from "~~/utils/scaffold-stark/contract";
 import { devnet } from "@starknet-react/chains";
 import { useProvider } from "@starknet-react/core";
-import { hash, RpcProvider } from "starknet";
+import { RpcProvider } from "starknet";
 import { events as starknetEvents, CallData, createAbiParser } from "starknet";
 import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
-import { composeEventFilterKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
+import { buildEventKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
+import {
+  enrichLog,
+  getLatestAcceptedBlockNumber,
+  parseLogsArgs,
+  resolveEventAbi,
+} from "~~/utils/scaffold-stark/eventsUtils";
 import { useWebSocketEvents } from "./useWebSocketEvents";
 
 const MAX_KEYS_COUNT = 16;
@@ -87,26 +93,15 @@ export const useScaffoldEventHistory = <
   }, [targetNetwork.rpcUrls.public.http]);
 
   // Get back event full name
-  const matchingAbiEvents = useMemo(() => {
-    return (deployedContractData?.abi as Abi)?.filter(
-      (part) =>
-        part.type === "event" &&
-        part.name.split("::").slice(-1)[0] === (eventName as string),
-    ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>[];
+  const eventAbi = useMemo(() => {
+    return resolveEventAbi<TContractName, TEventName>(
+      deployedContractData?.abi as Abi,
+      eventName as string,
+    );
   }, [deployedContractData, deployedContractLoading, eventName]);
-  // const matchingAbiEvents =
-
-  if (matchingAbiEvents?.length === 0) {
+  if (!eventAbi) {
     throw new Error(`Event ${eventName as string} not found in contract ABI`);
   }
-
-  if (matchingAbiEvents?.length > 1) {
-    throw new Error(
-      `Ambiguous event "${eventName as string}". ABI contains ${matchingAbiEvents.length} events with that name`,
-    );
-  }
-
-  const eventAbi = matchingAbiEvents?.[0];
   const fullName = eventAbi?.name;
 
   const readEvents = async (fromBlock?: bigint) => {
@@ -132,24 +127,19 @@ export const useScaffoldEventHistory = <
         throw new Error(`Event ${String(eventName)} not found in ABI`);
       }
 
-      const latestAccepted = await publicClient.getBlockLatestAccepted();
-      const blockNumber = BigInt(latestAccepted.block_number);
+      const blockNumber = await getLatestAcceptedBlockNumber(publicClient);
 
       if (
         (fromBlock && blockNumber >= fromBlock) ||
         blockNumber >= fromBlockUpdated
       ) {
-        let keys: string[][] = [[hash.getSelectorFromName(eventName)]];
-        if (filters) {
-          keys = keys.concat(
-            composeEventFilterKeys(
-              filters,
-              eventAbi as any,
-              deployedContractData.abi,
-            ),
-          );
-        }
-        keys = keys.slice(0, MAX_KEYS_COUNT);
+        const keys = buildEventKeys(
+          eventName as string,
+          filters as any,
+          eventAbi as any,
+          deployedContractData.abi as any,
+          MAX_KEYS_COUNT,
+        );
         const rawEventResp = await publicClient.getEvents({
           chunk_size: 100,
           keys,
@@ -167,17 +157,15 @@ export const useScaffoldEventHistory = <
         const newestFirst = [...logs].reverse();
         const enriched = await Promise.all(
           newestFirst.map(async (log) => {
-            const [block, transaction, receipt] = await Promise.all([
-              blockData && log.block_hash !== null
-                ? publicClient.getBlockWithTxHashes(log.block_hash)
-                : Promise.resolve(null),
-              transactionData && log.transaction_hash !== null
-                ? publicClient.getTransactionByHash(log.transaction_hash)
-                : Promise.resolve(null),
-              receiptData && log.transaction_hash !== null
-                ? publicClient.getTransactionReceipt(log.transaction_hash)
-                : Promise.resolve(null),
-            ]);
+            const { block, transaction, receipt } = await enrichLog(
+              publicClient,
+              log,
+              {
+                block: !!blockData,
+                transaction: !!transactionData,
+                receipt: !!receiptData,
+              },
+            );
             return { event: eventAbi, log, block, transaction, receipt };
           }),
         );
@@ -278,15 +266,11 @@ export const useScaffoldEventHistory = <
   const eventHistoryData = useMemo(() => {
     if (deployedContractData) {
       return (events || []).map((event) => {
-        const logs = [JSON.parse(JSON.stringify(event.log))];
-        const parsed = starknetEvents.parseEvents(
-          logs,
-          starknetEvents.getAbiEvents(deployedContractData.abi),
-          CallData.getAbiStruct(deployedContractData.abi),
-          CallData.getAbiEnum(deployedContractData.abi),
-          createAbiParser(deployedContractData.abi),
+        const args = parseLogsArgs(
+          deployedContractData.abi as Abi,
+          fullName as string,
+          [event.log],
         );
-        const args = parsed.length ? parsed[0][fullName] : {};
         const { event: rawEvent, ...rest } = event;
         // Some sources (e.g., WebSocket) may not include the raw event ABI on each item.
         // Fallback to the resolved eventAbi from this hook when it's missing.
