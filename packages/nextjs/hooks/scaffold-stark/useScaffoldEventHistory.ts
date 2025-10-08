@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTargetNetwork } from "./useTargetNetwork";
 import { useInterval } from "usehooks-ts";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
@@ -71,8 +71,9 @@ export const useScaffoldEventHistory = <
 >) => {
   const [events, setEvents] = useState<any[]>();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<Error>();
   const [fromBlockUpdated, setFromBlockUpdated] = useState<bigint>(fromBlock);
+  const isFetchingRef = useRef(false);
 
   const { data: deployedContractData, isLoading: deployedContractLoading } =
     useDeployedContractInfo(contractName);
@@ -92,7 +93,7 @@ export const useScaffoldEventHistory = <
         part.type === "event" &&
         part.name.split("::").slice(-1)[0] === (eventName as string),
     ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>[];
-  }, [deployedContractData, deployedContractLoading]);
+  }, [deployedContractData, deployedContractLoading, eventName]);
   // const matchingAbiEvents =
 
   if (matchingAbiEvents?.length === 0) {
@@ -114,6 +115,10 @@ export const useScaffoldEventHistory = <
       return;
     }
 
+    if (isFetchingRef.current) {
+      return;
+    }
+    isFetchingRef.current = true;
     setIsLoading(true);
     try {
       if (deployedContractLoading) {
@@ -123,15 +128,12 @@ export const useScaffoldEventHistory = <
       if (!deployedContractData) {
         throw new Error("Contract not found");
       }
+      if (!eventAbi) {
+        throw new Error(`Event ${String(eventName)} not found in ABI`);
+      }
 
-      const event = (deployedContractData.abi as Abi).find(
-        (part) =>
-          part.type === "event" &&
-          part.name.split("::").slice(-1)[0] === eventName,
-      ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
-
-      const blockNumber = (await publicClient.getBlockLatestAccepted())
-        .block_number;
+      const latestAccepted = await publicClient.getBlockLatestAccepted();
+      const blockNumber = BigInt(latestAccepted.block_number);
 
       if (
         (fromBlock && blockNumber >= fromBlock) ||
@@ -140,7 +142,11 @@ export const useScaffoldEventHistory = <
         let keys: string[][] = [[hash.getSelectorFromName(eventName)]];
         if (filters) {
           keys = keys.concat(
-            composeEventFilterKeys(filters, event, deployedContractData.abi),
+            composeEventFilterKeys(
+              filters,
+              eventAbi as any,
+              deployedContractData.abi,
+            ),
           );
         }
         keys = keys.slice(0, MAX_KEYS_COUNT);
@@ -149,49 +155,45 @@ export const useScaffoldEventHistory = <
           keys,
           address: deployedContractData?.address,
           from_block: { block_number: Number(fromBlock || fromBlockUpdated) },
-          to_block: { block_number: blockNumber },
+          to_block: { block_number: Number(blockNumber) },
         });
         if (!rawEventResp) {
           return;
         }
         const logs = rawEventResp.events;
-        setFromBlockUpdated(BigInt(blockNumber + 1));
+        setFromBlockUpdated(blockNumber + 1n);
 
-        const newEvents = [];
-        for (let i = logs.length - 1; i >= 0; i--) {
-          newEvents.push({
-            event,
-            log: logs[i],
-            block:
-              blockData && logs[i].block_hash === null
-                ? null
-                : await publicClient.getBlockWithTxHashes(logs[i].block_hash),
-            transaction:
-              transactionData && logs[i].transaction_hash !== null
-                ? await publicClient.getTransactionByHash(
-                    logs[i].transaction_hash,
-                  )
-                : null,
-            receipt:
-              receiptData && logs[i].transaction_hash !== null
-                ? await publicClient.getTransactionReceipt(
-                    logs[i].transaction_hash,
-                  )
-                : null,
-          });
-        }
+        // Build newest-first array and enrich concurrently
+        const newestFirst = [...logs].reverse();
+        const enriched = await Promise.all(
+          newestFirst.map(async (log) => {
+            const [block, transaction, receipt] = await Promise.all([
+              blockData && log.block_hash !== null
+                ? publicClient.getBlockWithTxHashes(log.block_hash)
+                : Promise.resolve(null),
+              transactionData && log.transaction_hash !== null
+                ? publicClient.getTransactionByHash(log.transaction_hash)
+                : Promise.resolve(null),
+              receiptData && log.transaction_hash !== null
+                ? publicClient.getTransactionReceipt(log.transaction_hash)
+                : Promise.resolve(null),
+            ]);
+            return { event: eventAbi, log, block, transaction, receipt };
+          }),
+        );
         if (events && typeof fromBlock === "undefined") {
-          setEvents([...newEvents, ...events]);
+          setEvents([...enriched, ...events]);
         } else {
-          setEvents(newEvents);
+          setEvents(enriched);
         }
         setError(undefined);
       }
     } catch (e: any) {
       console.error(e);
       setEvents(undefined);
-      setError(e);
+      setError(e instanceof Error ? e : new Error(String(e)));
     } finally {
+      isFetchingRef.current = false;
       setIsLoading(false);
     }
   };
@@ -201,8 +203,22 @@ export const useScaffoldEventHistory = <
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromBlock, enabled]);
 
+  // WebSocket stream for live updates; keep polling as fallback or for initial batch
+  const {
+    events: wsEvents,
+    error: wsError,
+    isConnected: wsConnected,
+  } = useWebSocketEvents({
+    contractName,
+    eventName: eventName as any,
+    filters,
+    enrich: true,
+    enabled: !!watch,
+    fromBlock: fromBlockUpdated,
+  });
+
   useEffect(() => {
-    if (!deployedContractLoading) {
+    if (!deployedContractLoading && (!watch || !wsConnected)) {
       readEvents().then();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -218,6 +234,8 @@ export const useScaffoldEventHistory = <
     blockData,
     transactionData,
     receiptData,
+    wsConnected,
+    watch,
   ]);
 
   useEffect(() => {
@@ -226,16 +244,6 @@ export const useScaffoldEventHistory = <
     setFromBlockUpdated(fromBlock);
     setError(undefined);
   }, [fromBlock, targetNetwork.id]);
-
-  // WebSocket stream for live updates; keep polling as fallback or for initial batch
-  const { events: wsEvents, error: wsError } = useWebSocketEvents({
-    contractName,
-    eventName: eventName as any,
-    filters,
-    enrich: true,
-    enabled: !!watch,
-    fromBlock: fromBlockUpdated,
-  });
 
   useEffect(() => {
     if (!wsError && wsEvents && wsEvents.length) {
@@ -256,7 +264,7 @@ export const useScaffoldEventHistory = <
 
   useInterval(
     async () => {
-      if (!deployedContractLoading && (!!wsError || !watch)) {
+      if (!deployedContractLoading && (!!wsError || !watch || !wsConnected)) {
         readEvents();
       }
     },
