@@ -94,7 +94,7 @@ export const useScaffoldEventHistory = <
       eventName as string,
     );
   }, [deployedContractData, deployedContractLoading, eventName]);
-  if (!eventAbi) {
+  if (!eventAbi && !deployedContractLoading) {
     throw new Error(`Event ${eventName as string} not found in contract ABI`);
   }
   const fullName = eventAbi?.name;
