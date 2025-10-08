@@ -2,78 +2,12 @@
 
 import type { NextPage } from "next";
 import { Address } from "~~/components/scaffold-stark";
+import { normalizeToHexAddress, formatStrk } from "~~/utils/scaffold-stark/common";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
 
-// Helper function to format address from event data
-const formatEventAddress = (address: any): `0x${string}` => {
-  if (!address) return "0x0";
-
-  // If it's already a string, return as is
-  if (typeof address === "string") {
-    return address as `0x${string}`;
-  }
-
-  // If it's a BigInt or number, convert to hex string
-  if (typeof address === "bigint" || typeof address === "number") {
-    const hex = address.toString(16);
-    // Ensure it's properly padded and has 0x prefix
-    return `0x${hex.padStart(64, "0")}` as `0x${string}`;
-  }
-
-  return "0x0";
-};
-
-// Helper function to format STRK value from event data
-const formatStrkValue = (value: any): string => {
-  if (value === null || value === undefined) return "0 STRK";
-
-  try {
-    // Handle CairoOption type
-    if (
-      value &&
-      typeof value === "object" &&
-      "Some" in value &&
-      "None" in value
-    ) {
-      // It's a CairoOption
-      if (value.Some !== undefined) {
-        // Some value exists
-        const numValue = BigInt(value.Some);
-        const strkValue = Number(numValue) / 1e18;
-        return `${strkValue.toFixed(4)} STRK`;
-      } else {
-        // None value
-        return "0 STRK";
-      }
-    }
-
-    // Handle direct BigInt values
-    if (typeof value === "bigint") {
-      const strkValue = Number(value) / 1e18;
-      return `${strkValue.toFixed(4)} STRK`;
-    }
-
-    // Handle string values
-    if (typeof value === "string") {
-      if (value.trim() === "" || value === "0") return "0 STRK";
-      const numValue = BigInt(value);
-      const strkValue = Number(numValue) / 1e18;
-      return `${strkValue.toFixed(4)} STRK`;
-    }
-
-    // Handle number values
-    if (typeof value === "number") {
-      if (value === 0) return "0 STRK";
-      const strkValue = value / 1e18;
-      return `${strkValue.toFixed(4)} STRK`;
-    }
-
-    return "0 STRK";
-  } catch (error) {
-    console.error("Error formatting STRK value:", error, value);
-    return "0 STRK";
-  }
-};
+const formatEventAddress = (address: any): `0x${string}` =>
+  normalizeToHexAddress(address);
+const formatStrkValue = (value: any): string => formatStrk(value);
 
 const Events: NextPage = () => {
   const {
@@ -187,11 +121,10 @@ const Events: NextPage = () => {
                           </td>
                           <td className="py-4 px-4">
                             <span
-                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                event.args?.premium
-                                  ? "bg-green-100 text-green-800"
-                                  : "bg-gray-100 text-gray-800"
-                              }`}
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${event.args?.premium
+                                ? "bg-green-100 text-green-800"
+                                : "bg-gray-100 text-gray-800"
+                                }`}
                             >
                               {event.args?.premium ? "Premium" : "Free"}
                             </span>
