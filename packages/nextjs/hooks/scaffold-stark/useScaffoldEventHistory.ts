@@ -280,10 +280,13 @@ export const useScaffoldEventHistory = <
         );
         const args = parsed.length ? parsed[0][fullName] : {};
         const { event: rawEvent, ...rest } = event;
+        // Some sources (e.g., WebSocket) may not include the raw event ABI on each item.
+        // Fallback to the resolved eventAbi from this hook when it's missing.
+        const members = (rawEvent?.members ?? (eventAbi as any)?.members) || [];
         return {
-          type: rawEvent.members,
+          type: members,
           args,
-          parsedArgs: format ? parseEventData(args, rawEvent.members) : null,
+          parsedArgs: format ? parseEventData(args, members) : null,
           ...rest,
         };
       });
