@@ -3,6 +3,7 @@ import { useTargetNetwork } from "./useTargetNetwork";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { Abi, ExtractAbiEventNames } from "abi-wan-kanabi/dist/kanabi";
 import { RpcProvider, WebSocketChannel } from "starknet";
+import type { SubscribeEventsParams } from "starknet";
 import { buildEventKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
 import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
 import {
@@ -84,16 +85,13 @@ export const useWebSocketEvents = <
         16,
       );
 
-      const sub = await channel.subscribeEvents({
-        // starknet.js expects contract_address
-        contract_address: deployedContractData.address,
+      const params: SubscribeEventsParams = {
+        fromAddress: deployedContractData.address,
         keys,
-        // If fromBlock is defined, begin there; otherwise provider default (latest)
-        from_block:
-          typeof fromBlock !== "undefined"
-            ? { block_number: Number(fromBlock) }
-            : undefined,
-      } as any);
+        blockIdentifier:
+          typeof fromBlock !== "undefined" ? Number(fromBlock) : undefined,
+      };
+      const sub = await channel.subscribeEvents(params);
       subscriptionRef.current = sub;
       setIsConnected(true);
 
