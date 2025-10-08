@@ -40,14 +40,22 @@ export const useScaffoldWatchContractEvent = <
   const { provider } = useProvider();
   const { targetNetwork } = useTargetNetwork();
 
-  const { isLoading: wsLoading, error: wsError } = useWebSocketEvents({
+  const {
+    events,
+    isLoading: wsLoading,
+    error: wsError,
+  } = useWebSocketEvents({
     contractName,
-    // use full event name compatibility; underlying hook resolves full name
-    eventName: eventName as any,
+    eventName: eventName,
     enrich: true,
     enabled: true,
-    onEvent: (e) => onLogs(e),
   });
+
+  useEffect(() => {
+    if (events.length > 0) {
+      onLogs(events[0]);
+    }
+  }, [events, onLogs]);
 
   useEffect(() => {
     setIsLoading(wsLoading);
