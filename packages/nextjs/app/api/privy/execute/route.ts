@@ -49,8 +49,8 @@ export const POST = withAuth(async (req: WithAuthRequest) => {
     });
 
     const normalizeOne = (c: any) => {
-      if (!c || !c.contractAddress || !c.entrypoint)
-        throw new Error("call must include contractAddress and entrypoint");
+      if (!c || !c.contract_address || !c.entry_point)
+        throw new Error("call must include contract_address and entry_point");
       let calldata: any = c.calldata ?? [];
       if (
         calldata &&
@@ -60,8 +60,8 @@ export const POST = withAuth(async (req: WithAuthRequest) => {
         calldata = CallData.compile(calldata);
       }
       return {
-        contractAddress: c.contractAddress,
-        entrypoint: c.entrypoint,
+        contractAddress: c.contract_address,
+        entrypoint: c.entry_point,
         calldata: calldata || [],
       };
     };
