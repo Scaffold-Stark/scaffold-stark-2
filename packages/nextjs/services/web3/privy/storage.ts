@@ -88,7 +88,11 @@ export const clearAll = (): boolean => {
 };
 
 export const getToken = (): string | null => {
-  return getItem(STORAGE_KEYS.token);
+  const token = getItem(STORAGE_KEYS.token);
+  if (token && typeof token === "string") {
+    return token.replace(/^"|"$/g, "");
+  }
+  return token;
 };
 
 export const isAuthenticated = (): boolean => {

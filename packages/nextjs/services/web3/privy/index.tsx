@@ -6,6 +6,7 @@ import {
   InjectedConnectorOptions,
   UserRejectedRequestError,
 } from "@starknet-react/core";
+import { WalletAccount } from "starknet";
 import type { RpcMessage } from "get-starknet-core";
 import scaffoldConfig from "~~/scaffold.config";
 import {
@@ -38,6 +39,8 @@ export class PrivyConnector extends InjectedConnector {
   private __options: InjectedConnectorOptions;
   private currentAddress?: string;
   private currentWalletId?: string;
+  private _connected: boolean = false;
+  private _account?: WalletAccount;
 
   constructor() {
     const options: InjectedConnectorOptions = {
@@ -50,6 +53,11 @@ export class PrivyConnector extends InjectedConnector {
     const walletData = getWallet();
     this.currentWalletId = walletData.walletId || undefined;
     this.currentAddress = walletData.walletAddress || undefined;
+    this._connected = !!(
+      this.currentWalletId &&
+      this.currentAddress &&
+      isAuthenticated()
+    );
   }
 
   get id() {
@@ -70,7 +78,36 @@ export class PrivyConnector extends InjectedConnector {
   }
 
   async ready(): Promise<boolean> {
-    return !!this.currentAddress;
+    return this._connected && !!this.currentAddress;
+  }
+
+  async account(
+    provider?: any,
+    paymasterProvider?: any,
+  ): Promise<WalletAccount> {
+    if (!this._connected || !this.currentAddress) {
+      throw new ConnectorNotConnectedError();
+    }
+
+    if (!this._account) {
+      // For Privy, we need to create a custom account implementation
+      // Since we don't have a traditional wallet object, we'll create a minimal implementation
+      this._account = {
+        address: this.currentAddress,
+        chainId: await this.chainId(),
+        // Implement the required methods for WalletAccount
+        execute: async (calls: any) => {
+          const response = await this.request({
+            type: "wallet_addInvokeTransaction",
+            params: { calls, wait: false },
+          });
+          return response;
+        },
+        // Add other required methods as needed
+      } as any;
+    }
+
+    return this._account!;
   }
 
   async chainId(): Promise<bigint> {
@@ -120,6 +157,7 @@ export class PrivyConnector extends InjectedConnector {
     if (!account) throw new ConnectorNotFoundError();
 
     const chainId = await this.chainId();
+    this._connected = true;
     this.emit("connect", { account, chainId });
 
     this.persist();
@@ -129,6 +167,8 @@ export class PrivyConnector extends InjectedConnector {
   async disconnect(): Promise<void> {
     this.currentAddress = undefined;
     this.currentWalletId = undefined;
+    this._connected = false;
+    this._account = undefined;
     this.persist();
     this.emit("disconnect");
   }
@@ -137,7 +177,8 @@ export class PrivyConnector extends InjectedConnector {
     type: T;
     params?: any;
   }): Promise<any> {
-    if (!this.currentWalletId) throw new ConnectorNotConnectedError();
+    if (!this._connected || !this.currentWalletId)
+      throw new ConnectorNotConnectedError();
 
     switch (call.type) {
       case "wallet_requestAccounts": {
