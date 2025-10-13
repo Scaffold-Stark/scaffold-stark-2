@@ -103,6 +103,10 @@ export class PrivyConnector extends InjectedConnector {
           });
           return response;
         },
+        // Add getChainId method that useTransactor expects
+        getChainId: async () => {
+          return await this.chainId();
+        },
         // Add other required methods as needed
       } as any;
     }
