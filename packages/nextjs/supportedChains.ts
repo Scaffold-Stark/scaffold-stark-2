@@ -24,8 +24,8 @@ const mainnetFork = {
     },
   },
   paymasterRpcUrls: {
-    default: {
-      http: [],
+    avnu: {
+      http: [rpcUrlDevnet],
     },
   },
 } as chains.Chain;
