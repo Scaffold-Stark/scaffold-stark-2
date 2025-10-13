@@ -8,20 +8,16 @@ import {
 } from "@starknet-react/core";
 import type { RpcMessage } from "get-starknet-core";
 import scaffoldConfig from "~~/scaffold.config";
-
-const PRIVY_WALLET_STORAGE_KEY = "privy_wallet";
-const PRIVY_TOKEN_STORAGE_KEY = "privy_auth_token";
-
-type StoredPrivyWallet = {
-  walletId: string;
-  address?: string;
-};
+import {
+  getWallet,
+  storeWallet,
+  removeWallet,
+  isAuthenticated,
+  getToken,
+} from "./storage";
 
 async function api<T>(path: string, init?: RequestInit): Promise<T> {
-  const token =
-    typeof window !== "undefined"
-      ? window.localStorage.getItem(PRIVY_TOKEN_STORAGE_KEY) || undefined
-      : undefined;
+  const token = getToken();
   const headers: HeadersInit = {
     "Content-Type": "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -51,16 +47,9 @@ export class PrivyConnector extends InjectedConnector {
     };
     super({ options });
     this.__options = options;
-    if (typeof window !== "undefined") {
-      try {
-        const raw = window.localStorage.getItem(PRIVY_WALLET_STORAGE_KEY);
-        if (raw) {
-          const parsed: StoredPrivyWallet = JSON.parse(raw);
-          this.currentWalletId = parsed.walletId;
-          this.currentAddress = parsed.address;
-        }
-      } catch {}
-    }
+    const walletData = getWallet();
+    this.currentWalletId = walletData.walletId || undefined;
+    this.currentAddress = walletData.walletAddress || undefined;
   }
 
   get id() {
@@ -92,6 +81,11 @@ export class PrivyConnector extends InjectedConnector {
   async connect(
     _args: ConnectArgs = {},
   ): Promise<{ account: string; chainId: bigint }> {
+    const token = getToken();
+    if (!token) {
+      throw new UserRejectedRequestError("Please login with Privy first");
+    }
+
     // Attempt to reuse stored wallet
     if (!this.currentWalletId) {
       // Create a new wallet via API
@@ -189,20 +183,10 @@ export class PrivyConnector extends InjectedConnector {
   }
 
   private persist() {
-    if (typeof window === "undefined") return;
     if (!this.currentWalletId) {
-      window.localStorage.removeItem(PRIVY_WALLET_STORAGE_KEY);
+      removeWallet();
       return;
     }
-    const payload: StoredPrivyWallet = {
-      walletId: this.currentWalletId,
-      address: this.currentAddress,
-    };
-    try {
-      window.localStorage.setItem(
-        PRIVY_WALLET_STORAGE_KEY,
-        JSON.stringify(payload),
-      );
-    } catch {}
+    storeWallet(this.currentWalletId, this.currentAddress);
   }
 }

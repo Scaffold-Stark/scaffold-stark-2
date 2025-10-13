@@ -12,6 +12,7 @@ import provider from "~~/services/web3/provider";
 import { useNativeCurrencyPrice } from "~~/hooks/scaffold-stark/useNativeCurrencyPrice";
 import { PrivyProvider } from "@privy-io/react-auth";
 import { chains } from "~~/utils/scaffold-stark";
+import { usePrivyAutoConnect } from "~~/hooks/usePrivyAutoConnect";
 
 const Footer = dynamic(
   () => import("~~/components/Footer").then((mod) => mod.Footer),
@@ -22,6 +23,7 @@ const Footer = dynamic(
 
 const ScaffoldStarkApp = ({ children }: { children: React.ReactNode }) => {
   useNativeCurrencyPrice();
+  usePrivyAutoConnect(); // Auto-connect Privy wallet after login
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
   return (
@@ -68,17 +70,17 @@ export const ScaffoldStarkAppWithProviders = ({
       explorer={starkscan}
     >
       <PrivyProvider
-        appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || 'demo-app-id'}
+        appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || "demo-app-id"}
         config={{
-          loginMethods: ['email'],
+          loginMethods: ["email"],
           appearance: {
-            theme: 'light',
-            accentColor: '#0C0C4F',
+            theme: "light",
+            accentColor: "#0C0C4F",
             logo: undefined,
           },
           embeddedWallets: {
             ethereum: {
-              createOnLogin: 'all-users',
+              createOnLogin: "all-users",
             },
           },
           supportedChains: (Object.values(chains) as any[]).map((c: any) => ({
