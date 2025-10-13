@@ -38,6 +38,7 @@ async function api<T>(path: string, init?: RequestInit): Promise<T> {
 export class PrivyConnector extends InjectedConnector {
   private __options: InjectedConnectorOptions;
   private currentAddress?: string;
+  private currentPublicKey?: string;
   private currentWalletId?: string;
   private _connected: boolean = false;
   private _account?: WalletAccount;
@@ -53,9 +54,11 @@ export class PrivyConnector extends InjectedConnector {
     const walletData = getWallet();
     this.currentWalletId = walletData.walletId || undefined;
     this.currentAddress = walletData.walletAddress || undefined;
+    this.currentPublicKey = walletData.publicKey || undefined;
     this._connected = !!(
       this.currentWalletId &&
       this.currentAddress &&
+      this.currentPublicKey &&
       isAuthenticated()
     );
   }
@@ -131,11 +134,22 @@ export class PrivyConnector extends InjectedConnector {
     if (!this.currentWalletId) {
       // Create a new wallet via API
       try {
-        const created = await api<{ wallet: { id: string } }>(
-          "/create-wallet",
-          { method: "POST", body: JSON.stringify({ chainType: "starknet" }) },
-        );
+        const created = await api<{
+          wallet: { id: string; address?: string; public_key?: string };
+        }>("/create-wallet", {
+          method: "POST",
+          body: JSON.stringify({ chainType: "starknet" }),
+        });
         this.currentWalletId = created.wallet.id;
+
+        // If we got address and public key from creation, store them
+        if (created.wallet.address) {
+          this.currentAddress = created.wallet.address;
+        }
+        if (created.wallet.public_key) {
+          this.currentPublicKey = created.wallet.public_key;
+        }
+        this.persist();
       } catch {
         throw new UserRejectedRequestError();
       }
@@ -222,7 +236,12 @@ export class PrivyConnector extends InjectedConnector {
       );
       const wallet: any = data.wallet;
       const address: string | undefined = wallet?.address;
+      const publicKey: string | undefined =
+        data.public_key || wallet?.public_key || wallet?.publicKey;
+
       if (address) this.currentAddress = address;
+      if (publicKey) this.currentPublicKey = publicKey;
+
       this.persist();
     } catch {}
   }
@@ -232,6 +251,10 @@ export class PrivyConnector extends InjectedConnector {
       removeWallet();
       return;
     }
-    storeWallet(this.currentWalletId, this.currentAddress);
+    storeWallet(
+      this.currentWalletId,
+      this.currentAddress,
+      this.currentPublicKey,
+    );
   }
 }

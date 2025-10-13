@@ -35,6 +35,24 @@ export function computeReadyAddress(publicKey: string) {
   );
 }
 
+/**
+ * Check if a Ready account is already deployed on the network.
+ * Returns true if deployed, false if not deployed.
+ */
+export async function isReadyAccountDeployed(
+  address: string,
+): Promise<boolean> {
+  try {
+    const provider = getRpcProvider();
+    await provider.getClassHashAt(address);
+
+    return true;
+  } catch (error) {
+    // If we get an error (like "Contract not found"), the account is not deployed
+    return false;
+  }
+}
+
 export async function buildReadyAccount({
   walletId,
   publicKey,
@@ -84,7 +102,7 @@ export async function rawSign(
   messageHash: string,
   opts: { userJwt: string; userId?: string; origin?: string },
 ) {
-  const appId = process.env.PRIVY_APP_ID;
+  const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
   if (!appId) throw new Error("Missing PRIVY_APP_ID");
   const appSecret = process.env.PRIVY_APP_SECRET;
   if (!appSecret) throw new Error("Missing PRIVY_APP_SECRET");
@@ -205,19 +223,6 @@ export async function deployReadyAccount({
     paymasterRpc,
   });
 
-  // Initial call to execute after deployment
-  const targetContractAddress = process.env.CONTRACT_ADDRESS;
-  if (!targetContractAddress) {
-    throw new Error("Missing CONTRACT_ADDRESS");
-  }
-  const entrypoint =
-    process.env.CONTRACT_ENTRY_POINT_GET_COUNTER || "get_counter";
-  const initialCall = {
-    contractAddress: targetContractAddress,
-    entrypoint,
-    calldata: CallData.compile([contractAddress]),
-  };
-
   // Prepare paymaster fee details with correct structure
   if (!isSponsored && !gasToken) {
     throw new Error("Missing GAS_TOKEN for default paymaster mode");
@@ -229,15 +234,8 @@ export async function deployReadyAccount({
     deploymentData,
   };
 
-  const deployPayload = {
-    classHash,
-    contractAddress,
-    constructorCalldata,
-    addressSalt: publicKey,
-  };
-
   console.log(
-    `Processing with paymaster in ${
+    `Deploying account with paymaster in ${
       isSponsored ? "sponsored" : "default"
     } mode...`,
   );
@@ -246,13 +244,13 @@ export async function deployReadyAccount({
 
   // Estimate fees if not sponsored, then apply a 1.5x safety margin to maxFee
   if (!isSponsored) {
-    console.log("Estimating fees...");
+    console.log("Estimating deployment fees...");
     const feeEstimation = await account.estimatePaymasterTransactionFee(
-      [initialCall],
+      [], // No calls, just deployment
       paymasterDetails,
     );
     const suggested = feeEstimation.suggested_max_fee_in_gas_token;
-    console.log("Estimated fee:", suggested.toString());
+    console.log("Estimated deployment fee:", suggested.toString());
     const withMargin15 = (v: any) => {
       const bi = BigInt(v.toString());
       return (bi * 3n + 1n) / 2n; // ceil(1.5x)
@@ -260,15 +258,15 @@ export async function deployReadyAccount({
     maxFee = withMargin15(suggested);
   }
 
-  // Execute deployment and initial transaction with paymaster
-  console.log("Executing paymaster transaction...");
+  // Execute deployment with paymaster (no additional calls)
+  console.log("Executing account deployment...");
   const res = await account.executePaymasterTransaction(
-    [initialCall],
+    [], // No calls, just deployment
     paymasterDetails,
     maxFee,
   );
 
-  console.log("Transaction hash:", res.transaction_hash);
+  console.log("Deployment transaction hash:", res.transaction_hash);
 
   return res;
 }

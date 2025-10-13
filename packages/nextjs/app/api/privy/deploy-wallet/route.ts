@@ -5,8 +5,8 @@ import {
 } from "~~/app/api/privy/_lib/authMiddleware";
 import { getStarknetWallet } from "~~/app/api/privy/_lib/wallet";
 import {
-  computeReadyAddress,
   deployReadyAccount,
+  isReadyAccountDeployed,
 } from "~~/app/api/privy/_lib/ready";
 
 export const runtime = "nodejs";
@@ -40,9 +40,31 @@ export const POST = withAuth(async (req: WithAuthRequest) => {
       );
     }
 
-    const { publicKey } = await getStarknetWallet(walletId);
-    const address = computeReadyAddress(publicKey);
+    const { address, publicKey } = await getStarknetWallet(walletId);
+    if (!address) {
+      return NextResponse.json(
+        { error: "Address is required" },
+        { status: 400 },
+      );
+    }
+    // Check if the account is already deployed
+    const isDeployed = await isReadyAccountDeployed(address);
 
+    if (isDeployed) {
+      // Account is already deployed, return success without deploying
+      return NextResponse.json(
+        {
+          walletId,
+          address,
+          publicKey,
+          transactionHash: null,
+          message: "Account already deployed",
+        },
+        { status: 200 },
+      );
+    }
+
+    // Account is not deployed, proceed with deployment
     const deployResult: any = await deployReadyAccount({
       walletId,
       publicKey,
@@ -57,6 +79,7 @@ export const POST = withAuth(async (req: WithAuthRequest) => {
         address,
         publicKey,
         transactionHash: deployResult?.transaction_hash,
+        message: "Account deployed successfully",
       },
       { status: 200 },
     );

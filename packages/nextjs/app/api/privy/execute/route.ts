@@ -4,7 +4,11 @@ import {
   WithAuthRequest,
 } from "~~/app/api/privy/_lib/authMiddleware";
 import { getStarknetWallet } from "~~/app/api/privy/_lib/wallet";
-import { getReadyAccount } from "~~/app/api/privy/_lib/ready";
+import {
+  getReadyAccount,
+  isReadyAccountDeployed,
+  deployReadyAccount,
+} from "~~/app/api/privy/_lib/ready";
 import { CallData } from "starknet";
 
 export const runtime = "nodejs";
@@ -38,8 +42,29 @@ export const POST = withAuth(async (req: WithAuthRequest) => {
       );
     }
 
-    const { publicKey } = await getStarknetWallet(walletId);
-    const { account, address } = await getReadyAccount({
+    const { address, publicKey } = await getStarknetWallet(walletId);
+    if (!address) {
+      return NextResponse.json(
+        { error: "Address is required" },
+        { status: 400 },
+      );
+    }
+    const isDeployed = await isReadyAccountDeployed(address);
+
+    if (!isDeployed) {
+      // Account is not deployed, deploy it first
+      console.log("Account not deployed, deploying now...");
+      await deployReadyAccount({
+        walletId,
+        publicKey,
+        classHash,
+        userJwt,
+        userId: authUserId,
+        origin,
+      });
+    }
+
+    const { account } = await getReadyAccount({
       walletId,
       publicKey,
       classHash,
