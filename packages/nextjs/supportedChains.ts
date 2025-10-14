@@ -6,7 +6,7 @@ const rpcUrlDevnet =
 const mainnetFork = {
   id: chains.mainnet.id,
   network: "devnet",
-  name: "Starknet Devnet",
+  name: "Starknet Mainnet Fork",
   nativeCurrency: {
     address:
       "0x4718F5A0FC34CC1AF16A1CDEE98FFB20C31F5CD61D6AB07201858F4287C938D",
