@@ -50,7 +50,7 @@ export default function DebugHistory() {
       <div className="tab h-10 w-full lg:w-1/3 tab-active bg-[#8A45FC]! rounded-[5px] text-white!">
         History
       </div>
-      <div className="border-gradient rounded-[5px] h-full w-full">
+      <div className="border-gradient rounded-[5px] h-full w-full overflow-y-auto">
         <div className="flex flex-col">
           {formatted.length === 0 ? (
             <div className="p-4 text-sm text-neutral">No history yet.</div>
