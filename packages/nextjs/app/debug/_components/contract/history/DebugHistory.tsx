@@ -4,8 +4,7 @@ import { useLocalStorage } from "usehooks-ts";
 import { useHistoryStore, HistoryEntry } from "~~/services/store/history";
 import { ContractName } from "~~/utils/scaffold-stark/contract";
 import { getAllContracts } from "~~/utils/scaffold-stark/contractsData";
-import SuccessHistoryModal from "./SuccessHistoryModal";
-import FailHistoryModal from "./FailHistoryModal";
+import HistoryModal from "./HistoryModal";
 
 const contractsData = getAllContracts();
 const contractNames = Object.keys(contractsData) as ContractName[];
@@ -80,18 +79,9 @@ export default function DebugHistory() {
         </div>
       </div>
 
-      {openEntry &&
-        (openEntry.status === "success" ? (
-          <SuccessHistoryModal
-            entry={openEntry}
-            onClose={() => setOpenEntry(null)}
-          />
-        ) : (
-          <FailHistoryModal
-            entry={openEntry}
-            onClose={() => setOpenEntry(null)}
-          />
-        ))}
+      {openEntry && (
+        <HistoryModal entry={openEntry} onClose={() => setOpenEntry(null)} />
+      )}
     </div>
   );
 }
