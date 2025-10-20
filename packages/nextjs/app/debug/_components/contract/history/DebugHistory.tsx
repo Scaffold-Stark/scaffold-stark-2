@@ -7,6 +7,7 @@ import { useHistoryStore, HistoryEntry } from "~~/services/store/history";
 import { ContractName } from "~~/utils/scaffold-stark/contract";
 import { getAllContracts } from "~~/utils/scaffold-stark/contractsData";
 import HistoryModal from "./HistoryModal";
+import { useTheme } from "next-themes";
 
 const contractsData = getAllContracts();
 const contractNames = Object.keys(contractsData) as ContractName[];
@@ -24,6 +25,9 @@ export default function DebugHistory() {
     [historyByContract, selectedAddress],
   );
   const [openEntry, setOpenEntry] = useState<HistoryEntry | null>(null);
+
+  const { theme } = useTheme();
+  const isDarkMode = theme === "dark";
 
   const formatted = useMemo(
     () =>
@@ -58,8 +62,7 @@ export default function DebugHistory() {
             formatted.map((e, idx) => (
               <button
                 key={e.txHash ?? `${e.functionName}-${e.timestamp}`}
-                className={`w-full flex items-center justify-between py-3 px-3 text-left bg-[#0000002E] ${idx !== formatted.length - 1 ? "border-b" : ""}`}
-                style={{ borderColor: "#FFFFFF33" }}
+                className={`w-full flex items-center justify-between py-3 px-3 text-left border-b ${isDarkMode ? "bg-[#0000002E] border-b-[#ffffff4f]" : "bg-[#ffffff0f] border-b-black/40"}`}
                 onClick={() => setOpenEntry(e)}
               >
                 <span className="truncate mr-2 text-[#4DB4FF]">

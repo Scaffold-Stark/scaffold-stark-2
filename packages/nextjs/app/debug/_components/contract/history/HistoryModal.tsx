@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 import { HistoryEntry } from "~~/services/store/history";
 import { formatTimestamp } from "~~/utils/scaffold-stark/common";
 
@@ -11,6 +12,8 @@ export default function HistoryModal({
   entry: HistoryEntry;
   onClose: () => void;
 }) {
+  const { theme } = useTheme();
+  const isDarkMode = theme === "dark";
   const formatDate = (ts: number) => formatTimestamp(ts);
 
   const isSuccess = entry.status === "success";
@@ -25,7 +28,9 @@ export default function HistoryModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 backdrop-blur-xs" onClick={onClose} />
-      <div className="relative z-10 w-[95%] max-w-2xl rounded-[5px] border border-[#8A45FC] bg-[#0C1023] p-4">
+      <div
+        className={`relative z-10 w-[95%] max-w-2xl rounded-[5px] border border-[#8A45FC] p-4 ${isDarkMode ? "bg-[#0C1023]" : "bg-base-100"}`}
+      >
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <h3 className="m-0 font-semibold">{entry.functionName}</h3>
@@ -41,7 +46,7 @@ export default function HistoryModal({
           </button>
         </div>
 
-        <div className="bg-input text-sm px-4 py-2 mb-3 rounded">
+        <div className="bg-base-200 text-sm px-4 py-2 mb-3 rounded">
           <div className="flex items-center justify-between">
             <span>Your input</span>
             <span className="text-xs">{formatDate(entry.timestamp)}</span>
