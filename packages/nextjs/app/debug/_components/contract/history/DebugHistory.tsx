@@ -1,6 +1,7 @@
 "use client";
 import React, { useMemo, useState } from "react";
 import Image from "next/image";
+import { formatTimestamp } from "~~/utils/scaffold-stark/common";
 import { useLocalStorage } from "usehooks-ts";
 import { useHistoryStore, HistoryEntry } from "~~/services/store/history";
 import { ContractName } from "~~/utils/scaffold-stark/contract";
@@ -33,15 +34,7 @@ export default function DebugHistory() {
     [entries],
   );
 
-  const formatDate = (ts: number) =>
-    new Intl.DateTimeFormat(undefined, {
-      month: "short",
-      day: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }).format(new Date(ts));
+  const formatDate = (ts: number) => formatTimestamp(ts);
 
   const StatusIcon = ({ status }: { status: HistoryEntry["status"] }) => (
     <Image

@@ -2,6 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import { HistoryEntry } from "~~/services/store/history";
+import { formatTimestamp } from "~~/utils/scaffold-stark/common";
 
 export default function HistoryModal({
   entry,
@@ -10,15 +11,7 @@ export default function HistoryModal({
   entry: HistoryEntry;
   onClose: () => void;
 }) {
-  const formatDate = (ts: number) =>
-    new Intl.DateTimeFormat(undefined, {
-      month: "short",
-      day: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }).format(new Date(ts));
+  const formatDate = (ts: number) => formatTimestamp(ts);
 
   const isSuccess = entry.status === "success";
   const chipClasses = isSuccess
