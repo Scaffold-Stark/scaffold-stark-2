@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 import { HistoryEntry } from "~~/services/store/history";
 
 export default function HistoryModal({
@@ -38,7 +39,7 @@ export default function HistoryModal({
             <span
               className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded ${chipClasses}`}
             >
-              <img src={iconSrc} alt={chipLabel} className="h-4 w-4" />
+              <Image src={iconSrc} alt={chipLabel} width={16} height={16} />
               {chipLabel}
             </span>
           </div>

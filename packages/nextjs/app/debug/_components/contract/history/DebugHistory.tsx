@@ -1,5 +1,6 @@
 "use client";
 import React, { useMemo, useState } from "react";
+import Image from "next/image";
 import { useLocalStorage } from "usehooks-ts";
 import { useHistoryStore, HistoryEntry } from "~~/services/store/history";
 import { ContractName } from "~~/utils/scaffold-stark/contract";
@@ -17,7 +18,10 @@ export default function DebugHistory() {
   );
   const historyByContract = useHistoryStore((s) => s.historyByContract);
   const selectedAddress = contractsData[selectedContract]?.address as string;
-  const entries = historyByContract[selectedAddress] || [];
+  const entries = useMemo(
+    () => historyByContract[selectedAddress] || [],
+    [historyByContract, selectedAddress],
+  );
   const [openEntry, setOpenEntry] = useState<HistoryEntry | null>(null);
 
   const formatted = useMemo(
@@ -40,10 +44,11 @@ export default function DebugHistory() {
     }).format(new Date(ts));
 
   const StatusIcon = ({ status }: { status: HistoryEntry["status"] }) => (
-    <img
+    <Image
       src={status === "success" ? "/success-icon.svg" : "/fail-icon.svg"}
       alt={status}
-      className="h-5 w-5"
+      width={20}
+      height={20}
     />
   );
 
