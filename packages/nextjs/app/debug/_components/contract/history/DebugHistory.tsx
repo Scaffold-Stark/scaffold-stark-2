@@ -17,7 +17,8 @@ export default function DebugHistory() {
     { initializeWithValue: false },
   );
   const historyByContract = useHistoryStore((s) => s.historyByContract);
-  const entries = historyByContract[selectedContract] || [];
+  const selectedAddress = contractsData[selectedContract]?.address as string;
+  const entries = historyByContract[selectedAddress] || [];
   const [openEntry, setOpenEntry] = useState<HistoryEntry | null>(null);
 
   const formatted = useMemo(
@@ -29,41 +30,49 @@ export default function DebugHistory() {
     [entries],
   );
 
+  const formatDate = (ts: number) =>
+    new Intl.DateTimeFormat(undefined, {
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    }).format(new Date(ts));
+
+  const StatusIcon = ({ status }: { status: HistoryEntry["status"] }) => (
+    <img
+      src={status === "success" ? "/success-icon.svg" : "/fail-icon.svg"}
+      alt={status}
+      className="h-5 w-5"
+    />
+  );
+
   return (
     <div className="h-full max-h-[650px] w-full lg:w-[400px] space-y-4">
       <div className="tab h-10 w-full lg:w-1/3 tab-active bg-[#8A45FC]! rounded-[5px] text-white!">
         History
       </div>
-      <div className="border-gradient rounded-[5px] h-full w-full p-2">
-        <div className="flex flex-col divide-y divide-secondary/30">
+      <div className="border-gradient rounded-[5px] h-full w-full">
+        <div className="flex flex-col">
           {formatted.length === 0 ? (
             <div className="p-4 text-sm text-neutral">No history yet.</div>
           ) : (
-            formatted.map((e) => (
+            formatted.map((e, idx) => (
               <button
                 key={e.txHash ?? `${e.functionName}-${e.timestamp}`}
-                className="w-full flex items-center justify-between py-3 px-3 hover:bg-white/5 text-left"
+                className={`w-full flex items-center justify-between py-3 px-3 text-left bg-[#0000002E] ${idx !== formatted.length - 1 ? "border-b" : ""}`}
+                style={{ borderColor: "#FFFFFF33" }}
                 onClick={() => setOpenEntry(e)}
               >
-                <span className="link truncate mr-2">{e.functionName}</span>
-                <div className="flex items-center gap-2">
+                <span className="truncate mr-2 text-[#4DB4FF]">
+                  {e.functionName}
+                </span>
+                <div className="flex items-center gap-3">
                   <span className="text-xs text-neutral">
-                    {e.ts.toLocaleString(undefined, {
-                      month: "short",
-                      day: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {formatDate(e.timestamp)}
                   </span>
-                  <span
-                    className={`inline-block h-4 w-4 rounded-full border ${
-                      e.status === "success"
-                        ? "bg-green-500/20 border-green-400"
-                        : "bg-red-500/20 border-red-400"
-                    }`}
-                    aria-hidden
-                  />
+                  <StatusIcon status={e.status} />
                 </div>
               </button>
             ))
