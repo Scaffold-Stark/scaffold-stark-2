@@ -22,6 +22,7 @@ import { TxReceipt } from "./TxReceipt";
 import { useTransactor } from "~~/hooks/scaffold-stark";
 import { useAccount } from "~~/hooks/useAccount";
 import { addHistory } from "~~/services/store/history";
+import { safeStringify } from "~~/utils/scaffold-stark/common";
 
 type WriteOnlyFunctionFormProps = {
   abi: Abi;
@@ -88,7 +89,7 @@ export const WriteOnlyFunctionForm = ({
           : [],
       );
       try {
-        const inputStr = JSON.stringify(getArgsAsStringInputFromForm(form));
+        const inputStr = safeStringify(getArgsAsStringInputFromForm(form));
         const message = "Transaction sent";
         addHistory(contractAddress, {
           txHash: typeof txHash === "string" ? txHash : undefined,
@@ -110,7 +111,7 @@ export const WriteOnlyFunctionForm = ({
       );
 
       try {
-        const inputStr = JSON.stringify(getArgsAsStringInputFromForm(form));
+        const inputStr = safeStringify(getArgsAsStringInputFromForm(form));
         addHistory(contractAddress, {
           txHash: undefined,
           functionName: abiFunction.name,

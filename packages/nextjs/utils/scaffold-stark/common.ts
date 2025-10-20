@@ -37,3 +37,14 @@ export function isValidContractArgs(
     args.every((arg) => arg !== undefined && arg !== null && arg !== "")
   );
 }
+
+// Safely stringify objects that might contain bigint or complex values
+export function safeStringify(value: unknown): string {
+  try {
+    return JSON.stringify(value, (_key, val) =>
+      typeof val === "bigint" ? val.toString() : val,
+    );
+  } catch {
+    return String(value);
+  }
+}
