@@ -50,8 +50,8 @@ export default function DebugHistory() {
   );
 
   return (
-    <div className="h-full max-h-[650px] w-full lg:w-[400px] space-y-4">
-      <div className="tab h-10 w-full lg:w-1/3 tab-active bg-[#8A45FC]! rounded-[5px] text-white!">
+    <div className="h-full max-h-[650px] w-full xl:w-[400px] space-y-4">
+      <div className="tab h-10 w-full xl:w-1/3 tab-active bg-[#8A45FC]! rounded-[5px] text-white!">
         History
       </div>
       <div className="border-gradient rounded-[5px] h-full w-full overflow-y-auto">

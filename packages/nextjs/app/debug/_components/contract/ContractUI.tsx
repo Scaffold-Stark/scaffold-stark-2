@@ -138,7 +138,7 @@ export const ContractUI = ({
           </div>
         </div>
 
-        <div className="col-span-1 min-w-0">
+        <div className="xl:col-span-1 min-w-0">
           <DebugHistory />
         </div>
       </div>
