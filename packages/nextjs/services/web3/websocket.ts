@@ -9,11 +9,17 @@ const httpToWs = (httpUrl: string): string => {
   if (!httpUrl) return "";
   // Replace protocol with secure websocket
   const wsBase = httpUrl.replace(/^http/i, "ws");
-  // If it already ends with "/ws" or contains "/rpc/ws", keep it; else try appending "/ws"
-  if (wsBase.endsWith("/ws") || wsBase.includes("/rpc/ws")) return wsBase;
-  // Many providers expose ws at /rpc/ws or /ws; prefer /rpc/ws if url contains /rpc
-  if (wsBase.includes("/rpc")) return wsBase.replace("/rpc", "/rpc/ws");
-  return `${wsBase}${wsBase.endsWith("/") ? "" : "/"}ws`;
+  // If it already ends with "/ws", keep it
+  if (wsBase.endsWith("/ws")) return wsBase;
+  // For local devnet (127.0.0.1:5050), replace /rpc with /ws or append /ws
+  if (wsBase.includes("127.0.0.1:5050")) {
+    if (wsBase.includes("/rpc")) {
+      return wsBase.replace("/rpc", "/ws");
+    }
+    return wsBase.endsWith("/") ? `${wsBase}ws` : `${wsBase}/ws`;
+  }
+  // For other providers, keep the same path as HTTP (no /ws suffix needed)
+  return wsBase;
 };
 
 export const getWsUrlForChain = (chain: Chain): string => {
