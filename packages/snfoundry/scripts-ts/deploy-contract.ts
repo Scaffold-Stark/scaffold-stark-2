@@ -136,17 +136,27 @@ let deployCalls = [];
 
 const { provider, deployer, feeToken }: Network = networks[networkName];
 
+const estimateTip = async (): Promise<bigint> => {
+  return networkName === "devnet"
+    ? 1000n
+    : (await deployer.getEstimateTip()).recommendedTip;
+};
+
 /**
  * Calculate estimated tip for declaration transaction with fee escalation
  */
-const estimateTransactionTip = async (
+const estimateDeclareFee = async (
   payload: DeclareContractPayload,
   classHash: string
 ): Promise<bigint> => {
-  const { overall_fee } = await deployer.estimateDeclareFee({
-    contract: payload.contract,
-    compiledClassHash: classHash,
-  });
+  const tip = await estimateTip();
+  const { overall_fee } = await deployer.estimateDeclareFee(
+    {
+      contract: payload.contract,
+      compiledClassHash: classHash,
+    },
+    { tip }
+  );
 
   const minimumTip = 500000000000000000n; // 0.1 STRK
   const finalTip = overall_fee > minimumTip ? overall_fee : minimumTip;
@@ -206,8 +216,12 @@ const declareIfNot_NotWait = async (
   }
 
   try {
-    const estimatedTip = await estimateTransactionTip(payload, classHash);
+    const estimatedDeclareFee = await estimateDeclareFee(payload, classHash);
+    const estimatedTip = await estimateTip();
     const retryInterval = estimateRetryInterval(payload);
+    console.log(
+      yellow(`Estimated declare fee: ${estimatedDeclareFee.toString()}`)
+    );
     console.log(yellow(`Estimated tip: ${estimatedTip.toString()}`));
     console.log(
       yellow(`Estimated retry interval: ${retryInterval.toString()}`)
@@ -215,7 +229,8 @@ const declareIfNot_NotWait = async (
 
     const declareOptions = {
       ...options,
-      estimated_tip: estimatedTip,
+      tip: estimatedTip,
+      estimated_tip: estimatedDeclareFee,
     };
 
     const { transaction_hash } = await deployer.declare(
