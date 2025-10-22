@@ -12,9 +12,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-stark";
-import { BlockieAvatar } from "~~/components/scaffold-stark/BlockieAvatar";
-import { getStarknetPFPIfExists } from "~~/utils/profile";
-import { default as NextImage } from "next/image";
+import { Avatar } from "~~/components/scaffold-stark/Avatar";
 import CopyToClipboard from "react-copy-to-clipboard";
 
 type AddressProps = {
@@ -123,21 +121,11 @@ export const Address = ({
   return (
     <div className="flex items-center">
       <div className="shrink-0">
-        {getStarknetPFPIfExists(profile?.profilePicture) ? (
-          <NextImage
-            src={profile?.profilePicture || ""}
-            alt="Profile Picture"
-            className="rounded-full"
-            width={24}
-            height={24}
-          />
-        ) : (
-          <BlockieAvatar
-            address={checkSumAddress}
-            size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
-            ensImage={ensAvatar}
-          />
-        )}
+        <Avatar
+          address={checkSumAddress}
+          size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
+          profilePicture={profile?.profilePicture}
+        />
       </div>
       {disableAddressLink ? (
         <span className={`ml-1.5 text-${size} font-normal`}>

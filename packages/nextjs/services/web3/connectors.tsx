@@ -4,7 +4,6 @@ import { BurnerConnector } from "@scaffold-stark/stark-burner";
 import scaffoldConfig from "~~/scaffold.config";
 import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
 import { KeplrConnector } from "./keplr";
-import { supportedChains } from "~~/supportedChains";
 
 const targetNetworks = getTargetNetworks();
 
@@ -34,7 +33,8 @@ function getConnectors() {
     connectors.push(new KeplrConnector());
   } else {
     const burnerConnector = new BurnerConnector();
-    burnerConnector.chain = supportedChains.devnet;
+    // burnerConnector's should be initialized with dynamic network instead of hardcoded devnet to support mainnetFork
+    burnerConnector.chain = targetNetworks[0];
     connectors.push(burnerConnector as unknown as InjectedConnector);
   }
 

@@ -13,6 +13,7 @@ import {
 } from "~~/utils/scaffold-stark/contract";
 import { ContractVariables } from "./ContractVariables";
 import { ClassHash } from "~~/components/scaffold-stark/ClassHash";
+import DebugHistory from "./history/DebugHistory";
 
 const ContractWriteMethods = dynamic(() =>
   import("./ContractWriteMethods").then((mod) => mod.ContractWriteMethods),
@@ -72,9 +73,9 @@ export const ContractUI = ({
 
   return (
     <div
-      className={`grid grid-cols-1 lg:grid-cols-6 px-6 lg:px-10 lg:gap-12 w-full max-w-7xl my-0 ${className}`}
+      className={`grid grid-cols-1 lg:grid-cols-6 px-6 lg:px-10 lg:gap-12 w-full max-w-7xl my-0 mx-auto ${className}`}
     >
-      <div className="col-span-5 grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10">
+      <div className="col-span-6 grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-10">
         <div className="col-span-1 flex flex-col">
           <div className="bg-transparent border-gradient rounded-[5px] px-6 lg:px-8 mb-6 space-y-1 py-4">
             <div className="flex">
@@ -109,7 +110,7 @@ export const ContractUI = ({
           </div>
         </div>
 
-        <div className="col-span-1 lg:col-span-2 flex flex-col gap-6">
+        <div className="col-span-1 lg:col-span-2 flex flex-col gap-6 min-w-0">
           <div className="tabs tabs-box  border border-[#8A45FC] rounded-[5px] bg-transparent">
             {tabs.map((tab) => (
               <a
@@ -135,6 +136,10 @@ export const ContractUI = ({
               )}
             </div>
           </div>
+        </div>
+
+        <div className="xl:col-span-1 min-w-0">
+          <DebugHistory />
         </div>
       </div>
     </div>
