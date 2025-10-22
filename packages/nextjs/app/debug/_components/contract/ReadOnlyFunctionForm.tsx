@@ -18,6 +18,7 @@ import { BlockNumber } from "starknet";
 import { useContract, useReadContract } from "@starknet-react/core";
 import { ContractInput } from "./ContractInput";
 import { isValidContractArgs } from "~~/utils/scaffold-stark/common";
+import { addHistory } from "~~/services/store/history";
 
 type ReadOnlyFunctionFormProps = {
   contractAddress: Address;
@@ -102,6 +103,18 @@ export const ReadOnlyFunctionForm = ({
     }
 
     refetch();
+    try {
+      const inputStr = JSON.stringify(newInputValue);
+      // Optimistically log a read call as success; real error will be captured via useReadContract error effect
+      addHistory(contractAddress, {
+        txHash: undefined,
+        functionName: abiFunction.name,
+        timestamp: Date.now(),
+        status: "success",
+        message: "Read executed",
+        input: inputStr,
+      });
+    } catch {}
   };
 
   return (
