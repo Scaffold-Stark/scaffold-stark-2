@@ -150,7 +150,32 @@ export const notification = {
     return Notification({ content, status: "warning", ...options });
   },
   error: (content: React.ReactNode, options?: NotificationOptions) => {
-    return Notification({ content, status: "error", ...options });
+    const logId = `tx-error-${Date.now()}`;
+    console.error(`[${logId}] Transaction error:`, content);
+
+    const fallbackContent: React.ReactNode = (
+      <div>
+        <div className="font-semibold text-red-500 text-base">
+          ❌ Transaction failed
+        </div>
+        <div className="text-sm">Check the console for more details.</div>
+        <div className="text-sm">
+          <a
+            href={`#${logId}`}
+            className="text-blue-500 underline"
+            onClick={() => console.log(`Navigate to log ID: ${logId}`)}
+          >
+            View log: {logId}
+          </a>
+        </div>
+      </div>
+    );
+
+    return Notification({
+      content: fallbackContent,
+      status: "error",
+      ...options,
+    });
   },
   loading: (content: React.ReactNode, options?: NotificationOptions) => {
     return Notification({ content, status: "loading", ...options });
