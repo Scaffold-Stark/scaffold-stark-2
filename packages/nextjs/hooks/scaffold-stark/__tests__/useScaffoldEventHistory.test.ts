@@ -101,7 +101,7 @@ describe("useScaffoldEventHistory", () => {
       isLoading: false,
     });
     // @ts-ignore
-    (useTargetNetwork as Vi.Mock).mockReturnValue({
+    (useTargetNetwork as vi.Mock).mockReturnValue({
       targetNetwork: mockTargetNetwork,
     });
     // @ts-ignore

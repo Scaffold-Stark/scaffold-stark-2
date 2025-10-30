@@ -1,14 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTargetNetwork } from "./useTargetNetwork";
 import { useInterval } from "usehooks-ts";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import scaffoldConfig from "~~/scaffold.config";
 import { replacer } from "~~/utils/scaffold-stark/common";
-import {
-  Abi,
-  ExtractAbiEvent,
-  ExtractAbiEventNames,
-} from "abi-wan-kanabi/dist/kanabi";
+import { Abi, ExtractAbiEventNames } from "abi-wan-kanabi/dist/kanabi";
 import {
   ContractAbi,
   ContractName,
@@ -16,10 +12,16 @@ import {
 } from "~~/utils/scaffold-stark/contract";
 import { devnet } from "@starknet-react/chains";
 import { useProvider } from "@starknet-react/core";
-import { hash, RpcProvider } from "starknet";
-import { events as starknetEvents, CallData, createAbiParser } from "starknet";
+import { RpcProvider } from "starknet";
 import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
-import { composeEventFilterKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
+import { buildEventKeys } from "~~/utils/scaffold-stark/eventKeyFilter";
+import {
+  enrichLog,
+  getLatestAcceptedBlockNumber,
+  parseLogsArgs,
+  resolveEventAbi,
+} from "~~/utils/scaffold-stark/eventsUtils";
+import { useScaffoldWebSocketEvents } from "./useScaffoldWebSocketEvents";
 
 const MAX_KEYS_COUNT = 16;
 /**
@@ -70,8 +72,9 @@ export const useScaffoldEventHistory = <
 >) => {
   const [events, setEvents] = useState<any[]>();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<Error>();
   const [fromBlockUpdated, setFromBlockUpdated] = useState<bigint>(fromBlock);
+  const isFetchingRef = useRef(false);
 
   const { data: deployedContractData, isLoading: deployedContractLoading } =
     useDeployedContractInfo(contractName);
@@ -85,26 +88,15 @@ export const useScaffoldEventHistory = <
   }, [targetNetwork.rpcUrls.public.http]);
 
   // Get back event full name
-  const matchingAbiEvents = useMemo(() => {
-    return (deployedContractData?.abi as Abi)?.filter(
-      (part) =>
-        part.type === "event" &&
-        part.name.split("::").slice(-1)[0] === (eventName as string),
-    ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>[];
-  }, [deployedContractData, deployedContractLoading]);
-  // const matchingAbiEvents =
-
-  if (matchingAbiEvents?.length === 0) {
+  const eventAbi = useMemo(() => {
+    return resolveEventAbi<TContractName, TEventName>(
+      deployedContractData?.abi as Abi,
+      eventName as string,
+    );
+  }, [deployedContractData, deployedContractLoading, eventName]);
+  if (!eventAbi && !deployedContractLoading) {
     throw new Error(`Event ${eventName as string} not found in contract ABI`);
   }
-
-  if (matchingAbiEvents?.length > 1) {
-    throw new Error(
-      `Ambiguous event "${eventName as string}". ABI contains ${matchingAbiEvents.length} events with that name`,
-    );
-  }
-
-  const eventAbi = matchingAbiEvents?.[0];
   const fullName = eventAbi?.name;
 
   const readEvents = async (fromBlock?: bigint) => {
@@ -113,6 +105,10 @@ export const useScaffoldEventHistory = <
       return;
     }
 
+    if (isFetchingRef.current) {
+      return;
+    }
+    isFetchingRef.current = true;
     setIsLoading(true);
     try {
       if (deployedContractLoading) {
@@ -122,75 +118,65 @@ export const useScaffoldEventHistory = <
       if (!deployedContractData) {
         throw new Error("Contract not found");
       }
+      if (!eventAbi) {
+        throw new Error(`Event ${String(eventName)} not found in ABI`);
+      }
 
-      const event = (deployedContractData.abi as Abi).find(
-        (part) =>
-          part.type === "event" &&
-          part.name.split("::").slice(-1)[0] === eventName,
-      ) as ExtractAbiEvent<ContractAbi<TContractName>, TEventName>;
-
-      const blockNumber = (await publicClient.getBlockLatestAccepted())
-        .block_number;
+      const blockNumber = await getLatestAcceptedBlockNumber(publicClient);
 
       if (
         (fromBlock && blockNumber >= fromBlock) ||
         blockNumber >= fromBlockUpdated
       ) {
-        let keys: string[][] = [[hash.getSelectorFromName(eventName)]];
-        if (filters) {
-          keys = keys.concat(
-            composeEventFilterKeys(filters, event, deployedContractData.abi),
-          );
-        }
-        keys = keys.slice(0, MAX_KEYS_COUNT);
+        const keys = buildEventKeys(
+          eventName as string,
+          filters as any,
+          eventAbi as any,
+          deployedContractData.abi as any,
+          MAX_KEYS_COUNT,
+        );
         const rawEventResp = await publicClient.getEvents({
           chunk_size: 100,
           keys,
           address: deployedContractData?.address,
           from_block: { block_number: Number(fromBlock || fromBlockUpdated) },
-          to_block: { block_number: blockNumber },
+          to_block: { block_number: Number(blockNumber) },
         });
         if (!rawEventResp) {
           return;
         }
         const logs = rawEventResp.events;
-        setFromBlockUpdated(BigInt(blockNumber + 1));
+        setFromBlockUpdated(blockNumber + 1n);
 
-        const newEvents = [];
-        for (let i = logs.length - 1; i >= 0; i--) {
-          newEvents.push({
-            event,
-            log: logs[i],
-            block:
-              blockData && logs[i].block_hash === null
-                ? null
-                : await publicClient.getBlockWithTxHashes(logs[i].block_hash),
-            transaction:
-              transactionData && logs[i].transaction_hash !== null
-                ? await publicClient.getTransactionByHash(
-                    logs[i].transaction_hash,
-                  )
-                : null,
-            receipt:
-              receiptData && logs[i].transaction_hash !== null
-                ? await publicClient.getTransactionReceipt(
-                    logs[i].transaction_hash,
-                  )
-                : null,
-          });
-        }
+        // Build newest-first array and enrich concurrently
+        const newestFirst = [...logs].reverse();
+        const enriched = await Promise.all(
+          newestFirst.map(async (log) => {
+            const { block, transaction, receipt } = await enrichLog(
+              publicClient,
+              log,
+              {
+                block: !!blockData,
+                transaction: !!transactionData,
+                receipt: !!receiptData,
+              },
+            );
+            return { event: eventAbi, log, block, transaction, receipt };
+          }),
+        );
         if (events && typeof fromBlock === "undefined") {
-          setEvents([...newEvents, ...events]);
+          setEvents([...enriched, ...events]);
         } else {
-          setEvents(newEvents);
+          setEvents(enriched);
         }
         setError(undefined);
       }
     } catch (e: any) {
       console.error(e);
       setEvents(undefined);
-      setError(e);
+      setError(e instanceof Error ? e : new Error(String(e)));
     } finally {
+      isFetchingRef.current = false;
       setIsLoading(false);
     }
   };
@@ -200,8 +186,22 @@ export const useScaffoldEventHistory = <
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromBlock, enabled]);
 
+  // WebSocket stream for live updates; keep polling as fallback or for initial batch
+  const {
+    events: wsEvents,
+    error: wsError,
+    isConnected: wsConnected,
+  } = useScaffoldWebSocketEvents({
+    contractName,
+    eventName: eventName as any,
+    filters,
+    enrich: true,
+    enabled: !!watch,
+    fromBlock: fromBlockUpdated,
+  });
+
   useEffect(() => {
-    if (!deployedContractLoading) {
+    if (!deployedContractLoading && (!watch || !wsConnected)) {
       readEvents().then();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -217,6 +217,8 @@ export const useScaffoldEventHistory = <
     blockData,
     transactionData,
     receiptData,
+    wsConnected,
+    watch,
   ]);
 
   useEffect(() => {
@@ -226,9 +228,26 @@ export const useScaffoldEventHistory = <
     setError(undefined);
   }, [fromBlock, targetNetwork.id]);
 
+  useEffect(() => {
+    if (!wsError && wsEvents && wsEvents.length) {
+      // Prepend latest ws events to current list without duplicating
+      const existing = events || [];
+      const incoming = wsEvents.filter((we: any) =>
+        existing.every(
+          (e: any) =>
+            e.log.transaction_hash !== we.log.transaction_hash ||
+            e.log.event_index !== we.log.event_index,
+        ),
+      );
+      if (incoming.length) {
+        setEvents([...incoming, ...existing]);
+      }
+    }
+  }, [wsEvents]);
+
   useInterval(
     async () => {
-      if (!deployedContractLoading) {
+      if (!deployedContractLoading && (!!wsError || !watch || !wsConnected)) {
         readEvents();
       }
     },
@@ -242,20 +261,19 @@ export const useScaffoldEventHistory = <
   const eventHistoryData = useMemo(() => {
     if (deployedContractData) {
       return (events || []).map((event) => {
-        const logs = [JSON.parse(JSON.stringify(event.log))];
-        const parsed = starknetEvents.parseEvents(
-          logs,
-          starknetEvents.getAbiEvents(deployedContractData.abi),
-          CallData.getAbiStruct(deployedContractData.abi),
-          CallData.getAbiEnum(deployedContractData.abi),
-          createAbiParser(deployedContractData.abi),
+        const args = parseLogsArgs(
+          deployedContractData.abi as Abi,
+          fullName as string,
+          [event.log],
         );
-        const args = parsed.length ? parsed[0][fullName] : {};
         const { event: rawEvent, ...rest } = event;
+        // Some sources (e.g., WebSocket) may not include the raw event ABI on each item.
+        // Fallback to the resolved eventAbi from this hook when it's missing.
+        const members = (rawEvent?.members ?? (eventAbi as any)?.members) || [];
         return {
-          type: rawEvent.members,
+          type: members,
           args,
-          parsedArgs: format ? parseEventData(args, rawEvent.members) : null,
+          parsedArgs: format ? parseEventData(args, members) : null,
           ...rest,
         };
       });

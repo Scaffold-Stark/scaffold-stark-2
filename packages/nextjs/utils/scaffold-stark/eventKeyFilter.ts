@@ -172,3 +172,20 @@ export const composeEventFilterKeys = (
   }
   return keys;
 };
+
+export function buildEventKeys(
+  eventName: string,
+  filters: Record<string, unknown> | undefined,
+  eventAbi: any,
+  abi: Abi,
+  maxKeys = 16,
+) {
+  const { hash } = require("starknet");
+  let keys: string[][] = [[hash.getSelectorFromName(eventName)]];
+  if (filters) {
+    keys = keys.concat(
+      composeEventFilterKeys(filters as any, eventAbi as any, abi),
+    );
+  }
+  return keys.slice(0, maxKeys);
+}
