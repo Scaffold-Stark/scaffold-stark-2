@@ -526,7 +526,7 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
         const revertReason = receiptAny.revert_reason;
         throw new Error(red(`Deploy Calls Failed: ${revertReason}`));
       }
-      // logging links beatifully.
+      // logging links beautifully.
       logDeploymentSummary({
         network: networkName,
         transactionHash: transaction_hash,

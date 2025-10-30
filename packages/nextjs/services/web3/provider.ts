@@ -46,7 +46,7 @@ export const getRpcUrl = (networkName: string): string => {
 // Get RPC URL for the current network
 const rpcUrl = getRpcUrl(currentNetworkName);
 
-// Important: if the rpcUrl is empty (not configed in .env), we use the publicProvider
+// Important: if the rpcUrl is empty (not configured in .env), we use the publicProvider
 // which randomly choose a provider from the chain list of public providers.
 // Some public provider might have strict rate limits.
 if (rpcUrl === "") {
