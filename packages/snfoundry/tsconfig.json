@@ -10,5 +10,5 @@
       "*": ["node_modules/*", "src/types/*"]
     }
   },
-  "include": ["scripts-ts/**/*.ts"],
+  "include": ["scripts-ts/**/*.ts"]
 }

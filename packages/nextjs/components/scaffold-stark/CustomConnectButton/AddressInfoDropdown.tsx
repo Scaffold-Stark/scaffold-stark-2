@@ -12,16 +12,18 @@ import {
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import { useLocalStorage } from "usehooks-ts";
-import { BlockieAvatar, isENS } from "~~/components/scaffold-stark";
+import {
+  Avatar,
+  BlockieAvatar,
+  isStarknetName,
+} from "~~/components/scaffold-stark";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { BurnerConnector, burnerAccounts } from "@scaffold-stark/stark-burner";
 import { getTargetNetworks, notification } from "~~/utils/scaffold-stark";
 import { Address } from "@starknet-react/chains";
 import { useDisconnect, useNetwork, useConnect } from "@starknet-react/core";
-import { getStarknetPFPIfExists } from "~~/utils/profile";
 import { useScaffoldStarkProfile } from "~~/hooks/scaffold-stark/useScaffoldStarkProfile";
 import { useTheme } from "next-themes";
-import { default as NextImage } from "next/image";
 
 const allowedNetworks = getTargetNetworks();
 
@@ -29,12 +31,10 @@ type AddressInfoDropdownProps = {
   address: Address;
   blockExplorerAddressLink: string | undefined;
   displayName: string;
-  ensAvatar?: string;
 };
 
 export const AddressInfoDropdown = ({
   address,
-  ensAvatar,
   displayName,
   blockExplorerAddressLink,
 }: AddressInfoDropdownProps) => {
@@ -102,20 +102,14 @@ export const AddressInfoDropdown = ({
       <details ref={dropdownRef} className="dropdown dropdown-end leading-3">
         <summary className="btn bg-transparent btn-sm px-2 py-[0.35rem] dropdown-toggle gap-0 !h-auto border border-[#5c4fe5] ">
           <div className="hidden [@media(min-width:412px)]:block">
-            {getStarknetPFPIfExists(profile?.profilePicture) ? (
-              <NextImage
-                src={profile?.profilePicture || ""}
-                alt="Profile Picture"
-                className="rounded-full"
-                width={30}
-                height={30}
-              />
-            ) : (
-              <BlockieAvatar address={address} size={28} ensImage={ensAvatar} />
-            )}
+            <Avatar
+              address={address}
+              size={30}
+              profilePicture={profile?.profilePicture}
+            />
           </div>
           <span className="ml-2 mr-2 text-sm">
-            {isENS(displayName)
+            {isStarknetName(displayName)
               ? displayName
               : profile?.name ||
                 address?.slice(0, 6) + "..." + address?.slice(-4)}

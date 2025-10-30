@@ -73,8 +73,54 @@ jobs:
             --exclude='CONTRIBUTING*' \
             --exclude='README.md' \
             ../source_repo/ ./
+
+          # Sync only the Compatible versions section from README.md
+          echo "Syncing Compatible versions section from README.md..."
+          python3 -c "
+          import re
+
+          # Read source and destination READMEs
+          with open('../source_repo/README.md', 'r') as f:
+              source = f.read()
+          with open('README.md', 'r') as f:
+              dest = f.read()
+
+          # Extract versions list from source (## Compatible versions)
+          source_match = re.search(r'## Compatible versions\s*\n(.*?)(?=\n##|\Z)', source, re.DOTALL)
+          if not source_match:
+              print('Could not find Compatible versions in source README')
+              exit(1)
+
+          versions_list = source_match.group(1).strip()
+          print('Found versions:', versions_list[:50] + '...')
+
+          # Replace versions in destination (### Compatible versions)
+          dest_pattern = r'(### Compatible versions\s*\n)(.*?)(?=\n###|\Z)'
+          dest_match = re.search(dest_pattern, dest, re.DOTALL)
+          if not dest_match:
+              print('Could not find Compatible versions in destination README')
+              exit(1)
+
+          # Keep the requirements link if it exists
+          old_content = dest_match.group(2)
+          requirements_link = ''
+          if 'Make sure you have the compatible versions' in old_content:
+              req_match = re.search(r'(Make sure you have.*?)(?=\n###|\Z)', old_content, re.DOTALL)
+              if req_match:
+                  requirements_link = '\n\n' + req_match.group(1).strip()
+
+          # Replace the section
+          new_section = dest_match.group(1) + versions_list + requirements_link
+          new_dest = re.sub(dest_pattern, new_section, dest, flags=re.DOTALL)
+
+          # Write updated README
+          with open('README.md', 'w') as f:
+              f.write(new_dest)
+          print('Successfully updated Compatible versions section')
+          "
+
           git add .
-          git commit -m "chore: sync files from scaffold-stark-2"
+          git commit -m "chore: sync files from scaffold-stark-2 and update Compatible versions section"
           git push origin base-challenge-template
 
       - name: Notify Slack on Success

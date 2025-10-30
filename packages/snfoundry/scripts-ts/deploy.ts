@@ -7,7 +7,7 @@ import {
   assertRpcNetworkActive,
   assertDeployerSignable,
 } from "./deploy-contract";
-import { green } from "./helpers/colorize-log";
+import { green, red } from "./helpers/colorize-log";
 
 /**
  * Deploy a contract using the specified parameters.
@@ -65,7 +65,11 @@ const main = async (): Promise<void> => {
 
     console.log(green("All Setup Done!"));
   } catch (err) {
-    console.log(err);
+    if (err instanceof Error) {
+      console.error(red(err.message));
+    } else {
+      console.error(err);
+    }
     process.exit(1); //exit with error so that non subsequent scripts are run
   }
 };

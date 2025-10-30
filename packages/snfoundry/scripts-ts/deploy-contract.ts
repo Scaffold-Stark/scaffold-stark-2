@@ -136,6 +136,55 @@ let deployCalls = [];
 
 const { provider, deployer, feeToken }: Network = networks[networkName];
 
+const estimateTip = async (): Promise<bigint> => {
+  return networkName === "devnet"
+    ? 1000n
+    : (await deployer.getEstimateTip()).recommendedTip;
+};
+
+/**
+ * Calculate estimated tip for declaration transaction with fee escalation
+ */
+const estimateDeclareFee = async (
+  payload: DeclareContractPayload,
+  classHash: string
+): Promise<bigint> => {
+  const tip = await estimateTip();
+  const { overall_fee } = await deployer.estimateDeclareFee(
+    {
+      contract: payload.contract,
+      compiledClassHash: classHash,
+    },
+    { tip }
+  );
+
+  const minimumTip = 500000000000000000n; // 0.1 STRK
+  const finalTip = overall_fee > minimumTip ? overall_fee : minimumTip;
+
+  return finalTip;
+};
+
+/**
+ * Get contract size for logging purposes
+ */
+const getContractSize = (payload: DeclareContractPayload): number => {
+  return typeof payload.contract === "string"
+    ? payload.contract.length
+    : JSON.stringify(payload.contract).length;
+};
+
+/**
+ * Calculate retry interval based on contract size
+ */
+const estimateRetryInterval = (payload: DeclareContractPayload): number => {
+  const contractSize = getContractSize(payload);
+
+  const baseInterval = 5000;
+  const sizeMultiplier = Math.ceil(contractSize / 100000) * 1.5; // 1.5 seconds per 100KB
+
+  return Math.min(baseInterval + sizeMultiplier * 1000, 30000);
+};
+
 const declareIfNot_NotWait = async (
   payload: DeclareContractPayload,
   options?: UniversalDetails
@@ -167,8 +216,23 @@ const declareIfNot_NotWait = async (
   }
 
   try {
-    const declareOptions =
-      networkName === "devnet" ? { ...options, tip: 1000n } : { ...options };
+    const estimatedDeclareFee = await estimateDeclareFee(payload, classHash);
+    const estimatedTip = await estimateTip();
+    const retryInterval = estimateRetryInterval(payload);
+    console.log(
+      yellow(`Estimated declare fee: ${estimatedDeclareFee.toString()}`)
+    );
+    console.log(yellow(`Estimated tip: ${estimatedTip.toString()}`));
+    console.log(
+      yellow(`Estimated retry interval: ${retryInterval.toString()}`)
+    );
+
+    const declareOptions = {
+      ...options,
+      tip: estimatedTip,
+      estimated_tip: estimatedDeclareFee,
+    };
+
     const { transaction_hash } = await deployer.declare(
       payload,
       declareOptions
@@ -178,24 +242,28 @@ const declareIfNot_NotWait = async (
       console.log(
         yellow("Waiting for declaration transaction to be accepted...")
       );
-      const receipt = await provider.waitForTransaction(transaction_hash);
-      console.log(
-        yellow("Declaration transaction receipt:"),
-        JSON.stringify(
-          receipt,
-          (_, v) => (typeof v === "bigint" ? v.toString() : v),
-          2
-        )
-      );
+      const receipt = await provider.waitForTransaction(transaction_hash, {
+        retryInterval,
+      });
 
       const receiptAny = receipt as any;
       if (receiptAny.execution_status !== "SUCCEEDED") {
+        // Show verbose error details when declaration fails
+        console.log(
+          red("Declaration transaction receipt:"),
+          JSON.stringify(
+            receipt,
+            (_, v) => (typeof v === "bigint" ? v.toString() : v),
+            2
+          )
+        );
         const revertReason = receiptAny.revert_reason || "Unknown reason";
         throw new Error(
           red(`Declaration failed or reverted. Reason: ${revertReason}`)
         );
       }
       console.log(green("Declaration successful"));
+      console.log(yellow("Declaration fee:"), receiptAny.actual_fee);
     }
 
     return {
@@ -207,15 +275,42 @@ const declareIfNot_NotWait = async (
       e.isType("VALIDATION_FAILURE") &&
       e.baseError.data.includes("exceed balance")
     ) {
+      console.error(red("❌ Class declaration failed: Insufficient balance"));
+      console.error(red(`   Deployer address: ${deployer.address}`));
       console.error(
-        red("Class declaration failed: deployer"),
-        deployer.address,
-        red("has insufficient balance.")
+        red(
+          `   Please ensure your account has enough ${feeToken[0].name} to cover the declaration fee.`
+        )
       );
       throw "Class declaration failed: insufficient balance";
     }
 
-    console.error(red("Class declaration failed: error details below"));
+    if (
+      e instanceof RpcError &&
+      (e.message?.includes("connection") || e.message?.includes("network"))
+    ) {
+      console.error(red("❌ Class declaration failed: RPC connection error"));
+      console.error(red(`   Unable to connect to ${networkName} network.`));
+      console.error(
+        red("   Please check your RPC URL and network connectivity.")
+      );
+      throw "Class declaration failed: RPC connection error";
+    }
+
+    if (
+      e instanceof RpcError &&
+      (e.message?.includes("timeout") || e.message?.includes("TIMEOUT"))
+    ) {
+      console.error(red("❌ Class declaration failed: Request timeout"));
+      console.error(
+        red(
+          "   The RPC request timed out. Please try again or check your network connection."
+        )
+      );
+      throw "Class declaration failed: request timeout";
+    }
+
+    console.error(red("❌ Class declaration failed: error details below"));
     console.error(e);
     throw "Class declaration failed";
   }
@@ -465,14 +560,45 @@ const executeDeployCalls = async (options?: UniversalDetails) => {
       e.baseError.data.includes("exceed balance")
     ) {
       console.error(
-        red("Deployment tx execution failed: deployer"),
-        deployer.address,
-        red("has insufficient balance.")
+        red("❌ Deployment execution failed: Insufficient balance")
+      );
+      console.error(red(`   Deployer address: ${deployer.address}`));
+      console.error(
+        red(
+          `   Please ensure your account has enough ${feeToken[0].name} to cover the deployment fees.`
+        )
       );
       throw "Deployment tx execution failed: insufficient balance";
     }
 
-    console.error(red("Deployment tx execution failed: error details below"));
+    if (
+      e instanceof RpcError &&
+      (e.message?.includes("connection") || e.message?.includes("network"))
+    ) {
+      console.error(
+        red("❌ Deployment execution failed: RPC connection error")
+      );
+      console.error(red(`   Unable to connect to ${networkName} network.`));
+      console.error(
+        red("   Please check your RPC URL and network connectivity.")
+      );
+      throw "Deployment tx execution failed: RPC connection error";
+    }
+
+    if (
+      e instanceof RpcError &&
+      (e.message?.includes("timeout") || e.message?.includes("TIMEOUT"))
+    ) {
+      console.error(red("❌ Deployment execution failed: Request timeout"));
+      console.error(
+        red(
+          "   The RPC request timed out. Please try again or check your network connection."
+        )
+      );
+      throw "Deployment tx execution failed: request timeout";
+    }
+
+    console.error(red("❌ Deployment execution failed: error details below"));
     console.error(e);
     throw "Deployment tx execution failed";
   }
@@ -512,16 +638,14 @@ const exportDeployments = () => {
 
 const assertDeployerDefined = () => {
   if (!deployer) {
-    const errorMessage = `Deployer account is not defined. \`ACCOUNT_ADDRESS_${networkName.toUpperCase()}\` or \`PRIVATE_KEY_${networkName.toUpperCase()}\` is missing from \`.env\`.`;
-    console.error(red(errorMessage));
+    const errorMessage = `❌ Deployer account is not defined. \`ACCOUNT_ADDRESS_${networkName.toUpperCase()}\` or \`PRIVATE_KEY_${networkName.toUpperCase()}\` is missing from \`.env\`.\n   Please add both environment variables to your \`.env\` file.`;
     throw new Error(errorMessage);
   }
 };
 
 const assertRpcNetworkActive = async () => {
   if (!provider) {
-    const errorMessage = `RPC provider is not defined. \`RPC_URL_${networkName.toUpperCase()}\` is missing from \`.env\`.`;
-    console.error(red(errorMessage));
+    const errorMessage = `❌ RPC provider is not defined. \`RPC_URL_${networkName.toUpperCase()}\` is missing from \`.env\`.`;
     throw new Error(errorMessage);
   }
 
@@ -529,8 +653,25 @@ const assertRpcNetworkActive = async () => {
     const block = await provider.getBlock("latest");
     console.log(green(`✓ RPC connected (Block #${block.block_number})`));
   } catch (e) {
-    const errorMessage = `RPC provider is not active. \`RPC_URL_${networkName.toUpperCase()}\` is not reachable.\n`;
-    console.error(red(errorMessage), e);
+    if (
+      e instanceof RpcError &&
+      (e.message?.includes("connection") || e.message?.includes("network"))
+    ) {
+      const errorMessage = `❌ RPC connection failed. Unable to connect to ${networkName} network.\n   Please check your \`RPC_URL_${networkName.toUpperCase()}\` in \`.env\` and ensure the RPC endpoint is accessible.`;
+      throw new Error(errorMessage);
+    }
+
+    if (
+      e instanceof RpcError &&
+      (e.message?.includes("timeout") || e.message?.includes("TIMEOUT"))
+    ) {
+      const errorMessage = `❌ RPC request timeout. The connection to ${networkName} network timed out.\n   Please check your network connection and try again.`;
+      throw new Error(errorMessage);
+    }
+
+    const errorMessage = `❌ RPC provider is not active. \`RPC_URL_${networkName.toUpperCase()}\` is not reachable.\n   Error details: ${
+      e.message || e
+    }`;
     throw new Error(errorMessage);
   }
 };
@@ -564,20 +705,37 @@ const assertDeployerSignable = async () => {
     );
   } catch (e) {
     if (e.toString().includes("Contract not found")) {
-      const errorMessage = `Deployer account at \`${deployer.address}\` hasn't been deployed on ${networkName} network.`;
-      console.error(red(errorMessage), e);
+      const errorMessage = `❌ Deployer account at \`${deployer.address}\` hasn't been deployed on ${networkName} network.\n   Please deploy your account first or use a different account address.`;
+
       throw new Error(errorMessage);
     }
 
-    const errorMessage =
-      "Unable to verify signature from the deployer account. Possible causes: network latency, RPC timeout.";
-    console.error(red(errorMessage), e);
+    if (
+      e instanceof RpcError &&
+      (e.message?.includes("connection") || e.message?.includes("network"))
+    ) {
+      const errorMessage = `❌ Unable to verify deployer signature: RPC connection error.\n   Please check your network connection and RPC endpoint.`;
+
+      throw new Error(errorMessage);
+    }
+
+    if (
+      e instanceof RpcError &&
+      (e.message?.includes("timeout") || e.message?.includes("TIMEOUT"))
+    ) {
+      const errorMessage = `❌ Unable to verify deployer signature: Request timeout.\n   Please try again or check your network connection.`;
+
+      throw new Error(errorMessage);
+    }
+
+    const errorMessage = `❌ Unable to verify signature from the deployer account.\n   Possible causes: network latency, RPC timeout, or invalid account configuration.`;
+
     throw new Error(errorMessage);
   }
 
   if (!isValidSig) {
-    const errorMessage = `Invalid signature. \`ACCOUNT_ADDRESS_${networkName.toUpperCase()}\` is not match with \`PRIVATE_KEY_${networkName.toUpperCase()}\`.`;
-    console.error(red(errorMessage));
+    const errorMessage = `❌ Invalid signature. \`ACCOUNT_ADDRESS_${networkName.toUpperCase()}\` does not match \`PRIVATE_KEY_${networkName.toUpperCase()}\`.\n   Please verify that your account address and private key are correctly configured in \`.env\`.`;
+
     throw new Error(errorMessage);
   }
 };

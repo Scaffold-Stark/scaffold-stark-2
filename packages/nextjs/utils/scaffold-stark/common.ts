@@ -37,3 +37,25 @@ export function isValidContractArgs(
     args.every((arg) => arg !== undefined && arg !== null && arg !== "")
   );
 }
+
+// Safely stringify objects that might contain bigint or complex values
+export function safeStringify(value: unknown): string {
+  try {
+    return JSON.stringify(value, (_key, val) =>
+      typeof val === "bigint" ? val.toString() : val,
+    );
+  } catch {
+    return String(value);
+  }
+}
+
+export function formatTimestamp(ts: number): string {
+  return new Intl.DateTimeFormat(undefined, {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(new Date(ts));
+}

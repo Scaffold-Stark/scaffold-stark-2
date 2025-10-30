@@ -3,7 +3,7 @@ name: Deploy Demo Page
 on:
   pull_request:
     types: [closed]
-    branches: [main]
+    branches: [main, develop]
     paths:
       - "packages/nextjs/**"
   workflow_dispatch:
@@ -25,8 +25,6 @@ jobs:
 
       - name: Install snfoundryup
         uses: foundry-rs/setup-snfoundry@v3
-        with:
-          tool-versions: ./.tool-versions
 
       - name: Modify scaffoldConfig in Source Repository
         run: |
@@ -65,6 +63,7 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           RPC_URL_SEPOLIA: ${{ secrets.RPC_URL_SEPOLIA }}
+          NEXT_PUBLIC_SEPOLIA_PROVIDER_URL: ${{ secrets.NEXT_PUBLIC_SEPOLIA_PROVIDER_URL }}
         run: |
           cd source_repo
           vercel link --yes --project $VERCEL_PROJECT_ID --token $VERCEL_TOKEN --scope $VERCEL_ORG_ID

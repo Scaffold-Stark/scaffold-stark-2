@@ -55,7 +55,11 @@ function main() {
 
     execSync(command, { stdio: "inherit" });
   } catch (error) {
-    console.error("Error during deployment:", error);
+    if (error instanceof Error) {
+      console.error("Error during deployment:", error.message);
+    } else {
+      console.error("Error during deployment:", error);
+    }
     process.exit(1);
   }
 }
