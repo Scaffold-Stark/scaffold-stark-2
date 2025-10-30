@@ -30,9 +30,6 @@ export function useTargetNetwork(): { targetNetwork: ChainWithAttributes } {
   }, [chainId, setTargetNetwork, targetNetwork.id]);
 
   return {
-    targetNetwork: {
-      ...targetNetwork,
-      //   ...NETWORKS_EXTRA_DATA[targetNetwork.id],
-    },
+    targetNetwork,
   };
 }

@@ -38,6 +38,41 @@ export function isValidContractArgs(
   );
 }
 
+// Normalize mixed-type addresses (string | bigint | number) to 0x-prefixed hex
+export function normalizeToHexAddress(
+  input: string | bigint | number | null | undefined,
+): `0x${string}` {
+  if (!input) return "0x0";
+  if (typeof input === "string") return input as `0x${string}`;
+  const hex = BigInt(input).toString(16).padStart(64, "0");
+  return `0x${hex}` as `0x${string}`;
+}
+
+// Format STRK (wei-like, 18 decimals) from bigint/string/number or CairoOption
+export function formatStrk(value: any): string {
+  try {
+    if (
+      value &&
+      typeof value === "object" &&
+      "Some" in value &&
+      "None" in value
+    ) {
+      if (value.Some !== undefined)
+        return (Number(BigInt(value.Some)) / 1e18).toFixed(4) + " STRK";
+      return "0 STRK";
+    }
+    if (typeof value === "bigint")
+      return (Number(value) / 1e18).toFixed(4) + " STRK";
+    if (typeof value === "string") {
+      if (value.trim() === "" || value === "0") return "0 STRK";
+      return (Number(BigInt(value)) / 1e18).toFixed(4) + " STRK";
+    }
+    if (typeof value === "number")
+      return value === 0 ? "0 STRK" : (value / 1e18).toFixed(4) + " STRK";
+  } catch {}
+  return "0 STRK";
+}
+
 // Safely stringify objects that might contain bigint or complex values
 export function safeStringify(value: unknown): string {
   try {
