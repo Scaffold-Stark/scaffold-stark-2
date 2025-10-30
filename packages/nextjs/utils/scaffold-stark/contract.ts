@@ -393,6 +393,19 @@ export type UseScaffoldWatchContractEventConfig<
   onLogs: (log: any) => void;
 };
 
+export type UseScaffoldWebSocketEventsConfig<
+  TContractName extends ContractName,
+  TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
+> = {
+  contractName: TContractName;
+  eventName: BaseName<IsContractDeclarationMissing<string, TEventName>>;
+  fromBlock?: bigint;
+  filters?: Record<string, unknown>;
+  enrich?: boolean;
+  enabled?: boolean;
+  onEvent?: (event: any) => void;
+};
+
 /// export all the types from kanabi
 
 export function getFunctionsByStateMutability(
