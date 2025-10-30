@@ -157,7 +157,7 @@ Now you are ready!!!
 
 - Starknet-devnet - 0.6.1
 - Scarb - v2.12.2
-- Snforge - v0.50.0
+- Snforge - v0.51.1
 - Cairo - v2.12.2
 - Rpc - v0.9.x
 
