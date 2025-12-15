@@ -430,9 +430,9 @@ export function useFetchEvents(
             // Sort events by block number and event index (newest first)
             const sortedEvents = eventResponse.events.sort((a, b) => {
               if (a.block_number !== b.block_number) {
-                return b.block_number - a.block_number;
+                return b.block_number || 0 - (a.block_number || 0);
               }
-              return (b as any).event_index - (a as any).event_index;
+              return (b as any).event_index || 0 - (a as any).event_index || 0;
             });
 
             // Apply pagination
@@ -459,8 +459,8 @@ export function useFetchEvents(
 
                   // Initialize event data
                   const eventData: EventData = {
-                    blockHash: event.block_hash,
-                    blockNumber: event.block_number,
+                    blockHash: event.block_hash || "",
+                    blockNumber: event.block_number || 0,
                     transactionHash: event.transaction_hash,
                     eventName: "Event",
                     contractAddress: event.from_address,
