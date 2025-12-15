@@ -13,7 +13,6 @@ import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import { Abi } from "abi-wan-kanabi/dist/kanabi";
 import { resolveEventAbi } from "~~/utils/scaffold-stark/eventsUtils";
 
-
 /**
  * Watches for specific contract events and triggers a callback when events are detected.
  * callback function whenever new events matching the specified event name are found.
