@@ -429,9 +429,11 @@ export function useFetchEvents(
 
           if (eventResponse.events) {
             // Sort events by block number and event index (newest first)
-            const sortedEvents = (eventResponse.events as EMITTED_EVENT[]).sort((a, b) => {
-              return b.block_number - a.block_number;
-            });
+            const sortedEvents = (eventResponse.events as EMITTED_EVENT[]).sort(
+              (a, b) => {
+                return b.block_number - a.block_number;
+              },
+            );
 
             // Apply pagination
             const startIndex = (page - 1) * pageSize;
