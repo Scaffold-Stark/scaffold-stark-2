@@ -53,7 +53,7 @@ const validateConstructorArgsWithStarknetJS = (
                 error: `Invalid ContractAddress for '${arg.name}': Zero address (${addressValue}) is not allowed. Please provide a valid non-zero address.`,
               };
             }
-          } catch (parseError) {}
+          } catch (parseError) { }
         }
       }
     }
@@ -106,11 +106,10 @@ const validateConstructorArgsWithStarknetJS = (
 
     return {
       isValid: false,
-      error: `${userFriendlyMessage}${
-        originalError !== userFriendlyMessage
+      error: `${userFriendlyMessage}${originalError !== userFriendlyMessage
           ? ` (Details: ${originalError})`
           : ""
-      }`,
+        }`,
     };
   }
 };
@@ -349,7 +348,7 @@ const findContractFile = (
   if (!matchingFile) {
     throw new Error(
       `Could not find ${fileType} file for contract "${contract}". ` +
-        `Try removing snfoundry/contracts/target, then run 'yarn compile' and check if your contract name is correct inside the contracts/target/dev directory.`
+      `Try removing snfoundry/contracts/target, then run 'yarn compile' and check if your contract name is correct inside the contracts/target/dev directory.`
     );
   }
 
@@ -428,8 +427,7 @@ const deployContract = async (
     if (!constructorArgs) {
       throw new Error(
         red(
-          `Missing constructor arguments: expected ${
-            requiredArgs.length
+          `Missing constructor arguments: expected ${requiredArgs.length
           } (${requiredArgs
             .map((a: any) => `${a.name}: ${a.type}`)
             .join(", ")}), but got none.`
@@ -669,9 +667,8 @@ const assertRpcNetworkActive = async () => {
       throw new Error(errorMessage);
     }
 
-    const errorMessage = `❌ RPC provider is not active. \`RPC_URL_${networkName.toUpperCase()}\` is not reachable.\n   Error details: ${
-      e.message || e
-    }`;
+    const errorMessage = `❌ RPC provider is not active. \`RPC_URL_${networkName.toUpperCase()}\` is not reachable.\n   Error details: ${e.message || e
+      }`;
     throw new Error(errorMessage);
   }
 };

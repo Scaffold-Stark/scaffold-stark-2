@@ -1,6 +1,8 @@
+use snforge_std::ContractClassTrait;
+use snforge_std::DeclareResultTrait;
+use snforge_std::declare;
 use contracts::your_contract::YourContract::FELT_STRK_CONTRACT;
 use contracts::your_contract::{IYourContractDispatcher, IYourContractDispatcherTrait};
-use openzeppelin_testing::declare_and_deploy;
 use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 use openzeppelin_utils::serde::SerializedAppend;
 use snforge_std::{CheatSpan, cheat_caller_address};
@@ -16,7 +18,9 @@ const STRK_TOKEN_CONTRACT_ADDRESS: ContractAddress = FELT_STRK_CONTRACT.try_into
 fn deploy_contract(name: ByteArray) -> ContractAddress {
     let mut calldata = array![];
     calldata.append_serde(OWNER);
-    declare_and_deploy(name, calldata)
+    let contract = declare(name).unwrap().contract_class();
+    let (contract_address, _) = contract.deploy(@calldata).unwrap();
+    contract_address
 }
 
 #[test]
