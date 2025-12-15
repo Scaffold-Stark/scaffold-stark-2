@@ -375,7 +375,7 @@ const findContractFile = (
  * @returns {Promise<{ classHash: string; address: string }>} The deployed contract's class hash and address.
  *
  * @example
- * ///Example usage of deployContract function
+ * // Example usage of deployContract function
  * await deployContract({
  *   contract: "YourContract",
  *   contractName: "YourContractExportName",
