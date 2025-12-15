@@ -41,10 +41,10 @@ describe("getRpcUrl", () => {
 
     expect(getRpcUrl("devnet")).toBe("http://127.0.0.1:5050");
     expect(getRpcUrl("sepolia")).toBe(
-      "https://starknet-sepolia.public.blastapi.io/rpc/v0_9",
+      "https://starknet-sepolia.public.blastapi.io/rpc/v0_10",
     );
     expect(getRpcUrl("mainnet")).toBe(
-      "https://starknet-mainnet.public.blastapi.io/rpc/v0_9",
+      "https://starknet-mainnet.public.blastapi.io/rpc/v0_10",
     );
   });
 
