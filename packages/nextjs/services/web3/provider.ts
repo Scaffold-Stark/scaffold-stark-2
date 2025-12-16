@@ -31,12 +31,12 @@ export const getRpcUrl = (networkName: string): string => {
     case "sepolia":
       rpcUrl =
         sepoliaRpcUrl ||
-        "https://starknet-sepolia.public.blastapi.io/rpc/v0_10";
+        "https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_10/_hKu4IgnPgrF8O82GLuYU";
       break;
     case "mainnet":
       rpcUrl =
         mainnetRpcUrl ||
-        "https://starknet-mainnet.public.blastapi.io/rpc/v0_10";
+        "https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_10/_hKu4IgnPgrF8O82GLuYU";
       break;
     default:
       rpcUrl = "http://127.0.0.1:5050";
