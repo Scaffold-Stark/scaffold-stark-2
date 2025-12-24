@@ -7,28 +7,28 @@ import {
   devnetStrkClassHash,
   universalStrkAddress,
   sepoliaMainnetStrkClassHash,
-  universalErc20Abi,
+  strkAbi,
 } from "../utils/Constants";
 
 const preDeployedContracts = {
   devnet: {
     Strk: {
       address: universalStrkAddress,
-      abi: universalErc20Abi,
+      abi: strkAbi,
       classHash: devnetStrkClassHash,
     },
   },
   sepolia: {
     Strk: {
       address: universalStrkAddress,
-      abi: universalErc20Abi,
+      abi: strkAbi,
       classHash: sepoliaMainnetStrkClassHash,
     },
   },
   mainnet: {
     Strk: {
       address: universalStrkAddress,
-      abi: universalErc20Abi,
+      abi: strkAbi,
       classHash: sepoliaMainnetStrkClassHash,
     },
   },

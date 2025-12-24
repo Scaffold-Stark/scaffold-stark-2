@@ -22,7 +22,7 @@
 
 Before you begin, you need to install the following tools:
 
-- [Node (>= v18.17)](https://nodejs.org/en/download/)
+- [Node (>= v22)](https://nodejs.org/en/download/)
 - Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
 - [Git](https://git-scm.com/downloads)
 
@@ -40,8 +40,7 @@ Tool for installing all the Starknet essentials for development. [Starkup](https
 - [Starknet Foundry](https://foundry-rs.github.io/starknet-foundry/index.html) - Development toolchain for testing on Starknet
 - [asdf](https://asdf-vm.com/guide/getting-started.html) - Version manager to easily switch between tool versions
 - [Cairo 1.0 extension](https://marketplace.visualstudio.com/items?itemName=starkware.cairo1) for VSCode - Syntax highlighting and language support
-
->Currently, [starknet-devnet](https://0xspaceshard.github.io/starknet-devnet/) is not supported by `starkup` and needs to be installed separately (see instructions below).
+- [Starknet Devnet](https://0xspaceshard.github.io/starknet-devnet/) - Starknet Devnet
 
 To install `starkup`, run the following command:
 
@@ -61,29 +60,21 @@ yarn install
 
 Now you have a new project with the basic structure.
 
-#### 1.3 Install Starknet Devnet using ASDF Fast Install
+#### 1.3 Troubleshooting
 
-- Install [asdf](https://asdf-vm.com/guide/getting-started.html) in case you don't have it installed yet. It allows you to manage the other dependencies with ease.
+- If you run into version errors after using `starkup` or `asdf`, you can try to install the dependencies manually. Check the details below.
 
-We are almost done, now we need to install `Starknet Devnet`. First let's register the Starknet Devnet plugin on `asdf`.
+<details>
 
-```bash
-asdf plugin add starknet-devnet
-```
+#### Installing with ASDF
 
-Now open your new created project. Since we have the required dependencies listed on a `.tool-versions` file, simply running the below command on the root folder will install `starknet-devnet`(and other dependencies such as `scarb` and `starknet-foundry`) with the version SPECIFIED on the `.tool-versions` file (not necessarily the latest):
+Using ASDF, you can install the required dependencies of Scaffold Stark 2 in a single command. You can do so by doing
 
 ```bash
 asdf install
 ```
 
-Now you are ready!!!. You can jump to [Quickstart 1](#quickstart-1-deploying-a-smart-contract-to-starknet-devnet) to start developing your dapp.
-
-#### 1.4 Troubleshooting
-
-- If you run into version errors after using `starkup` or `asdf`, you can try to install the dependencies manually. Check the details below.
-
-<details>
+You can refer to the guide of manual installation of asdf [here](https://asdf-vm.com/guide/getting-started.html).
 
 #### Scarb version
 
@@ -103,31 +94,31 @@ Otherwise, you can install Scarb `2.11.4` following the [instructions](https://d
 
 #### Starknet Foundry version
 
-To ensure the proper functioning of the tests on scaffold-stark, your `Starknet Foundry` version must be `0.41.0`. To accomplish this, first check your `Starknet Foundry` version:
+To ensure the proper functioning of the tests on scaffold-stark, your `Starknet Foundry` version must be `0.46.0`. To accomplish this, first check your `Starknet Foundry` version:
 
 ```sh
 snforge --version
 ```
 
-If your `Starknet Foundry` version is not `0.41.0`, you need to install it. If you already have installed `Starknet Foundry` via `starkup`, you can setup this specific version with the following command:
+If your `Starknet Foundry` version is not `0.46.0`, you need to install it. If you already have installed `Starknet Foundry` via `starkup`, you can setup this specific version with the following command:
 
 ```sh
-asdf install starknet-foundry 0.41.0 && asdf set starknet-foundry 0.41.0
+asdf install starknet-foundry 0.46.0 && asdf set starknet-foundry 0.46.0
 ```
 
-Otherwise, you can install Starknet Foundry `0.41.0` following the [instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf).
+Otherwise, you can install Starknet Foundry `0.46.0` following the [instructions](https://foundry-rs.github.io/starknet-foundry/getting-started/installation.html#installation-via-asdf).
 
 #### Starknet-devnet version
 
-To ensure the proper functioning of scaffold-stark, your `starknet-devnet` version must be `0.4.0`. To accomplish this, first check your `starknet-devnet` version:
+To ensure the proper functioning of scaffold-stark, your `starknet-devnet` version must be ` 0.4.3`. To accomplish this, first check your `starknet-devnet` version:
 
 ```sh
 starknet-devnet --version
 ```
 
-If your `starknet-devnet` version is not `0.4.0`, you need to install it.
+If your `starknet-devnet` version is not ` 0.4.3`, you need to install it.
 
-- Install starknet-devnet `0.4.0` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
+- Install starknet-devnet ` 0.4.3` via `asdf` ([instructions](https://github.com/gianalarcon/asdf-starknet-devnet/blob/main/README.md)).
 
 </details>
 
@@ -164,9 +155,9 @@ Now you are ready!!!
 
 ## Compatible versions
 
-- Starknet-devnet - v0.4.0
+- Starknet-devnet - 0.4.3
 - Scarb - v2.11.4
-- Snforge - v0.41.0
+- Snforge - v0.46.0
 - Cairo - v2.11.4
 - Rpc - v0.8.0
 
@@ -293,12 +284,13 @@ You have to paste the endpoint and body in the API platform and click on the `Se
 
 <details>
 
-By default, Network settings are centralized in `scaffold.config.ts` with all RPC URLs defined in the `rpcProviderUrl` object. We strongly recommend to use environment variables to configure the networks, otherwise the framework will choose a random provider for you.
+By default, majority of the Network settings are centralized in `scaffold.config.ts`, the exception being the RPC urls which are configured from your environment variables. In the absence of the proper settings, the framework will choose a random provider for you.
+In the env file also, the lines configuring the networks (devnet, sepolia or mainnet) need to be uncommented, depending on what
+network you want activated for you.
 
 **How to Change Networks:**
 
 - Update the `targetNetworks` array in `scaffold.config.ts` (first network is the primary target)
-- Ensure each network has a corresponding RPC URL in the `rpcProviderUrl` object
 
 ### Required Environment Variables
 

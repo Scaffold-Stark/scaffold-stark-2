@@ -102,6 +102,17 @@ describe("Cairo Type Checks", () => {
     });
   });
 
+  describe("isCairoVoid", () => {
+    it("should return true for Cairo enum () type", () => {
+      expect(isCairoVoid("()")).toBe(true);
+    });
+
+    it("should return false for non-enum void types", () => {
+      expect(isCairoVoid("core::integer::u256")).toBe(false);
+      expect(isCairoVoid("")).toBe(false);
+    });
+  });
+
   describe("isCairoTuple", () => {
     it("should return true for Cairo tuple types", () => {
       expect(isCairoTuple("(core::felt252, core::integer::u256)")).toBe(true);

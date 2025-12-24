@@ -360,6 +360,10 @@ export type EventFilters<
     }
 >;*/
 
+type BaseName<S extends string> = S extends `${infer _Prefix}::${infer Rest}`
+  ? BaseName<Rest>
+  : S;
+
 export type UseScaffoldEventHistoryConfig<
   TContractName extends ContractName,
   TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
@@ -368,7 +372,8 @@ export type UseScaffoldEventHistoryConfig<
   TReceiptData extends boolean = false,
 > = {
   contractName: TContractName;
-  eventName: IsContractDeclarationMissing<string, TEventName>;
+  eventName: // | IsContractDeclarationMissing<string, TEventName>
+  BaseName<IsContractDeclarationMissing<string, TEventName>>;
   fromBlock: bigint;
   filters?: { [key: string]: any };
   blockData?: TBlockData;
@@ -377,6 +382,15 @@ export type UseScaffoldEventHistoryConfig<
   watch?: boolean;
   format?: boolean;
   enabled?: boolean;
+};
+
+export type UseScaffoldWatchContractEventConfig<
+  TContractName extends ContractName,
+  TEventName extends ExtractAbiEventNames<ContractAbi<TContractName>>,
+> = {
+  contractName: TContractName;
+  eventName: BaseName<IsContractDeclarationMissing<string, TEventName>>;
+  onLogs: (log: any) => void;
 };
 
 /// export all the types from kanabi

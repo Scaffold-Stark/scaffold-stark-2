@@ -21,11 +21,6 @@ export const BlockExplorer = () => {
       img: "/voyager-icon.svg",
       link: "https://voyager.online/",
     },
-    {
-      name: "Stark Compass",
-      img: "/starkcompass-icon.svg",
-      link: "https://starkcompass.com/",
-    },
   ];
 
   const { resolvedTheme } = useTheme();
@@ -51,37 +46,39 @@ export const BlockExplorer = () => {
         className="modal-toggle"
       />
       <GenericModal modalId="blockexplorer-modal">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xl font-bold">Mainnet Block Explorers</h3>
-          <label
-            htmlFor="blockexplorer-modal"
-            className="btn btn-ghost btn-sm btn-circle"
-          >
-            ✕
-          </label>
-        </div>
-        <div className="mb-4 mt-6">
-          <div className="flex flex-col gap-4">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-bold">Mainnet Block Explorers</h3>
+            <label
+              htmlFor="blockexplorer-modal"
+              className="btn btn-ghost btn-sm btn-circle"
+            >
+              ✕
+            </label>
+          </div>
+          <div className="flex flex-col space-y-2">
             {blockExplorers.length &&
               blockExplorers.map((blockexplorer, id) => (
                 <a
                   href={blockexplorer.link}
                   target="_blank"
-                  className={`h-12 flex items-center btn-sm px-6 gap-4 rounded-[4px] transition-all modal-border ${
-                    isDarkMode ? "hover:bg-[#385183]" : "hover:bg-slate-200"
-                  } border `}
+                  className={`h-10 flex items-center px-4 gap-3 rounded-[4px] transition-all ${
+                    isDarkMode
+                      ? "hover:bg-[#385183] border-gray-700"
+                      : "hover:bg-slate-200 border-gray-200"
+                  } border`}
                   key={id}
                 >
                   <div className="flex relative w-6 h-6">
                     <Image
-                      alt="Starknet Developers Hub"
+                      alt={blockexplorer.name}
                       className="cursor-pointer"
                       fill
                       sizes="1.5rem"
                       src={blockexplorer.img}
                     />
                   </div>
-                  <span className="text-sm m-0">{blockexplorer.name}</span>
+                  <p className="text-sm m-0">{blockexplorer.name}</p>
                 </a>
               ))}
           </div>
