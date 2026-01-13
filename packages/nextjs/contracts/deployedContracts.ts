@@ -7,12 +7,12 @@ const deployedContracts = {
   devnet: {
     YourContract: {
       address:
-        "0x1a2542704c7588b9c5eb86c9a1b2391b93b77b67694268b74db51097031839d",
+        "0x1923d7a1a6c39c69ad8da2359053d9d2afe92fe476af97963387f36471c4d9b",
       abi: [
         {
           type: "impl",
           name: "YourContractImpl",
-          interface_name: "contracts::YourContract::IYourContract",
+          interface_name: "contracts::your_contract::IYourContract",
         },
         {
           type: "struct",
@@ -76,7 +76,7 @@ const deployedContracts = {
         },
         {
           type: "interface",
-          name: "contracts::YourContract::IYourContract",
+          name: "contracts::your_contract::IYourContract",
           items: [
             {
               type: "function",
@@ -229,7 +229,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::YourContract::YourContract::GreetingChanged",
+          name: "contracts::your_contract::YourContract::GreetingChanged",
           kind: "struct",
           members: [
             {
@@ -256,7 +256,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::YourContract::YourContract::Event",
+          name: "contracts::your_contract::YourContract::Event",
           kind: "enum",
           variants: [
             {
@@ -266,111 +266,25 @@ const deployedContracts = {
             },
             {
               name: "GreetingChanged",
-              type: "contracts::YourContract::YourContract::GreetingChanged",
+              type: "contracts::your_contract::YourContract::GreetingChanged",
               kind: "nested",
             },
           ],
         },
       ],
       classHash:
-        "0x5e4c766477764df946dcce9b0d2c865468882ac572c0d3767aeb98d23cbe74b",
-    },
-  },
-  mainnet: {
-    Multicall: {
-      address:
-        "0x7ca5ccfeb2e4d6e13e9382d70042712f1f736c003f3a40243d9a397a7317251",
-      abi: [
-        {
-          type: "impl",
-          name: "MulticallImpl",
-          interface_name: "contracts::multicall::IMulticall",
-        },
-        {
-          type: "struct",
-          name: "core::array::Span::<core::starknet::contract_address::ContractAddress>",
-          members: [
-            {
-              name: "snapshot",
-              type: "@core::array::Array::<core::starknet::contract_address::ContractAddress>",
-            },
-          ],
-        },
-        {
-          type: "struct",
-          name: "core::array::Span::<core::felt252>",
-          members: [
-            {
-              name: "snapshot",
-              type: "@core::array::Array::<core::felt252>",
-            },
-          ],
-        },
-        {
-          type: "struct",
-          name: "core::array::Span::<core::array::Span::<core::felt252>>",
-          members: [
-            {
-              name: "snapshot",
-              type: "@core::array::Array::<core::array::Span::<core::felt252>>",
-            },
-          ],
-        },
-        {
-          type: "interface",
-          name: "contracts::multicall::IMulticall",
-          items: [
-            {
-              type: "function",
-              name: "call_contracts",
-              inputs: [
-                {
-                  name: "contracts",
-                  type: "core::array::Span::<core::starknet::contract_address::ContractAddress>",
-                },
-                {
-                  name: "entry_point_selectors",
-                  type: "core::array::Span::<core::felt252>",
-                },
-                {
-                  name: "calldata",
-                  type: "core::array::Span::<core::array::Span::<core::felt252>>",
-                },
-              ],
-              outputs: [
-                {
-                  type: "core::array::Array::<core::array::Span::<core::felt252>>",
-                },
-              ],
-              state_mutability: "view",
-            },
-          ],
-        },
-        {
-          type: "constructor",
-          name: "constructor",
-          inputs: [],
-        },
-        {
-          type: "event",
-          name: "contracts::multicall::Multicall::Event",
-          kind: "enum",
-          variants: [],
-        },
-      ],
-      classHash:
-        "0x67be8d0979b1012f4222674cb81e3a0413e45e16897b8d7c650ae84ba4a3f23",
+        "0x73e64394744804c476eb7a4ad56902d49e77565ad413e6a34726b4914cc4d1b",
     },
   },
   sepolia: {
     YourContract: {
       address:
-        "0x62eb9272c7523ee445d223bae15b5b44a79c3fdbb5216d3412534a47bcc5255",
+        "0x13fb0e8e1e3a8473422d70620ab9bba6fb1b33c643881fa08e0fae2c2efa54a",
       abi: [
         {
           type: "impl",
           name: "YourContractImpl",
-          interface_name: "contracts::YourContract::IYourContract",
+          interface_name: "contracts::your_contract::IYourContract",
         },
         {
           type: "struct",
@@ -434,7 +348,7 @@ const deployedContracts = {
         },
         {
           type: "interface",
-          name: "contracts::YourContract::IYourContract",
+          name: "contracts::your_contract::IYourContract",
           items: [
             {
               type: "function",
@@ -587,7 +501,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::YourContract::YourContract::GreetingChanged",
+          name: "contracts::your_contract::YourContract::GreetingChanged",
           kind: "struct",
           members: [
             {
@@ -614,7 +528,7 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "contracts::YourContract::YourContract::Event",
+          name: "contracts::your_contract::YourContract::Event",
           kind: "enum",
           variants: [
             {
@@ -624,14 +538,14 @@ const deployedContracts = {
             },
             {
               name: "GreetingChanged",
-              type: "contracts::YourContract::YourContract::GreetingChanged",
+              type: "contracts::your_contract::YourContract::GreetingChanged",
               kind: "nested",
             },
           ],
         },
       ],
       classHash:
-        "0x5e4c766477764df946dcce9b0d2c865468882ac572c0d3767aeb98d23cbe74b",
+        "0x48982488d0c174566ce66c575b8ab07211f22689acba2abd1a97c83a0f824a4",
     },
   },
 } as const;

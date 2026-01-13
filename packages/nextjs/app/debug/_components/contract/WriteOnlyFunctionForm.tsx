@@ -21,6 +21,8 @@ import { InvokeTransactionReceiptResponse } from "starknet";
 import { TxReceipt } from "./TxReceipt";
 import { useTransactor } from "~~/hooks/scaffold-stark";
 import { useAccount } from "~~/hooks/useAccount";
+import { addHistory } from "~~/services/store/history";
+import { safeStringify } from "~~/utils/scaffold-stark/common";
 
 type WriteOnlyFunctionFormProps = {
   abi: Abi;
@@ -76,7 +78,7 @@ export const WriteOnlyFunctionForm = ({
 
   const handleWrite = async () => {
     try {
-      await writeTransaction(
+      const txHash = await writeTransaction(
         !!contractInstance
           ? [
               contractInstance.populate(
@@ -86,6 +88,18 @@ export const WriteOnlyFunctionForm = ({
             ]
           : [],
       );
+      try {
+        const inputStr = safeStringify(getArgsAsStringInputFromForm(form));
+        const message = "Transaction sent";
+        addHistory(contractAddress, {
+          txHash: typeof txHash === "string" ? txHash : undefined,
+          functionName: abiFunction.name,
+          timestamp: Date.now(),
+          status: "success",
+          message,
+          input: inputStr,
+        });
+      } catch {}
     } catch (e: any) {
       const errorPattern = /Contract (.*?)"}/;
       const match = errorPattern.exec(e.message);
@@ -95,6 +109,18 @@ export const WriteOnlyFunctionForm = ({
         "⚡️ ~ file: WriteOnlyFunctionForm.tsx:handleWrite ~ error",
         message,
       );
+
+      try {
+        const inputStr = safeStringify(getArgsAsStringInputFromForm(form));
+        addHistory(contractAddress, {
+          txHash: undefined,
+          functionName: abiFunction.name,
+          timestamp: Date.now(),
+          status: "error",
+          message,
+          input: inputStr,
+        });
+      } catch {}
     }
   };
 

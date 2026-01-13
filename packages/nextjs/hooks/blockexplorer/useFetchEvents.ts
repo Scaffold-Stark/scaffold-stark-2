@@ -15,6 +15,7 @@ import deployedContracts from "~~/contracts/deployedContracts";
 import predeployedContracts from "~~/contracts/predeployedContracts";
 import configExternalContracts from "~~/contracts/configExternalContracts";
 import { deepMergeContracts } from "~~/utils/scaffold-stark/contract";
+import { EMITTED_EVENT } from "@starknet-io/types-js";
 
 export interface EventData {
   blockHash: string;
@@ -428,12 +429,11 @@ export function useFetchEvents(
 
           if (eventResponse.events) {
             // Sort events by block number and event index (newest first)
-            const sortedEvents = eventResponse.events.sort((a, b) => {
-              if (a.block_number !== b.block_number) {
+            const sortedEvents = (eventResponse.events as EMITTED_EVENT[]).sort(
+              (a, b) => {
                 return b.block_number - a.block_number;
-              }
-              return (b as any).event_index - (a as any).event_index;
-            });
+              },
+            );
 
             // Apply pagination
             const startIndex = (page - 1) * pageSize;

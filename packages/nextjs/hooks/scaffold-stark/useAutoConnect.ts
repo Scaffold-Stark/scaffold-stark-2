@@ -14,7 +14,7 @@ import { useAccount } from "~~/hooks/useAccount";
  * - Time since last connection hasn't exceeded TTL
  * - The previously used connector is available and ready
  *
- * @returns {void} This hook doesn't return any value
+ * @returns {void} This hook doesn't return any value but performs auto-connection side effects
  */
 export const useAutoConnect = (): void => {
   const savedConnector = useReadLocalStorage<{ id: string; ix?: number }>(

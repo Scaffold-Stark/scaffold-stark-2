@@ -19,6 +19,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@adraffy/ens-normalize@npm:^1.10.1":
+  version: 1.11.1
+  resolution: "@adraffy/ens-normalize@npm:1.11.1"
+  checksum: e8b17fcc730ccc45a956e1fbb09edfe42be41c291079512082e9964f8ef4287e67913183cdd02fff71d2e215340d5b98a9bbbd9be32c5d36fad4ba2c1ec33ff2
+  languageName: node
+  linkType: hard
+
 "@adraffy/ens-normalize@npm:^1.11.0":
   version: 1.11.0
   resolution: "@adraffy/ens-normalize@npm:1.11.0"
@@ -2117,10 +2124,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/env@npm:15.2.4":
-  version: 15.2.4
-  resolution: "@next/env@npm:15.2.4"
-  checksum: 8c532d963408766406baeb3b7f018fcdfac6b953d829afbd9d7d649668c20546dd32400259d3b0d894a7a1947116e364cb4a62e9a642cf0cca7c0f1fcf9e7920
+"@next/env@npm:15.2.6":
+  version: 15.2.6
+  resolution: "@next/env@npm:15.2.6"
+  checksum: a8043d092fe3ab0ecf7da9a616d872c8a4c8d60966cc6863c5bd2970bbd8133d7ef4c46b38b153b33dc05960661b362699508ead3de00e9839c25d2e36324308
   languageName: node
   linkType: hard
 
@@ -2140,9 +2147,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-arm64@npm:15.2.4":
-  version: 15.2.4
-  resolution: "@next/swc-darwin-arm64@npm:15.2.4"
+"@next/swc-darwin-arm64@npm:15.2.5":
+  version: 15.2.5
+  resolution: "@next/swc-darwin-arm64@npm:15.2.5"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
@@ -2154,9 +2161,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-x64@npm:15.2.4":
-  version: 15.2.4
-  resolution: "@next/swc-darwin-x64@npm:15.2.4"
+"@next/swc-darwin-x64@npm:15.2.5":
+  version: 15.2.5
+  resolution: "@next/swc-darwin-x64@npm:15.2.5"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
@@ -2168,9 +2175,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-gnu@npm:15.2.4":
-  version: 15.2.4
-  resolution: "@next/swc-linux-arm64-gnu@npm:15.2.4"
+"@next/swc-linux-arm64-gnu@npm:15.2.5":
+  version: 15.2.5
+  resolution: "@next/swc-linux-arm64-gnu@npm:15.2.5"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
@@ -2182,9 +2189,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-musl@npm:15.2.4":
-  version: 15.2.4
-  resolution: "@next/swc-linux-arm64-musl@npm:15.2.4"
+"@next/swc-linux-arm64-musl@npm:15.2.5":
+  version: 15.2.5
+  resolution: "@next/swc-linux-arm64-musl@npm:15.2.5"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
@@ -2196,9 +2203,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-gnu@npm:15.2.4":
-  version: 15.2.4
-  resolution: "@next/swc-linux-x64-gnu@npm:15.2.4"
+"@next/swc-linux-x64-gnu@npm:15.2.5":
+  version: 15.2.5
+  resolution: "@next/swc-linux-x64-gnu@npm:15.2.5"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
@@ -2210,9 +2217,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-musl@npm:15.2.4":
-  version: 15.2.4
-  resolution: "@next/swc-linux-x64-musl@npm:15.2.4"
+"@next/swc-linux-x64-musl@npm:15.2.5":
+  version: 15.2.5
+  resolution: "@next/swc-linux-x64-musl@npm:15.2.5"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
@@ -2224,9 +2231,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/swc-win32-arm64-msvc@npm:15.2.4":
-  version: 15.2.4
-  resolution: "@next/swc-win32-arm64-msvc@npm:15.2.4"
+"@next/swc-win32-arm64-msvc@npm:15.2.5":
+  version: 15.2.5
+  resolution: "@next/swc-win32-arm64-msvc@npm:15.2.5"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
@@ -2245,9 +2252,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/swc-win32-x64-msvc@npm:15.2.4":
-  version: 15.2.4
-  resolution: "@next/swc-win32-x64-msvc@npm:15.2.4"
+"@next/swc-win32-x64-msvc@npm:15.2.5":
+  version: 15.2.5
+  resolution: "@next/swc-win32-x64-msvc@npm:15.2.5"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -2268,15 +2275,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/curves@npm:1.7.0, @noble/curves@npm:~1.7.0":
-  version: 1.7.0
-  resolution: "@noble/curves@npm:1.7.0"
-  dependencies:
-    "@noble/hashes": 1.6.0
-  checksum: e220b704f1e516f326fff985e794e840a267f5542e1388737142b08177672ebc41b460b5a5bf636d7622c68e8ae719bc042ccd8aed16dc14311450a94b5f2a05
-  languageName: node
-  linkType: hard
-
 "@noble/curves@npm:1.9.1":
   version: 1.9.1
   resolution: "@noble/curves@npm:1.9.1"
@@ -2286,12 +2284,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/curves@npm:^1.4.2, @noble/curves@npm:~1.9.0":
+"@noble/curves@npm:^1.4.2, @noble/curves@npm:^1.6.0, @noble/curves@npm:~1.9.0":
   version: 1.9.7
   resolution: "@noble/curves@npm:1.9.7"
   dependencies:
     "@noble/hashes": 1.8.0
   checksum: 65acad44ac6944ab96471109087d6cfcbcaa251faad6295961be9a5ace220634f4b7c74a96d1ee2274ad3880ea953d8e8259893ed8c906c831ef29f5c04ec9cc
+  languageName: node
+  linkType: hard
+
+"@noble/curves@npm:~1.7.0":
+  version: 1.7.0
+  resolution: "@noble/curves@npm:1.7.0"
+  dependencies:
+    "@noble/hashes": 1.6.0
+  checksum: e220b704f1e516f326fff985e794e840a267f5542e1388737142b08177672ebc41b460b5a5bf636d7622c68e8ae719bc042ccd8aed16dc14311450a94b5f2a05
   languageName: node
   linkType: hard
 
@@ -2309,7 +2316,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/hashes@npm:1.8.0, @noble/hashes@npm:^1.2.0, @noble/hashes@npm:^1.4.0, @noble/hashes@npm:^1.8.0, @noble/hashes@npm:~1.8.0":
+"@noble/hashes@npm:1.8.0, @noble/hashes@npm:^1.2.0, @noble/hashes@npm:^1.4.0, @noble/hashes@npm:^1.5.0, @noble/hashes@npm:^1.8.0, @noble/hashes@npm:~1.8.0":
   version: 1.8.0
   resolution: "@noble/hashes@npm:1.8.0"
   checksum: c94e98b941963676feaba62475b1ccfa8341e3f572adbb3b684ee38b658df44100187fa0ef4220da580b13f8d27e87d5492623c8a02ecc61f23fb9960c7918f5
@@ -3882,21 +3889,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@scure/base@npm:1.2.1":
-  version: 1.2.1
-  resolution: "@scure/base@npm:1.2.1"
-  checksum: 061e04e4f6ed7bada6cdad4c799e6a82f30dda3f4008895bdb2e556f333f9b41f44dc067d25c064357ed6c012ea9c8be1e7927caf8a083af865b8de27b52370c
-  languageName: node
-  linkType: hard
-
-"@scure/base@npm:~1.2.5":
+"@scure/base@npm:~1.2.1, @scure/base@npm:~1.2.5":
   version: 1.2.6
   resolution: "@scure/base@npm:1.2.6"
   checksum: 1058cb26d5e4c1c46c9cc0ae0b67cc66d306733baf35d6ebdd8ddaba242b80c3807b726e3b48cb0411bb95ec10d37764969063ea62188f86ae9315df8ea6b325
   languageName: node
   linkType: hard
 
-"@scure/bip32@npm:1.7.0, @scure/bip32@npm:^1.7.0":
+"@scure/bip32@npm:1.7.0, @scure/bip32@npm:^1.5.0, @scure/bip32@npm:^1.7.0":
   version: 1.7.0
   resolution: "@scure/bip32@npm:1.7.0"
   dependencies:
@@ -3907,7 +3907,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@scure/bip39@npm:1.6.0, @scure/bip39@npm:^1.6.0":
+"@scure/bip39@npm:1.6.0, @scure/bip39@npm:^1.4.0, @scure/bip39@npm:^1.6.0":
   version: 1.6.0
   resolution: "@scure/bip39@npm:1.6.0"
   dependencies:
@@ -3973,7 +3973,7 @@ __metadata:
     get-starknet-core: ^4.0.0
     jsdom: ^26.0.0
     minimatch: ^10.0.0
-    next: 15.2.4
+    next: 15.2.6
     next-pwa: ^5.6.0
     next-themes: ^0.2.1
     nprogress: ^0.2.0
@@ -3981,12 +3981,12 @@ __metadata:
     prettier: ^3.4.2
     prettier-standalone: ^1.3.1-0
     qrcode.react: ^3.1.0
-    react: 19.0.0
+    react: 19.0.1
     react-copy-to-clipboard: ^5.1.0
-    react-dom: 19.0.0
+    react-dom: 19.0.1
     react-hot-toast: ^2.4.1
     shx: ^0.4.0
-    starknet: 8.5.3
+    starknet: ^9.2.1
     tailwindcss: ^4
     type-fest: ^4.6.0
     typescript: ^5
@@ -3999,8 +3999,8 @@ __metadata:
     zustand: ^4.1.2
   peerDependencies:
     "@babel/core": ^7.0.0
-    react: ^18.0.0 || ^19.0.0
-    react-dom: ^18.0.0 || ^19.0.0
+    react: ^18.0.0 || ^19.0.1
+    react-dom: ^18.0.0 || ^19.0.1
     webpack: ^5.0.0
   languageName: unknown
   linkType: soft
@@ -4018,7 +4018,7 @@ __metadata:
     globals: ^15.8.0
     prettier: ^2.8.8
     shx: ^0.4.0
-    starknet: 8.5.3
+    starknet: ^9.2.1
     toml: ^3.0.0
     ts-node: ^10.9.2
     tslib: ^2.6.2
@@ -4030,10 +4030,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@starknet-io/starknet-types-08@npm:@starknet-io/types-js@~0.8.4, @starknet-io/types-js@npm:^0.8.4":
-  version: 0.8.4
-  resolution: "@starknet-io/types-js@npm:0.8.4"
-  checksum: 5c42eeb216c8e91051977e8ef4f7ffdf1c225c13057c29c10d5cce25b7fe25ec0ad1f33e061add1a299447cf8ca5e85fed173ceb74c186d649810ddcc36f9027
+"@starknet-io/get-starknet-wallet-standard@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@starknet-io/get-starknet-wallet-standard@npm:5.0.0"
+  dependencies:
+    "@starknet-io/types-js": ^0.7.10
+    "@wallet-standard/base": ^1.1.0
+    "@wallet-standard/features": ^1.1.0
+    ox: ^0.4.4
+  checksum: 41c9327d98c37054da83fa1a36a38f850a4d3dc9d10f29106b60948063e37c30e37b1761d957901c453cdc559f2a2c9a208b9032f5b702155da41a7a3e326148
+  languageName: node
+  linkType: hard
+
+"@starknet-io/starknet-types-010@npm:@starknet-io/types-js@0.10.0":
+  version: 0.10.0
+  resolution: "@starknet-io/types-js@npm:0.10.0"
+  checksum: 5f07bd2836653b6d8e30646332fe6e79b57157b252db929ff790ef4387ddb8ee3300cc5a64efc26bc4c4a45decd1ac309e20959c06f0ab6e7a2eeb0b3238788a
   languageName: node
   linkType: hard
 
@@ -4048,6 +4060,13 @@ __metadata:
   version: 0.7.10
   resolution: "@starknet-io/types-js@npm:0.7.10"
   checksum: 8f71c57d0f101ebbde91e3016b73ab70ce3329ccb7463764a27a61db42b9ea14b690bd620a6b2dd4303e890b4a9212bdd40626962e0320e82e0c600fd3be5abf
+  languageName: node
+  linkType: hard
+
+"@starknet-io/types-js@npm:^0.8.4":
+  version: 0.8.4
+  resolution: "@starknet-io/types-js@npm:0.8.4"
+  checksum: 5c42eeb216c8e91051977e8ef4f7ffdf1c225c13057c29c10d5cce25b7fe25ec0ad1f33e061add1a299447cf8ca5e85fed173ceb74c186d649810ddcc36f9027
   languageName: node
   linkType: hard
 
@@ -5448,6 +5467,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wallet-standard/base@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@wallet-standard/base@npm:1.1.0"
+  checksum: 4057188f615f1deeb0c8a39f04018d4575f87cb387749dab6bc2e8232a95400be51ea4235450829bb256aa21136621f47167383ef1767f0eb3109f1140c74d86
+  languageName: node
+  linkType: hard
+
+"@wallet-standard/features@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@wallet-standard/features@npm:1.1.0"
+  dependencies:
+    "@wallet-standard/base": ^1.1.0
+  checksum: c0c101ee0bd4c55619e39505d15158132bbd619f4dc611880a4b0c001e96806957bed35d7a51efdff0077cf5afb01e0dc46a32b01d9d8c27f807fc2b61e92159
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/ast@npm:1.14.1, @webassemblyjs/ast@npm:^1.14.1":
   version: 1.14.1
   resolution: "@webassemblyjs/ast@npm:1.14.1"
@@ -5686,6 +5721,21 @@ __metadata:
     zod:
       optional: true
   checksum: 55f724d038a60cc5e4ce4913298f912f0c34c53e13240cd3b97b272f4122bdf4c84541d85d1e3bb36f6e8dab6685f232c69600718fad62ccc389bea3f63ed7e4
+  languageName: node
+  linkType: hard
+
+"abitype@npm:^1.0.6":
+  version: 1.2.2
+  resolution: "abitype@npm:1.2.2"
+  peerDependencies:
+    typescript: ">=5.0.4"
+    zod: ^3.22.0 || ^4.0.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+    zod:
+      optional: true
+  checksum: 13ad67305e12292e487ae9f30057a1d5b361259e79d041d3bbec4c3e63a14fdc4bda8e61009e7ddfd1973e1ee36bce91a752b9300b129d44efe3b5fa1d9929a4
   languageName: node
   linkType: hard
 
@@ -10158,10 +10208,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lossless-json@npm:^4.0.1":
-  version: 4.2.0
-  resolution: "lossless-json@npm:4.2.0"
-  checksum: 3e280633b08b524b546724c4336a6904241942ce3415b22ada56fd3bfa6eefc44da23819a9fbf00c338bbd07e85015db3f70082451c2c6cac92dc3563d25f1d7
+"lossless-json@npm:^4.2.0":
+  version: 4.3.0
+  resolution: "lossless-json@npm:4.3.0"
+  checksum: 11d25eadd5abcd6e554cc4326e6f04ce18f99daae2b0811d559c02e81febda18fe27b816817c35f7725f2f148abb0399e50bef2ea9568be28c42cbc7d99624a6
   languageName: node
   linkType: hard
 
@@ -10658,19 +10708,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:15.2.4":
-  version: 15.2.4
-  resolution: "next@npm:15.2.4"
+"next@npm:15.2.6":
+  version: 15.2.6
+  resolution: "next@npm:15.2.6"
   dependencies:
-    "@next/env": 15.2.4
-    "@next/swc-darwin-arm64": 15.2.4
-    "@next/swc-darwin-x64": 15.2.4
-    "@next/swc-linux-arm64-gnu": 15.2.4
-    "@next/swc-linux-arm64-musl": 15.2.4
-    "@next/swc-linux-x64-gnu": 15.2.4
-    "@next/swc-linux-x64-musl": 15.2.4
-    "@next/swc-win32-arm64-msvc": 15.2.4
-    "@next/swc-win32-x64-msvc": 15.2.4
+    "@next/env": 15.2.6
+    "@next/swc-darwin-arm64": 15.2.5
+    "@next/swc-darwin-x64": 15.2.5
+    "@next/swc-linux-arm64-gnu": 15.2.5
+    "@next/swc-linux-arm64-musl": 15.2.5
+    "@next/swc-linux-x64-gnu": 15.2.5
+    "@next/swc-linux-x64-musl": 15.2.5
+    "@next/swc-win32-arm64-msvc": 15.2.5
+    "@next/swc-win32-x64-msvc": 15.2.5
     "@swc/counter": 0.1.3
     "@swc/helpers": 0.5.15
     busboy: 1.6.0
@@ -10715,7 +10765,7 @@ __metadata:
       optional: true
   bin:
     next: dist/bin/next
-  checksum: a235fbe6a77e7b81ea8d9372a85ce02a1e1ecc5666b19f60b071acaa3135bf42fa4a29ad616257e3a2e60fadb9400cb4041da0e8217d46c76d7703c197896bd4
+  checksum: d2b1bf30ea31e000094d7782c38d54f9b959e4329af70d2c74f792e3b63015a5a2e73c609a26eda189a7bc44b3b1533d053591b147dffe7d15f5623197bd2d4c
   languageName: node
   linkType: hard
 
@@ -11093,6 +11143,26 @@ __metadata:
     typescript:
       optional: true
   checksum: 742a15a3942fa66beac1d0e80ee9ed806c9c4898f950d7e879373eb7068b2b61e983b0f3ea95ec09f7e19637a7978d2cf44ab73ca51007827f5d690f2974910f
+  languageName: node
+  linkType: hard
+
+"ox@npm:^0.4.4":
+  version: 0.4.4
+  resolution: "ox@npm:0.4.4"
+  dependencies:
+    "@adraffy/ens-normalize": ^1.10.1
+    "@noble/curves": ^1.6.0
+    "@noble/hashes": ^1.5.0
+    "@scure/bip32": ^1.5.0
+    "@scure/bip39": ^1.4.0
+    abitype: ^1.0.6
+    eventemitter3: 5.0.1
+  peerDependencies:
+    typescript: ">=5.4.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 412f443924ca0400142b287afb97b688cc5fadab1f8ef3f1e586a970c696a39dfaf335444efc5fa85a76d322d35d7023ff5e0c8667cb9ba4a297244ebfacf23e
   languageName: node
   linkType: hard
 
@@ -11626,14 +11696,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:19.0.0":
-  version: 19.0.0
-  resolution: "react-dom@npm:19.0.0"
+"react-dom@npm:19.0.1":
+  version: 19.0.1
+  resolution: "react-dom@npm:19.0.1"
   dependencies:
     scheduler: ^0.25.0
   peerDependencies:
-    react: ^19.0.0
-  checksum: 009cc6e575263a0d1906f9dd4aa6532d2d3d0d71e4c2b7777c8fe4de585fa06b5b77cdc2e0fbaa2f3a4a5e5d3305c189ba152153f358ee7da4d9d9ba5d3a8975
+    react: ^19.0.1
+  checksum: 43f2b6d5f83cfbdf9715b87b5eb4e38a5bb624c8a99cc9397154282e62d1aa03b209276d957f0bf0a8bd3907291b2866093a7ab571b8c2a4553facca4463d583
   languageName: node
   linkType: hard
 
@@ -11722,10 +11792,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:19.0.0":
-  version: 19.0.0
-  resolution: "react@npm:19.0.0"
-  checksum: 86de15d85b2465feb40297a90319c325cb07cf27191a361d47bcfe8c6126c973d660125aa67b8f4cbbe39f15a2f32efd0c814e98196d8e5b68c567ba40a399c6
+"react@npm:19.0.1":
+  version: 19.0.1
+  resolution: "react@npm:19.0.1"
+  checksum: 79456e02807187a194855cc42f65c20ab4d079fbf6a6f5a71b6e89c365d0a5409bd7a2f5b4ca53f85c764dcd524f660f5f0a28947dd5b5237ea3953f2b3dc73a
   languageName: node
   linkType: hard
 
@@ -12673,21 +12743,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"starknet@npm:8.5.3":
-  version: 8.5.3
-  resolution: "starknet@npm:8.5.3"
+"starknet@npm:^9.2.1":
+  version: 9.2.1
+  resolution: "starknet@npm:9.2.1"
   dependencies:
-    "@noble/curves": 1.7.0
-    "@noble/hashes": 1.6.0
-    "@scure/base": 1.2.1
+    "@noble/curves": ~1.7.0
+    "@noble/hashes": ~1.6.0
+    "@scure/base": ~1.2.1
     "@scure/starknet": 1.1.0
-    "@starknet-io/starknet-types-08": "npm:@starknet-io/types-js@~0.8.4"
+    "@starknet-io/get-starknet-wallet-standard": ^5.0.0
+    "@starknet-io/starknet-types-010": "npm:@starknet-io/types-js@0.10.0"
     "@starknet-io/starknet-types-09": "npm:@starknet-io/types-js@~0.9.1"
     abi-wan-kanabi: 2.2.4
-    lossless-json: ^4.0.1
+    lossless-json: ^4.2.0
     pako: ^2.0.4
     ts-mixer: ^6.0.3
-  checksum: c9799210b57438256dff39fc9ac625a80aab3d79159d0df18facd086b1222452cbbf543613990c9f6bc1a188196748166e9c6089e7dfea385dd2999ec137566d
+  checksum: 2934caf64820810a79fdad57e7683c7c4e8e17482fe161e9092fbaf34848fd969a5ae9884f045d0cc630e41c2d81585395cc4edc105e0dbf7a699405c59606d2
   languageName: node
   linkType: hard
 
