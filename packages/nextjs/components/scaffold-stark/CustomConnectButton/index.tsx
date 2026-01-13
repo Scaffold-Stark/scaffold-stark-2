@@ -83,7 +83,6 @@ export const CustomConnectButton = () => {
     );
   }
 
-
   // Skip wrong network check for devnet-like networks (devnet and mainnetFork)
   // since the RPC may return a different chain ID than the configured one
   const isDevnetLike = targetNetwork.network === "devnet";
