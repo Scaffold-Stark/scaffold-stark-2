@@ -155,9 +155,9 @@ Now you are ready!!!
 
 ## Compatible versions
 
-- Starknet-devnet - v0.7.1
-- Scarb - v2.15.0
-- Snforge - v0.54.1
+- Starknet-devnet - v0.7.2
+- Scarb - v2.15.1
+- Snforge - v0.55.0
 - Cairo - v2.15.0
 - Rpc - v0.10.x
 
