@@ -108,7 +108,6 @@ export const useTransactor = (
           icon: "🎉",
         },
       );
-      resetStates();
     }
   }, [txResult]);
 
