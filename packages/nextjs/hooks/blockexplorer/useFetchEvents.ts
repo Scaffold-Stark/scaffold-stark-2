@@ -431,7 +431,9 @@ export function useFetchEvents(
             // Sort events by block number and event index (newest first)
             const sortedEvents = (eventResponse.events as EMITTED_EVENT[]).sort(
               (a, b) => {
-                return b.block_number - a.block_number;
+                const blockA = a.block_number ?? 0;
+                const blockB = b.block_number ?? 0;
+                return blockB - blockA;
               },
             );
 
@@ -459,8 +461,8 @@ export function useFetchEvents(
 
                   // Initialize event data
                   const eventData: EventData = {
-                    blockHash: event.block_hash,
-                    blockNumber: event.block_number,
+                    blockHash: event.block_hash ?? "",
+                    blockNumber: event.block_number ?? 0,
                     transactionHash: event.transaction_hash,
                     eventName: "Event",
                     contractAddress: event.from_address,
@@ -530,8 +532,8 @@ export function useFetchEvents(
                 } catch (error) {
                   console.warn("Failed to process event:", error);
                   return {
-                    blockHash: event.block_hash,
-                    blockNumber: event.block_number,
+                    blockHash: event.block_hash ?? "",
+                    blockNumber: event.block_number ?? 0,
                     transactionHash: event.transaction_hash,
                     eventName: "Unknown",
                     contractAddress: event.from_address,
