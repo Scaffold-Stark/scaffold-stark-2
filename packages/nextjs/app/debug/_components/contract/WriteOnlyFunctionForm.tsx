@@ -172,13 +172,11 @@ export const WriteOnlyFunctionForm = ({
         </p>
         {inputs}
         <div className="flex justify-between gap-2">
-          {!zeroInputs && (
-            <div className="grow basis-0">
-              {displayedTxResult ? (
-                <TxReceipt txResult={displayedTxResult} />
-              ) : null}
-            </div>
-          )}
+          <div className="grow basis-0">
+            {displayedTxResult ? (
+              <TxReceipt txResult={displayedTxResult} />
+            ) : null}
+          </div>
           <div
             className={`flex ${
               !!errorMsg &&
@@ -199,11 +197,6 @@ export const WriteOnlyFunctionForm = ({
           </div>
         </div>
       </div>
-      {zeroInputs && txResult ? (
-        <div className="grow basis-0">
-          <TxReceipt txResult={txResult} />
-        </div>
-      ) : null}
     </div>
   );
 };

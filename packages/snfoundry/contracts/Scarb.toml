@@ -6,14 +6,14 @@ edition = "2024_07"
 # See more keys and their definitions at https://docs.swmansion.com/scarb/docs/reference/manifest.html
 
 [dependencies]
-starknet = ">=2.12.2"
+starknet = ">=2.14.0"
 openzeppelin_access = ">=2.0.0"
 openzeppelin_token = ">=2.0.0"
 
 [dev-dependencies]
 openzeppelin_utils = ">=2.0.0"
-openzeppelin_testing = ">=4.6.0"
-snforge_std = ">=0.51.0"
+# openzeppelin_testing = "6.1.0"
+snforge_std = "0.55.0"
 
 [[target.starknet-contract]]
 casm = true # taggle this to `false` to speed up compilation/script tests
@@ -28,7 +28,7 @@ sort-module-level-items = true
 
 [[tool.snforge.fork]]
 name = "SEPOLIA_LATEST"
-url = "https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_9/_hKu4IgnPgrF8O82GLuYU"
+url = "https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_10/_hKu4IgnPgrF8O82GLuYU"
 block_id.tag = "latest"
 
 [tool]

@@ -35,7 +35,7 @@ const blockieSizeMap = {
 };
 
 /**
- * Displays an address (or ENS) with a Blockie image and option to copy address.
+ * Displays an address with a StarkNet profile avatar and option to copy address.
  */
 export const Address = ({
   address,

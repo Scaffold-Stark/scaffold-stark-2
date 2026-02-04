@@ -147,13 +147,13 @@ const estimateTip = async (): Promise<bigint> => {
  */
 const estimateDeclareFee = async (
   payload: DeclareContractPayload,
-  classHash: string
+  compiledClassHash: string
 ): Promise<bigint> => {
   const tip = await estimateTip();
   const { overall_fee } = await deployer.estimateDeclareFee(
     {
       contract: payload.contract,
-      compiledClassHash: classHash,
+      compiledClassHash,
     },
     { tip }
   );
@@ -189,7 +189,11 @@ const declareIfNot_NotWait = async (
   payload: DeclareContractPayload,
   options?: UniversalDetails
 ) => {
-  const { classHash } = extractContractHashes(payload);
+  const starknetVersion = await provider.getStarknetVersion();
+  const { classHash, compiledClassHash } = extractContractHashes(
+    payload,
+    starknetVersion
+  );
 
   try {
     await provider.getClassByHash(classHash);
@@ -216,7 +220,10 @@ const declareIfNot_NotWait = async (
   }
 
   try {
-    const estimatedDeclareFee = await estimateDeclareFee(payload, classHash);
+    const estimatedDeclareFee = await estimateDeclareFee(
+      payload,
+      compiledClassHash
+    );
     const estimatedTip = await estimateTip();
     const retryInterval = estimateRetryInterval(payload);
     console.log(
@@ -368,7 +375,7 @@ const findContractFile = (
  * @returns {Promise<{ classHash: string; address: string }>} The deployed contract's class hash and address.
  *
  * @example
- * ///Example usage of deployContract function
+ * // Example usage of deployContract function
  * await deployContract({
  *   contract: "YourContract",
  *   contractName: "YourContractExportName",

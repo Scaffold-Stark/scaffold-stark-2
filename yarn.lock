@@ -19,6 +19,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@adraffy/ens-normalize@npm:^1.10.1":
+  version: 1.11.1
+  resolution: "@adraffy/ens-normalize@npm:1.11.1"
+  checksum: e8b17fcc730ccc45a956e1fbb09edfe42be41c291079512082e9964f8ef4287e67913183cdd02fff71d2e215340d5b98a9bbbd9be32c5d36fad4ba2c1ec33ff2
+  languageName: node
+  linkType: hard
+
 "@adraffy/ens-normalize@npm:^1.11.0":
   version: 1.11.0
   resolution: "@adraffy/ens-normalize@npm:1.11.0"
@@ -2268,15 +2275,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/curves@npm:1.7.0, @noble/curves@npm:~1.7.0":
-  version: 1.7.0
-  resolution: "@noble/curves@npm:1.7.0"
-  dependencies:
-    "@noble/hashes": 1.6.0
-  checksum: e220b704f1e516f326fff985e794e840a267f5542e1388737142b08177672ebc41b460b5a5bf636d7622c68e8ae719bc042ccd8aed16dc14311450a94b5f2a05
-  languageName: node
-  linkType: hard
-
 "@noble/curves@npm:1.9.1":
   version: 1.9.1
   resolution: "@noble/curves@npm:1.9.1"
@@ -2286,12 +2284,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/curves@npm:^1.4.2, @noble/curves@npm:~1.9.0":
+"@noble/curves@npm:^1.4.2, @noble/curves@npm:^1.6.0, @noble/curves@npm:~1.9.0":
   version: 1.9.7
   resolution: "@noble/curves@npm:1.9.7"
   dependencies:
     "@noble/hashes": 1.8.0
   checksum: 65acad44ac6944ab96471109087d6cfcbcaa251faad6295961be9a5ace220634f4b7c74a96d1ee2274ad3880ea953d8e8259893ed8c906c831ef29f5c04ec9cc
+  languageName: node
+  linkType: hard
+
+"@noble/curves@npm:~1.7.0":
+  version: 1.7.0
+  resolution: "@noble/curves@npm:1.7.0"
+  dependencies:
+    "@noble/hashes": 1.6.0
+  checksum: e220b704f1e516f326fff985e794e840a267f5542e1388737142b08177672ebc41b460b5a5bf636d7622c68e8ae719bc042ccd8aed16dc14311450a94b5f2a05
   languageName: node
   linkType: hard
 
@@ -2309,7 +2316,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/hashes@npm:1.8.0, @noble/hashes@npm:^1.2.0, @noble/hashes@npm:^1.4.0, @noble/hashes@npm:^1.8.0, @noble/hashes@npm:~1.8.0":
+"@noble/hashes@npm:1.8.0, @noble/hashes@npm:^1.2.0, @noble/hashes@npm:^1.4.0, @noble/hashes@npm:^1.5.0, @noble/hashes@npm:^1.8.0, @noble/hashes@npm:~1.8.0":
   version: 1.8.0
   resolution: "@noble/hashes@npm:1.8.0"
   checksum: c94e98b941963676feaba62475b1ccfa8341e3f572adbb3b684ee38b658df44100187fa0ef4220da580b13f8d27e87d5492623c8a02ecc61f23fb9960c7918f5
@@ -3882,21 +3889,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@scure/base@npm:1.2.1":
-  version: 1.2.1
-  resolution: "@scure/base@npm:1.2.1"
-  checksum: 061e04e4f6ed7bada6cdad4c799e6a82f30dda3f4008895bdb2e556f333f9b41f44dc067d25c064357ed6c012ea9c8be1e7927caf8a083af865b8de27b52370c
-  languageName: node
-  linkType: hard
-
-"@scure/base@npm:~1.2.5":
+"@scure/base@npm:~1.2.1, @scure/base@npm:~1.2.5":
   version: 1.2.6
   resolution: "@scure/base@npm:1.2.6"
   checksum: 1058cb26d5e4c1c46c9cc0ae0b67cc66d306733baf35d6ebdd8ddaba242b80c3807b726e3b48cb0411bb95ec10d37764969063ea62188f86ae9315df8ea6b325
   languageName: node
   linkType: hard
 
-"@scure/bip32@npm:1.7.0, @scure/bip32@npm:^1.7.0":
+"@scure/bip32@npm:1.7.0, @scure/bip32@npm:^1.5.0, @scure/bip32@npm:^1.7.0":
   version: 1.7.0
   resolution: "@scure/bip32@npm:1.7.0"
   dependencies:
@@ -3907,7 +3907,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@scure/bip39@npm:1.6.0, @scure/bip39@npm:^1.6.0":
+"@scure/bip39@npm:1.6.0, @scure/bip39@npm:^1.4.0, @scure/bip39@npm:^1.6.0":
   version: 1.6.0
   resolution: "@scure/bip39@npm:1.6.0"
   dependencies:
@@ -3947,9 +3947,9 @@ __metadata:
     "@radix-ui/react-icons": 1.3.0
     "@radix-ui/themes": 2.0.3
     "@scaffold-stark/stark-burner": ^0.1.13
-    "@starknet-io/types-js": ^0.8.4
-    "@starknet-react/chains": ^5.0.1
-    "@starknet-react/core": ^5.0.1
+    "@starknet-io/types-js": ^0.10.0
+    "@starknet-react/chains": ^5.0.3
+    "@starknet-react/core": ^5.0.3
     "@starknet-react/typescript-config": 0.0.2
     "@tailwindcss/postcss": ^4
     "@testing-library/dom": ^10.4.0
@@ -3986,7 +3986,7 @@ __metadata:
     react-dom: 19.0.3
     react-hot-toast: ^2.4.1
     shx: ^0.4.0
-    starknet: 8.5.3
+    starknet: ^9.2.1
     tailwindcss: ^4
     type-fest: ^4.6.0
     typescript: ^5
@@ -4018,7 +4018,7 @@ __metadata:
     globals: ^15.8.0
     prettier: ^2.8.8
     shx: ^0.4.0
-    starknet: 8.5.3
+    starknet: ^9.2.1
     toml: ^3.0.0
     ts-node: ^10.9.2
     tslib: ^2.6.2
@@ -4030,10 +4030,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@starknet-io/starknet-types-08@npm:@starknet-io/types-js@~0.8.4, @starknet-io/types-js@npm:^0.8.4":
-  version: 0.8.4
-  resolution: "@starknet-io/types-js@npm:0.8.4"
-  checksum: 5c42eeb216c8e91051977e8ef4f7ffdf1c225c13057c29c10d5cce25b7fe25ec0ad1f33e061add1a299447cf8ca5e85fed173ceb74c186d649810ddcc36f9027
+"@starknet-io/get-starknet-wallet-standard@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@starknet-io/get-starknet-wallet-standard@npm:5.0.0"
+  dependencies:
+    "@starknet-io/types-js": ^0.7.10
+    "@wallet-standard/base": ^1.1.0
+    "@wallet-standard/features": ^1.1.0
+    ox: ^0.4.4
+  checksum: 41c9327d98c37054da83fa1a36a38f850a4d3dc9d10f29106b60948063e37c30e37b1761d957901c453cdc559f2a2c9a208b9032f5b702155da41a7a3e326148
+  languageName: node
+  linkType: hard
+
+"@starknet-io/starknet-types-010@npm:@starknet-io/types-js@0.10.0, @starknet-io/types-js@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "@starknet-io/types-js@npm:0.10.0"
+  checksum: 5f07bd2836653b6d8e30646332fe6e79b57157b252db929ff790ef4387ddb8ee3300cc5a64efc26bc4c4a45decd1ac309e20959c06f0ab6e7a2eeb0b3238788a
   languageName: node
   linkType: hard
 
@@ -4051,19 +4063,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@starknet-react/chains@npm:^5.0.1":
-  version: 5.0.2
-  resolution: "@starknet-react/chains@npm:5.0.2"
-  checksum: 674b238a81bec2cad0667914015e3ab4e350dc4857cb99e119212acaa1255079f02147dd282f23a6fe951924021b10bd9e53b435cfe3884ceb81d9ae47f128b7
+"@starknet-io/types-js@npm:^0.8.4":
+  version: 0.8.4
+  resolution: "@starknet-io/types-js@npm:0.8.4"
+  checksum: 5c42eeb216c8e91051977e8ef4f7ffdf1c225c13057c29c10d5cce25b7fe25ec0ad1f33e061add1a299447cf8ca5e85fed173ceb74c186d649810ddcc36f9027
   languageName: node
   linkType: hard
 
-"@starknet-react/core@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "@starknet-react/core@npm:5.0.1"
+"@starknet-react/chains@npm:^5.0.3":
+  version: 5.0.3
+  resolution: "@starknet-react/chains@npm:5.0.3"
+  checksum: f519650ad54d197546e365e976389d083efdfa18981a0aefc6bebc86202795a2ca9686c8b0aa60436f2d9fa88fc804cb39005a7253a3d0caa7b9d0f290dd46c7
+  languageName: node
+  linkType: hard
+
+"@starknet-react/core@npm:^5.0.3":
+  version: 5.0.3
+  resolution: "@starknet-react/core@npm:5.0.3"
   dependencies:
     "@starknet-io/types-js": ^0.7.10
-    "@starknet-react/chains": ^5.0.1
+    "@starknet-react/chains": ^5.0.3
     "@tanstack/react-query": ^5.25.0
     abi-wan-kanabi: ^2.2.4
     eventemitter3: ^5.0.1
@@ -4073,7 +4092,7 @@ __metadata:
     get-starknet-core: ^4.0.0
     react: ^18.0
     starknet: ^8.1.2
-  checksum: 47bfec581b03a9f6f692510107aa55f59557dce5e336b532210371d8294303e5b8d6cd9fc1f9f678746341414a274023e9313148d608861c8d5c5f8cab96eac5
+  checksum: 349160180b751c99502f059934839c7d4efe7b7a85aee47f5f9dc44df641473bfb934c9c16fa754fd0951eb58b57f2290631c5b6e6c93964bb89f3ba3c0cf8bc
   languageName: node
   linkType: hard
 
@@ -5448,6 +5467,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wallet-standard/base@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@wallet-standard/base@npm:1.1.0"
+  checksum: 4057188f615f1deeb0c8a39f04018d4575f87cb387749dab6bc2e8232a95400be51ea4235450829bb256aa21136621f47167383ef1767f0eb3109f1140c74d86
+  languageName: node
+  linkType: hard
+
+"@wallet-standard/features@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@wallet-standard/features@npm:1.1.0"
+  dependencies:
+    "@wallet-standard/base": ^1.1.0
+  checksum: c0c101ee0bd4c55619e39505d15158132bbd619f4dc611880a4b0c001e96806957bed35d7a51efdff0077cf5afb01e0dc46a32b01d9d8c27f807fc2b61e92159
+  languageName: node
+  linkType: hard
+
 "@webassemblyjs/ast@npm:1.14.1, @webassemblyjs/ast@npm:^1.14.1":
   version: 1.14.1
   resolution: "@webassemblyjs/ast@npm:1.14.1"
@@ -5686,6 +5721,21 @@ __metadata:
     zod:
       optional: true
   checksum: 55f724d038a60cc5e4ce4913298f912f0c34c53e13240cd3b97b272f4122bdf4c84541d85d1e3bb36f6e8dab6685f232c69600718fad62ccc389bea3f63ed7e4
+  languageName: node
+  linkType: hard
+
+"abitype@npm:^1.0.6":
+  version: 1.2.2
+  resolution: "abitype@npm:1.2.2"
+  peerDependencies:
+    typescript: ">=5.0.4"
+    zod: ^3.22.0 || ^4.0.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+    zod:
+      optional: true
+  checksum: 13ad67305e12292e487ae9f30057a1d5b361259e79d041d3bbec4c3e63a14fdc4bda8e61009e7ddfd1973e1ee36bce91a752b9300b129d44efe3b5fa1d9929a4
   languageName: node
   linkType: hard
 
@@ -10158,10 +10208,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lossless-json@npm:^4.0.1":
-  version: 4.2.0
-  resolution: "lossless-json@npm:4.2.0"
-  checksum: 3e280633b08b524b546724c4336a6904241942ce3415b22ada56fd3bfa6eefc44da23819a9fbf00c338bbd07e85015db3f70082451c2c6cac92dc3563d25f1d7
+"lossless-json@npm:^4.2.0":
+  version: 4.3.0
+  resolution: "lossless-json@npm:4.3.0"
+  checksum: 11d25eadd5abcd6e554cc4326e6f04ce18f99daae2b0811d559c02e81febda18fe27b816817c35f7725f2f148abb0399e50bef2ea9568be28c42cbc7d99624a6
   languageName: node
   linkType: hard
 
@@ -11093,6 +11143,26 @@ __metadata:
     typescript:
       optional: true
   checksum: 742a15a3942fa66beac1d0e80ee9ed806c9c4898f950d7e879373eb7068b2b61e983b0f3ea95ec09f7e19637a7978d2cf44ab73ca51007827f5d690f2974910f
+  languageName: node
+  linkType: hard
+
+"ox@npm:^0.4.4":
+  version: 0.4.4
+  resolution: "ox@npm:0.4.4"
+  dependencies:
+    "@adraffy/ens-normalize": ^1.10.1
+    "@noble/curves": ^1.6.0
+    "@noble/hashes": ^1.5.0
+    "@scure/bip32": ^1.5.0
+    "@scure/bip39": ^1.4.0
+    abitype: ^1.0.6
+    eventemitter3: 5.0.1
+  peerDependencies:
+    typescript: ">=5.4.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 412f443924ca0400142b287afb97b688cc5fadab1f8ef3f1e586a970c696a39dfaf335444efc5fa85a76d322d35d7023ff5e0c8667cb9ba4a297244ebfacf23e
   languageName: node
   linkType: hard
 
@@ -12673,21 +12743,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"starknet@npm:8.5.3":
-  version: 8.5.3
-  resolution: "starknet@npm:8.5.3"
+"starknet@npm:^9.2.1":
+  version: 9.2.1
+  resolution: "starknet@npm:9.2.1"
   dependencies:
-    "@noble/curves": 1.7.0
-    "@noble/hashes": 1.6.0
-    "@scure/base": 1.2.1
+    "@noble/curves": ~1.7.0
+    "@noble/hashes": ~1.6.0
+    "@scure/base": ~1.2.1
     "@scure/starknet": 1.1.0
-    "@starknet-io/starknet-types-08": "npm:@starknet-io/types-js@~0.8.4"
+    "@starknet-io/get-starknet-wallet-standard": ^5.0.0
+    "@starknet-io/starknet-types-010": "npm:@starknet-io/types-js@0.10.0"
     "@starknet-io/starknet-types-09": "npm:@starknet-io/types-js@~0.9.1"
     abi-wan-kanabi: 2.2.4
-    lossless-json: ^4.0.1
+    lossless-json: ^4.2.0
     pako: ^2.0.4
     ts-mixer: ^6.0.3
-  checksum: c9799210b57438256dff39fc9ac625a80aab3d79159d0df18facd086b1222452cbbf543613990c9f6bc1a188196748166e9c6089e7dfea385dd2999ec137566d
+  checksum: 2934caf64820810a79fdad57e7683c7c4e8e17482fe161e9092fbaf34848fd969a5ae9884f045d0cc630e41c2d81585395cc4edc105e0dbf7a699405c59606d2
   languageName: node
   linkType: hard
 
