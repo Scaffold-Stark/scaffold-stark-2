@@ -1927,3 +1927,26 @@ export const Greetings = () => {
   );
 };
 ```
+
+## Starknet Agentic Skills
+
+When building AI-agent-powered features or adding on-chain agent capabilities to your Scaffold-Stark dApp, use the skills from [starknet-agentic](https://github.com/keep-starknet-strange/starknet-agentic). This toolkit provides smart contracts, tools, and reusable skills for AI agents that transact on Starknet.
+
+### Available Skills
+
+Install skills with: `npx skills add keep-starknet-strange/starknet-agentic/skills/<skill-name>`
+
+- **Wallet management** — create wallets, check balances, transfer tokens
+- **DeFi operations** — swaps, staking, lending
+- **P2P payments** — with Telegram integration
+- **Identity & reputation** — ERC-8004 registries for agent identity and reputation
+- **Privacy wallets** — privacy-focused wallet operations
+
+### Additional Resources
+
+- **MCP server** for agent-to-tool communication
+- **A2A adapter** for agent-to-agent workflows
+- **CLI scaffolding** for rapid agent deployment
+- **Cairo contracts** for agent accounts with session keys, registries, and transaction provenance
+
+See the [starknet-agentic README](https://github.com/keep-starknet-strange/starknet-agentic) for full documentation and setup instructions.
