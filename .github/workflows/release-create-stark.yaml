@@ -20,7 +20,7 @@ jobs:
       - name: check if skip ci
         id: check_commit
         run: |
-          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          COMMIT_MESSAGE="${{ github.event.pull_request.title }}"
           if [[ "$COMMIT_MESSAGE" == *"[skip ci]"* ]]; then
             echo "SHOULD_RUN=false" >> "$GITHUB_OUTPUT"
           else
