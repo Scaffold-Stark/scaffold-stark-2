@@ -18,7 +18,11 @@ export const CustomConnectButton = () => {
   const networkColor = useNetworkColor();
   const { targetNetwork } = useTargetNetwork();
   const { chain } = useNetwork();
-  const { status, address: accountAddress, chainId: accountChainId } = useAccount();
+  const {
+    status,
+    address: accountAddress,
+    chainId: accountChainId,
+  } = useAccount();
   const wasDisconnectedManually = useReadLocalStorage<boolean>(
     "wasDisconnectedManually",
   );

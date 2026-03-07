@@ -93,9 +93,7 @@ export const useTransactor = (): UseTransactorReturn => {
     }
   }, [txResult]);
 
-  const writeTransaction = async (
-    tx: Call[],
-  ): Promise<string | undefined> => {
+  const writeTransaction = async (tx: Call[]): Promise<string | undefined> => {
     resetStates();
     if (!address || status !== "connected") {
       notification.error("Cannot access account");

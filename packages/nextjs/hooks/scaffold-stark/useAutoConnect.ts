@@ -40,7 +40,8 @@ export const useAutoConnect = (): void => {
       now - (lastConnectionTime || 0) > scaffoldConfig.autoConnectTTL;
 
     const connector = connectors.find(
-      (c) => c.name === savedConnector?.id || c.instanceId === savedConnector?.id,
+      (c) =>
+        c.name === savedConnector?.id || c.instanceId === savedConnector?.id,
     );
     if (!connector) return;
 
