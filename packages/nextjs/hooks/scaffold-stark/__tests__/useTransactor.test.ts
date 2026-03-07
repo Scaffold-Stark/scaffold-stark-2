@@ -4,14 +4,13 @@ import { useTransactor } from "../useTransactor";
 import { useAccount } from "~~/hooks/useAccount";
 import { useTargetNetwork } from "../useTargetNetwork";
 import { notification } from "~~/utils/scaffold-stark";
-import { AccountInterface } from "starknet";
 import { getBlockExplorerTxLink } from "~~/utils/scaffold-stark";
 
-// Mock the @starknet-react/core hooks
+// Mock the @starknet-start/react hooks
 const sendAsyncMock = vi
   .fn()
   .mockResolvedValue({ transaction_hash: "mock-tx-hash" });
-vi.mock("@starknet-react/core", () => ({
+vi.mock("@starknet-start/react", () => ({
   useSendTransaction: () => ({
     sendAsync: sendAsyncMock,
   }),
@@ -33,12 +32,9 @@ vi.mock("~~/utils/scaffold-stark", () => ({
 
 vi.mock("~~/hooks/useAccount", () => ({
   useAccount: vi.fn(() => ({
-    account: {
-      getChainId: vi.fn().mockResolvedValue("mock-network-id"),
-      execute: vi.fn(),
-    },
     address: "mock-address",
     status: "connected",
+    chainId: 0n,
   })),
 }));
 
@@ -49,18 +45,11 @@ vi.mock("../useTargetNetwork", () => ({
 }));
 
 describe("useTransactor", () => {
-  let walletClientMock: Partial<AccountInterface>;
-
   beforeEach(() => {
-    walletClientMock = {
-      address: "mock-address",
-      getChainId: vi.fn().mockResolvedValue("mock-chain-id"),
-      execute: vi.fn().mockResolvedValue({ transaction_hash: "mock-tx-hash" }),
-    };
     (useAccount as Mock).mockReturnValue({
-      account: walletClientMock,
       address: "mock-address",
       status: "connected",
+      chainId: 0n,
     });
 
     (useTargetNetwork as Mock).mockReturnValue({
@@ -75,9 +64,7 @@ describe("useTransactor", () => {
   });
 
   it("should execute a transaction successfully", async () => {
-    const { result } = renderHook(() =>
-      useTransactor(walletClientMock as AccountInterface),
-    );
+    const { result } = renderHook(() => useTransactor());
 
     const mockTx = [
       { contractAddress: "0x123", entrypoint: "test", calldata: [] },
@@ -93,8 +80,12 @@ describe("useTransactor", () => {
     expect(sendAsyncMock).toHaveBeenCalledWith(mockTx);
   });
 
-  it("should show error notification when wallet client is unavailable", async () => {
-    (useAccount as Mock).mockReturnValue({ account: null });
+  it("should show error notification when wallet is not connected", async () => {
+    (useAccount as Mock).mockReturnValue({
+      address: undefined,
+      status: "disconnected",
+      chainId: undefined,
+    });
 
     const { result } = renderHook(() => useTransactor());
 
@@ -114,9 +105,7 @@ describe("useTransactor", () => {
     const mockError = new Error("Contract mock-error");
     sendAsyncMock.mockRejectedValueOnce(mockError);
 
-    const { result } = renderHook(() =>
-      useTransactor(walletClientMock as AccountInterface),
-    );
+    const { result } = renderHook(() => useTransactor());
 
     const mockTx = [
       { contractAddress: "0x123", entrypoint: "test", calldata: [] },
@@ -130,9 +119,7 @@ describe("useTransactor", () => {
   });
 
   it("should execute the transaction and return the transaction hash", async () => {
-    const { result } = renderHook(() =>
-      useTransactor(walletClientMock as AccountInterface),
-    );
+    const { result } = renderHook(() => useTransactor());
 
     const mockTx = [
       { contractAddress: "0x123", entrypoint: "test", calldata: [] },
@@ -145,9 +132,7 @@ describe("useTransactor", () => {
   });
 
   it("should set blockExplorerTxURL correctly", async () => {
-    const { result } = renderHook(() =>
-      useTransactor(walletClientMock as AccountInterface),
-    );
+    const { result } = renderHook(() => useTransactor());
 
     const mockTx = [
       { contractAddress: "0x123", entrypoint: "test", calldata: [] },
@@ -167,9 +152,7 @@ describe("useTransactor", () => {
   it("should handle string transaction results", async () => {
     sendAsyncMock.mockResolvedValueOnce("mock-tx-hash");
 
-    const { result } = renderHook(() =>
-      useTransactor(walletClientMock as AccountInterface),
-    );
+    const { result } = renderHook(() => useTransactor());
 
     const mockTx = [
       { contractAddress: "0x123", entrypoint: "test", calldata: [] },
@@ -179,15 +162,5 @@ describe("useTransactor", () => {
       const txHash = await result.current.writeTransaction(mockTx);
       expect(txHash).toBe("mock-tx-hash");
     });
-  });
-
-  it("should handle missing transaction", async () => {
-    const { result } = renderHook(() =>
-      useTransactor(walletClientMock as AccountInterface),
-    );
-
-    await expect(result.current.writeTransaction(null as any)).rejects.toThrow(
-      "Incorrect transaction passed to transactor",
-    );
   });
 });

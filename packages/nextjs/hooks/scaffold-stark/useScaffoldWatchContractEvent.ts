@@ -5,7 +5,7 @@ import {
 } from "~~/utils/scaffold-stark/contract";
 import { ExtractAbiEventNames } from "abi-wan-kanabi/dist/kanabi";
 import { useEffect, useMemo, useState } from "react";
-import { useProvider } from "@starknet-react/core";
+import { useProvider } from "@starknet-start/react";
 import { useTargetNetwork } from "./useTargetNetwork";
 import { useScaffoldWebSocketEvents } from "./useScaffoldWebSocketEvents";
 import scaffoldConfig from "~~/scaffold.config";

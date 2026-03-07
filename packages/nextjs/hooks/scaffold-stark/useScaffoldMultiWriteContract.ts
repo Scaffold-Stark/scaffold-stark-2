@@ -8,7 +8,8 @@ import {
   UseScaffoldArgsParam,
   UseScaffoldWriteConfig,
 } from "~~/utils/scaffold-stark/contract";
-import { useSendTransaction, useNetwork, Abi } from "@starknet-react/core";
+import { useNetwork } from "@starknet-start/react";
+import type { Abi } from "abi-wan-kanabi";
 import {
   Contract as StarknetJsContract,
   InvocationsDetails,

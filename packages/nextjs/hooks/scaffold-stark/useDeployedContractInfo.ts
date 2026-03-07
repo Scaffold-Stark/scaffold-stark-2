@@ -8,7 +8,7 @@ import {
   contracts,
 } from "~~/utils/scaffold-stark/contract";
 import { BlockIdentifier } from "starknet";
-import { useProvider } from "@starknet-react/core";
+import { useProvider } from "@starknet-start/react";
 import { ContractClassHashCache } from "./ContractClassHashCache";
 
 /**

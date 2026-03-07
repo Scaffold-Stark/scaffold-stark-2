@@ -10,7 +10,7 @@ vi.mock("../../scaffold-stark/useTargetNetwork", () => ({
   useTargetNetwork: vi.fn(),
 }));
 
-vi.mock("@starknet-react/core", () => ({
+vi.mock("@starknet-start/react", () => ({
   useContract: vi.fn(),
 }));
 

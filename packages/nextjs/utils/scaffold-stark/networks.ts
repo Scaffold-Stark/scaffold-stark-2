@@ -1,5 +1,5 @@
 import scaffoldConfig from "~~/scaffold.config";
-import { devnet, sepolia, mainnet, Chain } from "@starknet-react/chains";
+import { devnet, sepolia, mainnet, Chain } from "@starknet-start/chains";
 export const chains = {
   devnet,
   sepolia,

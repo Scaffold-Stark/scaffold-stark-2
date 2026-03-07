@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
-import { useConnect } from "@starknet-react/core";
+import { useConnect } from "@starknet-start/react";
 import { useReadLocalStorage } from "usehooks-ts";
-import { BurnerConnector, burnerAccounts } from "@scaffold-stark/stark-burner";
 import scaffoldConfig from "~~/scaffold.config";
 import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
 import { useAccount } from "~~/hooks/useAccount";
@@ -12,7 +11,7 @@ import { useAccount } from "~~/hooks/useAccount";
  * - Auto-connect is enabled in scaffold config
  * - User was not manually disconnected
  * - Time since last connection hasn't exceeded TTL
- * - The previously used connector is available and ready
+ * - The previously used connector is available
  *
  * @returns {void} This hook doesn't return any value but performs auto-connection side effects
  */
@@ -28,7 +27,7 @@ export const useAutoConnect = (): void => {
   );
 
   const { connect, connectors } = useConnect();
-  const { account } = useAccount();
+  const { status } = useAccount();
 
   const hasAutoConnected = useRef(false);
 
@@ -40,18 +39,12 @@ export const useAutoConnect = (): void => {
     const ttlExpired =
       now - (lastConnectionTime || 0) > scaffoldConfig.autoConnectTTL;
 
-    const connector = connectors.find((c) => c.id === savedConnector?.id);
-    if (!connector || !connector.ready) return;
+    const connector = connectors.find(
+      (c) => c.name === savedConnector?.id || c.instanceId === savedConnector?.id,
+    );
+    if (!connector) return;
 
-    const shouldReconnect = !account || ttlExpired;
-
-    if (
-      connector.id === "burner-wallet" &&
-      savedConnector?.ix !== undefined &&
-      connector instanceof BurnerConnector
-    ) {
-      connector.burnerAccount = burnerAccounts[savedConnector.ix];
-    }
+    const shouldReconnect = status !== "connected" || ttlExpired;
 
     if (shouldReconnect) {
       hasAutoConnected.current = true;
@@ -62,7 +55,7 @@ export const useAutoConnect = (): void => {
     connectors,
     savedConnector,
     lastConnectionTime,
-    account,
+    status,
     wasDisconnectedManually,
   ]);
 };

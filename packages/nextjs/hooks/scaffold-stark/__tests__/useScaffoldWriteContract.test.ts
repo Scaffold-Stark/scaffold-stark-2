@@ -5,7 +5,7 @@ import {
   useTransactor,
 } from "~~/hooks/scaffold-stark";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
-import { useSendTransaction } from "@starknet-react/core";
+import { useSendTransaction } from "@starknet-start/react";
 import { vi, describe, beforeEach, afterAll, it, expect } from "vitest";
 import { Mock } from "vitest";
 
@@ -32,7 +32,7 @@ vi.mock("~~/hooks/scaffold-stark/useTargetNetwork", () => ({
   useTargetNetwork: vi.fn(),
 }));
 
-vi.mock("@starknet-react/core", () => ({
+vi.mock("@starknet-start/react", () => ({
   useSendTransaction: vi.fn(),
   useNetwork: vi.fn().mockReturnValue({ chain: { id: 1 } }),
 }));

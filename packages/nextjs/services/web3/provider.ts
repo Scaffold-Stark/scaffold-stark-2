@@ -1,17 +1,6 @@
 import scaffoldConfig from "~~/scaffold.config";
-import {
-  jsonRpcProvider,
-  publicProvider,
-  starknetChainId,
-} from "@starknet-react/core";
-import * as chains from "@starknet-react/chains";
-import { RpcProvider } from "starknet";
-
-const containsDevnet = (networks: readonly chains.Chain[]) => {
-  return (
-    networks.filter((it) => it.network == chains.devnet.network).length > 0
-  );
-};
+import { jsonRpcProvider } from "@starknet-start/providers";
+import { Chain } from "@starknet-start/chains";
 
 // Get the current target network (first one in the array)
 const currentNetwork = scaffoldConfig.targetNetworks[0];
@@ -58,6 +47,10 @@ if (rpcUrl === "") {
   );
 }
 
-const provider = () => new RpcProvider({ nodeUrl: rpcUrl });
+const provider = jsonRpcProvider({
+  rpc: (_chain: Chain) => ({
+    nodeUrl: getRpcUrl(_chain.network),
+  }),
+});
 
 export default provider;

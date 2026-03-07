@@ -37,7 +37,7 @@ Styling Framework:
 
 ### Deployment Configuration and Network Setup
 
-- Default chains: devnet, sepolia, mainnet (from @starknet-react/chains)
+- Default chains: devnet, sepolia, mainnet (from @starknet-start/chains)
 - Chains: Configured in packages/nextjs/scaffold.config.ts via the targetNetworks array
 - RPC: Configured via environment variables (NEXT_PUBLIC_DEVNET_PROVIDER_URL, NEXT_PUBLIC_SEPOLIA_PROVIDER_URL, NEXT_PUBLIC_MAINNET_PROVIDER_URL)
 - Provider setup: packages/nextjs/services/web3/provider.ts
@@ -46,7 +46,7 @@ Example Network Config:
 
 ```typescript
 // In scaffold.config.ts
-import { Chain } from "@starknet-react/chains";
+import { Chain } from "@starknet-start/chains";
 import { supportedChains as chains } from "./supportedChains";
 
 const scaffoldConfig = {
@@ -525,7 +525,7 @@ The configuration parameters are described below. Make sure to update the values
 
 ##### - targetNetworks
 
-Array of Starknet networks where your dapp is deployed. Use values from `@starknet-react/chains` eg: `targetNetworks: [chains.sepolia]`
+Array of Starknet networks where your dapp is deployed. Use values from `@starknet-start/chains` eg: `targetNetworks: [chains.sepolia]`
 
 ##### - pollingInterval
 
@@ -732,7 +732,7 @@ const { data: yourContract } = useScaffoldContract({
 await yourContract?.call("greeting");
 
 // Used to write to a contract and can be called in any function
-import { useAccount } from "@starknet-react/core";
+import { useAccount } from "@starknet-start/react";
 
 const { account } = useAccount();
 const { data: yourContract } = useScaffoldContract({
@@ -1113,8 +1113,8 @@ Source: https://www.scaffoldstark.com/docs/recipes/add-custom-chain
 
 This recipe demonstrates how to add a custom chain to your project. We'll use a custom Starknet network as an example, but you can apply this process to any other Starknet-compatible network you want to add.
 
-Scaffold-Stark 2 uses [@starknet-react/chains](https://starknet-react.com/docs/chains) as a list of chains.
-Normally, devnet, sepolia, and mainnet already exist in @starknet-react/chains and [you can import them and use them](/deploying/deploy-nextjs-app#--targetnetworks), but we're going to add a custom network manually to show you how to do it.
+Scaffold-Stark 2 uses [@starknet-start/chains](https://starknet-react.com/docs/chains) as a list of chains.
+Normally, devnet, sepolia, and mainnet already exist in @starknet-start/chains and [you can import them and use them](/deploying/deploy-nextjs-app#--targetnetworks), but we're going to add a custom network manually to show you how to do it.
 
 :::info
 Scaffold-Stark 2 consists of two parts:
@@ -1136,7 +1136,7 @@ First, create a new file called `customChains.ts` in your `packages/nextjs/utils
 Open the file with your favorite editor and add the following code to define the chain.
 
 ```typescript title="packages/nextjs/utils/customChains.ts"
-import { Chain } from "@starknet-react/chains";
+import { Chain } from "@starknet-start/chains";
 
 // Custom Starknet chain
 export const customStarknet: Chain = {
@@ -1207,7 +1207,7 @@ This recipe shows how to fetch and display the STRK balance of the currently con
 <summary>Here is the full code, which we will be implementing in the guide below:</summary>
 
 ```tsx title="components/ConnectedAddressBalance.tsx"
-import { useAccount } from "@starknet-react/core";
+import { useAccount } from "@starknet-start/react";
 import { Address, Balance } from "~~/components/scaffold-stark";
 
 export const ConnectedAddressBalance = () => {
@@ -1253,7 +1253,7 @@ Fetch the Starknet address of the currently connected account using the [useAcco
 
 ```tsx title="components/ConnectedAddressBalance.tsx"
 // highlight-start
-import { useAccount } from "@starknet-react/core";
+import { useAccount } from "@starknet-start/react";
 import { Address, Balance } from "~~/components/scaffold-stark";
 // highlight-end
 
@@ -1286,7 +1286,7 @@ This recipe demonstrates how to read data from contract functions and display it
 <summary>Here is the full code, which we will be implementing in the guide below:</summary>
 
 ```tsx title="components/GreetingsCount.tsx"
-import { useAccount } from "@starknet-react/core";
+import { useAccount } from "@starknet-start/react";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark";
 
 export const GreetingsCount = () => {
@@ -1392,7 +1392,7 @@ We can get the connected address using the [useAccount](https://starknet-react.c
 ```tsx title="components/GreetingsCount.tsx"
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark";
 //highlight-start
-import { useAccount } from "@starknet-react/core";
+import { useAccount } from "@starknet-start/react";
 //highlight-end
 
 export const GreetingsCount = () => {
@@ -1432,7 +1432,7 @@ We can use `isLoading` returned from the [`useScaffoldReadContract`](/hooks/uses
 
 ```tsx title="components/GreetingsCount.tsx"
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark";
-import { useAccount } from "@starknet-react/core";
+import { useAccount } from "@starknet-start/react";
 
 export const GreetingsCount = () => {
   const { address: connectedAddress } = useAccount();
@@ -1494,7 +1494,7 @@ This recipe demonstrates how to create a button for contract interaction using t
 
 ```tsx title="components/ContractInteraction.tsx"
 import * as React from "react";
-import { useSendTransaction } from "@starknet-react/core";
+import { useSendTransaction } from "@starknet-start/react";
 import { useTransactor } from "~~/hooks/scaffold-stark";
 
 export const ContractInteraction = () => {
@@ -1557,7 +1557,7 @@ Add starknet-react's `useSendTransaction` hook and configure it with the transac
 ```tsx
 import * as React from "react";
 // highlight-start
-import { useSendTransaction } from "@starknet-react/core";
+import { useSendTransaction } from "@starknet-start/react";
 // highlight-end
 
 export const ContractInteraction = () => {
@@ -1582,7 +1582,7 @@ Initialize the `useTransactor` hook, and use it to wrap the `sendAsync` function
 
 ```tsx
 import * as React from "react";
-import { useSendTransaction } from "@starknet-react/core";
+import { useSendTransaction } from "@starknet-start/react";
 // highlight-start
 import { useTransactor } from "~~/hooks/scaffold-stark";
 // highlight-end
@@ -1616,7 +1616,7 @@ Wrap the `writeTx.writeTransaction` function in a handler function to start the 
 
 ```tsx
 import * as React from "react";
-import { useSendTransaction } from "@starknet-react/core";
+import { useSendTransaction } from "@starknet-start/react";
 import { useTransactor } from "~~/hooks/scaffold-stark";
 
 export const ContractInteraction = () => {
@@ -1658,7 +1658,7 @@ We can use `isPending` returned from `useSendTransaction` while the transaction 
 
 ```tsx
 import * as React from "react";
-import { useSendTransaction } from "@starknet-react/core";
+import { useSendTransaction } from "@starknet-start/react";
 import { useTransactor } from "~~/hooks/scaffold-stark";
 
 export const ContractInteraction = () => {

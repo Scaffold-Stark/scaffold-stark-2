@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 // CopyToClipboard moved to lazy loading for better performance
-import { Address as AddressType } from "@starknet-react/chains";
+import { Address as AddressType } from "@starknet-start/chains";
 import { getChecksumAddress, StarkProfile } from "starknet";
-import { devnet } from "@starknet-react/chains";
+import { devnet } from "@starknet-start/chains";
 import {
   CheckCircleIcon,
   DocumentDuplicateIcon,

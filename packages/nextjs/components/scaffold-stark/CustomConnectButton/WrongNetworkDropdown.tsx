@@ -2,7 +2,7 @@ import {
   ChevronDownIcon,
   ArrowLeftEndOnRectangleIcon,
 } from "@heroicons/react/24/outline";
-import { useDisconnect } from "@starknet-react/core";
+import { useDisconnect } from "@starknet-start/react";
 import { notification } from "~~/utils/scaffold-stark";
 import { useLocalStorage } from "usehooks-ts";
 

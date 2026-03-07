@@ -9,9 +9,9 @@ import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
 import { useTheme } from "next-themes";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
-import { devnet } from "@starknet-react/chains";
+import { devnet } from "@starknet-start/chains";
 import { SwitchTheme } from "./SwitchTheme";
-import { useAccount, useNetwork, useProvider } from "@starknet-react/core";
+import { useAccount, useNetwork, useProvider } from "@starknet-start/react";
 import { BlockIdentifier } from "starknet";
 
 type HeaderMenuLink = {
