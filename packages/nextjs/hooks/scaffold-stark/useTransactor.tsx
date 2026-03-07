@@ -1,11 +1,5 @@
 import { useAccount } from "~~/hooks/useAccount";
-import {
-  AccountInterface,
-  InvokeFunctionResponse,
-  constants,
-  Call,
-  ETransactionVersion,
-} from "starknet";
+import { Call } from "starknet";
 import { getBlockExplorerTxLink, notification } from "~~/utils/scaffold-stark";
 import { useTargetNetwork } from "./useTargetNetwork";
 import { useState, useEffect } from "react";
@@ -14,12 +8,9 @@ import {
   UseSendTransactionResult,
   useTransactionReceipt,
   UseTransactionReceiptResult,
-} from "@starknet-react/core";
+} from "@starknet-start/react";
 
-type TransactionFunc = (
-  tx: Call[],
-  withSendTransaction?: boolean,
-) => Promise<string | undefined>;
+type TransactionFunc = (tx: Call[]) => Promise<string | undefined>;
 
 interface UseTransactorReturn {
   writeTransaction: TransactionFunc;
@@ -53,26 +44,17 @@ const TxnNotification = ({
 
 /**
  * Handles sending transactions to Starknet contracts with comprehensive UI feedback and state management.
- * This hook provides a complete transaction experience including fee estimation, notifications,
- * transaction state tracking, and block explorer integration. It supports both prepared transactions
- * (using starknet-react's sendTransaction) and direct execution with automatic fee estimation.
+ * Uses useSendTransaction from starknet-start to submit transactions through the connected wallet.
  *
- * @param _walletClient - Optional wallet client to use. If not provided, will use the connected account from useAccount
  * @returns {UseTransactorReturn} An object containing:
- *   - writeTransaction: (tx: Call[], withSendTransaction?: boolean) => Promise<string | undefined> - Async function that sends transactions with fee estimation, notifications, and state management
- *   - transactionReceiptInstance: UseTransactionReceiptResult - Transaction receipt data and status from useTransactionReceipt
- *   - sendTransactionInstance: UseSendTransactionResult - Send transaction state and methods from useSendTransaction
+ *   - writeTransaction: (tx: Call[]) => Promise<string | undefined> - Async function that sends transactions with notifications and state management
+ *   - transactionReceiptInstance: UseTransactionReceiptResult - Transaction receipt data and status
+ *   - sendTransactionInstance: UseSendTransactionResult - Send transaction state and methods
  * @see {@link https://scaffoldstark.com/docs/hooks/useTransactor}
  */
-export const useTransactor = (
-  _walletClient?: AccountInterface,
-): UseTransactorReturn => {
-  let walletClient = _walletClient;
-  const { account, address, status } = useAccount();
+export const useTransactor = (): UseTransactorReturn => {
+  const { address, status } = useAccount();
   const { targetNetwork } = useTargetNetwork();
-  if (walletClient === undefined && account) {
-    walletClient = account;
-  }
   const sendTransactionInstance = useSendTransaction({});
 
   const [notificationId, setNotificationId] = useState<string | null>(null);
@@ -111,95 +93,33 @@ export const useTransactor = (
     }
   }, [txResult]);
 
-  const writeTransaction = async (
-    tx: Call[],
-    withSendTransaction: boolean = true,
-  ): Promise<string | undefined> => {
+  const writeTransaction = async (tx: Call[]): Promise<string | undefined> => {
     resetStates();
-    if (!walletClient) {
+    if (!address || status !== "connected") {
       notification.error("Cannot access account");
       console.error("⚡️ ~ file: useTransactor.tsx ~ error");
       return;
     }
 
     let notificationId = null;
-    let transactionHash:
-      | Awaited<InvokeFunctionResponse>["transaction_hash"]
-      | undefined = undefined;
+    let transactionHash: string | undefined = undefined;
     try {
-      const networkId = await walletClient.getChainId();
       notificationId = notification.loading(
         <TxnNotification message="Awaiting for user confirmation" />,
       );
-      if (tx != null && withSendTransaction) {
-        // Tx is already prepared by the caller
-        const result = await sendTransactionInstance.sendAsync(tx);
-        if (typeof result === "string") {
-          transactionHash = result;
-        } else {
-          transactionHash = result.transaction_hash;
-        }
-      } else if (tx != null) {
-        try {
-          // First try to estimate fees
-          const estimatedFee = await walletClient.estimateInvokeFee(
-            tx as Call[],
-          );
 
-          // Use estimated fee with a safety margin (multiply by 1.5)
-          const maxFee =
-            (BigInt(estimatedFee.overall_fee) * BigInt(15)) / BigInt(10);
-
-          // Set RPC 0.8 compatible parameters with estimated fees
-          const txOptions = {
-            version: ETransactionVersion.V3,
-            maxFee: "0x" + maxFee.toString(16),
-          };
-
-          transactionHash = (await walletClient.execute(tx, txOptions))
-            .transaction_hash;
-        } catch (feeEstimationError) {
-          console.warn(
-            "Fee estimation failed, using fallback values:",
-            feeEstimationError,
-          );
-
-          // Fallback to safe default values if estimation fails
-          const txOptions = {
-            version: ETransactionVersion.V3,
-            // Use a reasonable maxFee value that won't exceed account balance
-            maxFee: "0x1000000000",
-            // Set resource bounds for RPC 0.8 compatibility
-            resourceBounds: {
-              l1_gas: {
-                max_amount: 0x1000000n,
-                max_price_per_unit: 0x1n,
-              },
-              l2_gas: {
-                max_amount: 0x1000000n,
-                max_price_per_unit: 0x1n,
-              },
-              l1_data_gas: {
-                max_amount: 0x1000000n,
-                max_price_per_unit: 0x1n,
-              },
-            },
-          };
-
-          transactionHash = (await walletClient.execute(tx, txOptions))
-            .transaction_hash;
-        }
-      } else {
-        throw new Error("Incorrect transaction passed to transactor");
-      }
+      const result = await sendTransactionInstance.sendAsync(tx);
+      transactionHash =
+        typeof result === "string" ? result : result.transaction_hash;
 
       setTransactionHash(transactionHash);
 
       notification.remove(notificationId);
 
-      const blockExplorerTxURL = networkId
-        ? getBlockExplorerTxLink(targetNetwork.network, transactionHash)
-        : "";
+      const blockExplorerTxURL = getBlockExplorerTxLink(
+        targetNetwork.network,
+        transactionHash,
+      );
       setBlockExplorerTxURL(blockExplorerTxURL);
 
       notificationId = notification.loading(

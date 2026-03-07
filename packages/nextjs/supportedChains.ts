@@ -1,4 +1,4 @@
-import * as chains from "@starknet-react/chains";
+import * as chains from "@starknet-start/chains";
 
 const rpcUrlDevnet =
   process.env.NEXT_PUBLIC_DEVNET_PROVIDER_URL || "http://127.0.0.1:5050";
@@ -9,7 +9,7 @@ const mainnetFork = {
   name: "Starknet Mainnet Fork",
   nativeCurrency: {
     address:
-      "0x4718F5A0FC34CC1AF16A1CDEE98FFB20C31F5CD61D6AB07201858F4287C938D",
+      "0x4718F5A0FC34CC1AF16A1CDEE98FFB20C31F5CD61D6AB07201858F4287C938D" as `0x${string}`,
     name: "STRK",
     symbol: "STRK",
     decimals: 18,

@@ -1,4 +1,4 @@
-import { Abi, useReadContract } from "@starknet-react/core";
+import { Abi, useReadContract } from "@starknet-start/react";
 import { BlockNumber } from "starknet";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark";
 import {

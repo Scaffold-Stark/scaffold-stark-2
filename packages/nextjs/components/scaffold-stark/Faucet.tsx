@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Address as AddressType, devnet } from "@starknet-react/chains";
+import { Address as AddressType, devnet } from "@starknet-start/chains";
 import { BanknotesIcon } from "@heroicons/react/24/outline";
 import dynamic from "next/dynamic";
 import {
@@ -10,7 +10,7 @@ import {
   Balance,
   StarkInput,
 } from "~~/components/scaffold-stark";
-import { useNetwork, useProvider } from "@starknet-react/core";
+import { useNetwork, useProvider } from "@starknet-start/react";
 import { mintStrk } from "~~/services/web3/faucet";
 import { notification } from "~~/utils/scaffold-stark";
 

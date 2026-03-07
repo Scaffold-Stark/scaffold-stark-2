@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useFetchAllTxns } from "../useFetchAllTxns";
 import { useTargetNetwork } from "../../scaffold-stark/useTargetNetwork";
-import { useBlockNumber } from "@starknet-react/core";
+import { useBlockNumber } from "@starknet-start/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 
@@ -11,7 +11,7 @@ vi.mock("../../scaffold-stark/useTargetNetwork", () => ({
   useTargetNetwork: vi.fn(),
 }));
 
-vi.mock("@starknet-react/core", () => ({
+vi.mock("@starknet-start/react", () => ({
   useBlockNumber: vi.fn(),
 }));
 

@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Connector } from "@starknet-react/core";
+import React, { useEffect, useState } from "react";
+import type { UseConnectResult } from "@starknet-start/react";
+type WalletConnector = UseConnectResult["connectors"][number];
 import Image from "next/image";
 import { useTheme } from "next-themes";
 
@@ -8,11 +9,11 @@ const Wallet = ({
   connector,
   loader,
 }: {
-  connector: Connector;
+  connector: WalletConnector;
   loader: ({ src }: { src: string }) => string;
   handleConnectWallet: (
     e: React.MouseEvent<HTMLButtonElement>,
-    connector: Connector,
+    connector: WalletConnector,
   ) => void;
 }) => {
   const [clicked, setClicked] = useState(false);
@@ -20,14 +21,8 @@ const Wallet = ({
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
 
-  // connector has two : dark and light icon
-  const icon = useMemo(() => {
-    return typeof connector.icon === "object"
-      ? resolvedTheme === "dark"
-        ? (connector.icon.dark as string)
-        : (connector.icon.light as string)
-      : (connector.icon as string);
-  }, [connector, resolvedTheme]);
+  const icon = connector.icon as string;
+
   useEffect(() => {
     setIsMounted(true);
   }, []);

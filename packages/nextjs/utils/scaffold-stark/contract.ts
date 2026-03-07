@@ -11,8 +11,8 @@ import type {
 import {
   UseReadContractProps,
   UseSendTransactionProps,
-} from "@starknet-react/core";
-import { Address } from "@starknet-react/chains";
+} from "@starknet-start/react";
+import { Address } from "@starknet-start/chains";
 import {
   CairoCustomEnum,
   CairoOption,

@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { useBlockNumber } from "@starknet-react/core";
+import { useBlockNumber } from "@starknet-start/react";
 import {
   GetTransactionReceiptResponse,
   TransactionStatusReceiptSets,

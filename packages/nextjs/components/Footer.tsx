@@ -1,7 +1,7 @@
 import { Cog8ToothIcon, CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import { useGlobalState } from "~~/services/store/store";
-import { devnet, sepolia, mainnet } from "@starknet-react/chains";
+import { devnet, sepolia, mainnet } from "@starknet-start/chains";
 import { Faucet } from "~~/components/scaffold-stark/Faucet";
 import { FaucetSepolia } from "~~/components/scaffold-stark/FaucetSepolia";
 import { BlockExplorerSepolia } from "./scaffold-stark/BlockExplorerSepolia";

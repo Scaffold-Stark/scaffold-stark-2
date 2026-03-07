@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
-import { useConnect, useNetwork } from "@starknet-react/core";
-import { Address } from "@starknet-react/chains";
+import { useMemo } from "react";
+import { useNetwork } from "@starknet-start/react";
+import { Address } from "@starknet-start/chains";
 import { Balance } from "../Balance";
 import { AddressInfoDropdown } from "./AddressInfoDropdown";
 import { WrongNetworkDropdown } from "./WrongNetworkDropdown";
@@ -16,14 +16,16 @@ import { useReadLocalStorage } from "usehooks-ts";
 export const CustomConnectButton = () => {
   useAutoConnect();
   const networkColor = useNetworkColor();
-  const { connector } = useConnect();
   const { targetNetwork } = useTargetNetwork();
   const { chain } = useNetwork();
-  const { account, status, address: accountAddress } = useAccount();
+  const {
+    status,
+    address: accountAddress,
+    chainId: accountChainId,
+  } = useAccount();
   const wasDisconnectedManually = useReadLocalStorage<boolean>(
     "wasDisconnectedManually",
   );
-  const [accountChainId, setAccountChainId] = useState<bigint>(0n);
 
   const blockExplorerAddressLink = useMemo(() => {
     return accountAddress
@@ -31,45 +33,13 @@ export const CustomConnectButton = () => {
       : "";
   }, [accountAddress, targetNetwork]);
 
-  // effect to get chain id and address from account
-  useEffect(() => {
-    const getChainId = async () => {
-      try {
-        if (account?.channel?.getChainId) {
-          const chainId = await account.channel.getChainId();
-          setAccountChainId(BigInt(chainId));
-        } else if (chain?.id) {
-          setAccountChainId(BigInt(chain.id));
-        }
-      } catch (err) {
-        console.error("Failed to get chainId:", err);
-      }
-    };
-
-    getChainId();
-  }, [account, status, chain?.id]);
-
-  useEffect(() => {
-    const handleChainChange = (event: { chainId?: bigint }) => {
-      const { chainId } = event;
-      if (chainId && chainId !== accountChainId) {
-        setAccountChainId(chainId);
-      }
-    };
-    connector?.on("change", handleChainChange);
-    return () => {
-      connector?.off("change", handleChainChange);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connector]);
-
   if (status === "disconnected" || wasDisconnectedManually) {
     return <ConnectModal />;
   }
 
   const isLoading =
     status === "connected" &&
-    (!accountAddress || !chain?.name || accountChainId === 0n);
+    (!accountAddress || !chain?.name || !accountChainId);
 
   if (isLoading) {
     return (

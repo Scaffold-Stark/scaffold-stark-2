@@ -4,10 +4,11 @@ import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useTheme } from "next-themes";
 import { Toaster } from "react-hot-toast";
-import { StarknetConfig, starkscan } from "@starknet-react/core";
+import { StarknetConfig } from "@starknet-start/react";
+import { voyager } from "@starknet-start/explorers";
 import { Header } from "~~/components/Header";
 
-import { appChains, connectors } from "~~/services/web3/connectors";
+import { appChains } from "~~/services/web3/connectors";
 import provider from "~~/services/web3/provider";
 import { useNativeCurrencyPrice } from "~~/hooks/scaffold-stark/useNativeCurrencyPrice";
 
@@ -60,10 +61,10 @@ export const ScaffoldStarkAppWithProviders = ({
 
   return (
     <StarknetConfig
-      chains={appChains}
+      chains={[...appChains]}
       provider={provider}
-      connectors={connectors}
-      explorer={starkscan}
+      explorer={voyager}
+      autoConnect={true}
     >
       <ScaffoldStarkApp>{children}</ScaffoldStarkApp>
     </StarknetConfig>

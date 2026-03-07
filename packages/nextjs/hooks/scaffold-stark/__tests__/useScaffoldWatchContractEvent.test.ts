@@ -2,7 +2,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { useScaffoldWatchContractEvent } from "../useScaffoldWatchContractEvent";
 import { useDeployedContractInfo } from "../useDeployedContractInfo";
 import { useTargetNetwork } from "../useTargetNetwork";
-import { useProvider } from "@starknet-react/core";
+import { useProvider } from "@starknet-start/react";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 
 vi.mock("starknet", async () => {
@@ -18,7 +18,7 @@ vi.mock("../useDeployedContractInfo", () => ({
 vi.mock("../useTargetNetwork", () => ({
   useTargetNetwork: vi.fn(),
 }));
-vi.mock("@starknet-react/core", () => ({
+vi.mock("@starknet-start/react", () => ({
   useProvider: vi.fn(),
 }));
 vi.mock("../useScaffoldWebSocketEvents", () => ({

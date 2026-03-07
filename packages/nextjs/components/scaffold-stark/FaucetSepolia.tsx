@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { sepolia } from "@starknet-react/chains";
+import { sepolia } from "@starknet-start/chains";
 import { BanknotesIcon } from "@heroicons/react/24/outline";
-import { useNetwork, useProvider } from "@starknet-react/core";
+import { useNetwork, useProvider } from "@starknet-start/react";
 import { notification } from "~~/utils/scaffold-stark";
 import Image from "next/image";
 import dynamic from "next/dynamic";
