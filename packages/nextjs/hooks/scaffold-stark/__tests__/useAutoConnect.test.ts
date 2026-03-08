@@ -27,6 +27,13 @@ vi.mock("~~/hooks/useAccount", () => ({
   }),
 }));
 
+vi.mock("@scaffold-stark/stark-burner", () => ({
+  burnerWalletId: "burner-wallet",
+  burnerWalletName: "Burner Wallet",
+  burnerAccounts: [],
+  createBurnerWallet: vi.fn(),
+}));
+
 vi.mock("~~/scaffold.config", () => ({
   default: {
     walletAutoConnect: true,

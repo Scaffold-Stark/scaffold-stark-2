@@ -29,6 +29,7 @@
     "@heroicons/react": "^2.1.3",
     "@radix-ui/react-icons": "1.3.0",
     "@radix-ui/themes": "2.0.3",
+    "@scaffold-stark/stark-burner": "portal:../../../stark-burner",
     "@starknet-io/get-starknet-modal": "^5.0.0",
     "@starknet-io/types-js": "^0.10.0",
     "@starknet-start/chains": "^1.0.0",

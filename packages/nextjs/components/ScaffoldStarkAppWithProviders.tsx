@@ -8,7 +8,7 @@ import { StarknetConfig } from "@starknet-start/react";
 import { voyager } from "@starknet-start/explorers";
 import { Header } from "~~/components/Header";
 
-import { appChains } from "~~/services/web3/connectors";
+import { appChains, extraWallets } from "~~/services/web3/connectors";
 import provider from "~~/services/web3/provider";
 import { useNativeCurrencyPrice } from "~~/hooks/scaffold-stark/useNativeCurrencyPrice";
 
@@ -65,6 +65,7 @@ export const ScaffoldStarkAppWithProviders = ({
       provider={provider}
       explorer={voyager}
       autoConnect={true}
+      extraWallets={extraWallets}
     >
       <ScaffoldStarkApp>{children}</ScaffoldStarkApp>
     </StarknetConfig>

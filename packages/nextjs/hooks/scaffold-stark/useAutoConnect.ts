@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useConnect } from "@starknet-start/react";
 import { useReadLocalStorage } from "usehooks-ts";
+import { burnerWalletId } from "@scaffold-stark/stark-burner";
 import scaffoldConfig from "~~/scaffold.config";
 import { LAST_CONNECTED_TIME_LOCALSTORAGE_KEY } from "~~/utils/Constants";
 import { useAccount } from "~~/hooks/useAccount";
@@ -46,6 +47,16 @@ export const useAutoConnect = (): void => {
     if (!connector) return;
 
     const shouldReconnect = status !== "connected" || ttlExpired;
+
+    // Restore burner account selection before connecting
+    if (
+      (connector.name === burnerWalletId ||
+        connector.name === "Burner Wallet") &&
+      savedConnector?.ix !== undefined &&
+      "switchAccount" in connector
+    ) {
+      (connector as any).switchAccount(savedConnector.ix);
+    }
 
     if (shouldReconnect) {
       hasAutoConnected.current = true;
