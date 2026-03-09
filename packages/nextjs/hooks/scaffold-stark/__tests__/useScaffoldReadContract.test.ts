@@ -45,7 +45,7 @@ describe("useScaffoldReadContract", () => {
       watch: true,
       args: filteredArgs,
       enabled: true,
-      blockIdentifier: "pre_confirmed",
+      blockIdentifier: "latest",
     });
   });
 
@@ -83,7 +83,7 @@ describe("useScaffoldReadContract", () => {
     );
   });
 
-  it("should pass blockIdentifier as 'pending'", () => {
+  it("should pass blockIdentifier as 'latest'", () => {
     const filteredArgs = [1, 2];
 
     renderHook(() =>
@@ -96,7 +96,7 @@ describe("useScaffoldReadContract", () => {
 
     expect(mockUseReadContract).toHaveBeenCalledWith(
       expect.objectContaining({
-        blockIdentifier: "pre_confirmed", // Ensure blockIdentifier is passed as 'pending'. using the default which is 'pending'
+        blockIdentifier: "latest",
       }),
     );
   });

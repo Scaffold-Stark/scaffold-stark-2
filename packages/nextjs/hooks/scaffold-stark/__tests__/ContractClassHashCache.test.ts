@@ -101,13 +101,13 @@ describe("ContractClassHashCache", () => {
     const result1 = await cache.getClassHash(
       mockProvider as ProviderInterface,
       address,
-      "pre_confirmed",
+      "latest",
     );
 
     const result2 = await cache.getClassHash(
       mockProvider as ProviderInterface,
       address,
-      "latest",
+      "pre_confirmed",
     );
 
     expect(result1).toBe(hash1);

@@ -52,7 +52,7 @@ export const useScaffoldReadContract = <
     args: args || [],
     enabled:
       args && (!Array.isArray(args) || !args.some((arg) => arg === undefined)),
-    blockIdentifier: "pre_confirmed" as BlockNumber,
+    blockIdentifier: "latest" as BlockNumber,
     ...(readConfig as any),
   }) as Omit<ReturnType<typeof useReadContract>, "data"> & {
     data: AbiFunctionOutputs<ContractAbi, TFunctionName> | undefined;

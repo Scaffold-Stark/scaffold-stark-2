@@ -55,7 +55,7 @@ export const ReadOnlyFunctionForm = ({
     abi: [...abi],
     args: inputIsValidArray ? inputValue : undefined,
     enabled: !!inputValue && !!contractInstance,
-    blockIdentifier: "pre_confirmed" as BlockNumber,
+    blockIdentifier: "latest" as BlockNumber,
   });
 
   useEffect(() => {

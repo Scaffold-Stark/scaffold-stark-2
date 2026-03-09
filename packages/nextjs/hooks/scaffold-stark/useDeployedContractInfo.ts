@@ -47,7 +47,7 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
       const contractClassHash = await classHashCache.getClassHash(
         publicClient,
         deployedContract.address,
-        "pre_confirmed" as BlockIdentifier,
+        "latest" as BlockIdentifier,
       );
 
       if (!isMounted()) {
