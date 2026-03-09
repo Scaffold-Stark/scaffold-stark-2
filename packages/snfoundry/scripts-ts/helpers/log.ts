@@ -17,9 +17,9 @@ export const logDeploymentSummary = ({
 }) => {
   let baseUrl: any;
   if (network === "sepolia") {
-    baseUrl = `https://sepolia.starkscan.co`;
+    baseUrl = `https://sepolia.voyager.online`;
   } else if (network === "mainnet") {
-    baseUrl = `https://starkscan.co`;
+    baseUrl = `https://voyager.online`;
   } else {
     console.error(red(`Unsupported network: ${network}`));
     return;

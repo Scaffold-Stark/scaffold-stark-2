@@ -17,11 +17,6 @@ export const BlockExplorer = () => {
 
   const blockExplorers = [
     {
-      name: "Starkscan",
-      img: "/sn-symbol-gradient.png",
-      link: "https://starkscan.co/",
-    },
-    {
       name: "Voyager",
       img: "/voyager-icon.svg",
       link: "https://voyager.online/",

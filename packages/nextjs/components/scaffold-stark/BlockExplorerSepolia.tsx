@@ -17,11 +17,6 @@ export const BlockExplorerSepolia = () => {
 
   const sepoliaBlockExplorers = [
     {
-      name: "Starkscan",
-      img: "/sn-symbol-gradient.png",
-      link: "https://sepolia.starkscan.co/",
-    },
-    {
       name: "Voyager",
       img: "/voyager-icon.svg",
       link: "https://sepolia.voyager.online/",
