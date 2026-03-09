@@ -37,16 +37,18 @@ const ConnectModal = () => {
   // Identify devnet by network name
   const isDevnet = targetNetwork.network === "devnet";
 
-  // Split connectors into main and other options for devnet
+  const isBurnerConnector = (c: WalletConnector) =>
+    c.name === burnerWalletId || c.name === "Burner Wallet";
+
+  // Split connectors into main and other options for devnet;
+  // hide burner wallet entirely on non-devnet networks
   let mainConnectors = connectors;
   let otherConnectors: typeof connectors = [];
   if (isDevnet) {
-    mainConnectors = connectors.filter(
-      (c) => c.name === burnerWalletId || c.name === "Burner Wallet",
-    );
-    otherConnectors = connectors.filter(
-      (c) => c.name !== burnerWalletId && c.name !== "Burner Wallet",
-    );
+    mainConnectors = connectors.filter(isBurnerConnector);
+    otherConnectors = connectors.filter((c) => !isBurnerConnector(c));
+  } else {
+    mainConnectors = connectors.filter((c) => !isBurnerConnector(c));
   }
 
   const handleCloseModal = () => {
