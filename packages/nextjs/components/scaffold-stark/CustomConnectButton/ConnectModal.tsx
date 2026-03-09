@@ -18,7 +18,7 @@ const ConnectModal = () => {
   const [isBurnerWallet, setIsBurnerWallet] = useState(false);
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
-  const { connectors, connect } = useConnect();
+  const { connectors, connect, connectAsync } = useConnect();
   const [, setLastConnector] = useLocalStorage<{ id: string; ix?: number }>(
     "lastUsedConnector",
     { id: "" },
@@ -71,23 +71,29 @@ const ConnectModal = () => {
     handleCloseModal();
   }
 
-  function handleConnectBurner(
+  async function handleConnectBurner(
     e: React.MouseEvent<HTMLButtonElement>,
     ix: number,
   ) {
+    e.preventDefault();
+    e.stopPropagation();
     const connector = connectors.find(
       (it) => it.name === burnerWalletId || it.name === "Burner Wallet",
     );
-    if (connector) {
-      // MockWallet exposes switchAccount to select a specific burner
-      if ("switchAccount" in connector) {
-        (connector as any).switchAccount(ix);
-      }
-      setWasDisconnectedManually(false);
-      connect({ connector });
+    if (!connector) return;
+
+    // MockWallet exposes switchAccount to select a specific burner
+    if ("switchAccount" in connector) {
+      (connector as any).switchAccount(ix);
+    }
+    setWasDisconnectedManually(false);
+    try {
+      await connectAsync({ connector });
       setLastConnector({ id: connector.name, ix });
       setLastConnectionTime(Date.now());
       handleCloseModal();
+    } catch (err) {
+      console.error("Burner wallet connection failed:", err);
     }
   }
 
