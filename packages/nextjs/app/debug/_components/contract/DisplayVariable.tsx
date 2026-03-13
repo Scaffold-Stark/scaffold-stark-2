@@ -6,8 +6,8 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useAnimationConfig } from "~~/hooks/scaffold-stark";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { Abi } from "abi-wan-kanabi";
-import { Address } from "@starknet-react/chains";
-import { useReadContract } from "@starknet-react/core";
+import { Address } from "@starknet-start/chains";
+import { useReadContract } from "@starknet-start/react";
 import { BlockNumber } from "starknet";
 import { decodeContractResponse } from "./utilsDisplay";
 import { useTheme } from "next-themes";
@@ -99,7 +99,7 @@ export const DisplayVariable = ({
     address: contractAddress,
     functionName: abiFunction.name,
     abi: [...abi],
-    blockIdentifier: "pre_confirmed" as BlockNumber, // TODO : notify when failed - add error
+    blockIdentifier: "latest" as BlockNumber, // TODO : notify when failed - add error
   });
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const { showAnimation } = useAnimationConfig(result);

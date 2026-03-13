@@ -8,7 +8,7 @@ import {
   contracts,
 } from "~~/utils/scaffold-stark/contract";
 import { BlockIdentifier } from "starknet";
-import { useProvider } from "@starknet-react/core";
+import { useProvider } from "@starknet-start/react";
 import { ContractClassHashCache } from "./ContractClassHashCache";
 
 /**
@@ -47,7 +47,7 @@ export const useDeployedContractInfo = <TContractName extends ContractName>(
       const contractClassHash = await classHashCache.getClassHash(
         publicClient,
         deployedContract.address,
-        "pre_confirmed" as BlockIdentifier,
+        "latest" as BlockIdentifier,
       );
 
       if (!isMounted()) {

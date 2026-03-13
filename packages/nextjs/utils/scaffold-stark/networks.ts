@@ -1,5 +1,5 @@
 import scaffoldConfig from "~~/scaffold.config";
-import { devnet, sepolia, mainnet, Chain } from "@starknet-react/chains";
+import { devnet, sepolia, mainnet, Chain } from "@starknet-start/chains";
 export const chains = {
   devnet,
   sepolia,
@@ -43,11 +43,10 @@ export function getBlockExplorerTxLink(network: string, txnHash: string) {
   }
 
   const targetChain = targetChainArr[0] as keyof typeof chains;
-  // @ts-expect-error : ignoring error since `blockExplorers` key may or may not be present on some chains
-  const blockExplorerBaseURL = chains[targetChain].explorers?.starkscan[0];
+  const blockExplorerBaseURL = chains[targetChain].explorers?.voyager?.[0];
 
   if (!blockExplorerBaseURL) {
-    return `https://starkscan.co/tx/${txnHash}`;
+    return `https://voyager.online/tx/${txnHash}`;
   }
 
   return `${blockExplorerBaseURL}/tx/${txnHash}`;
@@ -55,16 +54,16 @@ export function getBlockExplorerTxLink(network: string, txnHash: string) {
 
 /**
  * Gives the block explorer URL for a given address.
- * Defaults to Starkscan if no block explorer is configured for the network.
+ * Defaults to Voyager if no block explorer is configured for the network.
  */
 export function getBlockExplorerAddressLink(network: Chain, address: string) {
-  const blockExplorerBaseURL = network.explorers?.starkscan[0];
+  const blockExplorerBaseURL = network.explorers?.voyager?.[0];
   if (network.network === chains.devnet.network) {
     return `/blockexplorer/address/${address}`;
   }
 
   if (!blockExplorerBaseURL) {
-    return `https://starkscan.co/contract/${address}`;
+    return `https://voyager.online/contract/${address}`;
   }
 
   return `${blockExplorerBaseURL}/contract/${address}`;
@@ -72,16 +71,16 @@ export function getBlockExplorerAddressLink(network: Chain, address: string) {
 
 /**
  * Gives the block explorer URL for a given classhash.
- * Defaults to Starkscan if no block explorer is configured for the network.
+ * Defaults to Voyager if no block explorer is configured for the network.
  */
 export function getBlockExplorerClasshashLink(network: Chain, address: string) {
-  const blockExplorerBaseURL = network.explorers?.starkscan[0];
+  const blockExplorerBaseURL = network.explorers?.voyager?.[0];
   if (network.network === chains.devnet.network) {
     return `/blockexplorer/class/${address}`;
   }
 
   if (!blockExplorerBaseURL) {
-    return `https://starkscan.co/class/${address}`;
+    return `https://voyager.online/class/${address}`;
   }
 
   return `${blockExplorerBaseURL}/class/${address}`;
@@ -90,11 +89,11 @@ export function getBlockExplorerClasshashLink(network: Chain, address: string) {
 export function getBlockExplorerLink(network: Chain) {
   switch (network) {
     case chains.mainnet:
-      return "https://starkscan.co/";
+      return "https://voyager.online/";
     default:
     case chains.devnet:
     case chains.sepolia:
-      return "https://sepolia.starkscan.co/";
+      return "https://sepolia.voyager.online/";
   }
 }
 

@@ -1,8 +1,10 @@
-import { Connector, useConnect } from "@starknet-react/core";
+import { useConnect } from "@starknet-start/react";
+import type { UseConnectResult } from "@starknet-start/react";
+type WalletConnector = UseConnectResult["connectors"][number];
 import { useRef, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import { BurnerConnector, burnerAccounts } from "@scaffold-stark/stark-burner";
 import { useTheme } from "next-themes";
+import { burnerAccounts, burnerWalletId } from "@scaffold-stark/stark-burner";
 import { BlockieAvatar } from "../BlockieAvatar";
 import GenericModal from "./GenericModal";
 import Wallet from "~~/components/scaffold-stark/CustomConnectButton/Wallet";
@@ -16,7 +18,7 @@ const ConnectModal = () => {
   const [isBurnerWallet, setIsBurnerWallet] = useState(false);
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
-  const { connectors, connect } = useConnect();
+  const { connectors, connect, connectAsync } = useConnect();
   const [, setLastConnector] = useLocalStorage<{ id: string; ix?: number }>(
     "lastUsedConnector",
     { id: "" },
@@ -35,12 +37,18 @@ const ConnectModal = () => {
   // Identify devnet by network name
   const isDevnet = targetNetwork.network === "devnet";
 
-  // Split connectors into main and other options for devnet
+  const isBurnerConnector = (c: WalletConnector) =>
+    c.name === burnerWalletId || c.name === "Burner Wallet";
+
+  // Split connectors into main and other options for devnet;
+  // hide burner wallet entirely on non-devnet networks
   let mainConnectors = connectors;
   let otherConnectors: typeof connectors = [];
   if (isDevnet) {
-    mainConnectors = connectors.filter((c) => c.id === "burner-wallet");
-    otherConnectors = connectors.filter((c) => c.id !== "burner-wallet");
+    mainConnectors = connectors.filter(isBurnerConnector);
+    otherConnectors = connectors.filter((c) => !isBurnerConnector(c));
+  } else {
+    mainConnectors = connectors.filter((c) => !isBurnerConnector(c));
   }
 
   const handleCloseModal = () => {
@@ -49,31 +57,45 @@ const ConnectModal = () => {
 
   function handleConnectWallet(
     e: React.MouseEvent<HTMLButtonElement>,
-    connector: Connector,
+    connector: WalletConnector,
   ) {
-    if (connector.id === "burner-wallet") {
+    if (
+      connector.name === burnerWalletId ||
+      connector.name === "Burner Wallet"
+    ) {
       setIsBurnerWallet(true);
       return;
     }
     setWasDisconnectedManually(false);
     connect({ connector });
-    setLastConnector({ id: connector.id });
+    setLastConnector({ id: connector.name });
     setLastConnectionTime(Date.now());
     handleCloseModal();
   }
 
-  function handleConnectBurner(
+  async function handleConnectBurner(
     e: React.MouseEvent<HTMLButtonElement>,
     ix: number,
   ) {
-    const connector = connectors.find((it) => it.id == "burner-wallet");
-    if (connector && connector instanceof BurnerConnector) {
-      connector.burnerAccount = burnerAccounts[ix];
-      setWasDisconnectedManually(false);
-      connect({ connector });
-      setLastConnector({ id: connector.id, ix });
+    e.preventDefault();
+    e.stopPropagation();
+    const connector = connectors.find(
+      (it) => it.name === burnerWalletId || it.name === "Burner Wallet",
+    );
+    if (!connector) return;
+
+    // MockWallet exposes switchAccount to select a specific burner
+    if ("switchAccount" in connector) {
+      (connector as any).switchAccount(ix);
+    }
+    setWasDisconnectedManually(false);
+    try {
+      await connectAsync({ connector });
+      setLastConnector({ id: connector.name, ix });
       setLastConnectionTime(Date.now());
       handleCloseModal();
+    } catch (err) {
+      console.error("Burner wallet connection failed:", err);
     }
   }
 
@@ -119,7 +141,7 @@ const ConnectModal = () => {
                   <>
                     {mainConnectors.map((connector, index) => (
                       <Wallet
-                        key={connector.id || index}
+                        key={connector.name || index}
                         connector={connector}
                         loader={loader}
                         handleConnectWallet={handleConnectWallet}
@@ -138,7 +160,7 @@ const ConnectModal = () => {
                   <>
                     {otherConnectors.map((connector, index) => (
                       <Wallet
-                        key={connector.id || index}
+                        key={connector.name || index}
                         connector={connector}
                         loader={loader}
                         handleConnectWallet={handleConnectWallet}

@@ -1,4 +1,4 @@
-import { Address } from "@starknet-react/chains";
+import { Address } from "@starknet-start/chains";
 import { getRpcUrl } from "./provider";
 
 /**

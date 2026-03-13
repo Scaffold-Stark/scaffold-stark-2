@@ -1,4 +1,4 @@
-import { Chain } from "@starknet-react/chains";
+import { Chain } from "@starknet-start/chains";
 import { supportedChains as chains } from "./supportedChains";
 
 export type ScaffoldConfig = {

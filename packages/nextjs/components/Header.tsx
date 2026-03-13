@@ -9,10 +9,9 @@ import { useOutsideClick } from "~~/hooks/scaffold-stark";
 import { CustomConnectButton } from "~~/components/scaffold-stark/CustomConnectButton";
 import { useTheme } from "next-themes";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
-import { devnet } from "@starknet-react/chains";
+import { devnet } from "@starknet-start/chains";
 import { SwitchTheme } from "./SwitchTheme";
-import { useAccount, useNetwork, useProvider } from "@starknet-react/core";
-import { BlockIdentifier } from "starknet";
+import { useAccount, useNetwork, useProvider } from "@starknet-start/react";
 
 type HeaderMenuLink = {
   label: string;
@@ -118,11 +117,13 @@ export const Header = () => {
   return (
     <div className=" lg:static top-0 navbar min-h-0 shrink-0 justify-between z-20 px-0 sm:px-2">
       <div className="navbar-start w-auto lg:w-1/2 -mr-2">
-        <div className="lg:hidden dropdown" ref={burgerMenuRef}>
-          <label
-            tabIndex={0}
-            className={`ml-1 btn btn-ghost 
-              [@media(max-width:379px)]:px-3! [@media(max-width:379px)]:py-1! 
+        <div
+          className={`lg:hidden dropdown ${isDrawerOpen ? "dropdown-open" : ""}`}
+          ref={burgerMenuRef}
+        >
+          <button
+            className={`ml-1 btn btn-ghost
+              [@media(max-width:379px)]:px-3! [@media(max-width:379px)]:py-1!
               [@media(max-width:379px)]:h-9! [@media(max-width:379px)]:min-h-0!
               [@media(max-width:379px)]:w-10!
               ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"}`}
@@ -131,11 +132,10 @@ export const Header = () => {
             }}
           >
             <Bars3Icon className="h-1/2" />
-          </label>
+          </button>
           {isDrawerOpen && (
             <ul
-              tabIndex={0}
-              className="menu menu-compact dropdown-content mt-3 p-2 shadow-sm rounded-box w-52 bg-base-100"
+              className="menu menu-sm dropdown-content mt-3 p-2 shadow-sm rounded-box w-52 bg-base-100"
               onClick={() => {
                 setIsDrawerOpen(false);
               }}

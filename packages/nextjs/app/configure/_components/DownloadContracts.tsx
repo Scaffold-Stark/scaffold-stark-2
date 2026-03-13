@@ -1,6 +1,6 @@
 "use client";
 
-import { useProvider } from "@starknet-react/core";
+import { useProvider } from "@starknet-start/react";
 import { useCallback, useState } from "react";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import configExternalContracts from "~~/contracts/configExternalContracts";

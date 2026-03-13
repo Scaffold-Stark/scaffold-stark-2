@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useFetchEvents } from "../useFetchEvents";
-import { useProvider } from "@starknet-react/core";
+import { useProvider } from "@starknet-start/react";
 import { useTargetNetwork } from "../../scaffold-stark/useTargetNetwork";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 
 // Mock dependencies
-vi.mock("@starknet-react/core", () => ({
+vi.mock("@starknet-start/react", () => ({
   useProvider: vi.fn(),
 }));
 
@@ -19,7 +19,7 @@ vi.mock("~~/utils/scaffold-stark/eventsData", () => ({
   parseEventData: vi.fn(),
 }));
 
-vi.mock("@starknet-react/chains", () => ({
+vi.mock("@starknet-start/chains", () => ({
   devnet: { network: "devnet" },
 }));
 

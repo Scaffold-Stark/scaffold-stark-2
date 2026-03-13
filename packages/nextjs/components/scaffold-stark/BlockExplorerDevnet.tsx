@@ -4,9 +4,9 @@ import {
   Address as AddressType,
   devnet,
   sepolia,
-} from "@starknet-react/chains";
+} from "@starknet-start/chains";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useNetwork } from "@starknet-react/core";
+import { useNetwork } from "@starknet-start/react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";

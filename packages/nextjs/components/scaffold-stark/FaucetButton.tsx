@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { BanknotesIcon } from "@heroicons/react/24/outline";
 import { mintStrk } from "~~/services/web3/faucet";
-import { Address, devnet } from "@starknet-react/chains";
+import { Address, devnet } from "@starknet-start/chains";
 import { useTargetNetwork } from "~~/hooks/scaffold-stark/useTargetNetwork";
 import useScaffoldStrkBalance from "~~/hooks/scaffold-stark/useScaffoldStrkBalance";
 import { useAccount } from "~~/hooks/useAccount";

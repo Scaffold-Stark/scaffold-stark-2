@@ -1,6 +1,6 @@
-import { Address } from "@starknet-react/chains";
+import { Address } from "@starknet-start/chains";
 import { useDeployedContractInfo } from "./useDeployedContractInfo";
-import { useReadContract } from "@starknet-react/core";
+import { useReadContract } from "@starknet-start/react";
 import { BlockNumber } from "starknet";
 import { Abi } from "abi-wan-kanabi";
 import { formatUnits } from "ethers";
@@ -36,7 +36,7 @@ const useScaffoldStrkBalance = ({ address }: UseScaffoldStrkBalanceProps) => {
     watch: true,
     enabled: true,
     args: address ? [address] : [],
-    blockIdentifier: "pre_confirmed" as BlockNumber,
+    blockIdentifier: "latest" as BlockNumber,
   });
 
   return {

@@ -10,8 +10,8 @@ import {
   ContractName,
   UseScaffoldEventHistoryConfig,
 } from "~~/utils/scaffold-stark/contract";
-import { devnet } from "@starknet-react/chains";
-import { useProvider } from "@starknet-react/core";
+import { devnet } from "@starknet-start/chains";
+import { useProvider } from "@starknet-start/react";
 import { RpcProvider } from "starknet";
 import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
 import { buildEventKeys } from "~~/utils/scaffold-stark/eventKeyFilter";

@@ -1,5 +1,5 @@
 import scaffoldConfig from "~~/scaffold.config";
-import { Chain } from "@starknet-react/chains";
+import { Chain } from "@starknet-start/chains";
 import { WebSocketChannel } from "starknet";
 
 // Cache one channel per ws url

@@ -18,14 +18,12 @@ import {
   isStarknetName,
 } from "~~/components/scaffold-stark";
 import { useOutsideClick } from "~~/hooks/scaffold-stark";
-import { BurnerConnector, burnerAccounts } from "@scaffold-stark/stark-burner";
-import { getTargetNetworks, notification } from "~~/utils/scaffold-stark";
-import { Address } from "@starknet-react/chains";
-import { useDisconnect, useNetwork, useConnect } from "@starknet-react/core";
+import { notification } from "~~/utils/scaffold-stark";
+import { Address } from "@starknet-start/chains";
+import { useDisconnect, useNetwork, useConnect } from "@starknet-start/react";
 import { useScaffoldStarkProfile } from "~~/hooks/scaffold-stark/useScaffoldStarkProfile";
 import { useTheme } from "next-themes";
-
-const allowedNetworks = getTargetNetworks();
+import { burnerAccounts, burnerWalletId } from "@scaffold-stark/stark-burner";
 
 type AddressInfoDropdownProps = {
   address: Address;
@@ -59,11 +57,15 @@ export const AddressInfoDropdown = ({
     e: React.MouseEvent<HTMLButtonElement>,
     ix: number,
   ) {
-    const connector = connectors.find((it) => it.id == "burner-wallet");
-    if (connector && connector instanceof BurnerConnector) {
-      connector.burnerAccount = burnerAccounts[ix];
+    const connector = connectors.find(
+      (it) => it.name === burnerWalletId || it.name === "Burner Wallet",
+    );
+    if (connector) {
+      if ("switchAccount" in connector) {
+        (connector as any).switchAccount(ix);
+      }
       connect({ connector });
-      setLastConnector({ id: connector.id, ix });
+      setLastConnector({ id: connector.name, ix });
       setShowBurnerAccounts(false);
     }
   }
@@ -226,7 +228,6 @@ export const AddressInfoDropdown = ({
                       <div className="flex flex-col items-center justify-center gap-3 mx-8 pb-10 pt-8">
                         <div className="h-[300px] overflow-y-auto flex w-full flex-col gap-2">
                           {burnerAccounts.map((burnerAcc, ix) => (
-                            // eslint-disable-next-line react/jsx-key
                             <div
                               key={burnerAcc.publicKey}
                               className="w-full flex flex-col"
@@ -260,21 +261,6 @@ export const AddressInfoDropdown = ({
               document.body,
             )}
 
-          {/* TODO: reinstate if needed */}
-          {/* {allowedNetworks.length > 1 ? (
-            <li className={selectingNetwork ? "hidden" : ""}>
-              <button
-                className="btn-sm !rounded-xl flex gap-3 py-3"
-                type="button"
-                onClick={() => {
-                  setSelectingNetwork(true);
-                }}
-              >
-                <ArrowsRightLeftIcon className="h-6 w-4 ml-2 sm:ml-0" />{" "}
-                <span>Switch Network</span>
-              </button>
-            </li>
-          ) : null} */}
           <li className={selectingNetwork ? "hidden" : "p-0"}>
             <button
               className="menu-item text-secondary-content btn-sm text-sm !rounded-xl flex gap-3"
