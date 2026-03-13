@@ -107,7 +107,7 @@ jobs:
           done
           cd destination_repo
           git add .
-          git commit -m "Processed $gitignore_file into $mjs_file"
+          git commit -m "chore: convert .gitignore files to .gitignore.template.mjs [skip ci]"
 
       - name: Bump version in Destination Repository
         id: bump-version-destination
