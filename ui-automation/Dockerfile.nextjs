@@ -1,4 +1,4 @@
-FROM starknetfoundation/starknet-dev:2.15.1
+FROM starknetfoundation/starknet-dev:2.16.0
 
 USER root
 
