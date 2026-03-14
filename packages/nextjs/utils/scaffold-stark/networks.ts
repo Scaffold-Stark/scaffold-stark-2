@@ -43,7 +43,8 @@ export function getBlockExplorerTxLink(network: string, txnHash: string) {
   }
 
   const targetChain = targetChainArr[0] as keyof typeof chains;
-  const blockExplorerBaseURL = chains[targetChain].explorers?.voyager?.[0];
+  const blockExplorerBaseURL = (chains[targetChain] as Chain).explorers
+    ?.voyager?.[0];
 
   if (!blockExplorerBaseURL) {
     return `https://voyager.online/tx/${txnHash}`;
