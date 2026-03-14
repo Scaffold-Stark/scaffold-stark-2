@@ -2,16 +2,16 @@ import { vi, describe, it, expect, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useScaffoldContract } from "~~/hooks/scaffold-stark/useScaffoldContract";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-stark/useDeployedContractInfo";
-import { useAccount } from "@starknet-react/core";
+import { useAccount } from "@starknet-start/react";
 import { Contract, RpcProvider } from "starknet";
 
 import type { Mock } from "vitest";
 import { ContractName } from "~~/utils/scaffold-stark/contract";
-import { useProvider } from "@starknet-react/core";
+import { useProvider } from "@starknet-start/react";
 
 //Using vitest's functionality to mock modules from different paths
 vi.mock("~~/hooks/scaffold-stark/useDeployedContractInfo");
-vi.mock("@starknet-react/core");
+vi.mock("@starknet-start/react");
 vi.mock("starknet", () => {
   const actualStarknet = vi.importActual("starknet");
   return {

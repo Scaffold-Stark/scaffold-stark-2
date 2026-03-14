@@ -1,4 +1,4 @@
-import * as chains from "@starknet-react/chains";
+import * as chains from "@starknet-start/chains";
 import scaffoldConfig from "~~/scaffold.config";
 import { useEffect, useState } from "react";
 import { StarkProfile } from "starknet";

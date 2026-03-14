@@ -9,7 +9,7 @@ import {
 
 import { useTargetNetwork } from "../useTargetNetwork";
 
-import { useNetwork, useSendTransaction } from "@starknet-react/core";
+import { useNetwork, useSendTransaction } from "@starknet-start/react";
 
 import { useTransactor } from "../useTransactor";
 
@@ -41,7 +41,7 @@ vi.mock("~~/hooks/scaffold-stark/useTargetNetwork", () => ({
   useTargetNetwork: vi.fn(),
 }));
 
-vi.mock("@starknet-react/core", () => ({
+vi.mock("@starknet-start/react", () => ({
   useSendTransaction: vi.fn(),
 
   useNetwork: vi.fn().mockReturnValue({ chain: { id: 1 } }),

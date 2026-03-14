@@ -3,9 +3,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Contract, hash, num, RpcProvider } from "starknet";
-import { Address } from "@starknet-react/chains";
+import { Address } from "@starknet-start/chains";
 import { useTargetNetwork } from "../scaffold-stark/useTargetNetwork";
-import { useContract } from "@starknet-react/core";
+import { useContract } from "@starknet-start/react";
 import { devnetUDCAddress } from "~~/utils/Constants";
 import { checkSanitizedEquals } from "~~/utils/blockexplorer";
 

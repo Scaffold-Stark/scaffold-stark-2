@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 import { useDeployedContractInfo } from "../useDeployedContractInfo";
 import { useTargetNetwork } from "../useTargetNetwork";
 import { useIsMounted } from "usehooks-ts";
-import { useProvider } from "@starknet-react/core";
+import { useProvider } from "@starknet-start/react";
 import { RpcProvider } from "starknet";
 import { ContractClassHashCache } from "../ContractClassHashCache";
 import { ContractCodeStatus } from "~~/utils/scaffold-stark/contract";
@@ -17,7 +17,7 @@ vi.mock("usehooks-ts", () => ({
   useIsMounted: vi.fn(),
 }));
 
-vi.mock("@starknet-react/core");
+vi.mock("@starknet-start/react");
 
 vi.mock("~~/utils/scaffold-stark/contract", () => ({
   // these are hoisted to the top, so the variable has to re-declared into the test suite

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Abi } from "abi-wan-kanabi";
-import { Address } from "@starknet-react/chains";
+import { Address } from "@starknet-start/chains";
 import {
   getFunctionInputKey,
   getInitialFormState,
@@ -15,7 +15,7 @@ import {
 } from "~~/app/debug/_components/contract";
 import { AbiFunction } from "~~/utils/scaffold-stark/contract";
 import { BlockNumber } from "starknet";
-import { useContract, useReadContract } from "@starknet-react/core";
+import { useContract, useReadContract } from "@starknet-start/react";
 import { ContractInput } from "./ContractInput";
 import { isValidContractArgs } from "~~/utils/scaffold-stark/common";
 import { addHistory } from "~~/services/store/history";
@@ -55,7 +55,7 @@ export const ReadOnlyFunctionForm = ({
     abi: [...abi],
     args: inputIsValidArray ? inputValue : undefined,
     enabled: !!inputValue && !!contractInstance,
-    blockIdentifier: "pre_confirmed" as BlockNumber,
+    blockIdentifier: "latest" as BlockNumber,
   });
 
   useEffect(() => {

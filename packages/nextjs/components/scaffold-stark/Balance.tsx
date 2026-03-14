@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Address } from "@starknet-react/chains";
+import { Address } from "@starknet-start/chains";
 import { useGlobalState } from "~~/services/store/store";
 import useScaffoldStrkBalance from "~~/hooks/scaffold-stark/useScaffoldStrkBalance";
 

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useProvider } from "@starknet-react/core";
+import { useProvider } from "@starknet-start/react";
 import {
   RpcProvider,
   hash,
@@ -10,7 +10,7 @@ import {
 } from "starknet";
 import { useTargetNetwork } from "../scaffold-stark/useTargetNetwork";
 import { parseEventData } from "~~/utils/scaffold-stark/eventsData";
-import { devnet } from "@starknet-react/chains";
+import { devnet } from "@starknet-start/chains";
 import deployedContracts from "~~/contracts/deployedContracts";
 import predeployedContracts from "~~/contracts/predeployedContracts";
 import configExternalContracts from "~~/contracts/configExternalContracts";
