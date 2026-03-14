@@ -73,7 +73,6 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           new_version=$(npm version ${{ env.type }} -m "chore(release): %s [skip ci]")
           echo "NEW_VERSION=${new_version}" >> "$GITHUB_ENV"
-          git push origin main --follow-tags
 
       - name: Copy Files to Destination Repository
         run: |
@@ -107,7 +106,7 @@ jobs:
           done
           cd destination_repo
           git add .
-          git commit -m "Processed $gitignore_file into $mjs_file"
+          git commit -m "chore: convert .gitignore files to .gitignore.template.mjs [skip ci]"
 
       - name: Bump version in Destination Repository
         id: bump-version-destination
@@ -116,7 +115,6 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           new_version=$(npm version ${{ env.type }} -m "chore(release): %s [skip ci]")
-          git push origin main --follow-tags
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -132,6 +130,18 @@ jobs:
           npm install && npm run build && npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Push Source Repository
+        if: success()
+        run: |
+          cd source_repo
+          git push origin main --follow-tags
+
+      - name: Push Destination Repository
+        if: success()
+        run: |
+          cd destination_repo
+          git push origin main --follow-tags
 
       - name: Notify Slack on Success
         if: success()
