@@ -3676,15 +3676,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@scaffold-stark/stark-burner@portal:../../../stark-burner::locator=%40ss-2%2Fnextjs%40workspace%3Apackages%2Fnextjs":
-  version: 0.0.0-use.local
-  resolution: "@scaffold-stark/stark-burner@portal:../../../stark-burner::locator=%40ss-2%2Fnextjs%40workspace%3Apackages%2Fnextjs"
+"@scaffold-stark/stark-burner@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@scaffold-stark/stark-burner@npm:1.0.0"
   peerDependencies:
     "@starknet-start/chains": ^1.0.0
     "@starknet-start/react": ^1.0.0
     starknet: ^9.0.0
+  checksum: 859147f1cdedf636b4ad8de84b9b76da52bedf64d66fd9598a84b1b713904e078c69b7ba694ac242a39b130eb469ff74a1dd015d8d52d2b0666803eee750ea52
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "@scure/base@npm:~1.2.1, @scure/base@npm:~1.2.5":
   version: 1.2.6
@@ -3738,7 +3739,7 @@ __metadata:
     "@heroicons/react": ^2.1.3
     "@radix-ui/react-icons": 1.3.0
     "@radix-ui/themes": 2.0.3
-    "@scaffold-stark/stark-burner": "portal:../../../stark-burner"
+    "@scaffold-stark/stark-burner": ^1.0.0
     "@starknet-io/get-starknet-modal": ^5.0.0
     "@starknet-io/types-js": ^0.10.0
     "@starknet-start/chains": ^1.0.0
