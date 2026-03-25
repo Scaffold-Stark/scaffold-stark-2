@@ -16,7 +16,13 @@ Practical recipes, FAQ, and pitfalls for building on Scaffold-Stark 2 (Cairo sma
   - [Recipes](#frontend-recipes)
   - [FAQ](#frontend-faq)
   - [Common Pitfalls](#frontend-pitfalls)
-- [Deployment](#deployment)
+- [Deploy Scripts & Commands](#deploy-scripts--commands)
+  - [How the Deploy Pipeline Works](#how-the-deploy-pipeline-works)
+  - [All Deploy Commands](#all-deploy-commands)
+  - [deploy.ts — Writing the Deploy Script](#deployts--writing-the-deploy-script)
+  - [networks.ts — Env Vars & Credentials](#networksts--env-vars--credentials)
+  - [Deploy FAQ](#deploy-faq)
+  - [Deploy Pitfalls](#deploy-pitfalls)
 - [Testing](#testing)
 
 ---
@@ -570,15 +576,256 @@ const formatted = formatUnits(data as bigint, 18); // 18 decimals for STRK
 
 ---
 
+## Deploy Scripts & Commands
+
+### How the Deploy Pipeline Works
+
+Every `yarn deploy` call runs this exact sequence:
+
+```
+yarn deploy [--network <net>] [--no-reset]
+  └── ts-node scripts-ts/helpers/deploy-wrapper.ts   ← CLI arg parsing + smartCompile()
+        ├── scarb build  (or skips if Sierra/CASM unchanged)
+        ├── ts-node scripts-ts/deploy.ts              ← your deploy script runs here
+        │     ├── assertDeployerDefined()             ← checks .env credentials
+        │     ├── assertRpcNetworkActive()            ← pings the RPC, prints block #
+        │     ├── assertDeployerSignable()            ← signs test message to validate key pair
+        │     ├── deployContract(...)                 ← declare class (skips if already on-chain)
+        │     │     └── deployContract_NotWait()      ← queues a UDC call (does NOT send yet)
+        │     └── executeDeployCalls()                ← sends ONE multicall tx for all queued deploys
+        │           └── exportDeployments()           ← writes deployments/<network>_latest.json
+        └── ts-node scripts-ts/helpers/parse-deployments.ts
+              └── writes packages/nextjs/contracts/deployedContracts.ts
+```
+
+Key points:
+- **Declare is idempotent** — if the class hash already exists on-chain, the declare step is silently skipped. Re-deploying the same bytecode costs nothing extra.
+- **All contracts are deployed in a single multicall** — `deployContract()` only queues a UDC call; `executeDeployCalls()` sends them all at once. This means if `executeDeployCalls()` fails, **no** contracts get deployed even if `deployContract()` returned an address.
+- **The returned address from `deployContract()` is deterministic** (salt + class hash + deployer address), computed locally before the tx is sent.
+- **`deployedContracts.ts` is updated last** by `parse-deployments.ts`. If the process crashes after `exportDeployments()` but before parsing, run `yarn deploy` again — the declare will be skipped and only the parse step will re-run.
+
+---
+
+### All Deploy Commands
+
+| Command | What it does |
+|---|---|
+| `yarn chain` | Start local devnet (`starknet-devnet --seed 0`) |
+| `yarn deploy` | Compile + declare + deploy to **devnet** (resets `devnet_latest.json`) |
+| `yarn deploy --network sepolia` | Deploy to Sepolia testnet |
+| `yarn deploy --network mainnet` | Deploy to Mainnet |
+| `yarn deploy --no-reset` | Deploy without overwriting `<network>_latest.json` (timestamps the old file, keeps history) |
+| `yarn deploy:no-reset` | Alias for `yarn deploy --no-reset` |
+| `yarn deploy:clear` | Delete all `deployments/*.json` files first, then deploy fresh |
+| `yarn workspace @ss-2/snfoundry compile` | Compile Cairo contracts only (no deploy) |
+| `yarn workspace @ss-2/snfoundry verify --network sepolia` | Verify source on block explorer |
+| `yarn workspace @ss-2/snfoundry test` | Run `snforge test` |
+| `yarn workspace @ss-2/snfoundry clean` | `scarb clean` + delete all deployment JSONs |
+
+---
+
+### deploy.ts — Writing the Deploy Script
+
+`packages/snfoundry/scripts-ts/deploy.ts` is the only file you edit for each project. It is called with the `deployer` account already resolved from `.env` for the target network.
+
+#### Minimal — single contract, owner constructor
+
+```typescript
+import {
+  deployContract,
+  executeDeployCalls,
+  exportDeployments,
+  deployer,
+  assertDeployerDefined,
+  assertRpcNetworkActive,
+  assertDeployerSignable,
+} from "./deploy-contract";
+
+const deployScript = async (): Promise<void> => {
+  await deployContract({
+    contract: "YourContract",        // must match the Cairo module name (case-sensitive)
+    constructorArgs: {
+      owner: deployer.address,       // key names must match Cairo constructor param names exactly
+    },
+  });
+};
+
+const main = async (): Promise<void> => {
+  assertDeployerDefined();
+  await Promise.all([assertRpcNetworkActive(), assertDeployerSignable()]);
+  await deployScript();
+  await executeDeployCalls();
+  exportDeployments();
+};
+
+main();
+```
+
+#### Multiple contracts
+
+```typescript
+const deployScript = async (): Promise<void> => {
+  // All calls are queued; they execute in a single multicall tx in executeDeployCalls()
+  await deployContract({
+    contract: "TokenContract",
+    constructorArgs: { owner: deployer.address, initial_supply: 1000000n },
+  });
+
+  await deployContract({
+    contract: "MarketplaceContract",
+    contractName: "Marketplace",    // optional: overrides the export name in deployedContracts.ts
+    constructorArgs: {
+      owner: deployer.address,
+      fee_bps: 250,                 // u16 → pass as number
+    },
+    options: {
+      maxFee: BigInt(2_000_000_000_000), // override fee cap
+    },
+  });
+};
+```
+
+#### `deployContract` parameter reference
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `contract` | `string` | Yes | Cairo `mod` name — must match a file in `contracts/target/dev/` |
+| `constructorArgs` | `object` | If constructor exists | Keys = Cairo param names; values = JS equivalents (see type mapping below) |
+| `contractName` | `string` | No | Export name in `deployedContracts.ts`. Defaults to `contract`. Use when deploying the same class twice under different names. |
+| `options` | `UniversalDetails` | No | Starknet.js deploy options (e.g. `maxFee`) |
+
+#### Cairo → JS type mapping for `constructorArgs`
+
+| Cairo type | JS value |
+|---|---|
+| `ContractAddress` | hex string `"0x..."` or `deployer.address` |
+| `felt252` | hex string `"0x..."`, decimal string `"123"`, or number |
+| `u8` / `u16` / `u32` / `u64` / `u128` | number or `bigint` |
+| `u256` | `bigint`, number, hex string, or `{ low: "123", high: "0" }` |
+| `bool` | `true` / `false` / `0` / `1` |
+| `ByteArray` (Cairo string) | JS `string` |
+| `Array<T>` | JS array `[item1, item2]` |
+| `Option::None` | omit the key, or `undefined` — **do not pass `null`** |
+| `Option::Some(v)` | pass `v` directly |
+
+---
+
+### networks.ts — Env Vars & Credentials
+
+`packages/snfoundry/scripts-ts/helpers/networks.ts` loads from `packages/snfoundry/.env`.
+
+#### Devnet defaults (no `.env` needed)
+
+```
+PRIVATE_KEY_DEVNET  → 0x71d7bb07b9a64f6f78ac4c816aff4da9      (Katana predeployed account)
+ACCOUNT_ADDRESS_DEVNET → 0x64b48806902a367c8598f4f95c305e8c1a1acba5f082d294a43793113115691
+RPC_URL_DEVNET      → http://127.0.0.1:5050
+```
+
+These defaults only work with `yarn chain` (Katana with `--seed 0`). Override in `.env` if using a different seed or external devnet.
+
+#### Sepolia / Mainnet `.env` required keys
+
+```bash
+# packages/snfoundry/.env
+ACCOUNT_ADDRESS_SEPOLIA=0x...
+PRIVATE_KEY_SEPOLIA=0x...
+RPC_URL_SEPOLIA=https://starknet-sepolia.infura.io/rpc/v0_7/YOUR_KEY
+
+ACCOUNT_ADDRESS_MAINNET=0x...
+PRIVATE_KEY_MAINNET=0x...
+RPC_URL_MAINNET=https://starknet-mainnet.infura.io/rpc/v0_7/YOUR_KEY
+```
+
+> The deployer account **must already be deployed on-chain** (funded + initialized). `assertDeployerSignable()` will catch an undeployed account before any fee is spent.
+
+#### Frontend RPC — separate file
+
+```bash
+# packages/nextjs/.env.local
+NEXT_PUBLIC_DEVNET_PROVIDER_URL=http://127.0.0.1:5050
+NEXT_PUBLIC_SEPOLIA_PROVIDER_URL=https://starknet-sepolia.infura.io/rpc/v0_7/YOUR_KEY
+NEXT_PUBLIC_MAINNET_PROVIDER_URL=https://starknet-mainnet.infura.io/rpc/v0_7/YOUR_KEY
+```
+
+These are **independent** of `packages/snfoundry/.env`. Both must be set for a full-stack deployment.
+
+---
+
+### Deploy FAQ
+
+**Q: Why does my contract address change on every deploy even with the same code?**
+
+`deployContract` uses a random salt (`stark.randomAddress()`). The address is `hash(salt, classHash, deployerAddress, constructorCalldata)`. Use `--no-reset` to keep the previous deployment if you need a stable address, or set a fixed salt by modifying the deploy script.
+
+**Q: How do I re-deploy without re-declaring?**
+
+You can't skip declaration through the CLI — but it's free because `declareIfNot_NotWait` checks if the class hash exists on-chain and skips if so. Just run `yarn deploy` normally.
+
+**Q: How do I deploy the same Cairo class as two separate contracts?**
+
+Call `deployContract` twice with different `contractName` values:
+
+```typescript
+await deployContract({ contract: "ERC20", contractName: "TokenA", constructorArgs: { ... } });
+await deployContract({ contract: "ERC20", contractName: "TokenB", constructorArgs: { ... } });
+```
+
+Both will appear in `deployedContracts.ts` under their respective names.
+
+**Q: What is `--no-reset` for?**
+
+By default (`--reset`, which is on), `yarn deploy` overwrites `deployments/<network>_latest.json`. With `--no-reset`, the old file is renamed to `deployments/<network>_<timestamp>.json` before writing. Use this to keep deployment history across multiple deploys to the same network.
+
+**Q: Where does `deployedContracts.ts` come from?**
+
+It is written by `packages/snfoundry/scripts-ts/helpers/parse-deployments.ts` after each deploy. It reads all `*_latest.json` files in `packages/snfoundry/deployments/` and merges them by chain ID. **Never edit it manually.**
+
+**Q: My `assertDeployerSignable` fails — what does that mean?**
+
+Either: (a) the account at `ACCOUNT_ADDRESS_*` is not deployed on that network yet, or (b) `ACCOUNT_ADDRESS_*` and `PRIVATE_KEY_*` don't belong to the same account. Deploy the account first using `starkli account deploy` or a faucet + ArgentX/Braavos setup.
+
+**Q: Can I use a hardware wallet / Ledger as the deployer?**
+
+Not with the current scripts — they use a raw private key via `Account` from starknet.js. For hardware wallet signing you'd need to replace the `Account` instantiation with a custom signer.
+
+---
+
+### Deploy Pitfalls
+
+1. **`constructorArgs` key names are case-sensitive and must match Cairo** — Cairo uses `snake_case`. `{ Owner: deployer.address }` silently fails with a "missing argument" error; it must be `{ owner: deployer.address }`.
+
+2. **`executeDeployCalls()` must always be called** — `deployContract()` only queues UDC calls. If you return early without calling `executeDeployCalls()`, nothing is deployed on-chain despite seeing "Contract Deployed at" logs.
+
+3. **`exportDeployments()` must be called before `parse-deployments.ts` runs** — `deploy-wrapper.ts` handles this for you, but if you run `deploy.ts` directly (not via the wrapper), you must call `exportDeployments()` manually.
+
+4. **`deployer.address` resolves to the devnet default on Sepolia/Mainnet if `.env` is missing** — The devnet hardcoded address (`0x64b48...`) is used as fallback. The deploy will fail at `assertDeployerDefined` or `assertDeployerSignable`, but the error may be confusing. Always check `.env` first.
+
+5. **Using `null` for `Option::None` breaks calldata compilation** — Pass `undefined` (or omit the key). `null` passes through `compile()` and produces an invalid calldata array.
+
+6. **`contract` field is the Cairo `mod` name, not the filename** — If your file is `my_token.cairo` but the module is `pub mod ERC20Mintable`, use `contract: "ERC20Mintable"`. The deploy script searches `target/dev/` for `*ERC20Mintable.contract_class.json`.
+
+7. **Declare succeeds but deploy multicall fails** — The class is now on-chain but the contract instance is not. Re-running `yarn deploy` will skip the declare (class already exists) and retry the deploy. This is safe.
+
+8. **Don't run multiple `yarn deploy` simultaneously** — Both processes write to the same `deployments/<network>_latest.json` and will race/corrupt the file.
+
+9. **`deploy:clear` deletes all deployment history** — `deployments/clear.mjs` removes every JSON file in the `deployments/` directory, not just `_latest`. Use `--no-reset` instead if you want to preserve history.
+
+10. **Mainnet deployer is missing `cairoVersion: "1"`** in `networks.ts** — Unlike devnet/sepolia, the mainnet `Account` constructor omits `cairoVersion`. If you're deploying Cairo 1 contracts to mainnet and see unexpected signature errors, patch `networks.ts` to add `cairoVersion: "1"` to the mainnet `Account` instantiation.
+
+---
+
 ## Deployment
+
+> For full deploy script internals, CLI flags, `deploy.ts` recipes, `.env` reference, and deploy pitfalls see [Deploy Scripts & Commands](#deploy-scripts--commands) above.
 
 ### Full devnet workflow
 
 ```bash
-# Terminal 1 — start local devnet
+# Terminal 1 — start local devnet (Katana, seed 0)
 yarn chain
 
-# Terminal 2 — compile + declare + deploy contracts
+# Terminal 2 — compile + declare + deploy contracts → writes deployedContracts.ts
 yarn deploy
 
 # Terminal 3 — start Next.js dev server
@@ -588,41 +835,40 @@ yarn start
 ### Deploy to Sepolia
 
 ```bash
-# 1. Set credentials
-# packages/snfoundry/.env
+# 1. packages/snfoundry/.env
 ACCOUNT_ADDRESS_SEPOLIA=0x...
 PRIVATE_KEY_SEPOLIA=0x...
+RPC_URL_SEPOLIA=https://starknet-sepolia.infura.io/rpc/v0_7/YOUR_KEY
 
-# 2. Deploy contracts
+# 2. packages/nextjs/.env.local
+NEXT_PUBLIC_SEPOLIA_PROVIDER_URL=https://starknet-sepolia.infura.io/rpc/v0_7/YOUR_KEY
+
+# 3. Deploy contracts
 yarn deploy --network sepolia
 
-# 3. Update scaffold.config.ts
-targetNetworks: [chains.sepolia]
+# 4. Update scaffold.config.ts
+# targetNetworks: [chains.sepolia]
 
-# 4. Set RPC in packages/nextjs/.env.local
-NEXT_PUBLIC_SEPOLIA_PROVIDER_URL=https://...
-
-# 5. Start or redeploy frontend
-yarn start
-# or
-yarn vercel --prod
+# 5. Start or deploy frontend
+yarn start                # local
+yarn vercel --prod        # Vercel
 ```
 
 ### Deploy to Mainnet
 
-Same as Sepolia — use `--network mainnet` and `ACCOUNT_ADDRESS_MAINNET` / `PRIVATE_KEY_MAINNET`.
+Identical to Sepolia — use `--network mainnet`, `ACCOUNT_ADDRESS_MAINNET`, `PRIVATE_KEY_MAINNET`, `RPC_URL_MAINNET`.
+
+> **Known issue:** The mainnet `Account` in `networks.ts` is missing `cairoVersion: "1"`. If you get signature errors on mainnet, add it manually. See [Deploy Pitfalls](#deploy-pitfalls) #10.
 
 ### Vercel deployment
 
 ```bash
-# Link repo to Vercel and set env vars in Vercel dashboard, then:
-yarn vercel --prod
-
-# Deploy ignoring lint/type errors:
-yarn vercel:yolo
+yarn vercel --prod        # production
+yarn vercel               # preview URL
+yarn vercel:yolo          # skip lint/type checks
 ```
 
-Set `NEXT_PUBLIC_IGNORE_BUILD_ERROR=true` in Vercel environment variables to disable build-time checks.
+Set `NEXT_PUBLIC_IGNORE_BUILD_ERROR=true` in Vercel environment variables to disable build-time checks permanently.
 
 ---
 
