@@ -293,7 +293,7 @@ snforge test test_my_function
 
 9. **Starknet Foundry vs Scarb version mismatch** — Always keep `snforge` / `sncast` versions aligned with the `starknet-foundry` entry in `Scarb.toml`. Check compatibility at https://foundry-rs.github.io/starknet-foundry/
 
-10. **Do NOT commit `packages/nextjs/contracts/deployedContracts.ts`** — This file is auto-generated on each `yarn deploy`. Committing it causes conflicts when the same contract is deployed to different addresses across environments.
+10. **Do NOT commit `packages/nextjs/contracts/deployedContracts.ts`** unless Scaffold-Stark is used as a project template. This file is auto-generated on each `yarn deploy`. If not used as a template, DO NOT COMMIT, as it causes conflicts when the same contract is deployed to different addresses across environments.
 
 ---
 
