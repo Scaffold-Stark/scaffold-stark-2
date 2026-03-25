@@ -6,11 +6,14 @@ import { useTheme } from "next-themes";
 import { Toaster } from "react-hot-toast";
 import { StarknetConfig } from "@starknet-start/react";
 import { voyager } from "@starknet-start/explorers";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Header } from "~~/components/Header";
 
 import { appChains, extraWallets } from "~~/services/web3/connectors";
 import provider from "~~/services/web3/provider";
 import { useNativeCurrencyPrice } from "~~/hooks/scaffold-stark/useNativeCurrencyPrice";
+
+const queryClient = new QueryClient();
 
 const Footer = dynamic(
   () => import("~~/components/Footer").then((mod) => mod.Footer),
@@ -60,14 +63,16 @@ export const ScaffoldStarkAppWithProviders = ({
   if (!mounted) return null;
 
   return (
-    <StarknetConfig
-      chains={[...appChains]}
-      provider={provider}
-      explorer={voyager}
-      autoConnect={true}
-      extraWallets={extraWallets}
-    >
-      <ScaffoldStarkApp>{children}</ScaffoldStarkApp>
-    </StarknetConfig>
+    <QueryClientProvider client={queryClient}>
+      <StarknetConfig
+        chains={[...appChains]}
+        provider={provider}
+        explorer={voyager}
+        autoConnect={true}
+        extraWallets={extraWallets}
+      >
+        <ScaffoldStarkApp>{children}</ScaffoldStarkApp>
+      </StarknetConfig>
+    </QueryClientProvider>
   );
 };
