@@ -2,6 +2,8 @@
 
 Everything you need to build dApps on Starknet. A modern, clean version of Scaffold-Stark with NextJS, Starknet-React, Starknet.js and TypeScript. Supports Starknet Foundry for Cairo smart contracts.
 
+> **Agents:** For practical recipes, FAQ, pitfalls, and deploy script internals see [SKILLS.md](./SKILLS.md).
+
 ## High level overview
 
 ### Smart Contract Read and Write Operations Patterns
@@ -564,6 +566,8 @@ import scaffoldConfig from "~~/scaffold.config";
 ### deploy-smart-contracts
 
 Source: https://www.scaffoldstark.com/docs/deploying/deploy-smart-contracts
+
+> **Full deploy internals, all CLI flags, `deploy.ts` recipes, `.env` reference, type mapping, and deploy pitfalls are in [SKILLS.md — Deploy Scripts & Commands](./SKILLS.md#deploy-scripts--commands).**
 
 #### Deploy Your Smart Contracts
 
