@@ -1,0 +1,84 @@
+# Rsync filter rules for scaffold-stark-2 → speedrunstark sync
+# P = Protect (never delete from speedrunstark)
+# - = Exclude (never copy from scaffold-stark-2)
+#
+# When adding new speedrun-specific files, add a P rule here.
+# When adding new scaffold-stark-2 files that shouldn't sync, add a - rule.
+
+# === PROTECT speedrun-specific files (prevent --delete from removing them) ===
+
+# Merge strategy configs
+P .gitattributes
+P packages/nextjs/.gitattributes
+P packages/snfoundry/.gitattributes
+
+# Speedrun UI components and branding
+P packages/nextjs/components/Button/
+P packages/nextjs/components/Button/**
+P packages/nextjs/components/ButtonStyle/
+P packages/nextjs/components/ButtonStyle/**
+P packages/nextjs/components/HeaderLogo.tsx
+P packages/nextjs/components/icons/
+P packages/nextjs/components/icons/**
+
+# Speedrun fonts and assets
+P packages/nextjs/font/
+P packages/nextjs/font/**
+P packages/nextjs/public/icon-starknet.svg
+P packages/nextjs/public/logo-header.svg
+P packages/nextjs/public/speedrunStarknet.svg
+P packages/nextjs/public/starkcompass-icon.svg
+P packages/nextjs/public/Starknet-icon.svg
+P packages/nextjs/public/starknet.svg
+
+# Speedrun-specific contract files
+P packages/snfoundry/contracts/tests/TestContract.cairo
+P packages/snfoundry/scripts-ts/helpers/fees.ts
+
+# Speedrun workflows
+P .github/workflows/sync_other_challenges.yaml
+
+# Editor and dev tool configs
+P .vscode/
+P .vscode/**
+P .claude/
+P .claude/**
+
+# Speedrun project files
+P global_rules.md
+P submissions.md
+
+# === EXCLUDE from sync (never copy these from scaffold-stark-2) ===
+
+# Git directory
+- .git/
+- .git/**
+
+# Test files
+- __test__/
+- __test__/**
+- __tests__/
+- __tests__/**
+
+# Debug assets
+- packages/nextjs/public/debug-image.png
+- packages/nextjs/public/rpc-version.png
+
+# Challenge-specific files (each challenge has its own)
+- packages/snfoundry/contracts/src/your_contract.cairo
+
+# Environment files (speedrunstark has its own credentials)
+- packages/snfoundry/.env
+- packages/nextjs/.env
+
+# Deployment files (speedrunstark has its own deployments)
+- packages/snfoundry/deployments/
+
+# Docs that are rewritten for speedrunstark
+- CHANGELOG*
+- CONTRIBUTING*
+- README.md
+
+# Husky hooks (not used in speedrunstark)
+- .husky/_/
+- .husky/_/**
