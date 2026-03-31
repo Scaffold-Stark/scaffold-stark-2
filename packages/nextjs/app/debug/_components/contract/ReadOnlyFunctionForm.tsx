@@ -139,7 +139,9 @@ export const ReadOnlyFunctionForm = ({
           duration,
         });
       }
-    } catch {}
+    } catch (e) {
+      console.warn("Failed to log read history:", e);
+    }
   };
 
   return (

@@ -102,7 +102,9 @@ export const WriteOnlyFunctionForm = ({
           input: inputStr,
           duration: Date.now() - startTime,
         });
-      } catch {}
+      } catch (histErr) {
+        console.warn("Failed to log write history:", histErr);
+      }
     } catch (e: any) {
       const errorPattern = /Contract (.*?)"}/;
       const match = errorPattern.exec(e.message);
@@ -126,7 +128,9 @@ export const WriteOnlyFunctionForm = ({
           duration: Date.now() - startTime,
           errorDetails: e.stack || e.message,
         });
-      } catch {}
+      } catch (histErr) {
+        console.warn("Failed to log write history:", histErr);
+      }
     }
   };
 
