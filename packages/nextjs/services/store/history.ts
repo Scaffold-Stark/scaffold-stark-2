@@ -5,10 +5,15 @@ export type HistoryStatus = "success" | "error";
 export type HistoryEntry = {
   txHash?: string;
   functionName: string;
+  callType: "read" | "write";
   timestamp: number;
   status: HistoryStatus;
   message: string;
   input?: string;
+  decodedResult?: string;
+  gasUsed?: string;
+  duration?: number;
+  errorDetails?: string;
 };
 
 type HistoryState = {

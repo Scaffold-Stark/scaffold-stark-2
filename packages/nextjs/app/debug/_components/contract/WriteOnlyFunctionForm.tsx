@@ -77,6 +77,7 @@ export const WriteOnlyFunctionForm = ({
   }, [error]);
 
   const handleWrite = async () => {
+    const startTime = Date.now();
     try {
       const txHash = await writeTransaction(
         !!contractInstance
@@ -94,10 +95,12 @@ export const WriteOnlyFunctionForm = ({
         addHistory(contractAddress, {
           txHash: typeof txHash === "string" ? txHash : undefined,
           functionName: abiFunction.name,
+          callType: "write",
           timestamp: Date.now(),
           status: "success",
           message,
           input: inputStr,
+          duration: Date.now() - startTime,
         });
       } catch {}
     } catch (e: any) {
@@ -115,10 +118,13 @@ export const WriteOnlyFunctionForm = ({
         addHistory(contractAddress, {
           txHash: undefined,
           functionName: abiFunction.name,
+          callType: "write",
           timestamp: Date.now(),
           status: "error",
           message,
           input: inputStr,
+          duration: Date.now() - startTime,
+          errorDetails: e.stack || e.message,
         });
       } catch {}
     }
