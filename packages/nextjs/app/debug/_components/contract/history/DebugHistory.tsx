@@ -8,6 +8,7 @@ import { ContractName } from "~~/utils/scaffold-stark/contract";
 import { getAllContracts } from "~~/utils/scaffold-stark/contractsData";
 import HistoryModal from "./HistoryModal";
 import { useTheme } from "next-themes";
+import { EyeIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 
 const contractsData = getAllContracts();
 const contractNames = Object.keys(contractsData) as ContractName[];
@@ -236,13 +237,17 @@ export default function DebugHistory() {
               >
                 <div className="flex items-center gap-2 min-w-0">
                   <span
-                    className={`flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded-[3px] text-[10px] font-bold leading-none ${
+                    className={`flex-shrink-0 inline-flex items-center justify-center w-5 h-5 rounded-[3px] ${
                       e.callType === "read"
                         ? "bg-blue-500/20 text-blue-400"
                         : "bg-amber-500/20 text-amber-400"
                     }`}
                   >
-                    {e.callType === "read" ? "R" : "W"}
+                    {e.callType === "read" ? (
+                      <EyeIcon className="w-3.5 h-3.5" />
+                    ) : (
+                      <PencilSquareIcon className="w-3.5 h-3.5" />
+                    )}
                   </span>
                   <span className="truncate text-sm text-[#4DB4FF]">
                     {e.functionName}

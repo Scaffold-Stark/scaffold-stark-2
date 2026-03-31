@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { HistoryEntry } from "~~/services/store/history";
 import { formatTimestamp } from "~~/utils/scaffold-stark/common";
+import { EyeIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 
 export default function HistoryModal({
   entry,
@@ -51,9 +52,7 @@ export default function HistoryModal({
         {/* Header row */}
         <div className="flex items-start justify-between mb-4 flex-shrink-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="m-0 font-semibold text-lg">
-              {entry.functionName}
-            </h3>
+            <h3 className="m-0 font-semibold text-lg">{entry.functionName}</h3>
 
             {/* Status chip */}
             <span
@@ -65,8 +64,13 @@ export default function HistoryModal({
 
             {/* Call type badge */}
             <span
-              className={`inline-flex items-center text-xs px-2 py-0.5 rounded-[3px] ${callTypeBadgeClasses}`}
+              className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-[3px] ${callTypeBadgeClasses}`}
             >
+              {entry.callType === "read" ? (
+                <EyeIcon className="w-3.5 h-3.5" />
+              ) : (
+                <PencilSquareIcon className="w-3.5 h-3.5" />
+              )}
               {callTypeLabel}
             </span>
           </div>
