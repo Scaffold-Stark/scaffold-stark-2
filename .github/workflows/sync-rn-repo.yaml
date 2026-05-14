@@ -4,14 +4,30 @@ on:
   pull_request:
     types: [closed]
     branches: [main]
+  push:
+    branches: [develop]
+    paths:
+      - '.tool-versions'
+      - '**/package.json'
+      - 'yarn.lock'
+      - '**/Scarb.toml'
+      - '**/Scarb.lock'
+      - 'README.md'
   workflow_dispatch:
+    inputs:
+      source_ref:
+        description: 'Source ref of scaffold-stark-2 to sync from (branch, tag, or SHA)'
+        required: false
+        default: 'main'
+        type: string
 
 jobs:
   check_commit:
-    if: github.event.pull_request.merged == true
+    if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
       SHOULD_RUN: ${{ steps.check_commit.outputs.SHOULD_RUN }}
+      SOURCE_REF: ${{ steps.source.outputs.SOURCE_REF }}
     steps:
       - name: Checkout Files
         uses: actions/checkout@v4
@@ -28,6 +44,23 @@ jobs:
             echo "SHOULD_RUN=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Resolve source ref
+        id: source
+        run: |
+          case "${{ github.event_name }}" in
+            workflow_dispatch)
+              REF="${{ inputs.source_ref }}"
+              ;;
+            push)
+              REF="${{ github.ref_name }}"
+              ;;
+            *)
+              REF="main"
+              ;;
+          esac
+          echo "SOURCE_REF=$REF" >> "$GITHUB_OUTPUT"
+          echo "Resolved source ref: $REF"
+
   sync-speedrun:
     needs: check_commit
     if: ${{ needs.check_commit.outputs.SHOULD_RUN != 'false' }}
@@ -38,6 +71,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Scaffold-Stark/scaffold-stark-2
+          ref: ${{ needs.check_commit.outputs.SOURCE_REF }}
           token: ${{ secrets.ORG_GITHUB_TOKEN }}
           path: source_repo
 
