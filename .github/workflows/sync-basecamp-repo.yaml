@@ -4,13 +4,30 @@ on:
   pull_request:
     types: [closed]
     branches: [main]
+  push:
+    branches: [develop]
+    paths:
+      - '.tool-versions'
+      - '**/package.json'
+      - 'yarn.lock'
+      - '**/Scarb.toml'
+      - '**/Scarb.lock'
+      - 'README.md'
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: 'Source ref of scaffold-stark-2 to sync from (branch, tag, or SHA)'
+        required: false
+        default: 'main'
+        type: string
 
 jobs:
   check_commit:
-    if: github.event.pull_request.merged == true
+    if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
       SHOULD_RUN: ${{ steps.check_commit.outputs.SHOULD_RUN }}
+      SOURCE_REF: ${{ steps.source.outputs.SOURCE_REF }}
     steps:
       - name: Checkout Files
         uses: actions/checkout@v4
@@ -27,6 +44,23 @@ jobs:
             echo "SHOULD_RUN=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Resolve source ref
+        id: source
+        run: |
+          case "${{ github.event_name }}" in
+            workflow_dispatch)
+              REF="${{ inputs.source_ref }}"
+              ;;
+            push)
+              REF="${{ github.ref_name }}"
+              ;;
+            *)
+              REF="main"
+              ;;
+          esac
+          echo "SOURCE_REF=$REF" >> "$GITHUB_OUTPUT"
+          echo "Resolved source ref: $REF"
+
   sync-basecamp:
     needs: check_commit
     if: ${{ needs.check_commit.outputs.SHOULD_RUN != 'false' }}
@@ -37,6 +71,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Scaffold-Stark/scaffold-stark-2
+          ref: ${{ needs.check_commit.outputs.SOURCE_REF }}
           token: ${{ secrets.ORG_GITHUB_TOKEN }}
           path: source_repo
 
@@ -53,11 +88,27 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      - name: Sync Base Branch
+      - name: Sync base to temp branch
+        id: sync_base
+        env:
+          SOURCE_REF: ${{ needs.check_commit.outputs.SOURCE_REF }}
         run: |
+          set -e
           cd basecamp_repo
-          git checkout base
-          rsync -av --delete \
+          SHORT_SHA=$(cd ../source_repo && git rev-parse --short HEAD)
+          SOURCE_SHA=$(cd ../source_repo && git rev-parse HEAD)
+          SAFE_REF=$(echo "$SOURCE_REF" | tr '/' '-')
+          TEMP_BRANCH="sync/base-from-${SAFE_REF}-${SHORT_SHA}"
+
+          git fetch origin base
+          git checkout -B "$TEMP_BRANCH" origin/base
+
+          CONFLICT=false
+          # Conflict trigger for basecamp's base sync is rsync exit code.
+          # rsync --delete is the destructive step that could clobber unexpected
+          # state if upstream layout changed; a non-zero exit means an actual
+          # filesystem-level problem worth surfacing for review.
+          RSYNC_LOG=$(rsync -av --delete \
             --exclude='.git/' \
             --include='.github/' \
             --include='.github/workflows/' \
@@ -71,25 +122,234 @@ jobs:
             --exclude='CHANGELOG*' \
             --exclude='CONTRIBUTING*' \
             --exclude='README.md' \
-            ../source_repo/ ./
-          git add .
-          git commit -m "chore: sync files from scaffold-stark-2 [skip ci]"
-          git push origin base
+            ../source_repo/ ./ 2>&1) || CONFLICT=true
+          if [ "$CONFLICT" = "true" ]; then
+            echo "::warning::rsync to basecamp base failed; staging partial sync for manual review."
+            echo "$RSYNC_LOG"
+          fi
 
-      - name: Update Step Branches
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A
+            git commit -m "chore: sync files from scaffold-stark-2 (${SOURCE_REF} @ ${SHORT_SHA}) [skip ci]"
+            git push --force-with-lease origin "$TEMP_BRANCH"
+            NOOP=false
+          else
+            echo "No changes to sync; basecamp base already at parity."
+            NOOP=true
+          fi
+
+          {
+            echo "TEMP_BRANCH=$TEMP_BRANCH"
+            echo "SOURCE_SHA=$SOURCE_SHA"
+            echo "SHORT_SHA=$SHORT_SHA"
+            echo "CONFLICT=$CONFLICT"
+            echo "NOOP=$NOOP"
+            echo 'RSYNC_LOG<<RSYNC_LOG_EOF'
+            # Trim to last 100 lines so PR body stays readable
+            echo "${RSYNC_LOG:-Applied cleanly.}" | tail -n 100
+            echo 'RSYNC_LOG_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Finalize base sync (fast-forward or open PR)
+        id: finalize_base
+        if: steps.sync_base.outputs.NOOP != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.ORG_GITHUB_TOKEN }}
+          DEST_REPO: Scaffold-Stark/basecamp
+          PROD_BRANCH: base
+          TEMP_BRANCH: ${{ steps.sync_base.outputs.TEMP_BRANCH }}
+          SOURCE_SHA: ${{ steps.sync_base.outputs.SOURCE_SHA }}
+          SHORT_SHA: ${{ steps.sync_base.outputs.SHORT_SHA }}
+          SOURCE_REF: ${{ needs.check_commit.outputs.SOURCE_REF }}
+          RSYNC_LOG: ${{ steps.sync_base.outputs.RSYNC_LOG }}
+          CONFLICT: ${{ steps.sync_base.outputs.CONFLICT }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
+          set -e
           cd basecamp_repo
-          git checkout step-0 && git merge base --no-edit && git push origin step-0
-          git checkout step-1 && git merge step-0 --no-edit && git push origin step-1
-          git checkout step-2 && git merge step-1 --no-edit && git push origin step-2
-          git checkout step-3 && git merge step-2 --no-edit && git push origin step-3
 
-      - name: Notify Slack on Success
-        if: success()
+          if [ "$CONFLICT" = "true" ]; then
+            gh label create sync-conflict --color b60205 \
+              --description "Sync from scaffold-stark-2 hit a conflict needing manual resolution" \
+              --force --repo "$DEST_REPO"
+            gh label create needs-review --color fbca04 \
+              --description "Awaiting human review" \
+              --force --repo "$DEST_REPO"
+
+            BODY_FILE=$(mktemp)
+            {
+              echo "## Automated sync conflict from scaffold-stark-2"
+              echo
+              echo "The base-branch rsync into \`$PROD_BRANCH\` exited non-zero. Whatever rsync did manage to apply has been committed to this branch so the failure can be inspected against the latest tree."
+              echo
+              echo "| Field | Value |"
+              echo "| --- | --- |"
+              echo "| Source ref | \`$SOURCE_REF\` |"
+              echo "| Source SHA | \`$SOURCE_SHA\` |"
+              echo "| Trigger | \`$EVENT_NAME\` |"
+              echo "| Failing step | \`rsync -av --delete ../source_repo/ ./\` |"
+              echo
+              echo "### Rsync log (tail)"
+              echo
+              echo '```'
+              echo "$RSYNC_LOG"
+              echo '```'
+              echo
+              echo "### Manual resolution"
+              echo
+              echo "1. \`git fetch origin && git checkout $TEMP_BRANCH\`"
+              echo "2. Re-run the rsync from the workflow locally and inspect what failed."
+              echo "3. Resolve, commit, force-push the branch."
+              echo "4. When CI is green, merge this PR into \`$PROD_BRANCH\`. Step branches were NOT updated by this run; they will fast-forward on the next clean sync."
+            } > "$BODY_FILE"
+
+            EXISTING=$(gh pr list --repo "$DEST_REPO" --head "$TEMP_BRANCH" --base "$PROD_BRANCH" --state open --json number --jq '.[0].number // empty')
+            if [ -n "$EXISTING" ]; then
+              gh pr edit "$EXISTING" --repo "$DEST_REPO" --body-file "$BODY_FILE"
+              echo "Updated existing conflict PR #$EXISTING"
+            else
+              gh pr create --repo "$DEST_REPO" \
+                --base "$PROD_BRANCH" \
+                --head "$TEMP_BRANCH" \
+                --title "Sync conflict from ${SOURCE_REF}@${SHORT_SHA}" \
+                --label sync-conflict \
+                --label needs-review \
+                --body-file "$BODY_FILE"
+            fi
+            rm -f "$BODY_FILE"
+            echo "OUTCOME=pr_opened" >> "$GITHUB_OUTPUT"
+          else
+            git fetch origin "$PROD_BRANCH" "$TEMP_BRANCH"
+            git checkout "$PROD_BRANCH"
+            git merge --ff-only "origin/$TEMP_BRANCH"
+            git push origin "$PROD_BRANCH"
+            git push origin --delete "$TEMP_BRANCH"
+            echo "OUTCOME=fast_forwarded" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update step branches (with PR-on-conflict per step)
+        id: steps_update
+        # Only fan out to step branches when base actually advanced cleanly.
+        # If base was a no-op, steps would also be no-ops; if base hit a
+        # conflict, steps depend on resolved base and must wait.
+        if: steps.finalize_base.outputs.OUTCOME == 'fast_forwarded'
+        env:
+          GH_TOKEN: ${{ secrets.ORG_GITHUB_TOKEN }}
+          DEST_REPO: Scaffold-Stark/basecamp
+          SOURCE_SHA: ${{ steps.sync_base.outputs.SOURCE_SHA }}
+          SHORT_SHA: ${{ steps.sync_base.outputs.SHORT_SHA }}
+          SOURCE_REF: ${{ needs.check_commit.outputs.SOURCE_REF }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -e
+          cd basecamp_repo
+          git fetch origin
+
+          gh label create sync-conflict --color b60205 \
+            --description "Sync from scaffold-stark-2 hit a conflict needing manual resolution" \
+            --force --repo "$DEST_REPO" >/dev/null
+          gh label create needs-review --color fbca04 \
+            --description "Awaiting human review" \
+            --force --repo "$DEST_REPO" >/dev/null
+
+          PREV=base
+          CONFLICTED_STEP=""
+          SKIPPED_STEPS=()
+          UPDATED_STEPS=()
+          for STEP in step-0 step-1 step-2 step-3; do
+            if [ -n "$CONFLICTED_STEP" ]; then
+              SKIPPED_STEPS+=("$STEP")
+              continue
+            fi
+            git checkout "$STEP"
+            git reset --hard "origin/$STEP"
+            if git merge --no-edit "origin/$PREV"; then
+              git push origin "$STEP"
+              UPDATED_STEPS+=("$STEP")
+            else
+              git merge --abort || true
+              SYNC_BRANCH="sync/${STEP}-from-${PREV}-${SHORT_SHA}"
+              git checkout -B "$SYNC_BRANCH" "origin/$PREV"
+              git push --force-with-lease origin "$SYNC_BRANCH"
+
+              BODY_FILE=$(mktemp)
+              {
+                echo "## Automated step-branch merge conflict"
+                echo
+                echo "Merging \`$PREV\` into \`$STEP\` produced merge conflicts during the basecamp sync from scaffold-stark-2."
+                echo
+                echo "| Field | Value |"
+                echo "| --- | --- |"
+                echo "| Source ref | \`$SOURCE_REF\` |"
+                echo "| Source SHA | \`$SOURCE_SHA\` |"
+                echo "| Trigger | \`$EVENT_NAME\` |"
+                echo "| Failing merge | \`git merge $PREV\` into \`$STEP\` |"
+                echo
+                echo "### Manual resolution"
+                echo
+                echo "1. \`git fetch origin && git checkout $STEP\`"
+                echo "2. \`git merge $SYNC_BRANCH\` and resolve conflicts."
+                echo "3. Commit and push \`$STEP\`. The sync branch can then be deleted; closing this PR will not affect \`$STEP\`."
+                echo "4. Subsequent steps were skipped this run; the next sync will fast-forward them once \`$STEP\` is consistent."
+              } > "$BODY_FILE"
+
+              EXISTING=$(gh pr list --repo "$DEST_REPO" --head "$SYNC_BRANCH" --base "$STEP" --state open --json number --jq '.[0].number // empty')
+              if [ -n "$EXISTING" ]; then
+                gh pr edit "$EXISTING" --repo "$DEST_REPO" --body-file "$BODY_FILE"
+              else
+                gh pr create --repo "$DEST_REPO" \
+                  --base "$STEP" \
+                  --head "$SYNC_BRANCH" \
+                  --title "Step-branch sync conflict: ${PREV} -> ${STEP} from ${SOURCE_REF}@${SHORT_SHA}" \
+                  --label sync-conflict \
+                  --label needs-review \
+                  --body-file "$BODY_FILE"
+              fi
+              rm -f "$BODY_FILE"
+              CONFLICTED_STEP="$STEP"
+            fi
+            PREV="$STEP"
+          done
+
+          {
+            echo "CONFLICTED_STEP=$CONFLICTED_STEP"
+            echo "UPDATED_STEPS=${UPDATED_STEPS[*]}"
+            echo "SKIPPED_STEPS=${SKIPPED_STEPS[*]}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Notify Slack on full clean sync
+        if: success() && steps.finalize_base.outputs.OUTCOME == 'fast_forwarded' && steps.steps_update.outputs.CONFLICTED_STEP == ''
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: "Successfully synced scaffold-stark-2 changes to basecamp repository and updated all step branches."
+          slack-message: "Successfully synced scaffold-stark-2 (${{ needs.check_commit.outputs.SOURCE_REF }}@${{ steps.sync_base.outputs.SHORT_SHA }}) to basecamp base + step-0..step-3."
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Notify Slack on base conflict PR opened
+        if: success() && steps.finalize_base.outputs.OUTCOME == 'pr_opened'
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: "basecamp base sync from ${{ needs.check_commit.outputs.SOURCE_REF }}@${{ steps.sync_base.outputs.SHORT_SHA }} hit an rsync error. Opened PR for manual review on ${{ steps.sync_base.outputs.TEMP_BRANCH }}. Step branches were not touched."
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Notify Slack on step-branch conflict
+        if: success() && steps.steps_update.outputs.CONFLICTED_STEP != ''
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: "basecamp sync (${{ needs.check_commit.outputs.SOURCE_REF }}@${{ steps.sync_base.outputs.SHORT_SHA }}): base advanced; step ${{ steps.steps_update.outputs.CONFLICTED_STEP }} hit merge conflicts. Opened PR for manual review. Updated: '${{ steps.steps_update.outputs.UPDATED_STEPS }}'. Skipped: '${{ steps.steps_update.outputs.SKIPPED_STEPS }}'."
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Notify Slack on no-op sync
+        if: success() && steps.sync_base.outputs.NOOP == 'true'
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: "basecamp sync from ${{ needs.check_commit.outputs.SOURCE_REF }}@${{ steps.sync_base.outputs.SHORT_SHA }}: no changes to apply."
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
@@ -98,6 +358,6 @@ jobs:
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: "Failed to sync scaffold-stark-2 changes to basecamp repository."
+          slack-message: "Failed to sync scaffold-stark-2 changes to basecamp repository (workflow error, not an rsync or merge conflict)."
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
