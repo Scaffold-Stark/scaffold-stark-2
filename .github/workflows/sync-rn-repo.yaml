@@ -88,27 +88,153 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      - name: Sync Base Branch
+      - name: Sync to temp branch
+        id: sync
+        env:
+          SOURCE_REF: ${{ needs.check_commit.outputs.SOURCE_REF }}
         run: |
+          set -e
           cd destination_repo
-          git checkout develop
+          SHORT_SHA=$(cd ../source_repo && git rev-parse --short HEAD)
+          SOURCE_SHA=$(cd ../source_repo && git rev-parse HEAD)
+          # Sanitize ref for branch name (slashes are fine in git refs but keep readable)
+          SAFE_REF=$(echo "$SOURCE_REF" | tr '/' '-')
+          TEMP_BRANCH="sync/from-${SAFE_REF}-${SHORT_SHA}"
+
+          git fetch origin develop
+          git checkout -B "$TEMP_BRANCH" origin/develop
+
           cp -f ../source_repo/.tool-versions ./.tool-versions
           rsync -av ../source_repo/packages/snfoundry/ ./packages/snfoundry/
-          if ! git apply -p1 ./.github/rn.patch; then
-            echo "Failed to apply rn.patch. Failing CI."
-            exit 1
+
+          CONFLICT=false
+          PATCH_OUT=$(git apply -p1 ./.github/rn.patch 2>&1) || CONFLICT=true
+          if [ "$CONFLICT" = "true" ]; then
+            echo "::warning::rn.patch failed to apply; staging partial sync for manual review."
+            echo "$PATCH_OUT"
           fi
 
-          git add .
-          git commit -m "chore: sync files from scaffold-stark-2"
-          git push origin develop
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A
+            git commit -m "chore: sync files from scaffold-stark-2 (${SOURCE_REF} @ ${SHORT_SHA})"
+            git push --force-with-lease origin "$TEMP_BRANCH"
+            NOOP=false
+          else
+            echo "No changes to sync; destination already at parity."
+            NOOP=true
+          fi
 
-      - name: Notify Slack on Success
-        if: success()
+          {
+            echo "TEMP_BRANCH=$TEMP_BRANCH"
+            echo "SOURCE_SHA=$SOURCE_SHA"
+            echo "SHORT_SHA=$SHORT_SHA"
+            echo "CONFLICT=$CONFLICT"
+            echo "NOOP=$NOOP"
+            echo 'PATCH_LOG<<PATCH_LOG_EOF'
+            echo "${PATCH_OUT:-Applied cleanly.}"
+            echo 'PATCH_LOG_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Finalize sync (fast-forward or open PR)
+        id: finalize
+        if: steps.sync.outputs.NOOP != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.ORG_GITHUB_TOKEN }}
+          DEST_REPO: Scaffold-Stark/scaffold-stark-rn
+          PROD_BRANCH: develop
+          TEMP_BRANCH: ${{ steps.sync.outputs.TEMP_BRANCH }}
+          SOURCE_SHA: ${{ steps.sync.outputs.SOURCE_SHA }}
+          SHORT_SHA: ${{ steps.sync.outputs.SHORT_SHA }}
+          SOURCE_REF: ${{ needs.check_commit.outputs.SOURCE_REF }}
+          PATCH_LOG: ${{ steps.sync.outputs.PATCH_LOG }}
+          CONFLICT: ${{ steps.sync.outputs.CONFLICT }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -e
+          cd destination_repo
+
+          if [ "$CONFLICT" = "true" ]; then
+            gh label create sync-conflict --color b60205 \
+              --description "Sync from scaffold-stark-2 hit a conflict needing manual resolution" \
+              --force --repo "$DEST_REPO"
+            gh label create needs-review --color fbca04 \
+              --description "Awaiting human review" \
+              --force --repo "$DEST_REPO"
+
+            BODY_FILE=$(mktemp)
+            {
+              echo "## Automated sync conflict from scaffold-stark-2"
+              echo
+              echo "The sync workflow could not apply \`./.github/rn.patch\` cleanly onto \`$PROD_BRANCH\`. Partial changes (rsync of \`packages/snfoundry/\` and \`.tool-versions\`) have been committed to this branch so the patch failure can be inspected against the latest tree."
+              echo
+              echo "| Field | Value |"
+              echo "| --- | --- |"
+              echo "| Source ref | \`$SOURCE_REF\` |"
+              echo "| Source SHA | \`$SOURCE_SHA\` |"
+              echo "| Trigger | \`$EVENT_NAME\` |"
+              echo "| Failing step | \`git apply -p1 ./.github/rn.patch\` |"
+              echo
+              echo "### Patch log"
+              echo
+              echo '```'
+              echo "$PATCH_LOG"
+              echo '```'
+              echo
+              echo "### Manual resolution"
+              echo
+              echo "1. \`git fetch origin && git checkout $TEMP_BRANCH\`"
+              echo "2. Re-run \`git apply -p1 ./.github/rn.patch\` and inspect rejected hunks (\`*.rej\` files)."
+              echo "3. Resolve conflicts, amend the sync commit, force-push."
+              echo "4. When CI is green, merge this PR into \`$PROD_BRANCH\`."
+            } > "$BODY_FILE"
+            EXISTING=$(gh pr list --repo "$DEST_REPO" --head "$TEMP_BRANCH" --base "$PROD_BRANCH" --state open --json number --jq '.[0].number // empty')
+            if [ -n "$EXISTING" ]; then
+              gh pr edit "$EXISTING" --repo "$DEST_REPO" --body-file "$BODY_FILE"
+              echo "Updated existing conflict PR #$EXISTING"
+            else
+              gh pr create --repo "$DEST_REPO" \
+                --base "$PROD_BRANCH" \
+                --head "$TEMP_BRANCH" \
+                --title "Sync conflict from ${SOURCE_REF}@${SHORT_SHA}" \
+                --label sync-conflict \
+                --label needs-review \
+                --body-file "$BODY_FILE"
+            fi
+            rm -f "$BODY_FILE"
+            echo "OUTCOME=pr_opened" >> "$GITHUB_OUTPUT"
+          else
+            git fetch origin "$PROD_BRANCH" "$TEMP_BRANCH"
+            git checkout "$PROD_BRANCH"
+            git merge --ff-only "origin/$TEMP_BRANCH"
+            git push origin "$PROD_BRANCH"
+            git push origin --delete "$TEMP_BRANCH"
+            echo "OUTCOME=fast_forwarded" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Notify Slack on fast-forward sync
+        if: success() && steps.finalize.outputs.OUTCOME == 'fast_forwarded'
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: "Successfully synced scaffold-stark-2 changes to scaffold-stark-rn repository main branch."
+          slack-message: "Successfully synced scaffold-stark-2 (${{ needs.check_commit.outputs.SOURCE_REF }}@${{ steps.sync.outputs.SHORT_SHA }}) to scaffold-stark-rn develop."
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Notify Slack on conflict PR opened
+        if: success() && steps.finalize.outputs.OUTCOME == 'pr_opened'
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: "scaffold-stark-rn sync from ${{ needs.check_commit.outputs.SOURCE_REF }}@${{ steps.sync.outputs.SHORT_SHA }} hit a patch conflict. Opened PR for manual review on branch ${{ steps.sync.outputs.TEMP_BRANCH }}."
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Notify Slack on no-op sync
+        if: success() && steps.sync.outputs.NOOP == 'true'
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: "scaffold-stark-rn sync from ${{ needs.check_commit.outputs.SOURCE_REF }}@${{ steps.sync.outputs.SHORT_SHA }}: no changes to apply."
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
@@ -117,6 +243,6 @@ jobs:
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: "Failed to sync scaffold-stark-2 changes to scaffold-stark-rn repository."
+          slack-message: "Failed to sync scaffold-stark-2 changes to scaffold-stark-rn repository (workflow error, not a patch conflict)."
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
