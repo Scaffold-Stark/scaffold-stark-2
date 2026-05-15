@@ -107,11 +107,45 @@ jobs:
           cp -f ../source_repo/.tool-versions ./.tool-versions
           rsync -av ../source_repo/packages/snfoundry/ ./packages/snfoundry/
 
+          # rn-fork rewrites: structural deltas between scaffold-stark-2 and scaffold-stark-rn.
+          # Each rewrite is gated by a grep sanity check so upstream renames surface as a conflict PR
+          # instead of silently no-op'ing.
           CONFLICT=false
-          PATCH_OUT=$(git apply -p1 ./.github/rn.patch 2>&1) || CONFLICT=true
+          REASON=""
+          PKG_JSON=./packages/snfoundry/package.json
+          PARSE_DEPLOY=./packages/snfoundry/scripts-ts/helpers/parse-deployments.ts
+
+          if [ ! -f "$PKG_JSON" ]; then
+            CONFLICT=true
+            REASON="$PKG_JSON not found after rsync — upstream layout changed."
+          elif ! grep -q '@ss-2/snfoundry' "$PKG_JSON"; then
+            CONFLICT=true
+            REASON="grep '@ss-2/snfoundry' not found in $PKG_JSON — upstream may have renamed the package."
+          fi
+
+          if [ "$CONFLICT" != "true" ]; then
+            if [ ! -f "$PARSE_DEPLOY" ]; then
+              CONFLICT=true
+              REASON="$PARSE_DEPLOY not found after rsync — upstream layout changed."
+            elif ! grep -q 'nextjs/contracts' "$PARSE_DEPLOY"; then
+              CONFLICT=true
+              REASON="grep 'nextjs/contracts' not found in $PARSE_DEPLOY — upstream may have moved the contracts target dir."
+            fi
+          fi
+
+          if [ "$CONFLICT" != "true" ]; then
+            sed -i 's|@ss-2/snfoundry|@ss-rn/snfoundry|g' "$PKG_JSON"
+            sed -i 's|nextjs/contracts|rn/contracts|g' "$PARSE_DEPLOY"
+            # Post-rewrite verification: ensure the old strings are gone.
+            if grep -q '@ss-2/snfoundry' "$PKG_JSON" || grep -q 'nextjs/contracts' "$PARSE_DEPLOY"; then
+              CONFLICT=true
+              REASON="sed rewrites left residual @ss-2/snfoundry or nextjs/contracts references — manual review required."
+            fi
+          fi
+
           if [ "$CONFLICT" = "true" ]; then
-            echo "::warning::rn.patch failed to apply; staging partial sync for manual review."
-            echo "$PATCH_OUT"
+            echo "::warning::rn-fork sed rewrites failed sanity check; staging partial sync for manual review."
+            echo "$REASON"
           fi
 
           if [ -n "$(git status --porcelain)" ]; then
@@ -130,9 +164,9 @@ jobs:
             echo "SHORT_SHA=$SHORT_SHA"
             echo "CONFLICT=$CONFLICT"
             echo "NOOP=$NOOP"
-            echo 'PATCH_LOG<<PATCH_LOG_EOF'
-            echo "${PATCH_OUT:-Applied cleanly.}"
-            echo 'PATCH_LOG_EOF'
+            echo 'REASON<<REASON_EOF'
+            echo "${REASON:-Sed rewrites applied cleanly.}"
+            echo 'REASON_EOF'
           } >> "$GITHUB_OUTPUT"
 
       - name: Finalize sync (fast-forward or open PR)
@@ -146,7 +180,7 @@ jobs:
           SOURCE_SHA: ${{ steps.sync.outputs.SOURCE_SHA }}
           SHORT_SHA: ${{ steps.sync.outputs.SHORT_SHA }}
           SOURCE_REF: ${{ needs.check_commit.outputs.SOURCE_REF }}
-          PATCH_LOG: ${{ steps.sync.outputs.PATCH_LOG }}
+          REASON: ${{ steps.sync.outputs.REASON }}
           CONFLICT: ${{ steps.sync.outputs.CONFLICT }}
           EVENT_NAME: ${{ github.event_name }}
         run: |
@@ -165,25 +199,25 @@ jobs:
             {
               echo "## Automated sync conflict from scaffold-stark-2"
               echo
-              echo "The sync workflow could not apply \`./.github/rn.patch\` cleanly onto \`$PROD_BRANCH\`. Partial changes (rsync of \`packages/snfoundry/\` and \`.tool-versions\`) have been committed to this branch so the patch failure can be inspected against the latest tree."
+              echo "The sync workflow's rn-fork sed rewrites failed a sanity check against the rsync'd tree from \`scaffold-stark-2\`. Partial changes (rsync of \`packages/snfoundry/\` and \`.tool-versions\`) have been committed to this branch so the failure can be inspected against the latest tree."
               echo
               echo "| Field | Value |"
               echo "| --- | --- |"
               echo "| Source ref | \`$SOURCE_REF\` |"
               echo "| Source SHA | \`$SOURCE_SHA\` |"
               echo "| Trigger | \`$EVENT_NAME\` |"
-              echo "| Failing step | \`git apply -p1 ./.github/rn.patch\` |"
+              echo "| Failing step | sed-based rn-fork rewrites (sanity check). Reason: $REASON |"
               echo
-              echo "### Patch log"
+              echo "### Sanity-check reason"
               echo
               echo '```'
-              echo "$PATCH_LOG"
+              echo "$REASON"
               echo '```'
               echo
               echo "### Manual resolution"
               echo
               echo "1. \`git fetch origin && git checkout $TEMP_BRANCH\`"
-              echo "2. Re-run \`git apply -p1 ./.github/rn.patch\` and inspect rejected hunks (\`*.rej\` files)."
+              echo "2. Inspect the sed targets in \`.github/workflows/sync-rn-repo.yaml\` (the \"Sync to temp branch\" step) and the upstream files in \`scaffold-stark-2\`. If upstream renamed \`@ss-2/snfoundry\` or moved \`nextjs/contracts\`, update the sed patterns and grep sanity checks in the workflow. Otherwise resolve manually on this branch."
               echo "3. Resolve conflicts, amend the sync commit, force-push."
               echo "4. When CI is green, merge this PR into \`$PROD_BRANCH\`."
             } > "$BODY_FILE"
@@ -225,7 +259,7 @@ jobs:
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: "scaffold-stark-rn sync from ${{ needs.check_commit.outputs.SOURCE_REF }}@${{ steps.sync.outputs.SHORT_SHA }} hit a patch conflict. Opened PR for manual review on branch ${{ steps.sync.outputs.TEMP_BRANCH }}."
+          slack-message: "scaffold-stark-rn sync from ${{ needs.check_commit.outputs.SOURCE_REF }}@${{ steps.sync.outputs.SHORT_SHA }} hit a sync conflict (sed sanity check failed). Opened PR for manual review on branch ${{ steps.sync.outputs.TEMP_BRANCH }}."
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
@@ -243,6 +277,6 @@ jobs:
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: "Failed to sync scaffold-stark-2 changes to scaffold-stark-rn repository (workflow error, not a patch conflict)."
+          slack-message: "Failed to sync scaffold-stark-2 changes to scaffold-stark-rn repository (workflow error, not a sync conflict)."
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
