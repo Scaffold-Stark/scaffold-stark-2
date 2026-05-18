@@ -1,6 +1,6 @@
 use contracts::your_contract::YourContract::FELT_STRK_CONTRACT;
 use contracts::your_contract::{IYourContractDispatcher, IYourContractDispatcherTrait};
-use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
+use openzeppelin_interfaces::token::erc20::{IERC20Dispatcher, IERC20DispatcherTrait};
 use openzeppelin_utils::serde::SerializedAppend;
 use snforge_std::{CheatSpan, ContractClassTrait, DeclareResultTrait, cheat_caller_address, declare};
 use starknet::ContractAddress;

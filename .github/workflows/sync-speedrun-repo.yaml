@@ -4,13 +4,33 @@ on:
   pull_request:
     types: [closed]
     branches: [main]
+  push:
+    branches: [develop]
+    paths:
+      - '.tool-versions'
+      - '**/package.json'
+      - 'yarn.lock'
+      - '**/Scarb.toml'
+      - '**/Scarb.lock'
+      - 'README.md'
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: 'Source ref of scaffold-stark-2 to sync from (branch, tag, or SHA)'
+        required: false
+        default: 'main'
+        type: string
+
+permissions:
+  contents: read
 
 jobs:
   check_commit:
-    if: github.event.pull_request.merged == true
+    if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
       SHOULD_RUN: ${{ steps.check_commit.outputs.SHOULD_RUN }}
+      SOURCE_REF: ${{ steps.source.outputs.SOURCE_REF }}
     steps:
       - name: Checkout Files
         uses: actions/checkout@v4
@@ -27,6 +47,23 @@ jobs:
             echo "SHOULD_RUN=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Resolve source ref
+        id: source
+        run: |
+          case "${{ github.event_name }}" in
+            workflow_dispatch)
+              REF="${{ inputs.source_ref }}"
+              ;;
+            push)
+              REF="${{ github.ref_name }}"
+              ;;
+            *)
+              REF="main"
+              ;;
+          esac
+          echo "SOURCE_REF=$REF" >> "$GITHUB_OUTPUT"
+          echo "Resolved source ref: $REF"
+
   sync-speedrun:
     needs: check_commit
     if: ${{ needs.check_commit.outputs.SHOULD_RUN != 'false' }}
@@ -37,6 +74,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Scaffold-Stark/scaffold-stark-2
+          ref: ${{ needs.check_commit.outputs.SOURCE_REF }}
           token: ${{ secrets.ORG_GITHUB_TOKEN }}
           path: source_repo
 
@@ -53,10 +91,21 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      - name: Sync Base Challenge Template Branch
+      - name: Sync to temp branch
+        id: sync
+        env:
+          SOURCE_REF: ${{ needs.check_commit.outputs.SOURCE_REF }}
         run: |
+          set -e
           cd speedrun_repo
-          git checkout base-challenge-template
+          SHORT_SHA=$(cd ../source_repo && git rev-parse --short HEAD)
+          SOURCE_SHA=$(cd ../source_repo && git rev-parse HEAD)
+          SAFE_REF=$(echo "$SOURCE_REF" | tr '/' '-')
+          TEMP_BRANCH="sync/from-${SAFE_REF}-${SHORT_SHA}"
+
+          git fetch origin base-challenge-template
+          git checkout -B "$TEMP_BRANCH" origin/base-challenge-template
+
           rsync -av \
             --exclude='.git/' \
             --include='.github/' \
@@ -74,34 +123,29 @@ jobs:
             --exclude='README.md' \
             ../source_repo/ ./
 
-          # Sync only the Compatible versions section from README.md
-          echo "Syncing Compatible versions section from README.md..."
-          python3 -c "
-          import re
+          # Sync the Compatible versions section from README.md.
+          # Failure here is the conflict trigger for this workflow.
+          cat > /tmp/sync-readme.py <<'PYEOF'
+          import re, sys
 
-          # Read source and destination READMEs
           with open('../source_repo/README.md', 'r') as f:
               source = f.read()
           with open('README.md', 'r') as f:
               dest = f.read()
 
-          # Extract versions list from source (## Compatible versions)
           source_match = re.search(r'## Compatible versions\s*\n(.*?)(?=\n##|\Z)', source, re.DOTALL)
           if not source_match:
-              print('Could not find Compatible versions in source README')
-              exit(1)
+              print('Could not find Compatible versions in source README', file=sys.stderr)
+              sys.exit(1)
 
           versions_list = source_match.group(1).strip()
-          print('Found versions:', versions_list[:50] + '...')
 
-          # Replace versions in destination (### Compatible versions)
           dest_pattern = r'(### Compatible versions\s*\n)(.*?)(?=\n###|\Z)'
           dest_match = re.search(dest_pattern, dest, re.DOTALL)
           if not dest_match:
-              print('Could not find Compatible versions in destination README')
-              exit(1)
+              print('Could not find Compatible versions in destination README', file=sys.stderr)
+              sys.exit(1)
 
-          # Keep the requirements link if it exists
           old_content = dest_match.group(2)
           requirements_link = ''
           if 'Make sure you have the compatible versions' in old_content:
@@ -109,26 +153,145 @@ jobs:
               if req_match:
                   requirements_link = '\n\n' + req_match.group(1).strip()
 
-          # Replace the section
           new_section = dest_match.group(1) + versions_list + requirements_link
           new_dest = re.sub(dest_pattern, new_section, dest, flags=re.DOTALL)
 
-          # Write updated README
           with open('README.md', 'w') as f:
               f.write(new_dest)
-          print('Successfully updated Compatible versions section')
-          "
+          print('Updated Compatible versions section')
+          PYEOF
 
-          git add .
-          git commit -m "chore: sync files from scaffold-stark-2 and update Compatible versions section"
-          git push origin base-challenge-template
+          CONFLICT=false
+          README_LOG=$(python3 /tmp/sync-readme.py 2>&1) || CONFLICT=true
+          if [ "$CONFLICT" = "true" ]; then
+            echo "::warning::README Compatible-versions rewrite failed; staging rsync changes for manual review."
+            echo "$README_LOG"
+          else
+            echo "$README_LOG"
+          fi
 
-      - name: Notify Slack on Success
-        if: success()
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A
+            git commit -m "chore: sync files from scaffold-stark-2 and update Compatible versions section (${SOURCE_REF} @ ${SHORT_SHA})"
+            git push --force-with-lease origin "$TEMP_BRANCH"
+            NOOP=false
+          else
+            echo "No changes to sync; destination already at parity."
+            NOOP=true
+          fi
+
+          {
+            echo "TEMP_BRANCH=$TEMP_BRANCH"
+            echo "SOURCE_SHA=$SOURCE_SHA"
+            echo "SHORT_SHA=$SHORT_SHA"
+            echo "CONFLICT=$CONFLICT"
+            echo "NOOP=$NOOP"
+            echo 'README_LOG<<README_LOG_EOF'
+            echo "${README_LOG:-Applied cleanly.}"
+            echo 'README_LOG_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Finalize sync (fast-forward or open PR)
+        id: finalize
+        if: steps.sync.outputs.NOOP != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.ORG_GITHUB_TOKEN }}
+          DEST_REPO: Scaffold-Stark/speedrunstark
+          PROD_BRANCH: base-challenge-template
+          TEMP_BRANCH: ${{ steps.sync.outputs.TEMP_BRANCH }}
+          SOURCE_SHA: ${{ steps.sync.outputs.SOURCE_SHA }}
+          SHORT_SHA: ${{ steps.sync.outputs.SHORT_SHA }}
+          SOURCE_REF: ${{ needs.check_commit.outputs.SOURCE_REF }}
+          README_LOG: ${{ steps.sync.outputs.README_LOG }}
+          CONFLICT: ${{ steps.sync.outputs.CONFLICT }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          set -e
+          cd speedrun_repo
+
+          if [ "$CONFLICT" = "true" ]; then
+            gh label create sync-conflict --color b60205 \
+              --description "Sync from scaffold-stark-2 hit a conflict needing manual resolution" \
+              --force --repo "$DEST_REPO"
+            gh label create needs-review --color fbca04 \
+              --description "Awaiting human review" \
+              --force --repo "$DEST_REPO"
+
+            BODY_FILE=$(mktemp)
+            {
+              echo "## Automated sync conflict from scaffold-stark-2"
+              echo
+              echo "The sync workflow could not rewrite the README \`Compatible versions\` section cleanly onto \`$PROD_BRANCH\`. The rsync portion of the sync has been committed to this branch so the README rewrite can be inspected against the latest tree."
+              echo
+              echo "| Field | Value |"
+              echo "| --- | --- |"
+              echo "| Source ref | \`$SOURCE_REF\` |"
+              echo "| Source SHA | \`$SOURCE_SHA\` |"
+              echo "| Trigger | \`$EVENT_NAME\` |"
+              echo "| Failing step | README \`Compatible versions\` rewriter |"
+              echo
+              echo "### Rewriter log"
+              echo
+              echo '```'
+              echo "$README_LOG"
+              echo '```'
+              echo
+              echo "### Manual resolution"
+              echo
+              echo "1. \`git fetch origin && git checkout $TEMP_BRANCH\`"
+              echo "2. Hand-edit \`README.md\` so the \`### Compatible versions\` section matches scaffold-stark-2's \`## Compatible versions\` block (preserve any \`Make sure you have the compatible versions\` link below it)."
+              echo "3. Commit, force-push the branch."
+              echo "4. When CI is green, merge this PR into \`$PROD_BRANCH\`."
+            } > "$BODY_FILE"
+
+            EXISTING=$(gh pr list --repo "$DEST_REPO" --head "$TEMP_BRANCH" --base "$PROD_BRANCH" --state open --json number --jq '.[0].number // empty')
+            if [ -n "$EXISTING" ]; then
+              gh pr edit "$EXISTING" --repo "$DEST_REPO" --body-file "$BODY_FILE"
+              echo "Updated existing conflict PR #$EXISTING"
+            else
+              gh pr create --repo "$DEST_REPO" \
+                --base "$PROD_BRANCH" \
+                --head "$TEMP_BRANCH" \
+                --title "Sync conflict from ${SOURCE_REF}@${SHORT_SHA}" \
+                --label sync-conflict \
+                --label needs-review \
+                --body-file "$BODY_FILE"
+            fi
+            rm -f "$BODY_FILE"
+            echo "OUTCOME=pr_opened" >> "$GITHUB_OUTPUT"
+          else
+            git fetch origin "$PROD_BRANCH" "$TEMP_BRANCH"
+            git checkout "$PROD_BRANCH"
+            git merge --ff-only "origin/$TEMP_BRANCH"
+            git push origin "$PROD_BRANCH"
+            git push origin --delete "$TEMP_BRANCH"
+            echo "OUTCOME=fast_forwarded" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Notify Slack on fast-forward sync
+        if: success() && steps.finalize.outputs.OUTCOME == 'fast_forwarded'
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: "Successfully synced scaffold-stark-2 changes to speedrunstark repository base-challenge-template branch."
+          slack-message: "Successfully synced scaffold-stark-2 (${{ needs.check_commit.outputs.SOURCE_REF }}@${{ steps.sync.outputs.SHORT_SHA }}) to speedrunstark base-challenge-template."
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Notify Slack on conflict PR opened
+        if: success() && steps.finalize.outputs.OUTCOME == 'pr_opened'
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: "speedrunstark sync from ${{ needs.check_commit.outputs.SOURCE_REF }}@${{ steps.sync.outputs.SHORT_SHA }} hit a README rewrite conflict. Opened PR for manual review on branch ${{ steps.sync.outputs.TEMP_BRANCH }}."
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Notify Slack on no-op sync
+        if: success() && steps.sync.outputs.NOOP == 'true'
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: "speedrunstark sync from ${{ needs.check_commit.outputs.SOURCE_REF }}@${{ steps.sync.outputs.SHORT_SHA }}: no changes to apply."
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
@@ -137,6 +300,6 @@ jobs:
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-          slack-message: "Failed to sync scaffold-stark-2 changes to speedrunstark repository."
+          slack-message: "Failed to sync scaffold-stark-2 changes to speedrunstark repository (workflow error, not a README conflict)."
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
