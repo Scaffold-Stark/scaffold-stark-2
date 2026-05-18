@@ -21,6 +21,9 @@ on:
         default: 'main'
         type: string
 
+permissions:
+  contents: read
+
 jobs:
   check_commit:
     if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
