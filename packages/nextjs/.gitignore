@@ -35,3 +35,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# next-pwa generated service worker (build output, keep local)
+public/sw.js
+public/workbox-*.js
+public/sw.js.map
+public/workbox-*.js.map
