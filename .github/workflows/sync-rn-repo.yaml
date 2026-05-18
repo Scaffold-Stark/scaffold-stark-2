@@ -114,6 +114,7 @@ jobs:
           REASON=""
           PKG_JSON=./packages/snfoundry/package.json
           PARSE_DEPLOY=./packages/snfoundry/scripts-ts/helpers/parse-deployments.ts
+          VERIFY_CONTRACTS=./packages/snfoundry/scripts-ts/verify-contracts.ts
 
           if [ ! -f "$PKG_JSON" ]; then
             CONFLICT=true
@@ -134,10 +135,21 @@ jobs:
           fi
 
           if [ "$CONFLICT" != "true" ]; then
+            if [ ! -f "$VERIFY_CONTRACTS" ]; then
+              CONFLICT=true
+              REASON="$VERIFY_CONTRACTS not found after rsync — upstream layout changed."
+            elif ! grep -q 'nextjs/contracts' "$VERIFY_CONTRACTS"; then
+              CONFLICT=true
+              REASON="grep 'nextjs/contracts' not found in $VERIFY_CONTRACTS — upstream may have moved the contracts target dir."
+            fi
+          fi
+
+          if [ "$CONFLICT" != "true" ]; then
             sed -i 's|@ss-2/snfoundry|@ss-rn/snfoundry|g' "$PKG_JSON"
             sed -i 's|nextjs/contracts|rn/contracts|g' "$PARSE_DEPLOY"
+            sed -i 's|nextjs/contracts|rn/contracts|g' "$VERIFY_CONTRACTS"
             # Post-rewrite verification: ensure the old strings are gone.
-            if grep -q '@ss-2/snfoundry' "$PKG_JSON" || grep -q 'nextjs/contracts' "$PARSE_DEPLOY"; then
+            if grep -q '@ss-2/snfoundry' "$PKG_JSON" || grep -q 'nextjs/contracts' "$PARSE_DEPLOY" || grep -q 'nextjs/contracts' "$VERIFY_CONTRACTS"; then
               CONFLICT=true
               REASON="sed rewrites left residual @ss-2/snfoundry or nextjs/contracts references — manual review required."
             fi
