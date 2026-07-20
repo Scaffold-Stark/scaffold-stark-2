@@ -108,7 +108,7 @@ jobs:
           git checkout -B "$TEMP_BRANCH" origin/develop
 
           cp -f ../source_repo/.tool-versions ./.tool-versions
-          rsync -av ../source_repo/packages/snfoundry/ ./packages/snfoundry/
+          rsync -av --exclude='.claude/' ../source_repo/packages/snfoundry/ ./packages/snfoundry/
 
           # rn-fork rewrites: structural deltas between scaffold-stark-2 and scaffold-stark-rn.
           # Each rewrite is gated by a grep sanity check so upstream renames surface as a conflict PR

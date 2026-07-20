@@ -108,6 +108,7 @@ jobs:
 
           rsync -av \
             --exclude='.git/' \
+            --exclude='.claude/' \
             --include='.github/' \
             --include='.github/workflows/' \
             --include='.github/workflows/main.yml' \
