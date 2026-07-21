@@ -18,5 +18,12 @@ package-lock.json
 !**/.env.example
 
 # local tooling / generated state (keep local, do not commit)
-.claude/
+# .claude/* rather than .claude/ so the shared skills/workflows below can be re-included
+.claude/*
+!.claude/skills/
+!.claude/workflows/
 .gitnexus/
+
+# stark-smoke-test runtime artifacts
+.smoke-test-state.json
+.smoke-test-logs/
