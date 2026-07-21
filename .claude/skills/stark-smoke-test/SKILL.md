@@ -8,8 +8,6 @@ description: Use after Phase 1 dependency updates are merged, before any Phase 2
 Prove the stack actually works end-to-end on devnet before propagating anything
 to sibling forks. **A red gate blocks Phase 2.**
 
-Design: `docs/superpowers/specs/2026-07-21-stark-smoke-test-design.md`
-
 ## Scope
 
 This repo only, devnet only. Sepolia and mainnet are out of scope — they need
@@ -109,7 +107,7 @@ Pass requires **all 13 steps**. Any failing step means a **RED GATE** and Phase
 2 is blocked.
 
 When reporting a failure, state **which step** failed and include the verbatim
-output. Never collapse it to something like "deploy failed".
+output. Never collapse it to something like "deploy failed". If there is an error (or an expected failure), say so in your signal done/blocked message so the captain can check tu11aa/squadrant and file it. Don't file issues from the crew.
 
 ## Reporting rule — hard rule
 
