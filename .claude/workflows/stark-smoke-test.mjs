@@ -157,9 +157,11 @@ function writeState(state) {
 
 /**
  * Chrome is the script's own resource (devnet/next are intentionally left for
- * the operator to debug), so it gets its own state slot: recorded the instant
- * launchChrome() resolves, so a crash between launch and kill still leaves a
- * trail `down` and the next `up`'s guard can find.
+ * the operator to debug), so it gets its own state slot. Called from
+ * launchChrome()'s onSpawn — i.e. the instant the process exists, NOT once
+ * launchChrome resolves (that also waits on CDP, which can lag spawn by
+ * seconds). A crash any time after the process exists still leaves a trail
+ * `down` and the next `up`'s guard can find.
  */
 function recordChrome(chrome) {
   const state = readState() ?? { processes: [] };
@@ -970,16 +972,29 @@ async function verifyBrowser(flags) {
 
   let chrome;
   try {
-    chrome = await launchChrome({ port: CDP_PORT, headless: !flags.headed, logFile: chromeLog });
+    chrome = await launchChrome({
+      port: CDP_PORT,
+      headless: !flags.headed,
+      logFile: chromeLog,
+      // Fires the instant the process is spawned — seconds before this whole
+      // call resolves (it also waits on CDP). Recording here, not after
+      // launchChrome returns, is what closes the window: if this script dies
+      // (Ctrl-C, closed terminal, crash, SIGKILL) anywhere from here on,
+      // `down` and the next `up`'s guard already know this Chrome exists.
+      onSpawn: (spawned) => {
+        activeChrome = spawned;
+        recordChrome(spawned);
+      },
+    });
   } catch (err) {
+    // launchChrome already made its own best-effort kill of what it spawned
+    // before throwing, but "best-effort" is not "guaranteed" — the state
+    // record from onSpawn is deliberately left in place (not cleared here) so
+    // `down`, which is idempotent against an already-dead pid and an
+    // already-removed profile dir, remains the actual safety net.
     fail(8, "Chrome launch", "Could not launch Chrome for CDP verification.", String(err?.message ?? err));
     return;
   }
-  // Recorded immediately: if this process dies before the matching killChrome
-  // below (Ctrl-C, closed terminal, crash, SIGKILL), `down` and the next `up`
-  // still know this Chrome exists.
-  recordChrome(chrome);
-  activeChrome = chrome;
   info(`chrome pid ${chrome.pid}, profile ${chrome.profileDir}, CDP on ${CDP_PORT}`);
 
   try {

@@ -94,9 +94,13 @@ async function cdpReady(port) {
 /**
  * Launch Chrome headless (by default) on an isolated temp profile so this
  * never touches the operator's real browser data, with CDP on `port`.
- * Resolves once the CDP HTTP endpoint actually answers.
+ * Resolves once the CDP HTTP endpoint actually answers — which can be 1-3s+
+ * after the process actually exists. A caller that needs to survive a crash
+ * in that window (to record the pid before it's known to be healthy) must
+ * hook `onSpawn(info)`, which fires synchronously right after spawn(), not
+ * wait for this promise to resolve.
  */
-export async function launchChrome({ port, headless = true, logFile, windowWidth = 1440, windowHeight = 900 } = {}) {
+export async function launchChrome({ port, headless = true, logFile, windowWidth = 1440, windowHeight = 900, onSpawn } = {}) {
   const binary = findChromeBinary();
   if (!binary) {
     throw new Error(
@@ -124,13 +128,19 @@ export async function launchChrome({ port, headless = true, logFile, windowWidth
   child.unref();
   if (logFile) fs.closeSync(fd);
 
+  // The process exists from this point, not from whenever the CDP-ready wait
+  // below finishes — fire onSpawn now so a caller's crash-safety record can't
+  // lag behind the actual process.
+  const spawned = { pid: child.pid, profileDir, port, windowWidth, windowHeight };
+  if (onSpawn) onSpawn(spawned);
+
   const { ready } = await waitFor(() => cdpReady(port), { timeoutMs: 15_000, intervalMs: 300 });
   if (!ready) {
     await killChrome({ pid: child.pid, profileDir });
     throw new Error(`Chrome (pid ${child.pid}) never opened CDP on 127.0.0.1:${port} within 15s.`);
   }
 
-  return { pid: child.pid, profileDir, port, windowWidth, windowHeight };
+  return spawned;
 }
 
 /**
