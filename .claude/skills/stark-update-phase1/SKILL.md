@@ -96,20 +96,26 @@ for p in chains explorers providers react; do npm view "@starknet-start/$p" vers
 
 `starknet` is a direct dependency of **both** `packages/nextjs` (hooks, components) **and** `packages/snfoundry` (deploy scripts). A major bump touches both — never treat it as frontend-only.
 
-> Registry quirk: `npm view starknet version` returns the `latest` dist-tag, which has lagged behind published versions before (10.0.2 as `latest` while 10.0.3–10.4.0 existed and 10.5.0 sat on `next`). Check `npm view starknet versions --json | tail` if the number looks suspiciously round.
+> **Registry quirk and caret trap**: `npm view starknet version` returns the `latest` dist-tag, which has lagged behind published versions before. Check `npm view starknet versions --json | tail` if the number looks suspiciously round.
+> **CRITICAL:** Verified 2026-07-21: dist-tags were `latest=10.0.2`, `next=10.5.0` — `10.5.0` carried no prerelease suffix, so `^10.0.2` resolved to `10.5.0`, pulling the unstable `next` channel. Always verify `npm view starknet dist-tags --json` and check what the range actually resolves to. A version on the `next` channel without a prerelease suffix will bypass the caret and resolve automatically. Any v10 adoption must pin the exact version, never a caret, because the range propagates to every fork via sync and breaks them.
 
 ## Step 4 — Next.js frontend and security
 
 ```sh
-yarn outdated || npm outdated --workspaces      # if this fails, fall back to npm view per direct dep
+# Yarn Berry lacks an 'outdated' command, so fallback to a direct package loop:
+for p in next react eslint-config-next vitest typescript daisyui zustand next-themes usehooks-ts qrcode.react; do
+  cur=$(grep -m1 "\"$p\":" packages/nextjs/package.json | sed 's/.*: *"//; s/".*//')
+  printf '%-22s current=%-12s latest=%s\n' "$p" "$cur" "$(npm view "$p" version 2>/dev/null)"
+done
+
 yarn npm audit || npm audit --workspaces
-gh api --paginate repos/Scaffold-Stark/scaffold-stark-2/dependabot/alerts \
-  --jq '[.[]|select(.state=="open")|.security_advisory.severity]|group_by(.)|map({(.[0]):length})|add'
+gh api --paginate --slurp "repos/Scaffold-Stark/scaffold-stark-2/dependabot/alerts?per_page=100&state=open" > /tmp/a.json
+jq 'add | {total: length, by_sev: (group_by(.security_advisory.severity)|map({(.[0].security_advisory.severity):length})|add)}' /tmp/a.json
 ```
 
 The org is **`Scaffold-Stark`**, not `Quantum3-Labs`. A `gh api` call against the wrong org fails in a way that looks like "no alerts".
 
-**`--paginate` is mandatory.** Without it `gh api` returns only the first page (30 items), so the count silently undercounts — it answers "how many on page one", not "how many are open". Verified 2026-07-20: 25 without, 29 with.
+**Do not pipe `--paginate` directly to `--jq` inside `gh api`.** That combination applies the `jq` filter to each page separately, emitting one JSON object per page instead of an aggregate. A careless read takes the final page's line and reports it as the total (e.g., 29 items instead of 107). Instead, use `--slurp` to output a single array of pages to a file, then run `jq` externally.
 
 Focus on **direct** dependencies: `next`, `react`, `eslint-config-next`, `vitest`, `typescript`, and the UI set (`daisyui`, `zustand`, `@radix-ui/themes`, `usehooks-ts`, `qrcode.react`, `next-themes`). Fold routine patch drift in dev tooling into **one** informational line — not twenty findings.
 
@@ -132,7 +138,7 @@ Review this list each release; stale entries here cause missed regressions.
 - **TanStack** May-2026 compromise: not exposed. Resolved versions predate the window; `yarn.lock` pins per-artifact sha512.
 - **`next-pwa` is abandoned** (last publish 2022) and pulls a second `next@13.5.11` tree, which is the source of most remaining alerts — all build-time. Migration target is `@serwist/next`. Known, deferred.
 - The Dependabot backlog reports every alert as `scope=runtime` because they trace through `yarn.lock`. That labelling is useless here; judge reachability yourself.
-- **Alert count as of 2026-07-20: 29 open — 10 high, 12 medium, 7 low, zero critical.** Treat this as a baseline to diff against, not a fact to repeat. A jump above ~35, or any critical appearing, is the signal worth acting on. (Earlier figures of 78 and 107 in the May/July reports were unpaginated or double-counted — do not trust them as history.)
+- **Alert count as of 2026-07-21: 107 open — 1 critical, 51 high, 39 medium, 16 low.** The single critical is GHSA-5xrq-8626-4rwp (vitest UI server arbitrary file read/execute, vulnerable <3.2.6). Treat this baseline as a diffing target, not a fact to repeat. A jump above ~115, or any *new* critical appearing, is the signal worth acting on. (Earlier low counts like 29 were caused by the per-page `jq` bug described in Step 4 — 107 is the correct historical baseline).
 
 ---
 
