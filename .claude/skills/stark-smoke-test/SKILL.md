@@ -107,7 +107,7 @@ Pass requires **all 13 steps**. Any failing step means a **RED GATE** and Phase
 2 is blocked.
 
 When reporting a failure, state **which step** failed and include the verbatim
-output. Never collapse it to something like "deploy failed". If there is an error (or an expected failure), say so in your signal done/blocked message so the captain can check tu11aa/squadrant and file it. Don't file issues from the crew.
+output. Never collapse it to something like "deploy failed".
 
 ## Reporting rule — hard rule
 
