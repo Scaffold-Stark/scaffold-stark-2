@@ -11,6 +11,8 @@
  *
  *   node .claude/workflows/stark-smoke-test.mjs up     # steps 1-7, leaves stack RUNNING
  *   node .claude/workflows/stark-smoke-test.mjs down   # kills what `up` recorded
+ *   node .claude/workflows/stark-smoke-test.mjs verify # steps 8-13, against an already-running stack
+ *   node .claude/workflows/stark-smoke-test.mjs run    # up -> verify -> down, CI entry point
  *
  * Plain Node ESM, builtins only. This is a template repo: every dependency
  * added here is inherited by every fork and by create-stark.
@@ -23,6 +25,15 @@ import net from "node:net";
 import path from "node:path";
 import readline from "node:readline";
 import { fileURLToPath } from "node:url";
+import {
+  captureScreenshot,
+  closeTab,
+  connectSession,
+  killChrome,
+  launchChrome,
+  openTab,
+  waitFor,
+} from "./stark-smoke-test-browser.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const STATE_FILE = path.join(ROOT, ".smoke-test-state.json");
@@ -38,6 +49,16 @@ const DEVNET_READY_TIMEOUT_MS = 60_000;
 const NEXT_READY_TIMEOUT_MS = 180_000;
 const DEPLOY_TIMEOUT_MS = 300_000;
 const PORT_RELEASE_TIMEOUT_MS = 20_000;
+
+// CDP debugging port for the Chrome instance steps 8-13 launch and own.
+// Deliberately not a "well-known" port so it never collides with a browser
+// someone already has open.
+const CDP_PORT = 9333;
+const APP_URL = `http://127.0.0.1:${NEXT_PORT}`;
+const PAGE_LOAD_TIMEOUT_MS = 30_000;
+const WALLET_CONNECT_TIMEOUT_MS = 15_000;
+const TX_CONFIRM_TIMEOUT_MS = 90_000;
+const SELF_PATH = fileURLToPath(import.meta.url);
 
 const REQUIRED_DEVNET_VARS = ["PRIVATE_KEY_DEVNET", "RPC_URL_DEVNET", "ACCOUNT_ADDRESS_DEVNET"];
 
@@ -89,6 +110,24 @@ function reportRunningStack() {
   }
   console.error(`\nTear down with:`);
   console.error(`  node .claude/workflows/stark-smoke-test.mjs down`);
+}
+
+/**
+ * Steps 8-13 throw this instead of calling fail() directly, so the caller can
+ * kill Chrome (which fail()'s process.exit would otherwise skip) before
+ * formatting and exiting through the same fail() as steps 1-7.
+ */
+class StepFailure extends Error {
+  constructor(step, title, message, detail) {
+    super(message);
+    this.step = step;
+    this.title = title;
+    this.detail = detail;
+  }
+}
+
+function stepFail(n, title, message, detail) {
+  throw new StepFailure(n, title, message, detail);
 }
 
 // ----------------------------------------------------------------- utils ---
@@ -509,6 +548,389 @@ async function stepStartNext() {
   ok(`dev server answering after ${Math.round(waitedMs / 1000)}s`);
 }
 
+// ------------------------------------------------- verify (steps 8-13) ----
+//
+// Drives Chrome over the CDP toolkit in stark-smoke-test-browser.mjs.
+// Selectors below were read off the real rendered DOM (ConnectModal.tsx,
+// DisplayVariable.tsx, WriteOnlyFunctionForm.tsx render exactly this
+// structure) — not guessed.
+
+async function step8LoadApp(session) {
+  step(8, "Load the app — no console errors, no failed devnet requests");
+
+  const consoleErrors = [];
+  const consoleWarnings = [];
+  const failedDevnetRequests = [];
+  const urlByRequestId = new Map();
+
+  session.on("Runtime.consoleAPICalled", (p) => {
+    const text = (p.args || []).map((a) => a.value ?? a.description ?? "").join(" ");
+    if (p.type === "error") consoleErrors.push(text);
+    else if (p.type === "warning") consoleWarnings.push(text);
+  });
+  session.on("Runtime.exceptionThrown", (p) => {
+    consoleErrors.push(p.exceptionDetails?.exception?.description || p.exceptionDetails?.text || "uncaught exception");
+  });
+  session.on("Network.requestWillBeSent", (p) => urlByRequestId.set(p.requestId, p.request.url));
+  session.on("Network.responseReceived", (p) => {
+    const { url, status } = p.response;
+    if (status >= 400 && (url.includes(`127.0.0.1:${DEVNET_PORT}`) || url.includes(`localhost:${DEVNET_PORT}`))) {
+      failedDevnetRequests.push(`HTTP ${status} ${url}`);
+    }
+  });
+  session.on("Network.loadingFailed", (p) => {
+    const url = urlByRequestId.get(p.requestId) || "";
+    if (url.includes(`127.0.0.1:${DEVNET_PORT}`) || url.includes(`localhost:${DEVNET_PORT}`)) {
+      failedDevnetRequests.push(`FAILED ${p.errorText} ${url}`);
+    }
+  });
+
+  await session.send("Runtime.enable");
+  await session.send("Network.enable");
+  await session.send("Page.enable");
+
+  let loaded = false;
+  const offLoad = session.on("Page.loadEventFired", () => {
+    loaded = true;
+  });
+  await session.send("Page.navigate", { url: APP_URL });
+
+  const { ready, waitedMs } = await waitFor(() => loaded, { timeoutMs: PAGE_LOAD_TIMEOUT_MS, intervalMs: 300 });
+  offLoad();
+  if (!ready) {
+    stepFail(8, "app load", `Waited ${Math.round(PAGE_LOAD_TIMEOUT_MS / 1000)}s for ${APP_URL} to fire the page load event and it never did.`, "");
+  }
+
+  await sleep(2000); // let hydration / async console noise settle before judging it
+
+  const finalUrl = await session.evaluate(`location.href`);
+  if (!finalUrl.startsWith(APP_URL)) {
+    const bodyText = await session.evaluate(`document.body ? document.body.innerText.slice(0, 500) : ''`);
+    stepFail(
+      8,
+      "app load",
+      `Expected to land on ${APP_URL} but ended up at ${finalUrl}. The dev server is likely not running.`,
+      bodyText
+    );
+  }
+
+  fs.mkdirSync(LOG_DIR, { recursive: true });
+  await captureScreenshot(session, path.join(LOG_DIR, "08-app-loaded.png"));
+
+  const rpcWarnings = consoleWarnings.filter((w) => /\brpc\b|provider|contract/i.test(w));
+  if (consoleErrors.length || rpcWarnings.length) {
+    stepFail(
+      8,
+      "console errors",
+      "App load produced console error(s) or a warning mentioning the RPC, the provider, or a contract.",
+      [
+        consoleErrors.length ? `console errors:\n${consoleErrors.join("\n")}` : "",
+        rpcWarnings.length ? `warnings mentioning rpc/provider/contract:\n${rpcWarnings.join("\n")}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n\n")
+    );
+  }
+  if (failedDevnetRequests.length) {
+    stepFail(8, "devnet network requests", `Failed network request(s) to 127.0.0.1:${DEVNET_PORT}.`, failedDevnetRequests.join("\n"));
+  }
+
+  ok(`app loaded after ${Math.round(waitedMs / 1000)}s, 0 console errors, 0 failed devnet requests`);
+  if (consoleWarnings.length) info(`${consoleWarnings.length} non-fatal console warning(s) (none mention rpc/provider/contract)`);
+}
+
+async function step9ConnectWallet(session) {
+  step(9, "Go to /debug and connect the burner wallet");
+
+  let loaded = false;
+  const offLoad = session.on("Page.loadEventFired", () => {
+    loaded = true;
+  });
+  await session.send("Page.navigate", { url: `${APP_URL}/debug` });
+  const nav = await waitFor(() => loaded, { timeoutMs: PAGE_LOAD_TIMEOUT_MS, intervalMs: 300 });
+  offLoad();
+  if (!nav.ready) {
+    stepFail(9, "debug page load", `Waited ${Math.round(PAGE_LOAD_TIMEOUT_MS / 1000)}s for ${APP_URL}/debug to load and it never did.`, "");
+  }
+  await sleep(1500);
+
+  const openedModal = await session.evaluate(`
+    (() => {
+      const label = document.querySelector('label[for="connect-modal"]');
+      if (!label) return 'NO_CONNECT_LABEL';
+      label.click();
+      return 'clicked';
+    })()
+  `);
+  if (openedModal !== "clicked") {
+    stepFail(9, "connect modal", `Could not find the Connect button (label[for="connect-modal"]) on ${APP_URL}/debug.`, `evaluate returned: ${openedModal}`);
+  }
+
+  const modalOpen = await waitFor(() => session.evaluate(`document.getElementById('connect-modal')?.checked === true`), {
+    timeoutMs: 5000,
+    intervalMs: 200,
+  });
+  if (!modalOpen.ready) {
+    stepFail(9, "connect modal", `Clicked Connect but the modal never opened within ${modalOpen.waitedMs}ms.`, "");
+  }
+
+  const clickedBurner = await session.evaluate(`
+    (() => {
+      const btn = [...document.querySelectorAll('button')].find(b => b.textContent.trim() === 'Burner Wallet');
+      if (!btn) return 'NO_BURNER_BUTTON';
+      btn.click();
+      return 'clicked';
+    })()
+  `);
+  if (clickedBurner !== "clicked") {
+    stepFail(9, "burner wallet", 'Could not find the "Burner Wallet" button in the connect modal.', `evaluate returned: ${clickedBurner}`);
+  }
+
+  const ACCOUNT_TEXT_RE = "/^0x[0-9a-fA-F]{2,}\\.\\.\\.[0-9a-fA-F]{2,}$/";
+  const accountsReady = await waitFor(
+    () => session.evaluate(`[...document.querySelectorAll('button')].filter(b => ${ACCOUNT_TEXT_RE}.test(b.textContent.trim())).length > 0`),
+    { timeoutMs: 5000, intervalMs: 200 }
+  );
+  if (!accountsReady.ready) {
+    stepFail(9, "burner accounts", `Burner Wallet account list never appeared within ${accountsReady.waitedMs}ms.`, "");
+  }
+
+  const clickedAccount = await session.evaluate(`
+    (() => {
+      const btn = [...document.querySelectorAll('button')].find(b => ${ACCOUNT_TEXT_RE}.test(b.textContent.trim()));
+      if (!btn) return 'NO_ACCOUNT_BUTTON';
+      btn.click();
+      return btn.textContent.trim();
+    })()
+  `);
+  if (clickedAccount === "NO_ACCOUNT_BUTTON") {
+    stepFail(9, "burner account select", "Could not click a burner account button.", "");
+  }
+
+  const connected = await waitFor(
+    async () => {
+      const text = await session.evaluate(`document.querySelector('details summary')?.textContent.trim() ?? ''`);
+      return /^0x[0-9a-fA-F]{2,}\.\.\.[0-9a-fA-F]{2,}$/.test(text) ? text : false;
+    },
+    { timeoutMs: WALLET_CONNECT_TIMEOUT_MS, intervalMs: 300 }
+  );
+  if (!connected.ready) {
+    stepFail(
+      9,
+      "wallet connection",
+      `Selected burner account "${clickedAccount}" but the UI never showed a connected address within ${Math.round(connected.waitedMs / 1000)}s.`,
+      ""
+    );
+  }
+
+  await captureScreenshot(session, path.join(LOG_DIR, "09-wallet-connected.png"));
+  ok(`burner wallet connected: ${connected.result}`);
+}
+
+/** Reads .space-y-1 container's value div for the read function named `name` (DisplayVariable.tsx layout). */
+function readDisplayVariableExpr(name) {
+  return `
+    (() => {
+      const h3 = [...document.querySelectorAll('h3')].find(h => h.textContent.trim() === ${JSON.stringify(name)});
+      const container = h3 ? h3.closest('.space-y-1') : null;
+      const valueEl = container ? container.querySelector('.break-all.block.transition') : null;
+      return valueEl ? valueEl.textContent.trim() : null;
+    })()
+  `;
+}
+
+async function step10ReadValue(session) {
+  step(10, "Read a contract read function (greeting) and record its value");
+
+  await session.evaluate(`[...document.querySelectorAll('a')].find(a => a.textContent.trim() === 'Read')?.click()`);
+  await sleep(800);
+
+  const found = await waitFor(() => session.evaluate(`!!([...document.querySelectorAll('h3')].find(h => h.textContent.trim() === 'greeting'))`), {
+    timeoutMs: 10_000,
+    intervalMs: 300,
+  });
+  if (!found.ready) {
+    stepFail(10, "read greeting", `The "greeting" read function never appeared on the Debug Contracts page within ${Math.round(found.waitedMs / 1000)}s.`, "");
+  }
+
+  const value = await session.evaluate(readDisplayVariableExpr("greeting"));
+  if (!value) {
+    stepFail(10, "read greeting", "Found the greeting label but its value element was empty or missing.", "");
+  }
+
+  await captureScreenshot(session, path.join(LOG_DIR, "10-read-before.png"));
+  ok(`greeting = ${JSON.stringify(value)}`);
+  return value;
+}
+
+async function step11WriteValue(session) {
+  step(11, "Call set_greeting (write) and wait for the transaction to confirm");
+  const newValue = `smoke-test-${Date.now()}`;
+
+  await session.evaluate(`[...document.querySelectorAll('a')].find(a => a.textContent.trim() === 'Write')?.click()`);
+  await sleep(800);
+
+  const filled = await session.evaluate(`
+    (() => {
+      const input = document.querySelector('input[name^="set_greeting_new_greeting"]');
+      if (!input) return 'NO_INPUT';
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+      setter.call(input, ${JSON.stringify(newValue)});
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      return input.value;
+    })()
+  `);
+  if (filled !== newValue) {
+    stepFail(11, "set_greeting form", "Could not fill the set_greeting new_greeting input.", `evaluate returned: ${filled}`);
+  }
+
+  const clickedSend = await session.evaluate(`
+    (() => {
+      const label = [...document.querySelectorAll('p.text-function')].find(p => p.textContent.trim() === 'set_greeting');
+      if (!label) return 'NO_LABEL';
+      const container = label.closest('.flex.gap-3.flex-col');
+      const btn = container ? [...container.querySelectorAll('button')].find(b => b.textContent.trim() === 'Send 💸') : null;
+      if (!btn) return 'NO_SEND_BUTTON';
+      if (btn.disabled) return 'SEND_DISABLED';
+      btn.click();
+      return 'clicked';
+    })()
+  `);
+  if (clickedSend !== "clicked") {
+    stepFail(11, "set_greeting send", "Could not click Send for set_greeting.", `evaluate returned: ${clickedSend}`);
+  }
+
+  const confirmed = await waitFor(async () => (await session.evaluate(`document.body.innerText`)).includes("Transaction completed successfully"), {
+    timeoutMs: TX_CONFIRM_TIMEOUT_MS,
+    intervalMs: 500,
+  });
+  if (!confirmed.ready) {
+    const lastText = await session.evaluate(`document.body.innerText`).catch(() => "");
+    stepFail(
+      11,
+      "transaction confirmation",
+      `Sent set_greeting("${newValue}") but never saw the "Transaction completed successfully!" confirmation within ${Math.round(
+        TX_CONFIRM_TIMEOUT_MS / 1000
+      )}s.`,
+      lastText.slice(0, 2000)
+    );
+  }
+
+  await captureScreenshot(session, path.join(LOG_DIR, "11-tx-confirmed.png"));
+  ok(`set_greeting("${newValue}") confirmed after ${Math.round(confirmed.waitedMs / 1000)}s`);
+  return newValue;
+}
+
+async function step12ReadAgain(session, valueBefore) {
+  step(12, "Read the value again — it must differ from step 10");
+
+  await session.evaluate(`[...document.querySelectorAll('a')].find(a => a.textContent.trim() === 'Read')?.click()`);
+  await sleep(800);
+  await session.evaluate(`
+    (() => {
+      const h3 = [...document.querySelectorAll('h3')].find(h => h.textContent.trim() === 'greeting');
+      const refreshBtn = h3 ? h3.closest('.flex.items-center')?.querySelector('button.btn-ghost') : null;
+      if (refreshBtn) refreshBtn.click();
+    })()
+  `);
+
+  const changed = await waitFor(
+    async () => {
+      const value = await session.evaluate(readDisplayVariableExpr("greeting"));
+      return value && value !== valueBefore ? value : false;
+    },
+    { timeoutMs: 15_000, intervalMs: 500 }
+  );
+  if (!changed.ready) {
+    stepFail(
+      12,
+      "read greeting after write",
+      `greeting is still "${valueBefore}" after waiting ${Math.round(changed.waitedMs / 1000)}s — the write did not take effect. ` +
+        `Unchanged is a FAIL even if the transaction reported success.`,
+      ""
+    );
+  }
+
+  await captureScreenshot(session, path.join(LOG_DIR, "12-read-after.png"));
+  ok(`greeting changed: "${valueBefore}" -> "${changed.result}"`);
+}
+
+async function step13Screenshots(session) {
+  step(13, "Confirm screenshots of the key moments were captured");
+
+  await captureScreenshot(session, path.join(LOG_DIR, "13-final.png"));
+  const expected = [
+    "08-app-loaded.png",
+    "09-wallet-connected.png",
+    "10-read-before.png",
+    "11-tx-confirmed.png",
+    "12-read-after.png",
+    "13-final.png",
+  ];
+  const missing = expected.filter((f) => !fs.existsSync(path.join(LOG_DIR, f)));
+  if (missing.length) {
+    stepFail(13, "screenshots", `Missing screenshot(s): ${missing.join(", ")}`, `expected all of: ${expected.join(", ")} in ${path.relative(ROOT, LOG_DIR)}/`);
+  }
+
+  ok(`${expected.length} screenshots saved to ${path.relative(ROOT, LOG_DIR)}/`);
+}
+
+async function runBrowserSteps(chrome) {
+  const tab = await openTab(chrome.port);
+  const session = await connectSession(tab.webSocketDebuggerUrl);
+  try {
+    await step8LoadApp(session);
+    await step9ConnectWallet(session);
+    const before = await step10ReadValue(session);
+    await step11WriteValue(session);
+    await step12ReadAgain(session, before);
+    await step13Screenshots(session);
+  } finally {
+    session.close();
+    await closeTab(chrome.port, tab.id);
+  }
+}
+
+/**
+ * Steps 8-13: launch Chrome, drive the already-running stack, always kill
+ * Chrome (it's ours, unlike devnet/next which stay alive for debugging on
+ * failure), then report through the same fail() as steps 1-7.
+ */
+async function verifyBrowser(flags) {
+  console.log(`stark-smoke-test: browser verification (steps 8-13 of 13)`);
+
+  if (await portInUse(CDP_PORT)) {
+    fail(8, "Chrome CDP launch", `Port ${CDP_PORT} (reserved for the Chrome DevTools Protocol) is already in use.\nFree it, or something from a previous run did not clean up.`);
+  }
+
+  fs.mkdirSync(LOG_DIR, { recursive: true });
+  const chromeLog = path.join(LOG_DIR, "chrome.log");
+  fs.writeFileSync(chromeLog, "");
+
+  let chrome;
+  try {
+    chrome = await launchChrome({ port: CDP_PORT, headless: !flags.headed, logFile: chromeLog });
+  } catch (err) {
+    fail(8, "Chrome launch", "Could not launch Chrome for CDP verification.", String(err?.message ?? err));
+    return;
+  }
+  info(`chrome pid ${chrome.pid}, profile ${chrome.profileDir}, CDP on ${CDP_PORT}`);
+
+  try {
+    await runBrowserSteps(chrome);
+  } catch (err) {
+    await killChrome(chrome);
+    if (err instanceof StepFailure) {
+      fail(err.step, err.title, err.message, err.detail);
+    } else {
+      fail(8, "browser verification", "Unexpected error during Chrome verification.", String(err?.stack || err));
+    }
+    return;
+  }
+  await killChrome(chrome);
+  ok("chrome killed, temp profile removed");
+}
+
 async function up(flags) {
   fs.mkdirSync(LOG_DIR, { recursive: true });
 
@@ -606,23 +1028,77 @@ async function down() {
   process.exit(0);
 }
 
+// ------------------------------------------------------------------- run ---
+
+/** Re-invokes this same script as a child so `up`'s/`down`'s own process.exit and leave-alive-on-failure behavior stay untouched. */
+function spawnStreamed(args) {
+  return new Promise((resolve) => {
+    const child = spawn(process.execPath, [SELF_PATH, ...args], { cwd: ROOT, stdio: "inherit" });
+    child.on("close", (code) => resolve(code ?? 1));
+    child.on("error", () => resolve(1));
+  });
+}
+
+/**
+ * CI entry point: up -> verify -> down, exit non-zero if any of the 13 steps
+ * are red. verifyBrowser() exits the process itself on failure (via fail()),
+ * so `down` only runs — and only needs to run — after a full pass.
+ */
+async function runFull(flags) {
+  console.log(`stark-smoke-test: run (up -> verify -> down)`);
+
+  const upArgs = ["up", ...(flags.writeEnv ? ["--write-env"] : [])];
+  const upCode = await spawnStreamed(upArgs);
+  if (upCode !== 0) {
+    console.error(`\nrun: \`up\` exited ${upCode}; stopping before verify. The stack was left running for debugging — see above.`);
+    process.exit(upCode);
+  }
+
+  await verifyBrowser(flags);
+
+  console.log(`\nrun: steps 8-13 passed. Tearing down...`);
+  const downCode = await spawnStreamed(["down"]);
+  if (downCode !== 0) {
+    console.error(`\nrun: verify PASSED but \`down\` exited ${downCode} — stack may not be fully cleaned up.`);
+    process.exit(downCode);
+  }
+
+  console.log(`\n=========================================================`);
+  console.log(`RUN COMPLETE — ALL 13 STEPS PASSED, stack torn down`);
+  console.log(`=========================================================`);
+  process.exit(0);
+}
+
 // ----------------------------------------------------------------- main ----
 
 const argv = process.argv.slice(2);
 const mode = argv.find((a) => !a.startsWith("-"));
-const flags = { writeEnv: argv.includes("--write-env") };
+const flags = { writeEnv: argv.includes("--write-env"), headed: argv.includes("--headed") };
 
 if (mode === "up") await up(flags);
 else if (mode === "down") await down();
+else if (mode === "verify") {
+  await verifyBrowser(flags);
+  console.log(`\n=========================================================`);
+  console.log(`STEPS 8-13 PASSED`);
+  console.log(`=========================================================`);
+  process.exit(0);
+} else if (mode === "run") await runFull(flags);
 else {
-  console.error(`stark-smoke-test — e2e devnet gate (steps 1-7; steps 8-13 are agent-side)
+  console.error(`stark-smoke-test — e2e devnet gate (13 steps: 1-7 process orchestration, 8-13 Chrome/CDP verification)
 
 usage:
   node .claude/workflows/stark-smoke-test.mjs up [--write-env]
+  node .claude/workflows/stark-smoke-test.mjs verify [--headed]
   node .claude/workflows/stark-smoke-test.mjs down
+  node .claude/workflows/stark-smoke-test.mjs run [--write-env] [--headed]
 
-  up     preflight + bring devnet/deploy/dev-server up, then exit 0 leaving them RUNNING
-         --write-env  consent up front to appending the devnet block to packages/snfoundry/.env
-  down   kill whatever \`up\` recorded and confirm ports ${DEVNET_PORT}/${NEXT_PORT} are released`);
+  up      preflight + bring devnet/deploy/dev-server up, then exit 0 leaving them RUNNING
+          --write-env  consent up front to appending the devnet block to packages/snfoundry/.env
+  verify  drive Chrome over CDP against an already-running stack (steps 8-13); exits non-zero on any failure
+          --headed     launch Chrome visibly instead of headless, for debugging
+  down    kill whatever \`up\` recorded and confirm ports ${DEVNET_PORT}/${NEXT_PORT} are released
+  run     up -> verify -> down in one shot; the CI entry point. Exits non-zero if any of the 13 steps fail.
+          On failure the stack is left running for debugging, same as \`up\`/\`verify\` alone.`);
   process.exit(2);
 }
