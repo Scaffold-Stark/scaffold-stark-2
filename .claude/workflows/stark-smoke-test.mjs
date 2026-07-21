@@ -100,13 +100,16 @@ function fail(n, title, message, verbatim) {
  */
 function reportRunningStack() {
   const state = readState();
-  if (!state || !state.processes?.length) {
+  if (!state || (!state.processes?.length && !state.chrome)) {
     console.error(`\nNothing was left running.`);
     return;
   }
   console.error(`\nThe stack was left RUNNING on purpose so you can debug it:`);
-  for (const p of state.processes) {
+  for (const p of state.processes ?? []) {
     console.error(`  ${p.name.padEnd(7)} pid ${p.pid}  log: ${p.log}`);
+  }
+  if (state.chrome) {
+    console.error(`  ${"chrome".padEnd(7)} pid ${state.chrome.pid}  profile: ${state.chrome.profileDir}  CDP port: ${state.chrome.port}`);
   }
   console.error(`\nTear down with:`);
   console.error(`  node .claude/workflows/stark-smoke-test.mjs down`);
@@ -151,6 +154,54 @@ function readState() {
 function writeState(state) {
   fs.writeFileSync(STATE_FILE, `${JSON.stringify(state, null, 2)}\n`);
 }
+
+/**
+ * Chrome is the script's own resource (devnet/next are intentionally left for
+ * the operator to debug), so it gets its own state slot: recorded the instant
+ * launchChrome() resolves, so a crash between launch and kill still leaves a
+ * trail `down` and the next `up`'s guard can find.
+ */
+function recordChrome(chrome) {
+  const state = readState() ?? { processes: [] };
+  state.chrome = { pid: chrome.pid, profileDir: chrome.profileDir, port: chrome.port };
+  writeState(state);
+}
+
+function clearChromeState() {
+  const state = readState();
+  if (state?.chrome) {
+    delete state.chrome;
+    writeState(state);
+  }
+}
+
+/**
+ * Set while verifyBrowser() has a live Chrome, so a Ctrl-C/SIGTERM mid-verify
+ * can kill exactly that Chrome. devnet/next are deliberately NOT touched here:
+ * they're detached, unref()'d processes that survive this script by design
+ * (left for the operator to debug), same as an ordinary step failure — only
+ * Chrome is this process's own resource to clean up on the way out.
+ */
+let activeChrome = null;
+
+async function handleTerminationSignal(signal) {
+  if (activeChrome) {
+    console.error(`\nReceived ${signal} — killing Chrome (pid ${activeChrome.pid}) before exit...`);
+    const chrome = activeChrome;
+    activeChrome = null;
+    await killChrome(chrome);
+    clearChromeState();
+    console.error(`  chrome killed, temp profile removed`);
+  }
+  process.exit(1);
+}
+
+process.on("SIGINT", () => {
+  handleTerminationSignal("SIGINT");
+});
+process.on("SIGTERM", () => {
+  handleTerminationSignal("SIGTERM");
+});
 
 /** Run a command to completion, capturing stdout+stderr together. */
 function run(cmd, args, { cwd = ROOT, timeoutMs, logFile } = {}) {
@@ -924,12 +975,19 @@ async function verifyBrowser(flags) {
     fail(8, "Chrome launch", "Could not launch Chrome for CDP verification.", String(err?.message ?? err));
     return;
   }
+  // Recorded immediately: if this process dies before the matching killChrome
+  // below (Ctrl-C, closed terminal, crash, SIGKILL), `down` and the next `up`
+  // still know this Chrome exists.
+  recordChrome(chrome);
+  activeChrome = chrome;
   info(`chrome pid ${chrome.pid}, profile ${chrome.profileDir}, CDP on ${CDP_PORT}`);
 
   try {
     await runBrowserSteps(chrome);
   } catch (err) {
     await killChrome(chrome);
+    activeChrome = null;
+    clearChromeState();
     if (err instanceof StepFailure) {
       fail(err.step, err.title, err.message, err.detail);
     } else {
@@ -938,6 +996,8 @@ async function verifyBrowser(flags) {
     return;
   }
   await killChrome(chrome);
+  activeChrome = null;
+  clearChromeState();
   ok("chrome killed, temp profile removed");
 }
 
@@ -945,7 +1005,9 @@ async function up(flags) {
   fs.mkdirSync(LOG_DIR, { recursive: true });
 
   const existing = readState();
-  if (existing?.processes?.some((p) => alive(p.pid))) {
+  const stackAlive = existing?.processes?.some((p) => alive(p.pid));
+  const chromeAlive = existing?.chrome && alive(existing.chrome.pid);
+  if (stackAlive || chromeAlive) {
     console.error(`A previous smoke-test stack still looks alive (see ${path.relative(ROOT, STATE_FILE)}).`);
     reportRunningStack();
     console.error(`\nRun \`down\` first.`);
@@ -1011,9 +1073,16 @@ async function down() {
     }
   }
 
+  if (state?.chrome) {
+    const { pid, profileDir } = state.chrome;
+    console.log(`  chrome  pid ${pid} ${alive(pid) ? "killing (orphaned CDP process)" : "already gone"}`);
+    await killChrome({ pid, profileDir });
+    console.log(`  chrome  profile dir removed (was ${profileDir})`);
+  }
+
   // Killing a pid is not the same as the port being free again.
   const stillBusy = [];
-  for (const port of [DEVNET_PORT, NEXT_PORT]) {
+  for (const port of [DEVNET_PORT, NEXT_PORT, CDP_PORT]) {
     const { ready, waitedMs } = await pollUntil(async () => !(await portInUse(port)), {
       timeoutMs: PORT_RELEASE_TIMEOUT_MS,
       intervalMs: 500,
