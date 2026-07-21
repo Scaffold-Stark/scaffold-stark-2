@@ -27,3 +27,5 @@ package-lock.json
 # stark-smoke-test runtime artifacts
 .smoke-test-state.json
 .smoke-test-logs/
+# personal workflow artifact; this is a public template repo
+docs/superpowers/
