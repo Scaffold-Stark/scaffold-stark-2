@@ -96,7 +96,7 @@ async function cdpReady(port) {
  * never touches the operator's real browser data, with CDP on `port`.
  * Resolves once the CDP HTTP endpoint actually answers.
  */
-export async function launchChrome({ port, headless = true, logFile } = {}) {
+export async function launchChrome({ port, headless = true, logFile, windowWidth = 1440, windowHeight = 900 } = {}) {
   const binary = findChromeBinary();
   if (!binary) {
     throw new Error(
@@ -111,6 +111,11 @@ export async function launchChrome({ port, headless = true, logFile } = {}) {
     `--user-data-dir=${profileDir}`,
     "--no-first-run",
     "--no-default-browser-check",
+    // Headless Chrome's default window is small enough that this app's fixed
+    // header buttons and avatar overlap the contract card content, which
+    // ruins step 13's screenshots as evidence even though the page itself
+    // renders correctly. A real desktop-sized window fixes that.
+    `--window-size=${windowWidth},${windowHeight}`,
   ];
   if (headless) args.push("--headless=new");
 
@@ -125,7 +130,7 @@ export async function launchChrome({ port, headless = true, logFile } = {}) {
     throw new Error(`Chrome (pid ${child.pid}) never opened CDP on 127.0.0.1:${port} within 15s.`);
   }
 
-  return { pid: child.pid, profileDir, port };
+  return { pid: child.pid, profileDir, port, windowWidth, windowHeight };
 }
 
 /**

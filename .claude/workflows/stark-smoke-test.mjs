@@ -879,6 +879,16 @@ async function runBrowserSteps(chrome) {
   const tab = await openTab(chrome.port);
   const session = await connectSession(tab.webSocketDebuggerUrl);
   try {
+    // --window-size on the Chrome command line is not always honored for the
+    // first paint in headless mode; force the viewport explicitly so fixed
+    // header buttons and the avatar don't overlap the contract card in the
+    // step 13 screenshots.
+    await session.send("Emulation.setDeviceMetricsOverride", {
+      width: chrome.windowWidth,
+      height: chrome.windowHeight,
+      deviceScaleFactor: 1,
+      mobile: false,
+    });
     await step8LoadApp(session);
     await step9ConnectWallet(session);
     const before = await step10ReadValue(session);
