@@ -133,7 +133,7 @@ const FINDINGS = {
           severity: { enum: ['blocker', 'needs-update', 'nice-to-have', 'informational'] },
           kind: {
             enum: ['CODE', 'OPS'],
-            description: 'CODE = needs a crew to implement. OPS = a merge/close/delete/review the captain does directly.',
+            description: 'CODE = needs a code change to implement. OPS = a merge/close/delete/review with no code change.',
           },
           detail: { type: 'string', description: 'Concrete evidence: version numbers, PR numbers, file:line, command output' },
           action: { type: 'string', description: 'The specific next step. "none" if no action needed.' },
@@ -318,13 +318,13 @@ Produce a single decision-ready report:
 1. A one-sentence verdict: does anything actually need updating right now, yes or no?
 2. Findings ranked blocker > needs-update > nice-to-have. MERGE duplicates appearing in
    multiple areas into one finding naming all affected repos.
-3. For each actionable finding, state whether it is CODE (needs a crew, and give the branch
-   name you'd suggest) or OPS (a merge, close, branch delete, or review the captain does
-   directly, and give the exact command or PR number).
+3. For each actionable finding, state whether it is CODE (needs a code change, and give the
+   branch name you'd suggest) or OPS (a merge, close, branch delete, or review with no code
+   change, and give the exact command or PR number).
 4. Flag any finding with breaksForks=true as needing coordinated multi-repo rollout — this
    project syncs to 3 forks plus an intra-repo branch, and an unsynced toolchain bump has
    broken them before.
-5. Explicitly list what was checked and found CLEAN, so the captain knows coverage — silence
+5. Explicitly list what was checked and found CLEAN, so the reader knows coverage — silence
    is not the same as verified.
 6. Note scaffold-stark-rn is marked deferred in SIBLINGS. Report its state for awareness; do
    not rank it as actionable unless it has materially worsened.

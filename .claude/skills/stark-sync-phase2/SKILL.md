@@ -125,7 +125,7 @@ A template can scaffold cleanly and still ship a broken import — the published
 
 ## Known constraints
 
-- **`scaffold-stark-rn` may be under a captain deferral.** Check the current handoff before proposing work on it; if deferred, report its state and do not rank it actionable unless materially worse.
+- **`scaffold-stark-rn` may be intentionally deferred.** Check whether it is intentionally deferred before proposing work on it; if so, report its state and do not rank it actionable unless materially worse.
 - **`v3-bulletproof-contracts` is a branch, not a repo.** It cannot be checked with `gh api repos/...`; use `git log origin/v3-bulletproof-contracts`.
 - **A toolchain bump propagates to every target.** `.tool-versions` is copied wholesale by the fork syncs and greped by `sync-bulletproof-contracts.yaml` to stamp a Docker image tag. Verify that tag exists before syncing a devnet bump, or the workflow emits a broken image reference.
 
@@ -144,7 +144,7 @@ State which targets you verified, which you could not, and why. "I did not find 
 
 1. **One sentence:** are all targets in sync?
 2. **Per target:** clean / broken-automation / trigger-problem / needs-manual, with the evidence.
-3. **Repairs needed**, tagged CODE (crew) or OPS (captain), with branch names.
+3. **Repairs needed**, tagged CODE (needs a code change) or OPS (a repo action, no code change), with branch names.
 4. **Verified clean** — explicitly, so silence is not read as coverage.
 
 ## Not in scope

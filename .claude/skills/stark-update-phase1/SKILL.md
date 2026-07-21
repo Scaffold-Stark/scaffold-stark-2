@@ -174,7 +174,7 @@ State plainly what passed, what failed, and what you did not run. A skipped chec
 ## Output format
 
 1. **One sentence:** does anything actually need updating right now?
-2. **Findings** ranked `blocker > needs-update > nice-to-have`, each tagged **CODE** (needs a crew) or **OPS** (captain does directly).
+2. **Findings** ranked `blocker > needs-update > nice-to-have`, each tagged **CODE** (needs a code change) or **OPS** (a repo action, no code change).
 3. **Batches** as above, with suggested branch names.
 4. **Checked and clean** — say explicitly what was verified as current, so silence is not mistaken for coverage.
 5. **Deferred, with reasons** — so the next run does not re-litigate them.
