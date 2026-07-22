@@ -1364,6 +1364,14 @@ async function sepoliaStepDeploy() {
   ok(`yarn deploy --network sepolia exited 0, log ${path.relative(ROOT, log)}`);
   console.log(`  NOTE: ${path.relative(ROOT, DEPLOYED_CONTRACTS)} was modified by this run.`);
   console.log(`        Commit or revert it yourself — this script will not touch it.`);
+
+  return extractDeployedAddressFromLog(result.output);
+}
+
+/** Deploy prints `Contract Deployed at <addr>` (deploy-contract.ts) — ground truth for "this run deployed something", independent of whether deployedContracts.ts actually got rewritten. */
+function extractDeployedAddressFromLog(output) {
+  const match = output.match(/Contract Deployed at[^\n]*?(0x[0-9a-fA-F]+)/);
+  return match ? match[1] : null;
 }
 
 /** Pulls the address of the first contract under the top-level "sepolia" key out of the regenerated deployedContracts.ts. */
@@ -1386,11 +1394,33 @@ function extractSepoliaAddress() {
   return { address: address[1] };
 }
 
-async function sepoliaStepConfirm() {
+async function sepoliaStepConfirm(deployLogAddress) {
   stepS(5, "On-chain confirmation (starknet_getClassHashAt)");
   const parsed = extractSepoliaAddress();
   if (parsed.error) {
     sepoliaRed(5, "on-chain confirmation", parsed.error);
+  }
+
+  // Freshness check: deployedContracts.ts could be a stale leftover from a
+  // previous run if this run's `yarn deploy` somehow exited 0 without
+  // rewriting it. Cross-check against the address S4's own deploy output
+  // reported, not just the file, before trusting the file at all.
+  if (!deployLogAddress) {
+    sepoliaRed(
+      5,
+      "on-chain confirmation",
+      `S4's deploy output had no parseable "Contract Deployed at <address>" line, so S5 cannot verify that\n` +
+        `${path.relative(ROOT, DEPLOYED_CONTRACTS)}'s sepolia address (${parsed.address}) is from this run rather than a stale one.`
+    );
+  }
+  if (normalizeHex(deployLogAddress) !== normalizeHex(parsed.address)) {
+    sepoliaRed(
+      5,
+      "on-chain confirmation",
+      `Freshness check failed: S4's deploy output reported ${deployLogAddress}, but\n` +
+        `${path.relative(ROOT, DEPLOYED_CONTRACTS)}'s sepolia address is ${parsed.address}.\n` +
+        `That file was not rewritten by this run — confirming it would validate a stale previous deploy, not this one.`
+    );
   }
   info(`checking class hash at ${parsed.address}`);
 
@@ -1420,8 +1450,8 @@ async function sepolia() {
   const vars = await sepoliaStepPreflight();
   await sepoliaStepRpcIdentity();
   await sepoliaStepBalance(vars.ACCOUNT_ADDRESS_SEPOLIA);
-  await sepoliaStepDeploy();
-  await sepoliaStepConfirm();
+  const deployLogAddress = await sepoliaStepDeploy();
+  await sepoliaStepConfirm(deployLogAddress);
 
   console.log(`\n=========================================================`);
   console.log(`SEPOLIA GATE GREEN — S1-S5 all passed`);
