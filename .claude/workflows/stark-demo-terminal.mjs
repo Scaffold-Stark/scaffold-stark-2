@@ -41,6 +41,10 @@ const ENV_FILE = path.join(ROOT, "packages", "snfoundry", ".env");
 // would compress that wait down and make the GIF's duration lie about how long
 // the run actually took. Set it far above any plausible gate runtime instead.
 const AGG_IDLE_TIME_LIMIT_SECS = 3600;
+// agg's default 3s last-frame hold is negligible against a multi-minute deploy
+// but was 12% of a 25s run in testing — enough to blow the <10% duration-match
+// requirement on a short run. Drop it so GIF duration tracks real duration.
+const AGG_LAST_FRAME_DURATION_SECS = 0;
 
 function usage() {
   console.error(`Usage: node .claude/workflows/stark-demo-terminal.mjs --branch <branch-name>
@@ -138,11 +142,18 @@ function assertOnPath(bin, versionArgs = ["--version"]) {
   }
 }
 
-/** Parses the RPC_URL_SEPOLIA value straight from .env for the post-hoc redaction grep. Never printed. */
-function readSepoliaRpcUrl() {
+// Both carry secrets: RPC_URL_SEPOLIA has an embedded API key, PRIVATE_KEY_SEPOLIA
+// signs real transactions. Neither is expected on stdout in the gate's success
+// path, but the post-hoc grep checks for both rather than trusting that.
+const SECRET_ENV_VARS = ["RPC_URL_SEPOLIA", "PRIVATE_KEY_SEPOLIA"];
+
+/** Parses secret env values straight from .env for the post-hoc redaction grep. Never printed. */
+function readSepoliaSecrets() {
   const envText = fs.readFileSync(ENV_FILE, "utf8");
-  const m = envText.match(/^RPC_URL_SEPOLIA=(.+)$/m);
-  return m ? m[1].trim() : null;
+  return SECRET_ENV_VARS.map((name) => {
+    const m = envText.match(new RegExp(`^${name}=(.+)$`, "m"));
+    return m ? { name, value: m[1].trim() } : null;
+  }).filter((entry) => entry && entry.value);
 }
 
 function main() {
@@ -198,19 +209,28 @@ function main() {
   const transcript = fs.readFileSync(txtFile, "utf8");
 
   // --- redaction check: must run before the GIF is treated as publishable ---
-  const rpcUrl = readSepoliaRpcUrl();
-  if (rpcUrl && transcript.includes(rpcUrl)) {
-    console.error(
-      `STOP: RPC_URL_SEPOLIA leaked into the recorded transcript (${path.relative(ROOT, txtFile)}).\n` +
-        `Not converting to GIF, not writing a proof block. Delete ${path.relative(ROOT, castFile)} and ` +
-        `${path.relative(ROOT, txtFile)}, then find where the gate printed it before re-recording.`
-    );
-    process.exit(1);
+  const secrets = readSepoliaSecrets();
+  for (const { name, value } of secrets) {
+    if (transcript.includes(value)) {
+      console.error(
+        `STOP: ${name} leaked into the recorded transcript (${path.relative(ROOT, txtFile)}).\n` +
+          `Not converting to GIF, not writing a proof block. Delete ${path.relative(ROOT, castFile)} and ` +
+          `${path.relative(ROOT, txtFile)}, then find where the gate printed it before re-recording.`
+      );
+      process.exit(1);
+    }
   }
 
   // agg has no --overwrite flag (unlike asciinema) — it just refuses to write over nothing, so clear stale output first.
   fs.rmSync(gifFile, { force: true });
-  const agg = sh("agg", ["--idle-time-limit", String(AGG_IDLE_TIME_LIMIT_SECS), castFile, gifFile]);
+  const agg = sh("agg", [
+    "--idle-time-limit",
+    String(AGG_IDLE_TIME_LIMIT_SECS),
+    "--last-frame-duration",
+    String(AGG_LAST_FRAME_DURATION_SECS),
+    castFile,
+    gifFile,
+  ]);
   if (agg.status !== 0) {
     console.error(`REFUSED: agg exited ${agg.status}.`);
     console.error(agg.stderr || agg.stdout || "(no output captured)");
@@ -220,10 +240,12 @@ function main() {
   // Second redaction pass on the actual artifact being handed off, per the
   // brief: grep the GIF too, don't just trust the transcript it was built from.
   const gifBytes = fs.readFileSync(gifFile);
-  if (rpcUrl && gifBytes.includes(Buffer.from(rpcUrl))) {
-    console.error(`STOP: RPC_URL_SEPOLIA found inside the rendered GIF bytes (${path.relative(ROOT, gifFile)}). Deleting it.`);
-    fs.unlinkSync(gifFile);
-    process.exit(1);
+  for (const { name, value } of secrets) {
+    if (gifBytes.includes(Buffer.from(value))) {
+      console.error(`STOP: ${name} found inside the rendered GIF bytes (${path.relative(ROOT, gifFile)}). Deleting it.`);
+      fs.unlinkSync(gifFile);
+      process.exit(1);
+    }
   }
 
   const gifDurationSecs = probeGifDurationSecs(gifFile);
@@ -269,10 +291,19 @@ function main() {
   lines.push(``);
 
   const proofBlock = lines.join("\n");
+
+  // Third redaction pass, on the proof block itself before it's written out.
+  for (const { name, value } of secrets) {
+    if (proofBlock.includes(value)) {
+      console.error(`STOP: ${name} would have leaked into the proof block. Not writing it.`);
+      process.exit(1);
+    }
+  }
   fs.writeFileSync(proofFile, proofBlock);
 
   console.log(`\n${proofBlock}`);
   console.log(`Proof block written to ${path.relative(ROOT, proofFile)}`);
+  console.log(`Redaction check: transcript, GIF bytes, and proof block all clear of ${SECRET_ENV_VARS.join(", ")}.`);
 
   if (!gateGreen) {
     console.error(`\nNOTE: the sepolia gate did not go GREEN this run — the GIF/proof above document that, not a successful deploy.`);
