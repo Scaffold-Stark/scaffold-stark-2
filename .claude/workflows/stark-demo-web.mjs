@@ -43,7 +43,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { waitFor, findChromeBinary, connectSession, openTab, closeTab } from "./stark-smoke-test-browser.mjs";
+import { waitFor, findChromeBinary, connectSession, openTab, closeTab, captureScreenshot } from "./stark-smoke-test-browser.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const LOG_DIR = path.join(ROOT, ".smoke-test-logs");
@@ -593,77 +593,205 @@ async function approveBraavosRequest(target, password) {
     // /Users/q3labsadmin/Q3/Brove/brove/packages/nextjs/e2e/helpers/braavos.ts.
     const STRUCTURAL_QUERIES = ['button', '[role="button"]', 'button, [role="button"], a[role="button"], [tabindex="0"]'];
     const TEXT_CANDIDATES = ["Connect", "Approve", "Confirm", "Accept", "Sign"];
-    let search = null;
-    let usedQuery = null;
-    for (const query of STRUCTURAL_QUERIES) {
-      await session.send("DOM.getDocument", { depth: -1, pierce: true });
-      search = await session.send("DOM.performSearch", { query, includeUserAgentShadowDOM: true });
-      if (search.resultCount) {
-        usedQuery = query;
-        break;
-      }
-    }
+    // Words identifying the PRIMARY action vs. the reject action — Braavos's
+    // own UI is confirmed English regardless of profile locale (see above).
+    const ACTION_RE = /\b(confirm|approve|connect|accept|sign|login)\b/i;
+    const REJECT_RE = /\b(reject|cancel|decline|close)\b/i;
 
-    let candidates = [];
-    if (search?.resultCount) {
-      const { nodeIds } = await session.send("DOM.getSearchResults", { searchId: search.searchId, fromIndex: 0, toIndex: search.resultCount });
-      for (const nodeId of nodeIds) {
-        const box = await session.send("DOM.getBoxModel", { nodeId }).catch(() => null);
-        if (!box?.model?.content) continue;
-        const c = box.model.content;
-        candidates.push({ cx: (c[0] + c[2] + c[4] + c[6]) / 4, cy: (c[1] + c[3] + c[5] + c[7]) / 4 });
+    /** Resolve one search hit to a clickable description: center point plus
+     * the text/tag/disabled evidence needed to pick by identity, not order —
+     * a blind last-candidate click at (180,696) left a tx request pending
+     * forever (neither confirmed nor rejected), so order-picking is banned. */
+    const describeNode = async (nodeId) => {
+      const box = await session.send("DOM.getBoxModel", { nodeId }).catch(() => null);
+      if (!box?.model?.content) return null;
+      const c = box.model.content;
+      const resolved = await session.send("DOM.resolveNode", { nodeId }).catch(() => null);
+      let tag = null, text = null, disabled = false;
+      if (resolved?.object?.objectId) {
+        const info = await session
+          .send("Runtime.callFunctionOn", {
+            objectId: resolved.object.objectId,
+            functionDeclaration:
+              "function() { return { tag: this.tagName, text: (this.innerText || this.textContent || '').trim().slice(0, 60), disabled: !!this.disabled || this.getAttribute('aria-disabled') === 'true' }; }",
+            returnByValue: true,
+          })
+          .catch(() => null);
+        tag = info?.result?.value?.tag ?? null;
+        text = info?.result?.value?.text ?? null;
+        disabled = info?.result?.value?.disabled ?? false;
       }
-    }
+      return { cx: (c[0] + c[2] + c[4] + c[6]) / 4, cy: (c[1] + c[3] + c[5] + c[7]) / 4, tag, text, disabled };
+    };
 
-    if (!candidates.length) {
+    const collectCandidates = async () => {
+      for (const query of STRUCTURAL_QUERIES) {
+        await session.send("DOM.getDocument", { depth: -1, pierce: true });
+        const search = await session.send("DOM.performSearch", { query, includeUserAgentShadowDOM: true });
+        if (!search.resultCount) continue;
+        const { nodeIds } = await session.send("DOM.getSearchResults", { searchId: search.searchId, fromIndex: 0, toIndex: search.resultCount });
+        const out = [];
+        for (const nodeId of nodeIds) {
+          const d = await describeNode(nodeId);
+          if (d) out.push(d);
+        }
+        if (out.length) return { usedQuery: query, candidates: out };
+      }
+      return await collectTextCandidates();
+    };
+
+    // Text-leaf search for the action words themselves. Needed both when no
+    // structural hit exists (connect screen) AND when structural hits are
+    // only wrapper containers — measured: the tx screen's sole bottom hit is
+    // one DIV whose text is "Decline\nSign" (both buttons in one box), so
+    // identity-picking on structural results alone can never resolve it.
+    // Prefer elements whose own text is EXACTLY the word ("Sign"), otherwise
+    // a header like "Sign Transaction" would win the text search.
+    const collectTextCandidates = async () => {
       for (const word of TEXT_CANDIDATES) {
         await session.send("DOM.getDocument", { depth: -1, pierce: true });
         const textSearch = await session.send("DOM.performSearch", { query: word, includeUserAgentShadowDOM: true });
         if (!textSearch.resultCount) continue;
+        const out = [];
         const { nodeIds } = await session.send("DOM.getSearchResults", { searchId: textSearch.searchId, fromIndex: 0, toIndex: textSearch.resultCount });
         for (const nodeId of nodeIds) {
           const point = await resolveTextNodeToClickable(session, nodeId);
-          if (point) candidates.push({ ...point, word });
+          if (point) out.push({ ...point, disabled: false, word });
         }
-        if (candidates.length) {
-          usedQuery = `text:"${word}"`;
-          break;
-        }
+        const exact = out.filter((c) => (c.text || "").trim() === word);
+        if (exact.length) return { usedQuery: `text:"${word}" (exact)`, candidates: exact };
+        if (out.length) return { usedQuery: `text:"${word}"`, candidates: out };
       }
+      return { usedQuery: null, candidates: [] };
+    };
+
+    const pickAction = (list) =>
+      [...list].reverse().find((c) => c.text && ACTION_RE.test(c.text) && !REJECT_RE.test(c.text) && !c.disabled) ?? null;
+
+    // The tx-confirm screen's primary button can appear/enable only after fee
+    // estimation finishes — re-poll until an enabled action-word candidate
+    // shows up instead of clicking whatever is there first.
+    // On the tx-confirm screen the Sign button stays disabled until fee
+    // estimation completes ("Network Fee" shows "-" while estimating, and a
+    // disabled RNW div is indistinguishable from an enabled one in DOM).
+    // Wait for the fee value to materialize before picking a button.
+    // A loading shimmer leaves the fee line EMPTY (innerText jumps straight
+    // to "Decline") — measured: treating "no dash" as done clicked a still-
+    // disabled Sign. Only a fee line containing a digit counts as settled,
+    // and an estimation error fails fast instead of waiting out the clock.
+    const feeSettled = await waitFor(
+      () =>
+        session.evaluate(`
+          (() => {
+            const t = document.body ? (document.body.innerText || '') : '';
+            if (/Transaction execution error/i.test(t)) return 'estimation_error';
+            if (!/Network Fee/i.test(t)) return 'no_fee_row';
+            const m = t.match(/Network Fee\\s*\\n\\s*([^\\n]*)/);
+            const line = m ? m[1].trim() : '';
+            return /[0-9]/.test(line) && line !== '-' ? 'fee_shown' : null;
+          })()
+        `),
+      { timeoutMs: 45_000, intervalMs: 800 }
+    );
+    if (feeSettled.ready && feeSettled.result === "estimation_error") {
+      const t = await session.evaluate(`document.body ? (document.body.innerText || '').slice(0, 400) : ''`).catch(() => "");
+      const errShot = path.join(LOG_DIR, `demo-web-panel-esterror-${Date.now()}.png`);
+      await captureScreenshot(session, errShot).catch(() => {});
+      throw new Error(`Braavos fee estimation FAILED (Transaction execution error shown). Panel text: ${JSON.stringify(t)}. Screenshot: ${errShot}`);
+    }
+    if (!feeSettled.ready) {
+      const t = await session.evaluate(`document.body ? (document.body.innerText || '').slice(0, 400) : ''`).catch(() => "");
+      // Do not click anything — an unestimatable tx means Sign never enables.
+      const feeShot = path.join(LOG_DIR, `demo-web-panel-feestuck-${Date.now()}.png`);
+      await captureScreenshot(session, feeShot).catch(() => {});
+      throw new Error(`Braavos fee estimation never completed within 30s (Network Fee still "-"). Panel text: ${JSON.stringify(t)}. Screenshot: ${feeShot}`);
     }
 
-    if (!candidates.length) {
-      const diag = await session
-        .evaluate(`
-          (() => {
-            const describe = (el, depth) => {
-              if (!el || depth > 6) return null;
-              return {
-                tag: el.tagName,
-                class: (el.className && el.className.toString().slice(0, 60)) || null,
-                childCount: el.children ? el.children.length : 0,
-                children: el.children ? [...el.children].map((c) => describe(c, depth + 1)) : [],
-              };
-            };
-            return { title: document.title, tree: document.body ? [...document.body.children].map((c) => describe(c, 0)) : [] };
-          })()
-        `)
-        .catch((e) => ({ evalError: String(e.message || e) }));
+    let usedQuery = null;
+    let candidates = [];
+    let primary = null;
+    const pollDeadline = Date.now() + 25_000;
+    while (Date.now() < pollDeadline) {
+      ({ usedQuery, candidates } = await collectCandidates());
+      primary = pickAction(candidates);
+      if (primary) break;
+      // Structural hits can be container-only (see collectTextCandidates) —
+      // fall through to a text-leaf pass before waiting another round.
+      const textOnly = await collectTextCandidates();
+      const textPick = pickAction(textOnly.candidates);
+      if (textPick) {
+        ({ usedQuery, candidates } = textOnly);
+        primary = textPick;
+        break;
+      }
+      await sleep(1200);
+    }
+
+    const shot = path.join(LOG_DIR, `demo-web-panel-${Date.now()}.png`);
+    await captureScreenshot(session, shot).catch(() => {});
+
+    if (!primary) {
+      // Measured on a real run: the panel showed "41: Transaction execution
+      // error" with a disabled Sign button — the blocker is the wallet's own
+      // fee-estimation/simulation failing, not the click. If a "See Error"
+      // link is present, open it and screenshot the detail as evidence.
+      let errorShot = null;
+      await session.send("DOM.getDocument", { depth: -1, pierce: true });
+      const errSearch = await session.send("DOM.performSearch", { query: "See Error", includeUserAgentShadowDOM: true }).catch(() => null);
+      if (errSearch?.resultCount) {
+        const { nodeIds } = await session.send("DOM.getSearchResults", { searchId: errSearch.searchId, fromIndex: 0, toIndex: errSearch.resultCount });
+        for (const nodeId of nodeIds) {
+          const point = await resolveTextNodeToClickable(session, nodeId);
+          if (point) {
+            await clickPoint(session, point.cx, point.cy);
+            await sleep(2000);
+            errorShot = path.join(LOG_DIR, `demo-web-panel-error-${Date.now()}.png`);
+            await captureScreenshot(session, errorShot).catch(() => {});
+            break;
+          }
+        }
+      }
+      const panelText = await session.evaluate(`document.body ? (document.body.innerText || '').slice(0, 1500) : ''`).catch(() => "");
       throw new Error(
-        `Found 0 clickable elements in the Braavos request UI via structural queries ${JSON.stringify(STRUCTURAL_QUERIES)} ` +
-          `and text candidates ${JSON.stringify(TEXT_CANDIDATES)}. Diagnostic: ${JSON.stringify(diag)}`
+        `No enabled action button (${String(ACTION_RE)}) appeared in the Braavos request UI within 25s. ` +
+          `Refusing to blind-click by position. Candidates seen: ${JSON.stringify(
+            candidates.map((c) => ({ tag: c.tag, text: c.text, disabled: c.disabled, x: Math.round(c.cx), y: Math.round(c.cy) }))
+          )}. Screenshot: ${shot}${errorShot ? ` — error detail screenshot: ${errorShot}` : ""}. Panel text: ${JSON.stringify(panelText)}`
       );
     }
 
-    // Prefer a non-<IMG> candidate (an icon/logo match is more likely a false
-    // positive than the actual pressable container) when more than one exists.
-    const nonImg = candidates.filter((c) => c.tag !== "IMG");
-    const primary = (nonImg.length ? nonImg : candidates)[(nonImg.length ? nonImg : candidates).length - 1];
-    await clickPoint(session, primary.cx, primary.cy);
+    // Click-and-verify: a click on a still-disabled RNW div is a silent
+    // no-op (DOM can't tell the two apart), so after each click check that
+    // the request screen actually went away; if not, re-resolve and click
+    // again until the deadline.
+    let clickAttempts = 0;
+    const clickDeadline = Date.now() + 40_000;
+    let panelChanged = false;
+    while (Date.now() < clickDeadline) {
+      await clickPoint(session, primary.cx, primary.cy);
+      clickAttempts++;
+      await sleep(2500);
+      const still = await session
+        .evaluate(`document.body ? /Decline/.test(document.body.innerText || '') && ${JSON.stringify(DAPP_REQUEST_PATHS)}.some((p) => location.href.includes(p)) : false`)
+        .catch(() => false); // an evaluate failure usually means the panel target closed = accepted
+      if (!still) {
+        panelChanged = true;
+        break;
+      }
+      const again = await collectTextCandidates();
+      const p2 = pickAction(again.candidates);
+      if (p2) primary = p2;
+    }
+    const afterShot = path.join(LOG_DIR, `demo-web-panel-after-${Date.now()}.png`);
+    await captureScreenshot(session, afterShot).catch(() => {});
     return {
       query: usedQuery,
-      candidates: candidates.map((c) => ({ tag: c.tag, text: c.text, word: c.word, x: Math.round(c.cx), y: Math.round(c.cy) })),
-      clickedAt: { x: primary.cx, y: primary.cy },
+      candidates: candidates.map((c) => ({ tag: c.tag, text: c.text, disabled: c.disabled, word: c.word, x: Math.round(c.cx), y: Math.round(c.cy) })),
+      clicked: { tag: primary.tag, text: primary.text, x: Math.round(primary.cx), y: Math.round(primary.cy) },
+      clickAttempts,
+      panelChanged,
+      screenshot: shot,
+      afterScreenshot: afterShot,
     };
   } finally {
     session.close();
@@ -1167,12 +1295,19 @@ async function runDemo(flags) {
   let recording = null;
   let getTxHash = () => null;
   let capturedTxHash = null;
+  let swSession = null;
 
   const cleanup = async () => {
     if (recording) {
       try {
         await recording.stop();
       } catch {}
+    }
+    if (swSession) {
+      try {
+        swSession.close();
+      } catch {}
+      swSession = null;
     }
     await killPersistentChrome();
     await killDevServer();
@@ -1366,30 +1501,75 @@ async function runDemo(flags) {
       // not through the dapp page's network stack. Hook the wallet
       // provider's own `request` method instead: its return value IS the
       // transaction_hash, captured at the JS level regardless of transport.
+      // Measured (probe on this exact profile/build): window.starknet_braavos
+      // EXISTS on localhost pages with request() inherited from deep in its
+      // prototype chain, and the app's tx path is
+      // connector.features['starknet:walletApi'].request(...) — a get-starknet
+      // wrapper that delegates to w.request dynamically, so an own-property
+      // shadow intercepts it. Wrap account.execute too (legacy path) and
+      // verify each assignment actually took instead of assuming.
       const hookInstalled = await session.evaluate(`
         (() => {
           const w = window.starknet_braavos;
-          if (!w || typeof w.request !== 'function' || w.__demoHooked) return !!w?.__demoHooked;
-          const orig = w.request.bind(w);
+          if (!w) return { ok: false, reason: "no window.starknet_braavos" };
+          if (w.__demoHooked) return { ok: true, wrapped: ["already hooked"] };
           window.__DEMO_TX = null;
           window.__DEMO_TX_ERROR = null;
-          w.request = async (...args) => {
-            try {
-              const result = await orig(...args);
-              if (result && typeof result === 'object' && result.transaction_hash) window.__DEMO_TX = result.transaction_hash;
-              return result;
-            } catch (err) {
-              window.__DEMO_TX_ERROR = String((err && err.message) || err);
-              throw err;
-            }
+          const capture = (result) => {
+            if (result && typeof result === 'object' && result.transaction_hash) window.__DEMO_TX = result.transaction_hash;
+            return result;
           };
+          const wrapped = [];
+          if (typeof w.request === 'function') {
+            const orig = w.request.bind(w);
+            const shadow = async (...args) => {
+              try { window.__DEMO_TX_REQ = JSON.stringify(args); } catch {}
+              try {
+                return capture(await orig(...args));
+              } catch (err) {
+                window.__DEMO_TX_ERROR = String((err && err.message) || err);
+                throw err;
+              }
+            };
+            try { w.request = shadow; } catch {}
+            if (w.request === shadow) wrapped.push("request");
+          }
+          const acct = w.account;
+          if (acct && typeof acct.execute === 'function') {
+            const origExec = acct.execute.bind(acct);
+            const shadowExec = async (...args) => {
+              try {
+                return capture(await origExec(...args));
+              } catch (err) {
+                window.__DEMO_TX_ERROR = String((err && err.message) || err);
+                throw err;
+              }
+            };
+            try { acct.execute = shadowExec; } catch {}
+            if (acct.execute === shadowExec) wrapped.push("account.execute");
+          }
           w.__demoHooked = true;
-          return true;
+          return { ok: wrapped.length > 0, wrapped };
         })()
       `);
-      report("run:tx_hash_hook", hookInstalled ? "ĐO ĐƯỢC" : "THẤT BẠI", hookInstalled ? "hooked window.starknet_braavos.request" : "window.starknet_braavos.request not hookable");
-      if (!hookInstalled) {
-        report("run:write_tx", "THẤT BẠI", "Không hook được provider.request để bắt transaction_hash.");
+      report("run:tx_hash_hook", hookInstalled?.ok ? "ĐO ĐƯỢC" : "THẤT BẠI", hookInstalled);
+
+      // Fallback per captain's brief: Braavos submits the invoke RPC from its
+      // OWN service worker, invisible to the dapp tab's Network domain — so
+      // also attach a Network capture directly to that service worker target.
+      let getSwTxHash = () => null;
+      const swTarget = await findServiceWorkerTarget();
+      if (swTarget) {
+        swSession = await connectSession(swTarget.webSocketDebuggerUrl);
+        await swSession.send("Network.enable");
+        getSwTxHash = attachTxHashCapture(swSession);
+        report("run:sw_tx_capture", "ĐO ĐƯỢC", `Network capture attached to Braavos service worker: ${swTarget.url}`);
+      } else {
+        report("run:sw_tx_capture", "THẤT BẠI", "Không tìm thấy service worker target của Braavos để attach Network capture.");
+      }
+
+      if (!hookInstalled?.ok && !swTarget) {
+        report("run:write_tx", "THẤT BẠI", "Cả provider hook lẫn service-worker Network capture đều không attach được — không có nguồn nào để bắt transaction_hash.");
         process.exitCode = 1;
         return;
       }
@@ -1413,6 +1593,8 @@ async function runDemo(flags) {
           process.exitCode = 1;
           return;
         }
+        const txReqPayload = await session.evaluate(`window.__DEMO_TX_REQ ?? null`).catch(() => null);
+        report("run:tx_request_payload", txReqPayload ? "ĐO ĐƯỢC" : "KHÔNG CHẠY", txReqPayload ?? "hook chưa thấy request nào từ dapp");
         approveTx = await approveBraavosRequest(txRequest, password);
         if (approveTx.lostContext) {
           report("run:tx_approval_retry", "ĐO ĐƯỢC", approveTx.reason + " — thử lại click Send.");
@@ -1436,7 +1618,11 @@ async function runDemo(flags) {
       const hashCaptured = await waitFor(
         async () => {
           const v = await session.evaluate(`window.__DEMO_TX`).catch(() => null);
-          if (v) return v;
+          if (v) return { hash: v, source: "provider_hook" };
+          const sw = getSwTxHash();
+          if (sw) return { hash: sw, source: "service_worker_network" };
+          const tabHash = getTxHash();
+          if (tabHash) return { hash: tabHash, source: "dapp_tab_network" };
           const err = await session.evaluate(`window.__DEMO_TX_ERROR`).catch(() => null);
           if (err) throw new Error(`provider.request rejected: ${err}`);
           return false;
@@ -1444,11 +1630,15 @@ async function runDemo(flags) {
         { timeoutMs: TX_CONFIRM_TIMEOUT_MS, intervalMs: 500 }
       );
       if (!hashCaptured.ready) {
-        report("run:write_tx", "THẤT BẠI", `window.__DEMO_TX không xuất hiện trong ${Math.round(TX_CONFIRM_TIMEOUT_MS / 1000)}s (provider.request hook) — có thể đã click nhầm nút Reject.`);
+        report(
+          "run:write_tx",
+          "THẤT BẠI",
+          `Không nguồn nào (provider hook / SW network / tab network) thấy transaction_hash trong ${Math.round(TX_CONFIRM_TIMEOUT_MS / 1000)}s — có thể đã click nhầm nút Reject.`
+        );
         process.exitCode = 1;
         return;
       }
-      report("run:write_tx", "ĐO ĐƯỢC", `set_greeting("${newValue}") tx_hash=${hashCaptured.result}`);
+      report("run:write_tx", "ĐO ĐƯỢC", `set_greeting("${newValue}") tx_hash=${hashCaptured.result.hash} (source: ${hashCaptured.result.source})`);
 
       await navigateAndWaitLoad(session, `${APP_URL}/debug`);
       await sleep(1200);
@@ -1469,7 +1659,7 @@ async function runDemo(flags) {
       await assertNoSecretLeak(session, "after read-again");
       report("run:read_after", "ĐO ĐƯỢC", `"${valueBefore}" -> "${changed.result}"`);
 
-      capturedTxHash = hashCaptured.result;
+      capturedTxHash = hashCaptured.result.hash;
     }
 
     const { frames, recordStartMs, recordEndMs } = await recording.stop();
