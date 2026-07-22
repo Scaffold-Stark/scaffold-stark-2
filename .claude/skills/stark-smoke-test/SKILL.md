@@ -18,10 +18,89 @@ synthetic mouse coordinates, which break on any layout change.
 
 ## Scope
 
-This repo only, devnet only. Sepolia and mainnet are out of scope — they need
-funded accounts and live external RPC, and one rate-limit would produce a false
-red gate that trains people to ignore this skill. **Do not touch sibling repos**
-— that is Phase 2.
+This repo only. The 13-step gate above is devnet-only — mainnet is out of
+scope entirely. Sepolia has its own separate, opt-in gate (below); it is not
+step 14 of the devnet gate and a devnet green remains a devnet green
+regardless of whether Sepolia has been run. **Do not touch sibling repos** —
+that is Phase 2.
+
+## Sepolia gate (opt-in, S1-S5)
+
+Design: `docs/superpowers/specs/2026-07-22-sepolia-deploy-gate-design.md`
+
+The devnet gate proves the stack works against `starknet-devnet`. It does not
+prove a real declare+deploy would succeed against a live sequencer — fee
+estimation, class-hash rules, RPC version negotiation and sequencer admission
+all differ. This command proves that against real Sepolia, without letting
+infrastructure flake (a rate limit, an unfunded account, a slow RPC)
+masquerade as a code failure.
+
+```bash
+node .claude/workflows/stark-smoke-test.mjs sepolia
+```
+
+It spawns no long-lived processes — no `up`/`down` lifecycle, no
+orphaned-process risk. It runs S1 through S5, reports, and exits.
+
+**Real STRK is spent on every run.** The command is opt-in partly for this
+reason — never run it as part of a routine gate check without the operator
+asking for it.
+
+**Three-way exit code contract** — this is not pass/fail like the devnet gate:
+
+| Exit | Meaning | Effect on Phase 2 |
+| --- | --- | --- |
+| `0` | GREEN — declared, deployed, and confirmed on-chain | unblocked |
+| `2` | INFRA (yellow) — unconfigured, unfunded, unreachable RPC, timeout, 429 | **does not block**; retryable |
+| `1` | RED — chain-id mismatch, a real declare/deploy rejection, or no class on-chain | **blocks** |
+
+An INFRA exit is explicitly not a code failure — do not report it as a red
+gate, and do not retry-loop it blindly; read what S1–S5 printed and fix the
+named cause (fund the account, fix the RPC URL, wait out the rate limit).
+
+**The five steps:**
+
+- **S1 — preflight.** Reuses the devnet toolchain check, then requires
+  `PRIVATE_KEY_SEPOLIA`, `ACCOUNT_ADDRESS_SEPOLIA`, `RPC_URL_SEPOLIA` to be
+  present and non-empty in `packages/snfoundry/.env`. Missing → INFRA. This
+  gate **never writes to `.env`** and never offers to — unlike the devnet
+  step, these are not public fixture keys.
+- **S2 — RPC identity.** `starknet_chainId` against `RPC_URL_SEPOLIA` must
+  answer `SN_SEPOLIA`. A different chain id is RED (the operator is pointed at
+  the wrong network — deploying would be actively wrong); a connection error,
+  timeout, 429, or 5xx is INFRA.
+- **S3 — fee balance.** `balanceOf` on the STRK fee token for
+  `ACCOUNT_ADDRESS_SEPOLIA`, compared against a documented minimum. Below the
+  minimum is INFRA — this is the single most likely cause of a false red gate,
+  so it is caught before spending a real declare/deploy on it.
+- **S4 — deploy.** `yarn deploy --network sepolia`, logged to
+  `.smoke-test-logs/deploy-sepolia.log`, on a timeout far longer than the
+  devnet deploy (Sepolia block times are slower). A timeout is INFRA; an
+  actual declare/deploy rejection reported by the tooling is RED.
+- **S5 — on-chain confirmation.** The proof step — S4 exiting 0 only means the
+  deploy script believed it succeeded. Parses the Sepolia entry out of
+  `packages/nextjs/contracts/deployedContracts.ts` and calls
+  `starknet_getClassHashAt` against that address. A non-zero class hash is
+  GREEN; an absent address or "no class at that address" is RED; an
+  unreachable RPC at this point is INFRA — **and the message says explicitly
+  that the deploy may well have succeeded but was not confirmed.** Never
+  report green here.
+
+**Side effect to know about:** `packages/nextjs/contracts/deployedContracts.ts`
+is modified by S4 (the Sepolia entry is added or updated). This is correct
+behavior — the script prints that the file changed and leaves
+commit-or-revert to the operator. It does not silently revert or stash the
+working tree.
+
+**Secret hygiene:** `RPC_URL_SEPOLIA` contains an API key. Never paste it into
+a report, a commit message, or anywhere else the raw output goes — the script
+itself redacts it from everything it prints to stdout, so a pasted log cannot
+leak it.
+
+**Reporting rule for this gate** matches the devnet gate's: report each of
+S1–S5 as `PASSED`, `FAILED`, or `NOT RUN`. If the run stops at S3, S4–S5 are
+`NOT RUN` — not passes. Never collapse the run into "Sepolia passed" unless
+all five steps actually executed and were observed.
 
 ## Commands
 

@@ -14,6 +14,14 @@
  *   node .claude/workflows/stark-smoke-test.mjs verify # steps 8-13, against an already-running stack
  *   node .claude/workflows/stark-smoke-test.mjs run    # up -> verify -> down, CI entry point
  *
+ * A separate, opt-in `sepolia` command (S1-S5) proves a real declare+deploy
+ * against live Sepolia. It is not part of the 13-step devnet gate above, has
+ * no up/down lifecycle of its own, and spends real STRK on every run:
+ *
+ *   node .claude/workflows/stark-smoke-test.mjs sepolia
+ *
+ * Design: docs/superpowers/specs/2026-07-22-sepolia-deploy-gate-design.md
+ *
  * Plain Node ESM, builtins only. This is a template repo: every dependency
  * added here is inherited by every fork and by create-stark.
  */
@@ -68,6 +76,23 @@ const TOOLCHAIN = {
   "starknet-foundry": { bin: "snforge", args: ["--version"] },
   "starknet-devnet": { bin: "starknet-devnet", args: ["--version"] },
 };
+
+// -------------------------------------------------------------- sepolia ---
+
+const REQUIRED_SEPOLIA_VARS = ["PRIVATE_KEY_SEPOLIA", "ACCOUNT_ADDRESS_SEPOLIA", "RPC_URL_SEPOLIA"];
+// ascii "SN_SEPOLIA" packed as a felt — the chain id starknet_chainId must answer with.
+const SN_SEPOLIA_CHAIN_ID = "0x534e5f5345504f4c4941";
+// Same STRK ERC20 address on every network (see packages/snfoundry/scripts-ts/helpers/networks.ts).
+const STRK_TOKEN_ADDRESS = "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
+// keccak-based entrypoint selector for "balanceOf", computed with this repo's
+// own starknet.js: hash.getSelectorFromName("balanceOf").
+const BALANCE_OF_SELECTOR = "0x2e4263afad30923c891518314c3c95dbe830a16874e8abc5777a9a20b54c76e";
+// Not a fee estimate — just a floor high enough to catch a plainly unfunded
+// account before spending a real declare+deploy attempt against it.
+const MIN_SEPOLIA_STRK_WEI = 10n ** 16n; // 0.01 STRK
+const SEPOLIA_RPC_TIMEOUT_MS = 15_000;
+// Sepolia block times are far slower than devnet's, hence the longer budget than DEPLOY_TIMEOUT_MS.
+const SEPOLIA_DEPLOY_TIMEOUT_MS = 900_000;
 
 // ---------------------------------------------------------------- output ---
 
@@ -1163,6 +1188,247 @@ async function runFull(flags) {
   process.exit(0);
 }
 
+// --------------------------------------------------------------- sepolia ---
+//
+// Opt-in live-network deploy gate (S1-S5). Spawns no long-lived processes —
+// no up/down lifecycle, no orphaned-process risk. Runs, reports, exits with a
+// three-way code: 0 GREEN, 2 INFRA (yellow, does not block Phase 2), 1 RED
+// (blocks Phase 2). Reuses fail()/run()/log-file conventions from the devnet
+// path above but does not call fail() itself — that function's "13 steps"
+// framing and reportRunningStack() do not apply to a gate with no stack.
+//
+// Design: docs/superpowers/specs/2026-07-22-sepolia-deploy-gate-design.md
+
+const stepS = (n, title) => console.log(`\n[S${n}/5] ${title}`);
+
+/** Set once S1 reads RPC_URL_SEPOLIA, so every later message can be scrubbed of it. */
+let sepoliaRpcUrl = null;
+
+/** RPC_URL_SEPOLIA carries an API key; never let it reach stdout, even inside an error message. */
+function redactRpcUrl(text) {
+  if (!text || !sepoliaRpcUrl) return text;
+  return text.split(sepoliaRpcUrl).join("[RPC_URL_SEPOLIA redacted]");
+}
+
+function sepoliaExit(kind, n, title, message, verbatim) {
+  const label = kind === "red" ? "RED" : "INFRA";
+  console.error(`\n=========================================================`);
+  console.error(`SEPOLIA GATE ${label} AT STEP S${n}/5 — ${title}`);
+  console.error(`=========================================================`);
+  console.error(redactRpcUrl(message));
+  if (verbatim && verbatim.trim()) {
+    console.error(`\n--- verbatim output ---`);
+    console.error(redactRpcUrl(verbatim.trimEnd()));
+    console.error(`--- end verbatim output ---`);
+  }
+  console.error(
+    kind === "red"
+      ? `\nRED GATE: this blocks Phase 2 — a real rejection or a missing on-chain class, not infrastructure.`
+      : `\nINFRA (yellow): this does NOT block Phase 2. It is retryable once the underlying issue (config, funding, connectivity) is fixed.`
+  );
+  process.exit(kind === "red" ? 1 : 2);
+}
+const sepoliaRed = (n, title, message, verbatim) => sepoliaExit("red", n, title, message, verbatim);
+const sepoliaInfra = (n, title, message, verbatim) => sepoliaExit("infra", n, title, message, verbatim);
+
+/** POST a JSON-RPC request. Separates transport failures from RPC-level error objects, since S5 needs to tell them apart. */
+async function rpcJson(url, method, params) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), SEPOLIA_RPC_TIMEOUT_MS);
+  let res;
+  try {
+    res = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+      signal: controller.signal,
+    });
+  } catch (err) {
+    return { ok: false, transportError: true, message: `request failed: ${String(err?.message ?? err)}` };
+  } finally {
+    clearTimeout(timer);
+  }
+  if (res.status === 429 || res.status >= 500) {
+    return { ok: false, transportError: true, message: `HTTP ${res.status} from RPC` };
+  }
+  let body;
+  try {
+    body = await res.json();
+  } catch {
+    return { ok: false, transportError: true, message: `HTTP ${res.status}, non-JSON response` };
+  }
+  if (body.error) {
+    return { ok: false, rpcError: body.error, message: `RPC error ${body.error.code}: ${body.error.message}` };
+  }
+  return { ok: true, result: body.result };
+}
+
+function formatStrk(wei) {
+  const whole = wei / 10n ** 18n;
+  const frac = (wei % 10n ** 18n).toString().padStart(18, "0").slice(0, 6);
+  return `${whole}.${frac}`;
+}
+
+async function sepoliaStepPreflight() {
+  stepS(1, "Preflight: toolchain + Sepolia env vars");
+  await stepToolVersions(); // reused as-is; exits 1 through fail() on a toolchain mismatch
+
+  let envText;
+  try {
+    envText = fs.readFileSync(ENV_FILE, "utf8");
+  } catch {
+    envText = "";
+  }
+  const vars = parseEnvFile(envText);
+  const missing = REQUIRED_SEPOLIA_VARS.filter((name) => !vars[name]);
+  if (missing.length) {
+    sepoliaInfra(
+      1,
+      "Sepolia env check",
+      `Missing (or empty) in ${path.relative(ROOT, ENV_FILE)}: ${missing.join(", ")}\n\n` +
+        `This gate never writes to your .env — fill in the missing value(s) yourself:\n\n` +
+        missing.map((v) => `  ${v}=`).join("\n") +
+        `\n\nThis is a "not configured" state, not a code failure.`
+    );
+  }
+  for (const name of REQUIRED_SEPOLIA_VARS) ok(`${name} set`);
+  sepoliaRpcUrl = vars.RPC_URL_SEPOLIA;
+  return vars;
+}
+
+async function sepoliaStepRpcIdentity() {
+  stepS(2, "RPC identity check (starknet_chainId)");
+  const result = await rpcJson(sepoliaRpcUrl, "starknet_chainId", []);
+  if (!result.ok) {
+    sepoliaInfra(2, "RPC identity", `starknet_chainId against RPC_URL_SEPOLIA failed: ${result.message}`);
+  }
+  if (normalizeHex(result.result) !== normalizeHex(SN_SEPOLIA_CHAIN_ID)) {
+    sepoliaRed(
+      2,
+      "RPC identity",
+      `RPC_URL_SEPOLIA answered starknet_chainId with ${result.result}, not SN_SEPOLIA (${SN_SEPOLIA_CHAIN_ID}).\n` +
+        `RPC_URL_SEPOLIA is pointed at the wrong network — deploying now would be actively wrong.`
+    );
+  }
+  ok(`chain id confirmed SN_SEPOLIA`);
+}
+
+async function sepoliaStepBalance(accountAddress) {
+  stepS(3, "Fee balance check (STRK balanceOf)");
+  const result = await rpcJson(sepoliaRpcUrl, "starknet_call", [
+    { contract_address: STRK_TOKEN_ADDRESS, entry_point_selector: BALANCE_OF_SELECTOR, calldata: [accountAddress] },
+    "latest",
+  ]);
+  if (!result.ok) {
+    sepoliaInfra(3, "fee balance check", `starknet_call balanceOf against RPC_URL_SEPOLIA failed: ${result.message}`);
+  }
+  const [lowHex, highHex] = Array.isArray(result.result) ? result.result : [];
+  if (lowHex === undefined) {
+    sepoliaInfra(3, "fee balance check", `starknet_call balanceOf returned an unexpected shape: ${JSON.stringify(result.result)}`);
+  }
+  const balance = BigInt(lowHex) + (BigInt(highHex ?? "0x0") << 128n);
+  if (balance < MIN_SEPOLIA_STRK_WEI) {
+    sepoliaInfra(
+      3,
+      "fee balance check",
+      `ACCOUNT_ADDRESS_SEPOLIA (${accountAddress}) has ${formatStrk(balance)} STRK, below the ${formatStrk(MIN_SEPOLIA_STRK_WEI)} STRK minimum this gate requires.\n` +
+        `Fund this account on Sepolia and re-run.`
+    );
+  }
+  ok(`fee balance ${formatStrk(balance)} STRK (>= ${formatStrk(MIN_SEPOLIA_STRK_WEI)} minimum)`);
+}
+
+async function sepoliaStepDeploy() {
+  stepS(4, "Deploy (yarn deploy --network sepolia)");
+  fs.mkdirSync(LOG_DIR, { recursive: true });
+  const log = path.join(LOG_DIR, "deploy-sepolia.log");
+  fs.writeFileSync(log, "");
+
+  const result = await run("yarn", ["deploy", "--network", "sepolia"], { timeoutMs: SEPOLIA_DEPLOY_TIMEOUT_MS, logFile: log });
+
+  if (result.spawnError) {
+    sepoliaInfra(4, "deploy", `Could not run \`yarn deploy --network sepolia\`.`, result.output);
+  }
+  if (result.timedOut) {
+    sepoliaInfra(
+      4,
+      "deploy",
+      `\`yarn deploy --network sepolia\` did not finish within ${Math.round(SEPOLIA_DEPLOY_TIMEOUT_MS / 1000)}s and was killed.\n` +
+        `Sepolia block times are far slower than devnet — this may not be a real failure. Check ${path.relative(ROOT, log)}.`,
+      result.output
+    );
+  }
+  if (result.code !== 0) {
+    sepoliaRed(4, "deploy", `\`yarn deploy --network sepolia\` exited with code ${result.code} — the sequencer rejected the declare or deploy.`, result.output);
+  }
+  ok(`yarn deploy --network sepolia exited 0, log ${path.relative(ROOT, log)}`);
+  console.log(`  NOTE: ${path.relative(ROOT, DEPLOYED_CONTRACTS)} was modified by this run.`);
+  console.log(`        Commit or revert it yourself — this script will not touch it.`);
+}
+
+/** Pulls the address of the first contract under the top-level "sepolia" key out of the regenerated deployedContracts.ts. */
+function extractSepoliaAddress() {
+  let contents;
+  try {
+    contents = fs.readFileSync(DEPLOYED_CONTRACTS, "utf8");
+  } catch (err) {
+    return { error: `Could not read ${path.relative(ROOT, DEPLOYED_CONTRACTS)}: ${String(err?.message ?? err)}` };
+  }
+  const sepoliaBlock = contents.match(/\bsepolia:\s*{/);
+  if (!sepoliaBlock) {
+    return { error: `No "sepolia" entry found in ${path.relative(ROOT, DEPLOYED_CONTRACTS)}.` };
+  }
+  const rest = contents.slice(sepoliaBlock.index + sepoliaBlock[0].length);
+  const address = rest.match(/address:\s*"(0x[0-9a-fA-F]+)"/);
+  if (!address) {
+    return { error: `Found a "sepolia" entry in ${path.relative(ROOT, DEPLOYED_CONTRACTS)} but no address inside it.` };
+  }
+  return { address: address[1] };
+}
+
+async function sepoliaStepConfirm() {
+  stepS(5, "On-chain confirmation (starknet_getClassHashAt)");
+  const parsed = extractSepoliaAddress();
+  if (parsed.error) {
+    sepoliaRed(5, "on-chain confirmation", parsed.error);
+  }
+  info(`checking class hash at ${parsed.address}`);
+
+  const result = await rpcJson(sepoliaRpcUrl, "starknet_getClassHashAt", ["latest", parsed.address]);
+  if (result.transportError) {
+    sepoliaInfra(
+      5,
+      "on-chain confirmation",
+      `starknet_getClassHashAt against RPC_URL_SEPOLIA failed: ${result.message}\n` +
+        `S4's deploy may well have succeeded but was not confirmed here — do not treat this as green. Re-run once the RPC is reachable.`
+    );
+  }
+  if (result.rpcError) {
+    sepoliaRed(5, "on-chain confirmation", `RPC reports no class at ${parsed.address} on Sepolia: ${result.message}.`);
+  }
+  if (!result.result || normalizeHex(result.result) === "0") {
+    sepoliaRed(5, "on-chain confirmation", `starknet_getClassHashAt returned a zero class hash for ${parsed.address} on Sepolia.`);
+  }
+  ok(`class hash confirmed on-chain: ${result.result}`);
+}
+
+async function sepolia() {
+  console.log(`stark-smoke-test: sepolia deploy gate (S1-S5)`);
+  console.log(`repo: ${ROOT}`);
+  console.log(`Opt-in, spends real STRK, separate from the 13-step devnet gate.`);
+
+  const vars = await sepoliaStepPreflight();
+  await sepoliaStepRpcIdentity();
+  await sepoliaStepBalance(vars.ACCOUNT_ADDRESS_SEPOLIA);
+  await sepoliaStepDeploy();
+  await sepoliaStepConfirm();
+
+  console.log(`\n=========================================================`);
+  console.log(`SEPOLIA GATE GREEN — S1-S5 all passed`);
+  console.log(`=========================================================`);
+  process.exit(0);
+}
+
 // ----------------------------------------------------------------- main ----
 
 const argv = process.argv.slice(2);
@@ -1178,6 +1444,7 @@ else if (mode === "verify") {
   console.log(`=========================================================`);
   process.exit(0);
 } else if (mode === "run") await runFull(flags);
+else if (mode === "sepolia") await sepolia();
 else {
   console.error(`stark-smoke-test — e2e devnet gate (13 steps: 1-7 process orchestration, 8-13 Chrome/CDP verification)
 
@@ -1186,6 +1453,7 @@ usage:
   node .claude/workflows/stark-smoke-test.mjs verify [--headed]
   node .claude/workflows/stark-smoke-test.mjs down
   node .claude/workflows/stark-smoke-test.mjs run [--write-env] [--headed]
+  node .claude/workflows/stark-smoke-test.mjs sepolia
 
   up      preflight + bring devnet/deploy/dev-server up, then exit 0 leaving them RUNNING
           --write-env  consent up front to appending the devnet block to packages/snfoundry/.env
@@ -1193,6 +1461,9 @@ usage:
           --headed     launch Chrome visibly instead of headless, for debugging
   down    kill whatever \`up\` recorded and confirm ports ${DEVNET_PORT}/${NEXT_PORT} are released
   run     up -> verify -> down in one shot; the CI entry point. Exits non-zero if any of the 13 steps fail.
-          On failure the stack is left running for debugging, same as \`up\`/\`verify\` alone.`);
+          On failure the stack is left running for debugging, same as \`up\`/\`verify\` alone.
+  sepolia opt-in live-network deploy gate (S1-S5): declares/deploys against real Sepolia and confirms
+          the class on-chain. Spends real STRK on every run. Exit 0 GREEN / 2 INFRA (yellow, does not
+          block Phase 2, retryable) / 1 RED (blocks Phase 2). Separate from the 13-step devnet gate above.`);
   process.exit(2);
 }
