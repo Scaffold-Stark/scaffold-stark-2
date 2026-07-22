@@ -28,6 +28,14 @@ that is Phase 2.
 
 Design: `docs/superpowers/specs/2026-07-22-sepolia-deploy-gate-design.md`
 
+**When to run:** Run the Sepolia gate AFTER the local devnet gate passes (all 13 steps). A devnet green stands on its own, but passing this Sepolia gate is a precondition for Phase 2 propagation. The required sequence is:
+1. Devnet gate green
+2. Sepolia gate green
+3. PR is merged
+4. Phase 2 propagation allowed
+
+*Note: Passing this gate proves deployment works on a live testnet sequencer, but it is not a guarantee of mainnet success. It is simply a precondition for Phase 2.*
+
 The devnet gate proves the stack works against `starknet-devnet`. It does not
 prove a real declare+deploy would succeed against a live sequencer — fee
 estimation, class-hash rules, RPC version negotiation and sequencer admission
