@@ -2,12 +2,12 @@
 /**
  * stark-demo-terminal — record a terminal GIF of the Sepolia deploy gate.
  *
- * Wraps `node .claude/workflows/stark-smoke-test.mjs sepolia` in an
+ * Wraps `node .claude/skills/stark-smoke-test/stark-smoke-test.mjs sepolia` in an
  * asciinema recording, converts it to a GIF with agg, and writes a proof
  * block (contract address, on-chain class hash, Starkscan link, branch +
  * commit, GIF duration vs. real run time) alongside it.
  *
- *   node .claude/workflows/stark-demo-terminal.mjs --branch <branch-name>
+ *   node .claude/skills/stark-demo-video/stark-demo-terminal.mjs --branch <branch-name>
  *
  * The GIF is not the proof — a screen recording can show anything and a
  * reviewer cannot verify it. The proof block is: it is built from what the
@@ -32,9 +32,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 const OUT_DIR = path.join(ROOT, ".smoke-test-logs", "demo-gif");
-const SMOKE_TEST_SCRIPT = path.join(ROOT, ".claude", "workflows", "stark-smoke-test.mjs");
+const SMOKE_TEST_SCRIPT = path.join(ROOT, ".claude", "skills", "stark-smoke-test", "stark-smoke-test.mjs");
 const ENV_FILE = path.join(ROOT, "packages", "snfoundry", ".env");
 
 // Real Sepolia declare+deploy can take minutes; agg's default 5s idle-time-limit
@@ -47,9 +47,9 @@ const AGG_IDLE_TIME_LIMIT_SECS = 3600;
 const AGG_LAST_FRAME_DURATION_SECS = 0;
 
 function usage() {
-  console.error(`Usage: node .claude/workflows/stark-demo-terminal.mjs --branch <branch-name>
+  console.error(`Usage: node .claude/skills/stark-demo-video/stark-demo-terminal.mjs --branch <branch-name>
 
-Records "node .claude/workflows/stark-smoke-test.mjs sepolia" with asciinema,
+Records "node .claude/skills/stark-smoke-test/stark-smoke-test.mjs sepolia" with asciinema,
 converts it to a GIF, and writes a proof block next to it in
 .smoke-test-logs/demo-gif/. Spends real STRK — see the Sepolia gate's own
 docs (.claude/skills/stark-smoke-test/SKILL.md) before running.
@@ -180,7 +180,7 @@ function main() {
   const recordedCommand =
     `${banner}; node ${shQuote(SMOKE_TEST_SCRIPT)} sepolia; printf '\\n[stark-demo-terminal] gate exited %s\\n' "$?"`;
 
-  console.log(`stark-demo-terminal: recording node .claude/workflows/stark-smoke-test.mjs sepolia`);
+  console.log(`stark-demo-terminal: recording node .claude/skills/stark-smoke-test/stark-smoke-test.mjs sepolia`);
   console.log(`branch: ${actualBranch}`);
   console.log(`commit: ${commitFull}`);
   console.log(`cast:   ${path.relative(ROOT, castFile)}`);
