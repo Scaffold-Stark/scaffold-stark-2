@@ -44,7 +44,7 @@ infrastructure flake (a rate limit, an unfunded account, a slow RPC)
 masquerade as a code failure.
 
 ```bash
-node .claude/workflows/stark-smoke-test.mjs sepolia
+node .claude/skills/stark-smoke-test/stark-smoke-test.mjs sepolia
 ```
 
 It spawns no long-lived processes — no `up`/`down` lifecycle, no
@@ -113,10 +113,10 @@ all five steps actually executed and were observed.
 ## Commands
 
 ```bash
-node .claude/workflows/stark-smoke-test.mjs up [--write-env]      # steps 1-7, leaves stack RUNNING
-node .claude/workflows/stark-smoke-test.mjs verify [--headed]     # steps 8-13, against an already-running stack
-node .claude/workflows/stark-smoke-test.mjs down                  # kills what `up` recorded
-node .claude/workflows/stark-smoke-test.mjs run [--write-env] [--headed]  # up -> verify -> down; the CI entry point
+node .claude/skills/stark-smoke-test/stark-smoke-test.mjs up [--write-env]      # steps 1-7, leaves stack RUNNING
+node .claude/skills/stark-smoke-test/stark-smoke-test.mjs verify [--headed]     # steps 8-13, against an already-running stack
+node .claude/skills/stark-smoke-test/stark-smoke-test.mjs down                  # kills what `up` recorded
+node .claude/skills/stark-smoke-test/stark-smoke-test.mjs run [--write-env] [--headed]  # up -> verify -> down; the CI entry point
 ```
 
 `run` is the one-shot gate: it exits non-zero if any of the 13 steps fail, and
@@ -134,7 +134,7 @@ debugging port (9333) and checks it is free first, the same way `up` checks
 ## Step A — bring the stack up (steps 1–7)
 
 ```bash
-node .claude/workflows/stark-smoke-test.mjs up
+node .claude/skills/stark-smoke-test/stark-smoke-test.mjs up
 ```
 
 This exits 0 with devnet and the dev server **still running**, and prints their
@@ -156,7 +156,7 @@ blindly, and do not report a generic "deploy failed".
 ## Step B — verify in Chrome over CDP (steps 8–13)
 
 ```bash
-node .claude/workflows/stark-smoke-test.mjs verify
+node .claude/skills/stark-smoke-test/stark-smoke-test.mjs verify
 ```
 
 Launches headless Chrome on an isolated temp profile (never the operator's real
@@ -200,7 +200,7 @@ and for how long. A step failure prints in the same
 `SMOKE TEST FAILED AT STEP N/13` format as steps 1–7, with verbatim detail —
 never a generic message.
 
-Selectors live in `.claude/workflows/stark-smoke-test.mjs` (steps 8–13) and
+Selectors live in `.claude/skills/stark-smoke-test/stark-smoke-test.mjs` (steps 8–13) and
 were read off the real rendered DOM, not guessed. If the UI changes and a
 selector goes stale, re-inspect the live DOM before editing it — do not guess a
 replacement.
@@ -208,7 +208,7 @@ replacement.
 ## Step C — tear down
 
 ```bash
-node .claude/workflows/stark-smoke-test.mjs down
+node .claude/skills/stark-smoke-test/stark-smoke-test.mjs down
 ```
 
 Safe to run twice and safe when nothing is up. It kills what `up` recorded and

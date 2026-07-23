@@ -9,16 +9,16 @@
  * Steps 8-13 (the Chrome verification) belong to the agent, see
  * .claude/skills/stark-smoke-test/SKILL.md
  *
- *   node .claude/workflows/stark-smoke-test.mjs up     # steps 1-7, leaves stack RUNNING
- *   node .claude/workflows/stark-smoke-test.mjs down   # kills what `up` recorded
- *   node .claude/workflows/stark-smoke-test.mjs verify # steps 8-13, against an already-running stack
- *   node .claude/workflows/stark-smoke-test.mjs run    # up -> verify -> down, CI entry point
+ *   node .claude/skills/stark-smoke-test/stark-smoke-test.mjs up     # steps 1-7, leaves stack RUNNING
+ *   node .claude/skills/stark-smoke-test/stark-smoke-test.mjs down   # kills what `up` recorded
+ *   node .claude/skills/stark-smoke-test/stark-smoke-test.mjs verify # steps 8-13, against an already-running stack
+ *   node .claude/skills/stark-smoke-test/stark-smoke-test.mjs run    # up -> verify -> down, CI entry point
  *
  * A separate, opt-in `sepolia` command (S1-S5) proves a real declare+deploy
  * against live Sepolia. It is not part of the 13-step devnet gate above, has
  * no up/down lifecycle of its own, and spends real STRK on every run:
  *
- *   node .claude/workflows/stark-smoke-test.mjs sepolia
+ *   node .claude/skills/stark-smoke-test/stark-smoke-test.mjs sepolia
  *
  * Design: docs/superpowers/specs/2026-07-22-sepolia-deploy-gate-design.md
  *
@@ -43,7 +43,7 @@ import {
   waitFor,
 } from "./stark-smoke-test-browser.mjs";
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 const STATE_FILE = path.join(ROOT, ".smoke-test-state.json");
 const LOG_DIR = path.join(ROOT, ".smoke-test-logs");
 const ENV_FILE = path.join(ROOT, "packages", "snfoundry", ".env");
@@ -137,7 +137,7 @@ function reportRunningStack() {
     console.error(`  ${"chrome".padEnd(7)} pid ${state.chrome.pid}  profile: ${state.chrome.profileDir}  CDP port: ${state.chrome.port}`);
   }
   console.error(`\nTear down with:`);
-  console.error(`  node .claude/workflows/stark-smoke-test.mjs down`);
+  console.error(`  node .claude/skills/stark-smoke-test/stark-smoke-test.mjs down`);
 }
 
 /**
@@ -446,7 +446,7 @@ async function stepPortsFree() {
       "port check",
       `Port(s) already in use: ${busy.join(", ")}.\n` +
         `A previous smoke test may still be up. Tear it down first:\n` +
-        `  node .claude/workflows/stark-smoke-test.mjs down`
+        `  node .claude/skills/stark-smoke-test/stark-smoke-test.mjs down`
     );
   }
 }
@@ -488,7 +488,7 @@ async function stepDevnetEnv(writeEnvFlag) {
       "devnet .env check",
       "\n  Not writing to your .env without confirmation.\n" +
         "  Paste the block above, or re-run with:\n" +
-        "    node .claude/workflows/stark-smoke-test.mjs up --write-env"
+        "    node .claude/skills/stark-smoke-test/stark-smoke-test.mjs up --write-env"
     );
   }
 
@@ -1077,7 +1077,7 @@ async function up(flags) {
   console.log(`\nSteps 8-13 are the agent's Chrome verification — see`);
   console.log(`  .claude/skills/stark-smoke-test/SKILL.md`);
   console.log(`\nWhen finished (or to clean up after a failure):`);
-  console.log(`  node .claude/workflows/stark-smoke-test.mjs down`);
+  console.log(`  node .claude/skills/stark-smoke-test/stark-smoke-test.mjs down`);
   process.exit(0);
 }
 
@@ -1479,11 +1479,11 @@ else {
   console.error(`stark-smoke-test — e2e devnet gate (13 steps: 1-7 process orchestration, 8-13 Chrome/CDP verification)
 
 usage:
-  node .claude/workflows/stark-smoke-test.mjs up [--write-env]
-  node .claude/workflows/stark-smoke-test.mjs verify [--headed]
-  node .claude/workflows/stark-smoke-test.mjs down
-  node .claude/workflows/stark-smoke-test.mjs run [--write-env] [--headed]
-  node .claude/workflows/stark-smoke-test.mjs sepolia
+  node .claude/skills/stark-smoke-test/stark-smoke-test.mjs up [--write-env]
+  node .claude/skills/stark-smoke-test/stark-smoke-test.mjs verify [--headed]
+  node .claude/skills/stark-smoke-test/stark-smoke-test.mjs down
+  node .claude/skills/stark-smoke-test/stark-smoke-test.mjs run [--write-env] [--headed]
+  node .claude/skills/stark-smoke-test/stark-smoke-test.mjs sepolia
 
   up      preflight + bring devnet/deploy/dev-server up, then exit 0 leaving them RUNNING
           --write-env  consent up front to appending the devnet block to packages/snfoundry/.env
