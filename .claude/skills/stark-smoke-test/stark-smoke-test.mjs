@@ -1413,6 +1413,31 @@ function extractDeployedAddressFromLog(output) {
   return match ? match[1] : null;
 }
 
+/**
+ * Index of the brace matching the '{' at `openIndex`, or -1 if unbalanced.
+ * Tracks quoted strings so a literal '{'/'}' inside a value (e.g. an ABI
+ * field) can't throw off the depth count.
+ */
+function matchingBraceIndex(text, openIndex) {
+  let depth = 0;
+  let inString = null;
+  for (let i = openIndex; i < text.length; i++) {
+    const ch = text[i];
+    if (inString) {
+      if (ch === "\\") i++;
+      else if (ch === inString) inString = null;
+      continue;
+    }
+    if (ch === '"' || ch === "'" || ch === "`") inString = ch;
+    else if (ch === "{") depth++;
+    else if (ch === "}") {
+      depth--;
+      if (depth === 0) return i;
+    }
+  }
+  return -1;
+}
+
 /** Pulls every contract address under the top-level "sepolia" key out of the regenerated deployedContracts.ts. */
 function extractSepoliaAddresses() {
   let contents;
@@ -1425,8 +1450,17 @@ function extractSepoliaAddresses() {
   if (!sepoliaBlock) {
     return { error: `No "sepolia" entry found in ${path.relative(ROOT, DEPLOYED_CONTRACTS)}.` };
   }
-  const rest = contents.slice(sepoliaBlock.index + sepoliaBlock[0].length);
-  const addresses = [...rest.matchAll(/address:\s*"(0x[0-9a-fA-F]+)"/g)].map((m) => m[1]);
+  // Bound to this block's own braces — deployedContracts.ts has no fixed key
+  // order, so an unbounded slice-to-EOF would sweep in addresses from any
+  // network key that happens to land AFTER "sepolia:" (e.g. a future mainnet
+  // deploy), letting a foreign address satisfy the freshness match below.
+  const openIndex = sepoliaBlock.index + sepoliaBlock[0].length - 1;
+  const closeIndex = matchingBraceIndex(contents, openIndex);
+  if (closeIndex === -1) {
+    return { error: `Could not find the closing brace for the "sepolia" entry in ${path.relative(ROOT, DEPLOYED_CONTRACTS)}.` };
+  }
+  const block = contents.slice(openIndex + 1, closeIndex);
+  const addresses = [...block.matchAll(/address:\s*"(0x[0-9a-fA-F]+)"/g)].map((m) => m[1]);
   if (!addresses.length) {
     return { error: `Found a "sepolia" entry in ${path.relative(ROOT, DEPLOYED_CONTRACTS)} but no address inside it.` };
   }
@@ -1468,7 +1502,12 @@ async function sepoliaStepConfirm(deployLogAddress) {
         `That file was not rewritten by this run — confirming it would validate a stale previous deploy, not this one.`
     );
   }
-  const checkAddress = parsed.addresses[0];
+  // Check the address this run provably deployed, not an arbitrary entry from
+  // the file — the freshness check above only proves deployLogAddress is
+  // SOMEWHERE in the file, not that it's the first one. Confirming a
+  // different (if equally "fresh") contract than the one S4 actually
+  // deployed would just move the "confirms the wrong thing" bug here.
+  const checkAddress = deployLogAddress;
   info(`checking class hash at ${checkAddress}`);
 
   const result = await rpcJson(sepoliaRpcUrl, "starknet_getClassHashAt", ["latest", checkAddress]);
