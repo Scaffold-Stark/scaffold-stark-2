@@ -26,6 +26,19 @@ import path from "node:path";
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/** Race `promise` against a timer so a request that never settles (a target
+ * that goes unresponsive — an MV3 service worker torn down mid-request, or a
+ * renderer that crashes with no post-open close/error propagation reaching
+ * the caller) surfaces as a reported error instead of hanging forever. */
+export function withTimeout(promise, ms, label) {
+  return Promise.race([promise, sleep(ms).then(() => Promise.reject(new Error(`Timed out after ${ms}ms: ${label}`)))]);
+}
+
+/** Default bound for a single CDP command. Generous relative to the DOM
+ * queries/evaluates every call site actually issues (sub-second in practice);
+ * long-running waits belong in waitFor()'s own timeoutMs, not here. */
+const CDP_SEND_TIMEOUT_MS = 30_000;
+
 const alive = (pid) => {
   try {
     process.kill(pid, 0);
@@ -199,6 +212,10 @@ class CdpSession {
     this._nextId = 0;
     this._pending = new Map();
     this._listeners = new Map();
+    // Set once the socket closes/errors post-open, so a send() issued after
+    // that point rejects immediately instead of joining a pending map that
+    // will never receive a message again.
+    this._closedError = null;
     ws.addEventListener("message", (ev) => {
       const msg = JSON.parse(ev.data);
       if (msg.id !== undefined && this._pending.has(msg.id)) {
@@ -210,13 +227,32 @@ class CdpSession {
         for (const handler of this._listeners.get(msg.method)) handler(msg.params);
       }
     });
+    // connectSession()'s own open/error listeners only cover the pre-open
+    // handshake — once that promise has settled, a later close/error on this
+    // same socket (renderer crash, target closed mid-wait) had nothing
+    // rejecting in-flight sends, so they hung forever. This is that handler.
+    const onSocketDown = (label) => () => {
+      if (this._closedError) return;
+      this._closedError = new Error(`CDP session ${label} with ${this._pending.size} request(s) still pending`);
+      for (const { reject } of this._pending.values()) reject(this._closedError);
+      this._pending.clear();
+    };
+    ws.addEventListener("close", onSocketDown("closed"));
+    ws.addEventListener("error", onSocketDown("errored"));
   }
 
-  send(method, params = {}) {
-    return new Promise((resolve, reject) => {
-      const id = ++this._nextId;
+  send(method, params = {}, timeoutMs = CDP_SEND_TIMEOUT_MS) {
+    if (this._closedError) return Promise.reject(this._closedError);
+    const id = ++this._nextId;
+    const request = new Promise((resolve, reject) => {
       this._pending.set(id, { resolve, reject });
       this.ws.send(JSON.stringify({ id, method, params }));
+    });
+    // Backstop for the case where the socket never fires close/error at all
+    // (e.g. a target that stops answering without tearing down the transport).
+    return withTimeout(request, timeoutMs, `CDP ${method}`).catch((err) => {
+      this._pending.delete(id);
+      throw err;
     });
   }
 

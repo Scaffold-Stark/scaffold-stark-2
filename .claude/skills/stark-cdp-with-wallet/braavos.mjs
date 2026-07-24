@@ -24,17 +24,9 @@ import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { CDP_PORT, PROFILE_DIR, BRAAVOS_ID, listTargets } from "./launch.mjs";
-import { waitFor, openTab, closeTab, connectSession, captureScreenshot } from "../stark-smoke-test/stark-smoke-test-browser.mjs";
+import { waitFor, openTab, closeTab, connectSession, captureScreenshot, withTimeout } from "../stark-smoke-test/stark-smoke-test-browser.mjs";
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-/** CdpSession.send() has no built-in timeout — a target that goes
- * unresponsive (an MV3 service worker torn down mid-request, observed once
- * here) leaves the promise pending forever instead of rejecting. Race it
- * against a timer so that failure mode surfaces as a reported error. */
-function withTimeout(promise, ms, label) {
-  return Promise.race([promise, sleep(ms).then(() => Promise.reject(new Error(`Timed out after ${ms}ms: ${label}`)))]);
-}
 
 // ----------------------------------------------------------- keychain ---
 
