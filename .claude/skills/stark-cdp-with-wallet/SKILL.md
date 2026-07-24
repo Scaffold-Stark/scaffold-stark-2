@@ -21,8 +21,8 @@ out mirrors scaffold-stylus's `cdp-with-wallet` skill
 (`.claude/skills/cdp-with-wallet/` at `origin/release/v0.2.0` in
 scaffold-stylus) — same shape (`launch.mjs` for Chrome/profile management,
 a wallet-primitives file for unlock/connect/approve), adapted for Braavos
-instead of MetaMask. The blueprint technique for both is Brove's
-`packages/nextjs/e2e/helpers/braavos.ts`: enumerate CDP targets from
+instead of MetaMask. The blueprint technique for both is an internal
+Playwright e2e helper's `braavos.ts`: enumerate CDP targets from
 `GET http://localhost:<port>/json`, find the extension's own page by URL
 prefix, attach a WebSocket directly to it. Only the *technique* carries
 over — Braavos and MetaMask have different selectors, different popup

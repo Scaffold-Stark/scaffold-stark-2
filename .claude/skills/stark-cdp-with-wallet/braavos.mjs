@@ -11,9 +11,8 @@
  * Extracted from stark-demo-web.mjs (formerly .claude/workflows/). The
  * technique (enumerate CDP targets, find the extension's own page by URL
  * prefix, attach a WebSocket directly to it) matches the in-repo precedent
- * in stark-smoke-test-browser.mjs and the proven reference at
- * /Users/q3labsadmin/Q3/Brove/brove/packages/nextjs/e2e/helpers/braavos.ts —
- * only the technique carries over, not any selector.
+ * in stark-smoke-test-browser.mjs and an internal Playwright helper this
+ * was ported from — only the technique carries over, not any selector.
  *
  * Finding a Keychain entry is NOT the same as the password being correct —
  * the entry can hold a stale value from before the wallet's password last
@@ -197,8 +196,8 @@ export async function attemptUnlock(password) {
 // ------------------------------------------------- Braavos request UI ---
 
 // Dapp-request paths that appear in the side panel's URL when it has a
-// pending request to show — same list as the proven reference at
-// /Users/q3labsadmin/Q3/Brove/brove/packages/nextjs/e2e/helpers/context.ts.
+// pending request to show — same list as the proven reference this was
+// ported from.
 const DAPP_REQUEST_PATHS = ["dapp-request", "transaction", "sign-message", "sign-transaction"];
 
 /**
@@ -207,8 +206,8 @@ const DAPP_REQUEST_PATHS = ["dapp-request", "transaction", "sign-message", "sign
  * went from `side-panel.html?nav={"path":"/dapp-request",...}` to bare
  * `side-panel.html` after an in-panel unlock lost the pending request state.
  * Matching "any new target ID" (the original approach) misses this reuse
- * entirely — match on URL path content instead, exactly like the proven
- * Brove reference implementation.
+ * entirely — match on URL path content instead, exactly like the reference
+ * implementation this was ported from.
  */
 export async function waitForBraavosRequestTarget(timeoutMs) {
   const deadline = Date.now() + timeoutMs;
@@ -362,8 +361,8 @@ export async function approveBraavosRequest(target, password, logDir, attachExtr
     // UI is confirmed English regardless of profile locale (title="Braavos"),
     // unlike this app's own frontend concern about localization, so falling
     // back to text search here is measured, not guessed — the same
-    // technique already proven against this exact wallet in
-    // /Users/q3labsadmin/Q3/Brove/brove/packages/nextjs/e2e/helpers/braavos.ts.
+    // technique already proven against this exact wallet in the internal
+    // Playwright helper this was ported from.
     const STRUCTURAL_QUERIES = ['button', '[role="button"]', 'button, [role="button"], a[role="button"], [tabindex="0"]'];
     const TEXT_CANDIDATES = ["Connect", "Approve", "Confirm", "Accept", "Sign"];
     // Words identifying the PRIMARY action vs. the reject action — Braavos's
