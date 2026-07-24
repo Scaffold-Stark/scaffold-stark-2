@@ -26,7 +26,7 @@
  * added here is inherited by every fork and by create-stark.
  */
 
-import { spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import fs from "node:fs";
 import http from "node:http";
 import net from "node:net";
@@ -311,13 +311,43 @@ async function pollUntil(probe, { timeoutMs, intervalMs = 1000 }) {
   return { ready: false, waitedMs: Date.now() - startedAt };
 }
 
-const alive = (pid) => {
+/**
+ * Cheap process identity beyond the bare pid: this process's own start
+ * timestamp (`ps -o lstart=`). Captured once at spawn time (see
+ * spawnDetached()) and re-checked here before anything is trusted to still
+ * be "our" process — a bare pid alone can't tell "still our devnet" apart
+ * from "unrelated process that got the same pid" after a crash + reboot +
+ * PID reuse. Returns null (rather than throwing) when `ps` itself fails,
+ * which callers treat as inconclusive, not as a mismatch.
+ */
+function processStartTime(pid) {
+  try {
+    const out = execFileSync("ps", ["-o", "lstart=", "-p", String(pid)], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+    return out.trim() || null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * `startedAt` is optional so callers on an older state file (recorded before
+ * this field existed) or Chrome (not identity-checked here — see
+ * stark-smoke-test-browser.mjs's own alive()) fall back to the bare
+ * liveness check, unchanged from before.
+ */
+const alive = (pid, startedAt) => {
+  let exists;
   try {
     process.kill(pid, 0);
-    return true;
+    exists = true;
   } catch (err) {
-    return err.code === "EPERM";
+    exists = err.code === "EPERM";
   }
+  if (!exists || !startedAt) return exists;
+  const current = processStartTime(pid);
+  // A ps failure here is inconclusive (permissions, transient), not proof of
+  // an impostor — only a definite, different start time counts as a mismatch.
+  return current === null || current === startedAt;
 };
 
 /**
@@ -352,7 +382,7 @@ function spawnDetached(name, cmd, args, logFile) {
   });
   child.unref();
   fs.closeSync(fd);
-  return { name, pid: child.pid, log: logFile, cmd: `${cmd} ${args.join(" ")}` };
+  return { name, pid: child.pid, log: logFile, cmd: `${cmd} ${args.join(" ")}`, startedAt: processStartTime(child.pid) };
 }
 
 function askYesNo(question) {
@@ -1051,7 +1081,7 @@ async function up(flags) {
   fs.mkdirSync(LOG_DIR, { recursive: true });
 
   const existing = readState();
-  const stackAlive = existing?.processes?.some((p) => alive(p.pid));
+  const stackAlive = existing?.processes?.some((p) => alive(p.pid, p.startedAt));
   const chromeAlive = existing?.chrome && alive(existing.chrome.pid);
   if (stackAlive || chromeAlive) {
     console.error(`A previous smoke-test stack still looks alive (see ${path.relative(ROOT, STATE_FILE)}).`);
@@ -1097,15 +1127,15 @@ async function down() {
     console.log(`  no ${path.relative(ROOT, STATE_FILE)} — nothing recorded to tear down`);
   } else {
     for (const p of state.processes) {
-      if (!alive(p.pid)) {
-        console.log(`  ${p.name.padEnd(7)} pid ${p.pid} already gone`);
+      if (!alive(p.pid, p.startedAt)) {
+        console.log(`  ${p.name.padEnd(7)} pid ${p.pid} already gone (or pid reused by another process)`);
         continue;
       }
       killGroup(p.pid, "SIGTERM");
       let stopped = false;
       for (let i = 0; i < 20; i++) {
         await sleep(250);
-        if (!alive(p.pid)) {
+        if (!alive(p.pid, p.startedAt)) {
           stopped = true;
           break;
         }
@@ -1113,7 +1143,7 @@ async function down() {
       if (!stopped) {
         killGroup(p.pid, "SIGKILL");
         await sleep(500);
-        stopped = !alive(p.pid);
+        stopped = !alive(p.pid, p.startedAt);
       }
       console.log(`  ${p.name.padEnd(7)} pid ${p.pid} ${stopped ? "stopped" : "WOULD NOT DIE"}`);
     }
