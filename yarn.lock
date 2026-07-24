@@ -5295,8 +5295,8 @@ __metadata:
   linkType: hard
 
 "@vitest/coverage-istanbul@npm:^3.0.9":
-  version: 3.2.4
-  resolution: "@vitest/coverage-istanbul@npm:3.2.4"
+  version: 3.2.7
+  resolution: "@vitest/coverage-istanbul@npm:3.2.7"
   dependencies:
     "@istanbuljs/schema": ^0.1.3
     debug: ^4.4.1
@@ -5309,14 +5309,14 @@ __metadata:
     test-exclude: ^7.0.1
     tinyrainbow: ^2.0.0
   peerDependencies:
-    vitest: 3.2.4
-  checksum: 29c4d0d159b3c5cbd1a8647a1caa160b99f76c467a3cc595e871451a2e33de95eceb3d27e2baeb0d02647aeffc290dfb02522bb4cb108eca7187d3e41832597d
+    vitest: 3.2.7
+  checksum: ad828884e458787259989f98d01086c1a9202e4c619d7f3fd07af4a77484810689b4eee4e6753130baabcdc22f7c051069ee41fd877e1d08a2812a6b5c39b152
   languageName: node
   linkType: hard
 
 "@vitest/coverage-v8@npm:^3.0.9":
-  version: 3.2.4
-  resolution: "@vitest/coverage-v8@npm:3.2.4"
+  version: 3.2.7
+  resolution: "@vitest/coverage-v8@npm:3.2.7"
   dependencies:
     "@ampproject/remapping": ^2.3.0
     "@bcoe/v8-coverage": ^1.0.2
@@ -5332,12 +5332,12 @@ __metadata:
     test-exclude: ^7.0.1
     tinyrainbow: ^2.0.0
   peerDependencies:
-    "@vitest/browser": 3.2.4
-    vitest: 3.2.4
+    "@vitest/browser": 3.2.7
+    vitest: 3.2.7
   peerDependenciesMeta:
     "@vitest/browser":
       optional: true
-  checksum: b33d4abb32216c793b1da122254bf70578c4acddbf2011c377818cbfc9506383398a5a2eaeb70045120dac1f86a1a2511fd624050dd92ef7387b9469929ceb33
+  checksum: c197987170fb4e287fee811dbbc8b29f7fc07489b0349846069c70f6ea15a9dff88a5e16635a5c1158fc3d0bbc267931d654513e26b51a9741134b5c6cc415e1
   languageName: node
   linkType: hard
 
