@@ -394,13 +394,19 @@ function devnetBlockFromExample() {
 
 // ------------------------------------------------------------------- up ----
 
-async function stepToolVersions() {
+/**
+ * `onFail` defaults to the devnet gate's fail() (exit 1, RED). The Sepolia
+ * gate passes sepoliaInfra instead: an unconfigured/missing local toolchain
+ * is an INFRA condition (exit 2) there, same as the env-var check right
+ * after it in sepoliaStepPreflight() — not a RED that blocks Phase 2.
+ */
+async function stepToolVersions(onFail = fail) {
   step(1, "Verify .tool-versions matches installed binaries");
   let declared;
   try {
     declared = fs.readFileSync(TOOL_VERSIONS, "utf8");
   } catch (err) {
-    fail(1, "toolchain check", `Could not read ${TOOL_VERSIONS}`, String(err?.message ?? err));
+    onFail(1, "toolchain check", `Could not read ${TOOL_VERSIONS}`, String(err?.message ?? err));
   }
 
   const mismatches = [];
@@ -423,7 +429,7 @@ async function stepToolVersions() {
   }
 
   if (mismatches.length) {
-    fail(
+    onFail(
       1,
       "toolchain check",
       "Installed toolchain does not match .tool-versions. This is reported first because the\n" +
@@ -1271,7 +1277,10 @@ function formatStrk(wei) {
 
 async function sepoliaStepPreflight() {
   stepS(1, "Preflight: toolchain + Sepolia env vars");
-  await stepToolVersions(); // reused as-is; exits 1 through fail() on a toolchain mismatch
+  // Pass sepoliaInfra so a toolchain mismatch here exits 2 (INFRA), not 1 (RED)
+  // — same classification as the env-var check below for the same "unconfigured
+  // local machine" class of problem. The devnet call site above keeps the default.
+  await stepToolVersions(sepoliaInfra);
 
   let envText;
   try {
