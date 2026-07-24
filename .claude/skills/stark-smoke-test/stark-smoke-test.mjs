@@ -1383,8 +1383,8 @@ function extractDeployedAddressFromLog(output) {
   return match ? match[1] : null;
 }
 
-/** Pulls the address of the first contract under the top-level "sepolia" key out of the regenerated deployedContracts.ts. */
-function extractSepoliaAddress() {
+/** Pulls every contract address under the top-level "sepolia" key out of the regenerated deployedContracts.ts. */
+function extractSepoliaAddresses() {
   let contents;
   try {
     contents = fs.readFileSync(DEPLOYED_CONTRACTS, "utf8");
@@ -1396,16 +1396,20 @@ function extractSepoliaAddress() {
     return { error: `No "sepolia" entry found in ${path.relative(ROOT, DEPLOYED_CONTRACTS)}.` };
   }
   const rest = contents.slice(sepoliaBlock.index + sepoliaBlock[0].length);
-  const address = rest.match(/address:\s*"(0x[0-9a-fA-F]+)"/);
-  if (!address) {
+  const addresses = [...rest.matchAll(/address:\s*"(0x[0-9a-fA-F]+)"/g)].map((m) => m[1]);
+  if (!addresses.length) {
     return { error: `Found a "sepolia" entry in ${path.relative(ROOT, DEPLOYED_CONTRACTS)} but no address inside it.` };
   }
-  return { address: address[1] };
+  return { addresses };
 }
+
+// starknet_getClassHashAt's JSON-RPC error code for "no class at this address" —
+// see the Starknet JSON-RPC spec's CONTRACT_NOT_FOUND error.
+const RPC_CONTRACT_NOT_FOUND = 20;
 
 async function sepoliaStepConfirm(deployLogAddress) {
   stepS(5, "On-chain confirmation (starknet_getClassHashAt)");
-  const parsed = extractSepoliaAddress();
+  const parsed = extractSepoliaAddresses();
   if (parsed.error) {
     sepoliaRed(5, "on-chain confirmation", parsed.error);
   }
@@ -1413,27 +1417,31 @@ async function sepoliaStepConfirm(deployLogAddress) {
   // Freshness check: deployedContracts.ts could be a stale leftover from a
   // previous run if this run's `yarn deploy` somehow exited 0 without
   // rewriting it. Cross-check against the address S4's own deploy output
-  // reported, not just the file, before trusting the file at all.
+  // reported, not just the file, before trusting the file at all. A
+  // multi-contract deploy can list contracts in a different order between
+  // S4's log and the file, so match against ANY address under the sepolia
+  // entry rather than assuming both "firsts" refer to the same contract.
   if (!deployLogAddress) {
     sepoliaRed(
       5,
       "on-chain confirmation",
       `S4's deploy output had no parseable "Contract Deployed at <address>" line, so S5 cannot verify that\n` +
-        `${path.relative(ROOT, DEPLOYED_CONTRACTS)}'s sepolia address (${parsed.address}) is from this run rather than a stale one.`
+        `${path.relative(ROOT, DEPLOYED_CONTRACTS)}'s sepolia entry (${parsed.addresses.join(", ")}) is from this run rather than a stale one.`
     );
   }
-  if (normalizeHex(deployLogAddress) !== normalizeHex(parsed.address)) {
+  if (!parsed.addresses.some((a) => normalizeHex(a) === normalizeHex(deployLogAddress))) {
     sepoliaRed(
       5,
       "on-chain confirmation",
-      `Freshness check failed: S4's deploy output reported ${deployLogAddress}, but\n` +
-        `${path.relative(ROOT, DEPLOYED_CONTRACTS)}'s sepolia address is ${parsed.address}.\n` +
+      `Freshness check failed: S4's deploy output reported ${deployLogAddress}, which does not match any address under\n` +
+        `${path.relative(ROOT, DEPLOYED_CONTRACTS)}'s sepolia entry (${parsed.addresses.join(", ")}).\n` +
         `That file was not rewritten by this run — confirming it would validate a stale previous deploy, not this one.`
     );
   }
-  info(`checking class hash at ${parsed.address}`);
+  const checkAddress = parsed.addresses[0];
+  info(`checking class hash at ${checkAddress}`);
 
-  const result = await rpcJson(sepoliaRpcUrl, "starknet_getClassHashAt", ["latest", parsed.address]);
+  const result = await rpcJson(sepoliaRpcUrl, "starknet_getClassHashAt", ["latest", checkAddress]);
   if (result.transportError) {
     sepoliaInfra(
       5,
@@ -1443,10 +1451,22 @@ async function sepoliaStepConfirm(deployLogAddress) {
     );
   }
   if (result.rpcError) {
-    sepoliaRed(5, "on-chain confirmation", `RPC reports no class at ${parsed.address} on Sepolia: ${result.message}.`);
+    // Only CONTRACT_NOT_FOUND actually means "no class here" — any other
+    // RPC-level error (e.g. a transient provider-internal error returned as
+    // HTTP 200 + error body) is infrastructure, not proof the deploy is bad.
+    if (result.rpcError.code === RPC_CONTRACT_NOT_FOUND) {
+      sepoliaRed(5, "on-chain confirmation", `RPC reports no class at ${checkAddress} on Sepolia (CONTRACT_NOT_FOUND): ${result.message}.`);
+    } else {
+      sepoliaInfra(
+        5,
+        "on-chain confirmation",
+        `starknet_getClassHashAt against RPC_URL_SEPOLIA returned RPC error ${result.rpcError.code} (not CONTRACT_NOT_FOUND): ${result.message}\n` +
+          `This looks like a transient provider-side error, not proof the contract is missing. Re-run once the RPC is healthy.`
+      );
+    }
   }
   if (!result.result || normalizeHex(result.result) === "0") {
-    sepoliaRed(5, "on-chain confirmation", `starknet_getClassHashAt returned a zero class hash for ${parsed.address} on Sepolia.`);
+    sepoliaRed(5, "on-chain confirmation", `starknet_getClassHashAt returned a zero class hash for ${checkAddress} on Sepolia.`);
   }
   ok(`class hash confirmed on-chain: ${result.result}`);
 }
