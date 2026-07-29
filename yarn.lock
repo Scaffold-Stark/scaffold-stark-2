@@ -3846,10 +3846,10 @@ __metadata:
     postcss: ^8.5.6
     prettier: ^3.4.2
     prettier-standalone: ^1.3.1-0
-    qrcode.react: ^3.1.0
-    react: 19.0.3
+    qrcode.react: ^4.2.0
+    react: 19.0.8
     react-copy-to-clipboard: ^5.1.0
-    react-dom: 19.0.3
+    react-dom: 19.0.8
     react-hot-toast: ^2.4.1
     shx: ^0.4.0
     starknet: ^9.4.2
@@ -6827,9 +6827,9 @@ __metadata:
   linkType: hard
 
 "daisyui@npm:^5.7.0":
-  version: 5.7.0
-  resolution: "daisyui@npm:5.7.0"
-  checksum: 01e382a490da2782ed64f6436f48f116186480c15996412b32f8853e593af48dad2189dc2c7fb46fd29f898a2771f074a3226f2aa0c67e8695bcac5cf8ed7653
+  version: 5.7.4
+  resolution: "daisyui@npm:5.7.4"
+  checksum: 95f88842562dcefe40049ee8b7ee390f461da1c24d22eba2d19ee58d06ad71c11ce3e5f98d1398c7c92a8de9dbbec3778c287d493ae23bc948d955df52b098b0
   languageName: node
   linkType: hard
 
@@ -11207,13 +11207,13 @@ __metadata:
   linkType: hard
 
 "postcss-js@npm:^4":
-  version: 4.0.1
-  resolution: "postcss-js@npm:4.0.1"
+  version: 4.1.0
+  resolution: "postcss-js@npm:4.1.0"
   dependencies:
     camelcase-css: ^2.0.1
   peerDependencies:
     postcss: ^8.4.21
-  checksum: 5c1e83efeabeb5a42676193f4357aa9c88f4dc1b3c4a0332c132fe88932b33ea58848186db117cf473049fc233a980356f67db490bd0a7832ccba9d0b3fd3491
+  checksum: 1fe3d51770f66d301e63103c15830d26875b1ae9bbe3ba6bf61256860edde3d9c0de5aa0c3e34d34b80c099f5d95b589cfcc92dac718253c8351aa8e05a8d80a
   languageName: node
   linkType: hard
 
@@ -11350,12 +11350,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qrcode.react@npm:^3.1.0":
-  version: 3.2.0
-  resolution: "qrcode.react@npm:3.2.0"
+"qrcode.react@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "qrcode.react@npm:4.2.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 55d020ca482d57e8d73ee9e2e18f152184fd3d7d2d0742ae54ec58c5a3bab08b242a648585178d7fc91877fc75d6fbad7a35fb51bc4bddd4374e1de450ca78e7
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: fe7f496bb3696eedf4113390c6feda386e7a5e5d69d12fcc2489c55ecec467f682dc99b0d8085afbeb8ed3962c1f7554b26225cd78b72e78416f9506abbebd5d
   languageName: node
   linkType: hard
 
@@ -11399,14 +11399,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:19.0.3":
-  version: 19.0.3
-  resolution: "react-dom@npm:19.0.3"
+"react-dom@npm:19.0.8":
+  version: 19.0.8
+  resolution: "react-dom@npm:19.0.8"
   dependencies:
     scheduler: ^0.25.0
   peerDependencies:
-    react: ^19.0.3
-  checksum: b5f53f84f9a044f9d77cb363fd6a0990cda5b7b89649b59c298ced63176e36df37a9289047d596aadf8fd7182df6c1d4f5b3f78839058b692d325dcee17af790
+    react: ^19.0.8
+  checksum: a4bed9fce5e0d5088f3717e3a76fb6159ca0c7c78dfdbd75264cd0676dfb737085ea6a449d16f5b8e62f7c5b88f204e50442629358e1efdc2f7da2dd84381c77
   languageName: node
   linkType: hard
 
@@ -11495,10 +11495,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:19.0.3":
-  version: 19.0.3
-  resolution: "react@npm:19.0.3"
-  checksum: b6a9f13dee6abc9724d2301ccfee6ca2faa55ff05bc2868fbe3a013d770c7d3f8459193d7a28d8c9f4f379146ab2d6a847a7cc902d133534d46ae7238b631d96
+"react@npm:19.0.8":
+  version: 19.0.8
+  resolution: "react@npm:19.0.8"
+  checksum: 5148809f2d34c4afbac063418d7a8bcda16bb8fd6edfa8fbf5edd21c6f535fe3a734fa1bd0a5c432e31ff6102cdce8d6c520f804ab74f3078ed103615b633302
   languageName: node
   linkType: hard
 
