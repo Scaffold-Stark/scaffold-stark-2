@@ -113,6 +113,7 @@ jobs:
           # filesystem-level problem worth surfacing for review.
           RSYNC_LOG=$(rsync -av --delete \
             --exclude='.git/' \
+            --exclude='.claude/' \
             --include='.github/' \
             --include='.github/workflows/' \
             --include='.github/workflows/main.yml' \
