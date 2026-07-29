@@ -8,19 +8,21 @@ description: Use after Phase 1 dependency updates are merged, before any Phase 2
 Prove the stack actually works end-to-end on devnet before propagating anything
 to sibling forks. **A red gate blocks Phase 2.**
 
-All 13 steps are now fully automated — no manual Chrome driving. Steps 1–7
+All 14 steps are now fully automated — no manual Chrome driving. Steps 1–7
 bring the stack up (process orchestration); steps 8–13 drive a real Chrome
 instance over the Chrome DevTools Protocol (CDP), the same transport Chrome
-DevTools itself uses. Zero new dependencies: Node's native `WebSocket` global
-is the CDP transport, and pages are driven with `Runtime.evaluate` running JS
-inside the page (`querySelector` / `.click()` / `textContent`) — never
-synthetic mouse coordinates, which break on any layout change.
+DevTools itself uses; step 14 runs the test suite and coverage (`yarn test`,
+`yarn coverage`) after teardown. Zero new dependencies: Node's native
+`WebSocket` global is the CDP transport, and pages are driven with
+`Runtime.evaluate` running JS inside the page (`querySelector` / `.click()` /
+`textContent`) — never synthetic mouse coordinates, which break on any layout
+change.
 
 ## Scope
 
-This repo only. The 13-step gate above is devnet-only — mainnet is out of
+This repo only. The 14-step gate above is devnet-only — mainnet is out of
 scope entirely. Sepolia has its own separate, opt-in gate (below); it is not
-step 14 of the devnet gate and a devnet green remains a devnet green
+part of the devnet gate and a devnet green remains a devnet green
 regardless of whether Sepolia has been run. **Do not touch sibling repos** —
 that is Phase 2.
 
@@ -28,7 +30,7 @@ that is Phase 2.
 
 Design: `docs/superpowers/specs/2026-07-22-sepolia-deploy-gate-design.md`
 
-**When to run:** Run the Sepolia gate AFTER the local devnet gate passes (all 13 steps). A devnet green stands on its own, but passing this Sepolia gate is a precondition for Phase 2 propagation. The required sequence is:
+**When to run:** Run the Sepolia gate AFTER the local devnet gate passes (all 14 steps). A devnet green stands on its own, but passing this Sepolia gate is a precondition for Phase 2 propagation. The required sequence is:
 1. Devnet gate green
 2. Sepolia gate green
 3. PR is merged
@@ -119,12 +121,14 @@ node .claude/skills/stark-smoke-test/stark-smoke-test.mjs down                  
 node .claude/skills/stark-smoke-test/stark-smoke-test.mjs run [--write-env] [--headed]  # up -> verify -> down; the CI entry point
 ```
 
-`run` is the one-shot gate: it exits non-zero if any of the 13 steps fail, and
-on a full pass it tears the stack down itself. On failure — at any step, 1
-through 13 — the stack (devnet, dev server) is deliberately left running so the
+`run` is the one-shot gate: it exits non-zero if any of the 14 steps fail, and
+on a full pass it tears the stack down itself. On failure at steps 1 through
+13, the stack (devnet, dev server) is deliberately left running so the
 operator can inspect it, exactly like `up` alone. Chrome is different: it
 belongs entirely to `verify`, so it is always killed (including on the failure
-path), and its temp profile directory is always removed.
+path), and its temp profile directory is always removed. Step 14 (the test
+suite) runs only after a clean teardown, so a step 14 failure happens with the
+stack already down.
 
 `--headed` launches Chrome visibly instead of headless — useful when debugging
 a selector or a hung wallet-connect locally. `verify` picks its own CDP
@@ -197,7 +201,7 @@ written to `.smoke-test-logs/` (`08-app-loaded.png` through `13-final.png`).
 
 Every wait has a timeout; on timeout the failure names what it was waiting for
 and for how long. A step failure prints in the same
-`SMOKE TEST FAILED AT STEP N/13` format as steps 1–7, with verbatim detail —
+`SMOKE TEST FAILED AT STEP N/14` format as steps 1–7, with verbatim detail —
 never a generic message.
 
 Selectors live in `.claude/skills/stark-smoke-test/stark-smoke-test.mjs` (steps 8–13) and
@@ -216,8 +220,8 @@ confirms ports 5050 and 3000 were actually released.
 
 ## Pass / fail
 
-Pass requires **all 13 steps**. Any failing step means a **RED GATE** and Phase
-2 is blocked. `run`'s exit code is the gate: `0` means all 13 steps passed and
+Pass requires **all 14 steps**. Any failing step means a **RED GATE** and Phase
+2 is blocked. `run`'s exit code is the gate: `0` means all 14 steps passed and
 the stack was torn down; non-zero means read the printed step number and
 verbatim output.
 
@@ -227,7 +231,7 @@ The report must distinguish **"ran and passed"** from **"did not run"**. Any
 skipped step must be stated explicitly. Silence must never be mistakable for
 coverage.
 
-Report each of the 13 steps as one of: `PASSED`, `FAILED`, or `NOT RUN`. If you
-stopped at step 6, steps 7–13 are `NOT RUN` — they are not passes, and the gate
-is red. Do not summarise 13 steps as "smoke test passed" unless all 13 were
+Report each of the 14 steps as one of: `PASSED`, `FAILED`, or `NOT RUN`. If you
+stopped at step 6, steps 7–14 are `NOT RUN` — they are not passes, and the gate
+is red. Do not summarise 14 steps as "smoke test passed" unless all 14 were
 actually executed and observed.
