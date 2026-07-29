@@ -77,6 +77,7 @@ export const WriteOnlyFunctionForm = ({
   }, [error]);
 
   const handleWrite = async () => {
+    const startTime = Date.now();
     try {
       const txHash = await writeTransaction(
         !!contractInstance
@@ -94,12 +95,16 @@ export const WriteOnlyFunctionForm = ({
         addHistory(contractAddress, {
           txHash: typeof txHash === "string" ? txHash : undefined,
           functionName: abiFunction.name,
+          callType: "write",
           timestamp: Date.now(),
           status: "success",
           message,
           input: inputStr,
+          duration: Date.now() - startTime,
         });
-      } catch {}
+      } catch (histErr) {
+        console.warn("Failed to log write history:", histErr);
+      }
     } catch (e: any) {
       const errorPattern = /Contract (.*?)"}/;
       const match = errorPattern.exec(e.message);
@@ -115,12 +120,17 @@ export const WriteOnlyFunctionForm = ({
         addHistory(contractAddress, {
           txHash: undefined,
           functionName: abiFunction.name,
+          callType: "write",
           timestamp: Date.now(),
           status: "error",
           message,
           input: inputStr,
+          duration: Date.now() - startTime,
+          errorDetails: e.stack || e.message,
         });
-      } catch {}
+      } catch (histErr) {
+        console.warn("Failed to log write history:", histErr);
+      }
     }
   };
 
