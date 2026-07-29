@@ -31,7 +31,9 @@ package-lock.json
 .claude/skills/*/*
 !.claude/skills/*/SKILL.md
 !.claude/skills/*/*.mjs
+.worktrees/
 .gitnexus/
+target/
 
 # stark-smoke-test runtime artifacts
 .smoke-test-state.json

@@ -108,7 +108,11 @@ jobs:
           git checkout -B "$TEMP_BRANCH" origin/develop
 
           cp -f ../source_repo/.tool-versions ./.tool-versions
-          rsync -av ../source_repo/packages/snfoundry/ ./packages/snfoundry/
+          # --exclude='.claude/' is a no-op today: this rsync's source is packages/snfoundry/,
+          # a subdirectory, while .claude/ lives at the repo root and is never inside that path.
+          # Kept anyway as defense-in-depth so the guard is already in place if this source is
+          # ever broadened to the full repo tree.
+          rsync -av --exclude='.claude/' ../source_repo/packages/snfoundry/ ./packages/snfoundry/
 
           # rn-fork rewrites: structural deltas between scaffold-stark-2 and scaffold-stark-rn.
           # Each rewrite is gated by a grep sanity check so upstream renames surface as a conflict PR
