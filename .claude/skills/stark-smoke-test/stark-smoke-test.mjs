@@ -15,7 +15,7 @@
  *   node .claude/skills/stark-smoke-test/stark-smoke-test.mjs run    # up -> verify -> down, CI entry point
  *
  * A separate, opt-in `sepolia` command (S1-S5) proves a real declare+deploy
- * against live Sepolia. It is not part of the 13-step devnet gate above, has
+ * against live Sepolia. It is not part of the 14-step devnet gate above, has
  * no up/down lifecycle of its own, and spends real STRK on every run:
  *
  *   node .claude/skills/stark-smoke-test/stark-smoke-test.mjs sepolia
@@ -57,6 +57,10 @@ const DEVNET_READY_TIMEOUT_MS = 60_000;
 const NEXT_READY_TIMEOUT_MS = 180_000;
 const DEPLOY_TIMEOUT_MS = 300_000;
 const PORT_RELEASE_TIMEOUT_MS = 20_000;
+const TEST_TIMEOUT_MS = 120_000;
+// Coverage instruments every file on top of running the suite, so it gets a
+// longer budget than a plain `yarn test`.
+const COVERAGE_TIMEOUT_MS = 300_000;
 
 // CDP debugging port for the Chrome instance steps 8-13 launch and own.
 // Deliberately not a "well-known" port so it never collides with a browser
@@ -96,7 +100,7 @@ const SEPOLIA_DEPLOY_TIMEOUT_MS = 900_000;
 
 // ---------------------------------------------------------------- output ---
 
-const step = (n, title) => console.log(`\n[${n}/13] ${title}`);
+const step = (n, title) => console.log(`\n[${n}/14] ${title}`);
 const ok = (msg) => console.log(`  OK    ${msg}`);
 const info = (msg) => console.log(`  ...   ${msg}`);
 
@@ -106,7 +110,7 @@ const info = (msg) => console.log(`  ...   ${msg}`);
  */
 function fail(n, title, message, verbatim) {
   console.error(`\n=========================================================`);
-  console.error(`SMOKE TEST FAILED AT STEP ${n}/13 — ${title}`);
+  console.error(`SMOKE TEST FAILED AT STEP ${n}/14 — ${title}`);
   console.error(`=========================================================`);
   console.error(message);
   if (verbatim && verbatim.trim()) {
@@ -989,6 +993,39 @@ async function step13Screenshots(session) {
   ok(`${expected.length} screenshots saved to ${path.relative(ROOT, LOG_DIR)}/`);
 }
 
+// ------------------------------------------------------- step 14 (tests) ----
+//
+// Needs neither devnet nor the dev server, so it would fail faster if run
+// ahead of steps 1-13 — appended at the end instead to keep this diff small;
+// see the PR description.
+
+async function stepTestSuite() {
+  step(14, "Run the test suite and coverage (yarn test, yarn coverage) in packages/nextjs");
+  const cwd = path.join(ROOT, "packages", "nextjs");
+
+  const testLog = path.join(LOG_DIR, "test.log");
+  fs.writeFileSync(testLog, "");
+  const testResult = await run("yarn", ["test"], { cwd, timeoutMs: TEST_TIMEOUT_MS, logFile: testLog });
+  if (testResult.timedOut) {
+    fail(14, "test suite", `\`yarn test\` did not finish within ${TEST_TIMEOUT_MS / 1000}s and was killed.`, testResult.output);
+  }
+  if (testResult.code !== 0) {
+    fail(14, "test suite", `\`yarn test\` exited with code ${testResult.code}.`, testResult.output);
+  }
+  ok(`yarn test exited 0, log ${testLog}`);
+
+  const coverageLog = path.join(LOG_DIR, "coverage.log");
+  fs.writeFileSync(coverageLog, "");
+  const coverageResult = await run("yarn", ["coverage"], { cwd, timeoutMs: COVERAGE_TIMEOUT_MS, logFile: coverageLog });
+  if (coverageResult.timedOut) {
+    fail(14, "coverage", `\`yarn coverage\` did not finish within ${COVERAGE_TIMEOUT_MS / 1000}s and was killed.`, coverageResult.output);
+  }
+  if (coverageResult.code !== 0) {
+    fail(14, "coverage", `\`yarn coverage\` exited with code ${coverageResult.code}.`, coverageResult.output);
+  }
+  ok(`yarn coverage exited 0, log ${coverageLog}`);
+}
+
 async function runBrowserSteps(chrome) {
   const tab = await openTab(chrome.port);
   const session = await connectSession(tab.webSocketDebuggerUrl);
@@ -1021,7 +1058,7 @@ async function runBrowserSteps(chrome) {
  * failure), then report through the same fail() as steps 1-7.
  */
 async function verifyBrowser(flags) {
-  console.log(`stark-smoke-test: browser verification (steps 8-13 of 13)`);
+  console.log(`stark-smoke-test: browser verification (steps 8-13 of 14)`);
 
   if (await portInUse(CDP_PORT)) {
     fail(8, "Chrome CDP launch", `Port ${CDP_PORT} (reserved for the Chrome DevTools Protocol) is already in use.\nFree it, or something from a previous run did not clean up.`);
@@ -1090,7 +1127,7 @@ async function up(flags) {
     process.exit(1);
   }
 
-  console.log(`stark-smoke-test: bring-up (steps 1-7 of 13)`);
+  console.log(`stark-smoke-test: bring-up (steps 1-7 of 14)`);
   console.log(`repo: ${ROOT}`);
 
   await stepToolVersions();
@@ -1195,12 +1232,14 @@ function spawnStreamed(args) {
 }
 
 /**
- * CI entry point: up -> verify -> down, exit non-zero if any of the 13 steps
- * are red. verifyBrowser() exits the process itself on failure (via fail()),
- * so `down` only runs — and only needs to run — after a full pass.
+ * CI entry point: up -> verify -> down -> test suite, exit non-zero if any of
+ * the 14 steps are red. verifyBrowser() exits the process itself on failure
+ * (via fail()), so `down` only runs — and only needs to run — after a full
+ * pass. Step 14 needs neither devnet nor the dev server, so it runs after
+ * teardown rather than holding the stack up any longer than steps 1-13 need.
  */
 async function runFull(flags) {
-  console.log(`stark-smoke-test: run (up -> verify -> down)`);
+  console.log(`stark-smoke-test: run (up -> verify -> down -> test)`);
 
   const upArgs = ["up", ...(flags.writeEnv ? ["--write-env"] : [])];
   const upCode = await spawnStreamed(upArgs);
@@ -1218,8 +1257,10 @@ async function runFull(flags) {
     process.exit(downCode);
   }
 
+  await stepTestSuite();
+
   console.log(`\n=========================================================`);
-  console.log(`RUN COMPLETE — ALL 13 STEPS PASSED, stack torn down`);
+  console.log(`RUN COMPLETE — ALL 14 STEPS PASSED, stack torn down`);
   console.log(`=========================================================`);
   process.exit(0);
 }
@@ -1230,7 +1271,7 @@ async function runFull(flags) {
 // no up/down lifecycle, no orphaned-process risk. Runs, reports, exits with a
 // three-way code: 0 GREEN, 2 INFRA (yellow, does not block Phase 2), 1 RED
 // (blocks Phase 2). Reuses fail()/run()/log-file conventions from the devnet
-// path above but does not call fail() itself — that function's "13 steps"
+// path above but does not call fail() itself — that function's "14 steps"
 // framing and reportRunningStack() do not apply to a gate with no stack.
 //
 // Design: docs/superpowers/specs/2026-07-22-sepolia-deploy-gate-design.md
@@ -1543,7 +1584,7 @@ async function sepoliaStepConfirm(deployLogAddress) {
 async function sepolia() {
   console.log(`stark-smoke-test: sepolia deploy gate (S1-S5)`);
   console.log(`repo: ${ROOT}`);
-  console.log(`Opt-in, spends real STRK, separate from the 13-step devnet gate.`);
+  console.log(`Opt-in, spends real STRK, separate from the 14-step devnet gate.`);
 
   const vars = await sepoliaStepPreflight();
   await sepoliaStepRpcIdentity();
@@ -1574,7 +1615,7 @@ else if (mode === "verify") {
 } else if (mode === "run") await runFull(flags);
 else if (mode === "sepolia") await sepolia();
 else {
-  console.error(`stark-smoke-test — e2e devnet gate (13 steps: 1-7 process orchestration, 8-13 Chrome/CDP verification)
+  console.error(`stark-smoke-test — e2e devnet gate (14 steps: 1-7 process orchestration, 8-13 Chrome/CDP verification, 14 test suite)
 
 usage:
   node .claude/skills/stark-smoke-test/stark-smoke-test.mjs up [--write-env]
@@ -1588,10 +1629,10 @@ usage:
   verify  drive Chrome over CDP against an already-running stack (steps 8-13); exits non-zero on any failure
           --headed     launch Chrome visibly instead of headless, for debugging
   down    kill whatever \`up\` recorded and confirm ports ${DEVNET_PORT}/${NEXT_PORT} are released
-  run     up -> verify -> down in one shot; the CI entry point. Exits non-zero if any of the 13 steps fail.
+  run     up -> verify -> down -> test suite in one shot; the CI entry point. Exits non-zero if any of the 14 steps fail.
           On failure the stack is left running for debugging, same as \`up\`/\`verify\` alone.
   sepolia opt-in live-network deploy gate (S1-S5): declares/deploys against real Sepolia and confirms
           the class on-chain. Spends real STRK on every run. Exit 0 GREEN / 2 INFRA (yellow, does not
-          block Phase 2, retryable) / 1 RED (blocks Phase 2). Separate from the 13-step devnet gate above.`);
+          block Phase 2, retryable) / 1 RED (blocks Phase 2). Separate from the 14-step devnet gate above.`);
   process.exit(2);
 }
