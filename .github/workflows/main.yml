@@ -32,11 +32,24 @@ jobs:
       - name: Check starknet-foundry version sync
         run: |
           TOOL_VER=$(grep 'starknet-foundry' .tool-versions | awk '{print $2}' | tr -d '\r')
-          SCARB_VER=$(grep -E '^snforge_std\s*=\s*' packages/snfoundry/contracts/Scarb.toml | sed -n 's/.*"\([^"]*\)".*/\1/p' | tr -d '\r')
+          
+          if [ ! -f "packages/snfoundry/contracts/Scarb.lock" ]; then
+            echo "Error: Scarb.lock not found. Cannot determine resolved snforge_std version."
+            exit 1
+          fi
+          
+          SCARB_VER=$(awk '/name = "snforge_std"/{f=1} f && /^version = /{gsub(/"/,"",$3); print $3; exit}' packages/snfoundry/contracts/Scarb.lock | tr -d '\r')
+          
+          if [ -z "$SCARB_VER" ]; then
+            echo "Error: snforge_std not found in Scarb.lock. Cannot determine resolved version."
+            exit 1
+          fi
+          
           echo "starknet-foundry in .tool-versions: $TOOL_VER"
-          echo "snforge_std in Scarb.toml: $SCARB_VER"
+          echo "snforge_std in Scarb.lock: $SCARB_VER"
+          
           if [ "$TOOL_VER" != "$SCARB_VER" ]; then
-            echo "Error: Version mismatch! .tool-versions has starknet-foundry $TOOL_VER but Scarb.toml has snforge_std $SCARB_VER"
+            echo "Error: Version mismatch! .tool-versions has starknet-foundry $TOOL_VER but Scarb.lock resolved snforge_std $SCARB_VER"
             exit 1
           fi
 
