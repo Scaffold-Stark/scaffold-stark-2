@@ -65,7 +65,15 @@ jobs:
         run: yarn compile
 
       - name: Run smart contract tests
-        run: yarn test
+        run: |
+          set -o pipefail
+          yarn test 2>&1 | tee test_output.log
+          TEST_EXIT=${PIPESTATUS[0]}
+          if grep -i "snforge_std" test_output.log | grep -iq "version requirement"; then
+            echo "Error: snforge_std version mismatch warning detected by snforge!"
+            exit 1
+          fi
+          exit $TEST_EXIT
 
       - name: Check Code Format
         run: yarn format:check
