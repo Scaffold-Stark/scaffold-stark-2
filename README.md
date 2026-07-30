@@ -155,10 +155,10 @@ Now you are ready!!!
 
 ## Compatible versions
 
-- Starknet-devnet - v0.7.2
-- Scarb - v2.15.1
-- Snforge - v0.55.0
-- Cairo - v2.15.0
+- Starknet-devnet - v0.9.1
+- Scarb - v2.20.0
+- Snforge - v0.62.1
+- Cairo - v2.20.0
 - Rpc - v0.10.x
 
 ## Quickstart 1: Deploying a Smart Contract to Starknet-Devnet
