@@ -16,3 +16,27 @@ package-lock.json
 
 **/.env*
 !**/.env.example
+
+# local tooling / generated state (keep local, do not commit)
+# Only workflow scripts and skill definitions/scripts are tracked; nothing else under .claude/ should be.
+# Must be '.claude/*' (glob), not '.claude/' — git can't re-include a path inside a
+# directory that is itself ignored, so a bare '.claude/' would make the negations below a no-op.
+.claude/*
+!.claude/workflows/
+.claude/workflows/*
+!.claude/workflows/*.mjs
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/*/
+.claude/skills/*/*
+!.claude/skills/*/SKILL.md
+!.claude/skills/*/*.mjs
+.worktrees/
+.gitnexus/
+target/
+
+# stark-smoke-test runtime artifacts
+.smoke-test-state.json
+.smoke-test-logs/
+# personal workflow artifact; this is a public template repo
+docs/superpowers/

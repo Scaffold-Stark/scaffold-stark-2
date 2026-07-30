@@ -106,21 +106,19 @@ jobs:
           git fetch origin base-challenge-template
           git checkout -B "$TEMP_BRANCH" origin/base-challenge-template
 
-          rsync -av \
+          # Copy filter rules from source repo
+          cp ../source_repo/.github/sync-speedrun-filter-rules /tmp/sync-filter-rules
+
+          rsync -av --delete \
             --exclude='.git/' \
+            --exclude='.claude/' \
+            --filter='merge /tmp/sync-filter-rules' \
             --include='.github/' \
             --include='.github/workflows/' \
             --include='.github/workflows/main.yml' \
+            --include='.github/sync-speedrun-filter-rules' \
             --exclude='.github/*' \
             --exclude='.github/workflows/*' \
-            --exclude='__test*__' \
-            --exclude='packages/nextjs/public/debug-image.png' \
-            --exclude='packages/nextjs/public/manifest.json' \
-            --exclude='packages/nextjs/public/rpc-version.png' \
-            --exclude='packages/snfoundry/contracts/src/your_contract.cairo' \
-            --exclude='CHANGELOG*' \
-            --exclude='CONTRIBUTING*' \
-            --exclude='README.md' \
             ../source_repo/ ./
 
           # Sync the Compatible versions section from README.md.

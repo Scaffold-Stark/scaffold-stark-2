@@ -81,7 +81,7 @@ export const ReadOnlyFunctionForm = ({
     );
   });
 
-  const handleRead = () => {
+  const handleRead = async () => {
     const newInputValue = getArgsAsStringInputFromForm(form);
     const expectedArgCount = abiFunction.inputs.length;
 
@@ -102,19 +102,46 @@ export const ReadOnlyFunctionForm = ({
       lastForm.current = form;
     }
 
-    refetch();
+    const startTime = Date.now();
+    const { data: refetchData, error: refetchError } = await refetch();
+    const duration = Date.now() - startTime;
+
     try {
       const inputStr = JSON.stringify(newInputValue);
-      // Optimistically log a read call as success; real error will be captured via useReadContract error effect
-      addHistory(contractAddress, {
-        txHash: undefined,
-        functionName: abiFunction.name,
-        timestamp: Date.now(),
-        status: "success",
-        message: "Read executed",
-        input: inputStr,
-      });
-    } catch {}
+      if (refetchError) {
+        addHistory(contractAddress, {
+          txHash: undefined,
+          functionName: abiFunction.name,
+          callType: "read",
+          timestamp: Date.now(),
+          status: "error",
+          message: refetchError.message,
+          input: inputStr,
+          duration,
+          errorDetails: refetchError.stack || refetchError.message,
+        });
+      } else {
+        const decodedResult = decodeContractResponse({
+          resp: refetchData,
+          abi,
+          functionOutputs: abiFunction?.outputs,
+          asText: true,
+        });
+        addHistory(contractAddress, {
+          txHash: undefined,
+          functionName: abiFunction.name,
+          callType: "read",
+          timestamp: Date.now(),
+          status: "success",
+          message: "Read executed",
+          input: inputStr,
+          decodedResult: decodedResult ?? undefined,
+          duration,
+        });
+      }
+    } catch (e) {
+      console.warn("Failed to log read history:", e);
+    }
   };
 
   return (
