@@ -53,6 +53,28 @@ jobs:
             exit 1
           fi
 
+      - name: Check README versions sync
+        run: |
+          SCARB_VER=$(grep 'scarb' .tool-versions | awk '{print $2}' | tr -d '\r')
+          SNFORGE_VER=$(grep 'starknet-foundry' .tool-versions | awk '{print $2}' | tr -d '\r')
+          DEVNET_VER=$(grep 'starknet-devnet' .tool-versions | awk '{print $2}' | tr -d '\r')
+          
+          COMPAT_BLOCK=$(awk '/^## Compatible versions/{flag=1; print; next} /^## /{if(flag) flag=0} flag' README.md)
+          
+          if ! echo "$COMPAT_BLOCK" | grep -q "\- Scarb - v$SCARB_VER"; then
+            echo "Error: README.md 'Compatible versions' block does not have '- Scarb - v$SCARB_VER'"
+            exit 1
+          fi
+          
+          if ! echo "$COMPAT_BLOCK" | grep -q "\- Snforge - v$SNFORGE_VER"; then
+            echo "Error: README.md 'Compatible versions' block does not have '- Snforge - v$SNFORGE_VER'"
+            exit 1
+          fi
+          
+          if ! echo "$COMPAT_BLOCK" | grep -q "\- Starknet-devnet - v$DEVNET_VER"; then
+            echo "Error: README.md 'Compatible versions' block does not have '- Starknet-devnet - v$DEVNET_VER'"
+            exit 1
+          fi
       - name: Setup node env
         uses: actions/setup-node@v3
         with:
@@ -68,6 +90,16 @@ jobs:
         with:
           tool-versions: ./.tool-versions
           scarb-lock: ./packages/snfoundry/contracts/Scarb.lock
+
+      - name: Check README Cairo version sync
+        run: |
+          CAIRO_VER=$(scarb --version | awk '/^cairo:/{print $2}' | tr -d '\r')
+          COMPAT_BLOCK=$(awk '/^## Compatible versions/{flag=1; print; next} /^## /{if(flag) flag=0} flag' README.md)
+          
+          if ! echo "$COMPAT_BLOCK" | grep -q "\- Cairo - v$CAIRO_VER"; then
+            echo "Error: README.md 'Compatible versions' block does not have '- Cairo - v$CAIRO_VER'"
+            exit 1
+          fi
 
       - name: Install snfoundryup
         uses: foundry-rs/setup-snfoundry@v3
