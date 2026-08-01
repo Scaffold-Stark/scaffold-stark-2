@@ -18,6 +18,7 @@ on:
       - "yarn.lock"
       - "package.json"
       - ".tool-versions"
+      - ".github/workflows/**"
 
 permissions:
   contents: read
