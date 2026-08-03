@@ -602,8 +602,8 @@ Also configure RPC URLs in `packages/nextjs/.env`:
 
 ```
 NEXT_PUBLIC_DEVNET_PROVIDER_URL=http://127.0.0.1:5050
-NEXT_PUBLIC_SEPOLIA_PROVIDER_URL=https://starknet-sepolia.public.blastapi.io/rpc/v0_9
-NEXT_PUBLIC_MAINNET_PROVIDER_URL=https://starknet-mainnet.public.blastapi.io/rpc/v0_9
+NEXT_PUBLIC_SEPOLIA_PROVIDER_URL=https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_10/_hKu4IgnPgrF8O82GLuYU
+NEXT_PUBLIC_MAINNET_PROVIDER_URL=https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_10/_hKu4IgnPgrF8O82GLuYU
 ```
 
 #### 3. Deploy your smart contract(s)

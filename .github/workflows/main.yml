@@ -5,6 +5,9 @@ on:
     paths:
       - "packages/snfoundry/contracts/**"
       - "packages/nextjs/**"
+      - "yarn.lock"
+      - "package.json"
+      - ".tool-versions"
   pull_request:
     branches:
       - main
@@ -12,6 +15,10 @@ on:
     paths:
       - "packages/nextjs/**"
       - "packages/snfoundry/**"
+      - "yarn.lock"
+      - "package.json"
+      - ".tool-versions"
+      - ".github/workflows/**"
 
 permissions:
   contents: read
@@ -29,6 +36,57 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
+      - name: Check starknet-foundry version sync
+        run: |
+          TOOL_VER=$(grep 'starknet-foundry' .tool-versions | awk '{print $2}' | tr -d '\r')
+          
+          if [ ! -f "packages/snfoundry/contracts/Scarb.lock" ]; then
+            echo "Error: Scarb.lock not found. Cannot determine resolved snforge_std version."
+            exit 1
+          fi
+          
+          SCARB_VER=$(awk '/name = "snforge_std"/{f=1} f && /^version = /{gsub(/"/,"",$3); print $3; exit}' packages/snfoundry/contracts/Scarb.lock | tr -d '\r')
+          
+          if [ -z "$SCARB_VER" ]; then
+            echo "Error: snforge_std not found in Scarb.lock. Cannot determine resolved version."
+            exit 1
+          fi
+          
+          echo "starknet-foundry in .tool-versions: $TOOL_VER"
+          echo "snforge_std in Scarb.lock: $SCARB_VER"
+          
+          if [ "$TOOL_VER" != "$SCARB_VER" ]; then
+            echo "Error: Version mismatch! .tool-versions has starknet-foundry $TOOL_VER but Scarb.lock resolved snforge_std $SCARB_VER"
+            exit 1
+          fi
+
+      - name: Check README versions sync
+        run: |
+          SCARB_VER=$(grep 'scarb' .tool-versions | awk '{print $2}' | tr -d '\r')
+          SNFORGE_VER=$(grep 'starknet-foundry' .tool-versions | awk '{print $2}' | tr -d '\r')
+          DEVNET_VER=$(grep 'starknet-devnet' .tool-versions | awk '{print $2}' | tr -d '\r')
+          
+          COMPAT_BLOCK=$(awk '/^#+ Compatible versions/{flag=1; print; next} /^#+ /{if(flag) flag=0} flag' README.md)
+
+          if [ -z "$COMPAT_BLOCK" ]; then
+            echo "::notice::No 'Compatible versions' heading found in README.md — skipping README version sync assertions."
+            exit 0
+          fi
+
+          if ! echo "$COMPAT_BLOCK" | grep -q "\- Scarb - v$SCARB_VER"; then
+            echo "Error: README.md 'Compatible versions' block does not have '- Scarb - v$SCARB_VER'"
+            exit 1
+          fi
+          
+          if ! echo "$COMPAT_BLOCK" | grep -q "\- Snforge - v$SNFORGE_VER"; then
+            echo "Error: README.md 'Compatible versions' block does not have '- Snforge - v$SNFORGE_VER'"
+            exit 1
+          fi
+          
+          if ! echo "$COMPAT_BLOCK" | grep -q "\- Starknet-devnet - v$DEVNET_VER"; then
+            echo "Error: README.md 'Compatible versions' block does not have '- Starknet-devnet - v$DEVNET_VER'"
+            exit 1
+          fi
       - name: Setup node env
         uses: actions/setup-node@v3
         with:
@@ -45,6 +103,21 @@ jobs:
           tool-versions: ./.tool-versions
           scarb-lock: ./packages/snfoundry/contracts/Scarb.lock
 
+      - name: Check README Cairo version sync
+        run: |
+          CAIRO_VER=$(scarb --version | awk '/^cairo:/{print $2}' | tr -d '\r')
+          COMPAT_BLOCK=$(awk '/^#+ Compatible versions/{flag=1; print; next} /^#+ /{if(flag) flag=0} flag' README.md)
+
+          if [ -z "$COMPAT_BLOCK" ]; then
+            echo "::notice::No 'Compatible versions' heading found in README.md — skipping README Cairo version sync assertion."
+            exit 0
+          fi
+
+          if ! echo "$COMPAT_BLOCK" | grep -q "\- Cairo - v$CAIRO_VER"; then
+            echo "Error: README.md 'Compatible versions' block does not have '- Cairo - v$CAIRO_VER'"
+            exit 1
+          fi
+
       - name: Install snfoundryup
         uses: foundry-rs/setup-snfoundry@v3
         with:
@@ -54,7 +127,15 @@ jobs:
         run: yarn compile
 
       - name: Run smart contract tests
-        run: yarn test
+        run: |
+          set -o pipefail
+          yarn test 2>&1 | tee test_output.log
+          TEST_EXIT=${PIPESTATUS[0]}
+          if grep -i "snforge_std" test_output.log | grep -iq "version requirement"; then
+            echo "Error: snforge_std version mismatch warning detected by snforge!"
+            exit 1
+          fi
+          exit $TEST_EXIT
 
       - name: Check Code Format
         run: yarn format:check

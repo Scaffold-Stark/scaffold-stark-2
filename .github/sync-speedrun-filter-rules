@@ -31,10 +31,6 @@ P packages/nextjs/public/starkcompass-icon.svg
 P packages/nextjs/public/Starknet-icon.svg
 P packages/nextjs/public/starknet.svg
 
-# Speedrun-specific contract files
-P packages/snfoundry/contracts/tests/TestContract.cairo
-P packages/snfoundry/scripts-ts/helpers/fees.ts
-
 # Speedrun workflows
 P .github/workflows/sync_other_challenges.yaml
 

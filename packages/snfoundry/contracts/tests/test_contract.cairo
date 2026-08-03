@@ -60,3 +60,33 @@ fn test_transfer() {
         ); // we transfer 500 wei
     assert(your_contract_dispatcher.greeting() == new_greeting, 'Should allow set new message');
 }
+
+#[test]
+#[fork("SEPOLIA_LATEST")]
+#[should_panic(
+    expected: ('ERC20: insufficient allowance', 'ENTRYPOINT_FAILED', 'ENTRYPOINT_FAILED'),
+)]
+fn test_set_greeting_no_allowance() {
+    let user = OWNER;
+    let your_contract_address = deploy_contract("YourContract");
+
+    let your_contract_dispatcher = IYourContractDispatcher {
+        contract_address: your_contract_address,
+    };
+
+    let new_greeting: ByteArray = "Learn Scaffold-Stark 2! :)";
+
+    cheat_caller_address(your_contract_address, user, CheatSpan::TargetCalls(1));
+    your_contract_dispatcher.set_greeting(new_greeting.clone(), Option::Some(500));
+}
+
+#[test]
+#[should_panic(expected: ('Caller is not the owner', 'ENTRYPOINT_FAILED'))]
+fn test_withdraw_not_owner() {
+    let contract_address = deploy_contract("YourContract");
+    let dispatcher = IYourContractDispatcher { contract_address };
+
+    let not_owner: ContractAddress = 0x123.try_into().unwrap();
+    cheat_caller_address(contract_address, not_owner, CheatSpan::TargetCalls(1));
+    dispatcher.withdraw();
+}
